@@ -63,6 +63,9 @@ CivilizationEvolution/
 1. **一键搭建游戏场景**：自动生成 GameManager / GameWorld（挂配置）/ MapPlane / 正交相机 / 平行光 / MapEditor / 完整 UGUI / EventSystem / Bootstrap。
 2. **创建世界配置资产**：生成 DefaultWorldConfig.asset。
 3. **保存当前场景到 Main.unity**。
+4. **地图编辑器面板（EditorWindow）**：画笔设置（模式/形状/半径/强度/连续绘制）、快捷操作（填充/清空地块）、海陆参数 5 滑块 + 左右连通（编辑配置资产）、地形重生成（随机种子，播放模式）。
+5. **就地升级 Dropdown 展开模板**：为旧场景补齐显示模式下拉框的完整展开列表层级（Template/Viewport/Content/Item+Toggle）。
+
 - `HeadlessBuilder.BuildAll` 供命令行无界面构建：
   `Unity.exe -batchmode -quit -projectPath <项目> -executeMethod CivilizationEvolution.EditorTools.HeadlessBuilder.BuildAll`
 
@@ -169,8 +172,8 @@ CivilizationEvolution/
 
 ## 待完善
 
-- [ ] 地图编辑器 EditorWindow 面板（画笔工具/参数滑块面板）
-- [ ] Dropdown 下拉模板完整样式（当前功能接线完成，展开列表样式待美化）
+- [x] 地图编辑器 EditorWindow 面板（画笔工具/参数滑块面板/地形重生成）
+- [x] Dropdown 下拉模板完整样式（Template/Viewport/Content/Item+Toggle 层级）
 - [ ] 音效与音乐系统、动画系统
 - [ ] 多人联机、模组加载器
 - [ ] 性能优化（ECS / Job System / Burst）

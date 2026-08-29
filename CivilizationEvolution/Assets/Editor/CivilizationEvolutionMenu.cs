@@ -136,6 +136,23 @@ namespace CivilizationEvolution.EditorTools
             Debug.Log("[CE菜单] 场景已保存。");
         }
 
+        [MenuItem(MenuRoot + "5. 就地升级 Dropdown 展开模板", false, 5)]
+        public static void UpgradeExistingDropdown()
+        {
+            var dd = Object.FindFirstObjectByType<Dropdown>(FindObjectsInactive.Include);
+            if (dd == null)
+            {
+                Debug.LogWarning("[CE菜单] 场景中未找到 Dropdown，请先执行菜单\"1. 一键搭建游戏场景\"。");
+                return;
+            }
+            if (dd.template != null)
+                Object.DestroyImmediate(dd.template.gameObject);
+            dd.itemText = null;
+            BuildDropdownTemplate(dd, dd.transform);
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Debug.Log("[CE菜单] Dropdown 展开模板已升级为完整层级（Viewport/Content/Item+Toggle），请保存场景。");
+        }
+
         // ================= UGUI 代码构建 =================
 
         /// <summary>构建整套界面并通过反射注入UIManager</summary>
@@ -165,14 +182,22 @@ namespace CivilizationEvolution.EditorTools
             SetField(ui, "speed3Button", CreateButton("Speed3Btn", speedGroup, "x5"));
             var dropdownGo = new GameObject("DisplayModeDropdown", typeof(RectTransform));
             dropdownGo.transform.SetParent(speedGroup, false);
+            var ddImage = dropdownGo.AddComponent<Image>();
+            ddImage.color = new Color(0.2f, 0.3f, 0.5f, 1f);
             var dd = dropdownGo.AddComponent<Dropdown>();
-            var ddLabel = CreateText("Label", dropdownGo.transform, "地形", 16);
-            dd.captionText = ddLabel;
-            var ddTemplate = new GameObject("Template", typeof(RectTransform));
-            ddTemplate.transform.SetParent(dropdownGo.transform, false);
-            dd.template = ddTemplate.AddComponent<RectTransform>();
-            var itemText = CreateText("ItemText", ddTemplate.transform, "选项", 16);
-            dd.itemText = itemText;
+            dd.targetGraphic = ddImage;
+            var ddCaption = CreateText("Label", dropdownGo.transform, "地形", 16);
+            ddCaption.alignment = TextAnchor.MiddleCenter;
+            ddCaption.rectTransform.anchorMin = Vector2.zero;
+            ddCaption.rectTransform.anchorMax = Vector2.one;
+            ddCaption.rectTransform.offsetMin = new Vector2(8, 0);
+            ddCaption.rectTransform.offsetMax = new Vector2(-12, 0);
+            var ddCaptionLe = ddCaption.GetComponent<LayoutElement>();
+            ddCaptionLe.minWidth = 0;
+            dd.captionText = ddCaption;
+            var ddLe = dropdownGo.AddComponent<LayoutElement>();
+            ddLe.preferredWidth = 150; ddLe.preferredHeight = 32;
+            BuildDropdownTemplate(dd, dropdownGo.transform);
             SetField(ui, "displayModeDropdown", dd);
 
             // ---- 地块详情面板（右侧）----
@@ -204,6 +229,106 @@ namespace CivilizationEvolution.EditorTools
             SetField(ui, "eventLogPanel", logPanel);
             SetField(ui, "eventLogText", logText);
             SetField(ui, "eventLogScroll", scroll);
+        }
+
+        /// <summary>构建 UGUI Dropdown 完整展开模板（Template/Viewport/Content/Item+Toggle）</summary>
+        /// <remarks>UGUI Dropdown 展开时按名称查找 "Item"/"Item Label"，层级与组件缺一不可</remarks>
+        private static void BuildDropdownTemplate(Dropdown dd, Transform dropdownRoot)
+        {
+            // ---- Template：下拉列表容器（背景 + 滚动）----
+            var templateGo = new GameObject("Template", typeof(RectTransform), typeof(Image), typeof(ScrollRect));
+            templateGo.transform.SetParent(dropdownRoot, false);
+            var templateRt = (RectTransform)templateGo.transform;
+            templateRt.anchorMin = new Vector2(0, 0);
+            templateRt.anchorMax = new Vector2(1, 0);
+            templateRt.pivot = new Vector2(0.5f, 1f);
+            templateRt.sizeDelta = new Vector2(0, 150f);
+            templateGo.GetComponent<Image>().color = new Color(0.09f, 0.12f, 0.19f, 0.96f);
+            var scroll = templateGo.GetComponent<ScrollRect>();
+            scroll.horizontal = false;
+            scroll.vertical = true;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+            scroll.scrollSensitivity = 24f;
+
+            // ---- Viewport：可视区（裁剪）----
+            var viewportGo = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(RectMask2D));
+            viewportGo.transform.SetParent(templateGo.transform, false);
+            var viewportRt = (RectTransform)viewportGo.transform;
+            StretchRect(viewportRt);
+            viewportGo.GetComponent<Image>().color = Color.clear;
+
+            // ---- Content：选项容器 ----
+            var contentGo = new GameObject("Content", typeof(RectTransform));
+            contentGo.transform.SetParent(viewportGo.transform, false);
+            var contentRt = (RectTransform)contentGo.transform;
+            contentRt.anchorMin = new Vector2(0, 1);
+            contentRt.anchorMax = new Vector2(1, 1);
+            contentRt.pivot = new Vector2(0.5f, 1f);
+            contentRt.sizeDelta = new Vector2(0, 28f);
+            scroll.viewport = viewportRt;
+            scroll.content = contentRt;
+
+            // ---- Item：单个选项（Toggle + 背景 + 勾选 + 文本）----
+            var itemGo = new GameObject("Item", typeof(RectTransform), typeof(Toggle));
+            itemGo.transform.SetParent(contentGo.transform, false);
+            var itemRt = (RectTransform)itemGo.transform;
+            itemRt.anchorMin = new Vector2(0, 0.5f);
+            itemRt.anchorMax = new Vector2(1, 0.5f);
+            itemRt.sizeDelta = new Vector2(0, 28f);
+            var toggle = itemGo.GetComponent<Toggle>();
+            toggle.isOn = true;
+            toggle.transition = Selectable.Transition.ColorTint;
+            var tint = toggle.colors;
+            tint.normalColor = Color.white;
+            tint.highlightedColor = new Color(0.85f, 0.92f, 1f);
+            tint.pressedColor = new Color(0.6f, 0.75f, 0.95f);
+            tint.selectedColor = new Color(0.45f, 0.62f, 0.9f);
+            tint.disabledColor = new Color(0.55f, 0.55f, 0.55f);
+            toggle.colors = tint;
+
+            var bgGo = new GameObject("Item Background", typeof(RectTransform), typeof(Image));
+            bgGo.transform.SetParent(itemGo.transform, false);
+            StretchRect((RectTransform)bgGo.transform);
+            var bgImage = bgGo.GetComponent<Image>();
+            bgImage.color = new Color(0.15f, 0.2f, 0.3f, 0.85f);
+            toggle.targetGraphic = bgImage;
+
+            var checkGo = new GameObject("Item Checkmark", typeof(RectTransform), typeof(Image));
+            checkGo.transform.SetParent(itemGo.transform, false);
+            StretchRect((RectTransform)checkGo.transform);
+            var checkImage = checkGo.GetComponent<Image>();
+            checkImage.color = new Color(0.55f, 0.8f, 1f, 1f);
+            toggle.graphic = checkImage;
+
+            // ---- 绑定 ----
+            dd.itemText = BuildTemplateText("Item Label", itemGo.transform, "选项");
+            dd.template = templateRt;
+            templateGo.SetActive(false);
+        }
+
+        /// <summary>模板内文本（不带 LayoutElement，避免选项行被撑宽）</summary>
+        private static Text BuildTemplateText(string name, Transform parent, string content)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+            var txt = go.AddComponent<Text>();
+            txt.font = UiFont; txt.text = content; txt.fontSize = 16;
+            txt.color = TextColor; txt.alignment = TextAnchor.MiddleLeft;
+            txt.horizontalOverflow = HorizontalWrapMode.Overflow;
+            var rt = (RectTransform)go.transform;
+            StretchRect(rt);
+            rt.offsetMin = new Vector2(8, 0);
+            rt.offsetMax = new Vector2(-8, 0);
+            return txt;
+        }
+
+        /// <summary>拉伸填满父级</summary>
+        private static void StretchRect(RectTransform rt)
+        {
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
         }
 
         private static RectTransform CreatePanel(string name, Transform parent)
