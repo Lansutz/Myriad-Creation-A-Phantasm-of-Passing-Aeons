@@ -36,6 +36,9 @@ namespace CivilizationEvolution.Politics
         public int suzerainId = -1; // 宗主国ID，-1表示独立
         public List<int> vassalIds = new List<int>();
 
+        // 继承法（政治体制成分表·权力交接维度：世袭制的四轴组合，默认长子继承）
+        public InheritanceLaw successionLaw = InheritanceLaw.Primogeniture();
+
         public RealmData()
         {
             classRelations[GameEnums.SocialClass.Royalty] = 70f;
