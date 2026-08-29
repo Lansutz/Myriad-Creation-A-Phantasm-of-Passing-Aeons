@@ -10,6 +10,8 @@ namespace CivilizationEvolution.Culture
     {
         public int cultureId;
         public string cultureName;
+        /// <summary>地图文化着色（十六进制，如 "#4f8fbf"），由文化包 JSON 提供</summary>
+        public string cultureColorHex = "#ffffff";
         public GameEnums.CultureStage stage;
 
         // 7维文化基因

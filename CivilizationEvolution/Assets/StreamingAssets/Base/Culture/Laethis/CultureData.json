@@ -1,0 +1,17 @@
+{
+  "cultureId": 1,
+  "cultureName": "Laethis",
+  "cultureColorHex": "#4f8fbf",
+  "stage": 2,
+  "livelihoodType": 2,
+  "mobilityType": 0,
+  "burialType": 1,
+  "worshipVector": [0.15, 0.9, 0.35, 0.1],
+  "materialStyle": 2,
+  "symbolicFocus": 3,
+  "environmentAdapt": 1,
+  "maturity": 35.0,
+  "spreadPower": 1.05,
+  "parentCultureId": -1,
+  "childCultureIds": []
+}

@@ -23,6 +23,9 @@ namespace CivilizationEvolution.Core
         {
             Debug.Log($"[{GameConstants.GameNameShort}] {GameConstants.GameNameEn} | {GameConstants.GameNameZh} | v{GameConstants.Version}");
 
+            // 加载内容注册表（Base/Mods 双目录数据驱动）
+            ContentRegistry.Initialize();
+
             // 确保GameManager存在
             if (GameManager.Instance == null)
             {

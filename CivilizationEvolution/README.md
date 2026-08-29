@@ -72,13 +72,23 @@ CivilizationEvolution/
 
 * 存档时用 `JsonUtility.ToJson` 存配置快照，读档 `FromJsonOverwrite` 恢复（SO 不能走 BinaryFormatter）。
 
+### 内容数据驱动（Base/Mods 双目录）
+
+* `StreamingAssets/Base/`（内置内容）与 `StreamingAssets/Mods/`（模组扩展）**目录同构**，启动时由 `ContentRegistry` 统一扫描加载，Mods 同名 Id 覆盖 Base。
+
+* **文化包**：`Culture/<文化名>/CultureData.json`（文化 Id/名称/着色/7 维文化基因）+ 名字池 CSV（`CharacterFirstNames_Male/Female.csv`、`CharacterLastNames.csv`、`CityNames.csv`，格式 `id,name`）。
+
+* **种族定义**：`Race/RaceDefs.json`（顶层 `{ "races": [...] }`，字段与 `RaceData` 公有字段一一对应）。
+
+* 加载器用 `JsonUtility` 反序列化（零第三方依赖），`Bootstrap.Awake` 时调用 `ContentRegistry.Initialize()`；失败仅告警不崩溃。
+
+* 新增文化：复制 `Base/Culture/Laethis` 模板目录改名，改 `cultureId` 与填充名字池即可；发布模组则放入 `Mods/` 目录。
+
 ### 编辑器一键工具（顶部菜单 Civilization Evolution）
 
 1. **一键搭建游戏场景**：自动生成 GameManager / GameWorld（挂配置）/ MapPlane / 正交相机 / 平行光 / MapEditor / 完整 UGUI / EventSystem / Bootstrap。
 2. **创建世界配置资产**：生成 DefaultWorldConfig.asset。
 3. **保存当前场景到 Main.unity**。
-4. **地图编辑器面板（EditorWindow）**：画笔设置（模式/形状/半径/强度/连续绘制）、快捷操作（填充/清空地块）、海陆参数 5 滑块 + 左右连通（编辑配置资产）、地形重生成（随机种子，播放模式）。
-5. **就地升级 Dropdown 展开模板**：为旧场景补齐显示模式下拉框的完整展开列表层级（Template/Viewport/Content/Item+Toggle）。
 
 * `HeadlessBuilder.BuildAll` 供命令行无界面构建：
   `Unity.exe -batchmode -quit -projectPath <项目> -executeMethod CivilizationEvolution.EditorTools.HeadlessBuilder.BuildAll`
@@ -227,9 +237,9 @@ CivilizationEvolution/
 
 ## 待完善
 
-* [x] 地图编辑器 EditorWindow 面板（画笔工具/参数滑块面板/地形重生成）
+* [ ] 地图编辑器 EditorWindow 面板（画笔工具/参数滑块面板）
 
-* [x] Dropdown 下拉模板完整样式（Template/Viewport/Content/Item+Toggle 层级）
+* [ ] Dropdown 下拉模板完整样式（当前功能接线完成，展开列表样式待美化）
 
 * [ ] 音效与音乐系统、动画系统
 
