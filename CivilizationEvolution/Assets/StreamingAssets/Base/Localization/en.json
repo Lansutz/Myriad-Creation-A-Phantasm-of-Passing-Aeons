@@ -271,6 +271,70 @@
     {
       "key": "tmpl_spouse_desc",
       "value": "Consort of the sovereign, moving between household and court."
+    },
+    {
+      "key": "talent_photographic_name",
+      "value": "Photographic Memory"
+    },
+    {
+      "key": "talent_photographic_desc",
+      "value": "An exceptional memory: everything read once is remembered for life."
+    },
+    {
+      "key": "talent_divine_strength_name",
+      "value": "Divine Strength"
+    },
+    {
+      "key": "talent_divine_strength_desc",
+      "value": "Incredible natural strength, able to lift cauldrons and wrestle tigers."
+    },
+    {
+      "key": "talent_iron_body_name",
+      "value": "Iron Body"
+    },
+    {
+      "key": "talent_iron_body_desc",
+      "value": "A constitution of iron, rarely ill and slow to age; a long life ahead."
+    },
+    {
+      "key": "talent_keen_mind_name",
+      "value": "Keen Mind"
+    },
+    {
+      "key": "talent_keen_mind_desc",
+      "value": "Quick to understand, grasping in months what takes others years."
+    },
+    {
+      "key": "defect_frail_name",
+      "value": "Frail Constitution"
+    },
+    {
+      "key": "defect_frail_desc",
+      "value": "Born frail, ailed by every wind; even a small sickness lingers for months."
+    },
+    {
+      "key": "defect_feeblemind_name",
+      "value": "Feebleminded"
+    },
+    {
+      "key": "defect_feeblemind_desc",
+      "value": "A clouded mind, hard to teach; speech and letters come only with great effort."
+    },
+    {
+      "key": "defect_hemophilia_name",
+      "value": "Hemophilia"
+    },
+    {
+      "key": "defect_hemophilia_desc",
+      "value": "Blood does not clot; even small wounds bleed long and heal poorly."
+    },
+    {
+      "key": "defect_pale_name",
+      "value": "Albinism"
+    },
+    {
+      "key": "defect_pale_desc",
+      "value": "Skin and hair without colour, shunning bright light; travels under a shade."
     }
   ]
 }

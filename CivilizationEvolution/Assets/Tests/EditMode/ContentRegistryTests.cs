@@ -22,10 +22,10 @@ namespace CivilizationEvolution.Tests
             ContentRegistry.Initialize();
         }
 
-        // ===== 八类注册表加载 =====
+        // ===== 九类注册表加载 =====
 
         [Test]
-        public void ContentRegistry_LoadsAllEightTypes()
+        public void ContentRegistry_LoadsAllNineTypes()
         {
             Assert.That(ContentRegistry.Cultures.Count, Is.GreaterThan(0), "文化包应加载");
             // 预种族已删除（2026-08-29 定稿：仅人类为代码内置 raceId 0），Base 无种族定义属合法状态
@@ -35,6 +35,35 @@ namespace CivilizationEvolution.Tests
             Assert.That(ContentRegistry.EthnicGroups.Count, Is.GreaterThan(0), "族群实体应加载");
             Assert.That(ContentRegistry.FamilyTraditions.Count, Is.GreaterThan(0), "家族传统定义表应加载");
             Assert.That(ContentRegistry.CharacterTemplates.Count, Is.GreaterThan(0), "角色模板定义表应加载");
+            Assert.That(ContentRegistry.TalentDefects.Count, Is.GreaterThan(0), "DNA 天赋/缺陷定义表应加载");
+        }
+
+        // ===== DNA 天赋/缺陷定义表（Base/Mods 双目录真实加载） =====
+
+        [Test]
+        public void DnaDefs_ModsOverride_BaseSemantics()
+        {
+            // 真实加载语义：Mods 后载覆盖 Base 同名 Id；Mods 新增 Id 直接可用
+            Assert.IsTrue(ContentRegistry.TryGetTalentDefect("defect_pale", out var pale), "白化定义应存在");
+            Assert.AreEqual("lifespan", pale.stat, "Mods 示例覆盖：白化 stat 应为 lifespan（Base 为 appearance）");
+            Assert.AreEqual(-5f, pale.amount, "Mods 示例覆盖：白化 lifespan 修正 -5");
+
+            Assert.IsTrue(ContentRegistry.TryGetTalentDefect("talent_steadfast", out var steadfast), "Mods 新增天赋应可解析");
+            Assert.IsTrue(steadfast.isTalent, "Mods 新增应为天赋");
+            Assert.AreEqual("martial", steadfast.stat);
+        }
+
+        [Test]
+        public void DnaDefs_Name_LocalizedOrFallback()
+        {
+            // Base 定义：显示名走本地化表
+            Assert.IsTrue(ContentRegistry.TryGetTalentDefect("talent_photographic", out var photo));
+            Assert.AreEqual("过目不忘", photo.GetName(), "Base 天赋名应经本地化解析");
+
+            // Mods 新增定义无本地化键：回退内置 name 字段（不崩溃）
+            Assert.IsTrue(ContentRegistry.TryGetTalentDefect("talent_steadfast", out var modded));
+            Assert.IsFalse(string.IsNullOrEmpty(modded.name), "Mods 定义可带内置回退名");
+            Assert.IsFalse(string.IsNullOrEmpty(modded.GetName()), "缺键时 GetName 应回退内置字段");
         }
 
         // ===== 家族传统定义表 =====

@@ -271,6 +271,70 @@
     {
       "key": "tmpl_spouse_desc",
       "value": "主君內助，周旋於家宅與朝堂之間。"
+    },
+    {
+      "key": "talent_photographic_name",
+      "value": "過目不忘"
+    },
+    {
+      "key": "talent_photographic_desc",
+      "value": "記憶超群，見聞過目成誦，經史子集讀一遍便烙印在腦海。"
+    },
+    {
+      "key": "talent_divine_strength_name",
+      "value": "神力"
+    },
+    {
+      "key": "talent_divine_strength_desc",
+      "value": "天生神力，可舉鼎、可搏虎，尋常人兩三下都近不得身。"
+    },
+    {
+      "key": "talent_iron_body_name",
+      "value": "鐵軀"
+    },
+    {
+      "key": "talent_iron_body_desc",
+      "value": "體格強韌異於常人，寒暑不侵、傷病難纏，壽數綿長。"
+    },
+    {
+      "key": "talent_keen_mind_name",
+      "value": "慧心"
+    },
+    {
+      "key": "talent_keen_mind_desc",
+      "value": "穎悟絕倫，一點即通，旁人多年的學問他數月便瞭然於胸。"
+    },
+    {
+      "key": "defect_frail_name",
+      "value": "先天體弱"
+    },
+    {
+      "key": "defect_frail_desc",
+      "value": "胎裡帶的孱弱，風吹便倒，一場小病也要將養半年，壽元受損。"
+    },
+    {
+      "key": "defect_feeblemind_name",
+      "value": "癡愚"
+    },
+    {
+      "key": "defect_feeblemind_desc",
+      "value": "心智矇昧，難以開化，教他說話認字都要費盡周章。"
+    },
+    {
+      "key": "defect_hemophilia_name",
+      "value": "血友病"
+    },
+    {
+      "key": "defect_hemophilia_desc",
+      "value": "凝血障礙，小傷口也血流不止，傷病最是難醫。"
+    },
+    {
+      "key": "defect_pale_name",
+      "value": "白化"
+    },
+    {
+      "key": "defect_pale_desc",
+      "value": "膚發無色，畏光避日，白日出行也要以傘遮面。"
     }
   ]
 }

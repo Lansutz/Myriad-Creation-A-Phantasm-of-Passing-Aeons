@@ -83,7 +83,11 @@ namespace CivilizationEvolution.Race
         public bool carriesDefect;           // 隐性携带者（Aa，不发病但可遗传）
     }
 
-    /// <summary>天赋/缺陷定义</summary>
+    /// <summary>
+    /// 天赋/缺陷定义
+    /// 数据驱动：定义文件（Dna/DnaDefs.json，Base/Mods 可覆盖）只存键；
+    /// name/description 为内置回退（未加载本地化表时用），显示优先走 GetName()/GetDescription()
+    /// </summary>
     [Serializable]
     public class TalentDefectDef
     {
@@ -93,6 +97,11 @@ namespace CivilizationEvolution.Race
         public string stat;       // 影响属性键：learning / martial / lifespan / appearance
         public float amount;      // 修正量
         public string description;
+
+        /// <summary>显示名：本地化表优先（&lt;id&gt;_name），回退内置字段</summary>
+        public string GetName() => Localization.Has(id + "_name") ? Localization.Get(id + "_name") : name;
+        /// <summary>写实描述：本地化表优先（&lt;id&gt;_desc），回退内置字段</summary>
+        public string GetDescription() => Localization.Has(id + "_desc") ? Localization.Get(id + "_desc") : description;
     }
 
     /// <summary>种族基因座频率（各基因座显性等位基因 A 的频率，0-1）</summary>
@@ -152,12 +161,39 @@ namespace CivilizationEvolution.Race
         private static readonly string[] _appearanceaa = { "肤色浅淡", "身形纤细", "轮廓柔和", "形容清减" };
 
         // ===== 查询 =====
-        public static IReadOnlyList<TalentDefectDef> GetTalentDefs() => _talentDefs;
-        public static IReadOnlyList<TalentDefectDef> GetDefectDefs() => _defectDefs;
 
+        /// <summary>天赋定义池（注册表优先——模组可扩展；未初始化/未定义时回退内置）</summary>
+        public static IReadOnlyList<TalentDefectDef> GetTalentDefs()
+        {
+            if (ContentRegistry.IsInitialized && ContentRegistry.TalentDefects.Count > 0)
+            {
+                var list = new List<TalentDefectDef>();
+                foreach (var kv in ContentRegistry.TalentDefects)
+                    if (kv.Value.isTalent) list.Add(kv.Value);
+                return list;
+            }
+            return _talentDefs;
+        }
+
+        /// <summary>遗传病定义池（注册表优先——模组可扩展；未初始化/未定义时回退内置）</summary>
+        public static IReadOnlyList<TalentDefectDef> GetDefectDefs()
+        {
+            if (ContentRegistry.IsInitialized && ContentRegistry.TalentDefects.Count > 0)
+            {
+                var list = new List<TalentDefectDef>();
+                foreach (var kv in ContentRegistry.TalentDefects)
+                    if (!kv.Value.isTalent) list.Add(kv.Value);
+                return list;
+            }
+            return _defectDefs;
+        }
+
+        /// <summary>按 id 查定义（注册表优先，回退内置表）</summary>
         public static TalentDefectDef FindDef(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
+            if (ContentRegistry.IsInitialized && ContentRegistry.TryGetTalentDefect(id, out var reg))
+                return reg;
             foreach (var t in _talentDefs) if (t.id == id) return t;
             foreach (var d in _defectDefs) if (d.id == id) return d;
             return null;
@@ -265,11 +301,13 @@ namespace CivilizationEvolution.Race
         private static void ApplyTalentDefect(DnaData dna, ref DnaExpression expr)
         {
             var pair = dna.GetLocus(DnaLocus.TalentDefect);
+            var talents = GetTalentDefs();
+            var defects = GetDefectDefs();
             if (pair.IsHomozygousDominant)
             {
                 // AA：有概率触发特殊天赋
-                if (UnityEngine.Random.value < TalentChanceAA)
-                    expr.talentId = _talentDefs[UnityEngine.Random.Range(0, _talentDefs.Count)].id;
+                if (UnityEngine.Random.value < TalentChanceAA && talents.Count > 0)
+                    expr.talentId = talents[UnityEngine.Random.Range(0, talents.Count)].id;
             }
             else if (pair.IsHeterozygous)
             {
@@ -279,10 +317,10 @@ namespace CivilizationEvolution.Race
             else
             {
                 // aa：纯合隐性发病；极低概率罕见正向突变（触发天赋）
-                if (UnityEngine.Random.value < DefectChanceAA)
-                    expr.defectId = _defectDefs[UnityEngine.Random.Range(0, _defectDefs.Count)].id;
-                else
-                    expr.talentId = _talentDefs[UnityEngine.Random.Range(0, _talentDefs.Count)].id;
+                if (defects.Count > 0 && UnityEngine.Random.value < DefectChanceAA)
+                    expr.defectId = defects[UnityEngine.Random.Range(0, defects.Count)].id;
+                else if (talents.Count > 0)
+                    expr.talentId = talents[UnityEngine.Random.Range(0, talents.Count)].id;
             }
         }
 

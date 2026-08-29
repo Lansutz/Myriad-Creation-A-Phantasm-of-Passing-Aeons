@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
+using CivilizationEvolution.Core;
 using CivilizationEvolution.Race;
 using CivilizationEvolution.Role;
 
@@ -157,6 +158,16 @@ namespace CivilizationEvolution.Tests
                 if (!string.IsNullOrEmpty(expr.defectId))
                     Assert.IsNotNull(DnaSystem.FindDef(expr.defectId), $"未知遗传病 id: {expr.defectId}");
             }
+        }
+
+        [Test]
+        public void FindDef_RegistryNotInitialized_FallsBackToBuiltin()
+        {
+            // 注册表未初始化时（如 DnaSystem 独立使用）：FindDef 回退内置表，不崩溃
+            ContentRegistry.Reset();
+            Assert.IsNotNull(DnaSystem.FindDef("talent_photographic"), "内置天赋应可查");
+            Assert.IsNotNull(DnaSystem.FindDef("defect_frail"), "内置遗传病应可查");
+            Assert.IsNull(DnaSystem.FindDef("talent_steadfast"), "注册表未加载时 Mods 内容不可见");
         }
 
         // ===== 近亲系数 =====

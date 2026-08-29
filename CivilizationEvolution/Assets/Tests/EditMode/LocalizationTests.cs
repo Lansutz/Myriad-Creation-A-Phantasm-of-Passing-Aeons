@@ -14,6 +14,9 @@ namespace CivilizationEvolution.Tests
         {
             Localization.Reset();
             Localization.Initialize("zh-Hans");
+            // 注册表自包含初始化（DefinitionTables_UseKeys 依赖；消除跨测试类静态顺序耦合）
+            ContentRegistry.Reset();
+            ContentRegistry.Initialize();
         }
 
         [Test]

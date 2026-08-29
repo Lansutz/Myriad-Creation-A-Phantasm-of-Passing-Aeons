@@ -1,0 +1,6 @@
+{
+  "defs": [
+    { "id": "defect_pale", "isTalent": false, "stat": "lifespan", "amount": -5.0, "name": "白化", "description": "肤发无色，畏光避日（Mods 覆盖版：轻度寿元折损）" },
+    { "id": "talent_steadfast", "isTalent": true, "stat": "martial", "amount": 3.0, "name": "坚毅", "description": "心志如铁，临危不乱（模组新增天赋，无本地化键时回退内嵌文本）" }
+  ]
+}
