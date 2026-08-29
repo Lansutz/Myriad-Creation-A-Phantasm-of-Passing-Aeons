@@ -1,0 +1,4 @@
+﻿<Solution>
+  <Project Path="CivilizationEvolution.Runtime.csproj" />
+  <Project Path="CivilizationEvolution.Editor.csproj" />
+</Solution>

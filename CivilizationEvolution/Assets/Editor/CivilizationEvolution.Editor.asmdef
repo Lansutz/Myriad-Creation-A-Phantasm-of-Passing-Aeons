@@ -1,0 +1,21 @@
+{
+    "name": "CivilizationEvolution.Editor",
+    "rootNamespace": "CivilizationEvolution.EditorTools",
+    "references": [
+        "CivilizationEvolution.Runtime",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
