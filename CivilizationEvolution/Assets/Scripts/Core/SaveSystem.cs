@@ -257,6 +257,13 @@ namespace CivilizationEvolution.Core
         public float aridityTolerance;
         public float humidityTolerance;
         public float altitudeTolerance;
+        // DNA 基准与基因频率（v3 存档新增；旧档缺失字段走默认值）
+        public float intelligenceBaseline;
+        public float martialBaseline;
+        public float lifespanBaseYears;
+        public float lifespanRangeYears;
+        public float resistanceBaseline;
+        public List<LocusFrequency> locusFrequencies = new List<LocusFrequency>();
 
         public static RaceDTO FromRaceData(RaceData r)
         {
@@ -284,7 +291,13 @@ namespace CivilizationEvolution.Core
                 heatTolerance = r.heatTolerance,
                 aridityTolerance = r.aridityTolerance,
                 humidityTolerance = r.humidityTolerance,
-                altitudeTolerance = r.altitudeTolerance
+                altitudeTolerance = r.altitudeTolerance,
+                intelligenceBaseline = r.intelligenceBaseline,
+                martialBaseline = r.martialBaseline,
+                lifespanBaseYears = r.lifespanBaseYears,
+                lifespanRangeYears = r.lifespanRangeYears,
+                resistanceBaseline = r.resistanceBaseline,
+                locusFrequencies = r.locusFrequencies ?? new List<LocusFrequency>()
             };
             if (r.productionModifiers != null)
                 foreach (var kv in r.productionModifiers) dto.productionModifiers.Add(new IntFloatEntry((int)kv.Key, kv.Value));
@@ -321,7 +334,13 @@ namespace CivilizationEvolution.Core
                 heatTolerance = heatTolerance,
                 aridityTolerance = aridityTolerance,
                 humidityTolerance = humidityTolerance,
-                altitudeTolerance = altitudeTolerance
+                altitudeTolerance = altitudeTolerance,
+                intelligenceBaseline = intelligenceBaseline,
+                martialBaseline = martialBaseline,
+                lifespanBaseYears = lifespanBaseYears,
+                lifespanRangeYears = lifespanRangeYears,
+                resistanceBaseline = resistanceBaseline,
+                locusFrequencies = locusFrequencies ?? new List<LocusFrequency>()
             };
             foreach (var e in productionModifiers) r.productionModifiers[(GameEnums.GoodsCategory)e.key] = e.value;
             foreach (var e in consumptionModifiers) r.consumptionModifiers[(GameEnums.GoodsCategory)e.key] = e.value;

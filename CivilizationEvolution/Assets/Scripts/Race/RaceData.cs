@@ -70,6 +70,29 @@ namespace CivilizationEvolution.Race
         [Range(0.5f, 2.0f)] public float navyBonus = 1.0f;
         [Range(0.5f, 2.0f)] public float moraleBase = 1.0f;
 
+        [Header("DNA 基准（个体偏移的种族锚点）")]
+        [Tooltip("智慧基准 0-100，DNA 智慧偏移叠加其上")] [Range(0f, 100f)] public float intelligenceBaseline = 50f;
+        [Tooltip("勇武基准 0-100，DNA 勇武偏移叠加其上")] [Range(0f, 100f)] public float martialBaseline = 50f;
+        [Tooltip("寿命区间中心（年），DNA 寿命偏移决定个体预期寿命")] [Range(40f, 120f)] public float lifespanBaseYears = 75f;
+        [Tooltip("寿命区间半宽（年），区间 = 基准±半宽")] [Range(5f, 30f)] public float lifespanRangeYears = 15f;
+        [Tooltip("综合抗性基准 0-100")] [Range(0f, 100f)] public float resistanceBaseline = 50f;
+
+        [Header("DNA 基因频率（各基因座显性等位基因 A 的频率；列表未覆盖的基因座取默认 0.5）")]
+        public List<LocusFrequency> locusFrequencies = new List<LocusFrequency>();
+
+        /// <summary>获取基因座显性等位基因 A 的频率（未配置返回 0.5）</summary>
+        public float GetLocusAFrequency(DnaLocus locus)
+        {
+            if (locusFrequencies != null)
+            {
+                foreach (var lf in locusFrequencies)
+                {
+                    if (lf.locus == locus) return Mathf.Clamp01(lf.dominantFrequency);
+                }
+            }
+            return 0.5f;
+        }
+
         [Header("环境适配")]
         public List<GameEnums.BiomeType> preferredBiomes = new List<GameEnums.BiomeType>();
         [Range(0f, 1f)] public float coldTolerance = 0.5f;

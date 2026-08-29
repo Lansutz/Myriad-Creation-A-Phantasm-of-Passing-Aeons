@@ -145,6 +145,7 @@ namespace CivilizationEvolution.Core
             _combatManager = new CombatManager(tiles, unitDefs, _seaLandGenerator);
             _diplomacyManager = new DiplomacyManager(realms);
             _characterManager = new CharacterManager();
+            _characterManager.Races = races; // 注入种族表（DNA 表达/混血基准依赖）
             _thoughtManager = new ThoughtManager();
             _disasterSystem = new DisasterSystem(tiles, mapWidth, mapHeight);
             _diseaseSystem = new DiseaseSystem(tiles, _characterManager, mapWidth, mapHeight);
@@ -807,6 +808,9 @@ namespace CivilizationEvolution.Core
                 // 为每个政权创建AI控制器
                 _aiManager.CreateController(r);
             }
+
+            // 为每个政权创建统治者与配偶（角色系统与生育机制的源头）
+            _characterManager.CreateInitialRulers(realms, currentYear);
 
             // 外交关系懒加载：首次GetRelation时自动创建
         }

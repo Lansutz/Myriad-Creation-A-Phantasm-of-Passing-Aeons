@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Politics;
+using CivilizationEvolution.Race;
 
 namespace CivilizationEvolution.Role
 {
@@ -33,6 +35,19 @@ namespace CivilizationEvolution.Role
         public int raceId;
         public int faithId;
         public CharacterRole role = CharacterRole.Commoner;
+
+        // 血缘（DNA 遗传与近亲系数计算依赖）
+        public int fatherId = -1;
+        public int motherId = -1;
+
+        // DNA（有名角色专属；人口块不存个体 DNA）
+        public DnaData dna;
+
+        /// <summary>个体预期寿命（年）：种族基准 + DNA 寿命偏移，出生时确定</summary>
+        public float expectedLifespanYears = 75f;
+
+        /// <summary>DNA 表达结果（出生时一次性计算，终身不变）</summary>
+        public DnaExpression dnaExpression;
 
         // 核心六维属性（0-100）
         [Range(0f, 100f)] public float martial = 50f;      // 军事
@@ -92,8 +107,10 @@ namespace CivilizationEvolution.Role
             if (currentDay == birthDay)
                 age++;
 
-            // 健康自然变化
-            float ageFactor = age > 50 ? (age - 50f) / 50f : 0f;
+            // 健康自然变化（有 DNA 时按个体预期寿命衰减；无 DNA 保持原 50 岁起、100 岁满的线性）
+            float onsetAge = dna != null ? expectedLifespanYears * 0.6f : 50f;
+            float fullAge = dna != null ? expectedLifespanYears : 100f;
+            float ageFactor = age > onsetAge ? (age - onsetAge) / Mathf.Max(1f, fullAge - onsetAge) : 0f;
             health = Mathf.Clamp(health - ageFactor * 0.01f, 0f, 100f);
 
             // 压力自然恢复
@@ -413,9 +430,13 @@ namespace CivilizationEvolution.Role
     /// <summary>
     /// 角色管理器
     /// 管理所有有名角色、家族、羁绊
+    /// DNA 系统对接：角色创建时生成/遗传 DNA，表达为初始属性；生育时孟德尔遗传
     /// </summary>
     public class CharacterManager
     {
+        /// <summary>种族定义表（由 GameWorld 注入，DNA 表达与混血基准依赖）</summary>
+        public Dictionary<int, RaceData> Races { get; set; }
+
         private readonly Dictionary<int, CharacterData> _characters = new Dictionary<int, CharacterData>();
         private readonly Dictionary<int, FamilyNode> _families = new Dictionary<int, FamilyNode>();
         private readonly List<CharacterBond> _bonds = new List<CharacterBond>();
@@ -423,10 +444,36 @@ namespace CivilizationEvolution.Role
         private int _nextFamilyId = 1;
         private int _nextBondId = 1;
 
-        /// <summary>创建新角色</summary>
-        public CharacterData CreateCharacter(string firstName, string lastName, int age, bool isMale,
-            int cultureId, int raceId, int faithId, CharacterRole role)
+        /// <summary>按 id 解析种族（未注入/未找到返回 null）</summary>
+        private RaceData ResolveRace(int raceId)
         {
+            if (Races != null && Races.TryGetValue(raceId, out var race)) return race;
+            return null;
+        }
+
+        /// <summary>创建新角色</summary>
+        /// <param name="dna">显式 DNA；null 时若有父母则按孟德尔遗传生成，否则按种族基因频率随机</param>
+        /// <param name="fatherId">父角色 id（-1=无）</param>
+        /// <param name="motherId">母角色 id（-1=无）</param>
+        /// <param name="expressionRace">表达基准种族；null 时用 raceId 对应种族（混血场景传双亲基准平均）</param>
+        public CharacterData CreateCharacter(string firstName, string lastName, int age, bool isMale,
+            int cultureId, int raceId, int faithId, CharacterRole role,
+            DnaData dna = null, int fatherId = -1, int motherId = -1, RaceData expressionRace = null)
+        {
+            // ===== DNA：显式传入 > 父母遗传 > 种族随机 =====
+            if (dna == null && (fatherId >= 0 || motherId >= 0))
+            {
+                var father = fatherId >= 0 ? GetCharacter(fatherId) : null;
+                var mother = motherId >= 0 ? GetCharacter(motherId) : null;
+                if (father != null || mother != null)
+                {
+                    float inbreeding = DnaSystem.CalculateInbreeding(father, mother, _characters);
+                    dna = DnaSystem.Inherit(father?.dna, mother?.dna, ResolveRace(raceId), inbreeding);
+                }
+            }
+            if (dna == null)
+                dna = DnaSystem.GenerateRandom(ResolveRace(raceId));
+
             var character = new CharacterData
             {
                 characterId = _nextCharacterId++,
@@ -439,19 +486,234 @@ namespace CivilizationEvolution.Role
                 cultureId = cultureId,
                 raceId = raceId,
                 faithId = faithId,
-                role = role
+                role = role,
+                fatherId = fatherId,
+                motherId = motherId,
+                dna = dna
             };
 
-            // 随机属性
-            character.martial = UnityEngine.Random.Range(20f, 80f);
-            character.diplomacy = UnityEngine.Random.Range(20f, 80f);
-            character.stewardship = UnityEngine.Random.Range(20f, 80f);
-            character.intrigue = UnityEngine.Random.Range(20f, 80f);
-            character.learning = UnityEngine.Random.Range(20f, 80f);
-            character.piety = UnityEngine.Random.Range(20f, 80f);
+            // ===== DNA 表达 → 初始属性 =====
+            RaceData exprRace = expressionRace ?? ResolveRace(raceId);
+            var expr = DnaSystem.ComputeExpression(dna, exprRace);
+            character.dnaExpression = expr;
+            character.expectedLifespanYears = Mathf.Clamp(
+                (exprRace != null ? exprRace.lifespanBaseYears : 75f) + expr.longevityOffsetYears, 20f, 150f);
+
+            if (dna != null)
+            {
+                // 有 DNA：勇武/学识由种族基准 + DNA 偏移 + 小随机浮动决定，其余四维保持随机
+                float martialBase = exprRace != null ? exprRace.martialBaseline : 50f;
+                float intelligenceBase = exprRace != null ? exprRace.intelligenceBaseline : 50f;
+                character.martial = Mathf.Clamp(martialBase + expr.martialOffset + UnityEngine.Random.Range(-3f, 3f), 5f, 95f);
+                character.learning = Mathf.Clamp(intelligenceBase + expr.intelligenceOffset + UnityEngine.Random.Range(-3f, 3f), 5f, 95f);
+                character.diplomacy = UnityEngine.Random.Range(20f, 80f);
+                character.stewardship = UnityEngine.Random.Range(20f, 80f);
+                character.intrigue = UnityEngine.Random.Range(20f, 80f);
+                character.piety = UnityEngine.Random.Range(20f, 80f);
+            }
+            else
+            {
+                // 无 DNA（兼容旧路径）：全随机
+                character.martial = UnityEngine.Random.Range(20f, 80f);
+                character.diplomacy = UnityEngine.Random.Range(20f, 80f);
+                character.stewardship = UnityEngine.Random.Range(20f, 80f);
+                character.intrigue = UnityEngine.Random.Range(20f, 80f);
+                character.learning = UnityEngine.Random.Range(20f, 80f);
+                character.piety = UnityEngine.Random.Range(20f, 80f);
+            }
+
+            // 天赋/缺陷叠加
+            ApplyTalentDefectEffect(character, expr);
 
             _characters[character.characterId] = character;
             return character;
+        }
+
+        // ===== 天赋/缺陷应用 =====
+
+        private void ApplyTalentDefectEffect(CharacterData c, DnaExpression expr)
+        {
+            var def = DnaSystem.FindDef(expr.talentId);
+            if (def != null) ApplyDef(c, def);
+            def = DnaSystem.FindDef(expr.defectId);
+            if (def != null) ApplyDef(c, def);
+        }
+
+        private static void ApplyDef(CharacterData c, TalentDefectDef def)
+        {
+            switch (def.stat)
+            {
+                case "learning":
+                    c.learning = Mathf.Clamp(c.learning + def.amount, 0f, 100f);
+                    break;
+                case "martial":
+                    c.martial = Mathf.Clamp(c.martial + def.amount, 0f, 100f);
+                    break;
+                case "lifespan":
+                    c.expectedLifespanYears = Mathf.Max(20f, c.expectedLifespanYears + def.amount);
+                    break;
+                case "appearance":
+                    c.dnaExpression.appearanceTag += $"（{def.name}）";
+                    break;
+            }
+        }
+
+        // ===== 生育机制（最小实现，DNA 孟德尔遗传入口） =====
+
+        /// <summary>
+        /// 生育：父+母 → 孟德尔遗传 DNA → 后代角色
+        /// 校验：双方存活、异性、成年（≥16）、非同一人、非直系亲子
+        /// 近亲允许（文化/法律层面决策），但近亲系数进入遗传（纯合隐性风险上升）
+        /// 混血（父母不同种族）：后代种族取父系，表达基准取双亲种族平均
+        /// </summary>
+        public CharacterData Procreate(int fatherId, int motherId, int birthYear)
+        {
+            if (fatherId < 0 || motherId < 0) return null;
+            var father = GetCharacter(fatherId);
+            var mother = GetCharacter(motherId);
+            if (father == null || mother == null) return null;
+            if (!father.isAlive || !mother.isAlive) return null;
+            if (father.isMale == mother.isMale) return null;
+            if (father.characterId == mother.characterId) return null;
+            if (father.age < 16 || mother.age < 16) return null;
+            // 直系亲子排除
+            if (IsDirectLineage(father, mother)) return null;
+
+            // 后代身份：父系传承（最小规则）
+            int childRaceId = father.raceId;
+            int childCultureId = father.cultureId;
+            int childFaithId = father.faithId;
+
+            // 混血：表达基准取双亲种族平均（基因频率仍用父种族）
+            var fatherRace = ResolveRace(father.raceId);
+            var motherRace = ResolveRace(mother.raceId);
+            RaceData expressionRace = fatherRace ?? motherRace;
+            if (fatherRace != null && motherRace != null && fatherRace.raceId != motherRace.raceId)
+                expressionRace = AverageRaceBaselines(fatherRace, motherRace);
+
+            float inbreeding = DnaSystem.CalculateInbreeding(father, mother, _characters);
+            var dna = DnaSystem.Inherit(father.dna, mother.dna, fatherRace ?? motherRace, inbreeding);
+
+            bool isMale = UnityEngine.Random.value < 0.5f;
+            string firstName = GenerateName(childCultureId, isMale ? 0 : 1);
+
+            var child = CreateCharacter(firstName, father.lastName, 0, isMale,
+                childCultureId, childRaceId, childFaithId, CharacterRole.Commoner,
+                dna, fatherId, motherId, expressionRace);
+
+            // 挂入父系家族
+            if (father.familyId >= 0)
+            {
+                child.familyId = father.familyId;
+                if (_families.TryGetValue(father.familyId, out var fam))
+                    fam.AddMember(child.characterId);
+            }
+
+            if (inbreeding > 0.05f)
+                Debug.Log($"[Character] {father.fullName} × {mother.fullName} 产子 {child.fullName}（近亲系数 {inbreeding:F3}）");
+            return child;
+        }
+
+        /// <summary>混血基准：双亲种族基准逐项取平均（返回临时 RaceData，仅用于表达）</summary>
+        private static RaceData AverageRaceBaselines(RaceData a, RaceData b)
+        {
+            return new RaceData
+            {
+                raceId = -1,
+                raceName = $"混血({a.raceName}+{b.raceName})",
+                intelligenceBaseline = (a.intelligenceBaseline + b.intelligenceBaseline) * 0.5f,
+                martialBaseline = (a.martialBaseline + b.martialBaseline) * 0.5f,
+                lifespanBaseYears = (a.lifespanBaseYears + b.lifespanBaseYears) * 0.5f,
+                lifespanRangeYears = (a.lifespanRangeYears + b.lifespanRangeYears) * 0.5f,
+                resistanceBaseline = (a.resistanceBaseline + b.resistanceBaseline) * 0.5f
+            };
+        }
+
+        /// <summary>直系血亲（亲子/全同胞）判定</summary>
+        private static bool IsDirectLineage(CharacterData a, CharacterData b)
+        {
+            if (a.fatherId == b.characterId || a.motherId == b.characterId) return true;
+            if (b.fatherId == a.characterId || b.motherId == a.characterId) return true;
+            // 全同胞（同一对父母）
+            return a.fatherId >= 0 && a.fatherId == b.fatherId
+                && a.motherId >= 0 && a.motherId == b.motherId;
+        }
+
+        /// <summary>统计角色的子女人数</summary>
+        public int CountChildren(int characterId)
+        {
+            int count = 0;
+            foreach (var c in _characters.Values)
+                if (c.fatherId == characterId || c.motherId == characterId) count++;
+            return count;
+        }
+
+        /// <summary>名字生成：文化名字池（type: 0男名 1女名 2姓氏），空池回退文化名</summary>
+        private static string GenerateName(int cultureId, int type)
+        {
+            if (ContentRegistry.TryGetCulture(cultureId, out var pack))
+                return ContentRegistry.GetRandomName(pack, type);
+            return "无名";
+        }
+
+        /// <summary>自主生育（最小机制）：成年异性同政权配对，低概率产子，保证 DNA 遗传持续发生</summary>
+        private void AutoProcreate(int currentYear)
+        {
+            var males = new List<CharacterData>();
+            var females = new List<CharacterData>();
+            foreach (var c in _characters.Values)
+            {
+                if (!c.isAlive || c.age < 16 || c.age > 45) continue; // 育龄 16-45
+                if (c.isMale) males.Add(c); else females.Add(c);
+            }
+            if (males.Count == 0 || females.Count == 0) return;
+
+            foreach (var male in males)
+            {
+                if (CountChildren(male.characterId) >= 8) continue; // 子女上限
+
+                foreach (var female in females)
+                {
+                    if (female.realmId != male.realmId) continue;
+                    if (CountChildren(female.characterId) >= 8) continue;
+                    if (IsDirectLineage(male, female)) continue;
+
+                    // 每年约 15% 生育概率（≈0.0004/天）
+                    if (UnityEngine.Random.value < 0.0004f)
+                    {
+                        Procreate(male.characterId, female.characterId, currentYear);
+                        break; // 每轮每名男性至多一个孩子
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 初始统治者：为每个政权创建统治者+配偶并建家族
+        /// 角色系统与生育机制的角色源头（政权初始无人治理的填补）
+        /// </summary>
+        public void CreateInitialRulers(Dictionary<int, RealmData> realms, int currentYear)
+        {
+            foreach (var realm in realms.Values)
+            {
+                int cultureId = realm.realmId;   // 政权 0/1/2 → 文化 0/1/2（内容覆盖后 id 1 为内容文化）
+                int raceId = realm.realmId % 3;  // 0 人族 / 1 / 2（内容覆盖后 1/2 为内容种族）
+
+                string lastName = GenerateName(cultureId, 2);
+                bool rulerIsMale = UnityEngine.Random.value < 0.5f;
+
+                var ruler = CreateCharacter(GenerateName(cultureId, rulerIsMale ? 0 : 1), lastName,
+                    UnityEngine.Random.Range(26, 42), rulerIsMale, cultureId, raceId, 0, CharacterRole.Ruler);
+                ruler.realmId = realm.realmId;
+
+                var spouse = CreateCharacter(GenerateName(cultureId, rulerIsMale ? 1 : 0), lastName,
+                    UnityEngine.Random.Range(22, 36), !rulerIsMale, cultureId, raceId, 0, CharacterRole.Spouse);
+                spouse.realmId = realm.realmId;
+
+                var family = CreateFamily(lastName, ruler.characterId, currentYear);
+                family.AddMember(spouse.characterId);
+                spouse.familyId = family.familyId;
+            }
         }
 
         /// <summary>创建家族</summary>
@@ -502,6 +764,9 @@ namespace CivilizationEvolution.Role
             {
                 bond.DailyTick();
             }
+
+            // 自主生育（最小机制：DNA 遗传持续发生）
+            AutoProcreate(currentYear);
 
             // 清理死亡角色的军队指挥
             foreach (var character in _characters.Values)
