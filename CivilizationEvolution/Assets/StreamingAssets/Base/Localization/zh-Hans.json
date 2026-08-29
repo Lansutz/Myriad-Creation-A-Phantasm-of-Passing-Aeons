@@ -383,6 +383,30 @@
     {
       "key": "ethnos_laethis_adj",
       "value": "莱希斯的"
+    },
+    {
+      "key": "famtrad_ink_legacy_name",
+      "value": "翰墨传家"
+    },
+    {
+      "key": "famtrad_ink_legacy_desc",
+      "value": "纸墨笔砚齐备，子弟以文章传名；满门翰墨，书香不散。"
+    },
+    {
+      "key": "famtrad_salt_iron_name",
+      "value": "盐铁世家"
+    },
+    {
+      "key": "famtrad_salt_iron_desc",
+      "value": "灶户与冶坊并兴，盐铁之利世代独擅；官府亦要倚仗三分。"
+    },
+    {
+      "key": "famtrad_horse_family_name",
+      "value": "弓马世家"
+    },
+    {
+      "key": "famtrad_horse_family_desc",
+      "value": "鞍上生、马背上长，子弟皆精骑射；一门弓马，为国戍边。"
     }
   ]
 }

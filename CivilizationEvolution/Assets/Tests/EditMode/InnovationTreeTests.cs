@@ -138,6 +138,38 @@ namespace CivilizationEvolution.Tests
         }
 
         [Test]
+        public void InnovationTree_BureaucracyEightNodes_Complete()
+        {
+            // 批 C：官僚 8 节点（研究 N0-N7）——文书→档案→统计→驿传→选拔→监察→俸禄
+            Assert.IsNotNull(_tree.GetInnovation(940), "档案典藏（N2）应存在");
+            Assert.IsNotNull(_tree.GetInnovation(941), "上计制度（N3）应存在");
+            Assert.IsNotNull(_tree.GetInnovation(942), "考课制度（N6）应存在");
+            Assert.IsNotNull(_tree.GetInnovation(943), "御史监察（N6）应存在");
+            Assert.IsNotNull(_tree.GetInnovation(944), "俸禄制度（N7）应存在");
+            Assert.IsNotNull(_tree.GetInnovation(945), "九品中正（N5）应存在");
+
+            // 科举链：官僚制度→九品中正→科举
+            Assert.IsTrue(_tree.GetInnovation(945).prerequisites.Contains(503), "九品中正前置官僚制度");
+            Assert.IsTrue(_tree.GetInnovation(504).prerequisites.Contains(945), "科举前置九品中正");
+            Assert.AreEqual(4, _tree.GetInnovation(504).era, "科举 era4（隋唐）");
+
+            // 监察链：上计→考课→御史
+            Assert.IsTrue(_tree.GetInnovation(942).prerequisites.Contains(941), "考课前置上计");
+            Assert.IsTrue(_tree.GetInnovation(943).prerequisites.Contains(942), "御史前置考课");
+        }
+
+        [Test]
+        public void CultureAffinity_Laethis_Resolves()
+        {
+            // 文化包联动：Laethis 文化亲和 Agriculture/Craft/Script
+            Assert.IsTrue(ContentRegistry.TryGetCulture(1, out var pack), "Laethis 文化应加载");
+            var c = pack.data;
+            Assert.IsTrue(c.HasInnovationAffinity("Agriculture"), "农耕亲和");
+            Assert.IsTrue(c.HasInnovationAffinity("craft"), "工艺亲和（不区分大小写）");
+            Assert.IsFalse(c.HasInnovationAffinity("Metallurgy"), "冶炼非亲和");
+        }
+
+        [Test]
         public void InnovationTree_TraditionSupplemented_WithNewContent()
         {
             // 补全内容在位：传统类 8 个 + 技术空缺子类

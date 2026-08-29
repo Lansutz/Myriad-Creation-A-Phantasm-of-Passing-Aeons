@@ -460,10 +460,10 @@
     {
       "innovationId": 504,
       "field": 16,
-      "era": 3,
+      "era": 4,
       "researchCost": 700,
       "prerequisites": [
-        503,
+        945,
         205
       ],
       "innovationName": "科举制度",
@@ -1181,6 +1181,77 @@
       ],
       "innovationName": "鎏金",
       "description": "金汞齐涂器加热，金衣不落（满城汉墓长信宫灯；罗马普林尼同法记载）。"
+    },
+    {
+      "innovationId": 940,
+      "field": 16,
+      "era": 3,
+      "researchCost": 300,
+      "prerequisites": [
+        822,
+        821
+      ],
+      "innovationName": "档案典藏",
+      "description": "文书入库、副本分存、编目检索（里耶简牍库三万七千枚；尼尼微档案三万件）；行政有了记忆。"
+    },
+    {
+      "innovationId": 941,
+      "field": 16,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        821,
+        502
+      ],
+      "innovationName": "上计制度",
+      "description": "郡县岁末呈报计簿——人口、垦田、赋税、刑狱；皇帝亲受计，天下如在掌中。"
+    },
+    {
+      "innovationId": 942,
+      "field": 16,
+      "era": 3,
+      "researchCost": 300,
+      "prerequisites": [
+        941,
+        503
+      ],
+      "innovationName": "考课制度",
+      "description": "四善二十七最，岁考小考三年大考；《效律》盘点物资，绩效与审计并立。"
+    },
+    {
+      "innovationId": 943,
+      "field": 16,
+      "era": 4,
+      "researchCost": 500,
+      "prerequisites": [
+        942,
+        502
+      ],
+      "innovationName": "御史监察",
+      "description": "十三州部刺史秩六百石而监察二千石，以小制大；专职监察官独立于行政之外。"
+    },
+    {
+      "innovationId": 944,
+      "field": 16,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        503,
+        701
+      ],
+      "innovationName": "俸禄制度",
+      "description": "秩石定俸、半钱半谷，官员食君之禄（汉代秩石制；欧麦尔迪万俸册同旨）。"
+    },
+    {
+      "innovationId": 945,
+      "field": 16,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        503
+      ],
+      "innovationName": "九品中正",
+      "description": "中正官品评士人，九品定高下；门阀渐成，然品评之制终为科举铺路。"
     }
   ]
 }

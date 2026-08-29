@@ -383,6 +383,30 @@
     {
       "key": "ethnos_laethis_adj",
       "value": "Laethish"
+    },
+    {
+      "key": "famtrad_ink_legacy_name",
+      "value": "Ink Legacy"
+    },
+    {
+      "key": "famtrad_ink_legacy_desc",
+      "value": "Paper, ink and brush at hand; sons raised on essays, the house known for its writing."
+    },
+    {
+      "key": "famtrad_salt_iron_name",
+      "value": "Salt and Iron House"
+    },
+    {
+      "key": "famtrad_salt_iron_desc",
+      "value": "Salt pans and smithies side by side; the profits of salt and iron have long been theirs."
+    },
+    {
+      "key": "famtrad_horse_family_name",
+      "value": "Horsemen of the House"
+    },
+    {
+      "key": "famtrad_horse_family_desc",
+      "value": "Born in the saddle, raised on horseback; every son a rider, guarding the frontier."
     }
   ]
 }

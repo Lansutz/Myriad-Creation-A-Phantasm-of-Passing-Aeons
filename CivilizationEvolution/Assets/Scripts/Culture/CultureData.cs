@@ -49,6 +49,22 @@ namespace CivilizationEvolution.Culture
         public float spreadPower = 1f;
         public int parentCultureId = -1;
         public List<int> childCultureIds = new List<int>();
+
+        /// <summary>
+        /// 革新亲和（考古文化包联动 v3）：键列表（对应 InnovationField 枚举名，
+        /// 如 "Metallurgy"/"Agriculture"）——文化在这些领域的研究速率获得加成
+        /// （软加成，数据驱动；硬条件不做防卡死）
+        /// </summary>
+        public List<string> innovationAffinities = new List<string>();
+
+        /// <summary>查询文化是否亲和某革新子类（field 名不区分大小写匹配）</summary>
+        public bool HasInnovationAffinity(string fieldName)
+        {
+            if (string.IsNullOrEmpty(fieldName) || innovationAffinities == null) return false;
+            foreach (var a in innovationAffinities)
+                if (string.Equals(a, fieldName, System.StringComparison.OrdinalIgnoreCase)) return true;
+            return false;
+        }
     }
 
     /// <summary>

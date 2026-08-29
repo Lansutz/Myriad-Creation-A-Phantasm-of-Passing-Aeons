@@ -252,6 +252,29 @@ namespace CivilizationEvolution.Tests
                 "未注入革新树时不应做前置检查");
         }
 
+        [Test]
+        public void FamilyTradition_ExtendedLines_RequireSpecificInnovations()
+        {
+            // 批 C：家族传统扩展线——翰墨传家需[造纸+文字]/盐铁世家需[井盐+冶铁]/弓马世家需[马镫+骑兵战术]
+            var manager = new CharacterManager();
+            var tree = new InnovationTree();
+            manager.Innovations = tree;
+
+            var ruler = manager.CreateCharacter("祖", "氏", 30, true, 0, 0, 0, CharacterRole.Ruler);
+            var family = manager.CreateFamily("扩展氏", ruler.characterId, 1, realmId: 1);
+
+            Assert.IsFalse(family.AddFamilyTradition("famtrad_ink_legacy"), "未持有时翰墨传家应拒绝");
+
+            // 完成翰墨链：陶器→文字→简牍→簿籍→文书行政→(造纸：纺织+文字)→印刷前置链
+            CompleteChain(tree, 1, 200);
+            CompleteChain(tree, 1, 600);
+            CompleteChain(tree, 1, 204);
+            CompleteChain(tree, 1, 205); // 造纸
+
+            Assert.IsTrue(family.AddFamilyTradition("famtrad_ink_legacy"), "持有造纸+文字后翰墨传家应可添加");
+            Assert.IsFalse(family.AddFamilyTradition("famtrad_salt_iron"), "盐铁世家前置（井盐+冶铁）未满足应拒绝");
+        }
+
         private static void CompleteChain(InnovationTree tree, int realmId, int innovationId)
         {
             Assert.IsTrue(tree.StartResearch(realmId, innovationId), $"革新 {innovationId} 应可开始研究");
