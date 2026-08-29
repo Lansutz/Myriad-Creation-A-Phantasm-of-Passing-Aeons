@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "groupId": "ethnos_laethis",
+      "name": "莱希斯族群",
+      "description": "河谷与丘陵间的农耕之民，善冶铜与贸易，以崇智为族群精神；共同语言莱希斯语，承载农耕礼俗、工匠传承与祖先祭祀诸传统。",
+      "cultureId": 1,
+      "ethosId": "ethos_scholarly",
+      "languageId": "laethis_lang",
+      "traditionIds": [
+        "trad_agrarian_rites",
+        "trad_craft_guild",
+        "trad_ancestor_cult"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "languageId": "laethis_lang",
+  "name": "莱希斯语",
+  "scriptType": "音节文字",
+  "description": "河谷农耕之民的语言，音节清晰、辅音柔和，地名常以自然特征与聚落通名复合而成；与冶铜、贸易相关的词汇借自相邻族群。",
+  "namingStyle": "地名=自然特征+通名（Vael-port、Cinder-hold、Laemor）；人名双音节为主，姓氏多源自职业或地貌",
+  "sampleWords": [
+    "vael（河谷）",
+    "cinder（灰烬）",
+    "laemor（渡口）",
+    "thorn（荆棘）",
+    "bram（石桥）"
+  ]
+}

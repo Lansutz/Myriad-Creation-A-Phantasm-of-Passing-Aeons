@@ -1,0 +1,106 @@
+{
+  "traditions": [
+    {
+      "traditionId": "trad_agrarian_rites",
+      "name": "农耕礼俗",
+      "description": "播种、开镰、储粮皆有定时定礼，土地神龛遍布田埂；歉收之年全族按礼减食共渡。",
+      "effects": [
+        { "key": "fertility", "value": 0.05 },
+        { "key": "agriculture", "value": 0.1 }
+      ]
+    },
+    {
+      "traditionId": "trad_pastoral_riding",
+      "name": "游牧骑射",
+      "description": "马背是摇篮也是战场，幼童先学挽弓后学执笔；逐水草而居，账篷为家。",
+      "effects": [
+        { "key": "cavalry", "value": 0.1 },
+        { "key": "mobility", "value": 0.05 }
+      ]
+    },
+    {
+      "traditionId": "trad_maritime_trade",
+      "name": "海洋贸易",
+      "description": "舟楫往来如织，港市通晓四方货殖；海上规矩重于陆地律法，船主在族中说话掷地有声。",
+      "effects": [
+        { "key": "trade", "value": 0.15 },
+        { "key": "navy", "value": 0.05 }
+      ]
+    },
+    {
+      "traditionId": "trad_craft_guild",
+      "name": "工匠传承",
+      "description": "百工之技口传心授，炉火与锤声不绝；匠户自成行会，秘方只在嫡传间流转。",
+      "effects": [
+        { "key": "craft", "value": 0.1 },
+        { "key": "development", "value": 0.05 }
+      ]
+    },
+    {
+      "traditionId": "trad_ancestor_cult",
+      "name": "祖先祭祀",
+      "description": "先人的牌位与坟冢是族群的根脉，春秋二祭全族肃穆；忤逆祖先者被视为最重的罪。",
+      "effects": [
+        { "key": "unity", "value": 0.05 },
+        { "key": "faith_influence", "value": 0.05 }
+      ],
+      "incompatibleWith": [ "trad_iconoclast" ]
+    },
+    {
+      "traditionId": "trad_iconoclast",
+      "name": "破坏圣像",
+      "description": "偶像与图像是蒙蔽人心的尘土，真正的虔信在于弃绝形相；先人的画像同样在破除之列。",
+      "effects": [
+        { "key": "piety", "value": 0.08 },
+        { "key": "order", "value": -0.05 }
+      ],
+      "incompatibleWith": [ "trad_ancestor_cult" ]
+    },
+    {
+      "traditionId": "trad_epic_oral",
+      "name": "歌谣史诗",
+      "description": "族群的记忆不在竹帛而在歌喉，吟游者传唱先祖的功业与悲欢；每一代歌者都往长诗里添上自己的一章。",
+      "effects": [
+        { "key": "learning", "value": 0.05 },
+        { "key": "prestige", "value": 0.05 }
+      ]
+    },
+    {
+      "traditionId": "trad_council_assembly",
+      "name": "族众议事",
+      "description": "大事开帐议事，长老、勇士与智者各执一席；共识不成则事不兴，议而不决的代价是行动迟缓。",
+      "effects": [
+        { "key": "order", "value": 0.05 },
+        { "key": "class_relation", "value": 0.05 },
+        { "key": "expansion", "value": -0.05 }
+      ]
+    },
+    {
+      "traditionId": "trad_communal_field",
+      "name": "氏族共耕",
+      "description": "田不私有，收成按户分账；犁铧与种子由族库共置，荒年互相周济。",
+      "effects": [
+        { "key": "fertility", "value": 0.05 },
+        { "key": "unity", "value": 0.05 }
+      ]
+    },
+    {
+      "traditionId": "trad_war_bands",
+      "name": "亲兵制度",
+      "description": "首领的亲兵食于首领之门，誓以性命相酬；亲兵之子仍为亲兵，世代相袭。",
+      "effects": [
+        { "key": "levy", "value": 0.1 },
+        { "key": "loyalty", "value": 0.05 }
+      ]
+    },
+    {
+      "traditionId": "trad_boundary_rites",
+      "name": "界碑祭祀",
+      "description": "族土四至立碑设祭，越界而耕者以盗论；碑在则土在，碑失则人心动摇。",
+      "effects": [
+        { "key": "stability", "value": 0.05 },
+        { "key": "order", "value": 0.05 }
+      ]
+    }
+  ]
+}
