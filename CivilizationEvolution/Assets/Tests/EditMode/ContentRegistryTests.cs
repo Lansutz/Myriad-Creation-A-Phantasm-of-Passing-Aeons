@@ -124,7 +124,7 @@ namespace CivilizationEvolution.Tests
         public void EthnicGroup_Laethis_AllPillarsResolve()
         {
             Assert.IsTrue(ContentRegistry.TryGetEthnicGroup("ethnos_laethis", out var group), "应存在莱希斯族群");
-            Assert.AreEqual("莱希斯族群", group.GetName(), "族群名应走本地化表");
+            Assert.AreEqual("莱希斯", group.GetName(), "族群单数名不应带「族群」后缀");
             // 挂靠文化
             Assert.IsTrue(ContentRegistry.TryGetCulture(group.cultureId, out var culture), "族群应挂靠文化");
             Assert.AreEqual("Laethis", culture.data.cultureName);
@@ -152,7 +152,7 @@ namespace CivilizationEvolution.Tests
         {
             // 族群称谓三形式：单数（xxx）/ 复数（xxx人）/ 形容词（xxx人的）
             Assert.IsTrue(ContentRegistry.TryGetEthnicGroup("ethnos_laethis", out var group));
-            Assert.AreEqual("莱希斯族群", group.GetName(), "单数称谓");
+            Assert.AreEqual("莱希斯", group.GetName(), "单数称谓（不带「族群」后缀）");
             Assert.AreEqual("莱希斯人", group.GetPluralName(), "复数称谓（群体形式）");
             Assert.AreEqual("莱希斯的", group.GetAdjectiveName(), "形容词形式（修饰语）");
 

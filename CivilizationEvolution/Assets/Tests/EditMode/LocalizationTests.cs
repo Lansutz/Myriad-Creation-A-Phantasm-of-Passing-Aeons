@@ -32,7 +32,7 @@ namespace CivilizationEvolution.Tests
             Assert.AreEqual("坚忍", Localization.Get("ethos_endurance_name"));
             Assert.AreEqual("农耕礼俗", Localization.Get("trad_agrarian_rites_name"));
             Assert.AreEqual("莱希斯语", Localization.Get("laethis_lang_name"));
-            Assert.AreEqual("莱希斯族群", Localization.Get("ethnos_laethis_name"));
+            Assert.AreEqual("莱希斯", Localization.Get("ethnos_laethis_name"));
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace CivilizationEvolution.Tests
             Localization.Initialize("en");
             Assert.AreEqual("Endurance", Localization.Get("ethos_endurance_name"), "英语应返回英文文本");
             Assert.AreEqual("Agrarian Rites", Localization.Get("trad_agrarian_rites_name"));
-            Assert.AreEqual("Laethis Ethnos", Localization.Get("ethnos_laethis_name"));
+            Assert.AreEqual("Laethis", Localization.Get("ethnos_laethis_name"));
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace CivilizationEvolution.Tests
             Localization.Initialize("zh-Hant");
             Assert.AreEqual("堅忍", Localization.Get("ethos_endurance_name"), "繁体应返回繁体文本");
             Assert.AreEqual("農耕禮俗", Localization.Get("trad_agrarian_rites_name"));
-            Assert.AreEqual("萊希斯族群", Localization.Get("ethnos_laethis_name"));
+            Assert.AreEqual("萊希斯", Localization.Get("ethnos_laethis_name"));
         }
 
         [Test]
