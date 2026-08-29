@@ -375,6 +375,14 @@
     {
       "key": "dementia_desc",
       "value": "年迈带来的心智衰退，往事如烟，认不清亲人，性情大变。"
+    },
+    {
+      "key": "ethnos_laethis_plural",
+      "value": "莱希斯人"
+    },
+    {
+      "key": "ethnos_laethis_adj",
+      "value": "莱希斯的"
     }
   ]
 }

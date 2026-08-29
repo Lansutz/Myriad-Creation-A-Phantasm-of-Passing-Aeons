@@ -375,6 +375,14 @@
     {
       "key": "dementia_desc",
       "value": "The mind fading with age; memories dissolve, faces grow strange, temper turns."
+    },
+    {
+      "key": "ethnos_laethis_plural",
+      "value": "Laethis People"
+    },
+    {
+      "key": "ethnos_laethis_adj",
+      "value": "Laethish"
     }
   ]
 }

@@ -93,6 +93,18 @@ namespace CivilizationEvolution.Core
 
         public string GetName() => Localization.Get(groupId + "_name");
         public string GetDescription() => Localization.Get(groupId + "_desc");
+
+        /// <summary>
+        /// 复数称谓（群体形式，如"莱希斯人"）
+        /// 键：&lt;groupId&gt;_plural；缺键回退单数名
+        /// </summary>
+        public string GetPluralName() => Localization.Get(groupId + "_plural", GetName());
+
+        /// <summary>
+        /// 形容词形式（修饰语，如"莱希斯的商队"）
+        /// 键：&lt;groupId&gt;_adj；缺键回退单数名
+        /// </summary>
+        public string GetAdjectiveName() => Localization.Get(groupId + "_adj", GetName());
     }
 
     /// <summary>

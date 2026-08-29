@@ -125,7 +125,6 @@ namespace CivilizationEvolution.Tests
         {
             Assert.IsTrue(ContentRegistry.TryGetEthnicGroup("ethnos_laethis", out var group), "应存在莱希斯族群");
             Assert.AreEqual("莱希斯族群", group.GetName(), "族群名应走本地化表");
-
             // 挂靠文化
             Assert.IsTrue(ContentRegistry.TryGetCulture(group.cultureId, out var culture), "族群应挂靠文化");
             Assert.AreEqual("Laethis", culture.data.cultureName);
@@ -146,6 +145,21 @@ namespace CivilizationEvolution.Tests
                 Assert.IsTrue(ContentRegistry.TryGetTradition(tid, out var trad), $"传统 {tid} 应可解析");
                 Assert.IsFalse(string.IsNullOrEmpty(trad.GetName()), $"传统 {tid} 名应走本地化表");
             }
+        }
+
+        [Test]
+        public void EthnicGroup_ThreeNameForms_Resolve()
+        {
+            // 族群称谓三形式：单数（xxx）/ 复数（xxx人）/ 形容词（xxx人的）
+            Assert.IsTrue(ContentRegistry.TryGetEthnicGroup("ethnos_laethis", out var group));
+            Assert.AreEqual("莱希斯族群", group.GetName(), "单数称谓");
+            Assert.AreEqual("莱希斯人", group.GetPluralName(), "复数称谓（群体形式）");
+            Assert.AreEqual("莱希斯的", group.GetAdjectiveName(), "形容词形式（修饰语）");
+
+            // 缺键回退：不存在的族群 → 复数/形容词回退单数名（不崩溃）
+            var ghost = new EthnicGroupDef { groupId = "ethnos_ghost" };
+            Assert.AreEqual("ethnos_ghost_name", ghost.GetPluralName(), "无复数键应回退单数名");
+            Assert.AreEqual("ethnos_ghost_name", ghost.GetAdjectiveName(), "无形容词键应回退单数名");
         }
 
         [Test]
