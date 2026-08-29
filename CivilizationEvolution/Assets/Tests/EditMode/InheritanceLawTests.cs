@@ -142,5 +142,80 @@ namespace CivilizationEvolution.Tests
             StringAssert.Contains("女子专属", InheritanceLaw.Matrilineal().GetName());
             StringAssert.Contains("年幼先", InheritanceLaw.Ultimogeniture().GetName());
         }
+
+        // ===== 头衔/领地继承模式（学术：唯一/分割/共治/选举 × 均分/长子/幼子/限定/共有） =====
+
+        [Test]
+        public void Salic_MaleOnlyWithPartibleLand()
+        {
+            // 萨利克法：男子专属 + 领地均分（排斥女性 ≠ 长子继承——学术要点）
+            var law = InheritanceLaw.Salic();
+            Assert.AreEqual(InheritanceGender.MaleOnly, law.gender, "萨利克男子专属");
+            Assert.AreEqual(LandInheritanceMode.Partible, law.landMode, "萨利克领地均分");
+            Assert.AreEqual(TitleInheritanceMode.SoleHeir, law.titleMode, "萨利克头衔唯一");
+        }
+
+        [Test]
+        public void ChinesePartible_TitleAndLandDecoupled()
+        {
+            // 中国式（唐代定论）：宗祧继承（头衔嫡长子唯一）与析产（领地诸子均分）分离
+            var law = InheritanceLaw.ChinesePartible();
+            Assert.AreEqual(TitleInheritanceMode.SoleHeir, law.titleMode, "宗祧：头衔嫡长子唯一");
+            Assert.AreEqual(LandInheritanceMode.Partible, law.landMode, "析产：领地诸子均分");
+            Assert.AreEqual(InheritanceScope.ClanOnly, law.scope, "宗祧限本族");
+        }
+
+        [Test]
+        public void ByzantineCollegiate_TitleShared()
+        {
+            // 拜占庭共治：头衔家族共享（co-emperor）
+            var law = InheritanceLaw.ByzantineCollegiate();
+            Assert.AreEqual(TitleInheritanceMode.Collective, law.titleMode, "拜占庭头衔共治");
+        }
+
+        [Test]
+        public void ElectiveMonarchy_TitleElected()
+        {
+            // 选举王（波兰自由选王/神罗选帝侯）：头衔选举产生
+            var law = InheritanceLaw.ElectiveMonarchy();
+            Assert.AreEqual(TitleInheritanceMode.Elective, law.titleMode, "头衔选举");
+            Assert.AreEqual(InheritanceGender.Equal, law.gender, "选举不区分性别");
+        }
+
+        [Test]
+        public void DistributeLand_Partible_EvenSplit()
+        {
+            // 诸子均分：7 领地 3 继承人 → 3/2/2
+            var law = InheritanceLaw.Partible();
+            var shares = law.DistributeLand(3, 7);
+            Assert.AreEqual(3, shares[0], "首位得余数");
+            Assert.AreEqual(2, shares[1]);
+            Assert.AreEqual(2, shares[2]);
+            int total = 0;
+            foreach (var s in shares) total += s;
+            Assert.AreEqual(7, total, "分配总量应守恒");
+        }
+
+        [Test]
+        public void DistributeLand_Ultimogeniture_AllToYoungest()
+        {
+            // 幼子守灶：全部归末位继承人
+            var law = InheritanceLaw.Ultimogeniture();
+            var shares = law.DistributeLand(3, 10);
+            Assert.AreEqual(0, shares[0]);
+            Assert.AreEqual(0, shares[1]);
+            Assert.AreEqual(10, shares[2], "幼子全得");
+        }
+
+        [Test]
+        public void DistributeLand_Primogeniture_AllToFirst()
+        {
+            // 长子独得：全部归首位
+            var law = InheritanceLaw.Primogeniture();
+            var shares = law.DistributeLand(3, 10);
+            Assert.AreEqual(10, shares[0]);
+            Assert.AreEqual(0, shares[1]);
+            Assert.AreEqual(0, shares[2]);
+        }
     }
 }
