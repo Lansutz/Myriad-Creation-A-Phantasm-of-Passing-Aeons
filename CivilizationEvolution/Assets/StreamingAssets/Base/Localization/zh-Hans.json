@@ -1,51 +1,276 @@
 {
   "entries": [
-    { "key": "ethos_endurance_name", "value": "坚忍" },
-    { "key": "ethos_endurance_desc", "value": "以苦为常，以韧为德。兵灾、饥馑与漫长的迁徙都磨不垮这个族群的脊梁；他们相信苦难是锻打，忍耐是荣耀。" },
-    { "key": "ethos_hospitable_name", "value": "好客" },
-    { "key": "ethos_hospitable_desc", "value": "远客进门即贵宾。这个族群以款待为荣，往来商旅、流亡者与异乡使节在这里总能得到一碗热食与一夜安稳——也带回他们的口碑与情报。" },
-    { "key": "ethos_warlike_name", "value": "尚武" },
-    { "key": "ethos_warlike_desc", "value": "荣誉在刀锋上。这个族群崇尚勇武与战功，成年礼与葬礼都围绕武事展开；对外是锋利的矛，对内是严密的盾。" },
-    { "key": "ethos_orderly_name", "value": "守序" },
-    { "key": "ethos_orderly_desc", "value": "万物有序，各安其位。祭祀的时辰、田亩的界限、长幼的尊卑，都要分毫不乱；秩序本身即是这个族群对世界最大的敬畏。" },
-    { "key": "ethos_pioneering_name", "value": "开拓" },
-    { "key": "ethos_pioneering_desc", "value": "地平线之外总有新土。这个族群不安于故地，擅长在陌生的山水间开辟居所；他们的迁徙是播种，而非逃亡。" },
-    { "key": "ethos_scholarly_name", "value": "崇智" },
-    { "key": "ethos_scholarly_desc", "value": "竹简重于刀剑，问学高于问卜。这个族群珍视技艺、文字与先贤的言语，工匠与记史者在族中享有尊位。" },
-    { "key": "ethos_communal_name", "value": "共济" },
-    { "key": "ethos_communal_desc", "value": "一人的饥荒是众人的饥荒，一家的婚礼是全族的庆典。这个族群以氏族互助为根基，贫富与贵贱的鸿沟始终难以彻底裂开。" },
-    { "key": "ethos_mystical_name", "value": "崇灵" },
-    { "key": "ethos_mystical_desc", "value": "万物有灵，山川草木皆可对话。这个族群的气质浸染着对不可见之物的敬畏，祭司与梦者的话语在集会中有沉甸甸的分量。" },
-
-    { "key": "trad_agrarian_rites_name", "value": "农耕礼俗" },
-    { "key": "trad_agrarian_rites_desc", "value": "播种、开镰、储粮皆有定时定礼，土地神龛遍布田埂；歉收之年全族按礼减食共渡。" },
-    { "key": "trad_pastoral_riding_name", "value": "游牧骑射" },
-    { "key": "trad_pastoral_riding_desc", "value": "马背是摇篮也是战场，幼童先学挽弓后学执笔；逐水草而居，账篷为家。" },
-    { "key": "trad_maritime_trade_name", "value": "海洋贸易" },
-    { "key": "trad_maritime_trade_desc", "value": "舟楫往来如织，港市通晓四方货殖；海上规矩重于陆地律法，船主在族中说话掷地有声。" },
-    { "key": "trad_craft_guild_name", "value": "工匠传承" },
-    { "key": "trad_craft_guild_desc", "value": "百工之技口传心授，炉火与锤声不绝；匠户自成行会，秘方只在嫡传间流转。" },
-    { "key": "trad_ancestor_cult_name", "value": "祖先祭祀" },
-    { "key": "trad_ancestor_cult_desc", "value": "先人的牌位与坟冢是族群的根脉，春秋二祭全族肃穆；忤逆祖先者被视为最重的罪。" },
-    { "key": "trad_iconoclast_name", "value": "破坏圣像" },
-    { "key": "trad_iconoclast_desc", "value": "偶像与图像是蒙蔽人心的尘土，真正的虔信在于弃绝形相；先人的画像同样在破除之列。" },
-    { "key": "trad_epic_oral_name", "value": "歌谣史诗" },
-    { "key": "trad_epic_oral_desc", "value": "族群的记忆不在竹帛而在歌喉，吟游者传唱先祖的功业与悲欢；每一代歌者都往长诗里添上自己的一章。" },
-    { "key": "trad_council_assembly_name", "value": "族众议事" },
-    { "key": "trad_council_assembly_desc", "value": "大事开帐议事，长老、勇士与智者各执一席；共识不成则事不兴，议而不决的代价是行动迟缓。" },
-    { "key": "trad_communal_field_name", "value": "氏族共耕" },
-    { "key": "trad_communal_field_desc", "value": "田不私有，收成按户分账；犁铧与种子由族库共置，荒年互相周济。" },
-    { "key": "trad_war_bands_name", "value": "亲兵制度" },
-    { "key": "trad_war_bands_desc", "value": "首领的亲兵食于首领之门，誓以性命相酬；亲兵之子仍为亲兵，世代相袭。" },
-    { "key": "trad_boundary_rites_name", "value": "界碑祭祀" },
-    { "key": "trad_boundary_rites_desc", "value": "族土四至立碑设祭，越界而耕者以盗论；碑在则土在，碑失则人心动摇。" },
-
-    { "key": "laethis_lang_name", "value": "莱希斯语" },
-    { "key": "laethis_lang_desc", "value": "河谷农耕之民的语言，音节清晰、辅音柔和，地名常以自然特征与聚落通名复合而成；与冶铜、贸易相关的词汇借自相邻族群。" },
-    { "key": "laethis_lang_script", "value": "音节文字" },
-    { "key": "laethis_lang_naming", "value": "地名=自然特征+通名（Vael-port、Cinder-hold、Laemor）；人名双音节为主，姓氏多源自职业或地貌" },
-
-    { "key": "ethnos_laethis_name", "value": "莱希斯族群" },
-    { "key": "ethnos_laethis_desc", "value": "河谷与丘陵间的农耕之民，善冶铜与贸易，以崇智为族群精神；共同语言莱希斯语，承载农耕礼俗、工匠传承与祖先祭祀诸传统。" }
+    {
+      "key": "ethos_endurance_name",
+      "value": "坚忍"
+    },
+    {
+      "key": "ethos_endurance_desc",
+      "value": "以苦为常，以韧为德。兵灾、饥馑与漫长的迁徙都磨不垮这个族群的脊梁；他们相信苦难是锻打，忍耐是荣耀。"
+    },
+    {
+      "key": "ethos_hospitable_name",
+      "value": "好客"
+    },
+    {
+      "key": "ethos_hospitable_desc",
+      "value": "远客进门即贵宾。这个族群以款待为荣，往来商旅、流亡者与异乡使节在这里总能得到一碗热食与一夜安稳——也带回他们的口碑与情报。"
+    },
+    {
+      "key": "ethos_warlike_name",
+      "value": "尚武"
+    },
+    {
+      "key": "ethos_warlike_desc",
+      "value": "荣誉在刀锋上。这个族群崇尚勇武与战功，成年礼与葬礼都围绕武事展开；对外是锋利的矛，对内是严密的盾。"
+    },
+    {
+      "key": "ethos_orderly_name",
+      "value": "守序"
+    },
+    {
+      "key": "ethos_orderly_desc",
+      "value": "万物有序，各安其位。祭祀的时辰、田亩的界限、长幼的尊卑，都要分毫不乱；秩序本身即是这个族群对世界最大的敬畏。"
+    },
+    {
+      "key": "ethos_pioneering_name",
+      "value": "开拓"
+    },
+    {
+      "key": "ethos_pioneering_desc",
+      "value": "地平线之外总有新土。这个族群不安于故地，擅长在陌生的山水间开辟居所；他们的迁徙是播种，而非逃亡。"
+    },
+    {
+      "key": "ethos_scholarly_name",
+      "value": "崇智"
+    },
+    {
+      "key": "ethos_scholarly_desc",
+      "value": "竹简重于刀剑，问学高于问卜。这个族群珍视技艺、文字与先贤的言语，工匠与记史者在族中享有尊位。"
+    },
+    {
+      "key": "ethos_communal_name",
+      "value": "共济"
+    },
+    {
+      "key": "ethos_communal_desc",
+      "value": "一人的饥荒是众人的饥荒，一家的婚礼是全族的庆典。这个族群以氏族互助为根基，贫富与贵贱的鸿沟始终难以彻底裂开。"
+    },
+    {
+      "key": "ethos_mystical_name",
+      "value": "崇灵"
+    },
+    {
+      "key": "ethos_mystical_desc",
+      "value": "万物有灵，山川草木皆可对话。这个族群的气质浸染着对不可见之物的敬畏，祭司与梦者的话语在集会中有沉甸甸的分量。"
+    },
+    {
+      "key": "trad_agrarian_rites_name",
+      "value": "农耕礼俗"
+    },
+    {
+      "key": "trad_agrarian_rites_desc",
+      "value": "播种、开镰、储粮皆有定时定礼，土地神龛遍布田埂；歉收之年全族按礼减食共渡。"
+    },
+    {
+      "key": "trad_pastoral_riding_name",
+      "value": "游牧骑射"
+    },
+    {
+      "key": "trad_pastoral_riding_desc",
+      "value": "马背是摇篮也是战场，幼童先学挽弓后学执笔；逐水草而居，账篷为家。"
+    },
+    {
+      "key": "trad_maritime_trade_name",
+      "value": "海洋贸易"
+    },
+    {
+      "key": "trad_maritime_trade_desc",
+      "value": "舟楫往来如织，港市通晓四方货殖；海上规矩重于陆地律法，船主在族中说话掷地有声。"
+    },
+    {
+      "key": "trad_craft_guild_name",
+      "value": "工匠传承"
+    },
+    {
+      "key": "trad_craft_guild_desc",
+      "value": "百工之技口传心授，炉火与锤声不绝；匠户自成行会，秘方只在嫡传间流转。"
+    },
+    {
+      "key": "trad_ancestor_cult_name",
+      "value": "祖先祭祀"
+    },
+    {
+      "key": "trad_ancestor_cult_desc",
+      "value": "先人的牌位与坟冢是族群的根脉，春秋二祭全族肃穆；忤逆祖先者被视为最重的罪。"
+    },
+    {
+      "key": "trad_iconoclast_name",
+      "value": "破坏圣像"
+    },
+    {
+      "key": "trad_iconoclast_desc",
+      "value": "偶像与图像是蒙蔽人心的尘土，真正的虔信在于弃绝形相；先人的画像同样在破除之列。"
+    },
+    {
+      "key": "trad_epic_oral_name",
+      "value": "歌谣史诗"
+    },
+    {
+      "key": "trad_epic_oral_desc",
+      "value": "族群的记忆不在竹帛而在歌喉，吟游者传唱先祖的功业与悲欢；每一代歌者都往长诗里添上自己的一章。"
+    },
+    {
+      "key": "trad_council_assembly_name",
+      "value": "族众议事"
+    },
+    {
+      "key": "trad_council_assembly_desc",
+      "value": "大事开帐议事，长老、勇士与智者各执一席；共识不成则事不兴，议而不决的代价是行动迟缓。"
+    },
+    {
+      "key": "trad_communal_field_name",
+      "value": "氏族共耕"
+    },
+    {
+      "key": "trad_communal_field_desc",
+      "value": "田不私有，收成按户分账；犁铧与种子由族库共置，荒年互相周济。"
+    },
+    {
+      "key": "trad_war_bands_name",
+      "value": "亲兵制度"
+    },
+    {
+      "key": "trad_war_bands_desc",
+      "value": "首领的亲兵食于首领之门，誓以性命相酬；亲兵之子仍为亲兵，世代相袭。"
+    },
+    {
+      "key": "trad_boundary_rites_name",
+      "value": "界碑祭祀"
+    },
+    {
+      "key": "trad_boundary_rites_desc",
+      "value": "族土四至立碑设祭，越界而耕者以盗论；碑在则土在，碑失则人心动摇。"
+    },
+    {
+      "key": "laethis_lang_name",
+      "value": "莱希斯语"
+    },
+    {
+      "key": "laethis_lang_desc",
+      "value": "河谷农耕之民的语言，音节清晰、辅音柔和，地名常以自然特征与聚落通名复合而成；与冶铜、贸易相关的词汇借自相邻族群。"
+    },
+    {
+      "key": "laethis_lang_script",
+      "value": "音节文字"
+    },
+    {
+      "key": "laethis_lang_naming",
+      "value": "地名=自然特征+通名（Vael-port、Cinder-hold、Laemor）；人名双音节为主，姓氏多源自职业或地貌"
+    },
+    {
+      "key": "ethnos_laethis_name",
+      "value": "莱希斯族群"
+    },
+    {
+      "key": "ethnos_laethis_desc",
+      "value": "河谷与丘陵间的农耕之民，善冶铜与贸易，以崇智为族群精神；共同语言莱希斯语，承载农耕礼俗、工匠传承与祖先祭祀诸传统。"
+    },
+    {
+      "key": "famtrad_scholarly_legacy_name",
+      "value": "耕读传家"
+    },
+    {
+      "key": "famtrad_scholarly_legacy_desc",
+      "value": "诗书传家，子弟以课读为业，门楣常悬“耕读”匾额；几代人下来，家族里总能出几个博学明理之人。"
+    },
+    {
+      "key": "famtrad_warlike_legacy_name",
+      "value": "尚武传家"
+    },
+    {
+      "key": "famtrad_warlike_legacy_desc",
+      "value": "祖辈以军功起家，子弟自幼习武，家祭必陈兵刃；这个家族的血脉里流淌着对刀弓的亲近。"
+    },
+    {
+      "key": "famtrad_merchant_legacy_name",
+      "value": "商贾传家"
+    },
+    {
+      "key": "famtrad_merchant_legacy_desc",
+      "value": "家业起于市井，账房与货栈是家族最熟悉的风景；经商之道代代口传，秤上功夫不输刀兵。"
+    },
+    {
+      "key": "famtrad_dignitary_legacy_name",
+      "value": "簪缨世家"
+    },
+    {
+      "key": "famtrad_dignitary_legacy_desc",
+      "value": "世代簪缨，族中出过数位显宦；门第之见深植于心，子弟以仕进为荣，以失仪为耻。"
+    },
+    {
+      "key": "famtrad_luxury_style_name",
+      "value": "奢华门风"
+    },
+    {
+      "key": "famtrad_luxury_style_desc",
+      "value": "锦衣玉食，宴饮无度，族中子弟以排场为体面；家底虽厚，风气却日渐骄奢。"
+    },
+    {
+      "key": "famtrad_thrifty_style_name",
+      "value": "节俭家风"
+    },
+    {
+      "key": "famtrad_thrifty_style_desc",
+      "value": "一粥一饭当思来处，族规明定婚丧嫁娶的用度；积攒下来的家底，都是锱铢之间省出来的。"
+    },
+    {
+      "key": "tmpl_commoner_name",
+      "value": "平民"
+    },
+    {
+      "key": "tmpl_commoner_desc",
+      "value": "寻常百姓，生于里巷，长于田亩，各安本分。"
+    },
+    {
+      "key": "tmpl_noble_name",
+      "value": "贵族"
+    },
+    {
+      "key": "tmpl_noble_desc",
+      "value": "簪缨门第，自幼习礼，通晓门阀往来的规矩。"
+    },
+    {
+      "key": "tmpl_military_name",
+      "value": "武将"
+    },
+    {
+      "key": "tmpl_military_desc",
+      "value": "弓马娴熟，长于行伍，闻战则喜。"
+    },
+    {
+      "key": "tmpl_scholar_name",
+      "value": "文臣"
+    },
+    {
+      "key": "tmpl_scholar_desc",
+      "value": "饱读诗书，明经通史，以文墨为刀笔。"
+    },
+    {
+      "key": "tmpl_ruler_name",
+      "value": "统治者"
+    },
+    {
+      "key": "tmpl_ruler_desc",
+      "value": "一国之主，握权柄、决赏罚，须通军政民生。"
+    },
+    {
+      "key": "tmpl_spouse_name",
+      "value": "配偶"
+    },
+    {
+      "key": "tmpl_spouse_desc",
+      "value": "主君内助，周旋于家宅与朝堂之间。"
+    }
   ]
 }

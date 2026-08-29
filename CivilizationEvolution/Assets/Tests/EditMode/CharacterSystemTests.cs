@@ -13,6 +13,16 @@ namespace CivilizationEvolution.Tests
     /// </summary>
     public class CharacterSystemTests
     {
+        [SetUp]
+        public void Setup()
+        {
+            // 真实加载 StreamingAssets（模板/家族传统/种族基因频率依赖注册表）
+            ContentRegistry.Reset();
+            Localization.Reset();
+            Localization.Initialize("zh-Hans");
+            ContentRegistry.Initialize();
+        }
+
         // ===== 统治类型判定（企划书 9.1：威望/恶名 → 明君/暴君/昏暴/平庸） =====
 
         [Test]
@@ -147,6 +157,93 @@ namespace CivilizationEvolution.Tests
                 manager.DailyTick(day, 1);
 
             Assert.AreEqual(MentalDisorderType.Dementia, c.mentalDisorder, "失智不可逆");
+        }
+
+        // ===== 角色模板（第九篇角色生成参数模板：年龄/六维/人格倾向） =====
+
+        [Test]
+        public void CharacterTemplate_Ruler_AppliesStatMinAndAgeRange()
+        {
+            var manager = new CharacterManager();
+            Assert.IsTrue(ContentRegistry.TryGetCharacterTemplate("tmpl_ruler", out var tpl), "统治者模板应已加载");
+
+            var c = manager.CreateCharacter("君", "氏", 0, true, 0, 0, 0, CharacterRole.Ruler, template: tpl);
+
+            Assert.That(c.age, Is.InRange(26, 60), "统治者模板年龄范围 26-60");
+            Assert.That(c.martial, Is.GreaterThanOrEqualTo(30f), "统治者勇武下限 30");
+            Assert.That(c.diplomacy, Is.GreaterThanOrEqualTo(30f), "统治者外交下限 30");
+            Assert.That(c.stewardship, Is.GreaterThanOrEqualTo(30f), "统治者管理下限 30");
+            Assert.That(c.learning, Is.GreaterThanOrEqualTo(30f), "统治者学识下限 30");
+        }
+
+        [Test]
+        public void CharacterTemplate_Ruler_RationalityBiasShiftsMeanPositive()
+        {
+            var manager = new CharacterManager();
+            Assert.IsTrue(ContentRegistry.TryGetCharacterTemplate("tmpl_ruler", out var tpl));
+
+            float sum = 0f;
+            const int N = 60;
+            for (int i = 0; i < N; i++)
+            {
+                var c = manager.CreateCharacter("君" + i, "氏", 0, true, 0, 0, 0, CharacterRole.Ruler, template: tpl);
+                sum += c.rationality;
+            }
+            Assert.That(sum / N, Is.GreaterThan(2f), $"理性倾向 +10 应使均值偏正，实际 {sum / N:F2}");
+        }
+
+        [Test]
+        public void CharacterTemplate_ExplicitAge_NotOverridden()
+        {
+            var manager = new CharacterManager();
+            Assert.IsTrue(ContentRegistry.TryGetCharacterTemplate("tmpl_military", out var tpl));
+
+            var c = manager.CreateCharacter("将", "氏", 45, true, 0, 0, 0, CharacterRole.Military, template: tpl);
+            Assert.AreEqual(45, c.age, "调用方显式指定年龄时模板不应覆盖");
+            Assert.That(c.martial, Is.GreaterThanOrEqualTo(40f), "武将勇武下限 40");
+            Assert.That(c.warfare, Is.GreaterThanOrEqualTo(40f), "武将军事经略下限 40");
+        }
+
+        // ===== 家族传统（企划书 9.4：互斥/注册表校验/效果查询） =====
+
+        [Test]
+        public void FamilyTradition_MutualExclusion_BlocksOpposite()
+        {
+            var manager = new CharacterManager();
+            var ruler = manager.CreateCharacter("祖", "氏", 30, true, 0, 0, 0, CharacterRole.Ruler);
+            var family = manager.CreateFamily("奢华氏", ruler.characterId, 1);
+
+            Assert.IsTrue(family.AddFamilyTradition("famtrad_luxury_style"), "奢华门风应可传承");
+            Assert.IsFalse(family.AddFamilyTradition("famtrad_thrifty_style"), "节俭家风与奢华门风互斥，应拒绝");
+            Assert.IsTrue(family.familyTraditions.ContainsKey("famtrad_luxury_style"));
+
+            Assert.IsTrue(family.RemoveFamilyTradition("famtrad_luxury_style"), "移除后应可腾出互斥位");
+            Assert.IsTrue(family.AddFamilyTradition("famtrad_thrifty_style"), "互斥传统移除后应可添加");
+        }
+
+        [Test]
+        public void FamilyTradition_UnknownId_RejectedWithWarning()
+        {
+            var manager = new CharacterManager();
+            var ruler = manager.CreateCharacter("祖", "氏", 30, true, 0, 0, 0, CharacterRole.Ruler);
+            var family = manager.CreateFamily("无名氏", ruler.characterId, 1);
+
+            Assert.IsFalse(family.AddFamilyTradition("famtrad_does_not_exist"), "未注册传统应拒绝");
+            Assert.AreEqual(0, family.familyTraditions.Count);
+        }
+
+        [Test]
+        public void FamilyTradition_EffectSummation_ScalesWithStrength()
+        {
+            var manager = new CharacterManager();
+            var ruler = manager.CreateCharacter("祖", "氏", 30, true, 0, 0, 0, CharacterRole.Ruler);
+            var family = manager.CreateFamily("商贾氏", ruler.characterId, 1);
+
+            family.AddFamilyTradition("famtrad_merchant_legacy");
+            Assert.That(family.GetTraditionEffect("gold"), Is.EqualTo(0.08f).Within(0.001f), "传承强度 1 时 gold 效果 = 0.08");
+
+            family.familyTraditions["famtrad_merchant_legacy"] = 3f; // 三代传承
+            Assert.That(family.GetTraditionEffect("gold"), Is.EqualTo(0.24f).Within(0.001f), "传承强度随代际线性累积");
         }
 
         // ===== 饮食联动（缺粮 → 压力上升 + 肥胖下降） =====

@@ -1,51 +1,276 @@
 {
   "entries": [
-    { "key": "ethos_endurance_name", "value": "Endurance" },
-    { "key": "ethos_endurance_desc", "value": "Hardship as the norm, tenacity as the virtue. War, famine and long migrations cannot break this people's spine; they hold that suffering is the forge and patience is the glory." },
-    { "key": "ethos_hospitable_name", "value": "Hospitality" },
-    { "key": "ethos_hospitable_desc", "value": "A guest at the door is a guest of honour. This people takes pride in hospitality; traders, exiles and foreign envoys always find a warm meal and a safe night here — and carry their reputation and intelligence back with them." },
-    { "key": "ethos_warlike_name", "value": "Warlike" },
-    { "key": "ethos_warlike_desc", "value": "Honour lives on the blade. This people exalts valour and martial achievement; coming-of-age rites and funerals alike revolve around the arts of war — a sharp spear abroad, a tight shield at home." },
-    { "key": "ethos_orderly_name", "value": "Orderly" },
-    { "key": "ethos_orderly_desc", "value": "All things have their place. The hour of sacrifice, the boundary of the field, the rank of elder and junior — none may be disturbed; order itself is this people's greatest reverence for the world." },
-    { "key": "ethos_pioneering_name", "value": "Pioneering" },
-    { "key": "ethos_pioneering_desc", "value": "Beyond the horizon lies new soil. This people does not rest in its homeland; it excels at carving settlements from unfamiliar mountains and waters. Their migrations are sowing, not flight." },
-    { "key": "ethos_scholarly_name", "value": "Scholarly" },
-    { "key": "ethos_scholarly_desc", "value": "The bamboo slip outweighs the blade; inquiry outranks divination. This people treasures craft, writing and the words of the wise; artisans and chroniclers hold high seats among them." },
-    { "key": "ethos_communal_name", "value": "Communal" },
-    { "key": "ethos_communal_desc", "value": "One man's famine is the famine of all; one family's wedding is the festival of the whole clan. This people is rooted in mutual aid, and the gulf between rich and poor, noble and base, can never fully split them." },
-    { "key": "ethos_mystical_name", "value": "Mystical" },
-    { "key": "ethos_mystical_desc", "value": "All things bear spirits; mountains, rivers, grass and trees can all be spoken to. This people's temperament is steeped in reverence for the unseen, and the words of priests and dreamers carry heavy weight in assembly." },
-
-    { "key": "trad_agrarian_rites_name", "value": "Agrarian Rites" },
-    { "key": "trad_agrarian_rites_desc", "value": "Sowing, first harvest and granary rites follow a fixed calendar, with shrines to the land standing along every ridge; in lean years the whole people fast together by rite." },
-    { "key": "trad_pastoral_riding_name", "value": "Pastoral Riding" },
-    { "key": "trad_pastoral_riding_desc", "value": "The saddle is cradle and battlefield alike; children learn the bow before the pen. The people follow water and pasture, and the felt tent is home." },
-    { "key": "trad_maritime_trade_name", "value": "Maritime Trade" },
-    { "key": "trad_maritime_trade_desc", "value": "Boats ply the waters in endless traffic and port markets know the wares of all directions; maritime custom outweighs land law, and shipmasters speak with weight in the clan." },
-    { "key": "trad_craft_guild_name", "value": "Craft Guilds" },
-    { "key": "trad_craft_guild_desc", "value": "The hundred trades pass from mouth to hand; forge fires and hammer strokes never fall silent. Craftsmen form their own guilds, and secrets flow only between chosen heirs." },
-    { "key": "trad_ancestor_cult_name", "value": "Ancestor Cult" },
-    { "key": "trad_ancestor_cult_desc", "value": "The tablets and tombs of the forebears are the roots of the people; at spring and autumn rites the whole clan stands solemn. To wrong one's ancestors is the heaviest of crimes." },
-    { "key": "trad_iconoclast_name", "value": "Iconoclasm" },
-    { "key": "trad_iconoclast_desc", "value": "Idols and images are dust that blinds the heart; true piety lies in renouncing forms. The portraits of ancestors fall under the same breaking." },
-    { "key": "trad_epic_oral_name", "value": "Epic Oral Tradition" },
-    { "key": "trad_epic_oral_desc", "value": "The people's memory lives not on bamboo but in the throat; singers pass down the deeds and sorrows of the ancestors, and every generation adds a chapter to the long poem." },
-    { "key": "trad_council_assembly_name", "value": "Council Assembly" },
-    { "key": "trad_council_assembly_desc", "value": "Great matters open the tent for council, where elders, warriors and sages each hold a seat; without consensus nothing is undertaken, and the price of deliberation is slow action." },
-    { "key": "trad_communal_field_name", "value": "Communal Fields" },
-    { "key": "trad_communal_field_desc", "value": "The land is not private; harvest is divided by household. Ploughs and seed come from the clan store, and in famine years all relieve one another." },
-    { "key": "trad_war_bands_name", "value": "War Bands" },
-    { "key": "trad_war_bands_desc", "value": "A chief's sworn men eat at the chief's gate and pledge their lives in return; the son of a sworn man becomes a sworn man, generation after generation." },
-    { "key": "trad_boundary_rites_name", "value": "Boundary Rites" },
-    { "key": "trad_boundary_rites_desc", "value": "Stele are raised and rites held at the four borders of the tribal land; to plough across the boundary is theft. While the stele stands, the land stands; when it falls, hearts waver." },
-
-    { "key": "laethis_lang_name", "value": "Laethis Language" },
-    { "key": "laethis_lang_desc", "value": "The tongue of the valley farming folk — clear syllables, soft consonants, and place names usually compounded from natural features and settlement terms; words for copper-working and trade were borrowed from neighbouring peoples." },
-    { "key": "laethis_lang_script", "value": "Syllabary" },
-    { "key": "laethis_lang_naming", "value": "Place names = natural feature + generic term (Vael-port, Cinder-hold, Laemor); personal names mostly disyllabic, surnames derived from craft or landscape" },
-
-    { "key": "ethnos_laethis_name", "value": "Laethis Ethnos" },
-    { "key": "ethnos_laethis_desc", "value": "Farming folk of the valleys and hills, skilled in copper-working and trade, with scholarship as their ethos; bound by the common Laethis tongue and bearing the traditions of agrarian rites, craft guilds and ancestor cult." }
+    {
+      "key": "ethos_endurance_name",
+      "value": "Endurance"
+    },
+    {
+      "key": "ethos_endurance_desc",
+      "value": "Hardship as the norm, tenacity as the virtue. War, famine and long migrations cannot break this people's spine; they hold that suffering is the forge and patience is the glory."
+    },
+    {
+      "key": "ethos_hospitable_name",
+      "value": "Hospitality"
+    },
+    {
+      "key": "ethos_hospitable_desc",
+      "value": "A guest at the door is a guest of honour. This people takes pride in hospitality; traders, exiles and foreign envoys always find a warm meal and a safe night here — and carry their reputation and intelligence back with them."
+    },
+    {
+      "key": "ethos_warlike_name",
+      "value": "Warlike"
+    },
+    {
+      "key": "ethos_warlike_desc",
+      "value": "Honour lives on the blade. This people exalts valour and martial achievement; coming-of-age rites and funerals alike revolve around the arts of war — a sharp spear abroad, a tight shield at home."
+    },
+    {
+      "key": "ethos_orderly_name",
+      "value": "Orderly"
+    },
+    {
+      "key": "ethos_orderly_desc",
+      "value": "All things have their place. The hour of sacrifice, the boundary of the field, the rank of elder and junior — none may be disturbed; order itself is this people's greatest reverence for the world."
+    },
+    {
+      "key": "ethos_pioneering_name",
+      "value": "Pioneering"
+    },
+    {
+      "key": "ethos_pioneering_desc",
+      "value": "Beyond the horizon lies new soil. This people does not rest in its homeland; it excels at carving settlements from unfamiliar mountains and waters. Their migrations are sowing, not flight."
+    },
+    {
+      "key": "ethos_scholarly_name",
+      "value": "Scholarly"
+    },
+    {
+      "key": "ethos_scholarly_desc",
+      "value": "The bamboo slip outweighs the blade; inquiry outranks divination. This people treasures craft, writing and the words of the wise; artisans and chroniclers hold high seats among them."
+    },
+    {
+      "key": "ethos_communal_name",
+      "value": "Communal"
+    },
+    {
+      "key": "ethos_communal_desc",
+      "value": "One man's famine is the famine of all; one family's wedding is the festival of the whole clan. This people is rooted in mutual aid, and the gulf between rich and poor, noble and base, can never fully split them."
+    },
+    {
+      "key": "ethos_mystical_name",
+      "value": "Mystical"
+    },
+    {
+      "key": "ethos_mystical_desc",
+      "value": "All things bear spirits; mountains, rivers, grass and trees can all be spoken to. This people's temperament is steeped in reverence for the unseen, and the words of priests and dreamers carry heavy weight in assembly."
+    },
+    {
+      "key": "trad_agrarian_rites_name",
+      "value": "Agrarian Rites"
+    },
+    {
+      "key": "trad_agrarian_rites_desc",
+      "value": "Sowing, first harvest and granary rites follow a fixed calendar, with shrines to the land standing along every ridge; in lean years the whole people fast together by rite."
+    },
+    {
+      "key": "trad_pastoral_riding_name",
+      "value": "Pastoral Riding"
+    },
+    {
+      "key": "trad_pastoral_riding_desc",
+      "value": "The saddle is cradle and battlefield alike; children learn the bow before the pen. The people follow water and pasture, and the felt tent is home."
+    },
+    {
+      "key": "trad_maritime_trade_name",
+      "value": "Maritime Trade"
+    },
+    {
+      "key": "trad_maritime_trade_desc",
+      "value": "Boats ply the waters in endless traffic and port markets know the wares of all directions; maritime custom outweighs land law, and shipmasters speak with weight in the clan."
+    },
+    {
+      "key": "trad_craft_guild_name",
+      "value": "Craft Guilds"
+    },
+    {
+      "key": "trad_craft_guild_desc",
+      "value": "The hundred trades pass from mouth to hand; forge fires and hammer strokes never fall silent. Craftsmen form their own guilds, and secrets flow only between chosen heirs."
+    },
+    {
+      "key": "trad_ancestor_cult_name",
+      "value": "Ancestor Cult"
+    },
+    {
+      "key": "trad_ancestor_cult_desc",
+      "value": "The tablets and tombs of the forebears are the roots of the people; at spring and autumn rites the whole clan stands solemn. To wrong one's ancestors is the heaviest of crimes."
+    },
+    {
+      "key": "trad_iconoclast_name",
+      "value": "Iconoclasm"
+    },
+    {
+      "key": "trad_iconoclast_desc",
+      "value": "Idols and images are dust that blinds the heart; true piety lies in renouncing forms. The portraits of ancestors fall under the same breaking."
+    },
+    {
+      "key": "trad_epic_oral_name",
+      "value": "Epic Oral Tradition"
+    },
+    {
+      "key": "trad_epic_oral_desc",
+      "value": "The people's memory lives not on bamboo but in the throat; singers pass down the deeds and sorrows of the ancestors, and every generation adds a chapter to the long poem."
+    },
+    {
+      "key": "trad_council_assembly_name",
+      "value": "Council Assembly"
+    },
+    {
+      "key": "trad_council_assembly_desc",
+      "value": "Great matters open the tent for council, where elders, warriors and sages each hold a seat; without consensus nothing is undertaken, and the price of deliberation is slow action."
+    },
+    {
+      "key": "trad_communal_field_name",
+      "value": "Communal Fields"
+    },
+    {
+      "key": "trad_communal_field_desc",
+      "value": "The land is not private; harvest is divided by household. Ploughs and seed come from the clan store, and in famine years all relieve one another."
+    },
+    {
+      "key": "trad_war_bands_name",
+      "value": "War Bands"
+    },
+    {
+      "key": "trad_war_bands_desc",
+      "value": "A chief's sworn men eat at the chief's gate and pledge their lives in return; the son of a sworn man becomes a sworn man, generation after generation."
+    },
+    {
+      "key": "trad_boundary_rites_name",
+      "value": "Boundary Rites"
+    },
+    {
+      "key": "trad_boundary_rites_desc",
+      "value": "Stele are raised and rites held at the four borders of the tribal land; to plough across the boundary is theft. While the stele stands, the land stands; when it falls, hearts waver."
+    },
+    {
+      "key": "laethis_lang_name",
+      "value": "Laethis Language"
+    },
+    {
+      "key": "laethis_lang_desc",
+      "value": "The tongue of the valley farming folk — clear syllables, soft consonants, and place names usually compounded from natural features and settlement terms; words for copper-working and trade were borrowed from neighbouring peoples."
+    },
+    {
+      "key": "laethis_lang_script",
+      "value": "Syllabary"
+    },
+    {
+      "key": "laethis_lang_naming",
+      "value": "Place names = natural feature + generic term (Vael-port, Cinder-hold, Laemor); personal names mostly disyllabic, surnames derived from craft or landscape"
+    },
+    {
+      "key": "ethnos_laethis_name",
+      "value": "Laethis Ethnos"
+    },
+    {
+      "key": "ethnos_laethis_desc",
+      "value": "Farming folk of the valleys and hills, skilled in copper-working and trade, with scholarship as their ethos; bound by the common Laethis tongue and bearing the traditions of agrarian rites, craft guilds and ancestor cult."
+    },
+    {
+      "key": "famtrad_scholarly_legacy_name",
+      "value": "Scholarly Legacy"
+    },
+    {
+      "key": "famtrad_scholarly_legacy_desc",
+      "value": "A house of books and scrolls. Sons are raised at the writing desk, and the family name is spoken with respect in halls of learning."
+    },
+    {
+      "key": "famtrad_warlike_legacy_name",
+      "value": "Martial Legacy"
+    },
+    {
+      "key": "famtrad_warlike_legacy_desc",
+      "value": "Founded on military merit. Children learn the bow before the brush, and the house altar keeps a blade among the tablets."
+    },
+    {
+      "key": "famtrad_merchant_legacy_name",
+      "value": "Merchant Legacy"
+    },
+    {
+      "key": "famtrad_merchant_legacy_desc",
+      "value": "Wealth built from the marketplace. Ledgers and warehouses are the family's true estate, and tradecraft is passed from hand to hand."
+    },
+    {
+      "key": "famtrad_dignitary_legacy_name",
+      "value": "Dignitary Legacy"
+    },
+    {
+      "key": "famtrad_dignitary_legacy_desc",
+      "value": "Generations of office-holders. Pride of rank runs deep; sons are raised to seek office and to dread disgrace."
+    },
+    {
+      "key": "famtrad_luxury_style_name",
+      "value": "Luxurious Style"
+    },
+    {
+      "key": "famtrad_luxury_style_desc",
+      "value": "Silks and feasts without measure. The family spends its fortune on display, and extravagance has become a custom."
+    },
+    {
+      "key": "famtrad_thrifty_style_name",
+      "value": "Thrifty Style"
+    },
+    {
+      "key": "famtrad_thrifty_style_desc",
+      "value": "Every grain of rice is accounted for. Family law sets the cost of weddings and funerals; the house's wealth is saved coin by coin."
+    },
+    {
+      "key": "tmpl_commoner_name",
+      "value": "Commoner"
+    },
+    {
+      "key": "tmpl_commoner_desc",
+      "value": "An ordinary person, born in the alleys and raised among the fields, content with their lot."
+    },
+    {
+      "key": "tmpl_noble_name",
+      "value": "Noble"
+    },
+    {
+      "key": "tmpl_noble_desc",
+      "value": "Of noble house, schooled from childhood in etiquette and the ways of great families."
+    },
+    {
+      "key": "tmpl_military_name",
+      "value": "Military Officer"
+    },
+    {
+      "key": "tmpl_military_desc",
+      "value": "Skilled with bow and horse, at home in the ranks, eager for battle."
+    },
+    {
+      "key": "tmpl_scholar_name",
+      "value": "Scholar"
+    },
+    {
+      "key": "tmpl_scholar_desc",
+      "value": "Well-read in the classics, versed in history, wielding the brush as a blade."
+    },
+    {
+      "key": "tmpl_ruler_name",
+      "value": "Ruler"
+    },
+    {
+      "key": "tmpl_ruler_desc",
+      "value": "Sovereign of a realm, holding power and judgment, versed in war, governance and the people's needs."
+    },
+    {
+      "key": "tmpl_spouse_name",
+      "value": "Spouse"
+    },
+    {
+      "key": "tmpl_spouse_desc",
+      "value": "Consort of the sovereign, moving between household and court."
+    }
   ]
 }

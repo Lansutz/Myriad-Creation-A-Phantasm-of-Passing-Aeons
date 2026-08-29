@@ -14,6 +14,8 @@ namespace CivilizationEvolution.Core
     ///   Race/RaceDefs.json（顶层包装 { "races": [...] }）
     ///   Ethos/Ethos.json（顶层包装 { "ethos": [...] }——族群精神定义表）
     ///   Tradition/Traditions.json（顶层包装 { "traditions": [...] }——文化传统定义表）
+    ///   FamilyTradition/FamilyTraditions.json（顶层包装 { "familyTraditions": [...] }——家族传统定义表）
+    ///   CharacterTemplate/CharacterTemplates.json（顶层包装 { "templates": [...] }——角色生成模板表）
     ///   Language/&lt;语言名&gt;/Language.json（语言定义）
     ///   EthnicGroup/EthnicGroups.json（顶层包装 { "groups": [...] }——族群实体）
     /// Mods 与 Base 同名 Id 后者覆盖，实现内容热扩展。
@@ -63,14 +65,28 @@ namespace CivilizationEvolution.Core
             public List<EthnicGroupDef> groups = new List<EthnicGroupDef>();
         }
 
+        [Serializable]
+        private class FamilyTraditionsWrapper
+        {
+            public List<FamilyTraditionDef> familyTraditions = new List<FamilyTraditionDef>();
+        }
+
+        [Serializable]
+        private class CharacterTemplatesWrapper
+        {
+            public List<CharacterTemplateDef> templates = new List<CharacterTemplateDef>();
+        }
+
         public static Dictionary<int, CultureContentPack> Cultures { get; private set; } = new Dictionary<int, CultureContentPack>();
         public static Dictionary<int, RaceData> Races { get; private set; } = new Dictionary<int, RaceData>();
 
-        // ===== 模组化定义表（族群/族群精神/文化传统/语言，按 Id 覆盖） =====
+        // ===== 模组化定义表（族群/族群精神/文化传统/语言/家族传统/角色模板，按 Id 覆盖） =====
         public static Dictionary<string, EthosDef> Ethos { get; private set; } = new Dictionary<string, EthosDef>();
         public static Dictionary<string, TraditionDef> Traditions { get; private set; } = new Dictionary<string, TraditionDef>();
         public static Dictionary<string, LanguageDef> Languages { get; private set; } = new Dictionary<string, LanguageDef>();
         public static Dictionary<string, EthnicGroupDef> EthnicGroups { get; private set; } = new Dictionary<string, EthnicGroupDef>();
+        public static Dictionary<string, FamilyTraditionDef> FamilyTraditions { get; private set; } = new Dictionary<string, FamilyTraditionDef>();
+        public static Dictionary<string, CharacterTemplateDef> CharacterTemplates { get; private set; } = new Dictionary<string, CharacterTemplateDef>();
 
         public static bool IsInitialized { get; private set; } = false;
 
@@ -84,6 +100,8 @@ namespace CivilizationEvolution.Core
             Traditions = new Dictionary<string, TraditionDef>();
             Languages = new Dictionary<string, LanguageDef>();
             EthnicGroups = new Dictionary<string, EthnicGroupDef>();
+            FamilyTraditions = new Dictionary<string, FamilyTraditionDef>();
+            CharacterTemplates = new Dictionary<string, CharacterTemplateDef>();
 
             string root = Application.streamingAssetsPath;
             if (!Directory.Exists(root))
@@ -98,7 +116,8 @@ namespace CivilizationEvolution.Core
 
             IsInitialized = true;
             Debug.Log($"[ContentRegistry] 内容加载完成：文化 {Cultures.Count}，种族 {Races.Count}，" +
-                $"族群精神 {Ethos.Count}，文化传统 {Traditions.Count}，语言 {Languages.Count}，族群 {EthnicGroups.Count}");
+                $"族群精神 {Ethos.Count}，文化传统 {Traditions.Count}，语言 {Languages.Count}，族群 {EthnicGroups.Count}，" +
+                $"家族传统 {FamilyTraditions.Count}，角色模板 {CharacterTemplates.Count}");
         }
 
         /// <summary>重置注册表（编辑器重载数据时使用）</summary>
@@ -111,6 +130,8 @@ namespace CivilizationEvolution.Core
             Traditions.Clear();
             Languages.Clear();
             EthnicGroups.Clear();
+            FamilyTraditions.Clear();
+            CharacterTemplates.Clear();
         }
 
         // ===== 查询接口 =====
@@ -121,6 +142,8 @@ namespace CivilizationEvolution.Core
         public static bool TryGetTradition(string id, out TraditionDef def) => Traditions.TryGetValue(id, out def);
         public static bool TryGetLanguage(string id, out LanguageDef def) => Languages.TryGetValue(id, out def);
         public static bool TryGetEthnicGroup(string id, out EthnicGroupDef def) => EthnicGroups.TryGetValue(id, out def);
+        public static bool TryGetFamilyTradition(string id, out FamilyTraditionDef def) => FamilyTraditions.TryGetValue(id, out def);
+        public static bool TryGetCharacterTemplate(string id, out CharacterTemplateDef def) => CharacterTemplates.TryGetValue(id, out def);
 
         /// <summary>从文化包提取随机名字（type: 0男名 1女名 2姓氏 3城名，可传 null 随机池）</summary>
         public static string GetRandomName(CultureContentPack pack, int type, System.Random rng = null)
@@ -193,6 +216,20 @@ namespace CivilizationEvolution.Core
             {
                 try { LoadEthnicGroups(groupFile); }
                 catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 族群定义加载失败：{e.Message}"); }
+            }
+
+            string familyTraditionFile = Path.Combine(root, "FamilyTradition", "FamilyTraditions.json");
+            if (File.Exists(familyTraditionFile))
+            {
+                try { LoadFamilyTraditions(familyTraditionFile); }
+                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 家族传统定义加载失败：{e.Message}"); }
+            }
+
+            string characterTemplateFile = Path.Combine(root, "CharacterTemplate", "CharacterTemplates.json");
+            if (File.Exists(characterTemplateFile))
+            {
+                try { LoadCharacterTemplates(characterTemplateFile); }
+                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 角色模板定义加载失败：{e.Message}"); }
             }
         }
 
@@ -280,6 +317,30 @@ namespace CivilizationEvolution.Core
             {
                 if (def == null || string.IsNullOrEmpty(def.groupId)) continue;
                 EthnicGroups[def.groupId] = def;
+            }
+        }
+
+        /// <summary>加载家族传统（FamilyTradition）定义表（企划书 9.4：家族团结度/家法/家族文化偏移）</summary>
+        private static void LoadFamilyTraditions(string path)
+        {
+            var wrapper = JsonUtility.FromJson<FamilyTraditionsWrapper>(File.ReadAllText(path));
+            if (wrapper == null || wrapper.familyTraditions == null) return;
+            foreach (var def in wrapper.familyTraditions)
+            {
+                if (def == null || string.IsNullOrEmpty(def.traditionId)) continue;
+                FamilyTraditions[def.traditionId] = def;
+            }
+        }
+
+        /// <summary>加载角色模板（CharacterTemplate）定义表（第九篇角色生成参数模板）</summary>
+        private static void LoadCharacterTemplates(string path)
+        {
+            var wrapper = JsonUtility.FromJson<CharacterTemplatesWrapper>(File.ReadAllText(path));
+            if (wrapper == null || wrapper.templates == null) return;
+            foreach (var def in wrapper.templates)
+            {
+                if (def == null || string.IsNullOrEmpty(def.templateId)) continue;
+                CharacterTemplates[def.templateId] = def;
             }
         }
 

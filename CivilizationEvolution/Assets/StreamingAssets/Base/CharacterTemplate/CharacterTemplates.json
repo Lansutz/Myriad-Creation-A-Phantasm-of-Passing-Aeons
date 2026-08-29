@@ -1,0 +1,10 @@
+{
+  "templates": [
+    { "templateId": "tmpl_commoner", "role": 0, "minAge": 16, "maxAge": 60, "weight": 100 },
+    { "templateId": "tmpl_noble", "role": 1, "minAge": 18, "maxAge": 60, "statMin": [ 0, 25, 0, 25, 0, 20 ], "statMax": [ 0, 0, 0, 0, 0, 0 ], "compassionBias": 5, "honorBias": 10, "weight": 30 },
+    { "templateId": "tmpl_military", "role": 4, "minAge": 20, "maxAge": 50, "statMin": [ 40, 0, 40, 0, 0, 0 ], "statMax": [ 0, 0, 0, 0, 0, 0 ], "boldnessBias": 20, "rationalityBias": -5, "weight": 30 },
+    { "templateId": "tmpl_scholar", "role": 5, "minAge": 20, "maxAge": 70, "statMin": [ 0, 0, 0, 0, 0, 40 ], "statMax": [ 0, 0, 0, 0, 0, 0 ], "rationalityBias": 15, "pietyBias": 10, "weight": 30 },
+    { "templateId": "tmpl_ruler", "role": 6, "minAge": 26, "maxAge": 60, "statMin": [ 30, 30, 20, 30, 20, 30 ], "statMax": [ 0, 0, 0, 0, 0, 0 ], "rationalityBias": 10, "honorBias": 10, "weight": 10 },
+    { "templateId": "tmpl_spouse", "role": 8, "minAge": 18, "maxAge": 40, "statMin": [ 0, 25, 0, 20, 0, 15 ], "statMax": [ 0, 0, 0, 0, 0, 0 ], "compassionBias": 10, "weight": 10 }
+  ]
+}

@@ -636,6 +636,54 @@ namespace CivilizationEvolution.Role
                 total += branch.CalculateTotalPrestige() * 0.5f; // 分支威望减半计入主家族
             return total;
         }
+
+        // ===== 家族传统（企划书 9.4 家族文化偏移；定义表解释键，见 FamilyTraditionDef） =====
+
+        /// <summary>
+        /// 添加家族传统：
+        /// 注册表未定义 → 拒绝并警告；与已传承传统互斥（incompatibleWith）→ 拒绝；
+        /// 传承强度起点 1（代际深度由家族系统后续累积）
+        /// </summary>
+        public bool AddFamilyTradition(string traditionId)
+        {
+            if (string.IsNullOrEmpty(traditionId) || familyTraditions.ContainsKey(traditionId)) return false;
+            if (!ContentRegistry.TryGetFamilyTradition(traditionId, out var def))
+            {
+                Debug.LogWarning($"[Family] 家族传统 {traditionId} 未在注册表定义，拒绝添加");
+                return false;
+            }
+            if (def.incompatibleWith != null)
+            {
+                foreach (var existing in familyTraditions.Keys)
+                {
+                    if (def.incompatibleWith.Contains(existing))
+                    {
+                        Debug.Log($"[Family] 家族传统 {traditionId} 与既有传统 {existing} 互斥，拒绝添加");
+                        return false;
+                    }
+                }
+            }
+            familyTraditions[traditionId] = 1f;
+            return true;
+        }
+
+        /// <summary>移除家族传统</summary>
+        public bool RemoveFamilyTradition(string traditionId) => familyTraditions.Remove(traditionId);
+
+        /// <summary>计算家族传统在指定键上的总效果（键由 FamilyTraditionDef.effects 解释，如 unity/prestige/learning）</summary>
+        public float GetTraditionEffect(string key)
+        {
+            float total = 0f;
+            foreach (var kv in familyTraditions)
+            {
+                if (!ContentRegistry.TryGetFamilyTradition(kv.Key, out var def) || def.effects == null) continue;
+                foreach (var e in def.effects)
+                {
+                    if (e.key == key) total += e.value * kv.Value;
+                }
+            }
+            return total;
+        }
     }
 
     /// <summary>
@@ -675,7 +723,8 @@ namespace CivilizationEvolution.Role
         /// <param name="expressionRace">表达基准种族；null 时用 raceId 对应种族（混血场景传双亲基准平均）</param>
         public CharacterData CreateCharacter(string firstName, string lastName, int age, bool isMale,
             int cultureId, int raceId, int faithId, CharacterRole role,
-            DnaData dna = null, int fatherId = -1, int motherId = -1, RaceData expressionRace = null)
+            DnaData dna = null, int fatherId = -1, int motherId = -1, RaceData expressionRace = null,
+            CharacterTemplateDef template = null)
         {
             // ===== DNA：显式传入 > 父母遗传 > 种族随机 =====
             if (dna == null && (fatherId >= 0 || motherId >= 0))
@@ -753,8 +802,58 @@ namespace CivilizationEvolution.Role
                 : character.dna != null && character.dna.GetLocus(DnaLocus.Appearance).IsHeterozygous ? 2f : -3f;
             character.charm = Mathf.Clamp(50f + appearanceBonus + UnityEngine.Random.Range(-10f, 10f), 0f, 100f);
 
+            // ===== 角色模板套用（第九篇角色生成参数模板：年龄范围/六维约束/人格倾向偏移） =====
+            if (template != null)
+                ApplyTemplate(character, template);
+
             _characters[character.characterId] = character;
             return character;
+        }
+
+        /// <summary>
+        /// 套用角色模板（第九篇角色生成参数模板）：
+        /// - 年龄范围：调用方未指定年龄（age<=0）时在模板范围内随机
+        /// - 六维范围约束：statMin/statMax（0 表示不约束，顺序 martial/diplomacy/warfare/stewardship/intrigue/learning）
+        /// - 人格倾向偏移：七维 bias 叠加（在家族遗传基线之上）
+        /// </summary>
+        public void ApplyTemplate(CharacterData c, CharacterTemplateDef template)
+        {
+            if (c == null || template == null) return;
+
+            if (c.age <= 0)
+            {
+                int minA = Mathf.Max(0, template.minAge);
+                int maxA = Mathf.Max(0, template.maxAge);
+                if (maxA > minA && maxA > 0)
+                    c.age = UnityEngine.Random.Range(minA, maxA + 1);
+                else if (maxA > 0)
+                    c.age = maxA;
+                else if (minA > 0)
+                    c.age = minA;
+            }
+
+            float[] stats = { c.martial, c.diplomacy, c.warfare, c.stewardship, c.intrigue, c.learning };
+            for (int i = 0; i < 6; i++)
+            {
+                if (template.statMin != null && i < template.statMin.Length && template.statMin[i] > 0f)
+                    stats[i] = Mathf.Max(stats[i], template.statMin[i]);
+                if (template.statMax != null && i < template.statMax.Length && template.statMax[i] > 0f)
+                    stats[i] = Mathf.Min(stats[i], template.statMax[i]);
+            }
+            c.martial = stats[0];
+            c.diplomacy = stats[1];
+            c.warfare = stats[2];
+            c.stewardship = stats[3];
+            c.intrigue = stats[4];
+            c.learning = stats[5];
+
+            c.boldness = Mathf.Clamp(c.boldness + template.boldnessBias, -100f, 100f);
+            c.compassion = Mathf.Clamp(c.compassion + template.compassionBias, -100f, 100f);
+            c.greed = Mathf.Clamp(c.greed + template.greedBias, -100f, 100f);
+            c.honor = Mathf.Clamp(c.honor + template.honorBias, -100f, 100f);
+            c.rationality = Mathf.Clamp(c.rationality + template.rationalityBias, -100f, 100f);
+            c.vengefulness = Mathf.Clamp(c.vengefulness + template.vengefulnessBias, -100f, 100f);
+            c.piety = Mathf.Clamp(c.piety + template.pietyBias, -100f, 100f);
         }
 
         // ===== 人格七维（企划书 9.3：家族遗传基线 + 随机偏移） =====
@@ -1134,12 +1233,18 @@ namespace CivilizationEvolution.Role
                 string lastName = GenerateName(cultureId, 2);
                 bool rulerIsMale = UnityEngine.Random.value < 0.5f;
 
+                // 角色模板（注册表有则套用：tmpl_ruler/tmpl_spouse；无则回退随机年龄）
+                ContentRegistry.TryGetCharacterTemplate("tmpl_ruler", out var rulerTpl);
+                ContentRegistry.TryGetCharacterTemplate("tmpl_spouse", out var spouseTpl);
+
                 var ruler = CreateCharacter(GenerateName(cultureId, rulerIsMale ? 0 : 1), lastName,
-                    UnityEngine.Random.Range(26, 42), rulerIsMale, cultureId, raceId, 0, CharacterRole.Ruler);
+                    0, rulerIsMale, cultureId, raceId, 0, CharacterRole.Ruler,
+                    template: rulerTpl);
                 ruler.realmId = realm.realmId;
 
                 var spouse = CreateCharacter(GenerateName(cultureId, rulerIsMale ? 1 : 0), lastName,
-                    UnityEngine.Random.Range(22, 36), !rulerIsMale, cultureId, raceId, 0, CharacterRole.Spouse);
+                    0, !rulerIsMale, cultureId, raceId, 0, CharacterRole.Spouse,
+                    template: spouseTpl);
                 spouse.realmId = realm.realmId;
 
                 var family = CreateFamily(lastName, ruler.characterId, currentYear);

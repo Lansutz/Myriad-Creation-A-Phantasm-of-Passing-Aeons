@@ -3,6 +3,7 @@ using NUnit.Framework;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Culture;
+using CivilizationEvolution.Role;
 
 namespace CivilizationEvolution.Tests
 {
@@ -21,10 +22,10 @@ namespace CivilizationEvolution.Tests
             ContentRegistry.Initialize();
         }
 
-        // ===== 六类注册表加载 =====
+        // ===== 八类注册表加载 =====
 
         [Test]
-        public void ContentRegistry_LoadsAllSixTypes()
+        public void ContentRegistry_LoadsAllEightTypes()
         {
             Assert.That(ContentRegistry.Cultures.Count, Is.GreaterThan(0), "文化包应加载");
             // 预种族已删除（2026-08-29 定稿：仅人类为代码内置 raceId 0），Base 无种族定义属合法状态
@@ -32,6 +33,33 @@ namespace CivilizationEvolution.Tests
             Assert.That(ContentRegistry.Traditions.Count, Is.GreaterThan(0), "文化传统定义表应加载");
             Assert.That(ContentRegistry.Languages.Count, Is.GreaterThan(0), "语言定义应加载");
             Assert.That(ContentRegistry.EthnicGroups.Count, Is.GreaterThan(0), "族群实体应加载");
+            Assert.That(ContentRegistry.FamilyTraditions.Count, Is.GreaterThan(0), "家族传统定义表应加载");
+            Assert.That(ContentRegistry.CharacterTemplates.Count, Is.GreaterThan(0), "角色模板定义表应加载");
+        }
+
+        // ===== 家族传统定义表 =====
+
+        [Test]
+        public void FamilyTradition_LuxuryThrifty_MutuallyExclusive()
+        {
+            Assert.IsTrue(ContentRegistry.TryGetFamilyTradition("famtrad_luxury_style", out var luxury));
+            Assert.IsTrue(ContentRegistry.TryGetFamilyTradition("famtrad_thrifty_style", out var thrifty));
+            Assert.IsTrue(luxury.incompatibleWith.Contains("famtrad_thrifty_style"), "奢华门风应互斥节俭家风");
+            Assert.IsTrue(thrifty.incompatibleWith.Contains("famtrad_luxury_style"), "互斥应双向声明");
+            Assert.IsFalse(string.IsNullOrEmpty(luxury.GetName()), "家族传统名应走本地化表");
+        }
+
+        // ===== 角色模板定义表 =====
+
+        [Test]
+        public void CharacterTemplate_Ruler_FieldsResolve()
+        {
+            Assert.IsTrue(ContentRegistry.TryGetCharacterTemplate("tmpl_ruler", out var tpl));
+            Assert.AreEqual(CharacterRole.Ruler, tpl.role, "统治者模板角色应为 Ruler");
+            Assert.That(tpl.statMin.Length, Is.EqualTo(6), "六维约束应 6 项（martial/diplomacy/warfare/stewardship/intrigue/learning）");
+            Assert.That(tpl.statMin[0], Is.GreaterThanOrEqualTo(30f), "统治者勇武下限");
+            Assert.That(tpl.weight, Is.GreaterThan(0f), "生成权重应为正");
+            Assert.IsFalse(string.IsNullOrEmpty(tpl.GetName()), "模板名应走本地化表");
         }
 
         // ===== 族群实体引用解析（Ethnos 支柱：精神/语言/传统） =====
