@@ -1,84 +1,12 @@
 {
   "ethos": [
-    {
-      "ethosId": "ethos_endurance",
-      "name": "坚忍",
-      "description": "以苦为常，以韧为德。兵灾、饥馑与漫长的迁徙都磨不垮这个族群的脊梁；他们相信苦难是锻打，忍耐是荣耀。",
-      "effects": [
-        { "key": "combat_loss", "value": -0.1 },
-        { "key": "stress_decay", "value": 0.05 },
-        { "key": "stability", "value": 0.05 }
-      ]
-    },
-    {
-      "ethosId": "ethos_hospitable",
-      "name": "好客",
-      "description": "远客进门即贵宾。这个族群以款待为荣，往来商旅、流亡者与异乡使节在这里总能得到一碗热食与一夜安稳——也带回他们的口碑与情报。",
-      "effects": [
-        { "key": "opinion", "value": 0.05 },
-        { "key": "trade", "value": 0.1 },
-        { "key": "diplomacy", "value": 0.05 }
-      ]
-    },
-    {
-      "ethosId": "ethos_warlike",
-      "name": "尚武",
-      "description": "荣誉在刀锋上。这个族群崇尚勇武与战功，成年礼与葬礼都围绕武事展开；对外是锋利的矛，对内是严密的盾。",
-      "effects": [
-        { "key": "levy", "value": 0.15 },
-        { "key": "aggression", "value": 0.1 },
-        { "key": "warfare", "value": 0.05 }
-      ]
-    },
-    {
-      "ethosId": "ethos_orderly",
-      "name": "守序",
-      "description": "万物有序，各安其位。祭祀的时辰、田亩的界限、长幼的尊卑，都要分毫不乱；秩序本身即是这个族群对世界最大的敬畏。",
-      "effects": [
-        { "key": "stability", "value": 0.1 },
-        { "key": "order", "value": 0.1 },
-        { "key": "innovation", "value": -0.05 }
-      ]
-    },
-    {
-      "ethosId": "ethos_pioneering",
-      "name": "开拓",
-      "description": "地平线之外总有新土。这个族群不安于故地，擅长在陌生的山水间开辟居所；他们的迁徙是播种，而非逃亡。",
-      "effects": [
-        { "key": "expansion", "value": 0.1 },
-        { "key": "mobility", "value": 0.1 },
-        { "key": "development", "value": 0.05 }
-      ]
-    },
-    {
-      "ethosId": "ethos_scholarly",
-      "name": "崇智",
-      "description": "竹简重于刀剑，问学高于问卜。这个族群珍视技艺、文字与先贤的言语，工匠与记史者在族中享有尊位。",
-      "effects": [
-        { "key": "innovation", "value": 0.15 },
-        { "key": "learning", "value": 0.05 },
-        { "key": "craft", "value": 0.05 }
-      ]
-    },
-    {
-      "ethosId": "ethos_communal",
-      "name": "共济",
-      "description": "一人的饥荒是众人的饥荒，一家的婚礼是全族的庆典。这个族群以氏族互助为根基，贫富与贵贱的鸿沟始终难以彻底裂开。",
-      "effects": [
-        { "key": "unity", "value": 0.1 },
-        { "key": "class_relation", "value": 0.05 },
-        { "key": "rebellion_threshold", "value": 0.05 }
-      ]
-    },
-    {
-      "ethosId": "ethos_mystical",
-      "name": "崇灵",
-      "description": "万物有灵，山川草木皆可对话。这个族群的气质浸染着对不可见之物的敬畏，祭司与梦者的话语在集会中有沉甸甸的分量。",
-      "effects": [
-        { "key": "faith_influence", "value": 0.1 },
-        { "key": "piety", "value": 0.05 },
-        { "key": "innovation", "value": -0.03 }
-      ]
-    }
+    { "ethosId": "ethos_endurance", "effects": [ { "key": "combat_loss", "value": -0.1 }, { "key": "stress_decay", "value": 0.05 }, { "key": "stability", "value": 0.05 } ] },
+    { "ethosId": "ethos_hospitable", "effects": [ { "key": "opinion", "value": 0.05 }, { "key": "trade", "value": 0.1 }, { "key": "diplomacy", "value": 0.05 } ] },
+    { "ethosId": "ethos_warlike", "effects": [ { "key": "levy", "value": 0.15 }, { "key": "aggression", "value": 0.1 }, { "key": "warfare", "value": 0.05 } ] },
+    { "ethosId": "ethos_orderly", "effects": [ { "key": "stability", "value": 0.1 }, { "key": "order", "value": 0.1 }, { "key": "innovation", "value": -0.05 } ] },
+    { "ethosId": "ethos_pioneering", "effects": [ { "key": "expansion", "value": 0.1 }, { "key": "mobility", "value": 0.1 }, { "key": "development", "value": 0.05 } ] },
+    { "ethosId": "ethos_scholarly", "effects": [ { "key": "innovation", "value": 0.15 }, { "key": "learning", "value": 0.05 }, { "key": "craft", "value": 0.05 } ] },
+    { "ethosId": "ethos_communal", "effects": [ { "key": "unity", "value": 0.1 }, { "key": "class_relation", "value": 0.05 }, { "key": "rebellion_threshold", "value": 0.05 } ] },
+    { "ethosId": "ethos_mystical", "effects": [ { "key": "faith_influence", "value": 0.1 }, { "key": "piety", "value": 0.05 }, { "key": "innovation", "value": -0.03 } ] }
   ]
 }

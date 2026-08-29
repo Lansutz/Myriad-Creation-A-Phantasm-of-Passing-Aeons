@@ -1129,7 +1129,7 @@ namespace CivilizationEvolution.Role
             foreach (var realm in realms.Values)
             {
                 int cultureId = realm.realmId;   // 政权 0/1/2 → 文化 0/1/2（内容覆盖后 id 1 为内容文化）
-                int raceId = realm.realmId % 3;  // 0 人族 / 1 / 2（内容覆盖后 1/2 为内容种族）
+                int raceId = 0;                  // 预种族已删除（2026-08-29 定稿）：当前仅人类
 
                 string lastName = GenerateName(cultureId, 2);
                 bool rulerIsMale = UnityEngine.Random.value < 0.5f;

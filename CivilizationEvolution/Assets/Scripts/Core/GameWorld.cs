@@ -675,6 +675,7 @@ namespace CivilizationEvolution.Core
 
         private void InitializeDefaultRaces()
         {
+            // 预种族已删除（2026-08-29 定稿）：当前仅人类
             races[0] = new RaceData
             {
                 raceId = 0,
@@ -686,30 +687,6 @@ namespace CivilizationEvolution.Core
                 diseaseResistance = 1.0f,
                 environmentalTolerance = 1.0f,
                 transformativity = 50f
-            };
-            races[1] = new RaceData
-            {
-                raceId = 1,
-                raceName = "精灵族",
-                baseLifespan = 2.5f,
-                growthRate = 0.6f,
-                reproductionRate = 0.4f,
-                physicalStrength = 0.8f,
-                diseaseResistance = 1.2f,
-                environmentalTolerance = 0.9f,
-                transformativity = 30f
-            };
-            races[2] = new RaceData
-            {
-                raceId = 2,
-                raceName = "矮人族",
-                baseLifespan = 1.8f,
-                growthRate = 0.8f,
-                reproductionRate = 0.7f,
-                physicalStrength = 1.3f,
-                diseaseResistance = 1.1f,
-                environmentalTolerance = 1.2f,
-                transformativity = 70f
             };
         }
 
@@ -793,12 +770,12 @@ namespace CivilizationEvolution.Core
                     tiles[tileIdx].ownerRealmId = r;
                     realm.coreTiles.Add(tileIdx);
 
-                    // 给每块地分配初始人口
+                    // 给每块地分配初始人口（预种族已删除，全部人族）
                     if (tiles[tileIdx].populationBlocks.Count == 0)
                     {
                         tiles[tileIdx].populationBlocks.Add(new PopulationBlock
                         {
-                            raceId = r % 3,
+                            raceId = 0,
                             cultureId = r % 3,
                             count = 10f,
                             satisfaction = 60f,

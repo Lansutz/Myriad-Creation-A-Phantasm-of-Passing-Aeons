@@ -16,6 +16,8 @@ namespace CivilizationEvolution.Tests
         public void Setup()
         {
             ContentRegistry.Reset();
+            Localization.Reset();
+            Localization.Initialize("zh-Hans");
             ContentRegistry.Initialize();
         }
 
@@ -25,7 +27,7 @@ namespace CivilizationEvolution.Tests
         public void ContentRegistry_LoadsAllSixTypes()
         {
             Assert.That(ContentRegistry.Cultures.Count, Is.GreaterThan(0), "文化包应加载");
-            Assert.That(ContentRegistry.Races.Count, Is.GreaterThan(0), "种族定义应加载");
+            // 预种族已删除（2026-08-29 定稿：仅人类为代码内置 raceId 0），Base 无种族定义属合法状态
             Assert.That(ContentRegistry.Ethos.Count, Is.GreaterThan(0), "族群精神定义表应加载");
             Assert.That(ContentRegistry.Traditions.Count, Is.GreaterThan(0), "文化传统定义表应加载");
             Assert.That(ContentRegistry.Languages.Count, Is.GreaterThan(0), "语言定义应加载");
@@ -38,7 +40,7 @@ namespace CivilizationEvolution.Tests
         public void EthnicGroup_Laethis_AllPillarsResolve()
         {
             Assert.IsTrue(ContentRegistry.TryGetEthnicGroup("ethnos_laethis", out var group), "应存在莱希斯族群");
-            Assert.AreEqual("莱希斯族群", group.name);
+            Assert.AreEqual("莱希斯族群", group.GetName(), "族群名应走本地化表");
 
             // 挂靠文化
             Assert.IsTrue(ContentRegistry.TryGetCulture(group.cultureId, out var culture), "族群应挂靠文化");
@@ -46,16 +48,20 @@ namespace CivilizationEvolution.Tests
 
             // 族群精神
             Assert.IsTrue(ContentRegistry.TryGetEthos(group.ethosId, out var ethos), "族群精神应可解析");
-            Assert.IsFalse(string.IsNullOrEmpty(ethos.description), "族群精神应有写实描述");
+            Assert.IsFalse(string.IsNullOrEmpty(ethos.GetName()), "族群精神名应走本地化表");
+            Assert.IsFalse(string.IsNullOrEmpty(ethos.GetDescription()), "族群精神应有写实描述");
 
             // 语言
             Assert.IsTrue(ContentRegistry.TryGetLanguage(group.languageId, out var language), "语言应可解析");
-            Assert.IsFalse(string.IsNullOrEmpty(language.scriptType), "语言应有书写系统");
+            Assert.IsFalse(string.IsNullOrEmpty(language.GetScriptType()), "语言应有书写系统");
 
             // 文化传统（全部可解析）
             Assert.That(group.traditionIds.Count, Is.GreaterThan(0), "族群应承载文化传统");
             foreach (var tid in group.traditionIds)
-                Assert.IsTrue(ContentRegistry.TryGetTradition(tid, out _), $"传统 {tid} 应可解析");
+            {
+                Assert.IsTrue(ContentRegistry.TryGetTradition(tid, out var trad), $"传统 {tid} 应可解析");
+                Assert.IsFalse(string.IsNullOrEmpty(trad.GetName()), $"传统 {tid} 名应走本地化表");
+            }
         }
 
         [Test]
@@ -121,10 +127,14 @@ namespace CivilizationEvolution.Tests
         public void ModsOverride_ByIdSemantics()
         {
             // 语义验证：直接覆盖注册表同 Id 条目（Mods 加载路径由加载器保证后载）
-            var custom = new EthosDef { ethosId = "ethos_endurance", name = "定制坚忍" };
+            var custom = new EthosDef { ethosId = "ethos_endurance" };
+            custom.effects.Add(new EffectEntry { key = "custom_marker", value = 1f });
             ContentRegistry.Ethos["ethos_endurance"] = custom;
             Assert.IsTrue(ContentRegistry.TryGetEthos("ethos_endurance", out var loaded));
-            Assert.AreEqual("定制坚忍", loaded.name, "同名 Id 应覆盖");
+            Assert.AreEqual(1, loaded.effects.Count, "同名 Id 覆盖后效果应为新定义");
+            Assert.AreEqual("custom_marker", loaded.effects[0].key);
+            // 显示文本仍走本地化表（键化设计）
+            Assert.AreEqual("坚忍", loaded.GetName());
         }
     }
 }
