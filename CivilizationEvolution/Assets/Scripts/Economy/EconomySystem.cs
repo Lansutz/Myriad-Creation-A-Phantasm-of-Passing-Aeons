@@ -562,5 +562,11 @@ namespace CivilizationEvolution.Economy
         public IReadOnlyList<Caravan> GetActiveCaravans() => _caravans;
         public CurrencySystem GetCurrencySystem() => _currency;
         public TaxSystem GetTaxSystem() => _taxSystem;
+
+        /// <summary>按地区获取贸易中心（角色饮食联动等外部查询用）</summary>
+        public TradeCenter GetTradeCenter(int regionId)
+        {
+            return _tradeCenters.GetValueOrDefault(regionId);
+        }
     }
 }

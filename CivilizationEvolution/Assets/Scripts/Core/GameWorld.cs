@@ -145,7 +145,10 @@ namespace CivilizationEvolution.Core
             _combatManager = new CombatManager(tiles, unitDefs, _seaLandGenerator);
             _diplomacyManager = new DiplomacyManager(realms);
             _characterManager = new CharacterManager();
-            _characterManager.Races = races; // 注入种族表（DNA 表达/混血基准依赖）
+            _characterManager.Races = races;   // 注入种族表（DNA 表达/混血基准依赖）
+            _characterManager.Economy = _economyManager; // 注入经济（角色饮食联动）
+            _characterManager.Tiles = tiles;   // 注入地块表（饮食按政权地块定位贸易中心）
+            _characterManager.Realms = realms; // 注入政权表（饮食/领地定位）
             _thoughtManager = new ThoughtManager();
             _disasterSystem = new DisasterSystem(tiles, mapWidth, mapHeight);
             _diseaseSystem = new DiseaseSystem(tiles, _characterManager, mapWidth, mapHeight);

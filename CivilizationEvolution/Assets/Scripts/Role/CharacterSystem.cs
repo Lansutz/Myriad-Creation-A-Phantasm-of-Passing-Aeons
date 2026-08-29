@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Economy;
 using CivilizationEvolution.Politics;
 using CivilizationEvolution.Race;
 
@@ -52,20 +53,45 @@ namespace CivilizationEvolution.Role
         /// <summary>个体综合抗性 0-100（种族抗性基准 + DNA 抗性偏移，疾病感染修正用）</summary>
         public float individualResistance = 50f;
 
-        // 核心六维属性（0-100）
-        [Range(0f, 100f)] public float martial = 50f;      // 军事
-        [Range(0f, 100f)] public float diplomacy = 50f;     // 外交
+        // 核心六维属性（0-100，企划书第九篇：武力/外交-社交/军事经略/学识/阴谋/管理）
+        [Range(0f, 100f)] public float martial = 50f;      // 武力
+        [Range(0f, 100f)] public float diplomacy = 50f;     // 外交-社交
+        [Range(0f, 100f)] public float warfare = 50f;       // 军事经略（原 piety 位，2026-08-29 定稿）
         [Range(0f, 100f)] public float stewardship = 50f;   // 管理
         [Range(0f, 100f)] public float intrigue = 50f;       // 谋略
         [Range(0f, 100f)] public float learning = 50f;       // 学识
-        [Range(0f, 100f)] public float piety = 50f;          // 虔诚
 
-        // 次级属性
+        // ===== 容量型数值（企划书：当前值 + 容量等级 + 容量上限） =====
+        /// <summary>威望当前值（0~当前容量上限）</summary>
+        public float prestige = 0f;
+        /// <summary>威望容量等级 1-5（上限 100/300/600/1000/1500）</summary>
+        public int prestigeCapacityLevel = 1;
+        /// <summary>恶名当前值（0~当前容量上限，与威望并存）</summary>
+        public float notoriety = 0f;
+
+        // ===== 上限型数值（0-100 固定上限） =====
         [Range(0f, 100f)] public float health = 100f;        // 健康
         [Range(0f, 100f)] public float fertility = 50f;       // 生育力
-        [Range(0f, 100f)] public float prestige = 0f;         // 威望
-        [Range(0f, 100f)] public float stress = 0f;           // 压力
+        [Range(0f, 100f)] public float stress = 0f;           // 压力（>60 人格漂移翻倍，>80 精神疾病风险）
         [Range(0f, 100f)] public float dread = 0f;            // 恐惧
+        [Range(0f, 100f)] public float obesity = 20f;         // 肥胖（饮食/活动驱动，影响健康/魅力）
+        [Range(0f, 100f)] public float charm = 50f;           // 魅力
+
+        // ===== 人格七维（企划书 9.3：-100~100，家族遗传基线，压力>60 漂移翻倍） =====
+        [Range(-100f, 100f)] public float boldness;      // 大胆
+        [Range(-100f, 100f)] public float compassion;    // 悲悯
+        [Range(-100f, 100f)] public float greed;         // 贪婪
+        [Range(-100f, 100f)] public float honor;         // 荣誉
+        [Range(-100f, 100f)] public float rationality;   // 理性
+        [Range(-100f, 100f)] public float vengefulness;  // 报复
+        [Range(-100f, 100f)] public float piety;         // 虔信（人格维度，非六维属性）
+
+        // ===== 精神疾病（简单版：单一活跃状态，由高压/恐惧/高龄/重病触发） =====
+        public MentalDisorderType mentalDisorder = MentalDisorderType.None;
+        /// <summary>压力>80 持续天数（精神疾病触发计时）</summary>
+        public int highStressDays = 0;
+        /// <summary>压力<30 持续天数（精神疾病缓解计时，失智不可逆）</summary>
+        public int lowStressRecoveryDays = 0;
 
         // 人格特质列表
         public List<PersonalityTrait> traits = new List<PersonalityTrait>();
@@ -83,10 +109,10 @@ namespace CivilizationEvolution.Role
         // 军队指挥
         public int commandedArmyId = -1;
 
-        /// <summary>计算综合能力值</summary>
+        /// <summary>计算综合能力值（六维：武力/外交/军事经略/管理/谋略/学识）</summary>
         public float CalculateOverallAbility()
         {
-            return (martial + diplomacy + stewardship + intrigue + learning) / 5f;
+            return (martial + diplomacy + warfare + stewardship + intrigue + learning) / 6f;
         }
 
         /// <summary>计算统治能力（用于政权稳定）</summary>
@@ -114,10 +140,37 @@ namespace CivilizationEvolution.Role
             float onsetAge = dna != null ? expectedLifespanYears * 0.6f : 50f;
             float fullAge = dna != null ? expectedLifespanYears : 100f;
             float ageFactor = age > onsetAge ? (age - onsetAge) / Mathf.Max(1f, fullAge - onsetAge) : 0f;
-            health = Mathf.Clamp(health - ageFactor * 0.01f, 0f, 100f);
+            // 肥胖 >70 加速衰老
+            float healthAgeMult = obesity > 70f ? 1.5f : 1f;
+            health = Mathf.Clamp(health - ageFactor * 0.01f * healthAgeMult, 0f, 100f);
 
-            // 压力自然恢复
-            stress = Mathf.Max(0f, stress - 0.1f);
+            // 压力恢复（受精神疾病影响：抑郁/焦虑恢复慢；压力>60 时几乎不恢复）
+            var disorderDef = MentalHealthSystem.GetDef(mentalDisorder);
+            float stressDecay = disorderDef != null ? 0.05f * disorderDef.stressDecayMult : 0.05f;
+            stress = Mathf.Max(0f, stress - (stress > 60f ? 0.01f : stressDecay));
+
+            // 高压计时（精神疾病触发判定）
+            if (stress > 80f)
+                highStressDays++;
+            else
+                highStressDays = Mathf.Max(0, highStressDays - 2);
+
+            // 人格漂移（企划书 9.3：压力>60 漂移速度翻倍，随机游走）
+            float drift = stress > 60f ? 0.02f : 0.01f;
+            boldness = Mathf.Clamp(boldness + UnityEngine.Random.Range(-drift, drift), -100f, 100f);
+            compassion = Mathf.Clamp(compassion + UnityEngine.Random.Range(-drift, drift), -100f, 100f);
+            greed = Mathf.Clamp(greed + UnityEngine.Random.Range(-drift, drift), -100f, 100f);
+            honor = Mathf.Clamp(honor + UnityEngine.Random.Range(-drift, drift), -100f, 100f);
+            rationality = Mathf.Clamp(rationality + UnityEngine.Random.Range(-drift, drift), -100f, 100f);
+            vengefulness = Mathf.Clamp(vengefulness + UnityEngine.Random.Range(-drift, drift), -100f, 100f);
+            piety = Mathf.Clamp(piety + UnityEngine.Random.Range(-drift, drift), -100f, 100f);
+
+            // 肥胖自然回落（活动代谢）
+            obesity = Mathf.Max(0f, obesity - 0.01f);
+
+            // 容量型数值自然衰减（威望/恶名缓慢向零回归）
+            prestige = Mathf.Max(0f, prestige - 0.05f);
+            notoriety = Mathf.Max(0f, notoriety - 0.02f);
 
             // 健康过低死亡
             if (health <= 0f)
@@ -130,6 +183,45 @@ namespace CivilizationEvolution.Role
             {
                 trait.ApplyDailyEffect(this);
             }
+        }
+
+        // ===== 人格描述（企划书 9.3 顶层：写实场景化描述，禁止四字标签与善恶定性） =====
+
+        /// <summary>生成写实人格描述：按最高 2 维组合套用场景模板</summary>
+        public string GetPersonalityDescription()
+        {
+            // 取绝对值最高的两维
+            var dims = new (string name, float value)[]
+            {
+                ("大胆", boldness), ("悲悯", compassion), ("贪婪", greed),
+                ("荣誉", honor), ("理性", rationality), ("报复", vengefulness), ("虔信", piety)
+            };
+            Array.Sort(dims, (a, b) => Mathf.Abs(b.value).CompareTo(Mathf.Abs(a.value)));
+
+            var top1 = dims[0];
+            var top2 = dims[1];
+            if (Mathf.Abs(top1.value) < 15f)
+                return "性情平和中正，既不偏激也不执拗，处世随分安时。";
+
+            string t1 = DescribeDimension(top1.name, top1.value);
+            string t2 = DescribeDimension(top2.name, top2.value);
+            return $"为人{t1}，行事{t2}。";
+        }
+
+        private static string DescribeDimension(string dim, float value)
+        {
+            bool high = value > 0f;
+            return dim switch
+            {
+                "大胆" => high ? "胆气过人，临事敢为，鲜有畏葸" : "性谨慎，谋定后动，不喜冒险",
+                "悲悯" => high ? "心肠慈悲，见不得民生疾苦，常施仁政" : "心硬如铁，视百姓如草芥，无情可动",
+                "贪婪" => high ? "贪得无厌，见利忘义，库藏永不餍足" : "淡泊财货，不慕荣利，清廉自守",
+                "荣誉" => high ? "重诺守信，把名誉看得比性命更重" : "轻诺寡信，名节于他不过是可售之物",
+                "理性" => high ? "冷静理性，遇事权衡利害，不感情用事" : "率性而为，凭一时好恶决断，不计后果",
+                "报复" => high ? "睚眦必报，恩怨分明，得罪过他的人他都记着" : "宽宏大量，受了委屈也多半一笑置之",
+                "虔信" => high ? "虔诚信奉，常与神职人员来往，礼敬神祇" : "对神明半信半疑，礼数只是做给人看",
+                _ => "性情难测"
+            };
         }
 
         /// <summary>角色死亡</summary>
@@ -169,8 +261,59 @@ namespace CivilizationEvolution.Role
                 rel = new CharacterRelation { otherCharacterId = otherId };
                 relations[otherId] = rel;
             }
-            rel.opinion = Mathf.Clamp(rel.opinion + opinionDelta, -100f, 100f);
+            rel.opinion = Mathf.Clamp(rel.opinion + opinionDelta, -200f, 200f);
             rel.history.Add($"{reason}: {opinionDelta}");
+        }
+
+        // ===== 容量型数值（企划书 9.1：威望/恶名，当前值+容量等级+上限） =====
+
+        /// <summary>威望容量上限（等级 1-5：100/300/600/1000/1500）</summary>
+        public float GetPrestigeCapacity()
+        {
+            return prestigeCapacityLevel switch
+            {
+                2 => 300f,
+                3 => 600f,
+                4 => 1000f,
+                5 => 1500f,
+                _ => 100f
+            };
+        }
+
+        /// <summary>恶名容量上限（与威望同级）</summary>
+        public float GetNotorietyCapacity() => GetPrestigeCapacity();
+
+        /// <summary>修改威望（含容量等级自动维护：达上限升级，低于 30% 降级）</summary>
+        public void ModifyPrestige(float delta)
+        {
+            prestige = Mathf.Clamp(prestige + delta, 0f, GetPrestigeCapacity());
+            if (prestige >= GetPrestigeCapacity() && prestigeCapacityLevel < 5)
+            {
+                prestigeCapacityLevel++;
+                Debug.Log($"[Character] {fullName} 威望容量升至 {prestigeCapacityLevel} 级");
+            }
+            else if (prestige < GetPrestigeCapacity() * 0.3f && prestigeCapacityLevel > 1)
+            {
+                prestigeCapacityLevel--;
+                Debug.Log($"[Character] {fullName} 威望容量降至 {prestigeCapacityLevel} 级");
+            }
+        }
+
+        /// <summary>修改恶名（容量同威望，不触发等级变化）</summary>
+        public void ModifyNotoriety(float delta)
+        {
+            notoriety = Mathf.Clamp(notoriety + delta, 0f, GetNotorietyCapacity());
+        }
+
+        /// <summary>统治类型判定（企划书：威望/恶名组合 → 明君/暴君/昏暴之君/平庸之主）</summary>
+        public RulerType GetRulerType()
+        {
+            bool highP = prestige / Mathf.Max(1f, GetPrestigeCapacity()) > 0.6f;
+            bool highN = notoriety / Mathf.Max(1f, GetNotorietyCapacity()) > 0.6f;
+            if (highP && highN) return RulerType.TyrantFool;   // 昏暴之君
+            if (highP) return RulerType.Benevolent;            // 明君
+            if (highN) return RulerType.Tyrant;                // 暴君
+            return RulerType.Mediocre;                         // 平庸之主
         }
     }
 
@@ -187,6 +330,15 @@ namespace CivilizationEvolution.Role
         Heir,          // 继承人
         Spouse,        // 配偶
         Courtier       // 廷臣
+    }
+
+    /// <summary>统治类型（企划书 9.1：威望/恶名组合）</summary>
+    public enum RulerType
+    {
+        Benevolent,    // 明君：威望高、恶名低
+        Tyrant,        // 暴君：恶名高、威望低
+        TyrantFool,    // 昏暴之君：威望恶名双高
+        Mediocre       // 平庸之主：双低
     }
 
     /// <summary>
@@ -208,7 +360,7 @@ namespace CivilizationEvolution.Role
         public float stewardshipMod = 0f;
         public float intrigueMod = 0f;
         public float learningMod = 0f;
-        public float pietyMod = 0f;
+        public float warfareMod = 0f;
 
         // 互斥特质
         public List<string> conflictingTraits = new List<string>();
@@ -256,11 +408,11 @@ namespace CivilizationEvolution.Role
     }
 
     /// <summary>角色间关系</summary>
-    [System.Serializable]
+    [Serializable]
     public struct CharacterRelation
     {
         public int otherCharacterId;
-        [Range(-100f, 100f)] public float opinion;  // 好感度
+        [Range(-200f, 200f)] public float opinion;  // 好感度（企划书：-200~200，双向不对称存储）
         public RelationshipType type;
         public List<string> history;
 
@@ -439,6 +591,12 @@ namespace CivilizationEvolution.Role
     {
         /// <summary>种族定义表（由 GameWorld 注入，DNA 表达与混血基准依赖）</summary>
         public Dictionary<int, RaceData> Races { get; set; }
+        /// <summary>经济系统（由 GameWorld 注入，角色饮食联动依赖）</summary>
+        public EconomyManager Economy { get; set; }
+        /// <summary>地块表（由 GameWorld 注入，角色饮食按政权地块定位贸易中心）</summary>
+        public TileData[] Tiles { get; set; }
+        /// <summary>政权表（由 GameWorld 注入，角色饮食/领地定位依赖）</summary>
+        public Dictionary<int, RealmData> Realms { get; set; }
 
         private readonly Dictionary<int, CharacterData> _characters = new Dictionary<int, CharacterData>();
         private readonly Dictionary<int, FamilyNode> _families = new Dictionary<int, FamilyNode>();
@@ -515,7 +673,7 @@ namespace CivilizationEvolution.Role
                 character.diplomacy = UnityEngine.Random.Range(20f, 80f);
                 character.stewardship = UnityEngine.Random.Range(20f, 80f);
                 character.intrigue = UnityEngine.Random.Range(20f, 80f);
-                character.piety = UnityEngine.Random.Range(20f, 80f);
+                character.warfare = UnityEngine.Random.Range(20f, 80f);
             }
             else
             {
@@ -525,14 +683,201 @@ namespace CivilizationEvolution.Role
                 character.stewardship = UnityEngine.Random.Range(20f, 80f);
                 character.intrigue = UnityEngine.Random.Range(20f, 80f);
                 character.learning = UnityEngine.Random.Range(20f, 80f);
-                character.piety = UnityEngine.Random.Range(20f, 80f);
+                character.warfare = UnityEngine.Random.Range(20f, 80f);
             }
 
             // 天赋/缺陷叠加
             ApplyTalentDefectEffect(character, expr);
 
+            // ===== 人格七维初始化（企划书 9.3：家族遗传基线 + 随机偏移） =====
+            InitializePersonality(character, fatherId, motherId);
+
+            // ===== 魅力初始（DNA 外观微调：AA +5 / Aa +2 / aa -3，±10 随机） =====
+            float appearanceBonus = character.dna != null && character.dna.GetLocus(DnaLocus.Appearance).IsHomozygousDominant ? 5f
+                : character.dna != null && character.dna.GetLocus(DnaLocus.Appearance).IsHeterozygous ? 2f : -3f;
+            character.charm = Mathf.Clamp(50f + appearanceBonus + UnityEngine.Random.Range(-10f, 10f), 0f, 100f);
+
             _characters[character.characterId] = character;
             return character;
+        }
+
+        // ===== 人格七维（企划书 9.3：家族遗传基线 + 随机偏移） =====
+
+        /// <summary>人格七维初始化：有父母取双亲平均 ±10（家族遗传基线），无父母围绕 0 随机 ±30</summary>
+        private void InitializePersonality(CharacterData c, int fatherId, int motherId)
+        {
+            var father = fatherId >= 0 ? GetCharacter(fatherId) : null;
+            var mother = motherId >= 0 ? GetCharacter(motherId) : null;
+
+            if (father != null || mother != null)
+            {
+                float f = father != null ? 1f : 0f, m = mother != null ? 1f : 0f;
+                float n = f + m;
+                c.boldness = Mathf.Clamp((father != null ? father.boldness : 0f) * f / n + (mother != null ? mother.boldness : 0f) * m / n + UnityEngine.Random.Range(-10f, 10f), -100f, 100f);
+                c.compassion = Mathf.Clamp((father != null ? father.compassion : 0f) * f / n + (mother != null ? mother.compassion : 0f) * m / n + UnityEngine.Random.Range(-10f, 10f), -100f, 100f);
+                c.greed = Mathf.Clamp((father != null ? father.greed : 0f) * f / n + (mother != null ? mother.greed : 0f) * m / n + UnityEngine.Random.Range(-10f, 10f), -100f, 100f);
+                c.honor = Mathf.Clamp((father != null ? father.honor : 0f) * f / n + (mother != null ? mother.honor : 0f) * m / n + UnityEngine.Random.Range(-10f, 10f), -100f, 100f);
+                c.rationality = Mathf.Clamp((father != null ? father.rationality : 0f) * f / n + (mother != null ? mother.rationality : 0f) * m / n + UnityEngine.Random.Range(-10f, 10f), -100f, 100f);
+                c.vengefulness = Mathf.Clamp((father != null ? father.vengefulness : 0f) * f / n + (mother != null ? mother.vengefulness : 0f) * m / n + UnityEngine.Random.Range(-10f, 10f), -100f, 100f);
+                c.piety = Mathf.Clamp((father != null ? father.piety : 0f) * f / n + (mother != null ? mother.piety : 0f) * m / n + UnityEngine.Random.Range(-10f, 10f), -100f, 100f);
+            }
+            else
+            {
+                c.boldness = UnityEngine.Random.Range(-30f, 30f);
+                c.compassion = UnityEngine.Random.Range(-30f, 30f);
+                c.greed = UnityEngine.Random.Range(-30f, 30f);
+                c.honor = UnityEngine.Random.Range(-30f, 30f);
+                c.rationality = UnityEngine.Random.Range(-30f, 30f);
+                c.vengefulness = UnityEngine.Random.Range(-30f, 30f);
+                c.piety = UnityEngine.Random.Range(-30f, 30f);
+            }
+        }
+
+        // ===== 角色数值机制（饮食/精神疾病） =====
+
+        /// <summary>
+        /// 饮食联动（肥胖驱动，企划书上限型数值）：
+        /// 每日从角色所属政权核心地块的贸易中心扣 1 单位粮食；
+        /// 吃上 → 肥胖按身份增速（贵族/统治者吃得好，体力身份增长慢）；
+        /// 缺粮 → 肥胖下降 + 压力上升
+        /// </summary>
+        private void DailyDiet()
+        {
+            if (Economy == null || Tiles == null || Realms == null) return;
+
+            foreach (var c in _characters.Values)
+            {
+                if (!c.isAlive || c.realmId < 0) continue;
+                if (!Realms.TryGetValue(c.realmId, out var realm) || realm.coreTiles.Count == 0) continue;
+
+                int firstTile = -1;
+                foreach (int t in realm.coreTiles) { firstTile = t; break; }
+                if (firstTile < 0 || firstTile >= Tiles.Length) continue;
+
+                int regionId = Tiles[firstTile].regionId;
+                var tc = Economy.GetTradeCenter(regionId);
+                if (tc != null && tc.RemoveGoods(0, 1f))
+                {
+                    float gain = c.role switch
+                    {
+                        CharacterRole.Ruler or CharacterRole.Noble => 0.04f,
+                        CharacterRole.Military or CharacterRole.Commoner => 0.015f,
+                        _ => 0.025f
+                    };
+                    c.obesity = Mathf.Clamp(c.obesity + gain, 0f, 100f);
+                }
+                else
+                {
+                    c.obesity = Mathf.Max(0f, c.obesity - 0.03f);
+                    c.stress = Mathf.Min(100f, c.stress + 2f);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 精神疾病触发与缓解（简单版，角色级状态机）：
+        /// - 触发：压力>80 持续 90 天 → 抑郁/焦虑；恐惧>80 → 偏执；高龄+低学识 → 失智
+        /// - 缓解：压力<30 持续 120 天 → 康复（失智不可逆）
+        /// </summary>
+        private void CheckMentalDisorders()
+        {
+            foreach (var c in _characters.Values)
+            {
+                if (!c.isAlive) continue;
+
+                if (c.mentalDisorder == MentalDisorderType.None)
+                {
+                    if (c.highStressDays >= MentalHealthSystem.HighStressTriggerDays)
+                    {
+                        c.mentalDisorder = UnityEngine.Random.value < 0.6f
+                            ? MentalDisorderType.Depression : MentalDisorderType.Anxiety;
+                        c.highStressDays = 0;
+                        Debug.Log($"[Mental] {c.fullName} 罹患{MentalHealthSystem.GetDisorderName(c)}（长期高压）");
+                    }
+                    else if (c.dread > MentalHealthSystem.DreadParanoiaThreshold && UnityEngine.Random.value < 0.002f)
+                    {
+                        c.mentalDisorder = MentalDisorderType.Paranoia;
+                        Debug.Log($"[Mental] {c.fullName} 罹患偏执（深度恐惧）");
+                    }
+                    else if (c.age >= MentalHealthSystem.DementiaAge
+                        && c.learning < MentalHealthSystem.DementiaLearningGate)
+                    {
+                        float risk = 0.0005f * (c.age - MentalHealthSystem.DementiaAge + 1) / 10f;
+                        if (UnityEngine.Random.value < risk)
+                        {
+                            c.mentalDisorder = MentalDisorderType.Dementia;
+                            Debug.Log($"[Mental] {c.fullName} 罹患失智（年迈心智衰退）");
+                        }
+                    }
+                }
+                else
+                {
+                    var def = MentalHealthSystem.GetDef(c.mentalDisorder);
+                    if (def == null || !def.reversible) continue;
+
+                    if (c.stress < 30f)
+                    {
+                        c.lowStressRecoveryDays++;
+                        if (c.lowStressRecoveryDays >= MentalHealthSystem.LowStressRecoveryDays)
+                        {
+                            Debug.Log($"[Mental] {c.fullName} 从{def.name}中康复");
+                            c.mentalDisorder = MentalDisorderType.None;
+                            c.lowStressRecoveryDays = 0;
+                        }
+                    }
+                    else
+                    {
+                        c.lowStressRecoveryDays = Mathf.Max(0, c.lowStressRecoveryDays - 1);
+                    }
+                }
+            }
+        }
+
+        // ===== 角色数值公共接口（事件/战争/疾病/AI 调用） =====
+
+        /// <summary>施加压力（战争/缺粮/重大事件）</summary>
+        public void AddStress(int characterId, float amount)
+        {
+            var c = GetCharacter(characterId);
+            if (c != null) c.stress = Mathf.Clamp(c.stress + amount, 0f, 100f);
+        }
+
+        /// <summary>施加恐惧（处决/暴行/恐怖事件）</summary>
+        public void AddDread(int characterId, float amount)
+        {
+            var c = GetCharacter(characterId);
+            if (c != null) c.dread = Mathf.Clamp(c.dread + amount, 0f, 100f);
+        }
+
+        /// <summary>人格维度修正（事件驱动漂移；维度名：boldness/compassion/greed/honor/rationality/vengefulness/piety）</summary>
+        public void ModifyPersonality(int characterId, string dimension, float delta)
+        {
+            var c = GetCharacter(characterId);
+            if (c == null) return;
+            switch (dimension)
+            {
+                case "boldness": c.boldness = Mathf.Clamp(c.boldness + delta, -100f, 100f); break;
+                case "compassion": c.compassion = Mathf.Clamp(c.compassion + delta, -100f, 100f); break;
+                case "greed": c.greed = Mathf.Clamp(c.greed + delta, -100f, 100f); break;
+                case "honor": c.honor = Mathf.Clamp(c.honor + delta, -100f, 100f); break;
+                case "rationality": c.rationality = Mathf.Clamp(c.rationality + delta, -100f, 100f); break;
+                case "vengefulness": c.vengefulness = Mathf.Clamp(c.vengefulness + delta, -100f, 100f); break;
+                case "piety": c.piety = Mathf.Clamp(c.piety + delta, -100f, 100f); break;
+            }
+        }
+
+        /// <summary>治愈精神疾病（贤者/事件/医学革新；失智不可逆）</summary>
+        public bool CureMentalDisorder(int characterId)
+        {
+            var c = GetCharacter(characterId);
+            if (c == null || c.mentalDisorder == MentalDisorderType.None) return false;
+            var def = MentalHealthSystem.GetDef(c.mentalDisorder);
+            if (def != null && !def.reversible) return false;
+            Debug.Log($"[Mental] {c.fullName} 经治疗摆脱{def?.name ?? "病痛"}");
+            c.mentalDisorder = MentalDisorderType.None;
+            c.highStressDays = 0;
+            c.lowStressRecoveryDays = 0;
+            return true;
         }
 
         // ===== 天赋/缺陷应用 =====
@@ -773,6 +1118,12 @@ namespace CivilizationEvolution.Role
 
             // 自主生育（最小机制：DNA 遗传持续发生）
             AutoProcreate(currentYear);
+
+            // 饮食联动（肥胖驱动）
+            DailyDiet();
+
+            // 精神疾病触发与缓解
+            CheckMentalDisorders();
 
             // 清理死亡角色的军队指挥
             foreach (var character in _characters.Values)
