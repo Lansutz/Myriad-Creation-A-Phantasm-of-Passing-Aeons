@@ -68,14 +68,14 @@ namespace CivilizationEvolution.AI
 
             // 研究革新
             var currentResearch = innovations.GetCurrentResearch(realmId);
-            if (!currentResearch.HasValue || currentResearch.Value.innovationId == 0)
+            if (currentResearch == null || currentResearch.innovationId == 0)
             {
                 var available = innovations.GetAvailableInnovations(realmId);
                 if (available.Count > 0)
                 {
-                    // 根据人格选择研究方向
+                    // 根据人格选择研究方向（偏好大类：技术/思维/制度/传统）
                     var preferred = available.Find(i =>
-                        personality.preferredCategories.Contains(i.category));
+                        personality.preferredDomains.Contains(i.Domain));
                     if (preferred.innovationId != 0)
                         innovations.StartResearch(realmId, preferred.innovationId);
                     else
@@ -417,7 +417,7 @@ namespace CivilizationEvolution.AI
         [Range(0f, 1f)] public float riskTolerance;       // 风险承受
         [Range(0f, 2f)] public float researchMultiplier;  // 研究倍率
 
-        public List<InnovationCategory> preferredCategories;
+        public List<InnovationDomain> preferredDomains;
 
         /// <summary>生成随机人格</summary>
         public static AIPersonality RandomPersonality()
@@ -432,16 +432,16 @@ namespace CivilizationEvolution.AI
                 aggression = UnityEngine.Random.Range(0.2f, 0.8f),
                 riskTolerance = UnityEngine.Random.Range(0.2f, 0.8f),
                 researchMultiplier = UnityEngine.Random.Range(0.8f, 1.5f),
-                preferredCategories = new List<InnovationCategory>()
+                preferredDomains = new List<InnovationDomain>()
             };
 
-            // 随机偏好2个研究方向
-            var allCategories = System.Enum.GetValues(typeof(InnovationCategory));
-            int first = UnityEngine.Random.Range(0, allCategories.Length);
-            int second = UnityEngine.Random.Range(0, allCategories.Length);
-            p.preferredCategories.Add((InnovationCategory)allCategories.GetValue(first));
+            // 随机偏好2个革新大类（技术/思维/制度/传统）
+            var allDomains = System.Enum.GetValues(typeof(InnovationDomain));
+            int first = UnityEngine.Random.Range(0, allDomains.Length);
+            int second = UnityEngine.Random.Range(0, allDomains.Length);
+            p.preferredDomains.Add((InnovationDomain)allDomains.GetValue(first));
             if (second != first)
-                p.preferredCategories.Add((InnovationCategory)allCategories.GetValue(second));
+                p.preferredDomains.Add((InnovationDomain)allDomains.GetValue(second));
 
             return p;
         }

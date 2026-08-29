@@ -5,6 +5,7 @@ using UnityEngine;
 using CivilizationEvolution.Culture;
 using CivilizationEvolution.Race;
 using CivilizationEvolution.Role;
+using CivilizationEvolution.Tech;
 
 namespace CivilizationEvolution.Core
 {
@@ -19,6 +20,7 @@ namespace CivilizationEvolution.Core
     ///   CharacterTemplate/CharacterTemplates.json（顶层包装 { "templates": [...] }——角色生成模板表）
     ///   Dna/DnaDefs.json（顶层包装 { "defs": [...] }——DNA 天赋/遗传病定义表，模组可扩展）
     ///   MentalHealth/MentalHealthDefs.json（顶层包装 { "disorders": [...] }——精神疾病定义表，模组可扩展）
+    ///   Innovation/Innovations.json（顶层包装 { "innovations": [...] }——革新定义表，两级分类：大类+子类，模组可扩展）
     ///   Language/&lt;语言名&gt;/Language.json（语言定义）
     ///   EthnicGroup/EthnicGroups.json（顶层包装 { "groups": [...] }——族群实体）
     /// Mods 与 Base 同名 Id 后者覆盖，实现内容热扩展。
@@ -92,6 +94,12 @@ namespace CivilizationEvolution.Core
             public List<MentalDisorderDef> disorders = new List<MentalDisorderDef>();
         }
 
+        [Serializable]
+        private class InnovationsWrapper
+        {
+            public List<InnovationDef> innovations = new List<InnovationDef>();
+        }
+
         public static Dictionary<int, CultureContentPack> Cultures { get; private set; } = new Dictionary<int, CultureContentPack>();
         public static Dictionary<int, RaceData> Races { get; private set; } = new Dictionary<int, RaceData>();
 
@@ -104,6 +112,7 @@ namespace CivilizationEvolution.Core
         public static Dictionary<string, CharacterTemplateDef> CharacterTemplates { get; private set; } = new Dictionary<string, CharacterTemplateDef>();
         public static Dictionary<string, TalentDefectDef> TalentDefects { get; private set; } = new Dictionary<string, TalentDefectDef>();
         public static Dictionary<string, MentalDisorderDef> MentalDisorders { get; private set; } = new Dictionary<string, MentalDisorderDef>();
+        public static Dictionary<int, InnovationDef> Innovations { get; private set; } = new Dictionary<int, InnovationDef>();
 
         public static bool IsInitialized { get; private set; } = false;
 
@@ -121,6 +130,7 @@ namespace CivilizationEvolution.Core
             CharacterTemplates = new Dictionary<string, CharacterTemplateDef>();
             TalentDefects = new Dictionary<string, TalentDefectDef>();
             MentalDisorders = new Dictionary<string, MentalDisorderDef>();
+            Innovations = new Dictionary<int, InnovationDef>();
 
             string root = Application.streamingAssetsPath;
             if (!Directory.Exists(root))
@@ -137,7 +147,7 @@ namespace CivilizationEvolution.Core
             Debug.Log($"[ContentRegistry] 内容加载完成：文化 {Cultures.Count}，种族 {Races.Count}，" +
                 $"族群精神 {Ethos.Count}，文化传统 {Traditions.Count}，语言 {Languages.Count}，族群 {EthnicGroups.Count}，" +
                 $"家族传统 {FamilyTraditions.Count}，角色模板 {CharacterTemplates.Count}，DNA 天赋缺陷 {TalentDefects.Count}，" +
-                $"精神疾病 {MentalDisorders.Count}");
+                $"精神疾病 {MentalDisorders.Count}，革新 {Innovations.Count}");
         }
 
         /// <summary>重置注册表（编辑器重载数据时使用）</summary>
@@ -154,6 +164,7 @@ namespace CivilizationEvolution.Core
             CharacterTemplates.Clear();
             TalentDefects.Clear();
             MentalDisorders.Clear();
+            Innovations.Clear();
         }
 
         // ===== 查询接口 =====
@@ -168,6 +179,7 @@ namespace CivilizationEvolution.Core
         public static bool TryGetCharacterTemplate(string id, out CharacterTemplateDef def) => CharacterTemplates.TryGetValue(id, out def);
         public static bool TryGetTalentDefect(string id, out TalentDefectDef def) => TalentDefects.TryGetValue(id, out def);
         public static bool TryGetMentalDisorder(string id, out MentalDisorderDef def) => MentalDisorders.TryGetValue(id, out def);
+        public static bool TryGetInnovation(int id, out InnovationDef def) => Innovations.TryGetValue(id, out def);
 
         /// <summary>从文化包提取随机名字（type: 0男名 1女名 2姓氏 3城名，可传 null 随机池）</summary>
         public static string GetRandomName(CultureContentPack pack, int type, System.Random rng = null)
@@ -268,6 +280,13 @@ namespace CivilizationEvolution.Core
             {
                 try { LoadMentalHealthDefs(mentalHealthFile); }
                 catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 精神疾病定义加载失败：{e.Message}"); }
+            }
+
+            string innovationFile = Path.Combine(root, "Innovation", "Innovations.json");
+            if (File.Exists(innovationFile))
+            {
+                try { LoadInnovations(innovationFile); }
+                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 革新定义加载失败：{e.Message}"); }
             }
         }
 
@@ -403,6 +422,18 @@ namespace CivilizationEvolution.Core
             {
                 if (def == null || string.IsNullOrEmpty(def.id)) continue;
                 MentalDisorders[def.id] = def;
+            }
+        }
+
+        /// <summary>加载革新（Innovation）定义表（两级分类：大类+子类；模组可新增）</summary>
+        private static void LoadInnovations(string path)
+        {
+            var wrapper = JsonUtility.FromJson<InnovationsWrapper>(File.ReadAllText(path));
+            if (wrapper == null || wrapper.innovations == null) return;
+            foreach (var def in wrapper.innovations)
+            {
+                if (def == null || def.innovationId <= 0) continue;
+                Innovations[def.innovationId] = def;
             }
         }
 
