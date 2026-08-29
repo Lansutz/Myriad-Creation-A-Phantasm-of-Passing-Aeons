@@ -124,11 +124,11 @@
     {
       "innovationId": 200,
       "field": 6,
-      "era": 1,
-      "researchCost": 100,
+      "era": 0,
+      "researchCost": 60,
       "prerequisites": [],
       "innovationName": "陶器制作",
-      "description": "一团泥巴在火里变成器皿，储水、存粮、煮食都离不开它。"
+      "description": "一团泥巴在火里变成器皿；东亚仙人洞的陶片已有两万年（全球最早）。"
     },
     {
       "innovationId": 204,
@@ -206,7 +206,8 @@
       "researchCost": 600,
       "prerequisites": [
         301,
-        302
+        302,
+        924
       ],
       "innovationName": "重装骑兵",
       "description": "人马俱甲，冲锋如墙；平原战场的主宰者登场。"
@@ -260,11 +261,11 @@
     {
       "innovationId": 400,
       "field": 7,
-      "era": 1,
+      "era": 0,
       "researchCost": 80,
       "prerequisites": [],
       "innovationName": "独木舟",
-      "description": "一截巨木掏空成舟，人第一次离开了岸。"
+      "description": "一截巨木掏空成舟，人第一次离开了岸（Pesse 独木舟，约前 8000 年）。"
     },
     {
       "innovationId": 401,
@@ -384,7 +385,9 @@
       "field": 13,
       "era": 2,
       "researchCost": 400,
-      "prerequisites": [],
+      "prerequisites": [
+        923
+      ],
       "innovationName": "骑兵战术",
       "description": "骑射奔袭、迂回包抄，战马不只是脚力，更是兵法的一部分。"
     },
@@ -771,6 +774,248 @@
       ],
       "innovationName": "度量衡",
       "description": "度长短、量多少、衡轻重，天下同制；交易与赋税第一次有了不争的标准。"
+    },
+    {
+      "innovationId": 900,
+      "field": 6,
+      "era": 0,
+      "researchCost": 30,
+      "prerequisites": [],
+      "innovationName": "用火",
+      "description": "留住天火，驱兽取暖；长夜不再只有黑暗与寒冷。"
+    },
+    {
+      "innovationId": 901,
+      "field": 6,
+      "era": 0,
+      "researchCost": 40,
+      "prerequisites": [
+        900
+      ],
+      "innovationName": "烹饪",
+      "description": "火烤熟食，肠胃解放，脑力渐开；一餐熟食抵得上生食数日。"
+    },
+    {
+      "innovationId": 902,
+      "field": 6,
+      "era": 0,
+      "researchCost": 20,
+      "prerequisites": [],
+      "innovationName": "石器打制",
+      "description": "击石取片，刃口锋利；第一件工具也是第一件武器。"
+    },
+    {
+      "innovationId": 903,
+      "field": 6,
+      "era": 0,
+      "researchCost": 50,
+      "prerequisites": [
+        902
+      ],
+      "innovationName": "磨制石器",
+      "description": "砺石磨刃，斧凿规整；木工与舟船从此有了趁手的家伙。"
+    },
+    {
+      "innovationId": 904,
+      "field": 6,
+      "era": 0,
+      "researchCost": 40,
+      "prerequisites": [
+        902
+      ],
+      "innovationName": "骨角器",
+      "description": "骨针骨叉骨矛头，兽骨化身为第二套工具库。"
+    },
+    {
+      "innovationId": 905,
+      "field": 6,
+      "era": 0,
+      "researchCost": 60,
+      "prerequisites": [
+        902
+      ],
+      "innovationName": "装柄复合工具",
+      "description": "石刃装柄、矛尖绑杆；手的力量顺着木杆伸出去了一倍。"
+    },
+    {
+      "innovationId": 906,
+      "field": 6,
+      "era": 0,
+      "researchCost": 50,
+      "prerequisites": [
+        905
+      ],
+      "innovationName": "标枪",
+      "description": "削尖木杆，掷向猎物；三十万年前的松木长矛已能刺穿巨兽。"
+    },
+    {
+      "innovationId": 907,
+      "field": 6,
+      "era": 0,
+      "researchCost": 80,
+      "prerequisites": [
+        906
+      ],
+      "innovationName": "弓箭",
+      "description": "弯木为弓、弦丝为弦，箭矢破空；小型猎物与飞禽进入食谱。"
+    },
+    {
+      "innovationId": 908,
+      "field": 6,
+      "era": 0,
+      "researchCost": 60,
+      "prerequisites": [
+        904
+      ],
+      "innovationName": "缝纫与衣物",
+      "description": "骨针引线，兽皮成衣；寒带之地从此也能住人。"
+    },
+    {
+      "innovationId": 909,
+      "field": 6,
+      "era": 0,
+      "researchCost": 40,
+      "prerequisites": [],
+      "innovationName": "编织篮筐",
+      "description": "藤条苇草编成筐篮，采集的果实有了随身携带的仓库。"
+    },
+    {
+      "innovationId": 911,
+      "field": 1,
+      "era": 0,
+      "researchCost": 50,
+      "prerequisites": [],
+      "innovationName": "狗的驯化",
+      "description": "狼在火堆边安了家，人有了第一个四足伙伴；驯化的时代由此开始。"
+    },
+    {
+      "innovationId": 916,
+      "field": 1,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        100
+      ],
+      "innovationName": "粟黍旱作",
+      "description": "华北的粟与黍，春种秋收；黄土高原上最早的田园。"
+    },
+    {
+      "innovationId": 917,
+      "field": 1,
+      "era": 1,
+      "researchCost": 200,
+      "prerequisites": [
+        100
+      ],
+      "innovationName": "稻作水田",
+      "description": "长江流域的稻穗低垂，水田阡陌；一万年前的米香至今未散。"
+    },
+    {
+      "innovationId": 918,
+      "field": 1,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        100
+      ],
+      "innovationName": "麦类耕作",
+      "description": "新月沃地的麦浪西行，面包的香气追随播种者传遍四方。"
+    },
+    {
+      "innovationId": 919,
+      "field": 1,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [
+        911
+      ],
+      "innovationName": "牲畜驯养",
+      "description": "羊群牛群猪群圈进栅栏，肉食与皮毛不再全靠狩猎。"
+    },
+    {
+      "innovationId": 920,
+      "field": 1,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        919
+      ],
+      "innovationName": "羊毛乳业",
+      "description": "剪毛织褐、挤奶制酪，同一群羊被反复再发明；次级产品革命。"
+    },
+    {
+      "innovationId": 921,
+      "field": 1,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        919
+      ],
+      "innovationName": "犁耕",
+      "description": "牛曳木犁，深耕破土；一犁之功胜过十锄。"
+    },
+    {
+      "innovationId": 922,
+      "field": 1,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        919
+      ],
+      "innovationName": "马的驯化",
+      "description": "草原上的野马被套上缰绳；Botai 的牧人留下了最早的骑乘齿痕。"
+    },
+    {
+      "innovationId": 923,
+      "field": 5,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        922
+      ],
+      "innovationName": "骑乘术",
+      "description": "人马合一，日行百里；斥候的视野与军队的腿脚一同变长。"
+    },
+    {
+      "innovationId": 924,
+      "field": 5,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        923,
+        301
+      ],
+      "innovationName": "马镫",
+      "description": "双脚有了支点，骑士挥刀稳如平地；骑兵的时代真正到来。"
+    },
+    {
+      "innovationId": 914,
+      "field": 11,
+      "era": 0,
+      "researchCost": 30,
+      "prerequisites": [],
+      "innovationName": "赭石珠饰",
+      "description": "赭石涂身、贝壳穿串；部落的边界画在了身体上。"
+    },
+    {
+      "innovationId": 915,
+      "field": 9,
+      "era": 0,
+      "researchCost": 50,
+      "prerequisites": [],
+      "innovationName": "刻痕计数",
+      "description": "骨棒上刻下一道道痕，数目第一次离开记忆独自存留。"
+    },
+    {
+      "innovationId": 913,
+      "field": 6,
+      "era": 0,
+      "researchCost": 80,
+      "prerequisites": [
+        200
+      ],
+      "innovationName": "酿酒",
+      "description": "陶瓮里的米谷悄悄发酵，宴饮与祭祀从此有了醉意。"
     }
   ]
 }

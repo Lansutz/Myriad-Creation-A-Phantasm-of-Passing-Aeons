@@ -71,6 +71,53 @@ namespace CivilizationEvolution.Tests
         }
 
         [Test]
+        public void InnovationTree_OriginalEra0_FromPrimitiveStart()
+        {
+            // 批 A：era 0 原始起点（从最原始的技术开始）
+            var fire = _tree.GetInnovation(900);
+            Assert.IsNotNull(fire, "用火应存在");
+            Assert.AreEqual(0, fire.era, "用火应为 era0");
+            Assert.AreEqual(InnovationDomain.Technology, fire.Domain, "用火→技术");
+
+            Assert.AreEqual(0, _tree.GetInnovation(902).era, "石器打制 era0");
+            Assert.AreEqual(0, _tree.GetInnovation(911).era, "狗的驯化 era0");
+            Assert.AreEqual(0, _tree.GetInnovation(914).era, "赭石珠饰 era0");
+
+            // 陶器/独木舟降入 era0（全球最早实证：仙人洞 2 万年 / Pesse 前 8000 年）
+            Assert.AreEqual(0, _tree.GetInnovation(200).era, "陶器 era0（东亚最早）");
+            Assert.AreEqual(0, _tree.GetInnovation(400).era, "独木舟 era0");
+
+            // 人类学分期起点数
+            int era0Count = 0;
+            foreach (var kv in _tree.GetAllInnovations())
+                if (kv.Value.era == 0) era0Count++;
+            Assert.That(era0Count, Is.GreaterThanOrEqualTo(15), "era0 原始起点应 ≥15 项");
+        }
+
+        [Test]
+        public void InnovationTree_HorseChain_Complete()
+        {
+            // 骑兵链：马的驯化→骑乘术→马镫→重装骑兵（Botai 实证链）
+            Assert.AreEqual(1, _tree.GetInnovation(922).era, "马的驯化 era1");
+            Assert.IsTrue(_tree.GetInnovation(923).prerequisites.Contains(922), "骑乘术前置马驯化");
+            Assert.IsTrue(_tree.GetInnovation(924).prerequisites.Contains(923), "马镫前置骑乘");
+            Assert.IsTrue(_tree.GetInnovation(924).prerequisites.Contains(301), "马镫前置铁制武器");
+            Assert.IsTrue(_tree.GetInnovation(303).prerequisites.Contains(924), "重装骑兵前置马镫");
+            Assert.IsTrue(_tree.GetInnovation(302).prerequisites.Contains(923), "骑兵战术前置骑乘");
+        }
+
+        [Test]
+        public void InnovationTree_GlobalAgriculture_ThreeCrops()
+        {
+            // 全球驯化中心分列：粟黍（华北）/稻作（长江）/麦类（新月沃地）
+            Assert.IsNotNull(_tree.GetInnovation(916), "粟黍旱作应存在");
+            Assert.IsNotNull(_tree.GetInnovation(917), "稻作水田应存在");
+            Assert.IsNotNull(_tree.GetInnovation(918), "麦类耕作应存在");
+            Assert.AreEqual(1, _tree.GetInnovation(916).era, "农业 era1");
+            Assert.IsTrue(_tree.GetInnovation(916).prerequisites.Contains(100), "粟黍前置刀耕火种");
+        }
+
+        [Test]
         public void InnovationTree_TraditionSupplemented_WithNewContent()
         {
             // 补全内容在位：传统类 8 个 + 技术空缺子类
