@@ -1509,6 +1509,426 @@
       ],
       "innovationName": "包税制",
       "description": "税收征管以合同外包，包税人竞标定额（罗马 publicani、奥斯曼 iltizam）；财政的捷径与积弊。"
+    },
+    {
+      "innovationId": 962,
+      "field": 6,
+      "era": 0,
+      "researchCost": 60,
+      "prerequisites": [
+        902
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "预制石核",
+      "description": "先整石核再取片（勒瓦娄哇：一次成型）；工具第一次需要预谋。"
+    },
+    {
+      "innovationId": 963,
+      "field": 6,
+      "era": 0,
+      "researchCost": 70,
+      "prerequisites": [
+        962
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "石叶技术",
+      "description": "一核多叶、刃口绵长；石料利用率翻了三倍。"
+    },
+    {
+      "innovationId": 964,
+      "field": 6,
+      "era": 0,
+      "researchCost": 80,
+      "prerequisites": [
+        963
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "细石器",
+      "description": "几何小片嵌柄成刃（Howiesons Poort 六万五千年前）；复合刃的时代。"
+    },
+    {
+      "innovationId": 965,
+      "field": 6,
+      "era": 0,
+      "researchCost": 60,
+      "prerequisites": [
+        906
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "投矛器",
+      "description": "杠杆延长手臂，矛掷得又远又狠（马格德林文化）。"
+    },
+    {
+      "innovationId": 966,
+      "field": 11,
+      "era": 0,
+      "researchCost": 70,
+      "prerequisites": [
+        914
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "岩画艺术",
+      "description": "手印与野牛在洞壁上呼之欲出（苏拉威西四万五千年、Chauvet）；最早的艺术。"
+    },
+    {
+      "innovationId": 967,
+      "field": 9,
+      "era": 0,
+      "researchCost": 80,
+      "prerequisites": [
+        915
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "历法计时",
+      "description": "骨棒刻痕记月相（Ishango 骨）；时间第一次被数出来。"
+    },
+    {
+      "innovationId": 968,
+      "field": 23,
+      "era": 0,
+      "researchCost": 50,
+      "prerequisites": [
+        914
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "珠饰交换",
+      "description": "贝壳珠跨越千里易手（Blombos 七万五千年前）；最早的奢侈品贸易。"
+    },
+    {
+      "innovationId": 969,
+      "field": 1,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [
+        911
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "猪的驯化",
+      "description": "贾湖与安纳托利亚各自驯猪（多中心）；肉食稳定化的第一步。"
+    },
+    {
+      "innovationId": 970,
+      "field": 1,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [
+        911
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "羊的驯化",
+      "description": "扎格罗斯山麓的羊群入圈（Ganj Dareh）；毛奶肉的宝库。"
+    },
+    {
+      "innovationId": 971,
+      "field": 1,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [
+        911
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "牛的驯化",
+      "description": "安纳托利亚原牛驯服，印度瘤牛、非洲牛各成一系；力与乳的源泉。"
+    },
+    {
+      "innovationId": 972,
+      "field": 1,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        100
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "新大陆作物",
+      "description": "玉米土豆南瓜——无大牲畜的农业靠工具与智慧取胜（中美洲/安第斯）。"
+    },
+    {
+      "innovationId": 973,
+      "field": 6,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [
+        908,
+        909
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "纺轮",
+      "description": "陶木纺轮捻线如飞（河姆渡纺轮七千年前）；线比手捻又匀又长。"
+    },
+    {
+      "innovationId": 974,
+      "field": 6,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        973
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "养蚕缫丝",
+      "description": "桑蚕吐丝、缫成锦帛（钱山漾丝织品；贾湖丝蛋白八千五百年）；中国独有之秘。"
+    },
+    {
+      "innovationId": 975,
+      "field": 6,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        204
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "提花织机",
+      "description": "花楼之上提综换线，锦上能织山水（马钧改良绫机）。"
+    },
+    {
+      "innovationId": 976,
+      "field": 6,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        200
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "漆器",
+      "description": "漆树割汁髹涂成器（跨湖桥漆弓八千年，世界最早）；东亚的树脂文明。"
+    },
+    {
+      "innovationId": 977,
+      "field": 6,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        903
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "玉石加工",
+      "description": "砂绳切割、管钻成孔（良渚玉琮毫米级精度）；石头中的礼制。"
+    },
+    {
+      "innovationId": 978,
+      "field": 6,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        200
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "釉与釉砂",
+      "description": "石英砂挂釉入窑（埃及釉砂前四千年；唐三彩铅釉）；玻璃的兄长。"
+    },
+    {
+      "innovationId": 979,
+      "field": 6,
+      "era": 4,
+      "researchCost": 800,
+      "prerequisites": [
+        206
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "活字印刷",
+      "description": "毕昇泥活字、朝鲜金属活字、谷登堡铅活字——三次独立点亮；千书同出。"
+    },
+    {
+      "innovationId": 980,
+      "field": 14,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        505
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Democracy"
+      ],
+      "innovationName": "雅典公民议事",
+      "description": "五百人议事会轮值执政、抽签任职（克利斯提尼改革）；公民集体之治。"
+    },
+    {
+      "innovationId": 981,
+      "field": 16,
+      "era": 3,
+      "researchCost": 200,
+      "prerequisites": [
+        980
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Democracy"
+      ],
+      "innovationName": "陶片放逐",
+      "description": "万片陶片定流放（地米斯托克利之例）；民主的反独裁保险丝。"
+    },
+    {
+      "innovationId": 982,
+      "field": 10,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        600,
+        503
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Arthashastra"
+      ],
+      "innovationName": "政事论",
+      "description": "考底利耶著书立说：十八部门、逐级汇报、密探网络（孔雀王朝行政学）。"
+    },
+    {
+      "innovationId": 983,
+      "field": 16,
+      "era": 4,
+      "researchCost": 450,
+      "prerequisites": [
+        503,
+        506
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "拜占庭官僚",
+      "description": "官职表列名全套宫廷职官（taktika）；罗马官僚制的活化石。"
+    },
+    {
+      "innovationId": 984,
+      "field": 16,
+      "era": 4,
+      "researchCost": 350,
+      "prerequisites": [
+        823,
+        960
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Yam"
+      ],
+      "innovationName": "蒙古站赤",
+      "description": "一千四百站、牌符换乘（paiza）；欧亚大陆的驿传帝国。"
+    },
+    {
+      "innovationId": 985,
+      "field": 16,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        505
+      ],
+      "prerequisitesAny": [
+        820,
+        946,
+        947
+      ],
+      "affinityTags": [
+        "Seal"
+      ],
+      "innovationName": "印信封泥符券",
+      "description": "封泥盖印、剖符合验（秦封泥数万枚、虎符鱼符）；文书权威的凭据。"
+    },
+    {
+      "innovationId": 986,
+      "field": 16,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [],
+      "prerequisitesAny": [
+        820,
+        946,
+        947
+      ],
+      "affinityTags": [],
+      "innovationName": "神庙档案",
+      "description": "神庙与商号亦有账房（乌鲁克埃安纳两万件；穆拉舒家族租约）；文书化是复杂组织的通律。"
+    },
+    {
+      "innovationId": 987,
+      "field": 17,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        503,
+        701
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Diwan"
+      ],
+      "innovationName": "迪万财政",
+      "description": "欧麦尔设俸册，哈里发分设税务文翰印玺诸部（diwan）；部委制的雏形。"
+    },
+    {
+      "innovationId": 993,
+      "field": 15,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        505
+      ],
+      "prerequisitesAny": [
+        820,
+        946,
+        947
+      ],
+      "affinityTags": [],
+      "innovationName": "契约文书",
+      "description": "租约、借贷、合伙皆立契为凭（穆拉舒契约、庞贝蜡板）；私人间的法度。"
+    },
+    {
+      "innovationId": 988,
+      "field": 5,
+      "era": 5,
+      "researchCost": 900,
+      "prerequisites": [
+        603,
+        206
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "机械钟",
+      "description": "摆轮擒纵、昼夜自鸣（欧洲十三世纪钟楼）；时间脱离天象独立行走。"
+    },
+    {
+      "innovationId": 989,
+      "field": 5,
+      "era": 4,
+      "researchCost": 400,
+      "prerequisites": [
+        106,
+        801
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "风车",
+      "description": "风帆转轮、磨粉提水（波斯风车、欧洲风车）；风成了新的畜力。"
+    },
+    {
+      "innovationId": 990,
+      "field": 7,
+      "era": 4,
+      "researchCost": 500,
+      "prerequisites": [
+        403,
+        404
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "星盘导航",
+      "description": "观星定纬、测角知位（伊斯兰星盘传欧）；远洋有了天上的路标。"
     }
   ]
 }

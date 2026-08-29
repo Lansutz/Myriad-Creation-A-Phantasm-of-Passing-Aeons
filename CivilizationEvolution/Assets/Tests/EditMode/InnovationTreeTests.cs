@@ -258,6 +258,43 @@ namespace CivilizationEvolution.Tests
             Assert.IsTrue(_tree.GetInnovation(957).prerequisites.Contains(941), "末日审判书前置上计制度");
         }
 
+        [Test]
+        public void InnovationTree_StoneToolSpectrum_DeepChain()
+        {
+            // 旧石器技术谱系（研究 P2-P4）：打制→预制石核→石叶→细石器
+            Assert.IsNotNull(_tree.GetInnovation(962), "预制石核（勒瓦娄哇）应存在");
+            Assert.IsTrue(_tree.GetInnovation(962).prerequisites.Contains(902), "预制石核前置石器打制");
+            Assert.IsTrue(_tree.GetInnovation(963).prerequisites.Contains(962), "石叶前置预制石核");
+            Assert.IsTrue(_tree.GetInnovation(964).prerequisites.Contains(963), "细石器前置石叶");
+            Assert.IsTrue(_tree.GetInnovation(965).prerequisites.Contains(906), "投矛器前置标枪");
+            Assert.IsNotNull(_tree.GetInnovation(967), "历法计时应存在（Ishango 骨）");
+            Assert.IsNotNull(_tree.GetInnovation(966), "岩画艺术应存在（Chauvet）");
+        }
+
+        [Test]
+        public void InnovationTree_AdministrationForms_Worldwide()
+        {
+            // 行政新形态（全球比较）：民主/政事论/拜占庭/站赤/封泥/神庙档案/迪万/契约
+            Assert.IsTrue(_tree.GetInnovation(980).affinityTags.Contains("Democracy"), "雅典议事带 Democracy 标签");
+            Assert.IsTrue(_tree.GetInnovation(981).prerequisites.Contains(980), "陶片放逐前置雅典议事");
+            Assert.IsTrue(_tree.GetInnovation(982).prerequisites.Contains(503), "政事论前置官僚制度");
+            Assert.IsNotNull(_tree.GetInnovation(983), "拜占庭官僚应存在");
+            Assert.IsTrue(_tree.GetInnovation(984).prerequisites.Contains(960), "蒙古站赤前置行省制");
+            Assert.IsTrue(_tree.GetInnovation(985).prerequisitesAny.Contains(820), "封泥符券 OR 含简牍");
+            Assert.IsTrue(_tree.GetInnovation(987).affinityTags.Contains("Diwan"), "迪万财政带 Diwan 标签");
+            Assert.IsNotNull(_tree.GetInnovation(993), "契约文书应存在");
+        }
+
+        [Test]
+        public void InnovationTree_Era5_PreModernExists()
+        {
+            // 前近代（era5）：机械钟首次出现
+            Assert.IsNotNull(_tree.GetInnovation(988), "机械钟应存在（era5）");
+            Assert.AreEqual(5, _tree.GetInnovation(988).era, "机械钟 era5");
+            Assert.IsNotNull(_tree.GetInnovation(989), "风车应存在");
+            Assert.IsNotNull(_tree.GetInnovation(990), "星盘导航应存在");
+        }
+
         private static void CompleteTree(InnovationTree tree, int id)
         {
             Assert.IsTrue(tree.StartResearch(1, id), $"革新 {id} 应可开始研究");
