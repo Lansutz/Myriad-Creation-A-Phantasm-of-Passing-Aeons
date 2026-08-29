@@ -451,11 +451,14 @@
       "era": 3,
       "researchCost": 500,
       "prerequisites": [
-        502,
-        822
+        502
       ],
       "innovationName": "官僚制度",
-      "description": "以文书治国，官员由中枢任免；国家的机器不再靠血缘转动。"
+      "description": "以文书治国，官员由中枢任免；国家的机器不再靠血缘转动。",
+      "prerequisitesAny": [
+        822,
+        949
+      ]
     },
     {
       "innovationId": 504,
@@ -734,11 +737,14 @@
       "field": 16,
       "era": 2,
       "researchCost": 300,
-      "prerequisites": [
-        820
-      ],
+      "prerequisites": [],
       "innovationName": "簿籍制度",
-      "description": "户籍田册、赋役簿帐逐户登记；编户齐民，国家第一次能数清自己的子民。"
+      "description": "户籍田册、赋役簿帐逐户登记；编户齐民，国家第一次能数清自己的子民。",
+      "prerequisitesAny": [
+        820,
+        946,
+        947
+      ]
     },
     {
       "innovationId": 822,
@@ -758,11 +764,14 @@
       "era": 3,
       "researchCost": 350,
       "prerequisites": [
-        822,
         808
       ],
       "innovationName": "驿传邮驿",
-      "description": "驿道置邮，文书昼夜兼程；都城的诏令数日可抵千里之外的郡县。"
+      "description": "驿道置邮，文书昼夜兼程（印加以接力跑者传讯，奇普文明同此）；都城的诏令数日可抵千里。",
+      "prerequisitesAny": [
+        822,
+        949
+      ]
     },
     {
       "innovationId": 824,
@@ -1252,6 +1261,99 @@
       ],
       "innovationName": "九品中正",
       "description": "中正官品评士人，九品定高下；门阀渐成，然品评之制终为科举铺路。"
+    },
+    {
+      "innovationId": 946,
+      "field": 16,
+      "era": 1,
+      "researchCost": 250,
+      "prerequisites": [
+        600,
+        200
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Clay"
+      ],
+      "innovationName": "泥板文书",
+      "description": "湿泥压字、晒干成板（乌鲁克泥板九成是账目——书写为行政而生）；两河路径的记录载体。"
+    },
+    {
+      "innovationId": 947,
+      "field": 16,
+      "era": 1,
+      "researchCost": 250,
+      "prerequisites": [
+        600,
+        204
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Papyrus"
+      ],
+      "innovationName": "莎草纸文书",
+      "description": "纸草茎剖为页，书吏伏案疾书（瓦迪·杰尔夫纸草为现存最早）；埃及与地中海路径。"
+    },
+    {
+      "innovationId": 948,
+      "field": 16,
+      "era": 0,
+      "researchCost": 80,
+      "prerequisites": [
+        915
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Quipu"
+      ],
+      "innovationName": "奇普结绳",
+      "description": "绳结记事记数（卡拉尔遗址结绳早于印加四千年）；无文字文明的记录形态。"
+    },
+    {
+      "innovationId": 949,
+      "field": 16,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        948
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Quipu"
+      ],
+      "innovationName": "奇普统计",
+      "description": "分层汇总会计（Urton & Brezine 破译普鲁丘科奇普群为记账系统）；户口贡赋尽在绳结中。"
+    },
+    {
+      "innovationId": 950,
+      "field": 16,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        823
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Barid"
+      ],
+      "innovationName": "巴里德驿站",
+      "description": "四法尔萨赫一驿，信鸽传讯（《道里邦国志》九百三十站）；驿传与情报网合体。"
+    },
+    {
+      "innovationId": 951,
+      "field": 16,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        947,
+        503
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Scribe"
+      ],
+      "innovationName": "书吏学校",
+      "description": "神庙附设学馆，书吏子弟世代执笔（《行业讽刺诗》）；选拔的埃及形态。"
     }
   ]
 }

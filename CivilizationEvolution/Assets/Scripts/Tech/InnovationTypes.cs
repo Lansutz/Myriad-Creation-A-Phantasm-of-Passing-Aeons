@@ -110,11 +110,20 @@ namespace CivilizationEvolution.Tech
         public string innovationName;
         /// <summary>子类（domain 由映射表推导）</summary>
         public InnovationField field;
-        public int era; // 时代 1-4
+        public int era; // 时代 0-5
         public float researchCost;
+        /// <summary>前置（AND：全部满足）</summary>
         public List<int> prerequisites = new List<int>();
+        /// <summary>或前置（OR：满足任一即可；差异化路径——同节点多形态）</summary>
+        public List<int> prerequisitesAny = new List<int>();
         /// <summary>内置描述（本地化表有 &lt;id&gt;_desc 键时优先）</summary>
         public string description;
+        /// <summary>
+        /// 节点级文化亲和标签（如 "Clay"/"Papyrus"/"Quipu"）：
+        /// 文化 innovationAffinities 含该标签时研究速率加成——引导不同文明
+        /// 走向不同行政/技术形态（差异化路径，软引导非硬锁）
+        /// </summary>
+        public List<string> affinityTags = new List<string>();
 
         /// <summary>所属大类（由子类映射推导）</summary>
         public InnovationDomain Domain => InnovationDomainMap.GetDomain(field);

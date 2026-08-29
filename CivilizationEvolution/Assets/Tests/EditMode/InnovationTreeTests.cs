@@ -170,6 +170,58 @@ namespace CivilizationEvolution.Tests
         }
 
         [Test]
+        public void InnovationTree_AdministrativeDiversity_AlternativeForms()
+        {
+            // 差异化路径：记录载体三形态 + 无文字统计链 + 选拔多形态
+            Assert.IsNotNull(_tree.GetInnovation(946), "泥板文书（两河）应存在");
+            Assert.IsNotNull(_tree.GetInnovation(947), "莎草纸文书（埃及/地中海）应存在");
+            Assert.IsNotNull(_tree.GetInnovation(948), "奇普结绳（安第斯，无文字）应存在");
+            Assert.IsNotNull(_tree.GetInnovation(949), "奇普统计应存在");
+            Assert.IsNotNull(_tree.GetInnovation(950), "巴里德驿站（阿拉伯）应存在");
+            Assert.IsNotNull(_tree.GetInnovation(951), "书吏学校（埃及选拔）应存在");
+
+            // 节点级文化标签
+            Assert.IsTrue(_tree.GetInnovation(946).affinityTags.Contains("Clay"), "泥板文书带 Clay 标签");
+            Assert.IsTrue(_tree.GetInnovation(948).affinityTags.Contains("Quipu"), "奇普带 Quipu 标签");
+
+            // OR 前置：簿籍=简牍/泥板/莎草 任选；官僚=文书行政/奇普统计 任选
+            Assert.IsTrue(_tree.GetInnovation(821).prerequisitesAny.Contains(946), "簿籍 OR 含泥板");
+            Assert.IsTrue(_tree.GetInnovation(503).prerequisitesAny.Contains(949), "官僚 OR 含奇普统计");
+        }
+
+        [Test]
+        public void InnovationTree_OrPrerequisites_QuipuPathReachesBureaucracy()
+        {
+            // 差异化验证：无文字路径（奇普链）也能到达官僚制度——仅完成奇普链不碰简牍链
+            var tree = new InnovationTree();
+            // 政制链 + 驿传的硬质道路链（807 轮车→808 硬质道路）
+            CompleteTree(tree, 500);  // 部落联盟
+            CompleteTree(tree, 501);  // 封建
+            CompleteTree(tree, 807);  // 轮车
+            CompleteTree(tree, 808);  // 硬质道路
+            // 奇普统计链（无文字！）
+            CompleteTree(tree, 915);  // 刻痕计数
+            CompleteTree(tree, 948);  // 奇普结绳
+            CompleteTree(tree, 949);  // 奇普统计
+            // 驿传：OR [822 文书行政, 949 奇普统计]——奇普满足（印加 chasqui）
+            CompleteTree(tree, 823);
+            // 中央集权 → 官僚制度：OR [822, 949]——奇普满足
+            CompleteTree(tree, 502);
+            Assert.IsTrue(tree.StartResearch(1, 503), "奇普统计满足官僚制度 OR 前置，应可研究");
+            // 全程未触碰简牍/文字链
+            Assert.IsFalse(tree.HasInnovation(1, 600), "奇普路径不应需要文字");
+            Assert.IsFalse(tree.HasInnovation(1, 820), "奇普路径不应需要简牍");
+            Assert.IsFalse(tree.HasInnovation(1, 822), "奇普路径不应需要文书行政");
+        }
+
+        private static void CompleteTree(InnovationTree tree, int id)
+        {
+            Assert.IsTrue(tree.StartResearch(1, id), $"革新 {id} 应可开始研究");
+            tree.DailyTick(1, 100000f);
+            Assert.IsTrue(tree.HasInnovation(1, id), $"革新 {id} 应已完成");
+        }
+
+        [Test]
         public void InnovationTree_TraditionSupplemented_WithNewContent()
         {
             // 补全内容在位：传统类 8 个 + 技术空缺子类

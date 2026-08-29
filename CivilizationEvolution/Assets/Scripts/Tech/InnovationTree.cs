@@ -52,16 +52,32 @@ namespace CivilizationEvolution.Tech
             if (!_innovations.TryGetValue(innovationId, out var def)) return false;
             if (HasInnovation(realmId, innovationId)) return false;
 
-            // 检查前置
-            foreach (int prereq in def.prerequisites)
-            {
-                if (!HasInnovation(realmId, prereq)) return false;
-            }
+            // 检查前置（AND 全满足 + OR 任一满足；无前置则通过）
+            if (!ArePrerequisitesMet(realmId, def)) return false;
 
             _realmCurrentResearch[realmId] = innovationId;
             if (!_realmResearchPoints.ContainsKey(realmId))
                 _realmResearchPoints[realmId] = 0f;
 
+            return true;
+        }
+
+        /// <summary>前置检查：prerequisites 全部持有 + prerequisitesAny 至少一项持有（空列表视为通过）</summary>
+        public bool ArePrerequisitesMet(int realmId, InnovationDef def)
+        {
+            foreach (int prereq in def.prerequisites)
+            {
+                if (!HasInnovation(realmId, prereq)) return false;
+            }
+            if (def.prerequisitesAny != null && def.prerequisitesAny.Count > 0)
+            {
+                bool anyMet = false;
+                foreach (int alt in def.prerequisitesAny)
+                {
+                    if (HasInnovation(realmId, alt)) { anyMet = true; break; }
+                }
+                if (!anyMet) return false;
+            }
             return true;
         }
 
@@ -127,17 +143,7 @@ namespace CivilizationEvolution.Tech
             {
                 if (HasInnovation(realmId, def.innovationId)) continue;
 
-                bool prereqsMet = true;
-                foreach (int prereq in def.prerequisites)
-                {
-                    if (!HasInnovation(realmId, prereq))
-                    {
-                        prereqsMet = false;
-                        break;
-                    }
-                }
-
-                if (prereqsMet)
+                if (ArePrerequisitesMet(realmId, def))
                     result.Add(def);
             }
             return result;
