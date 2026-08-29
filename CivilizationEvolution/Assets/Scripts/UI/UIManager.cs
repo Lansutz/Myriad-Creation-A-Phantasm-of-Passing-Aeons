@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,9 +8,19 @@ using CivilizationEvolution.Render;
 
 namespace CivilizationEvolution.UI
 {
+    /// <summary>事件日志分类（决定富文本着色）</summary>
+    public enum EventLogKind
+    {
+        System,   // 系统：蓝灰
+        Info,     // 常规：白
+        War,      // 战争：红
+        Economy,  // 经济：绿
+        Warning   // 警示：黄
+    }
+
     /// <summary>
     /// UI管理器
-    /// 管理游戏内所有UI面板：顶部信息栏、地块详情、政权面板、外交面板、事件日志
+    /// 管理游戏内所有UI面板：顶部信息栏、地块详情、政权面板、外交面板、事件日志、Toast提示
     /// </summary>
     public class UIManager : MonoBehaviour
     {
@@ -48,13 +59,17 @@ namespace CivilizationEvolution.UI
 
         // 选中的地块
         private int _selectedTile = -1;
-        private List<string> _eventLog = new List<string>();
+        private readonly List<string> _eventLog = new List<string>();
         private const int MaxLogEntries = 100;
+
+        // Toast 队列
+        private readonly Queue<string> _toastQueue = new Queue<string>();
+        private Coroutine _toastRoutine;
 
         void Start()
         {
             InitializeUI();
-            AddEventLog("游戏启动");
+            AddEventLog("游戏启动", EventLogKind.System);
         }
 
         void Update()
@@ -169,7 +184,7 @@ namespace CivilizationEvolution.UI
         {
             if (GameManager.Instance != null)
                 GameManager.Instance.SetGameSpeed(speed);
-            AddEventLog($"游戏速度: {(speed == 0 ? "暂停" : speed + "x")}");
+            AddEventLog($"游戏速度: {(speed == 0 ? "暂停" : speed + "x")}", EventLogKind.System);
         }
 
         /// <summary>显示模式切换</summary>
@@ -179,11 +194,20 @@ namespace CivilizationEvolution.UI
             mapRenderer.SetDisplayMode((MapDisplayMode)index);
         }
 
-        /// <summary>添加事件日志</summary>
-        public void AddEventLog(string message)
+        /// <summary>添加事件日志（按类型着色）</summary>
+        public void AddEventLog(string message, EventLogKind kind = EventLogKind.Info)
         {
             string timestamp = world != null ? $"[{world.currentYear}年{world.currentDay}天] " : "";
-            _eventLog.Add(timestamp + message);
+            Color color = kind switch
+            {
+                EventLogKind.System => UITheme.LogSystem,
+                EventLogKind.War => UITheme.LogWar,
+                EventLogKind.Economy => UITheme.LogEconomy,
+                EventLogKind.Warning => UITheme.LogWarning,
+                _ => UITheme.LogInfo
+            };
+            string hex = ColorUtility.ToHtmlStringRGB(color);
+            _eventLog.Add($"<color=#{ColorUtility.ToHtmlStringRGB(UITheme.TextDim)}>{timestamp}</color><color=#{hex}>{message}</color>");
 
             if (_eventLog.Count > MaxLogEntries)
                 _eventLog.RemoveAt(0);
@@ -196,18 +220,83 @@ namespace CivilizationEvolution.UI
             }
         }
 
-        /// <summary>显示提示消息</summary>
+        /// <summary>显示顶部 Toast 提示（支持排队，自动渐隐）</summary>
         public void ShowToast(string message, float duration = 3f)
         {
-            AddEventLog(message);
-            // 简化：直接加到日志
+            if (string.IsNullOrEmpty(message)) return;
+            _toastQueue.Enqueue(message);
+            if (_toastRoutine == null)
+                _toastRoutine = StartCoroutine(ToastLoop());
         }
 
-        /// <summary>显示确认对话框</summary>
+        private IEnumerator ToastLoop()
+        {
+            while (_toastQueue.Count > 0)
+            {
+                yield return ShowToastCoroutine(_toastQueue.Dequeue(), 3f);
+            }
+            _toastRoutine = null;
+        }
+
+        private IEnumerator ShowToastCoroutine(string message, float duration)
+        {
+            var go = new GameObject("Toast", typeof(RectTransform), typeof(CanvasGroup));
+            go.transform.SetParent(transform, false);
+            var rt = (RectTransform)go.transform;
+            rt.anchorMin = new Vector2(0.5f, 1f);
+            rt.anchorMax = new Vector2(0.5f, 1f);
+            rt.pivot = new Vector2(0.5f, 1f);
+            rt.anchoredPosition = new Vector2(0f, -60f);
+            rt.sizeDelta = new Vector2(400f, 46f);
+
+            var img = go.AddComponent<Image>();
+            img.color = UITheme.ToastBg;
+            img.sprite = UITheme.RoundedPanelSprite;
+            img.type = Image.Type.Sliced;
+
+            var txtGo = new GameObject("Text", typeof(RectTransform));
+            txtGo.transform.SetParent(go.transform, false);
+            var txt = txtGo.AddComponent<Text>();
+            txt.font = Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei UI", "Segoe UI" }, 18);
+            txt.text = message;
+            txt.fontSize = 18;
+            txt.color = UITheme.TextMain;
+            txt.alignment = TextAnchor.MiddleCenter;
+            txt.horizontalOverflow = HorizontalWrapMode.Overflow;
+            txt.rectTransform.anchorMin = Vector2.zero;
+            txt.rectTransform.anchorMax = Vector2.one;
+            txt.rectTransform.offsetMin = Vector2.zero;
+            txt.rectTransform.offsetMax = Vector2.zero;
+
+            var cg = go.GetComponent<CanvasGroup>();
+
+            float t = 0f;
+            const float fadeIn = 0.25f;
+            const float fadeOut = 0.4f;
+            while (t < fadeIn)
+            {
+                t += Time.unscaledDeltaTime;
+                cg.alpha = Mathf.Clamp01(t / fadeIn);
+                yield return null;
+            }
+            cg.alpha = 1f;
+            yield return new WaitForSecondsRealtime(duration);
+
+            t = fadeOut;
+            while (t > 0f)
+            {
+                t -= Time.unscaledDeltaTime;
+                cg.alpha = Mathf.Clamp01(t / fadeOut);
+                yield return null;
+            }
+            Destroy(go);
+        }
+
+        /// <summary>显示确认对话框（简化：记录日志）</summary>
         public void ShowConfirmation(string title, string message, Action onConfirm, Action onCancel = null)
         {
             // 简化：直接确认
-            AddEventLog($"{title}: {message}");
+            AddEventLog($"{title}: {message}", EventLogKind.Warning);
             onConfirm?.Invoke();
         }
 

@@ -20,9 +20,9 @@ namespace CivilizationEvolution.EditorTools
         private const string MainScenePath = "Assets/Scenes/Main.unity";
         private const string DefaultConfigPath = "Assets/ScriptableObjects/DefaultWorldConfig.asset";
 
-        // 常用UI颜色
-        private static readonly Color PanelColor = new Color(0.08f, 0.10f, 0.16f, 0.85f);
-        private static readonly Color TextColor = Color.white;
+        // UI 主题（统一色板/圆角/Tint，见 CivilizationEvolution.UI.UITheme）
+        private static readonly Color PanelColor = UITheme.PanelBg;
+        private static readonly Color TextColor = UITheme.TextMain;
         private static readonly Font UiFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
         [MenuItem(MenuRoot + "1. 一键搭建游戏场景", false, 1)]
@@ -153,6 +153,74 @@ namespace CivilizationEvolution.EditorTools
             Debug.Log("[CE菜单] Dropdown 展开模板已升级为完整层级（Viewport/Content/Item+Toggle），请保存场景。");
         }
 
+        [MenuItem(MenuRoot + "6. 就地升级 UI 样式（主题色/圆角/按钮反馈）", false, 6)]
+        public static void UpgradeGlobalStyle()
+        {
+            // ---- 按钮：统一圆角 + ColorTint ----
+            var buttons = Object.FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var b in buttons)
+            {
+                if (b.targetGraphic is Image img)
+                {
+                    img.sprite = UITheme.RoundedButtonSprite;
+                    img.type = Image.Type.Sliced;
+                    img.color = UITheme.ButtonNormal;
+                }
+                UITheme.ApplyButtonTint(b);
+            }
+
+            // ---- Dropdown：统一圆角 + ColorTint ----
+            var dropdowns = Object.FindObjectsByType<Dropdown>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var dd in dropdowns)
+            {
+                if (dd.targetGraphic is Image img)
+                {
+                    img.sprite = UITheme.RoundedButtonSprite;
+                    img.type = Image.Type.Sliced;
+                    img.color = UITheme.ButtonNormal;
+                }
+                UITheme.ApplyButtonTint(dd);
+            }
+
+            // ---- 面板：圆角 + 主题色 ----
+            var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+            if (canvas != null)
+            {
+                foreach (var panelName in new[] { "TopBar", "SpeedGroup", "TileInfoPanel", "EventLogPanel" })
+                {
+                    var t = canvas.transform.Find(panelName);
+                    if (t == null) continue;
+                    var img = t.GetComponent<Image>();
+                    if (img != null)
+                    {
+                        img.sprite = UITheme.RoundedPanelSprite;
+                        img.type = Image.Type.Sliced;
+                        img.color = UITheme.PanelBg;
+                    }
+                }
+
+                // ---- 事件日志标题（旧场景缺失则补建）----
+                var logPanelT = canvas.transform.Find("EventLogPanel");
+                if (logPanelT != null && logPanelT.Find("EventLogTitle") == null)
+                {
+                    var lt = CreateText("EventLogTitle", logPanelT, "事件日志", 14);
+                    lt.color = UITheme.TextDim;
+                    lt.alignment = TextAnchor.MiddleLeft;
+                    SetAnchor(lt.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -8), Vector2.zero);
+                    var logTextT = logPanelT.Find("EventLogText");
+                    if (logTextT != null)
+                    {
+                        var rt = (RectTransform)logTextT;
+                        rt.offsetMax = new Vector2(-8, -24);
+                        rt.offsetMin = new Vector2(8, 4);
+                    }
+                }
+            }
+
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Debug.Log("[CE菜单] UI 样式已升级：按钮/下拉圆角+悬停反馈，面板主题色圆角，事件日志标题。请保存场景。");
+        }
+
         // ================= UGUI 代码构建 =================
 
         /// <summary>构建整套界面并通过反射注入UIManager</summary>
@@ -165,6 +233,9 @@ namespace CivilizationEvolution.EditorTools
             topLayout.spacing = 24; topLayout.padding = new RectOffset(16, 16, 8, 8);
             topLayout.childAlignment = TextAnchor.MiddleLeft; topLayout.childForceExpandWidth = false;
 
+            var gameTitle = CreateText("GameTitle", topBar, GameConstants.GameNameShort, 20);
+            gameTitle.color = UITheme.Accent;
+            gameTitle.fontStyle = FontStyle.Bold;
             SetField(ui, "dateText", CreateText("DateText", topBar, "第 0 年 第 0 天", 20));
             SetField(ui, "treasuryText", CreateText("TreasuryText", topBar, "国库：0", 20));
             SetField(ui, "populationText", CreateText("PopulationText", topBar, "人口：0", 20));
@@ -183,9 +254,12 @@ namespace CivilizationEvolution.EditorTools
             var dropdownGo = new GameObject("DisplayModeDropdown", typeof(RectTransform));
             dropdownGo.transform.SetParent(speedGroup, false);
             var ddImage = dropdownGo.AddComponent<Image>();
-            ddImage.color = new Color(0.2f, 0.3f, 0.5f, 1f);
+            ddImage.color = UITheme.ButtonNormal;
+            ddImage.sprite = UITheme.RoundedButtonSprite;
+            ddImage.type = Image.Type.Sliced;
             var dd = dropdownGo.AddComponent<Dropdown>();
             dd.targetGraphic = ddImage;
+            UITheme.ApplyButtonTint(dd);
             var ddCaption = CreateText("Label", dropdownGo.transform, "地形", 16);
             ddCaption.alignment = TextAnchor.MiddleCenter;
             ddCaption.rectTransform.anchorMin = Vector2.zero;
@@ -220,9 +294,15 @@ namespace CivilizationEvolution.EditorTools
             var logPanel = CreatePanel("EventLogPanel", canvas).gameObject;
             SetAnchor(logPanel.GetComponent<RectTransform>(),
                 new Vector2(0, 0), new Vector2(0, 0), new Vector2(16, 16), new Vector2(420, 220));
+            var logTitle = CreateText("EventLogTitle", logPanel.transform, "事件日志", 14);
+            logTitle.color = UITheme.TextDim;
+            logTitle.alignment = TextAnchor.MiddleLeft;
+            SetAnchor(logTitle.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -8), Vector2.zero);
             var scroll = logPanel.AddComponent<ScrollRect>();
             var logText = CreateText("EventLogText", logPanel.transform, "", 16);
             SetAnchor(logText.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            logText.rectTransform.offsetMax = new Vector2(-8, -24);
+            logText.rectTransform.offsetMin = new Vector2(8, 4);
             logText.verticalOverflow = VerticalWrapMode.Overflow;
             logText.alignment = TextAnchor.UpperLeft;
             scroll.content = logText.rectTransform;
@@ -243,7 +323,9 @@ namespace CivilizationEvolution.EditorTools
             templateRt.anchorMax = new Vector2(1, 0);
             templateRt.pivot = new Vector2(0.5f, 1f);
             templateRt.sizeDelta = new Vector2(0, 150f);
-            templateGo.GetComponent<Image>().color = new Color(0.09f, 0.12f, 0.19f, 0.96f);
+            templateGo.GetComponent<Image>().color = UITheme.PanelSolid;
+            templateGo.GetComponent<Image>().sprite = UITheme.RoundedPanelSprite;
+            templateGo.GetComponent<Image>().type = Image.Type.Sliced;
             var scroll = templateGo.GetComponent<ScrollRect>();
             scroll.horizontal = false;
             scroll.vertical = true;
@@ -277,14 +359,7 @@ namespace CivilizationEvolution.EditorTools
             itemRt.sizeDelta = new Vector2(0, 28f);
             var toggle = itemGo.GetComponent<Toggle>();
             toggle.isOn = true;
-            toggle.transition = Selectable.Transition.ColorTint;
-            var tint = toggle.colors;
-            tint.normalColor = Color.white;
-            tint.highlightedColor = new Color(0.85f, 0.92f, 1f);
-            tint.pressedColor = new Color(0.6f, 0.75f, 0.95f);
-            tint.selectedColor = new Color(0.45f, 0.62f, 0.9f);
-            tint.disabledColor = new Color(0.55f, 0.55f, 0.55f);
-            toggle.colors = tint;
+            UITheme.ApplyButtonTint(toggle);
 
             var bgGo = new GameObject("Item Background", typeof(RectTransform), typeof(Image));
             bgGo.transform.SetParent(itemGo.transform, false);
@@ -337,6 +412,8 @@ namespace CivilizationEvolution.EditorTools
             go.transform.SetParent(parent, false);
             var img = go.AddComponent<Image>();
             img.color = PanelColor;
+            img.sprite = UITheme.RoundedPanelSprite;
+            img.type = Image.Type.Sliced;
             return go.GetComponent<RectTransform>();
         }
 
@@ -356,8 +433,13 @@ namespace CivilizationEvolution.EditorTools
         {
             var go = new GameObject(name, typeof(RectTransform));
             go.transform.SetParent(parent, false);
-            var img = go.AddComponent<Image>(); img.color = new Color(0.2f, 0.3f, 0.5f, 1);
+            var img = go.AddComponent<Image>();
+            img.color = UITheme.ButtonNormal;
+            img.sprite = UITheme.RoundedButtonSprite;
+            img.type = Image.Type.Sliced;
             var btn = go.AddComponent<Button>();
+            btn.targetGraphic = img;
+            UITheme.ApplyButtonTint(btn);
             var txtGo = new GameObject("Text", typeof(RectTransform));
             txtGo.transform.SetParent(go.transform, false);
             var txt = txtGo.AddComponent<Text>();
