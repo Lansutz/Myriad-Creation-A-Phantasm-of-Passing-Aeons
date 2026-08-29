@@ -118,6 +118,26 @@ namespace CivilizationEvolution.Tests
         }
 
         [Test]
+        public void InnovationTree_MetallurgyChain_ResearchBased()
+        {
+            // 批 B：冶金链（研究实证）——鼓风链/钢链/贵金属
+            Assert.IsNotNull(_tree.GetInnovation(927), "灰吹法应存在（Tepe Sialk 实证）");
+            Assert.AreEqual(2, _tree.GetInnovation(927).era, "灰吹法 era2");
+            Assert.IsTrue(_tree.GetInnovation(927).prerequisites.Contains(925), "灰吹法前置皮囊风箱");
+
+            Assert.IsNotNull(_tree.GetInnovation(928), "失蜡法应存在（六中心独立发明）");
+            Assert.IsNotNull(_tree.GetInnovation(929), "坩埚钢应存在（Kodumanal 实证）");
+            Assert.IsTrue(_tree.GetInnovation(929).prerequisites.Contains(203), "坩埚钢前置炼钢");
+
+            Assert.IsNotNull(_tree.GetInnovation(931), "生铁高炉应存在（中国最早实证）");
+            Assert.IsTrue(_tree.GetInnovation(926).prerequisites.Contains(931), "活塞风箱前置高炉");
+
+            Assert.IsNotNull(_tree.GetInnovation(933), "井盐深钻应存在（四川）");
+            Assert.IsNotNull(_tree.GetInnovation(936), "瓷器应存在（小仙坛实证）");
+            Assert.AreEqual(4, _tree.GetInnovation(936).era, "瓷器 era4");
+        }
+
+        [Test]
         public void InnovationTree_TraditionSupplemented_WithNewContent()
         {
             // 补全内容在位：传统类 8 个 + 技术空缺子类

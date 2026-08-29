@@ -1016,6 +1016,171 @@
       ],
       "innovationName": "酿酒",
       "description": "陶瓮里的米谷悄悄发酵，宴饮与祭祀从此有了醉意。"
+    },
+    {
+      "innovationId": 925,
+      "field": 2,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        201
+      ],
+      "innovationName": "皮囊风箱",
+      "description": "脚踏皮囊鼓风入炉，炉火纯青；底比斯墓壁画上的冶铜师已经这么干了四千年。"
+    },
+    {
+      "innovationId": 926,
+      "field": 2,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        925,
+        931
+      ],
+      "innovationName": "活塞风箱",
+      "description": "双动活塞一推一拉皆出风，炉温再上层楼；中国发明的强风利器。"
+    },
+    {
+      "innovationId": 931,
+      "field": 2,
+      "era": 3,
+      "researchCost": 450,
+      "prerequisites": [
+        202,
+        925
+      ],
+      "innovationName": "生铁高炉",
+      "description": "炉温破千，铁水奔流（六合程桥春秋铁器为世界最早实证）；铁从此可以浇铸。"
+    },
+    {
+      "innovationId": 930,
+      "field": 2,
+      "era": 3,
+      "researchCost": 300,
+      "prerequisites": [
+        202
+      ],
+      "innovationName": "渗碳淬火",
+      "description": "烧红锻打、入水急冷，刃口硬如新磨；燕下都的淬火钢剑领先天下。"
+    },
+    {
+      "innovationId": 929,
+      "field": 2,
+      "era": 3,
+      "researchCost": 600,
+      "prerequisites": [
+        203,
+        200
+      ],
+      "innovationName": "坩埚钢",
+      "description": "密封坩埚慢火渗碳，钢纹如云（南印度 Kodumanal 最早实证）；大马士革刃的原料。"
+    },
+    {
+      "innovationId": 932,
+      "field": 2,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        931,
+        106
+      ],
+      "innovationName": "水力锻锤",
+      "description": "水轮带杵，锤落如雨；杜诗的水排让冶铁作坊昼夜不息。"
+    },
+    {
+      "innovationId": 927,
+      "field": 2,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        201,
+        925
+      ],
+      "innovationName": "灰吹法",
+      "description": "铅吸银入灰皿，火中炼出真银（Tepe Sialk 前四千年实证；安第斯独立发明）。"
+    },
+    {
+      "innovationId": 928,
+      "field": 2,
+      "era": 2,
+      "researchCost": 350,
+      "prerequisites": [
+        201,
+        200
+      ],
+      "innovationName": "失蜡法",
+      "description": "蜡模化去、铜液注入，纹饰纤毫毕现；至少六个文明独立点亮（Nahal Mishmar/曾侯乙尊盘）。"
+    },
+    {
+      "innovationId": 934,
+      "field": 0,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [
+        200
+      ],
+      "innovationName": "海盐煮盐",
+      "description": "陶器煮卤成盐，海边灶烟不绝（Provadia 遗址催生欧洲最早城镇）。"
+    },
+    {
+      "innovationId": 933,
+      "field": 0,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        803,
+        934
+      ],
+      "innovationName": "井盐深钻",
+      "description": "凿井及泉、竹筒汲卤，四川井盐养活半壁江山；北宋卓筒井的顿钻深达数百米。"
+    },
+    {
+      "innovationId": 935,
+      "field": 6,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        200,
+        201
+      ],
+      "innovationName": "玻璃制造",
+      "description": "石英砂与草木灰在高温中化成晶莹（阿马尔纳工坊工业级生产；罗马人吹出了透明时代）。"
+    },
+    {
+      "innovationId": 936,
+      "field": 6,
+      "era": 4,
+      "researchCost": 700,
+      "prerequisites": [
+        200,
+        202
+      ],
+      "innovationName": "瓷器",
+      "description": "高岭土入龙窑，千二百度烧成如玉之瓷（上虞小仙坛东汉窑为世界最早成熟瓷）。"
+    },
+    {
+      "innovationId": 937,
+      "field": 6,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        201,
+        200
+      ],
+      "innovationName": "金器细工",
+      "description": "锤揲累珠、錾刻鎏光（瓦尔纳前四千六百年金器为世界最早；三星堆金杖辉映星河）。"
+    },
+    {
+      "innovationId": 938,
+      "field": 6,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        937,
+        802
+      ],
+      "innovationName": "鎏金",
+      "description": "金汞齐涂器加热，金衣不落（满城汉墓长信宫灯；罗马普林尼同法记载）。"
     }
   ]
 }
