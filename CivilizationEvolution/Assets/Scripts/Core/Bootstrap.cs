@@ -26,8 +26,8 @@ namespace CivilizationEvolution.Core
             // 加载内容注册表（Base/Mods 双目录数据驱动）
             ContentRegistry.Initialize();
 
-            // 本地化初始化（键→文本；缺键回退键名）
-            Localization.Initialize("zh-Hans");
+            // 本地化初始化（键→文本；缺键回退键名；语言码走国际标准）
+            Localization.Initialize("zh-CN");
 
             // 确保GameManager存在
             if (GameManager.Instance == null)
