@@ -180,6 +180,55 @@ namespace CivilizationEvolution.Tests
             Assert.That(c.obesity, Is.LessThan(50f), "缺粮应降低肥胖");
         }
 
+        // ===== 人格亲和与 AI 同步（借鉴 CK3 More Personality Depth） =====
+
+        [Test]
+        public void PersonalityAffinity_SameDirection_Positive()
+        {
+            var a = MakeRuler();
+            var b = MakeRuler();
+            a.honor = 80f; b.honor = 70f;   // 同向高荣誉
+            Assert.That(a.GetPersonalityAffinity(b), Is.GreaterThan(0f), "同向人格应互喜");
+        }
+
+        [Test]
+        public void PersonalityAffinity_OppositeDirection_Negative()
+        {
+            var a = MakeRuler();
+            var b = MakeRuler();
+            a.honor = 80f; b.honor = -80f;  // 反向
+            Assert.That(a.GetPersonalityAffinity(b), Is.LessThan(0f), "反向人格应互厌");
+        }
+
+        [Test]
+        public void PersonalityAffinity_WeakTraits_Neutral()
+        {
+            var a = MakeRuler();
+            var b = MakeRuler();
+            Assert.AreEqual(0f, a.GetPersonalityAffinity(b), "无倾向（|v|<15）不参与亲和");
+        }
+
+        [Test]
+        public void AIController_SyncPersonality_GreedyRuler_EconomicBias()
+        {
+            var ruler = MakeRuler();
+            ruler.greed = 90f;
+            var controller = new CivilizationEvolution.AI.AIController(0, CivilizationEvolution.AI.AIPersonality.RandomPersonality());
+            controller.SyncPersonality(ruler);
+            Assert.That(controller.personality.economicBias, Is.GreaterThan(0.6f), "高贪婪统治者应显著偏好经济");
+        }
+
+        [Test]
+        public void AIController_SyncPersonality_VengefulRuler_Aggression()
+        {
+            var ruler = MakeRuler();
+            ruler.vengefulness = 90f;
+            ruler.boldness = 80f;
+            var controller = new CivilizationEvolution.AI.AIController(0, CivilizationEvolution.AI.AIPersonality.RandomPersonality());
+            controller.SyncPersonality(ruler);
+            Assert.That(controller.personality.aggression, Is.GreaterThan(0.6f), "高报复统治者应显著好战");
+        }
+
         // ===== 辅助 =====
 
         private static CharacterData MakeRuler()

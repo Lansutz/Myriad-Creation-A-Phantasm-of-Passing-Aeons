@@ -326,7 +326,8 @@ namespace CivilizationEvolution.Core
             // 10. 思想与规范
             _thoughtManager.DailyTick(currentYear);
 
-            // 11. AI决策
+            // 11. AI决策（先同步统治者人格到 AI 偏置——人格漂移实时反映）
+            _aiManager.SyncRulers(_characterManager);
             _aiManager.DailyTick(realms, tiles, _diplomacyManager, _economyManager, _innovationTree);
 
             // 12. 事件处理

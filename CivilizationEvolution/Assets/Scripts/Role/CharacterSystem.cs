@@ -187,6 +187,62 @@ namespace CivilizationEvolution.Role
 
         // ===== 人格描述（企划书 9.3 顶层：写实场景化描述，禁止四字标签与善恶定性） =====
 
+        /// <summary>
+        /// 人格强度分档（借鉴 CK3 More Personality Depth 三级制：Mild/Normal/Intense）
+        /// 0=无倾向(|v|&lt;15) 1=轻度(15-35) 2=中度(35-65) 3=重度(&gt;65)
+        /// 分档驱动好感缩放与 AI 偏置幅度
+        /// </summary>
+        public int GetPersonalityTier(string dim)
+        {
+            float v = GetPersonalityValue(dim);
+            float abs = Mathf.Abs(v);
+            if (abs < 15f) return 0;
+            if (abs < 35f) return 1;
+            if (abs < 65f) return 2;
+            return 3;
+        }
+
+        /// <summary>按维度名取人格值（boldness/compassion/greed/honor/rationality/vengefulness/piety）</summary>
+        public float GetPersonalityValue(string dim)
+        {
+            return dim switch
+            {
+                "boldness" => boldness,
+                "compassion" => compassion,
+                "greed" => greed,
+                "honor" => honor,
+                "rationality" => rationality,
+                "vengefulness" => vengefulness,
+                "piety" => piety,
+                _ => 0f
+            };
+        }
+
+        /// <summary>
+        /// 人格亲和度（-20~+20，借鉴 MPD 的 same/opposite opinion 机制）：
+        /// 七维逐项比较——同向（同号且双方强度&gt;0）互喜、反向互厌，强度分档决定幅度；
+        /// 用于关系好感缓慢漂移（性格相投日久生情，相斥渐行渐远）
+        /// </summary>
+        public float GetPersonalityAffinity(CharacterData other)
+        {
+            if (other == null) return 0f;
+            float affinity = 0f;
+            foreach (var dim in new[] { "boldness", "compassion", "greed", "honor", "rationality", "vengefulness", "piety" })
+            {
+                float a = GetPersonalityValue(dim);
+                float b = other.GetPersonalityValue(dim);
+                if (Mathf.Abs(a) < 15f || Mathf.Abs(b) < 15f) continue; // 无倾向不参与
+
+                bool same = (a > 0f) == (b > 0f);
+                int tier = Mathf.Min(GetPersonalityTier(dim), other.GetPersonalityTier(dim));
+                if (same)
+                    affinity += tier switch { 3 => 6f, 2 => 4f, _ => 2f };   // 同向：+2/+4/+6
+                else
+                    affinity -= tier switch { 3 => 5f, 2 => 3f, _ => 1f };   // 反向：-1/-3/-5
+            }
+            return Mathf.Clamp(affinity, -20f, 20f);
+        }
+
         /// <summary>生成写实人格描述：按最高 2 维组合套用场景模板</summary>
         public string GetPersonalityDescription()
         {
@@ -835,6 +891,31 @@ namespace CivilizationEvolution.Role
 
         // ===== 角色数值公共接口（事件/战争/疾病/AI 调用） =====
 
+        /// <summary>
+        /// 人格亲和漂移：已有角色对的关系按七维亲和度缓慢调整
+        /// （借鉴 CK3 More Personality Depth 的 same/opposite opinion 机制；
+        /// 仅作用于已建立的关系，不主动创建新关系）
+        /// </summary>
+        private void PersonalityOpinionDrift()
+        {
+            var chars = GetAliveCharacters();
+            for (int i = 0; i < chars.Count; i++)
+            {
+                for (int j = i + 1; j < chars.Count; j++)
+                {
+                    var a = chars[i];
+                    var b = chars[j];
+                    if (!a.relations.TryGetValue(b.characterId, out var rel)) continue;
+
+                    float affinity = a.GetPersonalityAffinity(b);
+                    if (Mathf.Abs(affinity) < 0.5f) continue;
+
+                    rel.opinion = Mathf.Clamp(rel.opinion + affinity * 0.002f, -200f, 200f);
+                    a.relations[b.characterId] = rel; // struct 回写
+                }
+            }
+        }
+
         /// <summary>施加压力（战争/缺粮/重大事件）</summary>
         public void AddStress(int characterId, float amount)
         {
@@ -1125,6 +1206,9 @@ namespace CivilizationEvolution.Role
             // 精神疾病触发与缓解
             CheckMentalDisorders();
 
+            // 人格亲和漂移（借鉴 MPD 好感机制：性格相投日久生情，相斥渐行渐远）
+            PersonalityOpinionDrift();
+
             // 清理死亡角色的军队指挥
             foreach (var character in _characters.Values)
             {
@@ -1169,6 +1253,15 @@ namespace CivilizationEvolution.Role
             foreach (var c in _characters.Values)
                 if (c.role == role && c.isAlive) result.Add(c);
             return result;
+        }
+
+        /// <summary>查找政权的现任统治者（Role=Ruler 且存活；无则 null）</summary>
+        public CharacterData FindRulerOfRealm(int realmId)
+        {
+            foreach (var c in _characters.Values)
+                if (c.isAlive && c.realmId == realmId && c.role == CharacterRole.Ruler)
+                    return c;
+            return null;
         }
 
         /// <summary>寻找最适合的将领</summary>

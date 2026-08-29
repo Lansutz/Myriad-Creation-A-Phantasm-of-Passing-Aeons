@@ -7,6 +7,7 @@ using CivilizationEvolution.Diplomacy;
 using CivilizationEvolution.War;
 using CivilizationEvolution.Economy;
 using CivilizationEvolution.Tech;
+using CivilizationEvolution.Role;
 
 namespace CivilizationEvolution.AI
 {
@@ -375,6 +376,31 @@ namespace CivilizationEvolution.AI
         // ===== 查询接口 =====
         public AIGoal GetCurrentGoal() => _currentGoal;
         public int GetTargetRealm() => _targetRealmId;
+
+        /// <summary>
+        /// 人格→AI 偏置同步（借鉴 MPD 的 ai_* 人格值：人格直接驱动决策，且随漂移实时变化）
+        /// 映射：大胆→扩张/冒险；贪婪→经济敛财；荣誉→守信外交；报复→好战；
+        /// 悲悯→厌战；理性→谨慎
+        /// </summary>
+        public void SyncPersonality(CharacterData ruler)
+        {
+            if (ruler == null) return;
+            float b = (ruler.boldness + 100f) / 200f;        // 大胆 0-1
+            float g = (ruler.greed + 100f) / 200f;           // 贪婪
+            float h = (ruler.honor + 100f) / 200f;           // 荣誉
+            float v = (ruler.vengefulness + 100f) / 200f;    // 报复
+            float c = (ruler.compassion + 100f) / 200f;      // 悲悯
+            float r = (ruler.rationality + 100f) / 200f;     // 理性
+
+            var p = personality; // struct 局部修改后回写
+            p.expansionBias = Mathf.Clamp(0.4f + (b - 0.5f) * 0.6f + (v - 0.5f) * 0.3f, 0.05f, 0.95f);
+            p.economicBias = Mathf.Clamp(0.4f + (g - 0.5f) * 0.8f, 0.05f, 0.95f);
+            p.diplomaticBias = Mathf.Clamp(0.4f + (h - 0.5f) * 0.6f + (r - 0.5f) * 0.3f, 0.05f, 0.95f);
+            p.militaryBias = Mathf.Clamp(0.35f + (v - 0.5f) * 0.5f + (b - 0.5f) * 0.3f - (c - 0.5f) * 0.3f, 0.05f, 0.95f);
+            p.aggression = Mathf.Clamp(0.4f + (b - 0.5f) * 0.5f + (v - 0.5f) * 0.4f - (c - 0.5f) * 0.4f, 0.05f, 0.95f);
+            p.riskTolerance = Mathf.Clamp(0.5f + (b - 0.5f) * 0.5f - (r - 0.5f) * 0.4f, 0.05f, 0.95f);
+            personality = p;
+        }
     }
 
     /// <summary>AI人格</summary>
@@ -465,6 +491,17 @@ namespace CivilizationEvolution.AI
 
         public AIController GetController(int realmId) =>
             _controllers.TryGetValue(realmId, out var c) ? c : null;
+
+        /// <summary>同步各政权统治者的七维人格到 AI 偏置（人格漂移实时反映到决策）</summary>
+        public void SyncRulers(CharacterManager characters)
+        {
+            if (characters == null) return;
+            foreach (var kv in _controllers)
+            {
+                var ruler = characters.FindRulerOfRealm(kv.Key);
+                kv.Value.SyncPersonality(ruler);
+            }
+        }
 
         public IReadOnlyDictionary<int, AIController> GetAllControllers() => _controllers;
     }
