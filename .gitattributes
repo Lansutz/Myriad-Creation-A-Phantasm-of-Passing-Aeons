@@ -1,0 +1,13 @@
+# Unity 官方推荐配置：文本文件统一 LF，消除 Windows CRLF 抖动
+* text=auto eol=lf
+
+# Unity YAML 资源使用专用合并驱动
+*.unity merge=unityyamlmerge
+*.prefab merge=unityyamlmerge
+*.asset merge=unityyamlmerge
+*.meta merge=unityyamlmerge
+*.mat merge=unityyamlmerge
+*.anim merge=unityyamlmerge
+*.controller merge=unityyamlmerge
+*.physicMaterial merge=unityyamlmerge
+*.physicsMaterial2D merge=unityyamlmerge
