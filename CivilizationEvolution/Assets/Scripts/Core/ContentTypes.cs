@@ -112,6 +112,7 @@ namespace CivilizationEvolution.Core
     /// 企划书 9.4：家族团结度/家法/家族文化偏移；FamilyNode.familyTraditions
     /// 为 Dictionary&lt;string,float&gt;（键=traditionId，值=传承强度/代际深度），本定义表解释键
     /// 例：耕读传家、尚武传家、商贾传家、簪缨世家
+    /// 解锁前置：requiredInnovations（革新 id 列表，家族须全部持有才能传承该传统）
     /// </summary>
     [Serializable]
     public class FamilyTraditionDef
@@ -120,6 +121,8 @@ namespace CivilizationEvolution.Core
         public List<EffectEntry> effects = new List<EffectEntry>();
         /// <summary>互斥传统（同家族不可同时传承）</summary>
         public List<string> incompatibleWith = new List<string>();
+        /// <summary>解锁前置革新（InnovationDef.innovationId；家族须全部持有）</summary>
+        public List<int> requiredInnovations = new List<int>();
 
         public string GetName() => Localization.Get(traditionId + "_name");
         public string GetDescription() => Localization.Get(traditionId + "_desc");

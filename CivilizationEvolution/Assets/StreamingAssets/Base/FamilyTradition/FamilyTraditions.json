@@ -1,9 +1,9 @@
 {
   "familyTraditions": [
-    { "traditionId": "famtrad_scholarly_legacy", "effects": [ { "key": "learning", "value": 0.05 }, { "key": "stewardship", "value": 0.03 }, { "key": "unity", "value": 0.03 } ], "incompatibleWith": [ "famtrad_warlike_legacy" ] },
-    { "traditionId": "famtrad_warlike_legacy", "effects": [ { "key": "martial", "value": 0.05 }, { "key": "warfare", "value": 0.05 }, { "key": "levy", "value": 0.03 } ], "incompatibleWith": [ "famtrad_scholarly_legacy" ] },
-    { "traditionId": "famtrad_merchant_legacy", "effects": [ { "key": "gold", "value": 0.08 }, { "key": "trade", "value": 0.05 } ] },
-    { "traditionId": "famtrad_dignitary_legacy", "effects": [ { "key": "prestige", "value": 0.08 }, { "key": "unity", "value": 0.03 } ] },
+    { "traditionId": "famtrad_scholarly_legacy", "effects": [ { "key": "learning", "value": 0.05 }, { "key": "stewardship", "value": 0.03 }, { "key": "unity", "value": 0.03 } ], "incompatibleWith": [ "famtrad_warlike_legacy" ], "requiredInnovations": [ 600 ] },
+    { "traditionId": "famtrad_warlike_legacy", "effects": [ { "key": "martial", "value": 0.05 }, { "key": "warfare", "value": 0.05 }, { "key": "levy", "value": 0.03 } ], "incompatibleWith": [ "famtrad_scholarly_legacy" ], "requiredInnovations": [ 300 ] },
+    { "traditionId": "famtrad_merchant_legacy", "effects": [ { "key": "gold", "value": 0.08 }, { "key": "trade", "value": 0.05 } ], "requiredInnovations": [ 701 ] },
+    { "traditionId": "famtrad_dignitary_legacy", "effects": [ { "key": "prestige", "value": 0.08 }, { "key": "unity", "value": 0.03 } ], "requiredInnovations": [ 503 ] },
     { "traditionId": "famtrad_luxury_style", "effects": [ { "key": "prestige", "value": 0.05 }, { "key": "gold", "value": 0.05 }, { "key": "unity", "value": -0.03 } ], "incompatibleWith": [ "famtrad_thrifty_style" ] },
     { "traditionId": "famtrad_thrifty_style", "effects": [ { "key": "gold", "value": 0.05 }, { "key": "stewardship", "value": 0.05 }, { "key": "prestige", "value": -0.03 } ], "incompatibleWith": [ "famtrad_luxury_style" ] }
   ]

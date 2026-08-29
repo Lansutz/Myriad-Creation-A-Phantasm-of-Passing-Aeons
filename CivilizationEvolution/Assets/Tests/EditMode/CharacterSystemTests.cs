@@ -5,6 +5,7 @@ using CivilizationEvolution.Core;
 using CivilizationEvolution.Economy;
 using CivilizationEvolution.Politics;
 using CivilizationEvolution.Role;
+using CivilizationEvolution.Tech;
 
 namespace CivilizationEvolution.Tests
 {
@@ -202,6 +203,60 @@ namespace CivilizationEvolution.Tests
             Assert.AreEqual(45, c.age, "调用方显式指定年龄时模板不应覆盖");
             Assert.That(c.martial, Is.GreaterThanOrEqualTo(40f), "武将勇武下限 40");
             Assert.That(c.warfare, Is.GreaterThanOrEqualTo(40f), "武将军事经略下限 40");
+        }
+
+        // ===== 家族传统（企划书 9.4 家族文化偏移；定义表解释键，见 FamilyTraditionDef） =====
+
+        [Test]
+        public void FamilyTradition_InnovationPrerequisite_Enforced()
+        {
+            // 簪缨世家需官僚制度(503)：家族未持有革新 → 拒绝；持有 → 接受
+            var manager = new CharacterManager();
+            var tree = new InnovationTree();
+            manager.Innovations = tree; // 先注入（CreateFamily 时传递给家族）
+
+            var ruler = manager.CreateCharacter("祖", "氏", 30, true, 0, 0, 0, CharacterRole.Ruler);
+            var family = manager.CreateFamily("簪缨氏", ruler.characterId, 1, realmId: 1);
+
+            Assert.IsFalse(family.AddFamilyTradition("famtrad_dignitary_legacy"),
+                "未持有官僚制度革新时簪缨世家应拒绝添加");
+
+            // 完成官僚制度前置链（部落联盟→封建→驿传→中央集权→文书行政→官僚制度）
+            CompleteChain(tree, 1, 500);
+            CompleteChain(tree, 1, 200); // 陶器（文字前置）
+            CompleteChain(tree, 1, 600);
+            CompleteChain(tree, 1, 820);
+            CompleteChain(tree, 1, 821);
+            CompleteChain(tree, 1, 505);
+            CompleteChain(tree, 1, 822);
+            CompleteChain(tree, 1, 807);
+            CompleteChain(tree, 1, 808);
+            CompleteChain(tree, 1, 823);
+            CompleteChain(tree, 1, 501);
+            CompleteChain(tree, 1, 502);
+            CompleteChain(tree, 1, 503);
+
+            Assert.IsTrue(family.AddFamilyTradition("famtrad_dignitary_legacy"),
+                "持有官僚制度革新后簪缨世家应可添加");
+        }
+
+        [Test]
+        public void FamilyTradition_NoTreeInjected_SkipsCheck()
+        {
+            // 革新树未注入（宽松模式）：前置检查跳过，传统直接可添加
+            var manager = new CharacterManager();
+            var ruler = manager.CreateCharacter("祖", "氏", 30, true, 0, 0, 0, CharacterRole.Ruler);
+            var family = manager.CreateFamily("宽松氏", ruler.characterId, 1, realmId: 1);
+
+            Assert.IsTrue(family.AddFamilyTradition("famtrad_dignitary_legacy"),
+                "未注入革新树时不应做前置检查");
+        }
+
+        private static void CompleteChain(InnovationTree tree, int realmId, int innovationId)
+        {
+            Assert.IsTrue(tree.StartResearch(realmId, innovationId), $"革新 {innovationId} 应可开始研究");
+            tree.DailyTick(realmId, 100000f);
+            Assert.IsTrue(tree.HasInnovation(realmId, innovationId), $"革新 {innovationId} 应已完成");
         }
 
         // ===== 家族传统（企划书 9.4：互斥/注册表校验/效果查询） =====

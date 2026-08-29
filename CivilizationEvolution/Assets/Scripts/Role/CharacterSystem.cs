@@ -5,6 +5,7 @@ using CivilizationEvolution.Core;
 using CivilizationEvolution.Economy;
 using CivilizationEvolution.Politics;
 using CivilizationEvolution.Race;
+using CivilizationEvolution.Tech;
 
 namespace CivilizationEvolution.Role
 {
@@ -562,6 +563,12 @@ namespace CivilizationEvolution.Role
         public float familyWealth = 0f;
         public Dictionary<string, float> familyTraditions = new Dictionary<string, float>();
 
+        /// <summary>家族所属政权（-1=未知；家族传统解锁前置革新按此政权检查）</summary>
+        public int holderRealmId = -1;
+
+        /// <summary>革新树引用（CreateFamily 时由管理器注入；家族传统解锁前置检查用，不入档）</summary>
+        [NonSerialized] public InnovationTree Innovations;
+
         // 家徽/纹章
         public string coaPattern;
         public string coaColors;
@@ -642,6 +649,7 @@ namespace CivilizationEvolution.Role
         /// <summary>
         /// 添加家族传统：
         /// 注册表未定义 → 拒绝并警告；与已传承传统互斥（incompatibleWith）→ 拒绝；
+        /// 解锁前置革新未全部持有（requiredInnovations）→ 拒绝（革新树未注入时跳过检查）；
         /// 传承强度起点 1（代际深度由家族系统后续累积）
         /// </summary>
         public bool AddFamilyTradition(string traditionId)
@@ -659,6 +667,19 @@ namespace CivilizationEvolution.Role
                     if (def.incompatibleWith.Contains(existing))
                     {
                         Debug.Log($"[Family] 家族传统 {traditionId} 与既有传统 {existing} 互斥，拒绝添加");
+                        return false;
+                    }
+                }
+            }
+            // 解锁前置革新检查（革新树注入且家族归属政权已知时生效；否则宽松跳过）
+            if (Innovations != null && holderRealmId >= 0
+                && def.requiredInnovations != null && def.requiredInnovations.Count > 0)
+            {
+                foreach (int reqId in def.requiredInnovations)
+                {
+                    if (!Innovations.HasInnovation(holderRealmId, reqId))
+                    {
+                        Debug.Log($"[Family] 家族传统 {traditionId} 需要革新 {reqId} 解锁，家族所在政权尚未持有，拒绝添加");
                         return false;
                     }
                 }
@@ -695,6 +716,9 @@ namespace CivilizationEvolution.Role
     {
         /// <summary>种族定义表（由 GameWorld 注入，DNA 表达与混血基准依赖）</summary>
         public Dictionary<int, RaceData> Races { get; set; }
+
+        /// <summary>革新树（由 GameWorld 注入，家族传统解锁前置检查依赖）</summary>
+        public InnovationTree Innovations { get; set; }
         /// <summary>经济系统（由 GameWorld 注入，角色饮食联动依赖）</summary>
         public EconomyManager Economy { get; set; }
         /// <summary>地块表（由 GameWorld 注入，角色饮食按政权地块定位贸易中心）</summary>
@@ -1247,21 +1271,23 @@ namespace CivilizationEvolution.Role
                     template: spouseTpl);
                 spouse.realmId = realm.realmId;
 
-                var family = CreateFamily(lastName, ruler.characterId, currentYear);
+                var family = CreateFamily(lastName, ruler.characterId, currentYear, realm.realmId);
                 family.AddMember(spouse.characterId);
                 spouse.familyId = family.familyId;
             }
         }
 
         /// <summary>创建家族</summary>
-        public FamilyNode CreateFamily(string familyName, int founderId, int foundingYear)
+        public FamilyNode CreateFamily(string familyName, int founderId, int foundingYear, int realmId = -1)
         {
             var family = new FamilyNode
             {
                 familyId = _nextFamilyId++,
                 familyName = familyName,
                 founderCharacterId = founderId,
-                foundingYear = foundingYear
+                foundingYear = foundingYear,
+                holderRealmId = realmId,
+                Innovations = Innovations // 传递革新树引用（家族传统解锁前置检查）
             };
             family.AddMember(founderId);
             _families[family.familyId] = family;
