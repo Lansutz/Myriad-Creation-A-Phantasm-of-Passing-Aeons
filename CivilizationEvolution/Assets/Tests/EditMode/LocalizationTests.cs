@@ -5,7 +5,7 @@ namespace CivilizationEvolution.Tests
 {
     /// <summary>
     /// 本地化系统 EditMode 测试（CK3 localization 模式：键→文本，缺键回退）
-    /// 真实加载 Assets/StreamingAssets/Base/Localization/zh-CN.json
+    /// 真实加载 Assets/StreamingAssets/Base/Localization/zh-Hans.json
     /// </summary>
     public class LocalizationTests
     {
@@ -13,14 +13,14 @@ namespace CivilizationEvolution.Tests
         public void Setup()
         {
             Localization.Reset();
-            Localization.Initialize("zh-CN");
+            Localization.Initialize("zh-Hans");
         }
 
         [Test]
         public void Localization_LoadsChineseTable()
         {
             Assert.IsTrue(Localization.IsLoaded, "本地化表应加载");
-            Assert.AreEqual("zh-CN", Localization.CurrentLanguage);
+            Assert.AreEqual("zh-Hans", Localization.CurrentLanguage);
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace CivilizationEvolution.Tests
             Assert.IsFalse(string.IsNullOrEmpty(ethos.GetDescription()));
         }
 
-        // ===== 多语言（正式：en/zh-CN/zh-TW；预留：fr/de/es/ja/ko） =====
+        // ===== 多语言（正式：en/zh-Hans/zh-Hant；预留：fr/de/es/ja/ko） =====
 
         [Test]
         public void Localization_English_LoadsAndTranslates()
@@ -76,7 +76,7 @@ namespace CivilizationEvolution.Tests
         public void Localization_TraditionalChinese_LoadsAndTranslates()
         {
             Localization.Reset();
-            Localization.Initialize("zh-TW");
+            Localization.Initialize("zh-Hant");
             Assert.AreEqual("堅忍", Localization.Get("ethos_endurance_name"), "繁体应返回繁体文本");
             Assert.AreEqual("農耕禮俗", Localization.Get("trad_agrarian_rites_name"));
             Assert.AreEqual("萊希斯族群", Localization.Get("ethnos_laethis_name"));
@@ -99,7 +99,7 @@ namespace CivilizationEvolution.Tests
         public void Localization_SwitchLanguage_ReloadsTable()
         {
             Localization.Reset();
-            Localization.Initialize("zh-CN");
+            Localization.Initialize("zh-Hans");
             Assert.AreEqual("坚忍", Localization.Get("ethos_endurance_name"));
             Localization.Reset();
             Localization.Initialize("en");

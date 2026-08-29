@@ -8,21 +8,21 @@ namespace CivilizationEvolution.Core
     /// <summary>
     /// 本地化管理器（键→文本，CK3 localization 模式）
     /// 数据/代码只存键；显示文本按语言查表；缺键回退键名（开发期可见）
-    /// 语言代码采用国际标准（ISO 639-1 + 区域子标签）：
-    ///   en / zh-CN（简体）/ zh-TW（繁体）/ fr / de / es / ja / ko（预留）
-    /// 文件：StreamingAssets/Base/Localization/&lt;语言码&gt;.json（如 zh-CN.json）
+    /// 语言代码采用国际标准 BCP 47（ISO 639-1 语言 + ISO 15924 文字码）：
+    ///   en / zh-Hans（简体中文）/ zh-Hant（繁体中文）/ fr / de / es / ja / ko（预留）
+    /// 文件：StreamingAssets/Base/Localization/&lt;语言码&gt;.json（如 zh-Hans.json）
     ///       Mods/Localization/&lt;语言码&gt;.json 覆盖 Base（模组扩展）
     /// JSON 格式：{ "entries": [ { "key": "...", "value": "..." } ] }
     /// </summary>
     public static class Localization
     {
-        public static string CurrentLanguage { get; private set; } = "zh-CN";
+        public static string CurrentLanguage { get; private set; } = "zh-Hans";
         public static bool IsLoaded { get; private set; } = false;
 
         private static readonly Dictionary<string, string> _table = new Dictionary<string, string>();
 
         /// <summary>幂等初始化（可切换语言；切换时重载）</summary>
-        public static void Initialize(string language = "zh-CN")
+        public static void Initialize(string language = "zh-Hans")
         {
             if (IsLoaded && CurrentLanguage == language) return;
 

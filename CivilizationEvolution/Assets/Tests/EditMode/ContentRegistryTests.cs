@@ -17,7 +17,7 @@ namespace CivilizationEvolution.Tests
         {
             ContentRegistry.Reset();
             Localization.Reset();
-            Localization.Initialize("zh-CN");
+            Localization.Initialize("zh-Hans");
             ContentRegistry.Initialize();
         }
 
