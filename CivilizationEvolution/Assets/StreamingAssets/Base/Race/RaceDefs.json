@@ -62,9 +62,8 @@
       "resistanceBaseline": 65.0,
       "locusFrequencies": [
         { "locus": 2, "dominantFrequency": 0.75 },
-        { "locus": 4, "dominantFrequency": 0.70 },
-        { "locus": 1, "dominantFrequency": 0.35 },
-        { "locus": 3, "dominantFrequency": 0.30 }
+        { "locus": 3, "dominantFrequency": 0.70 },
+        { "locus": 1, "dominantFrequency": 0.35 }
       ],
       "preferredBiomes": [10, 2, 1],
       "coldTolerance": 0.85,

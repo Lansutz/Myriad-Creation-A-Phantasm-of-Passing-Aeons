@@ -21,13 +21,13 @@ namespace CivilizationEvolution.Race
         Recessive   // 隐性 a
     }
 
-    /// <summary>基因座（原版 7 基因座，模组可扩展但建议 ≤15）</summary>
+    /// <summary>基因座（原版 6 基因座，模组可扩展但建议 ≤15）
+    /// 注：变革性为种族设定（RaceData.transformativity），社会维度归文化传统，不做个体级基因座</summary>
     public enum DnaLocus
     {
         Longevity,      // 寿命基因座：基础寿命偏移
         Intelligence,   // 智慧基因座：智慧值偏移
         Martial,        // 勇武基因座：勇武值偏移
-        Reformism,      // 变革性基因座：变革性偏移
         Resistance,     // 抗性基因座：综合抗性偏移
         Appearance,     // 外观基因座：肤色/体型/面部（纯外观）
         TalentDefect    // 天赋/缺陷基因座：特殊天赋或隐性遗传病
@@ -76,7 +76,6 @@ namespace CivilizationEvolution.Race
         public float longevityOffsetYears;   // 寿命偏移（年）
         public float intelligenceOffset;     // 智慧偏移（±15 量级）
         public float martialOffset;          // 勇武偏移（±15 量级）
-        public float reformismOffset;        // 变革性偏移（±15 量级）
         public float resistanceOffset;       // 综合抗性偏移（±15 量级）
         public string appearanceTag;         // 外观标签（肤色/体型/面部）
         public string talentId;              // 触发的天赋（空=无）
@@ -107,6 +106,7 @@ namespace CivilizationEvolution.Race
     /// <summary>
     /// DNA 系统核心：生成 / 遗传 / 突变 / 近亲 / 表达
     /// 全部为一次性计算（角色创建、生育时），不参与每 Tick 运算
+    /// 变革性为种族设定（RaceData.transformativity），个体 DNA 不设变革性基因座
     /// </summary>
     public static class DnaSystem
     {
@@ -115,7 +115,18 @@ namespace CivilizationEvolution.Race
         public const float TalentDefectMutationChance = 0.015f;   // 天赋/缺陷基因座突变概率略高
         public const float TalentChanceAA = 0.25f;                // AA 触发特殊天赋概率
         public const float DefectChanceAA = 0.9f;                 // aa 触发遗传病概率（其余 10% 罕见正向突变）
-        public const float OffsetRange = 15f;                     // 智慧/勇武/变革性/抗性基准 ±15 偏移量级
+        public const float OffsetRange = 15f;                     // 智慧/勇武/抗性基准 ±15 偏移量级
+
+        /// <summary>活跃基因座（变革性为种族设定，不参与个体 DNA）</summary>
+        public static readonly DnaLocus[] ActiveLoci =
+        {
+            DnaLocus.Longevity,
+            DnaLocus.Intelligence,
+            DnaLocus.Martial,
+            DnaLocus.Resistance,
+            DnaLocus.Appearance,
+            DnaLocus.TalentDefect
+        };
 
         // ===== 原版预设天赋表（模组可扩展） =====
         private static readonly List<TalentDefectDef> _talentDefs = new List<TalentDefectDef>
@@ -157,7 +168,7 @@ namespace CivilizationEvolution.Race
         public static DnaData GenerateRandom(RaceData race)
         {
             var dna = new DnaData();
-            foreach (DnaLocus locus in Enum.GetValues(typeof(DnaLocus)))
+            foreach (DnaLocus locus in ActiveLoci)
             {
                 float freq = race != null ? race.GetLocusAFrequency(locus) : 0.5f;
                 var pair = new LocusPair(
@@ -176,10 +187,11 @@ namespace CivilizationEvolution.Race
         /// 3. 近亲系数越高，纯合概率越大（隐性遗传病风险上升）
         /// 父母缺失时按种族基因频率随机补位（混血场景：父方缺失用父种族频率）
         /// </summary>
-        public static DnaData Inherit(DnaData father, DnaData mother, RaceData race, float inbreeding)
+        /// <param name="allowMutation">是否允许突变（测试确定性场景传 false）</param>
+        public static DnaData Inherit(DnaData father, DnaData mother, RaceData race, float inbreeding, bool allowMutation = true)
         {
             var dna = new DnaData { inbreedingCoefficient = Mathf.Clamp01(inbreeding) };
-            foreach (DnaLocus locus in Enum.GetValues(typeof(DnaLocus)))
+            foreach (DnaLocus locus in ActiveLoci)
             {
                 Allele paternal = father != null ? PickAllele(father.GetLocus(locus)) : RandomAllele(race, locus);
                 Allele maternal = mother != null ? PickAllele(mother.GetLocus(locus)) : RandomAllele(race, locus);
@@ -192,12 +204,15 @@ namespace CivilizationEvolution.Race
                 }
 
                 // 突变
-                float mutationChance = locus == DnaLocus.TalentDefect ? TalentDefectMutationChance : MutationChance;
-                if (UnityEngine.Random.value < mutationChance)
+                if (allowMutation)
                 {
-                    if (UnityEngine.Random.value < 0.5f) paternal = Flip(paternal);
-                    else maternal = Flip(maternal);
-                    dna.mutationCount++;
+                    float mutationChance = locus == DnaLocus.TalentDefect ? TalentDefectMutationChance : MutationChance;
+                    if (UnityEngine.Random.value < mutationChance)
+                    {
+                        if (UnityEngine.Random.value < 0.5f) paternal = Flip(paternal);
+                        else maternal = Flip(maternal);
+                        dna.mutationCount++;
+                    }
                 }
 
                 dna.SetLocus(locus, new LocusPair(paternal, maternal));
@@ -214,10 +229,9 @@ namespace CivilizationEvolution.Race
 
             // 寿命：偏移叠加在种族寿命区间上（区间半宽 lifespanRangeYears）
             expr.longevityOffsetYears = ComputeOffset(dna, DnaLocus.Longevity, race != null ? race.lifespanRangeYears : 15f);
-            // 智慧/勇武/变革性/抗性：种族基准 ±15 量级偏移
+            // 智慧/勇武/抗性：种族基准 ±15 量级偏移（变革性为种族设定，无个体偏移）
             expr.intelligenceOffset = ComputeOffset(dna, DnaLocus.Intelligence, OffsetRange);
             expr.martialOffset = ComputeOffset(dna, DnaLocus.Martial, OffsetRange);
-            expr.reformismOffset = ComputeOffset(dna, DnaLocus.Reformism, OffsetRange);
             expr.resistanceOffset = ComputeOffset(dna, DnaLocus.Resistance, OffsetRange);
             // 外观
             expr.appearanceTag = ComputeAppearance(dna);

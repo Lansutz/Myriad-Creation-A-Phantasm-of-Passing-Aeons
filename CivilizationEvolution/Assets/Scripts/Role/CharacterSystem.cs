@@ -49,6 +49,9 @@ namespace CivilizationEvolution.Role
         /// <summary>DNA 表达结果（出生时一次性计算，终身不变）</summary>
         public DnaExpression dnaExpression;
 
+        /// <summary>个体综合抗性 0-100（种族抗性基准 + DNA 抗性偏移，疾病感染修正用）</summary>
+        public float individualResistance = 50f;
+
         // 核心六维属性（0-100）
         [Range(0f, 100f)] public float martial = 50f;      // 军事
         [Range(0f, 100f)] public float diplomacy = 50f;     // 外交
@@ -498,6 +501,9 @@ namespace CivilizationEvolution.Role
             character.dnaExpression = expr;
             character.expectedLifespanYears = Mathf.Clamp(
                 (exprRace != null ? exprRace.lifespanBaseYears : 75f) + expr.longevityOffsetYears, 20f, 150f);
+            // 个体抗性：种族基准 + DNA 偏移（疾病感染修正用；变革性为种族设定，不做个体级）
+            character.individualResistance = Mathf.Clamp(
+                (exprRace != null ? exprRace.resistanceBaseline : 50f) + expr.resistanceOffset, 0f, 100f);
 
             if (dna != null)
             {

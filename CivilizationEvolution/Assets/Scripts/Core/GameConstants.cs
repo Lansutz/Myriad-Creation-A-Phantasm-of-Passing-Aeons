@@ -18,7 +18,7 @@ namespace CivilizationEvolution.Core
         public const string Version = "0.1.0-alpha";
 
         /// <summary>存档版本号（存档结构变更时递增，用于存档兼容）</summary>
-        public const int SaveVersion = 3;
+        public const int SaveVersion = 4;
 
         /// <summary>完整显示标题（英文主标题 + 中文副标题）</summary>
         public static string FullTitle => $"{GameNameEn}\n{GameNameZh}";

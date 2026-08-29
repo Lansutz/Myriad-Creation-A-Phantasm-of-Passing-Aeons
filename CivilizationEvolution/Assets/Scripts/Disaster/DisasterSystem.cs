@@ -577,6 +577,9 @@ namespace CivilizationEvolution.Disaster
                 // 传播
                 SpreadDisease(disease);
 
+                // 角色感染（DNA 抗性对接：个体抗性修正感染概率与死亡率）
+                InfectCharacters(disease, currentDay, currentYear);
+
                 // 感染者状态更新
                 UpdateInfections(disease, currentDay, currentYear);
 
@@ -629,6 +632,51 @@ namespace CivilizationEvolution.Disaster
                         remaining -= infected;
                         _tiles[tileIdx].populationBlocks[j] = pb;
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 角色感染（DNA 抗性对接）
+        /// 活跃疾病每日对影响地块政权的存活角色，按个体抗性修正概率感染：
+        /// - 个体抗性 100 → 感染概率 ×0.2；抗性 0 → ×1.6（individualResistance = 种族基准 + DNA 偏移）
+        /// - 感染扣健康（按疾病死亡率），健康归零角色死亡
+        /// - 感染概率远低于人口块感染（角色是珍稀个体，避免快速灭绝）
+        /// </summary>
+        private void InfectCharacters(ActiveDisease disease, int currentDay, int currentYear)
+        {
+            if (_characterManager == null || disease.affectedTiles == null || disease.affectedTiles.Count == 0)
+                return;
+
+            // 疾病影响地块的政权集合（去重）
+            var affectedRealms = new HashSet<int>();
+            foreach (int idx in disease.affectedTiles)
+            {
+                if (idx >= 0 && idx < _tiles.Length && _tiles[idx].ownerRealmId >= 0)
+                    affectedRealms.Add(_tiles[idx].ownerRealmId);
+            }
+            if (affectedRealms.Count == 0) return;
+
+            foreach (var c in _characterManager.GetAllCharacters().Values)
+            {
+                if (!c.isAlive || !affectedRealms.Contains(c.realmId)) continue;
+
+                float resistance = c.individualResistance;
+                float mod = Mathf.Clamp(1.6f - resistance / 100f * 1.4f, 0.2f, 1.6f);
+
+                float chance = disease.def.baseInfectionRate * (disease.currentR0 / 10f) * mod * 0.02f;
+                if (UnityEngine.Random.value >= chance) continue;
+
+                float damage = disease.def.baseMortalityRate * 15f;
+                c.health = Mathf.Max(0f, c.health - damage);
+                if (c.health <= 0f)
+                {
+                    c.Die(currentDay, currentYear, $"{disease.def.name}病逝");
+                    Debug.Log($"[Disease] {c.fullName} 因{disease.def.name}病逝（抗性 {resistance:F0}）");
+                }
+                else
+                {
+                    Debug.Log($"[Disease] {c.fullName} 感染{disease.def.name}（抗性 {resistance:F0}，健康 {c.health:F0}）");
                 }
             }
         }
