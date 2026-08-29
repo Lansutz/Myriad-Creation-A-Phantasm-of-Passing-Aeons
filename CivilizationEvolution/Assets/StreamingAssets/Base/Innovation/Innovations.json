@@ -1354,6 +1354,98 @@
       ],
       "innovationName": "书吏学校",
       "description": "神庙附设学馆，书吏子弟世代执笔（《行业讽刺诗》）；选拔的埃及形态。"
+    },
+    {
+      "innovationId": 952,
+      "field": 17,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        501
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Manor"
+      ],
+      "innovationName": "庄园制度",
+      "description": "领主自营地与农奴份地交错，敞田三圃轮作（Bloch：封建社会的经济细胞）；庄园自给自足。"
+    },
+    {
+      "innovationId": 953,
+      "field": 15,
+      "era": 3,
+      "researchCost": 250,
+      "prerequisites": [
+        952
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Manor"
+      ],
+      "innovationName": "庄园法庭",
+      "description": "领主开庭，庄头陪审，争讼不出庄园（manorial court）；领地内自有法度。"
+    },
+    {
+      "innovationId": 954,
+      "field": 17,
+      "era": 3,
+      "researchCost": 200,
+      "prerequisites": [
+        952
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Manor"
+      ],
+      "innovationName": "公地制度",
+      "description": "牧场林地共牧共樵，茅舍农亦有生机（commons）；村社的公共财产。"
+    },
+    {
+      "innovationId": 955,
+      "field": 17,
+      "era": 3,
+      "researchCost": 300,
+      "prerequisites": [
+        952,
+        106
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Manor"
+      ],
+      "innovationName": "磨坊垄断",
+      "description": "领主的磨坊是唯一的磨坊，磨税入仓（mill soke）；水磨成了权力的象征。"
+    },
+    {
+      "innovationId": 956,
+      "field": 17,
+      "era": 3,
+      "researchCost": 250,
+      "prerequisites": [
+        952
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Manor"
+      ],
+      "innovationName": "劳役地租",
+      "description": "农奴每周数日在自营地服役（corvée）；劳动本身就是地租。"
+    },
+    {
+      "innovationId": 957,
+      "field": 16,
+      "era": 4,
+      "researchCost": 500,
+      "prerequisites": [
+        952,
+        941
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Manor"
+      ],
+      "innovationName": "末日审判书",
+      "description": "威廉一世全英清丈，一万三千聚落登记在册（1086）；封建王权的统计奇迹。"
     }
   ]
 }

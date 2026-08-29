@@ -214,6 +214,24 @@ namespace CivilizationEvolution.Tests
             Assert.IsFalse(tree.HasInnovation(1, 822), "奇普路径不应需要文书行政");
         }
 
+        [Test]
+        public void InnovationTree_ManorLine_FeudalEconomicBase()
+        {
+            // 庄园线（Manorialism，Bloch《封建社会》）：封建制度→庄园制度→{法庭/公地/磨坊/劳役}
+            Assert.IsNotNull(_tree.GetInnovation(952), "庄园制度应存在");
+            Assert.IsTrue(_tree.GetInnovation(952).prerequisites.Contains(501), "庄园制度前置封建制度");
+            Assert.IsTrue(_tree.GetInnovation(952).affinityTags.Contains("Manor"), "庄园带 Manor 标签");
+
+            Assert.IsTrue(_tree.GetInnovation(953).prerequisites.Contains(952), "庄园法庭前置庄园");
+            Assert.IsTrue(_tree.GetInnovation(954).prerequisites.Contains(952), "公地制度前置庄园");
+            Assert.IsTrue(_tree.GetInnovation(955).prerequisites.Contains(952), "磨坊垄断前置庄园");
+            Assert.IsTrue(_tree.GetInnovation(955).prerequisites.Contains(106), "磨坊垄断前置水磨");
+            Assert.IsTrue(_tree.GetInnovation(956).prerequisites.Contains(952), "劳役地租前置庄园");
+
+            Assert.IsNotNull(_tree.GetInnovation(957), "末日审判书应存在（1086 全英清丈）");
+            Assert.IsTrue(_tree.GetInnovation(957).prerequisites.Contains(941), "末日审判书前置上计制度");
+        }
+
         private static void CompleteTree(InnovationTree tree, int id)
         {
             Assert.IsTrue(tree.StartResearch(1, id), $"革新 {id} 应可开始研究");
