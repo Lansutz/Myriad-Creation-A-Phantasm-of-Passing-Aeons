@@ -221,6 +221,38 @@ namespace CivilizationEvolution.EditorTools
             Debug.Log("[CE菜单] UI 样式已升级：按钮/下拉圆角+悬停反馈，面板主题色圆角，事件日志标题。请保存场景。");
         }
 
+        [MenuItem(MenuRoot + "7. 就地添加角色面板", false, 7)]
+        public static void AddCharacterPanelToExistingScene()
+        {
+            var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+            if (canvas == null)
+            {
+                Debug.LogWarning("[CE菜单] 未找到 Canvas，请先执行菜单 1 一键搭建游戏场景。");
+                return;
+            }
+            if (canvas.transform.Find("CharacterPanel") != null)
+            {
+                Debug.Log("[CE菜单] 角色面板已存在。");
+                return;
+            }
+
+            var ui = Object.FindFirstObjectByType<UIManager>(FindObjectsInactive.Include);
+            if (ui == null)
+            {
+                Debug.LogWarning("[CE菜单] 未找到 UIManager，请先执行菜单 1 一键搭建游戏场景。");
+                return;
+            }
+
+            // 顶部入口按钮（TopBar 存在则补建）
+            var topBar = canvas.transform.Find("TopBar");
+            if (topBar != null && topBar.Find("CharOpenBtn") == null)
+                SetField(ui, "charOpenButton", CreateButton("CharOpenBtn", topBar, "角色"));
+
+            BuildCharacterPanel(canvas.transform, ui);
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Debug.Log("[CE菜单] 角色面板已就地添加，请保存场景。");
+        }
+
         // ================= UGUI 代码构建 =================
 
         /// <summary>构建整套界面并通过反射注入UIManager</summary>
@@ -309,6 +341,55 @@ namespace CivilizationEvolution.EditorTools
             SetField(ui, "eventLogPanel", logPanel);
             SetField(ui, "eventLogText", logText);
             SetField(ui, "eventLogScroll", scroll);
+
+            // ---- 顶部：角色面板入口按钮（标题右侧）----
+            var charOpenBtn = CreateButton("CharOpenBtn", topBar, "角色");
+            SetField(ui, "charOpenButton", charOpenBtn);
+
+            // ---- 角色面板（右侧，地块面板上方）----
+            BuildCharacterPanel(canvas, ui);
+        }
+
+        /// <summary>构建角色面板（含入口按钮；供一键搭建与就地升级共用）</summary>
+        private static void BuildCharacterPanel(Transform canvas, UIManager ui)
+        {
+            var charPanel = CreatePanel("CharacterPanel", canvas).gameObject;
+            SetAnchor(charPanel.GetComponent<RectTransform>(),
+                new Vector2(1, 1), new Vector2(1, 1), new Vector2(-280, -12), new Vector2(280, 560));
+            var cv = charPanel.AddComponent<VerticalLayoutGroup>();
+            cv.spacing = 6; cv.padding = new RectOffset(12, 12, 10, 10);
+            cv.childForceExpandWidth = true;
+
+            // 标题行：◀ 名称 ▶（水平排布）
+            var titleRow = new GameObject("CharTitleRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            titleRow.transform.SetParent(charPanel.transform, false);
+            var trLayout = titleRow.GetComponent<HorizontalLayoutGroup>();
+            trLayout.spacing = 6; trLayout.childAlignment = TextAnchor.MiddleCenter;
+            trLayout.childForceExpandWidth = false;
+            SetField(ui, "charPrevButton", CreateButton("CharPrev", titleRow.transform, "◀"));
+            var charName = CreateText("CharName", titleRow.transform, "角色", 20);
+            charName.alignment = TextAnchor.MiddleCenter;
+            charName.GetComponent<LayoutElement>().minWidth = 140;
+            SetField(ui, "charNameText", charName);
+            SetField(ui, "charNextButton", CreateButton("CharNext", titleRow.transform, "▶"));
+
+            // 状态行（政权/在世/威望等级/统治类型/精神疾病）
+            SetField(ui, "charStatusText", CreateText("CharStatus", charPanel.transform, "", 16));
+            // 六维 + 容量型/上限型数值
+            SetField(ui, "charStatsText", CreateText("CharStats", charPanel.transform, "", 16));
+            // 人格七维
+            SetField(ui, "charPersonalityText", CreateText("CharPersonality", charPanel.transform, "", 16));
+            // 写实人格描述（小字）
+            var charDesc = CreateText("CharDesc", charPanel.transform, "", 14);
+            charDesc.color = UITheme.TextDim;
+            SetField(ui, "charDescText", charDesc);
+            // DNA 可见层（外貌/天赋/隐疾——不暴露基因型）
+            var charDna = CreateText("CharDna", charPanel.transform, "", 14);
+            charDna.color = UITheme.TextDim;
+            SetField(ui, "charDnaText", charDna);
+            // 关闭
+            SetField(ui, "charCloseButton", CreateButton("CharClose", charPanel.transform, "关闭"));
+            charPanel.SetActive(false);
         }
 
         /// <summary>构建 UGUI Dropdown 完整展开模板（Template/Viewport/Content/Item+Toggle）</summary>

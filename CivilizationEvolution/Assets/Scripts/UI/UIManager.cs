@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Render;
+using CivilizationEvolution.Race;
+using CivilizationEvolution.Role;
 
 namespace CivilizationEvolution.UI
 {
@@ -57,10 +59,27 @@ namespace CivilizationEvolution.UI
         [Header("显示模式切换")]
         [SerializeField] private Dropdown displayModeDropdown;
 
+        [Header("角色面板")]
+        [SerializeField] private GameObject characterPanel;
+        [SerializeField] private Button charOpenButton;
+        [SerializeField] private Button charPrevButton;
+        [SerializeField] private Button charNextButton;
+        [SerializeField] private Button charCloseButton;
+        [SerializeField] private Text charNameText;
+        [SerializeField] private Text charStatusText;
+        [SerializeField] private Text charStatsText;
+        [SerializeField] private Text charPersonalityText;
+        [SerializeField] private Text charDescText;
+        [SerializeField] private Text charDnaText;
+
         // 选中的地块
         private int _selectedTile = -1;
         private readonly List<string> _eventLog = new List<string>();
         private const int MaxLogEntries = 100;
+
+        // 角色面板状态
+        private readonly List<int> _characterList = new List<int>();
+        private int _charIndex = 0;
 
         // Toast 队列
         private readonly Queue<string> _toastQueue = new Queue<string>();
@@ -77,6 +96,8 @@ namespace CivilizationEvolution.UI
             UpdateTopBar();
             UpdateTileInfo();
             HandleMouseClick();
+            if (characterPanel != null && characterPanel.activeSelf)
+                UpdateCharacterPanel();
         }
 
         /// <summary>初始化UI</summary>
@@ -102,6 +123,12 @@ namespace CivilizationEvolution.UI
                 });
                 displayModeDropdown.onValueChanged.AddListener(OnDisplayModeChanged);
             }
+
+            // 角色面板按钮
+            if (charOpenButton != null) charOpenButton.onClick.AddListener(OpenCharacterPanel);
+            if (charPrevButton != null) charPrevButton.onClick.AddListener(() => { _charIndex--; UpdateCharacterPanel(); });
+            if (charNextButton != null) charNextButton.onClick.AddListener(() => { _charIndex++; UpdateCharacterPanel(); });
+            if (charCloseButton != null) charCloseButton.onClick.AddListener(CloseCharacterPanel);
 
             Debug.Log("[UIManager] UI初始化完成");
         }
@@ -192,6 +219,101 @@ namespace CivilizationEvolution.UI
         {
             if (mapRenderer == null) return;
             mapRenderer.SetDisplayMode((MapDisplayMode)index);
+        }
+
+        // ===== 角色面板 =====
+
+        /// <summary>打开角色面板（刷新角色列表并显示第一个）</summary>
+        public void OpenCharacterPanel()
+        {
+            var cm = world != null ? world.GetCharacterManager() : null;
+            if (cm == null) return;
+
+            _characterList.Clear();
+            foreach (var c in cm.GetAllCharacters().Values)
+                _characterList.Add(c.characterId);
+            _characterList.Sort();
+            _charIndex = 0;
+
+            if (characterPanel != null) characterPanel.SetActive(true);
+            UpdateCharacterPanel();
+        }
+
+        /// <summary>关闭角色面板</summary>
+        public void CloseCharacterPanel()
+        {
+            if (characterPanel != null) characterPanel.SetActive(false);
+        }
+
+        /// <summary>刷新角色面板（每帧调用，角色数据动态变化）</summary>
+        private void UpdateCharacterPanel()
+        {
+            var cm = world != null ? world.GetCharacterManager() : null;
+            if (cm == null || _characterList.Count == 0)
+            {
+                if (charNameText != null) charNameText.text = "无角色";
+                return;
+            }
+
+            if (_charIndex < 0) _charIndex = 0;
+            if (_charIndex >= _characterList.Count) _charIndex = _characterList.Count - 1;
+
+            var c = cm.GetCharacter(_characterList[_charIndex]);
+            if (c == null) return;
+
+            if (charNameText != null)
+                charNameText.text = $"{c.fullName}  {c.age}岁 {(c.isMale ? "男" : "女")}  [{_charIndex + 1}/{_characterList.Count}]";
+
+            if (charStatusText != null)
+            {
+                string rulerType = c.role == CharacterRole.Ruler ? $"｜{GetRulerTypeName(c.GetRulerType())}" : "";
+                string disorder = MentalHealthSystem.GetDisorderName(c);
+                string disorderStr = disorder.Length > 0
+                    ? $"｜<color=#{ColorUtility.ToHtmlStringRGB(UITheme.LogWar)}>患{disorder}</color>" : "";
+                charStatusText.text =
+                    $"政权{c.realmId}｜{(c.isAlive ? "在世" : "已故")}｜威望 Lv{c.prestigeCapacityLevel}{rulerType}{disorderStr}";
+            }
+
+            if (charStatsText != null)
+            {
+                charStatsText.text =
+                    $"武力 {c.martial:F0}    外交 {c.diplomacy:F0}    军事经略 {c.warfare:F0}\n" +
+                    $"管理 {c.stewardship:F0}    谋略 {c.intrigue:F0}    学识 {c.learning:F0}\n" +
+                    $"威望 {c.prestige:F0}/{c.GetPrestigeCapacity():F0}    恶名 {c.notoriety:F0}\n" +
+                    $"健康 {c.health:F0}    压力 {c.stress:F0}    恐惧 {c.dread:F0}    肥胖 {c.obesity:F0}\n" +
+                    $"魅力 {c.charm:F0}    预期寿命 {c.expectedLifespanYears:F0}岁";
+            }
+
+            if (charPersonalityText != null)
+            {
+                charPersonalityText.text =
+                    $"大胆 {c.boldness:F0}    悲悯 {c.compassion:F0}    贪婪 {c.greed:F0}    荣誉 {c.honor:F0}\n" +
+                    $"理性 {c.rationality:F0}    报复 {c.vengefulness:F0}    虔信 {c.piety:F0}";
+            }
+
+            if (charDescText != null)
+                charDescText.text = c.GetPersonalityDescription();
+
+            if (charDnaText != null)
+            {
+                string extra = "";
+                var talentDef = DnaSystem.FindDef(c.dnaExpression.talentId);
+                var defectDef = DnaSystem.FindDef(c.dnaExpression.defectId);
+                if (talentDef != null) extra += $"｜天赋：{talentDef.name}";
+                if (defectDef != null) extra += $"｜隐疾：{defectDef.name}";
+                charDnaText.text = $"外貌：{c.dnaExpression.appearanceTag}{extra}";
+            }
+        }
+
+        private static string GetRulerTypeName(RulerType type)
+        {
+            return type switch
+            {
+                RulerType.Benevolent => "明君",
+                RulerType.Tyrant => "暴君",
+                RulerType.TyrantFool => "昏暴之君",
+                _ => "平庸之主"
+            };
         }
 
         /// <summary>添加事件日志（按类型着色）</summary>
