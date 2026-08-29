@@ -224,7 +224,9 @@ namespace CivilizationEvolution.Tests
             // 完成官僚制度前置链（部落联盟→封建→驿传→中央集权→文书行政→官僚制度）
             CompleteChain(tree, 1, 500);
             CompleteChain(tree, 1, 200); // 陶器（文字前置）
-            CompleteChain(tree, 1, 600);
+            CompleteChain(tree, 1, 600); // 文字
+            CompleteChain(tree, 1, 958); // 中央集权思想（OR 文字✓）
+            CompleteChain(tree, 1, 959); // 郡县制（治理形态）
             CompleteChain(tree, 1, 820);
             CompleteChain(tree, 1, 821);
             CompleteChain(tree, 1, 505);
@@ -233,7 +235,7 @@ namespace CivilizationEvolution.Tests
             CompleteChain(tree, 1, 808);
             CompleteChain(tree, 1, 823);
             CompleteChain(tree, 1, 501);
-            CompleteChain(tree, 1, 502);
+            CompleteChain(tree, 1, 502); // 中央集权（思想+郡县）
             CompleteChain(tree, 1, 503);
 
             Assert.IsTrue(family.AddFamilyTradition("famtrad_dignitary_legacy"),

@@ -203,6 +203,9 @@ namespace CivilizationEvolution.Tests
             CompleteTree(tree, 915);  // 刻痕计数
             CompleteTree(tree, 948);  // 奇普结绳
             CompleteTree(tree, 949);  // 奇普统计
+            // 集权链（无文字版本）：思想经奇普传承→郡县制→中央集权
+            CompleteTree(tree, 958);  // 中央集权思想（OR [600 文字, 948 奇普]——奇普满足）
+            CompleteTree(tree, 959);  // 郡县制
             // 驿传：OR [822 文书行政, 949 奇普统计]——奇普满足（印加 chasqui）
             CompleteTree(tree, 823);
             // 中央集权 → 官僚制度：OR [822, 949]——奇普满足
@@ -212,6 +215,29 @@ namespace CivilizationEvolution.Tests
             Assert.IsFalse(tree.HasInnovation(1, 600), "奇普路径不应需要文字");
             Assert.IsFalse(tree.HasInnovation(1, 820), "奇普路径不应需要简牍");
             Assert.IsFalse(tree.HasInnovation(1, 822), "奇普路径不应需要文书行政");
+        }
+
+        [Test]
+        public void InnovationTree_GovernanceForms_ConceptLayers()
+        {
+            // 行政制度 v2：概念层次——思想（思维）vs 治理形态（制度）vs 结构（中央集权）
+            Assert.IsNotNull(_tree.GetInnovation(958), "中央集权思想应存在（思维层）");
+            Assert.AreEqual(InnovationDomain.Thought, _tree.GetInnovation(958).Domain, "集权思想→思维");
+
+            Assert.IsNotNull(_tree.GetInnovation(959), "郡县制应存在（政制）");
+            Assert.IsNotNull(_tree.GetInnovation(960), "行省制应存在（政制）");
+            Assert.IsNotNull(_tree.GetInnovation(961), "包税制应存在（经制）");
+            Assert.AreEqual(InnovationDomain.Institution, _tree.GetInnovation(959).Domain, "郡县制→制度");
+            Assert.AreEqual(InnovationField.Economic, _tree.GetInnovation(961).field, "包税制→制度-经制");
+
+            // 中央集权=思想+治理形态（OR：郡县/行省）
+            Assert.IsTrue(_tree.GetInnovation(502).prerequisites.Contains(958), "中央集权需集权思想");
+            Assert.IsTrue(_tree.GetInnovation(502).prerequisitesAny.Contains(959), "中央集权 OR 含郡县制");
+            Assert.IsTrue(_tree.GetInnovation(502).prerequisitesAny.Contains(960), "中央集权 OR 含行省制");
+
+            // 包税制=思想+铸币
+            Assert.IsTrue(_tree.GetInnovation(961).prerequisites.Contains(701), "包税制前置铸币");
+            Assert.IsTrue(_tree.GetInnovation(961).affinityTags.Contains("TaxFarming"), "包税制带 TaxFarming 标签");
         }
 
         [Test]

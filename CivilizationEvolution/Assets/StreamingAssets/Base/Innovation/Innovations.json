@@ -417,11 +417,14 @@
       "era": 3,
       "researchCost": 600,
       "prerequisites": [
-        501,
-        823
+        958
       ],
       "innovationName": "中央集权",
-      "description": "郡县直隶于王，诸侯之权收归中枢；天下只有一个声音。"
+      "description": "权柄归于一尊，地方服从中央（由集权思想与治理形态共同支撑的制度结构）。",
+      "prerequisitesAny": [
+        959,
+        960
+      ]
     },
     {
       "innovationId": 505,
@@ -1446,6 +1449,66 @@
       ],
       "innovationName": "末日审判书",
       "description": "威廉一世全英清丈，一万三千聚落登记在册（1086）；封建王权的统计奇迹。"
+    },
+    {
+      "innovationId": 958,
+      "field": 10,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [],
+      "prerequisitesAny": [
+        600,
+        948
+      ],
+      "affinityTags": [],
+      "innovationName": "中央集权思想",
+      "description": "事在四方，要在中央（法家）；集权首先是一种理念——经文字或结绳传承，然后才成为制度。"
+    },
+    {
+      "innovationId": 959,
+      "field": 14,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        958
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Junxian"
+      ],
+      "innovationName": "郡县制",
+      "description": "郡统县、县统乡，地方官由中央任免、流官任期（李斯定策）；中央垂直管理地方。"
+    },
+    {
+      "innovationId": 960,
+      "field": 14,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        958
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Province"
+      ],
+      "innovationName": "行省制",
+      "description": "中央派出机构地方化（元之行省、罗马行省总督）；大帝国的地方枢纽。"
+    },
+    {
+      "innovationId": 961,
+      "field": 17,
+      "era": 3,
+      "researchCost": 300,
+      "prerequisites": [
+        958,
+        701
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "TaxFarming"
+      ],
+      "innovationName": "包税制",
+      "description": "税收征管以合同外包，包税人竞标定额（罗马 publicani、奥斯曼 iltizam）；财政的捷径与积弊。"
     }
   ]
 }
