@@ -48,15 +48,15 @@ namespace CivilizationEvolution.Politics
 
     /// <summary>
     /// 头衔继承模式（学术：头衔如何传承）
-    /// SoleHeir=唯一继承（整体传位）/ Partible=头衔分割（凡尔登三分法兰克）/
-    /// Collective=家族共享·共治（拜占庭共治皇帝、印度 mitakshara 家族共有）/
-    /// Elective=选举（波兰自由选王、神罗选帝侯、教宗）
+    /// SoleHeir=唯一继承（整体传位）/ FamilyShared=家族共享（法兰克传统：
+    /// 所有兄弟共享"法兰克之王"王号，各自统治领地部分——凡尔登843三分的是
+    /// 领地而非头衔）/ Elective=选举（波兰自由选王、神罗选帝侯、教宗）
+    /// 注：共治君主（拜占庭 co-emperor）是生前统治形态，与继承正交，不属于继承模式
     /// </summary>
     public enum TitleInheritanceMode
     {
         SoleHeir,       // 唯一继承：头衔整体传予一人
-        Partible,       // 头衔分割：按继承人分割（加洛林凡尔登条约 843）
-        Collective,     // 家族共享/共治：家族共同领有（拜占庭 co-emperor）
+        FamilyShared,   // 家族共享：头衔由全体继承人共同领有（墨洛温/加洛林：诸子皆王）
         Elective        // 选举：由选举产生（波兰 liberum veto、神罗选帝侯）
     }
 
@@ -132,11 +132,14 @@ namespace CivilizationEvolution.Politics
                 InheritanceGender.FemaleOnly, InheritanceAge.Seniority,
                 TitleInheritanceMode.SoleHeir, LandInheritanceMode.Primogeniture);
 
-        /// <summary>绝对均分继承（法兰克/西班牙 1157-1300）：头衔分割+领地均分（凡尔登三分）</summary>
-        public static InheritanceLaw Partible() =>
+        /// <summary>
+        /// 法兰克式（墨洛温/加洛林传统）：王号家族共享（诸子皆"法兰克之王"）
+        /// + 领地均分（凡尔登 843 三分的是领地，头衔仍为家族共有）
+        /// </summary>
+        public static InheritanceLaw FrankishPartible() =>
             new InheritanceLaw(InheritanceScope.CognaticKin, InheritanceBranch.EldestLine,
-                InheritanceGender.MalePreference, InheritanceAge.Seniority,
-                TitleInheritanceMode.Partible, LandInheritanceMode.Partible);
+                InheritanceGender.MaleOnly, InheritanceAge.Seniority,
+                TitleInheritanceMode.FamilyShared, LandInheritanceMode.Partible);
 
         /// <summary>萨利克法（法兰克）：男子专属+均分继承（排斥女性≠长子继承）</summary>
         public static InheritanceLaw Salic() =>
@@ -149,12 +152,6 @@ namespace CivilizationEvolution.Politics
             new InheritanceLaw(InheritanceScope.ClanOnly, InheritanceBranch.EldestLine,
                 InheritanceGender.MalePreference, InheritanceAge.Seniority,
                 TitleInheritanceMode.SoleHeir, LandInheritanceMode.Partible);
-
-        /// <summary>拜占庭共治：头衔家族共享（co-emperor），领地长子独得</summary>
-        public static InheritanceLaw ByzantineCollegiate() =>
-            new InheritanceLaw(InheritanceScope.CognaticKin, InheritanceBranch.EldestLine,
-                InheritanceGender.MalePreference, InheritanceAge.Seniority,
-                TitleInheritanceMode.Collective, LandInheritanceMode.Primogeniture);
 
         /// <summary>选举王（波兰自由选王）：头衔选举产生，领地维持原状</summary>
         public static InheritanceLaw ElectiveMonarchy() =>
@@ -180,8 +177,7 @@ namespace CivilizationEvolution.Politics
             string titleName = titleMode switch
             {
                 TitleInheritanceMode.SoleHeir => "头衔唯一",
-                TitleInheritanceMode.Partible => "头衔分割",
-                TitleInheritanceMode.Collective => "头衔共治",
+                TitleInheritanceMode.FamilyShared => "头衔家族共享",
                 TitleInheritanceMode.Elective => "头衔选举",
                 _ => "头衔唯一"
             };

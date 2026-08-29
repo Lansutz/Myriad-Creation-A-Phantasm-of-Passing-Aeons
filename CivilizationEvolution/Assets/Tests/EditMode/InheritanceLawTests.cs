@@ -166,11 +166,14 @@ namespace CivilizationEvolution.Tests
         }
 
         [Test]
-        public void ByzantineCollegiate_TitleShared()
+        public void FrankishPartible_TitleFamilyShared()
         {
-            // 拜占庭共治：头衔家族共享（co-emperor）
-            var law = InheritanceLaw.ByzantineCollegiate();
-            Assert.AreEqual(TitleInheritanceMode.Collective, law.titleMode, "拜占庭头衔共治");
+            // 法兰克传统：王号家族共享（诸子皆"法兰克之王"）+ 领地均分
+            // （凡尔登 843 三分的是领地，头衔仍为家族共有——用户定稿修正）
+            var law = InheritanceLaw.FrankishPartible();
+            Assert.AreEqual(TitleInheritanceMode.FamilyShared, law.titleMode, "法兰克王号家族共享");
+            Assert.AreEqual(LandInheritanceMode.Partible, law.landMode, "法兰克领地均分");
+            Assert.AreEqual(InheritanceGender.MaleOnly, law.gender, "法兰克男子专属（萨利克传统）");
         }
 
         [Test]
@@ -186,7 +189,7 @@ namespace CivilizationEvolution.Tests
         public void DistributeLand_Partible_EvenSplit()
         {
             // 诸子均分：7 领地 3 继承人 → 3/2/2
-            var law = InheritanceLaw.Partible();
+            var law = InheritanceLaw.FrankishPartible();
             var shares = law.DistributeLand(3, 7);
             Assert.AreEqual(3, shares[0], "首位得余数");
             Assert.AreEqual(2, shares[1]);
