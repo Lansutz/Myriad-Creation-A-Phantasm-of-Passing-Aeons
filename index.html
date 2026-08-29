@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="An interactive generative constellation for Myriad Creation." />
+    <title>Myriad Creation</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="experience" aria-labelledby="title">
+      <canvas id="cosmos" aria-hidden="true"></canvas>
+
+      <section class="hero">
+        <p class="eyebrow">Archive 01 · a living study</p>
+        <h1 id="title">Myriad Creation</h1>
+        <p class="subtitle">A phantasm of passing aeons</p>
+        <p class="intro">
+          Each light is a fleeting world. Follow their drift, listen for their names,
+          and leave a small impossible thing behind.
+        </p>
+        <button class="begin" id="begin" type="button">Awaken the constellations</button>
+      </section>
+
+      <aside class="controls" aria-label="Constellation controls">
+        <div class="readout">
+          <span class="readout-label">Worlds witnessed</span>
+          <strong id="world-count">0</strong>
+        </div>
+        <label class="density" for="density">
+          <span>Myriad density</span>
+          <input id="density" type="range" min="40" max="260" value="130" />
+        </label>
+      </aside>
+
+      <footer>
+        <span>Move to bend the starlight</span>
+        <span class="pulse"><i></i> Still becoming</span>
+      </footer>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>
