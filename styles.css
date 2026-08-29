@@ -1,0 +1,95 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap");
+
+:root {
+  color-scheme: dark;
+  --ink: #f7f3e8;
+  --muted: #b7b0bd;
+  --line: rgba(247, 243, 232, 0.24);
+  --accent: #e7a8ff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #080811;
+  color: var(--ink);
+  font-family: "DM Mono", ui-monospace, monospace;
+}
+
+.experience {
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: clamp(1.5rem, 5vw, 4.75rem);
+  background:
+    radial-gradient(circle at 16% 20%, rgba(92, 56, 146, .22), transparent 26rem),
+    radial-gradient(circle at 86% 75%, rgba(11, 106, 128, .16), transparent 24rem),
+    #080811;
+}
+
+#cosmos { position: absolute; inset: 0; z-index: -1; height: 100%; width: 100%; }
+
+.hero {
+  align-self: center;
+  max-width: 51rem;
+  padding: 5rem 0 4rem;
+  animation: rise 1.2s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.eyebrow, footer, .controls { color: var(--muted); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; }
+.eyebrow { margin: 0 0 1.25rem; }
+
+h1 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(3.4rem, 10vw, 9.5rem);
+  font-weight: 500;
+  letter-spacing: -.07em;
+  line-height: .81;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.subtitle { color: var(--accent); font-family: "Playfair Display", Georgia, serif; font-size: clamp(1.35rem, 3vw, 2.3rem); font-style: italic; margin: 1.45rem 0 2.5rem; }
+.intro { color: #d8d2dc; font-size: clamp(.83rem, 1.3vw, 1rem); line-height: 1.8; margin: 0; max-width: 36rem; }
+
+.begin {
+  appearance: none;
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  color: #171320;
+  cursor: pointer;
+  font: 500 .7rem/1 "DM Mono", monospace;
+  letter-spacing: .1em;
+  margin-top: 2.5rem;
+  padding: 1rem 1.2rem;
+  text-transform: uppercase;
+  transition: background .25s, color .25s, transform .25s;
+}
+.begin:hover, .begin:focus-visible { background: transparent; color: var(--ink); transform: translateY(-3px); }
+.begin:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+.controls { border-left: 1px solid var(--line); padding-left: 1rem; position: absolute; right: clamp(1.5rem, 5vw, 4.75rem); top: clamp(1.5rem, 5vw, 4.75rem); width: 12.5rem; }
+.readout { display: flex; flex-direction: column; gap: .55rem; }
+.readout strong { color: var(--ink); font-family: "Playfair Display", serif; font-size: 2.3rem; font-weight: 500; letter-spacing: -.07em; }
+.density { display: grid; gap: .8rem; margin-top: 1.6rem; }
+input { accent-color: var(--accent); cursor: pointer; width: 100%; }
+
+footer { align-items: end; border-top: 1px solid var(--line); display: flex; justify-content: space-between; padding-top: 1rem; }
+.pulse { display: flex; align-items: center; gap: .45rem; }
+.pulse i { background: #b8ffcc; border-radius: 50%; box-shadow: 0 0 12px #b8ffcc; height: .38rem; width: .38rem; animation: blink 2.2s infinite; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes blink { 50% { opacity: .2; transform: scale(.65); } }
+
+@media (max-width: 650px) {
+  .experience { padding: 1.5rem; }
+  .controls { position: static; align-self: start; grid-row: 1; justify-self: end; width: 9rem; }
+  .hero { padding: 9rem 0 4rem; }
+  .intro { max-width: 27rem; }
+  footer { font-size: .55rem; }
+}
