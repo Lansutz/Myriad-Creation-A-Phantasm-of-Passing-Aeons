@@ -287,8 +287,14 @@ namespace CivilizationEvolution.Map
             {
                 int nx = x + dx[i];
                 int ny = y + dy[i];
-                if (nx >= 0 && nx < _width && ny >= 0 && ny < _height)
-                    yield return ny * _width + nx;
+
+                // 环绕支持（修复：原实现忽略 wrapX/wrapY，与 WorldConfig 默认 wrapX=true 矛盾）
+                if (_config.wrapX) nx = ((nx % _width) + _width) % _width;
+                else if (nx < 0 || nx >= _width) continue;
+                if (_config.wrapY) ny = ((ny % _height) + _height) % _height;
+                else if (ny < 0 || ny >= _height) continue;
+
+                yield return ny * _width + nx;
             }
         }
 

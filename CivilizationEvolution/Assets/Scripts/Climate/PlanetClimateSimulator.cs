@@ -286,13 +286,15 @@ namespace CivilizationEvolution.Climate
             int x = index % _width;
             int y = index / _width;
 
-            // 沿盛行风向回溯3格，计算上游高程
+            // 沿盛行风向回溯3格，计算上游高程（支持左右/上下环绕）
             float upstreamElevation = 0f;
             int upstreamCount = 0;
             for (int step = 1; step <= 3; step++)
             {
                 int ux = x - Mathf.RoundToInt(wind.x * step);
                 int uy = y - Mathf.RoundToInt(wind.y * step);
+                if (_config.wrapX) ux = ((ux % _width) + _width) % _width;
+                if (_config.wrapY) uy = ((uy % _height) + _height) % _height;
                 if (ux >= 0 && ux < _width && uy >= 0 && uy < _height)
                 {
                     int uidx = uy * _width + ux;

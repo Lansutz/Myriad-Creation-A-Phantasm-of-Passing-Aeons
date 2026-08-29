@@ -158,16 +158,16 @@ namespace CivilizationEvolution.War
         }
 
         /// <summary>设置移动目标</summary>
-        public void SetMoveTarget(int targetTile, TileData[] tiles, SeaLandGenerator seaLand)
+        public void SetMoveTarget(int targetTile, TileData[] tiles, SeaLandGenerator seaLand, int mapWidth)
         {
-            movePath = FindPath(currentTileIndex, targetTile, tiles, seaLand);
+            movePath = FindPath(currentTileIndex, targetTile, tiles, seaLand, mapWidth);
             moveTargetTile = targetTile;
             state = GameEnums.CombatState.Marching;
             moveProgress = 0f;
         }
 
         /// <summary>A*寻路（简化版，用List模拟优先队列保证兼容性）</summary>
-        private List<int> FindPath(int start, int end, TileData[] tiles, SeaLandGenerator seaLand)
+        private List<int> FindPath(int start, int end, TileData[] tiles, SeaLandGenerator seaLand, int mapWidth)
         {
             var path = new List<int>();
             var openSet = new List<int>();
@@ -177,7 +177,7 @@ namespace CivilizationEvolution.War
 
             openSet.Add(start);
             gScore[start] = 0f;
-            fScore[start] = Heuristic(start, end);
+            fScore[start] = Heuristic(start, end, mapWidth);
 
             while (openSet.Count > 0)
             {
@@ -218,7 +218,7 @@ namespace CivilizationEvolution.War
                     {
                         cameFrom[neighbor] = current;
                         gScore[neighbor] = tentativeG;
-                        fScore[neighbor] = tentativeG + Heuristic(neighbor, end);
+                        fScore[neighbor] = tentativeG + Heuristic(neighbor, end, mapWidth);
                         if (!openSet.Contains(neighbor))
                             openSet.Add(neighbor);
                     }
@@ -228,10 +228,10 @@ namespace CivilizationEvolution.War
             return path;
         }
 
-        private float Heuristic(int a, int b)
+        private float Heuristic(int a, int b, int mapWidth)
         {
-            int ax = a % 256, ay = a / 256;
-            int bx = b % 256, by = b / 256;
+            int ax = a % mapWidth, ay = a / mapWidth;
+            int bx = b % mapWidth, by = b / mapWidth;
             return Mathf.Abs(ax - bx) + Mathf.Abs(ay - by);
         }
 

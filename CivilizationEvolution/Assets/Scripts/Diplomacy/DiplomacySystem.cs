@@ -248,6 +248,9 @@ namespace CivilizationEvolution.Diplomacy
         private readonly List<Subordination> _subordinations = new List<Subordination>();
         private int _nextTreatyId = 1;
 
+        /// <summary>当前游戏日（由 GameWorld 每 Tick 同步，用于盟约/条约/事件的时间戳）</summary>
+        public int CurrentDay { get; set; } = 0;
+
         public DiplomacyManager(Dictionary<int, RealmData> realms)
         {
             _realms = realms;
@@ -332,7 +335,7 @@ namespace CivilizationEvolution.Diplomacy
             if (rel == null || rel.isAtWar) return false;
 
             rel.isAtWar = true;
-            rel.warDeclaredDay = 0; // 简化
+            rel.warDeclaredDay = CurrentDay;
             rel.relation = Mathf.Min(rel.relation, -50f);
             rel.trust = Mathf.Min(rel.trust, 10f);
             rel.threat = Mathf.Max(rel.threat, 90f);
@@ -366,7 +369,7 @@ namespace CivilizationEvolution.Diplomacy
                 treatyName = "和平条约",
                 signerAId = realmA,
                 signerBId = realmB,
-                signedDay = 0
+                signedDay = CurrentDay
             };
 
             if (warReparations > 0)
@@ -418,12 +421,15 @@ namespace CivilizationEvolution.Diplomacy
 
             if (rel.relation < requiredRelation) return null;
 
+            // 去重：同类型活跃盟约已存在则不重复缔结（修复：原实现可被 AI 每30天重复叠加）
+            if (rel.activeAlliances.Exists(a => a.type == type && a.isActive)) return null;
+
             var alliance = new Alliance
             {
                 type = type,
                 realmAId = realmA,
                 realmBId = realmB,
-                signedDay = 0,
+                signedDay = CurrentDay,
                 durationDays = -1,
                 relationRequirement = requiredRelation
             };
@@ -487,7 +493,7 @@ namespace CivilizationEvolution.Diplomacy
                 type = type,
                 suzerainId = suzerainId,
                 vassalId = vassalId,
-                establishedDay = 0
+                establishedDay = CurrentDay
             };
 
             // 设置从属条款
@@ -625,20 +631,21 @@ namespace CivilizationEvolution.Diplomacy
 
         private void NotifyAlliesOfWar(int attackerId, int defenderId)
         {
+            // 遍历全部外交关系：与防御方有 mutualDefense 盟约的第三方加入对攻击方宣战
+            // （修复：原实现要求 rel.isAtWar 才处理，导致防御同盟义务永不触发）
             foreach (var rel in _relations.Values)
             {
-                if (!rel.isAtWar) continue;
                 foreach (var alliance in rel.activeAlliances)
                 {
-                    if (alliance.mutualDefense)
-                    {
-                        // 防御同盟自动加入战争
-                        if (alliance.realmAId == defenderId || alliance.realmBId == defenderId)
-                        {
-                            int allyId = alliance.realmAId == defenderId ? alliance.realmBId : alliance.realmAId;
-                            DeclareWar(allyId, attackerId, "防御同盟义务");
-                        }
-                    }
+                    if (!alliance.isActive || !alliance.mutualDefense) continue;
+
+                    bool defendsTarget = alliance.realmAId == defenderId || alliance.realmBId == defenderId;
+                    if (!defendsTarget) continue;
+
+                    int allyId = alliance.realmAId == defenderId ? alliance.realmBId : alliance.realmAId;
+                    if (allyId == attackerId) continue; // 防御方即攻击方自身（无意义）跳过
+
+                    DeclareWar(allyId, attackerId, "防御同盟义务");
                 }
             }
         }

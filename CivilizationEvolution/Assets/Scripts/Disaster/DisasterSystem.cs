@@ -14,12 +14,16 @@ namespace CivilizationEvolution.Disaster
     public class DisasterSystem
     {
         private readonly TileData[] _tiles;
+        private readonly int _width;
+        private readonly int _height;
         private readonly List<ActiveDisaster> _activeDisasters = new List<ActiveDisaster>();
         private readonly Dictionary<DisasterType, DisasterDef> _disasterDefs = new Dictionary<DisasterType, DisasterDef>();
 
-        public DisasterSystem(TileData[] tiles)
+        public DisasterSystem(TileData[] tiles, int width, int height)
         {
             _tiles = tiles;
+            _width = width;
+            _height = height;
             InitializeDisasterDefs();
         }
 
@@ -280,15 +284,15 @@ namespace CivilizationEvolution.Disaster
                 _ => 5
             };
 
-            // 简化：用曼哈顿距离筛选
-            int cx = centerTile % 128; // 假设宽度128
-            int cy = centerTile / 128;
+            // 曼哈顿距离筛选
+            int cx = centerTile % _width; // 地图宽度来自构造参数（修复：原硬编码128）
+            int cy = centerTile / _width;
 
             for (int i = 0; i < _tiles.Length; i++)
             {
                 if (!_tiles[i].exists || !_tiles[i].isLand) continue;
-                int x = i % 128;
-                int y = i / 128;
+                int x = i % _width;
+                int y = i / _width;
                 int dist = Mathf.Abs(x - cx) + Mathf.Abs(y - cy);
                 if (dist <= radius)
                     affected.Add(i);
@@ -464,13 +468,17 @@ namespace CivilizationEvolution.Disaster
     {
         private readonly TileData[] _tiles;
         private readonly CharacterManager _characterManager;
+        private readonly int _width;
+        private readonly int _height;
         private readonly Dictionary<DiseaseType, DiseaseDef> _diseaseDefs = new Dictionary<DiseaseType, DiseaseDef>();
         private readonly List<ActiveDisease> _activeDiseases = new List<ActiveDisease>();
 
-        public DiseaseSystem(TileData[] tiles, CharacterManager characterManager)
+        public DiseaseSystem(TileData[] tiles, CharacterManager characterManager, int width, int height)
         {
             _tiles = tiles;
             _characterManager = characterManager;
+            _width = width;
+            _height = height;
             InitializeDiseaseDefs();
         }
 
@@ -743,14 +751,14 @@ namespace CivilizationEvolution.Disaster
                 _ => 5
             };
 
-            int cx = centerTile % 128;
-            int cy = centerTile / 128;
+            int cx = centerTile % _width;
+            int cy = centerTile / _width;
 
             for (int i = 0; i < _tiles.Length; i++)
             {
                 if (!_tiles[i].exists || !_tiles[i].isLand) continue;
-                int x = i % 128;
-                int y = i / 128;
+                int x = i % _width;
+                int y = i / _width;
                 if (Mathf.Abs(x - cx) + Mathf.Abs(y - cy) <= radius)
                     affected.Add(i);
             }
@@ -766,7 +774,7 @@ namespace CivilizationEvolution.Disaster
             {
                 DiseaseType.Plague => 0.5f + tile.airHumidityPct / 200f,
                 DiseaseType.Smallpox => 0.6f + (100f - tile.annualTemp) / 200f,
-                DiseaseType.Cholera => 0.3f + tile.airHumidityPct / 150f + (1f - tile.waterAdjacentWeight) * 0.2f,
+                DiseaseType.Cholera => 0.3f + tile.airHumidityPct / 150f + tile.waterAdjacentWeight * 0.2f, // 修复：原 (1-waterAdjacent) 反向（近水反而低危）
                 DiseaseType.Typhus => 0.4f + (100f - tile.stability) / 200f,
                 DiseaseType.Malaria => 0.2f + tile.airHumidityPct / 100f + Mathf.Max(0f, tile.annualTemp) / 50f,
                 DiseaseType.Tuberculosis => 0.5f + (100f - tile.annualTemp) / 200f,

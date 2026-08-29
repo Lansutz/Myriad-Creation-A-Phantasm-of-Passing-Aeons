@@ -85,6 +85,10 @@ namespace CivilizationEvolution.Core
         /// <summary>初始化世界</summary>
         public void InitializeWorld()
         {
+            // 内容注册表幂等初始化（与 Bootstrap.Awake 无执行顺序依赖）
+            if (!ContentRegistry.IsInitialized)
+                ContentRegistry.Initialize();
+
             // 配置资产：拖入了SO则Instantiate运行时副本（避免污染资产），否则创建默认实例
             if (config == null)
             {
@@ -123,6 +127,7 @@ namespace CivilizationEvolution.Core
             InitializeTradeCenters();
             InitializeDefaultRaces();
             InitializeDefaultCultures();
+            ApplyContentOverrides(); // 内容注册表按 id 覆盖内置默认（数据驱动优先）
             // InitializeDefaultRealms 移到 GenerateTerrain 之后（需要地形数据）
 
             Debug.Log($"[GameWorld] 世界初始化完成：{mapWidth}x{mapHeight} = {tiles.Length} 地块容量");
@@ -141,8 +146,8 @@ namespace CivilizationEvolution.Core
             _diplomacyManager = new DiplomacyManager(realms);
             _characterManager = new CharacterManager();
             _thoughtManager = new ThoughtManager();
-            _disasterSystem = new DisasterSystem(tiles);
-            _diseaseSystem = new DiseaseSystem(tiles, _characterManager);
+            _disasterSystem = new DisasterSystem(tiles, mapWidth, mapHeight);
+            _diseaseSystem = new DiseaseSystem(tiles, _characterManager, mapWidth, mapHeight);
             _buildingSystem = new BuildingSystem(tiles);
             _innovationTree = new InnovationTree();
             _aiManager = new AIManager();
@@ -304,7 +309,8 @@ namespace CivilizationEvolution.Core
             _politicalManager.DailyTick();
             PoliticsTick();
 
-            // 7. 外交
+            // 7. 外交（先同步世界时钟，供盟约/条约/事件时间戳使用）
+            _diplomacyManager.CurrentDay = currentDay;
             _diplomacyManager.DailyTick();
 
             // 8. 战争（CombatManager暂无DailyTick方法，待实现军队系统后启用）
@@ -803,6 +809,35 @@ namespace CivilizationEvolution.Core
             }
 
             // 外交关系懒加载：首次GetRelation时自动创建
+        }
+
+        /// <summary>
+        /// 内容注册表覆盖（数据驱动优先）
+        /// ContentRegistry 已加载的 Base/Mods 内容按 id 覆盖内置默认；
+        /// 与 ContentRegistry 的 "Mods 同名 Id 覆盖 Base" 语义一致。
+        /// 注意：内容包 cultureId/raceId 须 > 0（ContentRegistry 的约定），内置默认为 0,1,2，
+        /// 内容 id 与内置重叠时以内容为准。
+        /// </summary>
+        private void ApplyContentOverrides()
+        {
+            if (!ContentRegistry.IsInitialized) return;
+
+            int raceOverrides = 0;
+            foreach (var kv in ContentRegistry.Races)
+            {
+                races[kv.Key] = kv.Value;
+                raceOverrides++;
+            }
+
+            int cultureOverrides = 0;
+            foreach (var kv in ContentRegistry.Cultures)
+            {
+                cultures[kv.Key] = kv.Value.data;
+                cultureOverrides++;
+            }
+
+            if (raceOverrides > 0 || cultureOverrides > 0)
+                Debug.Log($"[GameWorld] 内容注册表覆盖：种族 +{raceOverrides}，文化 +{cultureOverrides}（数据驱动优先）");
         }
 
         // ===== 地块增删（自由形状地图支持） =====

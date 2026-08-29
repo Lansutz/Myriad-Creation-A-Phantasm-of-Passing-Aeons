@@ -90,7 +90,7 @@ namespace CivilizationEvolution.UI
             if (speed2Button != null)
                 speed2Button.onClick.AddListener(() => SetGameSpeed(2f));
             if (speed3Button != null)
-                speed3Button.onClick.AddListener(() => SetGameSpeed(5f));
+                speed3Button.onClick.AddListener(() => SetGameSpeed(3f)); // 修复：原为 5f（与按钮标注 3x 不符）
 
             // 显示模式下拉框
             if (displayModeDropdown != null)
