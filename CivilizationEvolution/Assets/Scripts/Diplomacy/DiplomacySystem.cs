@@ -34,6 +34,46 @@ namespace CivilizationEvolution.Diplomacy
         public List<Alliance> activeAlliances = new List<Alliance>();
         public List<Treaty> activeTreaties = new List<Treaty>();
 
+        // ===== 外交三槽位（用户定稿：主权状态/条约义务/特殊纽带 彻底解耦） =====
+
+        /// <summary>槽位1·主权状态（null=独立国；由 DiplomacyManager 同步挂载）</summary>
+        public Subordination subordination;
+
+        /// <summary>槽位3·特殊纽带（无/君合国/共主邦联；独立于从属与盟约）</summary>
+        public SpecialBondType specialBond = SpecialBondType.None;
+
+        /// <summary>设置特殊纽带（同一对政权同时仅一个活跃纽带）</summary>
+        public void SetSpecialBond(SpecialBondType bond)
+        {
+            specialBond = bond;
+        }
+
+        /// <summary>解除特殊纽带</summary>
+        public void ClearSpecialBond()
+        {
+            specialBond = SpecialBondType.None;
+        }
+
+        /// <summary>槽位1查询：以 selfId 视角返回主权状态（独立=null）</summary>
+        public SubordinationType? GetSovereigntyStatus(int selfId)
+        {
+            if (subordination == null || !subordination.isActive) return null;
+            return subordination.suzerainId == selfId
+                ? null // 宗主视角：自身是宗主，非从属
+                : subordination.type;
+        }
+
+        /// <summary>槽位2查询：条约义务（平级盟约列表）</summary>
+        public List<Alliance> GetTreatyObligations() => activeAlliances;
+
+        /// <summary>槽位2查询：是否承担某类盟约义务</summary>
+        public bool HasTreatyObligation(AllianceType type)
+        {
+            foreach (var a in activeAlliances)
+                if (a.type == type && a.isActive) return true;
+            return false;
+        }
+
         /// <summary>计算综合外交态度</summary>
         public float CalculateOverallAttitude()
         {
@@ -104,18 +144,19 @@ namespace CivilizationEvolution.Diplomacy
     }
 
     /// <summary>
-    /// 盟约类型（平等盟约，各类型独立平行，无递进关系）
+    /// 盟约类型（平等盟约——谱系一：各类型独立平行，无递进关系）
     /// </summary>
     public enum AllianceType
     {
-        NonAggressionPact,    // 互不侵犯条约
-        DefensiveAlliance,     // 防御同盟
-        OffensiveAlliance,     // 进攻同盟
+        NonAggressionPact,    // 互不侵犯条约：承诺不开战，可单方撕毁（信誉惩罚）
+        DefensiveAlliance,     // 防御同盟：仅被第三方攻击时共同作战
+        OffensiveAlliance,     // 全面同盟（进攻性）：任何一方宣战另一方必须加入
         TradeAgreement,        // 贸易协定
         CustomsUnion,          // 关税同盟
         MilitaryAccess,        // 军事通行权
         RoyalMarriage,         // 王室联姻
-        CulturalExchange       // 文化交流协定
+        CulturalExchange,      // 文化交流协定
+        Confederation          // 邦联/联邦式联盟：常设协调机构+保留退出权+最终否决权（瑞士邦联/欧盟前身）
     }
 
     /// <summary>盟约</summary>
@@ -151,18 +192,32 @@ namespace CivilizationEvolution.Diplomacy
     }
 
     /// <summary>
-    /// 不平等从属关系类型（各类型独立平行，无递进关系）
+    /// 不平等从属关系类型——主权状态槽位（用户定稿谱系二：内政自主度从高到低）
+    /// 朝贡国(0.9) → 保护国(0.7) → 附属国(0.5) → 附庸国(0.35) → 傀儡国(0.1)
+    /// 各类型独立平行，无递进关系
     /// </summary>
     public enum SubordinationType
     {
-        Tributary,          // 朝贡国
-        Vassal,             // 附庸国
-        Protectorate,       // 保护国
-        Puppet,             // 傀儡国
-        PersonalUnion,      // 联合统治
-        MilitaryOccupation, // 军事占领
+        Tributary,          // 朝贡国：内政完全自主，象征性臣服+进贡（明清朝鲜）
+        Protectorate,       // 保护国：内政自主，外交与宣战权转让（19世纪埃及/英法）
+        Vassal,             // 附庸国：总督/高级专员控制，法理仍为"国"（斯洛伐克傀儡）
+        Puppet,             // 傀儡国：首脑由宗主指定，一切重大决策需批准（汪精卫政权）
+        MilitaryOccupation, // 军事占领（非从属，附加态）
         FeudalTenant,       // 封建藩属
-        SubjectState        // 臣属国
+        SubjectState,       // 臣属国（广义从属）
+        PersonalUnion,      // [废弃] 联合统治——已移入特殊纽带槽位（SpecialBondType.PersonalUnion），勿再使用
+        Associate           // 附属国：内政受法定监督（顾问/否决法律），外交国防全权代理，保留名义君主（一战前波斯）
+    }
+
+    /// <summary>
+    /// 特殊纽带槽位（用户定稿谱系三：横向人身/王朝联合）
+    /// 独立于主权状态与条约义务；同一对政权可有且仅有一个活跃纽带
+    /// </summary>
+    public enum SpecialBondType
+    {
+        None,               // 无特殊纽带
+        PersonalUnion,      // 君合国（联统）：同一位君主，独立政府/议会/法律（英-汉诺威、奥匈）
+        CompositeMonarchy   // 共主邦联：多个君主国共主，各自保留完整主权机构
     }
 
     /// <summary>从属关系</summary>
@@ -496,31 +551,40 @@ namespace CivilizationEvolution.Diplomacy
                 establishedDay = CurrentDay
             };
 
-            // 设置从属条款
+            // 设置从属条款（用户定稿谱系二：自治度 朝贡0.9→保护0.7→附属0.5→附庸0.35→傀儡0.1）
             switch (type)
             {
                 case SubordinationType.Tributary:
                     sub.tributeRatio = 0.1f;
                     sub.autonomy = 0.9f;
                     break;
-                case SubordinationType.Vassal:
-                    sub.tributeRatio = 0.2f;
-                    sub.militaryObligation = true;
-                    sub.autonomy = 0.6f;
-                    break;
                 case SubordinationType.Protectorate:
                     sub.foreignPolicyControl = true;
                     sub.autonomy = 0.7f;
                     break;
-                case SubordinationType.Puppet:
+                case SubordinationType.Associate:
+                    // 附属国：内政受监督（自治度中），外交国防全权代理，保留名义君主
                     sub.foreignPolicyControl = true;
                     sub.militaryObligation = true;
-                    sub.autonomy = 0.2f;
+                    sub.autonomy = 0.5f;
+                    break;
+                case SubordinationType.Vassal:
+                    // 附庸国：总督/高级专员控制，法理仍为"国"
+                    sub.tributeRatio = 0.15f;
+                    sub.militaryObligation = true;
+                    sub.foreignPolicyControl = true;
+                    sub.autonomy = 0.35f;
+                    break;
+                case SubordinationType.Puppet:
+                    // 傀儡国：首脑由宗主指定，一切重大决策需批准
+                    sub.foreignPolicyControl = true;
+                    sub.militaryObligation = true;
+                    sub.successionControl = true;
+                    sub.autonomy = 0.1f;
                     break;
                 case SubordinationType.PersonalUnion:
-                    sub.successionControl = true;
-                    sub.autonomy = 0.8f;
-                    break;
+                    Debug.LogWarning("[Diplomacy] PersonalUnion 已移入特殊纽带槽位（SpecialBondType），请改用 EstablishPersonalUnion");
+                    return null;
                 case SubordinationType.MilitaryOccupation:
                     sub.autonomy = 0f;
                     sub.foreignPolicyControl = true;
@@ -529,6 +593,7 @@ namespace CivilizationEvolution.Diplomacy
             }
 
             _subordinations.Add(sub);
+            rel.subordination = sub; // 同步挂载到关系槽位1
 
             if (_realms.TryGetValue(vassalId, out var vassal))
                 vassal.suzerainId = suzerainId;
@@ -536,6 +601,25 @@ namespace CivilizationEvolution.Diplomacy
                 suzerain.vassalIds.Add(vassalId);
 
             return sub;
+        }
+
+        /// <summary>
+        /// 建立特殊纽带（谱系三：君合国/共主邦联——横向人身/王朝联合）
+        /// 独立于从属与盟约：双方各自保留主权，仅共享君主
+        /// </summary>
+        public bool EstablishPersonalUnion(int realmA, int realmB, SpecialBondType bond)
+        {
+            if (realmA == realmB || bond == SpecialBondType.None) return false;
+            var rel = GetRelation(realmA, realmB);
+            if (rel == null) return false;
+            if (rel.subordination != null && rel.subordination.isActive)
+            {
+                Debug.LogWarning("[Diplomacy] 存在从属关系时不可建立君合国（主权状态与特殊纽带互斥）");
+                return false;
+            }
+            rel.SetSpecialBond(bond);
+            Debug.Log($"[Diplomacy] 政权 {realmA} 与 {realmB} 建立特殊纽带：{bond}");
+            return true;
         }
 
         /// <summary>附庸独立</summary>
@@ -546,6 +630,11 @@ namespace CivilizationEvolution.Diplomacy
 
             sub.isActive = false;
             _subordinations.Remove(sub);
+
+            // 清理关系槽位1
+            var rel = GetRelation(suzerainId, vassalId);
+            if (rel != null && rel.subordination == sub)
+                rel.subordination = null;
 
             if (_realms.TryGetValue(vassalId, out var vassal))
                 vassal.suzerainId = -1;
