@@ -335,6 +335,46 @@
     {
       "key": "defect_pale_desc",
       "value": "Skin and hair without colour, shunning bright light; travels under a shade."
+    },
+    {
+      "key": "depression_name",
+      "value": "Depression"
+    },
+    {
+      "key": "depression_desc",
+      "value": "A crushing melancholy from prolonged strain; the world grows grey, and duty loses its pull."
+    },
+    {
+      "key": "anxiety_name",
+      "value": "Anxiety"
+    },
+    {
+      "key": "anxiety_desc",
+      "value": "Perpetual unease, sleepless nights and hesitant judgment; every shadow seems a threat."
+    },
+    {
+      "key": "paranoia_name",
+      "value": "Paranoia"
+    },
+    {
+      "key": "paranoia_desc",
+      "value": "Distrust of everyone around; kindness read as conspiracy, slights answered with spite."
+    },
+    {
+      "key": "delirium_name",
+      "value": "Delirium"
+    },
+    {
+      "key": "delirium_desc",
+      "value": "A fevered, wandering mind; lucid one hour, lost the next, unable to tell day from night."
+    },
+    {
+      "key": "dementia_name",
+      "value": "Dementia"
+    },
+    {
+      "key": "dementia_desc",
+      "value": "The mind fading with age; memories dissolve, faces grow strange, temper turns."
     }
   ]
 }

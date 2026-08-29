@@ -1,0 +1,560 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="62" result="Passed" total="62" passed="62" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:43Z" duration="0.6925238">
+  <test-suite type="TestSuite" id="1000" name="Myriad Creation_ A Phantasm of Passing Aeons" fullname="Myriad Creation_ A Phantasm of Passing Aeons" runstate="Runnable" testcasecount="62" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:43Z" duration="0.692524" total="62" passed="62" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1067" name="CivilizationEvolution.Tests.dll" fullname="D:/Myriad-Creation-A-Phantasm-of-Passing-Aeons/CivilizationEvolution/Library/ScriptAssemblies/CivilizationEvolution.Tests.dll" runstate="Runnable" testcasecount="62" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:43Z" duration="0.682532" total="62" passed="62" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="38268" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1068" name="CivilizationEvolution" fullname="CivilizationEvolution" runstate="Runnable" testcasecount="62" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:43Z" duration="0.681620" total="62" passed="62" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1069" name="Tests" fullname="CivilizationEvolution.Tests" runstate="Runnable" testcasecount="62" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:43Z" duration="0.681055" total="62" passed="62" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1001" name="CharacterSystemTests" fullname="CivilizationEvolution.Tests.CharacterSystemTests" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.297268" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1023" name="AIController_SyncPersonality_GreedyRuler_EconomicBias" fullname="CivilizationEvolution.Tests.CharacterSystemTests.AIController_SyncPersonality_GreedyRuler_EconomicBias" methodname="AIController_SyncPersonality_GreedyRuler_EconomicBias" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="1579004944" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.045280" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1024" name="AIController_SyncPersonality_VengefulRuler_Aggression" fullname="CivilizationEvolution.Tests.CharacterSystemTests.AIController_SyncPersonality_VengefulRuler_Aggression" methodname="AIController_SyncPersonality_VengefulRuler_Aggression" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="68805031" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.008634" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1015" name="CharacterTemplate_ExplicitAge_NotOverridden" fullname="CivilizationEvolution.Tests.CharacterSystemTests.CharacterTemplate_ExplicitAge_NotOverridden" methodname="CharacterTemplate_ExplicitAge_NotOverridden" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="1220546040" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.021882" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1013" name="CharacterTemplate_Ruler_AppliesStatMinAndAgeRange" fullname="CivilizationEvolution.Tests.CharacterSystemTests.CharacterTemplate_Ruler_AppliesStatMinAndAgeRange" methodname="CharacterTemplate_Ruler_AppliesStatMinAndAgeRange" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="591645054" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.009262" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1014" name="CharacterTemplate_Ruler_RationalityBiasShiftsMeanPositive" fullname="CivilizationEvolution.Tests.CharacterSystemTests.CharacterTemplate_Ruler_RationalityBiasShiftsMeanPositive" methodname="CharacterTemplate_Ruler_RationalityBiasShiftsMeanPositive" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="937365058" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.008837" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1019" name="Diet_FamineRaisesStressAndLowersObesity" fullname="CivilizationEvolution.Tests.CharacterSystemTests.Diet_FamineRaisesStressAndLowersObesity" methodname="Diet_FamineRaisesStressAndLowersObesity" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="1734853402" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.016942" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1018" name="FamilyTradition_EffectSummation_ScalesWithStrength" fullname="CivilizationEvolution.Tests.CharacterSystemTests.FamilyTradition_EffectSummation_ScalesWithStrength" methodname="FamilyTradition_EffectSummation_ScalesWithStrength" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="98430387" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.012112" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1016" name="FamilyTradition_MutualExclusion_BlocksOpposite" fullname="CivilizationEvolution.Tests.CharacterSystemTests.FamilyTradition_MutualExclusion_BlocksOpposite" methodname="FamilyTradition_MutualExclusion_BlocksOpposite" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="303158058" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.008448" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+[Family] 家族传统 famtrad_thrifty_style 与既有传统 famtrad_luxury_style 互斥，拒绝添加
+]]></output>
+            </test-case>
+            <test-case id="1017" name="FamilyTradition_UnknownId_RejectedWithWarning" fullname="CivilizationEvolution.Tests.CharacterSystemTests.FamilyTradition_UnknownId_RejectedWithWarning" methodname="FamilyTradition_UnknownId_RejectedWithWarning" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="1779735113" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.008226" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+[Family] 家族传统 famtrad_does_not_exist 未在注册表定义，拒绝添加
+]]></output>
+            </test-case>
+            <test-case id="1012" name="MentalDisorder_DementiaIrreversible" fullname="CivilizationEvolution.Tests.CharacterSystemTests.MentalDisorder_DementiaIrreversible" methodname="MentalDisorder_DementiaIrreversible" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="1250054893" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.006727" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1010" name="MentalDisorder_HighStressNinetyDays_Triggers" fullname="CivilizationEvolution.Tests.CharacterSystemTests.MentalDisorder_HighStressNinetyDays_Triggers" methodname="MentalDisorder_HighStressNinetyDays_Triggers" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="1637682531" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.007640" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+[Mental] 高压 氏 罹患抑郁（长期高压）
+]]></output>
+            </test-case>
+            <test-case id="1011" name="MentalDisorder_RecoversWhenStressLow" fullname="CivilizationEvolution.Tests.CharacterSystemTests.MentalDisorder_RecoversWhenStressLow" methodname="MentalDisorder_RecoversWhenStressLow" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="364422150" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.007910" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+[Mental] 康复 氏 从抑郁中康复
+]]></output>
+            </test-case>
+            <test-case id="1009" name="Personality_Description_NonEmptyAndSceneBased" fullname="CivilizationEvolution.Tests.CharacterSystemTests.Personality_Description_NonEmptyAndSceneBased" methodname="Personality_Description_NonEmptyAndSceneBased" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="990475026" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.012960" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1008" name="Personality_InheritedFromParents_WithinTolerance" fullname="CivilizationEvolution.Tests.CharacterSystemTests.Personality_InheritedFromParents_WithinTolerance" methodname="Personality_InheritedFromParents_WithinTolerance" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="1652077137" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.010992" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1021" name="PersonalityAffinity_OppositeDirection_Negative" fullname="CivilizationEvolution.Tests.CharacterSystemTests.PersonalityAffinity_OppositeDirection_Negative" methodname="PersonalityAffinity_OppositeDirection_Negative" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="85294825" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.008807" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1020" name="PersonalityAffinity_SameDirection_Positive" fullname="CivilizationEvolution.Tests.CharacterSystemTests.PersonalityAffinity_SameDirection_Positive" methodname="PersonalityAffinity_SameDirection_Positive" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="1780463779" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.007835" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1022" name="PersonalityAffinity_WeakTraits_Neutral" fullname="CivilizationEvolution.Tests.CharacterSystemTests.PersonalityAffinity_WeakTraits_Neutral" methodname="PersonalityAffinity_WeakTraits_Neutral" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="77522902" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.008315" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1007" name="PrestigeCapacity_DowngradeBelowThirtyPercent" fullname="CivilizationEvolution.Tests.CharacterSystemTests.PrestigeCapacity_DowngradeBelowThirtyPercent" methodname="PrestigeCapacity_DowngradeBelowThirtyPercent" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="881485884" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.012205" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+[Character] T C 威望容量降至 2 级
+]]></output>
+            </test-case>
+            <test-case id="1006" name="PrestigeCapacity_UpgradeOnCap" fullname="CivilizationEvolution.Tests.CharacterSystemTests.PrestigeCapacity_UpgradeOnCap" methodname="PrestigeCapacity_UpgradeOnCap" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="1708364805" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.010891" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+[Character] T C 威望容量升至 2 级
+]]></output>
+            </test-case>
+            <test-case id="1002" name="RulerType_Benevolent_HighPrestigeLowNotoriety" fullname="CivilizationEvolution.Tests.CharacterSystemTests.RulerType_Benevolent_HighPrestigeLowNotoriety" methodname="RulerType_Benevolent_HighPrestigeLowNotoriety" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="418927460" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.012666" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1005" name="RulerType_Mediocre_BothLow" fullname="CivilizationEvolution.Tests.CharacterSystemTests.RulerType_Mediocre_BothLow" methodname="RulerType_Mediocre_BothLow" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="160588217" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.009410" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1003" name="RulerType_Tyrant_HighNotorietyLowPrestige" fullname="CivilizationEvolution.Tests.CharacterSystemTests.RulerType_Tyrant_HighNotorietyLowPrestige" methodname="RulerType_Tyrant_HighNotorietyLowPrestige" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="683026208" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.011390" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1004" name="RulerType_TyrantFool_BothHigh" fullname="CivilizationEvolution.Tests.CharacterSystemTests.RulerType_TyrantFool_BothHigh" methodname="RulerType_TyrantFool_BothHigh" classname="CivilizationEvolution.Tests.CharacterSystemTests" runstate="Runnable" seed="284394498" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.008291" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1025" name="ContentRegistryTests" fullname="CivilizationEvolution.Tests.ContentRegistryTests" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:43Z" duration="0.137124" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1030" name="CharacterTemplate_Ruler_FieldsResolve" fullname="CivilizationEvolution.Tests.ContentRegistryTests.CharacterTemplate_Ruler_FieldsResolve" methodname="CharacterTemplate_Ruler_FieldsResolve" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="2085740157" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.010472" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1026" name="ContentRegistry_LoadsAllNineTypes" fullname="CivilizationEvolution.Tests.ContentRegistryTests.ContentRegistry_LoadsAllNineTypes" methodname="ContentRegistry_LoadsAllNineTypes" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="564096383" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.011352" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1034" name="Culture_Laethis_SevenPillarsExtended" fullname="CivilizationEvolution.Tests.ContentRegistryTests.Culture_Laethis_SevenPillarsExtended" methodname="Culture_Laethis_SevenPillarsExtended" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="449931343" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.012762" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1037" name="CultureSimilarity_EmptySets_FallbackToSingle" fullname="CivilizationEvolution.Tests.ContentRegistryTests.CultureSimilarity_EmptySets_FallbackToSingle" methodname="CultureSimilarity_EmptySets_FallbackToSingle" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="2144414968" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.013366" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1036" name="CultureSimilarity_SetJaccard_BurialOverlap" fullname="CivilizationEvolution.Tests.ContentRegistryTests.CultureSimilarity_SetJaccard_BurialOverlap" methodname="CultureSimilarity_SetJaccard_BurialOverlap" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="243514065" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.010485" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1027" name="DnaDefs_ModsOverride_BaseSemantics" fullname="CivilizationEvolution.Tests.ContentRegistryTests.DnaDefs_ModsOverride_BaseSemantics" methodname="DnaDefs_ModsOverride_BaseSemantics" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="1564897197" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:42Z" duration="0.009302" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1028" name="DnaDefs_Name_LocalizedOrFallback" fullname="CivilizationEvolution.Tests.ContentRegistryTests.DnaDefs_Name_LocalizedOrFallback" methodname="DnaDefs_Name_LocalizedOrFallback" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="1469757356" result="Passed" start-time="2026-08-29 15:37:42Z" end-time="2026-08-29 15:37:43Z" duration="0.009938" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1033" name="EthnicGroup_Laethis_AllPillarsResolve" fullname="CivilizationEvolution.Tests.ContentRegistryTests.EthnicGroup_Laethis_AllPillarsResolve" methodname="EthnicGroup_Laethis_AllPillarsResolve" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="556692135" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.008674" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1029" name="FamilyTradition_LuxuryThrifty_MutuallyExclusive" fullname="CivilizationEvolution.Tests.ContentRegistryTests.FamilyTradition_LuxuryThrifty_MutuallyExclusive" methodname="FamilyTradition_LuxuryThrifty_MutuallyExclusive" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="67194883" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.007841" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1031" name="MentalHealth_BaseDefs_ResolveAndLocalize" fullname="CivilizationEvolution.Tests.ContentRegistryTests.MentalHealth_BaseDefs_ResolveAndLocalize" methodname="MentalHealth_BaseDefs_ResolveAndLocalize" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="716568503" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.008069" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1032" name="MentalHealth_GetDef_RegistryNotInitialized_FallsBackToBuiltin" fullname="CivilizationEvolution.Tests.ContentRegistryTests.MentalHealth_GetDef_RegistryNotInitialized_FallsBackToBuiltin" methodname="MentalHealth_GetDef_RegistryNotInitialized_FallsBackToBuiltin" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="388230933" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.009865" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1038" name="ModsOverride_ByIdSemantics" fullname="CivilizationEvolution.Tests.ContentRegistryTests.ModsOverride_ByIdSemantics" methodname="ModsOverride_ByIdSemantics" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="952719017" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.010092" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1035" name="Tradition_AncestorCult_IncompatibleWithIconoclast" fullname="CivilizationEvolution.Tests.ContentRegistryTests.Tradition_AncestorCult_IncompatibleWithIconoclast" methodname="Tradition_AncestorCult_IncompatibleWithIconoclast" classname="CivilizationEvolution.Tests.ContentRegistryTests" runstate="Runnable" seed="507630176" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.010575" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1039" name="DnaSystemTests" fullname="CivilizationEvolution.Tests.DnaSystemTests" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.157255" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1052" name="CalculateInbreeding_FirstCousins_IsOneSixteenth" fullname="CivilizationEvolution.Tests.DnaSystemTests.CalculateInbreeding_FirstCousins_IsOneSixteenth" methodname="CalculateInbreeding_FirstCousins_IsOneSixteenth" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="2072394998" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.000649" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1050" name="CalculateInbreeding_FullSiblings_IsQuarter" fullname="CivilizationEvolution.Tests.DnaSystemTests.CalculateInbreeding_FullSiblings_IsQuarter" methodname="CalculateInbreeding_FullSiblings_IsQuarter" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="671322879" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.000279" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1051" name="CalculateInbreeding_HalfSiblings_IsOneEighth" fullname="CivilizationEvolution.Tests.DnaSystemTests.CalculateInbreeding_HalfSiblings_IsOneEighth" methodname="CalculateInbreeding_HalfSiblings_IsOneEighth" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="1767227410" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.000302" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1049" name="CalculateInbreeding_ParentChild_IsQuarter" fullname="CivilizationEvolution.Tests.DnaSystemTests.CalculateInbreeding_ParentChild_IsQuarter" methodname="CalculateInbreeding_ParentChild_IsQuarter" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="387615747" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.000435" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1053" name="CalculateInbreeding_Unrelated_IsZero" fullname="CivilizationEvolution.Tests.DnaSystemTests.CalculateInbreeding_Unrelated_IsZero" methodname="CalculateInbreeding_Unrelated_IsZero" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="21900959" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.000372" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1046" name="ComputeExpression_Appearance_AlwaysTagged" fullname="CivilizationEvolution.Tests.DnaSystemTests.ComputeExpression_Appearance_AlwaysTagged" methodname="ComputeExpression_Appearance_AlwaysTagged" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="1591993227" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.000307" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1045" name="ComputeExpression_OffsetDirection_MatchesGenotype" fullname="CivilizationEvolution.Tests.DnaSystemTests.ComputeExpression_OffsetDirection_MatchesGenotype" methodname="ComputeExpression_OffsetDirection_MatchesGenotype" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="1034262084" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.005506" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1047" name="ComputeExpression_TalentDefect_TableResolves" fullname="CivilizationEvolution.Tests.DnaSystemTests.ComputeExpression_TalentDefect_TableResolves" methodname="ComputeExpression_TalentDefect_TableResolves" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="862122166" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.001873" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1048" name="FindDef_RegistryNotInitialized_FallsBackToBuiltin" fullname="CivilizationEvolution.Tests.DnaSystemTests.FindDef_RegistryNotInitialized_FallsBackToBuiltin" methodname="FindDef_RegistryNotInitialized_FallsBackToBuiltin" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="63924236" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.000336" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1040" name="GenerateRandom_ProducesAllActiveLoci" fullname="CivilizationEvolution.Tests.DnaSystemTests.GenerateRandom_ProducesAllActiveLoci" methodname="GenerateRandom_ProducesAllActiveLoci" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="2052145476" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.000219" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1041" name="GenerateRandom_RespectsRaceFrequency" fullname="CivilizationEvolution.Tests.DnaSystemTests.GenerateRandom_RespectsRaceFrequency" methodname="GenerateRandom_RespectsRaceFrequency" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="892185324" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.003853" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1042" name="Inherit_AaCrossAa_ProducesExpectedRatio" fullname="CivilizationEvolution.Tests.DnaSystemTests.Inherit_AaCrossAa_ProducesExpectedRatio" methodname="Inherit_AaCrossAa_ProducesExpectedRatio" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="194829224" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.024162" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1043" name="Inherit_AAxAa_NeverProducesRecessiveHomozygote" fullname="CivilizationEvolution.Tests.DnaSystemTests.Inherit_AAxAa_NeverProducesRecessiveHomozygote" methodname="Inherit_AAxAa_NeverProducesRecessiveHomozygote" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="648483786" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.003126" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1055" name="Inherit_Inbreeding_IncreasesHomozygosity" fullname="CivilizationEvolution.Tests.DnaSystemTests.Inherit_Inbreeding_IncreasesHomozygosity" methodname="Inherit_Inbreeding_IncreasesHomozygosity" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="2094463967" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.070621" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1054" name="Inherit_MutationRate_InExpectedBand" fullname="CivilizationEvolution.Tests.DnaSystemTests.Inherit_MutationRate_InExpectedBand" methodname="Inherit_MutationRate_InExpectedBand" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="580535813" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.039707" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1044" name="Inherit_ParentAlleles_AreTransmitted" fullname="CivilizationEvolution.Tests.DnaSystemTests.Inherit_ParentAlleles_AreTransmitted" methodname="Inherit_ParentAlleles_AreTransmitted" classname="CivilizationEvolution.Tests.DnaSystemTests" runstate="Runnable" seed="1475869681" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.001347" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1056" name="LocalizationTests" fullname="CivilizationEvolution.Tests.LocalizationTests" classname="CivilizationEvolution.Tests.LocalizationTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.087183" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1062" name="Localization_DefinitionTables_UseKeys" fullname="CivilizationEvolution.Tests.LocalizationTests.Localization_DefinitionTables_UseKeys" methodname="Localization_DefinitionTables_UseKeys" classname="CivilizationEvolution.Tests.LocalizationTests" runstate="Runnable" seed="1034804339" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.007276" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1063" name="Localization_English_LoadsAndTranslates" fullname="CivilizationEvolution.Tests.LocalizationTests.Localization_English_LoadsAndTranslates" methodname="Localization_English_LoadsAndTranslates" classname="CivilizationEvolution.Tests.LocalizationTests" runstate="Runnable" seed="772814408" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.008493" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+[Localization] 加载完成：en，94 键
+]]></output>
+            </test-case>
+            <test-case id="1059" name="Localization_Get_MissingKey_FallsBackToKey" fullname="CivilizationEvolution.Tests.LocalizationTests.Localization_Get_MissingKey_FallsBackToKey" methodname="Localization_Get_MissingKey_FallsBackToKey" classname="CivilizationEvolution.Tests.LocalizationTests" runstate="Runnable" seed="995616138" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.007267" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1058" name="Localization_Get_ReturnsText" fullname="CivilizationEvolution.Tests.LocalizationTests.Localization_Get_ReturnsText" methodname="Localization_Get_ReturnsText" classname="CivilizationEvolution.Tests.LocalizationTests" runstate="Runnable" seed="1351523219" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.007379" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1060" name="Localization_Get_WithFallback" fullname="CivilizationEvolution.Tests.LocalizationTests.Localization_Get_WithFallback" methodname="Localization_Get_WithFallback" classname="CivilizationEvolution.Tests.LocalizationTests" runstate="Runnable" seed="1419704655" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.006670" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1061" name="Localization_Has_KeyExists" fullname="CivilizationEvolution.Tests.LocalizationTests.Localization_Has_KeyExists" methodname="Localization_Has_KeyExists" classname="CivilizationEvolution.Tests.LocalizationTests" runstate="Runnable" seed="1984916485" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.007538" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1057" name="Localization_LoadsChineseTable" fullname="CivilizationEvolution.Tests.LocalizationTests.Localization_LoadsChineseTable" methodname="Localization_LoadsChineseTable" classname="CivilizationEvolution.Tests.LocalizationTests" runstate="Runnable" seed="1320264609" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.007143" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+]]></output>
+            </test-case>
+            <test-case id="1065" name="Localization_ReservedLanguages_FallbackToKey" fullname="CivilizationEvolution.Tests.LocalizationTests.Localization_ReservedLanguages_FallbackToKey" methodname="Localization_ReservedLanguages_FallbackToKey" classname="CivilizationEvolution.Tests.LocalizationTests" runstate="Runnable" seed="957733183" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.011989" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+[Localization] 加载完成：fr，0 键
+[Localization] 加载完成：de，0 键
+[Localization] 加载完成：es，0 键
+[Localization] 加载完成：ja，0 键
+[Localization] 加载完成：ko，0 键
+]]></output>
+            </test-case>
+            <test-case id="1066" name="Localization_SwitchLanguage_ReloadsTable" fullname="CivilizationEvolution.Tests.LocalizationTests.Localization_SwitchLanguage_ReloadsTable" methodname="Localization_SwitchLanguage_ReloadsTable" classname="CivilizationEvolution.Tests.LocalizationTests" runstate="Runnable" seed="641426313" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.010507" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+[Localization] 加载完成：zh-Hans，94 键
+[Localization] 加载完成：en，94 键
+]]></output>
+            </test-case>
+            <test-case id="1064" name="Localization_TraditionalChinese_LoadsAndTranslates" fullname="CivilizationEvolution.Tests.LocalizationTests.Localization_TraditionalChinese_LoadsAndTranslates" methodname="Localization_TraditionalChinese_LoadsAndTranslates" classname="CivilizationEvolution.Tests.LocalizationTests" runstate="Runnable" seed="1550027715" result="Passed" start-time="2026-08-29 15:37:43Z" end-time="2026-08-29 15:37:43Z" duration="0.010454" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Localization] 加载完成：zh-Hans，94 键
+[ContentRegistry] 内容加载完成：文化 1，种族 0，族群精神 8，文化传统 11，语言 1，族群 1，家族传统 6，角色模板 6，DNA 天赋缺陷 9，精神疾病 5
+[Localization] 加载完成：zh-Hant，94 键
+Saving results to: C:/Users/25652/AppData/LocalLow/MyriadCreationStudio/Myriad Creation_ A Phantasm of Passing Aeons\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -86,8 +86,8 @@ namespace CivilizationEvolution.Role
         [Range(-100f, 100f)] public float vengefulness;  // 报复
         [Range(-100f, 100f)] public float piety;         // 虔信（人格维度，非六维属性）
 
-        // ===== 精神疾病（简单版：单一活跃状态，由高压/恐惧/高龄/重病触发） =====
-        public MentalDisorderType mentalDisorder = MentalDisorderType.None;
+        // ===== 精神疾病（简单版：单一活跃状态，由高压/恐惧/高龄/重病触发；id 见 MentalDisorderIds/注册表） =====
+        public string mentalDisorderId = "";
         /// <summary>压力>80 持续天数（精神疾病触发计时）</summary>
         public int highStressDays = 0;
         /// <summary>压力<30 持续天数（精神疾病缓解计时，失智不可逆）</summary>
@@ -145,7 +145,7 @@ namespace CivilizationEvolution.Role
             health = Mathf.Clamp(health - ageFactor * 0.01f * healthAgeMult, 0f, 100f);
 
             // 压力恢复（受精神疾病影响：抑郁/焦虑恢复慢；压力>60 时几乎不恢复）
-            var disorderDef = MentalHealthSystem.GetDef(mentalDisorder);
+            var disorderDef = MentalHealthSystem.GetDef(mentalDisorderId);
             float stressDecay = disorderDef != null ? 0.05f * disorderDef.stressDecayMult : 0.05f;
             stress = Mathf.Max(0f, stress - (stress > 60f ? 0.01f : stressDecay));
 
@@ -940,18 +940,18 @@ namespace CivilizationEvolution.Role
             {
                 if (!c.isAlive) continue;
 
-                if (c.mentalDisorder == MentalDisorderType.None)
+                if (string.IsNullOrEmpty(c.mentalDisorderId))
                 {
                     if (c.highStressDays >= MentalHealthSystem.HighStressTriggerDays)
                     {
-                        c.mentalDisorder = UnityEngine.Random.value < 0.6f
-                            ? MentalDisorderType.Depression : MentalDisorderType.Anxiety;
+                        c.mentalDisorderId = UnityEngine.Random.value < 0.6f
+                            ? MentalDisorderIds.Depression : MentalDisorderIds.Anxiety;
                         c.highStressDays = 0;
                         Debug.Log($"[Mental] {c.fullName} 罹患{MentalHealthSystem.GetDisorderName(c)}（长期高压）");
                     }
                     else if (c.dread > MentalHealthSystem.DreadParanoiaThreshold && UnityEngine.Random.value < 0.002f)
                     {
-                        c.mentalDisorder = MentalDisorderType.Paranoia;
+                        c.mentalDisorderId = MentalDisorderIds.Paranoia;
                         Debug.Log($"[Mental] {c.fullName} 罹患偏执（深度恐惧）");
                     }
                     else if (c.age >= MentalHealthSystem.DementiaAge
@@ -960,14 +960,14 @@ namespace CivilizationEvolution.Role
                         float risk = 0.0005f * (c.age - MentalHealthSystem.DementiaAge + 1) / 10f;
                         if (UnityEngine.Random.value < risk)
                         {
-                            c.mentalDisorder = MentalDisorderType.Dementia;
+                            c.mentalDisorderId = MentalDisorderIds.Dementia;
                             Debug.Log($"[Mental] {c.fullName} 罹患失智（年迈心智衰退）");
                         }
                     }
                 }
                 else
                 {
-                    var def = MentalHealthSystem.GetDef(c.mentalDisorder);
+                    var def = MentalHealthSystem.GetDef(c.mentalDisorderId);
                     if (def == null || !def.reversible) continue;
 
                     if (c.stress < 30f)
@@ -975,8 +975,8 @@ namespace CivilizationEvolution.Role
                         c.lowStressRecoveryDays++;
                         if (c.lowStressRecoveryDays >= MentalHealthSystem.LowStressRecoveryDays)
                         {
-                            Debug.Log($"[Mental] {c.fullName} 从{def.name}中康复");
-                            c.mentalDisorder = MentalDisorderType.None;
+                            Debug.Log($"[Mental] {c.fullName} 从{def.GetName()}中康复");
+                            c.mentalDisorderId = "";
                             c.lowStressRecoveryDays = 0;
                         }
                     }
@@ -1050,11 +1050,11 @@ namespace CivilizationEvolution.Role
         public bool CureMentalDisorder(int characterId)
         {
             var c = GetCharacter(characterId);
-            if (c == null || c.mentalDisorder == MentalDisorderType.None) return false;
-            var def = MentalHealthSystem.GetDef(c.mentalDisorder);
+            if (c == null || string.IsNullOrEmpty(c.mentalDisorderId)) return false;
+            var def = MentalHealthSystem.GetDef(c.mentalDisorderId);
             if (def != null && !def.reversible) return false;
-            Debug.Log($"[Mental] {c.fullName} 经治疗摆脱{def?.name ?? "病痛"}");
-            c.mentalDisorder = MentalDisorderType.None;
+            Debug.Log($"[Mental] {c.fullName} 经治疗摆脱{def?.GetName() ?? "病痛"}");
+            c.mentalDisorderId = "";
             c.highStressDays = 0;
             c.lowStressRecoveryDays = 0;
             return true;

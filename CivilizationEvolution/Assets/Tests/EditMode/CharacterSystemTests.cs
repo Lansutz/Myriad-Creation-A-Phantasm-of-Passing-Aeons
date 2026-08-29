@@ -126,8 +126,8 @@ namespace CivilizationEvolution.Tests
             for (int day = 1; day <= 90; day++)
                 manager.DailyTick(day, 1);
 
-            Assert.AreNotEqual(MentalDisorderType.None, c.mentalDisorder, "压力>80 持续 90 天应触发精神疾病");
-            Assert.IsTrue(c.mentalDisorder == MentalDisorderType.Depression || c.mentalDisorder == MentalDisorderType.Anxiety,
+            Assert.IsFalse(string.IsNullOrEmpty(c.mentalDisorderId), "压力>80 持续 90 天应触发精神疾病");
+            Assert.IsTrue(c.mentalDisorderId == MentalDisorderIds.Depression || c.mentalDisorderId == MentalDisorderIds.Anxiety,
                 "高压触发应为抑郁或焦虑");
         }
 
@@ -136,13 +136,13 @@ namespace CivilizationEvolution.Tests
         {
             var manager = new CharacterManager();
             var c = manager.CreateCharacter("康复", "氏", 30, true, 0, 0, 0, CharacterRole.Ruler);
-            c.mentalDisorder = MentalDisorderType.Depression;
+            c.mentalDisorderId = MentalDisorderIds.Depression;
             c.stress = 10f;
 
             for (int day = 1; day <= 130; day++)
                 manager.DailyTick(day, 1);
 
-            Assert.AreEqual(MentalDisorderType.None, c.mentalDisorder, "压力<30 持续 120 天应康复");
+            Assert.AreEqual(MentalDisorderIds.None, c.mentalDisorderId, "压力<30 持续 120 天应康复");
         }
 
         [Test]
@@ -150,13 +150,13 @@ namespace CivilizationEvolution.Tests
         {
             var manager = new CharacterManager();
             var c = manager.CreateCharacter("老朽", "氏", 80, true, 0, 0, 0, CharacterRole.Ruler);
-            c.mentalDisorder = MentalDisorderType.Dementia;
+            c.mentalDisorderId = MentalDisorderIds.Dementia;
             c.stress = 10f;
 
             for (int day = 1; day <= 200; day++)
                 manager.DailyTick(day, 1);
 
-            Assert.AreEqual(MentalDisorderType.Dementia, c.mentalDisorder, "失智不可逆");
+            Assert.AreEqual(MentalDisorderIds.Dementia, c.mentalDisorderId, "失智不可逆");
         }
 
         // ===== 角色模板（第九篇角色生成参数模板：年龄/六维/人格倾向） =====

@@ -36,6 +36,7 @@ namespace CivilizationEvolution.Tests
             Assert.That(ContentRegistry.FamilyTraditions.Count, Is.GreaterThan(0), "家族传统定义表应加载");
             Assert.That(ContentRegistry.CharacterTemplates.Count, Is.GreaterThan(0), "角色模板定义表应加载");
             Assert.That(ContentRegistry.TalentDefects.Count, Is.GreaterThan(0), "DNA 天赋/缺陷定义表应加载");
+            Assert.That(ContentRegistry.MentalDisorders.Count, Is.GreaterThan(0), "精神疾病定义表应加载");
         }
 
         // ===== DNA 天赋/缺陷定义表（Base/Mods 双目录真实加载） =====
@@ -89,6 +90,32 @@ namespace CivilizationEvolution.Tests
             Assert.That(tpl.statMin[0], Is.GreaterThanOrEqualTo(30f), "统治者勇武下限");
             Assert.That(tpl.weight, Is.GreaterThan(0f), "生成权重应为正");
             Assert.IsFalse(string.IsNullOrEmpty(tpl.GetName()), "模板名应走本地化表");
+        }
+
+        // ===== 精神疾病定义表 =====
+
+        [Test]
+        public void MentalHealth_BaseDefs_ResolveAndLocalize()
+        {
+            Assert.IsTrue(ContentRegistry.TryGetMentalDisorder("depression", out var depression));
+            Assert.IsTrue(depression.reversible, "抑郁可逆");
+            Assert.AreEqual("抑郁", depression.GetName(), "精神疾病名应走本地化表");
+            Assert.IsFalse(string.IsNullOrEmpty(depression.GetDescription()));
+
+            Assert.IsTrue(ContentRegistry.TryGetMentalDisorder("dementia", out var dementia));
+            Assert.IsFalse(dementia.reversible, "失智不可逆");
+            Assert.AreEqual(-15f, dementia.learningMod, "失智学识修正 -15");
+        }
+
+        [Test]
+        public void MentalHealth_GetDef_RegistryNotInitialized_FallsBackToBuiltin()
+        {
+            // 注册表未初始化时：GetDef 回退内置定义（精神疾病机制不依赖注册表也能跑）
+            ContentRegistry.Reset();
+            var def = MentalHealthSystem.GetDef(MentalDisorderIds.Depression);
+            Assert.IsNotNull(def, "内置抑郁定义应可查");
+            Assert.AreEqual(-5f, def.learningMod, "内置抑郁学识修正 -5");
+            Assert.IsNull(MentalHealthSystem.GetDef("mod_only_disorder"), "注册表未加载时模组内容不可见");
         }
 
         // ===== 族群实体引用解析（Ethnos 支柱：精神/语言/传统） =====

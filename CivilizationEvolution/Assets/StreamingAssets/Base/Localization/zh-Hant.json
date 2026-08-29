@@ -335,6 +335,46 @@
     {
       "key": "defect_pale_desc",
       "value": "膚發無色，畏光避日，白日出行也要以傘遮面。"
+    },
+    {
+      "key": "depression_name",
+      "value": "抑鬱"
+    },
+    {
+      "key": "depression_desc",
+      "value": "長期高壓下的意志消沉，對政務與人事提不起興致，日漸寡言。"
+    },
+    {
+      "key": "anxiety_name",
+      "value": "焦慮"
+    },
+    {
+      "key": "anxiety_desc",
+      "value": "終日憂懼不安，寢食難安，決斷遲疑，杯弓蛇影。"
+    },
+    {
+      "key": "paranoia_name",
+      "value": "偏執"
+    },
+    {
+      "key": "paranoia_desc",
+      "value": "懷疑身邊的一切人，把善意當作陰謀，睚眥必報。"
+    },
+    {
+      "key": "delirium_name",
+      "value": "譫妄"
+    },
+    {
+      "key": "delirium_desc",
+      "value": "神志昏亂，言語無狀，時而清醒時而糊塗，不識晝夜。"
+    },
+    {
+      "key": "dementia_name",
+      "value": "失智"
+    },
+    {
+      "key": "dementia_desc",
+      "value": "年邁帶來的心智衰退，往事如煙，認不清親人，性情大變。"
     }
   ]
 }
