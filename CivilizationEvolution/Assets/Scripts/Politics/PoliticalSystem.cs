@@ -36,8 +36,12 @@ namespace CivilizationEvolution.Politics
         public int suzerainId = -1; // 宗主国ID，-1表示独立
         public List<int> vassalIds = new List<int>();
 
-        // 继承法（政治体制成分表·权力交接维度：世袭制的四轴组合，默认长子继承）
-        public InheritanceLaw successionLaw = InheritanceLaw.Primogeniture();
+        // 政治体制成分（用户定稿五维总表：生存基础/主权归属/权力结构/行政组织/权力交接）
+        // 权力交接=世袭时使用 composition.successionLaw（继承法四轴+头衔+领地模式）
+        public GovernmentComposition composition = new GovernmentComposition();
+
+        /// <summary>便捷访问：政权继承法（=composition 的世袭子选项）</summary>
+        public InheritanceLaw SuccessionLaw => composition.successionLaw;
 
         public RealmData()
         {
