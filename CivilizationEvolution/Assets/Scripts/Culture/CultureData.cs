@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Politics;
-using CivilizationEvolution.Role;
 
 namespace CivilizationEvolution.Culture
 {
@@ -61,8 +60,6 @@ namespace CivilizationEvolution.Culture
         /// <summary>官职称号定制（文化覆盖默认表——OfficeTitleCatalog 查询）</summary>
         public List<OfficeTitleEntry> officialTitles = new List<OfficeTitleEntry>();
 
-        /// <summary>民族特质概率表（EthnicTrait 枚举名 → 概率 0-100——AI 性格/行为基线）</summary>
-        public List<EthnicTraitEntry> traitProbabilities = new List<EthnicTraitEntry>();
 
         /// <summary>
         /// 革新亲和（考古文化包联动 v3）：键列表（对应 InnovationField 枚举名，

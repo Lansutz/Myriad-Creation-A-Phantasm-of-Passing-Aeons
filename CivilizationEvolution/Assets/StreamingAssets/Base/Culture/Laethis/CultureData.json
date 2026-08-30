@@ -66,27 +66,5 @@
       "polityKey": "Republic",
       "titleKey": "office_laethis_stew_republic"
     }
-  ],
-  "traitProbabilities": [
-    {
-      "name": "HomelandDefense",
-      "value": 60
-    },
-    {
-      "name": "WellTrained",
-      "value": 40
-    },
-    {
-      "name": "DefyTheStrong",
-      "value": 35
-    },
-    {
-      "name": "FightToTheEnd",
-      "value": 20
-    },
-    {
-      "name": "Conqueror",
-      "value": 10
-    }
   ]
 }
