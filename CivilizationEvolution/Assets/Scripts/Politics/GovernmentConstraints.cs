@@ -770,12 +770,12 @@ namespace CivilizationEvolution.Politics
         /// <summary>
         /// 获取某维度的可用选项（根据当前政体组合过滤）
         /// 核心规则：
-        /// - A0=共和制 → A1不能有世袭/僭夺/神命等君主制专属选项
+        /// - A0=共和制 → A1主导成分不能有世袭/神命，但僭夺可作次要成分
         /// - A0=君主制 → A2头衔分配只能有独享/家族共享
         /// - A0=共和制 → A2头衔分配只能有有头衔/无头衔
         /// </summary>
         public static List<int> GetAvailableOptions(
-            GovernmentDimension dimension, GovernmentComposition comp)
+            GovernmentDimension dimension, GovernmentComposition comp, bool isPrimary = true)
         {
             var allOptions = GetAllOptions(dimension);
             var available = new List<int>();
@@ -792,21 +792,28 @@ namespace CivilizationEvolution.Politics
                     var succession = (SupremeSuccession)option;
                     if (comp.supremeSovereignty == SupremeSovereignty.Republic)
                     {
-                        // 共和制：排除世袭/僭夺/神命等君主制专属选项
-                        if (succession == SupremeSuccession.Hereditary ||
-                            succession == SupremeSuccession.Usurpation ||
-                            succession == SupremeSuccession.Divine)
-                            continue;
+                        // 共和制：
+                        // - 主导成分：排除世袭/神命（僭夺可以有，走主次逻辑）
+                        // - 次要成分：僭夺可以有（如罗马共和制下的僭主）
+                        if (isPrimary)
+                        {
+                            if (succession == SupremeSuccession.Hereditary ||
+                                succession == SupremeSuccession.Divine)
+                                continue;
+                        }
+                        else
+                        {
+                            // 次要成分：排除世袭/神命，僭夺可以有
+                            if (succession == SupremeSuccession.Hereditary ||
+                                succession == SupremeSuccession.Divine)
+                                continue;
+                        }
                     }
-                    // 君主制：所有选项可用（包括选举君主/推举君主）
+                    // 君主制：所有选项可用（包括选举君主/推举君主/僭夺）
                     available.Add(option);
                 }
                 return available;
             }
-
-            // A2最高权力分配：根据A0过滤头衔分配（但这里是SupremeScope枚举，不是TitleDistribution）
-            // SupremeScope是权力分配（全能/受限等），头衔分配是子选项
-            // 所以A2本身不过滤，子选项在GetActiveSubOptionGroups中过滤
 
             // 其他维度：不过滤
             return allOptions;
