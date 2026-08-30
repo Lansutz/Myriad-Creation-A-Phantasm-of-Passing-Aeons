@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using CivilizationEvolution.Core;
 using CivilizationEvolution.Role;
 
 namespace CivilizationEvolution.Politics
@@ -238,6 +239,50 @@ namespace CivilizationEvolution.Politics
                 _ => "限自由民"
             };
             return $"{genderName}·{scopeName}";
+        }
+
+        /// <summary>
+        /// 资格范围 ↔ 经济系统阶层映射（用户定稿：资格与 SocialClass 对接）
+        /// ClanOnly 为血缘判定（无阶层映射，返回 null）
+        /// </summary>
+        public static List<GameEnums.SocialClass> ScopeToSocialClasses(EligibilityScope scope)
+        {
+            var result = new List<GameEnums.SocialClass>();
+            switch (scope)
+            {
+                case EligibilityScope.Nobility:
+                    result.Add(GameEnums.SocialClass.Royalty);
+                    result.Add(GameEnums.SocialClass.NobilityClergy);
+                    break;
+                case EligibilityScope.Citizens:
+                    result.Add(GameEnums.SocialClass.MerchantFreeman); // 城邦公民≈市民（自由民中的公民层）
+                    break;
+                case EligibilityScope.Clergy:
+                    result.Add(GameEnums.SocialClass.NobilityClergy); // 教士阶层
+                    break;
+                case EligibilityScope.FreePeople:
+                    result.Add(GameEnums.SocialClass.Royalty);
+                    result.Add(GameEnums.SocialClass.NobilityClergy);
+                    result.Add(GameEnums.SocialClass.MerchantFreeman);
+                    result.Add(GameEnums.SocialClass.Peasant);
+                    break;
+                case EligibilityScope.All:
+                    result.Add(GameEnums.SocialClass.Royalty);
+                    result.Add(GameEnums.SocialClass.NobilityClergy);
+                    result.Add(GameEnums.SocialClass.MerchantFreeman);
+                    result.Add(GameEnums.SocialClass.Peasant);
+                    result.Add(GameEnums.SocialClass.Slave);
+                    break;
+                // ClanOnly：血缘判定，无阶层映射
+            }
+            return result;
+        }
+
+        /// <summary>阶层是否在资格范围内（与经济系统 SocialClass 对接）</summary>
+        public bool IsScopeEligible(GameEnums.SocialClass socialClass)
+        {
+            if (scope == EligibilityScope.ClanOnly) return true; // 血缘判定由调用方实现
+            return ScopeToSocialClasses(scope).Contains(socialClass);
         }
     }
 

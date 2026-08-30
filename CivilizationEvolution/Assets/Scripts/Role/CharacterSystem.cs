@@ -30,6 +30,9 @@ namespace CivilizationEvolution.Role
         public int deathYear = -1;
         public bool isAlive => deathDay < 0;
 
+        /// <summary>社会阶层（经济系统对接——政体资格判定/阶层好感依赖；默认农民）</summary>
+        public GameEnums.SocialClass socialClass = GameEnums.SocialClass.Peasant;
+
         // 身份
         public int realmId = -1;
         public int familyId = -1;

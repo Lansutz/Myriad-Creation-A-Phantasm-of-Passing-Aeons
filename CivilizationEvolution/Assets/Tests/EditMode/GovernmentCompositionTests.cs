@@ -337,6 +337,29 @@ namespace CivilizationEvolution.Tests
             Assert.IsTrue(comp.localEligibility.IsGenderEligible(false), "地方层平等：女领主可领有");
         }
 
+        [Test]
+        public void Eligibility_ScopeMapsToSocialClass()
+        {
+            // 用户定稿：资格范围与经济系统阶层（SocialClass）对接
+            // 限贵族=王室+贵族教士；限自由民=不含奴隶；全体=含奴隶
+            var nobility = new EligibilityRules { scope = EligibilityScope.Nobility };
+            Assert.IsTrue(nobility.IsScopeEligible(GameEnums.SocialClass.Royalty), "王室在贵族范围");
+            Assert.IsTrue(nobility.IsScopeEligible(GameEnums.SocialClass.NobilityClergy), "贵族教士在贵族范围");
+            Assert.IsFalse(nobility.IsScopeEligible(GameEnums.SocialClass.Peasant), "农民不在贵族范围");
+            Assert.IsFalse(nobility.IsScopeEligible(GameEnums.SocialClass.Slave), "奴隶不在贵族范围");
+
+            var free = new EligibilityRules { scope = EligibilityScope.FreePeople };
+            Assert.IsTrue(free.IsScopeEligible(GameEnums.SocialClass.Peasant), "农民是自由民");
+            Assert.IsFalse(free.IsScopeEligible(GameEnums.SocialClass.Slave), "奴隶非自由民");
+
+            var all = new EligibilityRules { scope = EligibilityScope.All };
+            Assert.IsTrue(all.IsScopeEligible(GameEnums.SocialClass.Slave), "全体含奴隶");
+
+            var clergy = new EligibilityRules { scope = EligibilityScope.Clergy };
+            Assert.IsTrue(clergy.IsScopeEligible(GameEnums.SocialClass.NobilityClergy), "教士阶层");
+            Assert.IsFalse(clergy.IsScopeEligible(GameEnums.SocialClass.Peasant), "农民非教阶");
+        }
+
         private static CharacterData MakeEligibleChar(int id, bool isMale)
         {
             return new CharacterData
