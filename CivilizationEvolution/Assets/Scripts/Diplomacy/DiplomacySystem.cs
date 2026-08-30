@@ -26,6 +26,8 @@ namespace CivilizationEvolution.Diplomacy
         public bool hasTradeEmbargo = false;
         public bool hasDiplomaticRelations = true;
         public int warDeclaredDay = -1;
+        /// <summary>停战到期日（WarRules.truceYears 决定；-1=无停战）</summary>
+        public int truceUntilDay = -1;
 
         // 历史事件记录
         public List<DiplomaticEvent> eventHistory = new List<DiplomaticEvent>();
@@ -306,6 +308,12 @@ namespace CivilizationEvolution.Diplomacy
         /// <summary>当前游戏日（由 GameWorld 每 Tick 同步，用于盟约/条约/事件的时间戳）</summary>
         public int CurrentDay { get; set; } = 0;
 
+        /// <summary>战争规则（由 GameWorld 注入——truce/白和/联盟介入/分数参数）</summary>
+        public WarRules WarRules { get; set; } = WarRules.Default();
+
+        /// <summary>编年史（由 GameWorld 注入，null 跳过记录）</summary>
+        public Chronicle Chronicle { get; set; }
+
         public DiplomacyManager(Dictionary<int, RealmData> realms)
         {
             _realms = realms;
@@ -389,6 +397,14 @@ namespace CivilizationEvolution.Diplomacy
             var rel = GetRelation(attackerId, defenderId);
             if (rel == null || rel.isAtWar) return false;
 
+            // 停战检查（WarRules.truceYears——借鉴《地图上发生的事》truce_until_tick）
+            if (rel.truceUntilDay >= 0 && CurrentDay < rel.truceUntilDay)
+            {
+                AddEventTo(rel, DiplomaticEventType.DemandRejected,
+                    $"{_realms[attackerId].realmName} 欲开战，但停战期未满（至第 {rel.truceUntilDay} 日）");
+                return false;
+            }
+
             rel.isAtWar = true;
             rel.warDeclaredDay = CurrentDay;
             rel.relation = Mathf.Min(rel.relation, -50f);
@@ -407,9 +423,23 @@ namespace CivilizationEvolution.Diplomacy
                 threatChange = 40f
             });
 
-            // 通知同盟国
-            NotifyAlliesOfWar(attackerId, defenderId);
+            // 编年史（重大）
+            Chronicle?.Add("war", $"{_realms[attackerId].realmName} 对 {_realms[defenderId].realmName} 宣战：{reason}",
+                major: true, attackerId, defenderId);
+
+            // 通知同盟国（WarRules.allowAllianceIntervention 控制）
+            if (WarRules == null || WarRules.allowAllianceIntervention)
+                NotifyAlliesOfWar(attackerId, defenderId);
             return true;
+        }
+
+        private static void AddEventTo(DiplomaticRelation rel, DiplomaticEventType type, string description)
+        {
+            rel.AddEvent(new DiplomaticEvent
+            {
+                type = type,
+                description = description
+            });
         }
 
         /// <summary>求和/签订和平条约</summary>
@@ -442,12 +472,23 @@ namespace CivilizationEvolution.Diplomacy
             rel.isAtWar = false;
             rel.relation = Mathf.Max(rel.relation, -30f);
 
+            // 停战期（WarRules.truceYears——和平后强制休战）
+            rel.truceUntilDay = WarRules != null
+                ? WarRules.GetTruceUntilDay(CurrentDay, WarRules.truceYears)
+                : CurrentDay + 5 * 365;
+
             rel.AddEvent(new DiplomaticEvent
             {
                 type = DiplomaticEventType.PeaceTreaty,
-                description = $"签订和平条约，赔款 {warReparations}",
+                description = $"签订和平条约，赔款 {warReparations}，停战至第 {rel.truceUntilDay} 日",
                 relationChange = 30f
             });
+
+            // 编年史（重大）
+            Chronicle?.Add("peace",
+                $"{_realms[realmA].realmName} 与 {_realms[realmB].realmName} 签订和平条约" +
+                (warReparations > 0 ? $"（赔款 {warReparations}）" : ""),
+                major: true, realmA, realmB);
 
             return treaty;
         }

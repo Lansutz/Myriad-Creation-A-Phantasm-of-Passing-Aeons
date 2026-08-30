@@ -566,6 +566,12 @@ namespace CivilizationEvolution.Role
         /// <summary>家族所属政权（-1=未知；家族传统解锁前置革新按此政权检查）</summary>
         public int holderRealmId = -1;
 
+        /// <summary>家族故国（homeland——发源地政权；借鉴《地图上发生的事》homeland_country）</summary>
+        public int homelandCountryId = -1;
+
+        /// <summary>代数标记（generation_marks——每代的命名/标记序列，本地化键）</summary>
+        public List<string> generationMarks = new List<string>();
+
         /// <summary>革新树引用（CreateFamily 时由管理器注入；家族传统解锁前置检查用，不入档）</summary>
         [NonSerialized] public InnovationTree Innovations;
 

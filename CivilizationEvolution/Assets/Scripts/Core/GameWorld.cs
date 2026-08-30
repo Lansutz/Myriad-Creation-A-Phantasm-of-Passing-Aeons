@@ -60,6 +60,7 @@ namespace CivilizationEvolution.Core
         private DiseaseSystem _diseaseSystem;
         private BuildingSystem _buildingSystem;
         private InnovationTree _innovationTree;
+        private Chronicle _chronicle;
         private AIManager _aiManager;
 
         // ===== 脏标记 =====
@@ -155,6 +156,8 @@ namespace CivilizationEvolution.Core
             _buildingSystem = new BuildingSystem(tiles);
             _innovationTree = new InnovationTree();
             _characterManager.Innovations = _innovationTree; // 注入革新树（家族传统解锁前置依赖）
+            _chronicle = new Chronicle(); // 编年史（世界大事日志）
+            _diplomacyManager.Chronicle = _chronicle;
             _aiManager = new AIManager();
         }
 
@@ -927,6 +930,7 @@ namespace CivilizationEvolution.Core
         public DiseaseSystem GetDiseaseSystem() => _diseaseSystem;
         public BuildingSystem GetBuildingSystem() => _buildingSystem;
         public InnovationTree GetInnovationTree() => _innovationTree;
+        public Chronicle GetChronicle() => _chronicle;
         public AIManager GetAIManager() => _aiManager;
         public PoliticalManager GetPoliticalManager() => _politicalManager;
     }
