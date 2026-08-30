@@ -6,3 +6,9 @@ debug.log
 
 # 编译日志（Unity batchmode 输出）
 compile_log*.txt
+
+# Il2CppDumper 解包工具（临时文件，含第三方密钥）
+Il2CppDumper/
+*.dll
+!Assets/**/*.dll
+
