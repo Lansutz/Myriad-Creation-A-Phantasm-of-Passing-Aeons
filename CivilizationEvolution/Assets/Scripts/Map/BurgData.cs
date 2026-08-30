@@ -19,6 +19,17 @@ namespace CivilizationEvolution.Map
     }
 
     /// <summary>
+    /// 聚落形态（宏观分类，区别于 BurgType 功能类型）
+    /// 村镇/城/堡 是可缓慢演化的属性，不是永久固化标签
+    /// </summary>
+    public enum SettlementType
+    {
+        Village,  // 村镇：村落、集镇，生产功能为主，防御薄弱，辐射范围小
+        City,     // 城：城邑、都会、大都会，区域综合型中心，功能复合
+        Fort      // 堡：堡垒、要塞、堡寨，军事防御为核心，等级跨度完整
+    }
+
+    /// <summary>
     /// 子地块（Burg / 男爵领）
     /// 省份内的可编辑定居点，是人口、贸易、军事的具体载体
     /// 对齐 FantasyMapSimulator: BurgData / BurgsAndStateGenerator / capitalBurgID / IsBurgPortQualified
@@ -55,6 +66,64 @@ namespace CivilizationEvolution.Map
         // 建设等级（0~3，对应村庄→集镇→城市→大都市）
         public int buildLevel;
 
+        // ===== 聚落形态系统（村镇/城/堡，可缓慢演化）=====
+        /// <summary>聚落形态：村镇/城/堡</summary>
+        public SettlementType settlementType;
+
+        /// <summary>聚落等级（Ⅰ-Ⅴ级：村落→集镇→城邑→都会→大都会）</summary>
+        public SettlementLevel settlementLevel;
+
+        /// <summary>主功能类型（决定发展倾向）</summary>
+        public SettlementFunction primaryFunction;
+
+        /// <summary>次要功能（Flags枚举，可叠加）</summary>
+        public SettlementFunction secondaryFunctions;
+
+        /// <summary>城市重心（都会级Ⅳ-Ⅴ的核心发展方向）</summary>
+        public CityFocus cityFocus;
+
+        /// <summary>城的形态（圆城/方城/山城/水城等）</summary>
+        public CityForm cityForm;
+
+        /// <summary>堡垒亚型（关口堡/高地堡/坞堡/平原屯堡/河口堡等）</summary>
+        public FortSubtype fortSubtype;
+
+        /// <summary>港口层级（避风港/内河港/中转港/深水港/帝国港）</summary>
+        public PortTier portTier;
+
+        /// <summary>关隘瓶颈类型（山口/峡谷/海峡/沙漠走廊等）</summary>
+        public BottleneckType bottleneckType;
+
+        /// <summary>升级路线（自然生长/港口发展/军事发展/矿业发展等）</summary>
+        public UpgradePath upgradePath;
+
+        /// <summary>演化阶段（稳定/过渡中/萌芽/已转化/衰退中）</summary>
+        public EvolutionStage evolutionStage;
+
+        /// <summary>城墙等级（无→木栅栏→土堤→石墙→加固城墙→棱堡→巨型防御）</summary>
+        public WallLevel wallLevel;
+
+        /// <summary>形态演化进度（0~100），累积到阈值后完成形态切换</summary>
+        public float settlementEvolution;
+
+        /// <summary>当前形态的稳定度（0~100），越高越难被演化推动改变</summary>
+        public float settlementStability;
+
+        /// <summary>形态演化的目标方向（null表示自然演化）</summary>
+        public SettlementType? evolutionTarget;
+
+        /// <summary>距上次形态切换的Tick数（用于冷却期）</summary>
+        public int ticksSinceLastTransition;
+
+        /// <summary>建城Tick（用于计算城龄）</summary>
+        public int foundingTick;
+
+        /// <summary>母城ID（从哪个聚落发展/分化而来，-1表示无）</summary>
+        public int parentBurgId = -1;
+
+        /// <summary>关联瓶颈地块ID（关口堡/渡口城的控制节点，-1表示无）</summary>
+        public int bottleneckTileIndex = -1;
+
         /// <summary>显示用名称（含类型前缀）</summary>
         public string DisplayName => type switch
         {
@@ -70,6 +139,42 @@ namespace CivilizationEvolution.Map
         public bool IsMajorSettlement =>
             type == BurgType.City || type == BurgType.Port ||
             type == BurgType.Capital || type == BurgType.Fortress;
+
+        /// <summary>形态显示名称</summary>
+        public string SettlementTypeName => settlementType switch
+        {
+            SettlementType.Village => "村镇",
+            SettlementType.City => "城",
+            SettlementType.Fort => "堡",
+            _ => "未知"
+        };
+
+        /// <summary>形态等级上限（软性约束，AI遵循，玩家可突破）</summary>
+        public int MaxBuildLevelForType => settlementType switch
+        {
+            SettlementType.Village => 1,  // 村镇最高到集镇（Ⅱ级），极少数交通要道可到Ⅲ级
+            SettlementType.City => 3,     // 城可到Ⅳ-Ⅴ级大都会
+            SettlementType.Fort => 3,     // 堡等级跨度完整，可到Ⅳ-Ⅴ级巨型要塞
+            _ => 3
+        };
+
+        /// <summary>该形态的初始军政倾向权重</summary>
+        public float MilitaryWeightBase => settlementType switch
+        {
+            SettlementType.Village => 0.2f,  // 村镇军政天然偏低
+            SettlementType.City => 0.5f,      // 城四类倾向自由发展
+            SettlementType.Fort => 0.8f,      // 堡军政初始权重很高
+            _ => 0.5f
+        };
+
+        /// <summary>该形态的初始经贸倾向权重</summary>
+        public float EconomyWeightBase => settlementType switch
+        {
+            SettlementType.Village => 0.7f,  // 村镇经贸、农耕产出偏高
+            SettlementType.City => 0.6f,      // 城可经济主导
+            SettlementType.Fort => 0.3f,      // 堡经贸通常偏低
+            _ => 0.5f
+        };
     }
 
     /// <summary>
@@ -197,6 +302,20 @@ namespace CivilizationEvolution.Map
                 isCoastal = tile.isCoast,
                 buildLevel = type == BurgType.City ? 2 : type == BurgType.Town ? 1 : 0
             };
+
+            // 初始化聚落类型学（形态/功能/等级/城形/堡型/升级路线）
+            SettlementTypologySystem.DeriveInitialType(burg, tile, _width, _height);
+
+            // 覆盖：根据BurgType强制形态
+            burg.settlementType = SettlementEvolutionSystem.InferFromBurgType(type);
+            burg.settlementLevel = type switch
+            {
+                BurgType.City or BurgType.Port or BurgType.Capital => SettlementLevel.LevelIII,
+                BurgType.Town => SettlementLevel.LevelII,
+                BurgType.Fortress => SettlementLevel.LevelII,
+                _ => SettlementLevel.LevelI
+            };
+
             return burg;
         }
 
