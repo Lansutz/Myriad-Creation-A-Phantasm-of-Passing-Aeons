@@ -2107,6 +2107,33 @@
       "affinityTags": [],
       "innovationName": "具装甲骑",
       "description": "人马俱披重甲，冲阵如墙（拜占庭甲骑/铁浮屠/帕提亚具装）；重骑兵的终极形态。"
+    },
+    {
+      "innovationId": 1007,
+      "field": 18,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        402
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "撞角战术",
+      "description": "舰首包铜铁撞角，冲断敌舷（希腊三列桨/罗马战船）；海战从接舷变为撞击。"
+    },
+    {
+      "innovationId": 1008,
+      "field": 17,
+      "era": 3,
+      "researchCost": 450,
+      "prerequisites": [
+        404,
+        701
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "远洋贸易",
+      "description": "远洋商路贯通（香料丝绸瓷器跨海而行）；海商们把世界缝在了一起。"
     }
   ]
 }

@@ -146,6 +146,59 @@ namespace CivilizationEvolution.Tests
             Assert.IsTrue(IsUnitAvailable(_world, 203, _tree, 1), "具装甲骑后超重装骑兵可征募");
         }
 
+        [Test]
+        public void NavalShips_RammingAndTradeVessels()
+        {
+            // 撞角战船（用户点名）：需撞角战术（1007）；物资=原木+铁矿（撞角需铁）
+            var ram = _world.unitDefs[302];
+            Assert.IsTrue(ram.requiredInnovations.Contains(1007), "撞角战船需撞角战术");
+            Assert.IsTrue(ram.recruitCost.ContainsKey(30), "撞角战船需原木");
+            Assert.IsTrue(ram.recruitCost.ContainsKey(50), "撞角战船需铁矿（铜铁撞角）");
+
+            // 远洋贸易船：需远洋贸易（1008）；物资=加工木材+棉花（帆布）
+            var trader = _world.unitDefs[303];
+            Assert.IsTrue(trader.requiredInnovations.Contains(1008), "远洋贸易船需远洋贸易");
+            Assert.IsTrue(trader.recruitCost.ContainsKey(31), "远洋贸易船需加工木材");
+            Assert.IsTrue(trader.recruitCost.ContainsKey(11), "远洋贸易船需棉花（帆布）");
+            Assert.Greater(trader.speed, _world.unitDefs[301].speed, "贸易船比战舰快");
+
+            // 革新在位
+            var ramInnovation = _tree.GetInnovation(1007);
+            Assert.IsNotNull(ramInnovation, "撞角战术应存在");
+            Assert.IsTrue(ramInnovation.prerequisites.Contains(402), "撞角战术前置桨帆船");
+            var tradeInnovation = _tree.GetInnovation(1008);
+            Assert.IsNotNull(tradeInnovation, "远洋贸易应存在");
+            Assert.IsTrue(tradeInnovation.prerequisites.Contains(404), "远洋贸易前置卡拉维尔");
+            Assert.IsTrue(tradeInnovation.prerequisites.Contains(701), "远洋贸易前置铸币");
+        }
+
+        [Test]
+        public void UnitRecruitCosts_MapToEconomyGoods()
+        {
+            // 物资对应（用户定稿）：兵种招募对应经济系统物资
+            // 重骑兵：武器+盔甲+马
+            var heavyCav = _world.unitDefs[201];
+            Assert.IsTrue(heavyCav.recruitCost.ContainsKey(70), "重骑兵需武器");
+            Assert.IsTrue(heavyCav.recruitCost.ContainsKey(71), "重骑兵需盔甲");
+            Assert.IsTrue(heavyCav.recruitCost.ContainsKey(20), "重骑兵需马");
+
+            // 超重装：人马双甲（马更多）
+            var cataphract = _world.unitDefs[203];
+            Assert.Greater(cataphract.recruitCost[20], heavyCav.recruitCost[20], "超重装耗马更多");
+
+            // 帆船战舰：加工木材+铁矿
+            var warship = _world.unitDefs[301];
+            Assert.IsTrue(warship.recruitCost.ContainsKey(31), "战舰需加工木材");
+            Assert.IsTrue(warship.recruitCost.ContainsKey(50), "战舰需铁矿");
+
+            // 桨帆船：原木+加工木材
+            var galley = _world.unitDefs[300];
+            Assert.IsTrue(galley.recruitCost.ContainsKey(30), "桨帆船需原木");
+
+            // 轻装步兵保持基础武器
+            Assert.IsTrue(_world.unitDefs[100].recruitCost.ContainsKey(70), "轻装步兵需武器");
+        }
+
         /// <summary>兵种可用性判定（requiredInnovations 全部持有——任一前置不满足不可征募）</summary>
         private static bool IsUnitAvailable(GameWorld world, int unitId, InnovationTree tree, int realmId)
         {

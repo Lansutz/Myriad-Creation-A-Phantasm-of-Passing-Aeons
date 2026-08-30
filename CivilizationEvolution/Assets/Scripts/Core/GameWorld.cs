@@ -626,20 +626,47 @@ namespace CivilizationEvolution.Core
 
         private void InitializeUnitDefs()
         {
-            // 步兵（兵种×革新：重装需铁制武器、精锐需炼钢、弩手需弩）
+            // 步兵（兵种×革新：重装需铁制武器、精锐需炼钢、弩手需弩；物资：武器/盔甲）
             AddUnitDef(100, "轻装步兵", GameEnums.UnitCategory.Infantry, 1, 10f, 0f, 8f, 60f, 2f, 1f, 50f, 1f);
             AddUnitDef(101, "重装步兵", GameEnums.UnitCategory.Infantry, 2, 15f, 0f, 15f, 70f, 1.5f, 1.5f, 80f, 1.5f, 301);
             AddUnitDef(102, "精锐步兵", GameEnums.UnitCategory.Infantry, 3, 20f, 0f, 22f, 80f, 1.2f, 2f, 120f, 2f, 203);
             AddUnitDef(110, "弓箭手", GameEnums.UnitCategory.Infantry, 1, 5f, 12f, 6f, 50f, 2f, 0.8f, 40f, 1f, 907);
             AddUnitDef(111, "弩手", GameEnums.UnitCategory.Infantry, 2, 6f, 18f, 8f, 55f, 1.5f, 1f, 60f, 1.2f, 304);
-            // 骑兵（轻骑需骑乘术、重骑需马镫——用户点名、精锐需重装骑兵）
+            // 骑兵（轻骑需骑乘术、重骑需马镫、精锐需重装骑兵；物资：武器+盔甲+马）
             AddUnitDef(200, "轻骑兵", GameEnums.UnitCategory.Cavalry, 1, 12f, 5f, 8f, 65f, 4f, 1.5f, 60f, 1f, 923);
             AddUnitDef(201, "重骑兵", GameEnums.UnitCategory.Cavalry, 2, 20f, 8f, 18f, 75f, 3f, 2.5f, 100f, 1.5f, 924);
             AddUnitDef(202, "精锐骑兵", GameEnums.UnitCategory.Cavalry, 3, 28f, 10f, 25f, 85f, 2.5f, 3f, 150f, 2f, 303);
             AddUnitDef(203, "超重装骑兵", GameEnums.UnitCategory.Cavalry, 4, 36f, 12f, 32f, 95f, 2f, 4f, 200f, 3f, 1006); // 具装甲骑（人马俱甲）
-            // 水军
+            // 水军（桨帆需桨帆船、战舰需克拉克、撞角需撞角战术、远洋贸易船需远洋贸易）
             AddUnitDef(300, "桨帆船", GameEnums.UnitCategory.Navy, 1, 15f, 10f, 10f, 60f, 3f, 2f, 80f, 1f, 402);
             AddUnitDef(301, "帆船战舰", GameEnums.UnitCategory.Navy, 2, 20f, 15f, 15f, 70f, 4f, 2.5f, 120f, 1.5f, 405);
+            AddUnitDef(302, "撞角战船", GameEnums.UnitCategory.Navy, 2, 28f, 4f, 14f, 65f, 3.5f, 2.5f, 100f, 2f, 1007); // 舰首包铜铁撞角
+            AddUnitDef(303, "远洋贸易船", GameEnums.UnitCategory.Navy, 3, 8f, 2f, 18f, 70f, 4.5f, 1.5f, 80f, 2.5f, 1008); // 商船/贸易护卫
+
+            // ===== 物资对应（经济系统 goods 对接——用户定稿） =====
+            // 步兵：武器/盔甲
+            SetUnitRecruitCosts(101, (70, 1.2f), (71, 1f));
+            SetUnitRecruitCosts(102, (70, 1.5f), (71, 1.5f));
+            // 骑兵：武器+盔甲+马
+            SetUnitRecruitCosts(200, (70, 1f), (20, 1f));
+            SetUnitRecruitCosts(201, (70, 1.2f), (71, 1.2f), (20, 1.5f));
+            SetUnitRecruitCosts(202, (70, 1.5f), (71, 1.5f), (20, 2f));
+            SetUnitRecruitCosts(203, (70, 2f), (71, 2f), (20, 2.5f)); // 超重装：人马双甲
+            // 船只：原木/加工木材 + 铁矿/棉花
+            SetUnitRecruitCosts(300, (30, 2f), (31, 1f));
+            SetUnitRecruitCosts(301, (31, 2f), (50, 1f));
+            SetUnitRecruitCosts(302, (30, 2f), (50, 1.5f)); // 撞角需铁
+            SetUnitRecruitCosts(303, (31, 2f), (11, 1f));   // 远洋船需加工木+帆布（棉花）
+        }
+
+        /// <summary>设置兵种招募物资（经济系统 goods 对接——goodsId → 数量）</summary>
+        private void SetUnitRecruitCosts(int unitId, params (int goodsId, float amount)[] costs)
+        {
+            if (!unitDefs.TryGetValue(unitId, out var def)) return;
+            def.recruitCost = new Dictionary<int, float>();
+            foreach (var (goodsId, amount) in costs)
+                def.recruitCost[goodsId] = amount;
+            unitDefs[unitId] = def; // struct 需回写
         }
 
         private void AddUnitDef(int id, string name, GameEnums.UnitCategory category, int tier,
