@@ -46,6 +46,17 @@ namespace CivilizationEvolution.EditorTools
             Debug.Log($"[HeadlessBuilder] 构建完成，场景已保存：{ScenePath}");
         }
 
+        /// <summary>
+        /// GUI 启动入口：打开项目后自动加载 Main 场景（供 -executeMethod 调用，新手免找场景）。
+        /// </summary>
+        public static void OpenMainScene()
+        {
+            if (System.IO.File.Exists(ScenePath))
+                EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            else
+                Debug.LogWarning($"[HeadlessBuilder] 场景不存在：{ScenePath}，请先执行菜单 Civilization Evolution/1. 一键搭建游戏场景");
+        }
+
         private static void EnsureFolder(string parent, string child)
         {
             string path = $"{parent}/{child}";

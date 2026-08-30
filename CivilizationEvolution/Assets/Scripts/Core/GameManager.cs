@@ -97,8 +97,14 @@ namespace CivilizationEvolution.Core
 
             if (world == null)
             {
-                var go = new GameObject("GameWorld");
-                world = go.AddComponent<GameWorld>();
+                // 优先复用场景中已存在的 GameWorld（MapRenderer/UIManager/MapEditor 都接线到它），
+                // 避免再新建第二个 GameWorld 去生成地形、而渲染器仍对着空世界导致黑屏。
+                world = FindAnyObjectByType<GameWorld>();
+                if (world == null)
+                {
+                    var go = new GameObject("GameWorld");
+                    world = go.AddComponent<GameWorld>();
+                }
             }
 
             world.mapWidth = mapWidth;

@@ -38,7 +38,7 @@ namespace CivilizationEvolution.Map
         /// <summary>全量重算海陆属性</summary>
         public void RecalculateAll()
         {
-            float seaThreshold = CalculateSeaLevelThreshold();
+            float seaThreshold = CalculateSeaLevelThresholdFromDistribution();
 
             for (int i = 0; i < _tiles.Length; i++)
                 RecalculateSingleTile(i, seaThreshold);
@@ -55,7 +55,7 @@ namespace CivilizationEvolution.Map
         {
             if (dirtyIndices == null || dirtyIndices.Count == 0) return;
 
-            float seaThreshold = CalculateSeaLevelThreshold();
+            float seaThreshold = _cachedSeaThreshold; // 画笔只改高度，海平面沿用全量重算的分位阈值
             bool connectivityChanged = false;
 
             var expandedDirty = new HashSet<int>(dirtyIndices);
@@ -78,11 +78,28 @@ namespace CivilizationEvolution.Map
                 RecalculateSeaConnectivity();
         }
 
-        private float CalculateSeaLevelThreshold()
+        /// <summary>缓存的海平面阈值（增量重算复用；全量重算时按高度场分布刷新）</summary>
+        private float _cachedSeaThreshold;
+
+        /// <summary>
+        /// 基于当前实际高度场分布计算海平面阈值，使 landAmount 滑块真正对应陆地占比。
+        /// 固定阈值会因高度场分布不均而使陆地比例严重失真；改为取高度分位数：高于分位线为陆地。
+        /// seaLevel 以 0.5 为中性，升高淹没低地、降低露出海床。
+        /// </summary>
+        private float CalculateSeaLevelThresholdFromDistribution()
         {
-            float baseThreshold = Mathf.Lerp(0.65f, 0.25f, _config.landAmount);
-            float seaOffset = Mathf.Lerp(-0.12f, 0.12f, _config.seaLevel);
-            return Mathf.Clamp(baseThreshold + seaOffset, 0.08f, 0.85f);
+            var heights = new List<float>(_tiles.Length);
+            for (int i = 0; i < _tiles.Length; i++)
+                if (_tiles[i].exists) heights.Add(_tiles[i].elevation01);
+
+            if (heights.Count == 0) { _cachedSeaThreshold = 0f; return 0f; }
+            heights.Sort();
+
+            float effectiveLand = Mathf.Clamp(_config.landAmount + (0.5f - _config.seaLevel) * 0.5f, 0.02f, 0.95f);
+            float quantile = 1f - effectiveLand;
+            int idx = Mathf.Clamp(Mathf.RoundToInt(quantile * (heights.Count - 1)), 0, heights.Count - 1);
+            _cachedSeaThreshold = heights[idx];
+            return _cachedSeaThreshold;
         }
 
         /// <summary>单地块海陆属性重算，输出5字段</summary>

@@ -193,15 +193,15 @@ namespace CivilizationEvolution.Core
                 _terrainDirtyTiles.Add(i);
             }
 
-            _seaLandGenerator.SetFragmentNoise(fragmentNoise);
-            RecalculateAll();
-
-            // 地形生成后所有地块都存在（随机生成完整矩形世界）
-            // 地图编辑器中玩家可删除地块创建非矩形形状
+            // 必须在 RecalculateAll 之前把所有地块标记为存在：海陆判定对 !exists 地块会直接判海返回，
+            // 若先重算再置 exists，会导致全图陆地为 0。随机生成完整矩形世界；编辑器里玩家可再删除地块。
             for (int i = 0; i < tiles.Length; i++)
             {
                 tiles[i].exists = true;
             }
+
+            _seaLandGenerator.SetFragmentNoise(fragmentNoise);
+            RecalculateAll();
 
             for (int i = 0; i < tiles.Length; i++)
             {
@@ -697,12 +697,15 @@ namespace CivilizationEvolution.Core
             int regionCount = (tiles.Length + 15) / 16;
             for (int r = 0; r < regionCount; r++)
             {
-                tradeCenters[r] = new TradeCenter
+                var center = new TradeCenter
                 {
                     regionId = r,
                     centerName = $"地区{r}贸易中心",
                     centerTileIndex = r * 16
                 };
+                // 开局启动粮储（物资 id 0 = 粮食）：经济产出尚未运转前，避免有人口的地块瞬间全判饥荒
+                center.inventory[0] = 1000f;
+                tradeCenters[r] = center;
             }
         }
 

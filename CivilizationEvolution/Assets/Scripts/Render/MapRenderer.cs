@@ -69,8 +69,14 @@ namespace CivilizationEvolution.Render
         /// <summary>初始化渲染器</summary>
         private void InitializeRenderer()
         {
+            // 先取现有组件（MapPlane 基元自带 MeshFilter/MeshRenderer），没有再添加；
+            // 对已存在组件重复 AddComponent 在 Unity6 会返回 null，导致后续空引用
+            if (meshFilter == null)
+                meshFilter = GetComponent<MeshFilter>();
             if (meshFilter == null)
                 meshFilter = gameObject.AddComponent<MeshFilter>();
+            if (meshRenderer == null)
+                meshRenderer = GetComponent<MeshRenderer>();
             if (meshRenderer == null)
                 meshRenderer = gameObject.AddComponent<MeshRenderer>();
 

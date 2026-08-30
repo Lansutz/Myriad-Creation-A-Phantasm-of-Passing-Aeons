@@ -87,8 +87,30 @@ namespace CivilizationEvolution.UI
 
         void Start()
         {
+            ApplyChineseFont();
             InitializeUI();
             AddEventLog("游戏启动", EventLogKind.System);
+        }
+
+        /// <summary>
+        /// 应用中文字体（simhei 黑体——内置 LegacyRuntime 字体不含中文，缺字体则 UI 显示方块）
+        /// 遍历场景全部 Legacy Text 组件统一设置
+        /// </summary>
+        public void ApplyChineseFont()
+        {
+            var font = Resources.Load<Font>("Fonts/simhei");
+            if (font == null)
+            {
+                Debug.LogWarning("[UIManager] 中文字体缺失（Resources/Fonts/simhei.ttf）——UI 中文可能显示异常");
+                return;
+            }
+            int count = 0;
+            foreach (var text in FindObjectsOfType<UnityEngine.UI.Text>(true))
+            {
+                text.font = font;
+                count++;
+            }
+            Debug.Log($"[UIManager] 中文字体已应用：{count} 处 UI 文本");
         }
 
         void Update()
