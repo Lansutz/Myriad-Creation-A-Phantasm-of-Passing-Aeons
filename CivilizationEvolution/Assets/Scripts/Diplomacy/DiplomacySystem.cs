@@ -493,6 +493,29 @@ namespace CivilizationEvolution.Diplomacy
             return treaty;
         }
 
+        /// <summary>
+        /// 强制和平（战争闭环——战争胜利/白和后的自动停战）
+        /// 结束战争状态 + 按 WarRules.truceYears 设置停战期
+        /// </summary>
+        public void ForcePeace(int realmA, int realmB, int day, int truceYears, string reason = "战争结束")
+        {
+            var rel = GetRelation(realmA, realmB);
+            if (rel == null) return;
+
+            rel.isAtWar = false;
+            rel.truceUntilDay = day + truceYears * 365;
+
+            rel.AddEvent(new DiplomaticEvent
+            {
+                type = DiplomaticEventType.PeaceTreaty,
+                description = $"{reason}：{_realms[realmA].realmName} 与 {_realms[realmB].realmName} 停战（至第 {rel.truceUntilDay} 日）",
+                relationChange = 10f
+            });
+
+            Chronicle?.Add("peace", $"{_realms[realmA].realmName} 与 {_realms[realmB].realmName} {reason}",
+                major: true, realmA, realmB);
+        }
+
         // ===== 盟约系统 =====
 
         /// <summary>提议盟约</summary>

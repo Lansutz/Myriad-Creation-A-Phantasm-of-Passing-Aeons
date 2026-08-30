@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Diplomacy;
 using CivilizationEvolution.Map;
 
 namespace CivilizationEvolution.War
@@ -332,6 +333,101 @@ namespace CivilizationEvolution.War
             }
             return totalLost;
         }
+
+        // ===== 战争闭环（用户定稿：分数累计/白和/胜利判定——接入主循环） =====
+
+        /// <summary>胜利分数阈值（达到即获胜）</summary>
+        public const float VictoryScore = 100f;
+
+        /// <summary>
+        /// 每日战争推进：同地块敌对军队自动交战（ResolveBattle），
+        /// 胜方按 WarRules.scoreBattle 加分（×兵力规模系数 0.5~2）
+        /// </summary>
+        public void DailyTick(Dictionary<int, Army> armies, List<WarState> wars,
+            WarRules rules, int day)
+        {
+            if (wars == null || armies == null) return;
+
+            // 1. 交战检测：遍历战争双方军队，同地块且敌对→战斗
+            var activeWars = new List<WarState>(wars.FindAll(w => !w.ended));
+            foreach (var war in activeWars)
+            {
+                foreach (var pair in armies)
+                {
+                    var army = pair.Value;
+                    int owner = army.ownerRealmId;
+                    if (owner != war.attackerId && owner != war.defenderId) continue;
+                    if (army.state == GameEnums.CombatState.Dead) continue;
+
+                    // 找敌方军队（同地块）
+                    foreach (var otherPair in armies)
+                    {
+                        if (otherPair.Key == pair.Key) continue;
+                        var enemy = otherPair.Value;
+                        int enemyOwner = enemy.ownerRealmId;
+                        if (enemyOwner != war.attackerId && enemyOwner != war.defenderId) continue;
+                        if (enemyOwner == owner) continue;
+                        if (enemy.state == GameEnums.CombatState.Dead) continue;
+                        if (enemy.currentTileIndex != army.currentTileIndex) continue;
+
+                        // 交战
+                        var result = ResolveBattle(army, enemy);
+                        war.lastBattleDay = day;
+                        if (result.attackerWins)
+                        {
+                            float scale = Mathf.Clamp(enemy.GetTotalManpower(_unitDefs) / Mathf.Max(1f, army.GetTotalManpower(_unitDefs)), 0.5f, 2f);
+                            war.AddScore(owner, rules.scoreBattle * scale);
+                        }
+                        else
+                        {
+                            float scale = Mathf.Clamp(army.GetTotalManpower(_unitDefs) / Mathf.Max(1f, enemy.GetTotalManpower(_unitDefs)), 0.5f, 2f);
+                            war.AddScore(enemyOwner, rules.scoreBattle * scale);
+                        }
+                        break; // 一队一天只打一场
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 战争结束判定：
+        /// ①任一方分数 ≥ VictoryScore → 胜利
+        /// ②双方分数均 < 白和阈值 且 开战超过 peaceMinYears → 白和（allowWhitePeace）
+        /// 返回本日新结束的战争（已标记 ended/winnerId/outcome）
+        /// </summary>
+        public static List<WarState> UpdateWarOutcomes(List<WarState> wars, WarRules rules, int day)
+        {
+            var ended = new List<WarState>();
+            if (wars == null) return ended;
+
+            foreach (var war in wars)
+            {
+                if (war.ended) continue;
+
+                // ① 胜利判定
+                if (war.attackerScore >= VictoryScore)
+                {
+                    war.ended = true; war.winnerId = war.attackerId; war.outcome = "victory";
+                    ended.Add(war); continue;
+                }
+                if (war.defenderScore >= VictoryScore)
+                {
+                    war.ended = true; war.winnerId = war.defenderId; war.outcome = "victory";
+                    ended.Add(war); continue;
+                }
+
+                // ② 白和判定（双方低分 + 开战超年限 + 规则允许）
+                if (rules != null && rules.allowWhitePeace
+                    && war.attackerScore < rules.peaceWhiteScore * VictoryScore
+                    && war.defenderScore < rules.peaceWhiteScore * VictoryScore
+                    && day - war.startDay >= rules.peaceMinYears * 365)
+                {
+                    war.ended = true; war.winnerId = -1; war.outcome = "white_peace";
+                    ended.Add(war);
+                }
+            }
+            return ended;
+        }
     }
 
     /// <summary>战斗结果</summary>
@@ -341,5 +437,43 @@ namespace CivilizationEvolution.War
         public bool attackerWins;
         public float attackerLosses;
         public float defenderLosses;
+    }
+
+    /// <summary>
+    /// 战争状态（战争闭环——分数累计/白和/胜利判定）
+    /// 分数按 WarRules score 体系：野战胜利=scoreBattle、歼灭敌军=按规模、
+    /// 占城=scoreCity 等（当前实现：战斗胜利+占领加分）
+    /// </summary>
+    [System.Serializable]
+    public class WarState
+    {
+        public int warId;
+        public int attackerId;
+        public int defenderId;
+        public float attackerScore;
+        public float defenderScore;
+        public int startDay;
+        public int lastBattleDay = -1;
+        public bool ended;
+        public int winnerId = -1;      // -1=未决
+        public string outcome = "";    // victory/white_peace/invalidated
+
+        public WarState(int warId, int attackerId, int defenderId, int startDay)
+        {
+            this.warId = warId;
+            this.attackerId = attackerId;
+            this.defenderId = defenderId;
+            this.startDay = startDay;
+        }
+
+        /// <summary>某方当前分数</summary>
+        public float GetScore(int realmId) => realmId == attackerId ? attackerScore : defenderScore;
+
+        /// <summary>己方加成（胜方得分按 WarRules.scoreBattle×规模系数）</summary>
+        public void AddScore(int realmId, float amount)
+        {
+            if (realmId == attackerId) attackerScore += amount;
+            else if (realmId == defenderId) defenderScore += amount;
+        }
     }
 }

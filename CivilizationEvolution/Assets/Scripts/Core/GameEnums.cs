@@ -215,7 +215,8 @@ namespace CivilizationEvolution.Core
             Besieging,
             InCombat,
             Retreating,
-            Routed
+            Routed,
+            Dead // 追加于末尾（枚举序安全：旧存档值 0-5 不变）
         }
 
         /// <summary>地形战术类型</summary>

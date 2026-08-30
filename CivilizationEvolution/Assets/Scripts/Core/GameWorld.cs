@@ -44,6 +44,12 @@ namespace CivilizationEvolution.Core
         public Dictionary<int, GoodsDef> goodsDefs = new Dictionary<int, GoodsDef>();
         public Dictionary<int, RealmData> realms = new Dictionary<int, RealmData>();
         public Dictionary<int, UnitDef> unitDefs = new Dictionary<int, UnitDef>();
+        /// <summary>军队（armyId → Army——战争闭环）</summary>
+        public Dictionary<int, Army> armies = new Dictionary<int, Army>();
+        /// <summary>战争状态列表（战争闭环——分数/胜负判定）</summary>
+        private readonly List<WarState> _wars = new List<WarState>();
+        private int _nextWarId = 1;
+        private int _nextArmyId = 1;
 
         // ===== 子系统 =====
         private SeaLandGenerator _seaLandGenerator;
@@ -321,8 +327,18 @@ namespace CivilizationEvolution.Core
             _diplomacyManager.CurrentDay = currentDay;
             _diplomacyManager.DailyTick();
 
-            // 8. 战争（CombatManager暂无DailyTick方法，待实现军队系统后启用）
-            // _combatManager.DailyTick(unitDefs, tiles, _seaLandGenerator);
+            // 8. 战争（战争闭环：同地块交战→分数→胜负判定→停战）
+            _combatManager.DailyTick(armies, _wars, _diplomacyManager.WarRules, currentDay);
+            var endedWars = CombatManager.UpdateWarOutcomes(_wars, _diplomacyManager.WarRules, currentDay);
+            foreach (var war in endedWars)
+            {
+                string outcomeText = war.outcome == "victory"
+                    ? $"{realms[war.winnerId].realmName} 赢得战争胜利"
+                    : "双方白和";
+                _chronicle?.Add("war_end", outcomeText, major: true, war.attackerId, war.defenderId);
+                _diplomacyManager.ForcePeace(war.attackerId, war.defenderId, currentDay,
+                    _diplomacyManager.WarRules.truceYears, outcomeText);
+            }
 
             // 9. 角色与家族
             _characterManager.DailyTick(currentDay, currentYear);
@@ -955,6 +971,32 @@ namespace CivilizationEvolution.Core
         public SeaLandGenerator GetSeaLandGenerator() => _seaLandGenerator;
         public PlanetClimateSimulator GetClimateSimulator() => _climateSimulator;
         public CombatManager GetCombatManager() => _combatManager;
+        public List<WarState> GetWars() => _wars;
+
+        /// <summary>宣战（外交宣战 + 创建战争状态——战争闭环入口）</summary>
+        public bool DeclareWar(int attackerId, int defenderId, string reason)
+        {
+            if (!_diplomacyManager.DeclareWar(attackerId, defenderId, reason)) return false;
+            _wars.Add(new WarState(_nextWarId++, attackerId, defenderId, currentDay));
+            _chronicle?.Add("war", $"{realms[attackerId].realmName} 对 {realms[defenderId].realmName} 宣战：{reason}",
+                major: true, attackerId, defenderId);
+            return true;
+        }
+
+        /// <summary>创建军队（战争闭环——基础编成；招募物资/革新检查由调用方执行）</summary>
+        public Army CreateArmy(int ownerRealmId, int commanderId, int tileIndex)
+        {
+            var army = new Army
+            {
+                armyId = _nextArmyId++,
+                armyName = $"{realms[ownerRealmId].realmName}军",
+                ownerRealmId = ownerRealmId,
+                commanderId = commanderId,
+                currentTileIndex = tileIndex
+            };
+            armies[army.armyId] = army;
+            return army;
+        }
         public DiplomacyManager GetDiplomacyManager() => _diplomacyManager;
         public CharacterManager GetCharacterManager() => _characterManager;
         public ThoughtManager GetThoughtManager() => _thoughtManager;
