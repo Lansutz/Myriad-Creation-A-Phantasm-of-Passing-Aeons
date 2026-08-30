@@ -31,6 +31,9 @@ namespace CivilizationEvolution.Core
         [Header("地图尺寸")]
         public int mapWidth = 128;
         public int mapHeight = 64;
+        public int randomSeed = 42;
+        [Header("地图环绕模式")]
+        public MapWrapMode wrapMode = MapWrapMode.Cylindrical;
 
         [Header("时间设置")]
         public float tickInterval = 1f;

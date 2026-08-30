@@ -91,7 +91,7 @@ namespace CivilizationEvolution.Core
         }
 
         /// <summary>开始新游戏</summary>
-        public void StartNewGame(int mapWidth = 128, int mapHeight = 64, int seed = 42)
+        public void StartNewGame(int mapWidth = 128, int mapHeight = 64, int seed = 42, MapWrapMode wrapMode = MapWrapMode.Cylindrical)
         {
             ChangeState(GameState.Loading);
 

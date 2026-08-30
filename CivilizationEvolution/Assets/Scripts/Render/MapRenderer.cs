@@ -147,7 +147,10 @@ namespace CivilizationEvolution.Render
             // 创建地图纹理
             mapTexture = new Texture2D(mapWidth, mapHeight, TextureFormat.RGBA32, false);
             mapTexture.filterMode = FilterMode.Point;
-            mapTexture.wrapMode = TextureWrapMode.Clamp;
+            // 根据地图环绕模式设置纹理环绕：柱面/环面用Repeat实现左右连通视觉
+            mapTexture.wrapMode = (world != null && world.wrapMode != MapWrapMode.Flat)
+                ? TextureWrapMode.Repeat
+                : TextureWrapMode.Clamp;
 
             // 创建简单的平面Mesh
             var mesh = new Mesh();

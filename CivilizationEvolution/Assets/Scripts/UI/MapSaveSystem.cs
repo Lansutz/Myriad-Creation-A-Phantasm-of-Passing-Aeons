@@ -153,7 +153,7 @@ namespace CivilizationEvolution.UI
                     isRiver = t.isRiver,
                     seaConnectId = t.seaConnectId,
                     oceanTier = (int)t.oceanTier,
-                    roadLevel = t.roadLevel,
+                    roadLevel = (int)t.roadLevel,
                     development = t.development,
                     stability = t.stability,
                     order = t.order
@@ -276,8 +276,8 @@ namespace CivilizationEvolution.UI
                         isCoast = s.isCoast,
                         isRiver = s.isRiver,
                         seaConnectId = s.seaConnectId,
-                        oceanTier = (TileData.OceanTier)s.oceanTier,
-                        roadLevel = s.roadLevel,
+                        oceanTier = (GameEnums.OceanTier)s.oceanTier,
+                        roadLevel = (GameEnums.RoadLevel)s.roadLevel,
                         development = s.development,
                         stability = s.stability,
                         order = s.order
@@ -379,7 +379,7 @@ namespace CivilizationEvolution.UI
             if (_world?.provinces == null) return list;
             foreach (var p in _world.provinces.Values)
                 list.Add((p.provinceId, p.provinceName));
-            list.Sort((a, b) => a.id.CompareTo(b.id));
+            list.Sort((a, b) => a.Item1.CompareTo(b.Item1));
             return list;
         }
 

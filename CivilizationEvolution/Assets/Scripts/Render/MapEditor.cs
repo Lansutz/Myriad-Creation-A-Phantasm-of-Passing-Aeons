@@ -145,12 +145,17 @@ namespace CivilizationEvolution.Render
 
                     int px = cx + dx;
                     int py = cy + dy;
-                    if (px < 0 || px >= _world.mapWidth || py < 0 || py >= _world.mapHeight) continue;
 
-                    // 左右环绕（如果启用）
-                    if (_world.config != null && _world.config.wrapX)
-                    {
+                    // 地图环绕：先环绕再边界检查（柱面=左右环绕，环面=全环绕，平面=不环绕）
+                    if (_world.wrapMode == MapWrapMode.Cylindrical || _world.wrapMode == MapWrapMode.Toroidal)
                         px = (px + _world.mapWidth) % _world.mapWidth;
+                    if (_world.wrapMode == MapWrapMode.Toroidal)
+                        py = (py + _world.mapHeight) % _world.mapHeight;
+
+                    // 平面模式下的边界检查（环绕模式下坐标已合法）
+                    if (_world.wrapMode == MapWrapMode.Flat)
+                    {
+                        if (px < 0 || px >= _world.mapWidth || py < 0 || py >= _world.mapHeight) continue;
                     }
 
                     int tileIndex = py * _world.mapWidth + px;
