@@ -191,6 +191,69 @@ namespace CivilizationEvolution.Core
             SupplyRaiding,  // 补给劫掠：攻击商队/补给线，不直接攻击聚落
             SlaveRaiding    // 掠奴：专门掠夺人口为奴
         }
+
+        /// <summary>战争借口类型（Casus Belli——为什么开战）</summary>
+        public enum CasusBelliType
+        {
+            None,                   // 无借口（不宣而战，高惩罚）
+            RaidReprisal,           // 劫掠报复（对方劫掠了己方村镇）
+            BorderIncident,          // 边境事件（边境摩擦升级）
+            TerritorialDispute,      // 领土争端（对争议领土有宣称）
+            ReligiousConflict,       // 宗教冲突（异端/异教徒/圣地）
+            AllianceObligation,      // 联盟义务（防御同盟被攻击）
+            HegemonyExpansion,       // 霸权扩张（实力差距大，主动扩张）
+            DynasticClaim,           // 王朝宣称（继承/联姻宣称）
+            TradeDispute,             // 贸易争端（商队被劫/贸易壁垒）
+            IndependenceWar,          // 独立战争（附庸/被压迫者独立）
+            Reconquest,               // 收复失地（曾经拥有的领土）
+            Crusade,                  // 圣战（宗教号召的大规模战争）
+            ImperialConquest,         // 帝国征服（建立帝国的征服战争）
+            CivilWar,                 // 内战（继承争端/叛乱）
+            Intervention              // 武装干涉（支持一方势力）
+        }
+
+        /// <summary>战争目标类型（War Goal——开战想要达到什么目的）</summary>
+        public enum WarGoalType
+        {
+            None,                     // 无明确目标（纯粹破坏/劫掠）
+            ConquerTerritory,         // 夺取领土（指定地块/省份）
+            ConquerRegion,            // 夺取地区（整个地区）
+            Vassalization,            // 迫使附庸（对方成为附庸）
+            PersonalUnion,            // 共主邦联（王朝联合）
+            Indemnity,                // 索取赔款（战争赔款）
+            ReleaseVassal,            // 释放附庸（迫使对方释放附庸）
+            ConvertReligion,          // 迫使改宗（对方改信己方宗教）
+            EnforceTradeRights,       // 强制贸易权（获得贸易特权）
+            Disarmament,              // 裁军（迫使对方裁减军备）
+            Humiliation,              // 羞辱（降低对方威望/稳定度）
+            Annihilation,             // 灭国（彻底摧毁对方政权）
+            BorderAdjustment,         // 边境调整（小规模领土变更）
+            Independence,              // 独立（从宗主国独立）
+            InstallRuler               // 扶植统治者（更换对方统治者）
+        }
+
+        /// <summary>和平条约条款类型（Peace Treaty Clause——实际得到什么）</summary>
+        public enum TreatyClauseType
+        {
+            TerritoryCession,         // 领土割让
+            WarReparations,           // 战争赔款
+            Vassalage,                // 附庸关系
+            PersonalUnion,            // 共主邦联
+            ReleasePrisoners,         // 释放囚犯
+            ReligiousFreedom,         // 宗教自由
+            TradePrivileges,          // 贸易特权
+            Disarmament,              // 裁军条款
+            Humiliation,              // 羞辱条款
+            Annexation,               // 吞并（整个政权）
+            Independence,             // 承认独立
+            BorderDemilitarization,   // 边境非军事化
+            AllianceObligation,       // 同盟义务（战败方加入战胜方同盟）
+            RoyalMarriage,            // 强制联姻
+            CulturalAssimilation,     // 文化同化（战败方地区文化转变）
+            WarCrimesTrial,           // 战争罪审判
+            ResourceConcession,       // 资源特许权（矿山/港口）
+            Truce                      // 停战协定（强制休战N年）
+        }
         /// <summary>社会阶层</summary>
         public enum SocialClass
         {

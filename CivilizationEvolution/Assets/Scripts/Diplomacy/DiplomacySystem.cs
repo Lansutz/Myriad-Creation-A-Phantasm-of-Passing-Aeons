@@ -57,6 +57,12 @@ namespace CivilizationEvolution.Diplomacy
         /// <summary>劫掠累计次数（用于判断是否升级为战争）</summary>
         public int raidCount = 0;
 
+        /// <summary>双方的战争借口列表（holderRealmId区分持有方）</summary>
+        public List<CasusBelli> casusBelliList = new List<CasusBelli>();
+
+        /// <summary>当前战争的战争目标列表（仅在战争中有效）</summary>
+        public List<WarGoal> activeWarGoals = new List<WarGoal>();
+
         // 历史事件记录
         public List<DiplomaticEvent> eventHistory = new List<DiplomaticEvent>();
 
@@ -304,6 +310,11 @@ namespace CivilizationEvolution.Diplomacy
         public string description;
         public float value;
         public int targetRealmId;
+        public int fromRealmId;         // 条款执行方（付出代价的一方）
+        public int toRealmId;           // 条款受益方
+        public int tileIndex;            // 相关地块（-1=无）
+        public int regionId;             // 相关地区（-1=无）
+        public int durationDays;         // 条款持续时间（-1=永久）
     }
 
     public enum TreatyClauseType
@@ -319,7 +330,21 @@ namespace CivilizationEvolution.Diplomacy
         MinorityProtection,   // 少数民族保护
         AllianceCommitment,   // 同盟承诺
         NonInterference,      // 不干涉内政
-        ArbitrationAgreement  // 仲裁协定
+        ArbitrationAgreement, // 仲裁协定
+        Vassalage,            // 附庸关系
+        PersonalUnion,        // 共主邦联
+        ReleasePrisoners,     // 释放囚犯
+        TradePrivileges,      // 贸易特权
+        Disarmament,          // 裁军条款
+        Humiliation,          // 羞辱条款
+        Annexation,           // 吞并（整个政权）
+        Independence,         // 承认独立
+        BorderDemilitarization, // 边境非军事化
+        RoyalMarriage,        // 强制联姻
+        CulturalAssimilation, // 文化同化
+        WarCrimesTrial,       // 战争罪审判
+        ResourceConcession,   // 资源特许权
+        Truce                  // 停战协定
     }
 
     /// <summary>
@@ -468,6 +493,102 @@ namespace CivilizationEvolution.Diplomacy
             return true;
         }
 
+        /// <summary>带战争借口和战争目标的宣战（三层分离：借口→目标→条约）</summary>
+        public bool DeclareWarWithJustification(int attackerId, int defenderId,
+            CasusBelli casusBelli, WarGoal warGoal, string reason = "")
+        {
+            var rel = GetRelation(attackerId, defenderId);
+            if (rel == null || rel.isAtWar) return false;
+
+            // 停战检查
+            if (rel.truceUntilDay >= 0 && CurrentDay < rel.truceUntilDay) return false;
+
+            // 验证战争借口有效性
+            if (casusBelli != null && !casusBelli.IsValid(CurrentDay))
+                casusBelli = null; // 借口无效，按无借口处理
+
+            // 计算宣战惩罚（有借口惩罚小，无借口惩罚大）
+            var penalties = WarJustificationSystem.CalculateDeclarationPenalties(casusBelli, false);
+
+            // 标记战争借口已使用
+            if (casusBelli != null)
+            {
+                casusBelli.isUsed = true;
+                reason = string.IsNullOrEmpty(reason) ?
+                    WarJustificationSystem.GetCBDescription(casusBelli.type) : reason;
+            }
+            else
+            {
+                reason = string.IsNullOrEmpty(reason) ? "无借口宣战" : reason;
+            }
+
+            // 触发战争
+            rel.isAtWar = true;
+            rel.warDeclaredDay = CurrentDay;
+            rel.hostilityLevel = 100f;
+            rel.relation = Mathf.Min(rel.relation, -50f);
+            rel.trust = Mathf.Min(rel.trust, 10f);
+            rel.threat = Mathf.Max(rel.threat, 90f);
+            rel.activeAlliances.Clear();
+
+            // 设置战争目标
+            rel.activeWarGoals.Clear();
+            if (warGoal != null)
+            {
+                warGoal.attackerRealmId = attackerId;
+                warGoal.defenderRealmId = defenderId;
+                rel.activeWarGoals.Add(warGoal);
+            }
+
+            // 应用宣战惩罚
+            if (_realms.TryGetValue(attackerId, out var atkRealm))
+            {
+                atkRealm.prestige = Mathf.Max(0f, atkRealm.prestige - penalties.prestigePenalty);
+                atkRealm.stability = Mathf.Max(0f, atkRealm.stability - penalties.stabilityPenalty);
+                CivilizationEvolution.Map.MovementControlSystem.OnWarDeclared(atkRealm, defenderId);
+            }
+            if (_realms.TryGetValue(defenderId, out var defRealm))
+                CivilizationEvolution.Map.MovementControlSystem.OnWarDeclared(defRealm, attackerId);
+
+            rel.AddEvent(new DiplomaticEvent
+            {
+                type = DiplomaticEventType.WarDeclaration,
+                description = $"{_realms[attackerId].realmName} 对 {_realms[defenderId].realmName} 宣战：{reason}" +
+                              (warGoal != null ? $"（战争目标：{warGoal.type}）" : ""),
+                relationChange = -50f, trustChange = -40f, threatChange = 40f
+            });
+
+            Chronicle?.Add("war",
+                $"{_realms[attackerId].realmName} 对 {_realms[defenderId].realmName} 宣战：{reason}",
+                major: true, attackerId, defenderId);
+
+            if (WarRules == null || WarRules.allowAllianceIntervention)
+                NotifyAlliesOfWar(attackerId, defenderId);
+
+            UpdateConflictLevel(rel);
+            return true;
+        }
+
+        /// <summary>获取某政权对另一政权的有效战争借口列表</summary>
+        public List<CasusBelli> GetValidCasusBelli(int holderRealmId, int targetRealmId)
+        {
+            var rel = GetRelation(holderRealmId, targetRealmId);
+            if (rel == null) return new List<CasusBelli>();
+            return WarJustificationSystem.GetValidCasusBelli(
+                rel.casusBelliList, holderRealmId, targetRealmId, CurrentDay);
+        }
+
+        /// <summary>根据战争借口获取可选战争目标类型</summary>
+        public List<GameEnums.WarGoalType> GetSupportedWarGoals(int holderRealmId, int targetRealmId)
+        {
+            var cbs = GetValidCasusBelli(holderRealmId, targetRealmId);
+            var result = new HashSet<GameEnums.WarGoalType>();
+            foreach (var cb in cbs)
+                foreach (var goal in WarJustificationSystem.GetSupportedWarGoals(cb.type))
+                    result.Add(goal);
+            return new List<GameEnums.WarGoalType>(result);
+        }
+
         // ===== 敌对状态管理（不宣而战机制）=====
 
         /// <summary>增加敌对程度（边境摩擦、外交抗议、间谍事件等）</summary>
@@ -589,6 +710,11 @@ namespace CivilizationEvolution.Diplomacy
             rel.lastRaidAttackerId = raiderId;
             rel.lastRaidDay = CurrentDay;
             rel.raidCount++;
+
+            // 被劫掠方获得战争借口（劫掠报复）
+            var raidCB = WarJustificationSystem.GenerateRaidReprisalCB(
+                targetId, raiderId, tileIndex, CurrentDay, raidType);
+            rel.casusBelliList.Add(raidCB);
             float lootValue = raidType switch
             {
                 GameEnums.RaidType.BorderSkirmish => UnityEngine.Random.Range(10f, 50f),
