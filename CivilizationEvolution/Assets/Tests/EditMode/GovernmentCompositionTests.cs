@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using CivilizationEvolution.Core;
 using CivilizationEvolution.Politics;
 
 namespace CivilizationEvolution.Tests
@@ -10,6 +11,59 @@ namespace CivilizationEvolution.Tests
     /// </summary>
     public class GovernmentCompositionTests
     {
+        [SetUp]
+        public void Setup()
+        {
+            ContentRegistry.Reset();
+            ContentRegistry.Initialize();
+        }
+
+        // ===== 继承法双轨（文明默认 × 国家覆盖——借鉴《地图上发生的事》） =====
+
+        [Test]
+        public void SuccessionLaw_TwoTier_CultureDefaultThenOverride()
+        {
+            // 第一轨：跟随文化默认（Laethis=宗祧析产：头衔唯一+领地均分）
+            var realm = new RealmData { realmId = 1, primaryCultureId = 1 };
+            realm.successionLawFromCulture = true;
+            Assert.AreEqual(LandInheritanceMode.Partible, realm.SuccessionLaw.landMode,
+                "跟随文化默认：领地均分（析产）");
+
+            // 第二轨：国家覆盖（改自定继承法）
+            realm.successionLawFromCulture = false;
+            realm.composition.successionLaw = InheritanceLaw.Tanistry();
+            Assert.AreEqual(InheritanceGender.MaleOnly, realm.SuccessionLaw.gender,
+                "国家覆盖：兄终弟及男子专属");
+        }
+
+        [Test]
+        public void SupremeRuler_MonarchConsulDualTrack()
+        {
+            // 君主制：monarch 生效
+            var realm = new RealmData { realmId = 1 };
+            realm.monarchId = 10;
+            realm.consulId = 20;
+            Assert.AreEqual(10, realm.GetSupremeRulerId(), "君主制取君主");
+
+            // 共和制（君主空缺）：执政官生效
+            realm.monarchId = -1;
+            Assert.AreEqual(20, realm.GetSupremeRulerId(), "共和制取执政官");
+
+            // 无人：-1
+            realm.consulId = -1;
+            Assert.AreEqual(-1, realm.GetSupremeRulerId());
+        }
+
+        [Test]
+        public void SupremeRuler_RuntimeFields()
+        {
+            var realm = new RealmData { realmId = 1 };
+            realm.heirId = 30;
+            realm.senateSeats = 300;
+            Assert.AreEqual(30, realm.heirId, "继承人指针");
+            Assert.AreEqual(300, realm.senateSeats, "元老院席位");
+        }
+
         // ===== 七维结构完整性 =====
 
         [Test]

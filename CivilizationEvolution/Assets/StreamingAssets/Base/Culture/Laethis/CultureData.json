@@ -41,5 +41,13 @@
     "Agriculture",
     "Craft",
     "Script"
-  ]
+  ],
+  "defaultSuccessionLaw": {
+    "scope": 0,
+    "branch": 0,
+    "gender": 0,
+    "age": 0,
+    "titleMode": 0,
+    "landMode": 1
+  }
 }

@@ -36,12 +36,49 @@ namespace CivilizationEvolution.Politics
         public int suzerainId = -1; // 宗主国ID，-1表示独立
         public List<int> vassalIds = new List<int>();
 
-        // 政治体制成分（用户定稿五维总表：生存基础/主权归属/权力结构/行政组织/权力交接）
+        // 政治体制成分（用户定稿七维：三权力层级×交接/分配 + 央地结构）
         // 权力交接=世袭时使用 composition.successionLaw（继承法四轴+头衔+领地模式）
         public GovernmentComposition composition = new GovernmentComposition();
 
-        /// <summary>便捷访问：政权继承法（=composition 的世袭子选项）</summary>
-        public InheritanceLaw SuccessionLaw => composition.successionLaw;
+        // ===== 继承法双轨（借鉴《地图上发生的事》inheritance_*_from_civilization） =====
+
+        /// <summary>政权主体文化（GetEffectiveSuccessionLaw 的文化默认查询依赖）</summary>
+        public int primaryCultureId = -1;
+
+        /// <summary>继承法是否跟随文化默认（true=按文化默认；false=国家自定 composition.successionLaw）</summary>
+        public bool successionLawFromCulture = true;
+
+        /// <summary>有效继承法：跟随文化默认时取 CultureData.defaultSuccessionLaw，否则取国家自定</summary>
+        public InheritanceLaw GetEffectiveSuccessionLaw()
+        {
+            if (successionLawFromCulture && primaryCultureId >= 0
+                && ContentRegistry.TryGetCulture(primaryCultureId, out var pack))
+            {
+                return pack.data.defaultSuccessionLaw;
+            }
+            return composition.successionLaw;
+        }
+
+        /// <summary>便捷访问：政权有效继承法</summary>
+        public InheritanceLaw SuccessionLaw => GetEffectiveSuccessionLaw();
+
+        // ===== 最高权力运行时（借鉴《地图上发生的事》monarch_id/consul_id 双轨） =====
+
+        /// <summary>君主（A1=世袭/僭主等君主制时生效）</summary>
+        public int monarchId = -1;
+        /// <summary>执政官（A1=选举/委员会选举等共和制时生效）</summary>
+        public int consulId = -1;
+        /// <summary>继承人（按有效继承法确定的下一任）</summary>
+        public int heirId = -1;
+        /// <summary>元老院/议事会席位（B2=议会/元老院/长老会时生效）</summary>
+        public int senateSeats = 0;
+
+        /// <summary>当前最高权力者（君主制取君主，共和制取执政官；无则 -1）</summary>
+        public int GetSupremeRulerId()
+        {
+            if (monarchId >= 0) return monarchId;
+            return consulId;
+        }
 
         public RealmData()
         {

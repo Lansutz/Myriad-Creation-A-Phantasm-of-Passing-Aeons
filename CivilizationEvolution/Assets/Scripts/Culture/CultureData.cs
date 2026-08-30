@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Politics;
 
 namespace CivilizationEvolution.Culture
 {
@@ -49,6 +50,12 @@ namespace CivilizationEvolution.Culture
         public float spreadPower = 1f;
         public int parentCultureId = -1;
         public List<int> childCultureIds = new List<int>();
+
+        /// <summary>
+        /// 文明默认继承法（借鉴《地图上发生的事》polity_profile 双轨模式：
+        /// inheritance_*_from_civilization——国家未覆盖时按文化默认执行继承）
+        /// </summary>
+        public InheritanceLaw defaultSuccessionLaw = InheritanceLaw.Primogeniture();
 
         /// <summary>
         /// 革新亲和（考古文化包联动 v3）：键列表（对应 InnovationField 枚举名，
