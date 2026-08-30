@@ -81,24 +81,7 @@ namespace CivilizationEvolution.Diplomacy
     /// </summary>
 
 
-    /// <summary>
-    /// 和平条约——战争结束后实际签订的条约
-    /// 包含多个条款，区分战争目标（想要的）和实际条约（得到的）
-    /// </summary>
-    [Serializable]
-    public class PeaceTreaty
-    {
-        public int treatyId;
-        public string treatyName;
-        public int signerAId;            // 甲方（通常是战胜方）
-        public int signerBId;            // 乙方（通常是战败方）
-        public int signedDay;             // 签订日期
-        public float warScoreAtSigning;  // 签订时的战争分数
-        public List<TreatyClause> clauses = new List<TreatyClause>();
-        public List<GameEnums.WarGoalType> originalWarGoals = new List<GameEnums.WarGoalType>(); // 原战争目标
-        public bool goalsFullyAchieved;   // 战争目标是否完全达成
-        public int truceUntilDay;          // 停战到期日
-    }
+
 
     /// <summary>
     /// 战争正当性系统（War Justification System）
@@ -316,10 +299,10 @@ namespace CivilizationEvolution.Diplomacy
         /// 根据战争分数和战争目标生成和平条约
         /// 区分战争目标（想要的）和实际条约（得到的）
         /// </summary>
-        public static PeaceTreaty GeneratePeaceTreaty(int winnerId, int loserId, float warScore,
+        public static Treaty GeneratePeaceTreaty(int winnerId, int loserId, float warScore,
             List<WarGoal> attackerGoals, int currentDay, int truceYears = 5)
         {
-            var treaty = new PeaceTreaty
+            var treaty = new Treaty
             {
                 treatyId = _nextTreatyId++,
                 treatyName = $"和平条约（第{currentDay}日）",
@@ -460,6 +443,50 @@ namespace CivilizationEvolution.Diplomacy
         /// <summary>
         /// 获取战争借口描述（用于UI显示）
         /// </summary>
+        /// <summary>
+        /// 执行和平条约条款（对接现有外交系统）
+        /// 将条约条款转化为Alliance/Subordination/SpecialBond等现有结构
+        /// </summary>
+        public static void ExecutePeaceTreaty(Treaty treaty, DiplomaticRelation rel, int currentDay)
+        {
+            if (treaty == null || rel == null) return;
+            foreach (var clause in treaty.clauses)
+            {
+                switch (clause.type)
+                {
+                    case TreatyClauseType.AllianceCommitment:
+                        rel.activeAlliances.Add(new Alliance { type = AllianceType.DefensiveAlliance, realmAId = treaty.signerAId, realmBId = treaty.signerBId, signedDay = currentDay, durationDays = 365 * 5, mutualDefense = true, relationRequirement = -20f });
+                        break;
+                    case TreatyClauseType.NonInterference:
+                        rel.activeAlliances.Add(new Alliance { type = AllianceType.NonAggressionPact, realmAId = treaty.signerAId, realmBId = treaty.signerBId, signedDay = currentDay, durationDays = 365 * 5, relationRequirement = -50f });
+                        break;
+                    case TreatyClauseType.TradeRights:
+                    case TreatyClauseType.TradePrivileges:
+                        rel.activeAlliances.Add(new Alliance { type = AllianceType.TradeAgreement, realmAId = treaty.signerAId, realmBId = treaty.signerBId, signedDay = currentDay, durationDays = 365 * 10, tradeEfficiencyBonus = 0.2f, tariffReduction = 0.3f });
+                        break;
+                    case TreatyClauseType.NavigationRights:
+                        rel.activeAlliances.Add(new Alliance { type = AllianceType.MilitaryAccess, realmAId = clause.toRealmId, realmBId = clause.fromRealmId, signedDay = currentDay, durationDays = 365 * 5, militaryAccess = true });
+                        break;
+                    case TreatyClauseType.PersonalUnion:
+                        rel.SetSpecialBond(SpecialBondType.PersonalUnion);
+                        break;
+                    case TreatyClauseType.Independence:
+                        rel.ClearSpecialBond();
+                        break;
+                    case TreatyClauseType.RoyalMarriage:
+                        rel.activeAlliances.Add(new Alliance { type = AllianceType.RoyalMarriage, realmAId = treaty.signerAId, realmBId = treaty.signerBId, signedDay = currentDay, durationDays = -1 });
+                        break;
+                    case TreatyClauseType.ArbitrationAgreement:
+                        rel.activeAlliances.Add(new Alliance { type = AllianceType.CulturalExchange, realmAId = treaty.signerAId, realmBId = treaty.signerBId, signedDay = currentDay, durationDays = 365 * 5 });
+                        break;
+                    default:
+                        // 其他条款（领土/赔款/裁军等）记录在条约中，由对应系统执行
+                        break;
+                }
+            }
+            rel.truceUntilDay = treaty.truceUntilDay > 0 ? treaty.truceUntilDay : currentDay + 5 * 365;
+        }
+
         public static string GetCBDescription(GameEnums.CasusBelliType type)
         {
             return type switch
