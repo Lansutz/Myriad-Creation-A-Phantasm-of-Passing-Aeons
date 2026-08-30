@@ -90,16 +90,57 @@ namespace CivilizationEvolution.Tests
         // ===== 细分成分（A1 九选/议会三形态/领主两分/央地结构） =====
 
         [Test]
+        public void SupremeSuccession_LeveledOptions()
+        {
+            // 层级1 推导（用户定稿：君主/共和=交接方式×权力分配 推导，非独立枚举）
+            // 个人传承系 → 君主
+            Assert.IsTrue(SupremeSuccessionLevel.IsMonarchy(SupremeSuccession.Hereditary, SupremeScope.Absolute));
+            Assert.IsTrue(SupremeSuccessionLevel.IsMonarchy(SupremeSuccession.Usurpation, SupremeScope.Absolute));
+            Assert.IsTrue(SupremeSuccessionLevel.IsMonarchy(SupremeSuccession.Divine, SupremeScope.DivinelyBound), "神命君主");
+
+            // 选举系：A2=全能 → 选举君主（教宗/大汗）；A2=共议 → 共和（雅典/罗马/威尼斯）
+            Assert.IsTrue(SupremeSuccessionLevel.IsMonarchy(SupremeSuccession.ElectiveDirect, SupremeScope.Absolute),
+                "选举+全能=选举君主");
+            Assert.IsTrue(SupremeSuccessionLevel.IsRepublic(SupremeSuccession.ElectiveDirect, SupremeScope.Consensual),
+                "选举+共议=共和——共和本身也是选举！");
+            Assert.IsTrue(SupremeSuccessionLevel.IsRepublic(SupremeSuccession.ElectiveRepresentative, SupremeScope.LegallyBound),
+                "选举·代议+受限=共和");
+            Assert.IsTrue(SupremeSuccessionLevel.IsRepublic(SupremeSuccession.Rotation, SupremeScope.Consensual),
+                "轮座+共议=共和（原始形态）");
+
+            // 经典政体层级抽查（实例推导）
+            Assert.IsTrue(SupremeSuccessionLevel.IsRepublic(GovernmentComposition.AthenianDemocracy()), "雅典=共和");
+            Assert.IsTrue(SupremeSuccessionLevel.IsRepublic(GovernmentComposition.SenatorialRepublic()), "罗马=共和（贵族共和——选举+贵族范围）");
+            Assert.IsTrue(SupremeSuccessionLevel.IsRepublic(GovernmentComposition.VenetianRepublic()), "威尼斯=共和");
+            Assert.IsTrue(SupremeSuccessionLevel.IsMonarchy(GovernmentComposition.HolyRomanEmpire()), "神罗=君主（选举君主：选帝侯选出+个人全能）");
+            Assert.IsTrue(SupremeSuccessionLevel.IsMonarchy(GovernmentComposition.MongolHorde()), "蒙古=君主（选举君主：忽里台+个人全能）");
+            Assert.IsTrue(SupremeSuccessionLevel.IsRepublic(GovernmentComposition.ConstitutionalMonarchy()), "君主立宪=共和实质（主权在议会）");
+        }
+
+        [Test]
         public void SupremeSuccession_RefinedOptions()
         {
-            // 选举三分：公民大会直接/代议/委员会
-            Assert.AreEqual((int)SupremeSuccession.DirectAssembly, GovernmentComposition.AthenianDemocracy().supremeSuccession.primary);
-            Assert.AreEqual((int)SupremeSuccession.CollegialElection, GovernmentComposition.SenatorialRepublic().supremeSuccession.primary);
-            Assert.AreEqual((int)SupremeSuccession.RepresentativeElection, GovernmentComposition.ConstitutionalMonarchy().supremeSuccession.primary);
-            // 指定储君（非世袭非选举——中国预立太子）
-            Assert.AreEqual((int)SupremeSuccession.SuccessorDesignation, GovernmentComposition.SuccessorDesignationEmpire().supremeSuccession.primary);
-            // 贵族推举（选帝侯）
-            Assert.AreEqual((int)SupremeSuccession.NobleDesignation, GovernmentComposition.HolyRomanEmpire().supremeSuccession.primary);
+            // 选举君主 ≠ 民主共和：教宗/神罗有君主，雅典无君主——分界在 A2 权力分配
+            Assert.AreEqual((int)SupremeSuccession.ElectiveRepresentative, GovernmentComposition.HolyRomanEmpire().supremeSuccession.primary,
+                "神罗=选举·代议（选帝侯选举人团）");
+            Assert.AreEqual(SupremeScope.Absolute, (SupremeScope)GovernmentComposition.HolyRomanEmpire().supremeScope.primary,
+                "神罗皇帝个人全能 → 选举君主");
+            Assert.AreEqual((int)SupremeSuccession.ElectiveDirect, GovernmentComposition.AthenianDemocracy().supremeSuccession.primary,
+                "雅典=选举·直接（公民大会）");
+            Assert.AreEqual(SupremeScope.Consensual, (SupremeScope)GovernmentComposition.AthenianDemocracy().supremeScope.primary,
+                "雅典共议制约 → 共和");
+
+            // 贵族共和=选举+贵族范围（scope 要素——不是独立形态！）
+            var rome = GovernmentComposition.SenatorialRepublic();
+            Assert.AreEqual((int)SupremeSuccession.ElectiveDirect, rome.supremeSuccession.primary, "罗马=选举");
+            Assert.AreEqual(EligibilityScope.Citizens, rome.eligibility.scope, "罗马选举范围=公民（百人团）");
+            var venice = GovernmentComposition.VenetianRepublic();
+            Assert.AreEqual(EligibilityScope.Nobility, venice.eligibility.scope, "威尼斯选举范围=贵族（大议会）——贵族共和的'贵族'是范围！");
+
+            // 蒙古：选举·直接（忽里台）+ 世袭次要
+            var mongol = GovernmentComposition.MongolHorde();
+            Assert.AreEqual((int)SupremeSuccession.ElectiveDirect, mongol.supremeSuccession.primary);
+            Assert.IsTrue(mongol.supremeSuccession.Contains((int)SupremeSuccession.Hereditary), "黄金家族世袭候选为次要成分");
         }
 
         [Test]
@@ -138,7 +179,7 @@ namespace CivilizationEvolution.Tests
         {
             // 君主立宪：最高权力在议会（代议）——非世袭君主！
             var comp = GovernmentComposition.ConstitutionalMonarchy();
-            Assert.AreEqual((int)SupremeSuccession.RepresentativeElection, comp.supremeSuccession.primary,
+            Assert.AreEqual((int)SupremeSuccession.ElectiveRepresentative, comp.supremeSuccession.primary,
                 "最高权力在议会，不在君主");
             Assert.AreEqual((int)CentralInstitution.BicameralAssembly, comp.centralInstitution.primary);
         }
@@ -149,7 +190,7 @@ namespace CivilizationEvolution.Tests
             // 长老议事会（长老资格制）≠ 议会/元老院（共和制）
             var comp = new GovernmentComposition
             {
-                supremeSuccession = new ComponentChoice((int)SupremeSuccession.NobleDesignation),
+                supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveDirect),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.EldersCouncil)
             };
             Assert.AreEqual((int)CentralInstitution.EldersCouncil, comp.centralInstitution.primary);
@@ -176,7 +217,7 @@ namespace CivilizationEvolution.Tests
 
             // 神权：神命+宗教会议
             var theo = GovernmentComposition.Theocracy();
-            Assert.AreEqual((int)SupremeSuccession.DivineMandate, theo.supremeSuccession.primary);
+            Assert.AreEqual((int)SupremeSuccession.Divine, theo.supremeSuccession.primary);
             Assert.AreEqual((int)CentralInstitution.ReligiousCouncil, theo.centralInstitution.primary);
 
             // 罗马帝国：皇帝+元老院（与共和元老院层级对等）
@@ -188,14 +229,16 @@ namespace CivilizationEvolution.Tests
 
             // 威尼斯：委员会选举+两院+城市特许
             var venice = GovernmentComposition.VenetianRepublic();
-            Assert.AreEqual((int)SupremeSuccession.CollegialElection, venice.supremeSuccession.primary);
+            Assert.AreEqual((int)SupremeSuccession.ElectiveDirect, venice.supremeSuccession.primary);
             Assert.AreEqual((int)CentralInstitution.BicameralAssembly, venice.centralInstitution.primary);
             Assert.AreEqual((int)LocalSuccession.CityCharter, venice.localSuccession.primary);
 
             // 储君制帝国：生前指定+考课晋升
-            var tang = GovernmentComposition.SuccessorDesignationEmpire();
-            Assert.AreEqual((int)SupremeSuccession.SuccessorDesignation, tang.supremeSuccession.primary);
-            Assert.AreEqual((int)CentralSuccession.MeritPromotion, tang.centralSuccession.primary);
+            // 储君预立=世袭内部预案（非独立制度——已并入世袭）
+            Assert.AreEqual((int)SupremeSuccession.Hereditary, GovernmentComposition.BureaucraticMonarchy().supremeSuccession.primary,
+                "秦=世袭（预立太子为内部预案）");
+            Assert.AreEqual((int)CentralSuccession.Appointed, GovernmentComposition.BureaucraticMonarchy().centralSuccession.primary,
+                "秦中央=君主任命");
         }
 
         // ===== 组合自由性（模组化接口：任意组合合法） =====
@@ -227,9 +270,9 @@ namespace CivilizationEvolution.Tests
         public void SecondaryComponents_Supported()
         {
             var comp = new GovernmentComposition();
-            comp.supremeSuccession = new ComponentChoice((int)SupremeSuccession.Hereditary, (int)SupremeSuccession.SuccessorDesignation);
+            comp.supremeSuccession = new ComponentChoice((int)SupremeSuccession.Hereditary, (int)SupremeSuccession.ElectiveDirect);
             Assert.IsTrue(comp.supremeSuccession.Contains((int)SupremeSuccession.Hereditary));
-            Assert.IsTrue(comp.supremeSuccession.Contains((int)SupremeSuccession.SuccessorDesignation));
+            Assert.IsTrue(comp.supremeSuccession.Contains((int)SupremeSuccession.ElectiveDirect));
             Assert.AreEqual(1, comp.supremeSuccession.secondary.Count, "0~2 个次要");
         }
 

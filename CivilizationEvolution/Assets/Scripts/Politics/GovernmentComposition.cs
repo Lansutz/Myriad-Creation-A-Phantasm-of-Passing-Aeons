@@ -15,18 +15,65 @@ namespace CivilizationEvolution.Politics
 
     // ==================== A. 最高权力 ====================
 
-    /// <summary>A1·最高权力·交接：最高权力者如何产生/传承（主体隐含于方式）</summary>
+    /// <summary>
+    /// A1·最高权力·交接方式（用户定稿：怎么产生——不含形态；民主/贵族/寡头
+    /// 是选举范围（EligibilityRules.scope）；禅让=推举（ElectiveDirect）；
+    /// 储君预立=世袭内部预案（非独立制度）；选举君主=选举+个人全能（A2=Absolute））
+    /// </summary>
     public enum SupremeSuccession
     {
-        Hereditary,             // 世袭：子选项=继承法（四轴人序+头衔+领地）——君主制
-        Usurpation,             // 武力僭夺：兵强者上——僭主
-        DirectAssembly,         // 公民大会直接：公民直接表决（雅典）
-        RepresentativeElection, // 代议选举：议会/代表间接选出
-        CollegialElection,      // 委员会选举：多人执政团选出（罗马执政官/威尼斯总督）
-        NobleDesignation,       // 贵族推举：长老/贵族共推（选帝侯）
-        SuccessorDesignation,   // 生前指定储君：现任指定继承人（中国预立太子/罗马养子继位）
-        DivineMandate,          // 神命：祭司认定/神谕——神权
-        Rotation                // 轮座：定期轮值（部落轮值）
+        Hereditary,                 // 世袭：子选项=继承法（四轴+头衔+领地）；预立太子=内部预案
+        ElectiveDirect,             // 选举·直接：公民大会/忽里台/红衣主教团/部落议事会推举（禅让在此）
+        ElectiveRepresentative,     // 选举·代议：议会/选举人团（神罗选帝侯/英国议会）
+        Usurpation,                 // 僭夺：武力夺权（兵强者上）
+        Rotation,                   // 轮座：部落长老轮值
+        Divine                      // 神命：祭司/神谕认定
+    }
+
+    /// <summary>
+    /// 层级1 推导（用户定稿：君主/共和不是独立枚举——由交接方式×权力分配推导）
+    /// 个人传承系（世袭/僭夺/神命）→ 君主
+    /// 选举系（选举/轮座）→ A2=全能=选举君主（教宗/大汗/选帝侯皇帝）；A2=共议=共和
+    /// </summary>
+    public static class SupremeSuccessionLevel
+    {
+        public static bool IsMonarchy(SupremeSuccession s)
+        {
+            return s == SupremeSuccession.Hereditary
+                || s == SupremeSuccession.Usurpation
+                || s == SupremeSuccession.Divine;
+        }
+
+        /// <summary>选举系判定（君主/共和由 A2 权力分配决定）</summary>
+        public static bool IsElective(SupremeSuccession s)
+        {
+            return s == SupremeSuccession.ElectiveDirect
+                || s == SupremeSuccession.ElectiveRepresentative
+                || s == SupremeSuccession.Rotation;
+        }
+
+        /// <summary>
+        /// 完整推导：君主制=个人传承系 或（选举系且 A2=全能——当选者个人终身专权）
+        /// 共和制=选举系且非全能（共议/受限——多人共治）
+        /// </summary>
+        public static bool IsMonarchy(SupremeSuccession s, SupremeScope scope)
+        {
+            if (IsMonarchy(s)) return true;
+            if (IsElective(s)) return scope == SupremeScope.Absolute;
+            return false;
+        }
+
+        public static bool IsRepublic(SupremeSuccession s, SupremeScope scope) => !IsMonarchy(s, scope);
+
+        /// <summary>按政体组合推导（主导成分）</summary>
+        public static bool IsMonarchy(GovernmentComposition comp)
+        {
+            return IsMonarchy((SupremeSuccession)comp.supremeSuccession.primary,
+                (SupremeScope)comp.supremeScope.primary);
+        }
+
+        /// <summary>按政体组合推导是否共和制</summary>
+        public static bool IsRepublic(GovernmentComposition comp) => !IsMonarchy(comp);
     }
 
     /// <summary>A2·最高权力·分配：最高权力掌握什么/受何约束</summary>
@@ -264,7 +311,7 @@ namespace CivilizationEvolution.Politics
         {
             return new GovernmentComposition
             {
-                supremeSuccession = new ComponentChoice((int)SupremeSuccession.DirectAssembly),
+                supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveDirect),
                 supremeScope = new ComponentChoice((int)SupremeScope.Consensual),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Elected),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.UnicameralAssembly),
@@ -280,7 +327,7 @@ namespace CivilizationEvolution.Politics
         {
             return new GovernmentComposition
             {
-                supremeSuccession = new ComponentChoice((int)SupremeSuccession.CollegialElection),
+                supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveDirect),
                 supremeScope = new ComponentChoice((int)SupremeScope.LegallyBound),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Patronage),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.UnicameralAssembly),
@@ -296,7 +343,7 @@ namespace CivilizationEvolution.Politics
         {
             return new GovernmentComposition
             {
-                supremeSuccession = new ComponentChoice((int)SupremeSuccession.DivineMandate),
+                supremeSuccession = new ComponentChoice((int)SupremeSuccession.Divine),
                 supremeScope = new ComponentChoice((int)SupremeScope.DivinelyBound),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Appointed),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.ReligiousCouncil),
@@ -312,7 +359,7 @@ namespace CivilizationEvolution.Politics
         {
             return new GovernmentComposition
             {
-                supremeSuccession = new ComponentChoice((int)SupremeSuccession.Hereditary),
+                supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveDirect, (int)SupremeSuccession.Hereditary), // 忽里台推举+黄金家族世袭
                 supremeScope = new ComponentChoice((int)SupremeScope.Absolute),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.MeritPromotion),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.MilitaryCouncil),
@@ -329,7 +376,7 @@ namespace CivilizationEvolution.Politics
         {
             return new GovernmentComposition
             {
-                supremeSuccession = new ComponentChoice((int)SupremeSuccession.RepresentativeElection),
+                supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveRepresentative),
                 supremeScope = new ComponentChoice((int)SupremeScope.Consensual),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Elected),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.BicameralAssembly),
@@ -362,8 +409,8 @@ namespace CivilizationEvolution.Politics
         {
             return new GovernmentComposition
             {
-                supremeSuccession = new ComponentChoice((int)SupremeSuccession.NobleDesignation),
-                supremeScope = new ComponentChoice((int)SupremeScope.Consensual),
+                supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveRepresentative),
+                supremeScope = new ComponentChoice((int)SupremeScope.Absolute), // 皇帝当选后个人全能=选举君主；帝国议会=中央机构（B2）
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Patronage),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.EstateAssembly),
                 localSuccession = new ComponentChoice((int)LocalSuccession.HereditaryVassal),
@@ -378,7 +425,7 @@ namespace CivilizationEvolution.Politics
         {
             return new GovernmentComposition
             {
-                supremeSuccession = new ComponentChoice((int)SupremeSuccession.CollegialElection),
+                supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveDirect),
                 supremeScope = new ComponentChoice((int)SupremeScope.Consensual),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Elected),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.BicameralAssembly),
@@ -389,21 +436,6 @@ namespace CivilizationEvolution.Politics
             };
         }
 
-        /// <summary>储君制帝国（唐/明）：生前指定储君+全能+考课晋升+官僚中枢+中央任官+完全直辖+单一制</summary>
-        public static GovernmentComposition SuccessorDesignationEmpire()
-        {
-            return new GovernmentComposition
-            {
-                supremeSuccession = new ComponentChoice((int)SupremeSuccession.SuccessorDesignation),
-                supremeScope = new ComponentChoice((int)SupremeScope.Absolute),
-                centralSuccession = new ComponentChoice((int)CentralSuccession.MeritPromotion),
-                centralInstitution = new ComponentChoice((int)CentralInstitution.BureaucraticCore),
-                localSuccession = new ComponentChoice((int)LocalSuccession.CentralAppointed),
-                localScope = new ComponentChoice((int)LocalScope.None),
-                spatialStructure = new ComponentChoice((int)SpatialStructure.Unitary),
-            eligibility = new EligibilityRules { gender = InheritanceGender.MalePreference, scope = EligibilityScope.FreePeople },  // 储君制：男子优先·自由民
-            };
-        }
 
         /// <summary>政体名称（中文：最高·中央·地方 三层概要 + 央地结构）</summary>
         public string GetName()
@@ -420,15 +452,12 @@ namespace CivilizationEvolution.Politics
     {
         public static string NameSupremeSuccession(int c) => c switch
         {
-            (int)SupremeSuccession.Hereditary => "世袭君主",
-            (int)SupremeSuccession.Usurpation => "武力僭主",
-            (int)SupremeSuccession.DirectAssembly => "公民大会直选",
-            (int)SupremeSuccession.RepresentativeElection => "代议选举",
-            (int)SupremeSuccession.CollegialElection => "委员会选举",
-            (int)SupremeSuccession.NobleDesignation => "贵族推举",
-            (int)SupremeSuccession.SuccessorDesignation => "储君指定",
-            (int)SupremeSuccession.DivineMandate => "神命君主",
-            (int)SupremeSuccession.Rotation => "轮座执政",
+            (int)SupremeSuccession.Hereditary => "世袭",
+            (int)SupremeSuccession.ElectiveDirect => "选举·直接",
+            (int)SupremeSuccession.ElectiveRepresentative => "选举·代议",
+            (int)SupremeSuccession.Usurpation => "僭夺",
+            (int)SupremeSuccession.Rotation => "轮座",
+            (int)SupremeSuccession.Divine => "神命",
             _ => "?"
         };
 
