@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
@@ -28,6 +28,22 @@ namespace CivilizationEvolution.Diplomacy
         public int warDeclaredDay = -1;
         /// <summary>停战到期日（WarRules.truceYears 决定；-1=无停战）</summary>
         public int truceUntilDay = -1;
+
+        // ===== 敌对状态（不宣而战机制）=====
+        /// <summary>敌对程度（0-100），≥50进入敌对状态，可直接攻击无惩罚</summary>
+        [Range(0f, 100f)] public float hostilityLevel = 0f;
+
+        /// <summary>敌对状态开始日（-1=无敌对状态）</summary>
+        public int hostileSinceDay = -1;
+
+        /// <summary>是否处于敌对状态（敌对程度≥50或处于战争）</summary>
+        public bool IsHostile => hostilityLevel >= 50f || isAtWar;
+
+        /// <summary>最近一次不宣而战的发起者（-1=无），用于惩罚计算</summary>
+        public int lastSurpriseAttackerId = -1;
+
+        /// <summary>最近一次不宣而战的日期（-1=无）</summary>
+        public int lastSurpriseAttackDay = -1;
 
         // 历史事件记录
         public List<DiplomaticEvent> eventHistory = new List<DiplomaticEvent>();
@@ -407,7 +423,14 @@ namespace CivilizationEvolution.Diplomacy
 
             rel.isAtWar = true;
             rel.warDeclaredDay = CurrentDay;
+            rel.hostilityLevel = 100f;
             rel.relation = Mathf.Min(rel.relation, -50f);
+
+            // 战争爆发：自动撤销双方的军事通行权
+            if (_realms.TryGetValue(attackerId, out var atkRealm))
+                CivilizationEvolution.Map.MovementControlSystem.OnWarDeclared(atkRealm, defenderId);
+            if (_realms.TryGetValue(defenderId, out var defRealm))
+                CivilizationEvolution.Map.MovementControlSystem.OnWarDeclared(defRealm, attackerId);
             rel.trust = Mathf.Min(rel.trust, 10f);
             rel.threat = Mathf.Max(rel.threat, 90f);
 
@@ -431,6 +454,123 @@ namespace CivilizationEvolution.Diplomacy
             if (WarRules == null || WarRules.allowAllianceIntervention)
                 NotifyAlliesOfWar(attackerId, defenderId);
             return true;
+        }
+
+        // ===== 敌对状态管理（不宣而战机制）=====
+
+        /// <summary>增加敌对程度（边境摩擦、外交抗议、间谍事件等）</summary>
+        public void IncreaseHostility(int realmA, int realmB, float amount, string reason = "")
+        {
+            var rel = GetRelation(realmA, realmB);
+            if (rel == null) return;
+            float oldLevel = rel.hostilityLevel;
+            rel.hostilityLevel = Mathf.Clamp(rel.hostilityLevel + amount, 0f, 100f);
+            if (oldLevel < 50f && rel.hostilityLevel >= 50f)
+            {
+                rel.hostileSinceDay = CurrentDay;
+                rel.AddEvent(new DiplomaticEvent { type = DiplomaticEventType.RelationDeteriorated, description = $"{_realms[realmA].realmName} 与 {_realms[realmB].realmName} 进入敌对状态：{reason}", relationChange = -10f, threatChange = 15f });
+                Chronicle?.Add("diplomacy", $"{_realms[realmA].realmName} 与 {_realms[realmB].realmName} 进入敌对状态", major: false, realmA, realmB);
+            }
+        }
+
+        /// <summary>降低敌对程度（外交缓和、和亲、贸易协定等）</summary>
+        public void DecreaseHostility(int realmA, int realmB, float amount, string reason = "")
+        {
+            var rel = GetRelation(realmA, realmB);
+            if (rel == null) return;
+            float oldLevel = rel.hostilityLevel;
+            rel.hostilityLevel = Mathf.Clamp(rel.hostilityLevel - amount, 0f, 100f);
+            if (oldLevel >= 50f && rel.hostilityLevel < 50f && !rel.isAtWar)
+            {
+                rel.hostileSinceDay = -1;
+                rel.AddEvent(new DiplomaticEvent { type = DiplomaticEventType.RelationImproved, description = $"{_realms[realmA].realmName} 与 {_realms[realmB].realmName} 解除敌对状态：{reason}", relationChange = 10f, threatChange = -10f });
+            }
+        }
+
+        /// <summary>直接设置敌对状态（用于事件/剧情）</summary>
+        public void SetHostile(int realmA, int realmB, bool hostile, string reason = "")
+        {
+            if (hostile) IncreaseHostility(realmA, realmB, 100f, reason);
+            else DecreaseHostility(realmA, realmB, 100f, reason);
+        }
+
+        /// <summary>不宣而战（军队直接攻击/入侵触发战争）。敌对状态下无惩罚，非敌对状态下有惩罚</summary>
+        public bool SurpriseAttack(int attackerId, int defenderId, int attackTileIndex = -1)
+        {
+            var rel = GetRelation(attackerId, defenderId);
+            if (rel == null || rel.isAtWar) return false;
+            if (rel.truceUntilDay >= 0 && CurrentDay < rel.truceUntilDay) { AddEventTo(rel, DiplomaticEventType.DemandRejected, $"{_realms[attackerId].realmName} 欲不宣而战，但停战期未满"); return false; }
+            bool isHostile = rel.IsHostile;
+            string attackType = isHostile ? "敌对状态下直接攻击" : "不宣而战";
+            rel.lastSurpriseAttackerId = attackerId;
+            rel.lastSurpriseAttackDay = CurrentDay;
+            rel.isAtWar = true;
+            rel.warDeclaredDay = CurrentDay;
+            rel.relation = Mathf.Min(rel.relation, -60f);
+            rel.trust = Mathf.Min(rel.trust, 5f);
+            rel.threat = Mathf.Max(rel.threat, 95f);
+            rel.hostilityLevel = 100f;
+            rel.activeAlliances.Clear();
+
+            // 战争爆发：自动撤销双方的军事通行权
+            if (_realms.TryGetValue(attackerId, out var atkRealm2))
+                CivilizationEvolution.Map.MovementControlSystem.OnWarDeclared(atkRealm2, defenderId);
+            if (_realms.TryGetValue(defenderId, out var defRealm2))
+                CivilizationEvolution.Map.MovementControlSystem.OnWarDeclared(defRealm2, attackerId);
+            if (!isHostile) ApplySurpriseAttackPenalties(attackerId, defenderId, rel);
+            rel.AddEvent(new DiplomaticEvent { type = DiplomaticEventType.WarDeclaration, description = $"{_realms[attackerId].realmName} 对 {_realms[defenderId].realmName} {attackType}" + (attackTileIndex >= 0 ? $"（地块 #{attackTileIndex}）" : ""), relationChange = -60f, trustChange = -45f, threatChange = 45f });
+            Chronicle?.Add("war", $"{_realms[attackerId].realmName} 对 {_realms[defenderId].realmName} {attackType}", major: true, attackerId, defenderId);
+            if (WarRules == null || WarRules.allowAllianceIntervention) NotifyAlliesOfWar(attackerId, defenderId);
+            return true;
+        }
+
+        /// <summary>不宣而战的惩罚（非敌对状态下率先发动战争）</summary>
+        private void ApplySurpriseAttackPenalties(int attackerId, int defenderId, DiplomaticRelation rel)
+        {
+            var attacker = _realms.ContainsKey(attackerId) ? _realms[attackerId] : null;
+            if (attacker == null) return;
+            float prestigeLoss = 30f + rel.trust * 0.3f;
+            attacker.prestige = Mathf.Max(0f, attacker.prestige - prestigeLoss);
+            float stabilityLoss = 15f + Mathf.Abs(rel.relation) * 0.1f;
+            attacker.stability = Mathf.Max(0f, attacker.stability - stabilityLoss);
+            foreach (var otherId in _realms.Keys)
+            {
+                if (otherId == attackerId || otherId == defenderId) continue;
+                var otherRel = GetRelation(otherId, defenderId);
+                if (otherRel == null) continue;
+                if (otherRel.relation > 20f)
+                {
+                    float relationPenalty = (otherRel.relation - 20f) * 0.3f;
+                    ModifyRelation(otherId, attackerId, -relationPenalty);
+                    IncreaseHostility(otherId, attackerId, relationPenalty * 0.5f, $"谴责 {_realms[attackerId].realmName} 的不宣而战");
+                }
+            }
+            var defender = _realms.ContainsKey(defenderId) ? _realms[defenderId] : null;
+            if (defender != null) defender.stability = Mathf.Min(100f, defender.stability + 10f);
+            Chronicle?.Add("diplomacy", $"{_realms[attackerId].realmName} 因不宣而战损失 {prestigeLoss:F0} 名声、{stabilityLoss:F0} 稳定度", major: false, attackerId, defenderId);
+        }
+
+        /// <summary>军队入侵检查（军队移动到敌方领土时调用，自动触发不宣而战）</summary>
+        public bool CheckInvasionTriggerWar(int armyOwnerRealmId, int tileOwnerRealmId, int tileIndex)
+        {
+            if (armyOwnerRealmId == tileOwnerRealmId) return false;
+            if (tileOwnerRealmId < 0) return false;
+            var rel = GetRelation(armyOwnerRealmId, tileOwnerRealmId);
+            if (rel == null || rel.isAtWar) return false;
+            return SurpriseAttack(armyOwnerRealmId, tileOwnerRealmId, tileIndex);
+        }
+
+        /// <summary>获取敌对程度描述（用于UI显示）</summary>
+        public string GetHostilityDescription(int realmA, int realmB)
+        {
+            var rel = GetRelation(realmA, realmB);
+            if (rel == null) return "未知";
+            if (rel.isAtWar) return "战争中";
+            if (rel.hostilityLevel >= 80f) return "极度敌对";
+            if (rel.hostilityLevel >= 50f) return "敌对状态";
+            if (rel.hostilityLevel >= 30f) return "关系紧张";
+            if (rel.hostilityLevel >= 10f) return "略有摩擦";
+            return "关系正常";
         }
 
         private static void AddEventTo(DiplomaticRelation rel, DiplomaticEventType type, string description)
