@@ -443,6 +443,22 @@
     {
       "key": "office_laethis_stew_republic",
       "value": "River-Treasurer"
+    },
+    {
+      "key": "trad_valley_elite_name",
+      "value": "Valley Elites"
+    },
+    {
+      "key": "trad_valley_elite_desc",
+      "value": "The valley folk excel at arms and defend their homeland; drilled militia outmatch common levies."
+    },
+    {
+      "key": "trad_conqueror_legacy_name",
+      "value": "Conqueror Legacy"
+    },
+    {
+      "key": "trad_conqueror_legacy_desc",
+      "value": "Martial customs passed down generations; expansion and conquest are held in honor."
     }
   ]
 }

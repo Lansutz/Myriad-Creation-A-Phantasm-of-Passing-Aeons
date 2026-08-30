@@ -52,12 +52,29 @@ namespace CivilizationEvolution.Core
         /// <summary>互斥传统（同族群不可同时承载）</summary>
         public List<string> incompatibleWith = new List<string>();
         /// <summary>
-        /// 解锁前置革新（用户定稿：革新与文化传统互相约束——必须持有革新才能持有传统）
+        /// 解锁前置革新（革新与文化传统互相约束——必须持有革新才能持有传统）
         /// </summary>
         public List<int> requiredInnovations = new List<int>();
+        /// <summary>
+        /// 文化特有传统：专属文化 id 列表（空=通用传统，任何文化可持有；
+        /// 非空=仅这些文化可持有——CK3 特有传统范式）
+        /// </summary>
+        public List<int> exclusiveToCultureIds = new List<int>();
+        /// <summary>升级来源（特有传统 = 通用传统的强化版——效果数值高于来源；空=无升级关系）</summary>
+        public string upgradesFrom = "";
 
         public string GetName() => Localization.Get(traditionId + "_name");
         public string GetDescription() => Localization.Get(traditionId + "_desc");
+
+        /// <summary>是否通用传统（任何文化可持有）</summary>
+        public bool IsCommon => exclusiveToCultureIds == null || exclusiveToCultureIds.Count == 0;
+
+        /// <summary>文化是否可持有（通用=是；特有=文化 id 在专属列表）</summary>
+        public bool CanCultureHold(int cultureId)
+        {
+            if (IsCommon) return true;
+            return exclusiveToCultureIds != null && exclusiveToCultureIds.Contains(cultureId);
+        }
     }
 
     /// <summary>

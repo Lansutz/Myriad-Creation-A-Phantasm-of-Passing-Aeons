@@ -185,6 +185,50 @@
       "requiredInnovations": [
         800
       ]
+    },
+    {
+      "traditionId": "trad_valley_elite",
+      "effects": [
+        {
+          "key": "levy",
+          "value": 0.15
+        },
+        {
+          "key": "loyalty",
+          "value": 0.1
+        },
+        {
+          "key": "defense",
+          "value": 0.05
+        }
+      ],
+      "incompatibleWith": [],
+      "requiredInnovations": [
+        995
+      ],
+      "exclusiveToCultureIds": [
+        1
+      ],
+      "upgradesFrom": "trad_war_bands"
+    },
+    {
+      "traditionId": "trad_conqueror_legacy",
+      "effects": [
+        {
+          "key": "expansion",
+          "value": 0.12
+        },
+        {
+          "key": "levy",
+          "value": 0.05
+        }
+      ],
+      "incompatibleWith": [],
+      "requiredInnovations": [
+        995
+      ],
+      "exclusiveToCultureIds": [],
+      "upgradesFrom": "trad_war_bands"
     }
   ]
 }

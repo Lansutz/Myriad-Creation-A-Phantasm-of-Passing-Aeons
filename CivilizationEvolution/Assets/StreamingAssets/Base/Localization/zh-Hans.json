@@ -443,6 +443,22 @@
     {
       "key": "office_laethis_stew_republic",
       "value": "河库司计"
+    },
+    {
+      "key": "trad_valley_elite_name",
+      "value": "河谷精兵"
+    },
+    {
+      "key": "trad_valley_elite_desc",
+      "value": "河谷之民精于武备，戍卫乡土；经年操练的民兵远胜寻常征召。"
+    },
+    {
+      "key": "trad_conqueror_legacy_name",
+      "value": "征服传统"
+    },
+    {
+      "key": "trad_conqueror_legacy_desc",
+      "value": "尚武好胜的习俗世代相传，扩张与征服被视为荣耀。"
     }
   ]
 }
