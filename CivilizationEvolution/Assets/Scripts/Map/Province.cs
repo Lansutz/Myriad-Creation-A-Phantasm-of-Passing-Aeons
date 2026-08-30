@@ -14,7 +14,29 @@ namespace CivilizationEvolution.Map
         public string provinceName;
         public int centerTileIndex;      // 省中心地块（种子点位置）
         public List<int> memberTiles = new List<int>();
-        public int ownerRealmId = -1;    // 归属政权（-1=无主）
+
+        /// <summary>省界判定：与任一邻域省份归属不同即为边界地块（静态——供渲染与测试）</summary>
+        public static bool IsBorder(TileData[] tiles, int width, int height, int index)
+        {
+            if (tiles[index].provinceId < 0) return false;
+            int x = index % width;
+            int y = index / width;
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                for (int dx = -1; dx <= 1; dx++)
+                {
+                    if (dx == 0 && dy == 0) continue;
+                    int nx = x + dx;
+                    int ny = y + dy;
+                    if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+                    int ni = ny * width + nx;
+                    if (!tiles[ni].isLand) continue; // 邻海不算省界
+                    if (tiles[ni].provinceId != tiles[index].provinceId)
+                        return true;
+                }
+            }
+            return false;
+        }
     }
 
     /// <summary>
@@ -157,6 +179,7 @@ namespace CivilizationEvolution.Map
             }
             return best;
         }
+
 
         /// <summary>省名生成（地形特征词组合——中文地名池；世界构建词干体系可后续接入）</summary>
         private static string GenerateProvinceName(TileData center)

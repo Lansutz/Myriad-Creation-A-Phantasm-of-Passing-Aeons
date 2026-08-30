@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Politics;
+using CivilizationEvolution.Role;
 
 namespace CivilizationEvolution.Culture
 {
@@ -52,10 +53,16 @@ namespace CivilizationEvolution.Culture
         public List<int> childCultureIds = new List<int>();
 
         /// <summary>
-        /// 文明默认继承法（借鉴《地图上发生的事》polity_profile 双轨模式：
-        /// inheritance_*_from_civilization——国家未覆盖时按文化默认执行继承）
+        /// 文明默认继承法（inheritance_*_from_civilization 双轨模式：
+        /// 国家未覆盖时按文化默认执行继承）
         /// </summary>
         public InheritanceLaw defaultSuccessionLaw = InheritanceLaw.Primogeniture();
+
+        /// <summary>官职称号定制（文化覆盖默认表——OfficeTitleCatalog 查询）</summary>
+        public List<OfficeTitleEntry> officialTitles = new List<OfficeTitleEntry>();
+
+        /// <summary>民族特质概率表（EthnicTrait 枚举名 → 概率 0-100——AI 性格/行为基线）</summary>
+        public List<EthnicTraitEntry> traitProbabilities = new List<EthnicTraitEntry>();
 
         /// <summary>
         /// 革新亲和（考古文化包联动 v3）：键列表（对应 InnovationField 枚举名，

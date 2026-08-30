@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Map;
 
 namespace CivilizationEvolution.Render
 {
@@ -23,6 +24,15 @@ namespace CivilizationEvolution.Render
         [SerializeField] private MeshFilter meshFilter;
         [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private Texture2D mapTexture;
+
+        /// <summary>省界描边颜色（Terrain 模式下省区边界）</summary>
+        [SerializeField] private Color provinceBorderColor = new Color(0.9f, 0.9f, 0.9f, 1f);
+
+        /// <summary>省界判定：与任一邻域省份归属不同即为边界地块</summary>
+        public bool IsProvinceBorder(int tileIndex)
+        {
+            return Province.IsBorder(world.tiles, mapWidth, mapHeight, tileIndex);
+        }
 
         /// <summary>当前显示模式（只读）</summary>
         public MapDisplayMode DisplayMode => displayMode;
@@ -223,6 +233,9 @@ namespace CivilizationEvolution.Render
                 case MapDisplayMode.Terrain:
                     // 河流优先着色（水系蓝）
                     if (tile.isRiver) return new Color(0.25f, 0.45f, 0.85f, 1f);
+                    // 省界描边（与任一邻域省份不同 → 边界色）
+                    if (IsProvinceBorder(tileIndex))
+                        return provinceBorderColor;
                     int terrainIndex = Mathf.Clamp(Mathf.RoundToInt((tile.elevation01 + 1f) / 2f * 255f), 0, 255);
                     return _terrainColors[terrainIndex];
 

@@ -407,6 +407,42 @@
     {
       "key": "famtrad_horse_family_desc",
       "value": "Born in the saddle, raised on horseback; every son a rider, guarding the frontier."
+    },
+    {
+      "key": "office_Governor",
+      "value": "Governor"
+    },
+    {
+      "key": "office_DistrictGovernor",
+      "value": "District Governor"
+    },
+    {
+      "key": "office_Chancellor",
+      "value": "Chancellor"
+    },
+    {
+      "key": "office_Steward",
+      "value": "Steward"
+    },
+    {
+      "key": "office_Marshal",
+      "value": "Marshal"
+    },
+    {
+      "key": "office_WarCommander",
+      "value": "War Commander"
+    },
+    {
+      "key": "office_laethis_gov_kingdom",
+      "value": "Valley Warden"
+    },
+    {
+      "key": "office_laethis_chan_kingdom",
+      "value": "Chief Scribe"
+    },
+    {
+      "key": "office_laethis_stew_republic",
+      "value": "River-Treasurer"
     }
   ]
 }

@@ -407,6 +407,42 @@
     {
       "key": "famtrad_horse_family_desc",
       "value": "鞍上生、马背上长，子弟皆精骑射；一门弓马，为国戍边。"
+    },
+    {
+      "key": "office_Governor",
+      "value": "总督"
+    },
+    {
+      "key": "office_DistrictGovernor",
+      "value": "区守"
+    },
+    {
+      "key": "office_Chancellor",
+      "value": "大法官"
+    },
+    {
+      "key": "office_Steward",
+      "value": "司库"
+    },
+    {
+      "key": "office_Marshal",
+      "value": "统军官"
+    },
+    {
+      "key": "office_WarCommander",
+      "value": "元帅"
+    },
+    {
+      "key": "office_laethis_gov_kingdom",
+      "value": "河谷都护"
+    },
+    {
+      "key": "office_laethis_chan_kingdom",
+      "value": "文翰首席"
+    },
+    {
+      "key": "office_laethis_stew_republic",
+      "value": "河库司计"
     }
   ]
 }
