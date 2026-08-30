@@ -45,6 +45,18 @@ namespace CivilizationEvolution.Diplomacy
         /// <summary>最近一次不宣而战的日期（-1=无）</summary>
         public int lastSurpriseAttackDay = -1;
 
+        /// <summary>冲突等级（区分敌对状态和战争状态）</summary>
+        public GameEnums.ConflictLevel conflictLevel = GameEnums.ConflictLevel.Peace;
+
+        /// <summary>最近一次劫掠的发起者（-1=无）</summary>
+        public int lastRaidAttackerId = -1;
+
+        /// <summary>最近一次劫掠日期（-1=无）</summary>
+        public int lastRaidDay = -1;
+
+        /// <summary>劫掠累计次数（用于判断是否升级为战争）</summary>
+        public int raidCount = 0;
+
         // 历史事件记录
         public List<DiplomaticEvent> eventHistory = new List<DiplomaticEvent>();
 
@@ -468,7 +480,7 @@ namespace CivilizationEvolution.Diplomacy
             if (oldLevel < 50f && rel.hostilityLevel >= 50f)
             {
                 rel.hostileSinceDay = CurrentDay;
-                rel.AddEvent(new DiplomaticEvent { type = DiplomaticEventType.RelationDeteriorated, description = $"{_realms[realmA].realmName} 与 {_realms[realmB].realmName} 进入敌对状态：{reason}", relationChange = -10f, threatChange = 15f });
+                rel.AddEvent(new DiplomaticEvent { type = DiplomaticEventType.BorderIncident, description = $"{_realms[realmA].realmName} 与 {_realms[realmB].realmName} 进入敌对状态：{reason}", relationChange = -10f, threatChange = 15f });
                 Chronicle?.Add("diplomacy", $"{_realms[realmA].realmName} 与 {_realms[realmB].realmName} 进入敌对状态", major: false, realmA, realmB);
             }
         }
@@ -483,7 +495,7 @@ namespace CivilizationEvolution.Diplomacy
             if (oldLevel >= 50f && rel.hostilityLevel < 50f && !rel.isAtWar)
             {
                 rel.hostileSinceDay = -1;
-                rel.AddEvent(new DiplomaticEvent { type = DiplomaticEventType.RelationImproved, description = $"{_realms[realmA].realmName} 与 {_realms[realmB].realmName} 解除敌对状态：{reason}", relationChange = 10f, threatChange = -10f });
+                rel.AddEvent(new DiplomaticEvent { type = DiplomaticEventType.TreatySigned, description = $"{_realms[realmA].realmName} 与 {_realms[realmB].realmName} 解除敌对状态：{reason}", relationChange = 10f, threatChange = -10f });
             }
         }
 
@@ -541,7 +553,7 @@ namespace CivilizationEvolution.Diplomacy
                 if (otherRel.relation > 20f)
                 {
                     float relationPenalty = (otherRel.relation - 20f) * 0.3f;
-                    ModifyRelation(otherId, attackerId, -relationPenalty);
+                    ModifyRelation(otherId, attackerId, -relationPenalty, "谴责不宣而战");
                     IncreaseHostility(otherId, attackerId, relationPenalty * 0.5f, $"谴责 {_realms[attackerId].realmName} 的不宣而战");
                 }
             }
@@ -550,15 +562,6 @@ namespace CivilizationEvolution.Diplomacy
             Chronicle?.Add("diplomacy", $"{_realms[attackerId].realmName} 因不宣而战损失 {prestigeLoss:F0} 名声、{stabilityLoss:F0} 稳定度", major: false, attackerId, defenderId);
         }
 
-        /// <summary>军队入侵检查（军队移动到敌方领土时调用，自动触发不宣而战）</summary>
-        public bool CheckInvasionTriggerWar(int armyOwnerRealmId, int tileOwnerRealmId, int tileIndex)
-        {
-            if (armyOwnerRealmId == tileOwnerRealmId) return false;
-            if (tileOwnerRealmId < 0) return false;
-            var rel = GetRelation(armyOwnerRealmId, tileOwnerRealmId);
-            if (rel == null || rel.isAtWar) return false;
-            return SurpriseAttack(armyOwnerRealmId, tileOwnerRealmId, tileIndex);
-        }
 
         /// <summary>获取敌对程度描述（用于UI显示）</summary>
         public string GetHostilityDescription(int realmA, int realmB)
@@ -573,6 +576,120 @@ namespace CivilizationEvolution.Diplomacy
             return "关系正常";
         }
 
+
+        // ===== 低烈度冲突（敌对状态下的劫掠/边境摩擦）=====
+
+        /// <summary>劫掠聚落（敌对状态下的低烈度行动，不触发全面战争）</summary>
+        public (bool success, bool warDeclared, float lootValue) RaidSettlement(
+            int raiderId, int targetId, int tileIndex, GameEnums.RaidType raidType)
+        {
+            var rel = GetRelation(raiderId, targetId);
+            if (rel == null || rel.isAtWar) return (false, false, 0f);
+            bool isHostile = rel.IsHostile;
+            rel.lastRaidAttackerId = raiderId;
+            rel.lastRaidDay = CurrentDay;
+            rel.raidCount++;
+            float lootValue = raidType switch
+            {
+                GameEnums.RaidType.BorderSkirmish => UnityEngine.Random.Range(10f, 50f),
+                GameEnums.RaidType.VillageRaid => UnityEngine.Random.Range(50f, 200f),
+                GameEnums.RaidType.TownAttack => UnityEngine.Random.Range(150f, 500f),
+                GameEnums.RaidType.SupplyRaiding => UnityEngine.Random.Range(30f, 150f),
+                GameEnums.RaidType.SlaveRaiding => UnityEngine.Random.Range(80f, 300f),
+                _ => 50f
+            };
+            float hostilityIncrease = raidType switch
+            {
+                GameEnums.RaidType.BorderSkirmish => 5f,
+                GameEnums.RaidType.VillageRaid => 15f,
+                GameEnums.RaidType.TownAttack => 30f,
+                GameEnums.RaidType.SupplyRaiding => 10f,
+                GameEnums.RaidType.SlaveRaiding => 25f,
+                _ => 10f
+            };
+            IncreaseHostility(targetId, raiderId, hostilityIncrease, raidType + "劫掠");
+            ModifyRelation(targetId, raiderId, -hostilityIncrease * 0.8f, "劫掠报复");
+            bool warDeclared = false;
+            if (!isHostile)
+            {
+                if (UnityEngine.Random.value < 0.6f || raidType == GameEnums.RaidType.TownAttack)
+                { DeclareWar(targetId, raiderId, "报复" + raidType + "劫掠"); warDeclared = true; }
+            }
+            else if (rel.raidCount >= 3 || rel.hostilityLevel >= 90f)
+            {
+                if (UnityEngine.Random.value < 0.4f)
+                { DeclareWar(targetId, raiderId, "报复持续劫掠"); warDeclared = true; rel.raidCount = 0; }
+            }
+            UpdateConflictLevel(rel);
+            string raidName = raidType.ToString();
+            rel.AddEvent(new DiplomaticEvent { type = DiplomaticEventType.BorderIncident, description = _realms[raiderId].realmName + " 对 " + _realms[targetId].realmName + " 发动" + raidName + "（地块 #" + tileIndex + "）", relationChange = -hostilityIncrease * 0.8f, threatChange = hostilityIncrease });
+            Chronicle?.Add("war", _realms[raiderId].realmName + " 对 " + _realms[targetId].realmName + " 发动" + raidName, major: raidType == GameEnums.RaidType.TownAttack, raiderId, targetId);
+            return (true, warDeclared, lootValue);
+        }
+
+        /// <summary>边境摩擦（最小规模低烈度冲突，不触发战争）</summary>
+        public bool BorderSkirmish(int realmA, int realmB)
+        {
+            var rel = GetRelation(realmA, realmB);
+            if (rel == null || rel.isAtWar) return false;
+            IncreaseHostility(realmA, realmB, 3f, "边境摩擦");
+            IncreaseHostility(realmB, realmA, 3f, "边境摩擦");
+            ModifyRelation(realmA, realmB, -2f, "敌对行动");
+            UpdateConflictLevel(rel);
+            Chronicle?.Add("diplomacy", _realms[realmA].realmName + " 与 " + _realms[realmB].realmName + " 发生边境摩擦", major: false, realmA, realmB);
+            return true;
+        }
+
+        /// <summary>更新冲突等级（根据敌对程度和战争状态）</summary>
+        private void UpdateConflictLevel(DiplomaticRelation rel)
+        {
+            if (rel.isAtWar)
+                rel.conflictLevel = rel.hostilityLevel >= 90f ? GameEnums.ConflictLevel.TotalWar : GameEnums.ConflictLevel.LimitedWar;
+            else if (rel.hostilityLevel >= 50f)
+                rel.conflictLevel = GameEnums.ConflictLevel.Hostility;
+            else if (rel.hostilityLevel >= 20f)
+                rel.conflictLevel = GameEnums.ConflictLevel.Tension;
+            else
+                rel.conflictLevel = GameEnums.ConflictLevel.Peace;
+        }
+
+        /// <summary>军队入侵检查（敌对状态下不自动触发全面战争，而是增加敌对程度）</summary>
+        public bool CheckInvasionTriggerWar(int armyOwnerRealmId, int tileOwnerRealmId, int tileIndex)
+        {
+            if (armyOwnerRealmId == tileOwnerRealmId) return false;
+            if (tileOwnerRealmId < 0) return false;
+            var rel = GetRelation(armyOwnerRealmId, tileOwnerRealmId);
+            if (rel == null || rel.isAtWar) return false;
+            if (rel.IsHostile)
+            {
+                IncreaseHostility(tileOwnerRealmId, armyOwnerRealmId, 8f, "军队入侵领土");
+                ModifyRelation(tileOwnerRealmId, armyOwnerRealmId, -5f, "敌对行动");
+                UpdateConflictLevel(rel);
+                if (rel.hostilityLevel >= 85f && UnityEngine.Random.value < 0.3f)
+                { DeclareWar(tileOwnerRealmId, armyOwnerRealmId, "驱逐入侵军队"); return true; }
+                return false;
+            }
+            else
+            {
+                return SurpriseAttack(armyOwnerRealmId, tileOwnerRealmId, tileIndex);
+            }
+        }
+
+        /// <summary>获取冲突等级描述（用于UI显示）</summary>
+        public string GetConflictLevelDescription(int realmA, int realmB)
+        {
+            var rel = GetRelation(realmA, realmB);
+            if (rel == null) return "未知";
+            return rel.conflictLevel switch
+            {
+                GameEnums.ConflictLevel.Peace => "和平",
+                GameEnums.ConflictLevel.Tension => "紧张",
+                GameEnums.ConflictLevel.Hostility => "敌对（可劫掠）",
+                GameEnums.ConflictLevel.LimitedWar => "有限战争",
+                GameEnums.ConflictLevel.TotalWar => "全面战争",
+                _ => "未知"
+            };
+        }
         private static void AddEventTo(DiplomaticRelation rel, DiplomaticEventType type, string description)
         {
             rel.AddEvent(new DiplomaticEvent

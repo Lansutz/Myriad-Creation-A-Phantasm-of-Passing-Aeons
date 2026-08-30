@@ -171,6 +171,26 @@ namespace CivilizationEvolution.Core
             Strict          // 严格管制：军队必须请求军事通行权，否则不可通过
         }
 
+
+        /// <summary>冲突等级（区分敌对状态和战争状态）</summary>
+        public enum ConflictLevel
+        {
+            Peace,          // 和平：正常外交
+            Tension,        // 紧张：有摩擦，无直接冲突
+            Hostility,      // 敌对：可进行低烈度冲突（劫掠/边境摩擦）
+            LimitedWar,     // 有限战争：局部战争，不全面动员
+            TotalWar        // 全面战争：正式宣战，全面战争
+        }
+
+        /// <summary>劫掠类型（敌对状态下的低烈度行动）</summary>
+        public enum RaidType
+        {
+            BorderSkirmish, // 边境摩擦：小规模冲突，人员伤亡小
+            VillageRaid,    // 劫掠村镇：掠夺物资，破坏建筑，可能俘虏人口
+            TownAttack,     // 攻击城镇：攻击小型城镇，掠夺更多物资，可能触发宣战
+            SupplyRaiding,  // 补给劫掠：攻击商队/补给线，不直接攻击聚落
+            SlaveRaiding    // 掠奴：专门掠夺人口为奴
+        }
         /// <summary>社会阶层</summary>
         public enum SocialClass
         {
