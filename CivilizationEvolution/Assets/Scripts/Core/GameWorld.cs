@@ -44,6 +44,8 @@ namespace CivilizationEvolution.Core
         public Dictionary<int, GoodsDef> goodsDefs = new Dictionary<int, GoodsDef>();
         public Dictionary<int, RealmData> realms = new Dictionary<int, RealmData>();
         public Dictionary<int, UnitDef> unitDefs = new Dictionary<int, UnitDef>();
+        /// <summary>省份（provinceId → Province——地图结构层）</summary>
+        public Dictionary<int, Province> provinces = new Dictionary<int, Province>();
         /// <summary>军队（armyId → Army——战争闭环）</summary>
         public Dictionary<int, Army> armies = new Dictionary<int, Army>();
         /// <summary>战争状态列表（战争闭环——分数/胜负判定）</summary>
@@ -115,6 +117,7 @@ namespace CivilizationEvolution.Core
                 {
                     tileIndex = i,
                     regionId = i / 16,
+                    provinceId = -1, // 省份归属（沃罗诺伊省区生成后赋值）
                     ownerRealmId = -1,
                     occupyingRealmId = -1,
                     exists = false, // 默认不存在，地形生成时创建陆地地块
@@ -220,7 +223,17 @@ namespace CivilizationEvolution.Core
             // 地形生成后再初始化政权（修复：地形生成前isLand全为false）
             InitializeDefaultRealms();
 
-            Debug.Log($"[GameWorld] 地形生成完成，陆地{GetLandTileCount()}地块，海洋{GetSeaTileCount()}地块");
+            // 省份生成（沃罗诺伊+Lloyd 松弛——地图结构层）
+            GenerateProvinces(seed);
+
+            Debug.Log($"[GameWorld] 地形生成完成，陆地{GetLandTileCount()}地块，海洋{GetSeaTileCount()}地块，省份{provinces.Count}个");
+        }
+
+        private void GenerateProvinces(int seed)
+        {
+            var generator = new ProvinceGenerator(tiles, mapWidth, mapHeight, config.wrapX);
+            provinces = generator.Generate(seed + 777, ProvinceGenerator.DefaultCellsPerProvince,
+                ProvinceGenerator.DefaultLloydIterations);
         }
 
         /// <summary>计算地块基础肥力</summary>
@@ -659,7 +672,6 @@ namespace CivilizationEvolution.Core
             AddUnitDef(302, "撞角战船", GameEnums.UnitCategory.Navy, 2, 28f, 4f, 14f, 65f, 3.5f, 2.5f, 100f, 2f, 1007); // 舰首包铜铁撞角
             AddUnitDef(303, "远洋贸易船", GameEnums.UnitCategory.Navy, 3, 8f, 2f, 18f, 70f, 4.5f, 1.5f, 80f, 2.5f, 1008); // 商船/贸易护卫
 
-            // ===== 物资对应（经济系统 goods 对接——用户定稿） =====
             // 步兵：武器/盔甲
             SetUnitRecruitCosts(101, (70, 1.2f), (71, 1f));
             SetUnitRecruitCosts(102, (70, 1.5f), (71, 1.5f));

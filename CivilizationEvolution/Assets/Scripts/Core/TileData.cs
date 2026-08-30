@@ -14,6 +14,8 @@ namespace CivilizationEvolution.Core
         // ===== 基础标识 =====
         public int tileIndex;
         public int regionId;
+        /// <summary>省份归属（沃罗诺伊省区——ProvinceGenerator 生成时赋值并重置，-1=未归属）</summary>
+        public int provinceId;
         public int ownerRealmId;
         public int occupyingRealmId;
 

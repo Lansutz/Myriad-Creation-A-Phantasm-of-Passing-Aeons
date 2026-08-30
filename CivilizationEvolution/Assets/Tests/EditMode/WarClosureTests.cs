@@ -9,7 +9,6 @@ using CivilizationEvolution.War;
 namespace CivilizationEvolution.Tests
 {
     /// <summary>
-    /// 战争闭环测试（用户定稿：分数累计/白和/胜利判定/停战——接入主循环）
     /// </summary>
     public class WarClosureTests
     {
