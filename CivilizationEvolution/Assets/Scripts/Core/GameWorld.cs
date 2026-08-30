@@ -182,43 +182,22 @@ namespace CivilizationEvolution.Core
             Debug.Log("[GameWorld] 子系统重建完成（读档后）");
         }
 
-        /// <summary>生成随机地形</summary>
+        /// <summary>生成随机地形（球形行星生成器：3D球面Simplex噪声+域扭曲+温度降水模拟+55群系）</summary>
         public void GenerateTerrain(int seed = 42)
         {
-            System.Random rng = new System.Random(seed);
-            float[] fragmentNoise = new float[tiles.Length];
+            randomSeed = seed;
 
-            // 大陆形态生成（多倍频噪声高度场 + 山脉脊线 + 河流追踪）
-            var terrainGen = new TerrainGenerator(seed);
-            terrainGen.Generate(tiles, mapWidth, mapHeight,
-                config.continentScale, config.mountainStrength);
+            // 球形行星地形生成器：3D球面Simplex噪声+域扭曲+山脊叠加+温度降水+55群系+肥力
+            var planetGen = new PlanetTerrainGenerator(seed);
+            planetGen.Generate(tiles, mapWidth, mapHeight);
 
+            // 标记所有地块为脏，触发渲染刷新
             for (int i = 0; i < tiles.Length; i++)
-            {
-                fragmentNoise[i] = (float)rng.NextDouble();
                 _terrainDirtyTiles.Add(i);
-            }
 
-            // 必须在 RecalculateAll 之前把所有地块标记为存在：海陆判定对 !exists 地块会直接判海返回，
-            // 若先重算再置 exists，会导致全图陆地为 0。随机生成完整矩形世界；编辑器里玩家可再删除地块。
-            for (int i = 0; i < tiles.Length; i++)
-            {
-                tiles[i].exists = true;
-            }
-
-            _seaLandGenerator.SetFragmentNoise(fragmentNoise);
-            RecalculateAll();
-
-            // 河流追踪（须在 isLand 判定完成后）
+            // 河流追踪（须在 isLand 判定完成后，复用旧TerrainGenerator的河流算法）
+            var terrainGen = new TerrainGenerator(seed);
             terrainGen.TrackRivers(tiles);
-
-            for (int i = 0; i < tiles.Length; i++)
-            {
-                if (tiles[i].isLand)
-                {
-                    tiles[i].fertility = CalculateBaseFertility(i);
-                }
-            }
 
             // 地形生成后再初始化政权（修复：地形生成前isLand全为false）
             InitializeDefaultRealms();
@@ -227,7 +206,7 @@ namespace CivilizationEvolution.Core
             GenerateProvinces(seed);
             GenerateBurgs(seed);
 
-            Debug.Log($"[GameWorld] 地形生成完成，陆地{GetLandTileCount()}地块，海洋{GetSeaTileCount()}地块，省份{provinces.Count}个");
+            Debug.Log($"[GameWorld] 球形地形生成完成，陆地{GetLandTileCount()}地块，海洋{GetSeaTileCount()}地块，省份{provinces.Count}个");
         }
 
                 private void GenerateProvinces(int seed)

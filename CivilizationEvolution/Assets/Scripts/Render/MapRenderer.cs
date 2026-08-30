@@ -231,20 +231,66 @@ namespace CivilizationEvolution.Render
 
             // 群系颜色
             _biomeColors = new Color[Enum.GetValues(typeof(GameEnums.BiomeType)).Length];
+            // ===== A系：低水沃野（农耕定居基座）=====
+            _biomeColors[(int)GameEnums.BiomeType.AlluvialPlain] = new Color(0.55f, 0.7f, 0.35f);
+            _biomeColors[(int)GameEnums.BiomeType.GreatRiverPlain] = new Color(0.5f, 0.68f, 0.32f);
+            _biomeColors[(int)GameEnums.BiomeType.Delta] = new Color(0.45f, 0.65f, 0.4f);
+            _biomeColors[(int)GameEnums.BiomeType.Interfluvial] = new Color(0.6f, 0.72f, 0.38f);
+            _biomeColors[(int)GameEnums.BiomeType.WetMarshPlain] = new Color(0.4f, 0.55f, 0.45f);
+            _biomeColors[(int)GameEnums.BiomeType.Swamp] = new Color(0.3f, 0.45f, 0.38f);
+            _biomeColors[(int)GameEnums.BiomeType.SedimentaryBasin] = new Color(0.55f, 0.6f, 0.45f);
+            _biomeColors[(int)GameEnums.BiomeType.PiedmontBasin] = new Color(0.58f, 0.65f, 0.42f);
+            _biomeColors[(int)GameEnums.BiomeType.EnclosedBasin] = new Color(0.52f, 0.68f, 0.38f);
+            _biomeColors[(int)GameEnums.BiomeType.InlandAridBasin] = new Color(0.7f, 0.65f, 0.45f);
+            _biomeColors[(int)GameEnums.BiomeType.VolcanicAshPlain] = new Color(0.5f, 0.55f, 0.4f);
+            _biomeColors[(int)GameEnums.BiomeType.PluvialFan] = new Color(0.6f, 0.68f, 0.45f);
+
+            // ===== B系：高地硬骨（屏障、割据与海洋陆地）=====
+            _biomeColors[(int)GameEnums.BiomeType.LoessPlateau] = new Color(0.65f, 0.58f, 0.4f);
+            _biomeColors[(int)GameEnums.BiomeType.LoessKarst] = new Color(0.6f, 0.55f, 0.42f);
+            _biomeColors[(int)GameEnums.BiomeType.FoldMountains] = new Color(0.5f, 0.45f, 0.4f);
+            _biomeColors[(int)GameEnums.BiomeType.LowHills] = new Color(0.45f, 0.55f, 0.38f);
+            _biomeColors[(int)GameEnums.BiomeType.HighMountains] = new Color(0.55f, 0.5f, 0.48f);
+            _biomeColors[(int)GameEnums.BiomeType.BrokenPlateau] = new Color(0.52f, 0.48f, 0.42f);
+            _biomeColors[(int)GameEnums.BiomeType.CoastalLowland] = new Color(0.5f, 0.65f, 0.5f);
+            _biomeColors[(int)GameEnums.BiomeType.Fjord] = new Color(0.35f, 0.45f, 0.5f);
+            _biomeColors[(int)GameEnums.BiomeType.KarstMountains] = new Color(0.48f, 0.45f, 0.42f);
+            _biomeColors[(int)GameEnums.BiomeType.ErodedBadlands] = new Color(0.6f, 0.5f, 0.38f);
+            _biomeColors[(int)GameEnums.BiomeType.VolcanicIslands] = new Color(0.4f, 0.35f, 0.3f);
+            _biomeColors[(int)GameEnums.BiomeType.ContinentalIslands] = new Color(0.42f, 0.55f, 0.4f);
+            _biomeColors[(int)GameEnums.BiomeType.CoralAtoll] = new Color(0.6f, 0.75f, 0.65f);
+            _biomeColors[(int)GameEnums.BiomeType.ContinentalIslet] = new Color(0.45f, 0.58f, 0.42f);
+            _biomeColors[(int)GameEnums.BiomeType.PlateauMarsh] = new Color(0.4f, 0.5f, 0.45f);
+            _biomeColors[(int)GameEnums.BiomeType.CoastalSaltMarsh] = new Color(0.55f, 0.6f, 0.5f);
+            _biomeColors[(int)GameEnums.BiomeType.ImpactCraterAtoll] = new Color(0.45f, 0.4f, 0.45f);
+            _biomeColors[(int)GameEnums.BiomeType.VolcanicIslandArc] = new Color(0.42f, 0.38f, 0.35f);
+
+            // ===== C系：极端覆盖与过渡（减速、通道与资源边界）=====
             _biomeColors[(int)GameEnums.BiomeType.IceSheet] = new Color(0.95f, 0.97f, 1f);
+            _biomeColors[(int)GameEnums.BiomeType.MountainGlacier] = new Color(0.85f, 0.9f, 0.95f);
             _biomeColors[(int)GameEnums.BiomeType.Tundra] = new Color(0.7f, 0.75f, 0.7f);
             _biomeColors[(int)GameEnums.BiomeType.BorealForest] = new Color(0.3f, 0.45f, 0.3f);
-            _biomeColors[(int)GameEnums.BiomeType.TemperateForest] = new Color(0.3f, 0.6f, 0.3f);
-            _biomeColors[(int)GameEnums.BiomeType.TemperateGrassland] = new Color(0.6f, 0.75f, 0.3f);
-            _biomeColors[(int)GameEnums.BiomeType.Desert] = new Color(0.85f, 0.75f, 0.45f);
-            _biomeColors[(int)GameEnums.BiomeType.Steppe] = new Color(0.7f, 0.65f, 0.4f);
+            _biomeColors[(int)GameEnums.BiomeType.DeciduousForest] = new Color(0.35f, 0.6f, 0.35f);
+            _biomeColors[(int)GameEnums.BiomeType.EvergreenForest] = new Color(0.25f, 0.5f, 0.3f);
+            _biomeColors[(int)GameEnums.BiomeType.MonsoonForest] = new Color(0.3f, 0.55f, 0.35f);
             _biomeColors[(int)GameEnums.BiomeType.Savanna] = new Color(0.75f, 0.7f, 0.3f);
             _biomeColors[(int)GameEnums.BiomeType.TropicalRainforest] = new Color(0.15f, 0.45f, 0.2f);
             _biomeColors[(int)GameEnums.BiomeType.TropicalMonsoon] = new Color(0.25f, 0.55f, 0.25f);
-            _biomeColors[(int)GameEnums.BiomeType.Alpine] = new Color(0.6f, 0.55f, 0.5f);
-            _biomeColors[(int)GameEnums.BiomeType.Wetland] = new Color(0.3f, 0.5f, 0.45f);
-            _biomeColors[(int)GameEnums.BiomeType.Volcanic] = new Color(0.4f, 0.25f, 0.2f);
-            _biomeColors[(int)GameEnums.BiomeType.SaltLake] = new Color(0.8f, 0.8f, 0.7f);
+            _biomeColors[(int)GameEnums.BiomeType.Mangrove] = new Color(0.3f, 0.5f, 0.4f);
+            _biomeColors[(int)GameEnums.BiomeType.HotDesert] = new Color(0.85f, 0.75f, 0.45f);
+            _biomeColors[(int)GameEnums.BiomeType.InlandDesert] = new Color(0.8f, 0.7f, 0.42f);
+            _biomeColors[(int)GameEnums.BiomeType.ColdDesert] = new Color(0.75f, 0.72f, 0.68f);
+            _biomeColors[(int)GameEnums.BiomeType.CoastalDesert] = new Color(0.78f, 0.72f, 0.5f);
+            _biomeColors[(int)GameEnums.BiomeType.SemiAridShrubland] = new Color(0.7f, 0.65f, 0.4f);
+            _biomeColors[(int)GameEnums.BiomeType.SaltDesert] = new Color(0.8f, 0.78f, 0.65f);
+            _biomeColors[(int)GameEnums.BiomeType.DesertOasis] = new Color(0.45f, 0.6f, 0.4f);
+            _biomeColors[(int)GameEnums.BiomeType.EndorheicLake] = new Color(0.4f, 0.55f, 0.65f);
+            _biomeColors[(int)GameEnums.BiomeType.RiverSourceMarsh] = new Color(0.42f, 0.52f, 0.48f);
+            _biomeColors[(int)GameEnums.BiomeType.AlpineMeadow] = new Color(0.55f, 0.65f, 0.5f);
+            _biomeColors[(int)GameEnums.BiomeType.TemperateGrassland] = new Color(0.6f, 0.75f, 0.3f);
+            _biomeColors[(int)GameEnums.BiomeType.GravelGobi] = new Color(0.65f, 0.62f, 0.55f);
+            _biomeColors[(int)GameEnums.BiomeType.Yardang] = new Color(0.68f, 0.6f, 0.5f);
+            _biomeColors[(int)GameEnums.BiomeType.LandBridgeIsthmus] = new Color(0.55f, 0.62f, 0.45f);
 
             // 政治颜色（随机生成）
             _politicalColors = new Color[16];

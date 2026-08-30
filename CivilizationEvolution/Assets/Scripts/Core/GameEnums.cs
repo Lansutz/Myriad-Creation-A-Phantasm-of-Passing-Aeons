@@ -32,22 +32,74 @@ namespace CivilizationEvolution.Core
         }
 
         /// <summary>生物群系</summary>
+        /// <summary>
+        /// 生物群系（55个，按 civilization-engine-v45 三系分类）
+        /// A系：低水沃野（农耕定居基座）12个
+        /// B系：高地硬骨（屏障割据与海陆）18个
+        /// C系：极端覆盖与过渡（减速通道与资源边界）25个
+        /// </summary>
         public enum BiomeType
         {
-            IceSheet,
-            Tundra,
-            BorealForest,
-            TemperateForest,
-            TemperateGrassland,
-            Desert,
-            Steppe,
-            Savanna,
-            TropicalRainforest,
-            TropicalMonsoon,
-            Alpine,
-            Wetland,
-            Volcanic,
-            SaltLake
+            // ===== A系：低水沃野（农耕与定居基座）=====
+            AlluvialPlain,      // 冲积平原
+            GreatRiverPlain,    // 大河平原
+            Delta,              // 三角洲
+            Interfluvial,       // 河间地
+            WetMarshPlain,      // 湿沼平原
+            Swamp,              // 沼泽地
+            SedimentaryBasin,   // 沉积盆地
+            PiedmontBasin,      // 山前拗陷盆地
+            EnclosedBasin,      // 环山构造盆地
+            InlandAridBasin,    // 内陆干旱盆地
+            VolcanicAshPlain,   // 火山灰平原
+            PluvialFan,         // 洪积扇
+
+            // ===== B系：高地硬骨（屏障、割据与海洋陆地）=====
+            LoessPlateau,       // 黄土高原
+            LoessKarst,         // 黄土溶蚀
+            FoldMountains,      // 褶皱山地
+            LowHills,            // 低山丘陵
+            HighMountains,       // 高亢山地
+            BrokenPlateau,       // 破碎高原
+            CoastalLowland,      // 滨海低地
+            Fjord,               // 峡湾
+            KarstMountains,      // 岩溶山地
+            ErodedBadlands,      // 侵蚀劣地
+            VolcanicIslands,     // 火山群岛
+            ContinentalIslands,  // 大陆群岛
+            CoralAtoll,          // 珊瑚离岛
+            ContinentalIslet,    // 大陆离岛
+            PlateauMarsh,        // 高原沼泽
+            CoastalSaltMarsh,    // 滨海盐沼
+            ImpactCraterAtoll,   // 陨坑环岛
+            VolcanicIslandArc,   // 火山岛弧
+
+            // ===== C系：极端覆盖与过渡（减速、通道与资源边界）=====
+            IceSheet,            // 冰盖
+            MountainGlacier,     // 山岳冰川
+            Tundra,              // 冻原
+            BorealForest,        // 寒带针叶林（泰加林）
+            DeciduousForest,     // 落叶阔叶林
+            EvergreenForest,     // 常绿阔叶林
+            MonsoonForest,       // 季风干湿林
+            Savanna,             // 稀树草原
+            TropicalRainforest,  // 雨林
+            TropicalMonsoon,     // 季雨林
+            Mangrove,            // 红树林
+            HotDesert,           // 炎热沙漠
+            InlandDesert,        // 内陆沙漠
+            ColdDesert,          // 寒冷沙漠
+            CoastalDesert,       // 滨海沙漠
+            SemiAridShrubland,   // 半干旱灌丛
+            SaltDesert,          // 盐碱荒漠
+            DesertOasis,         // 沙漠绿洲
+            EndorheicLake,       // 内流大湖
+            RiverSourceMarsh,    // 河源沼泽
+            AlpineMeadow,        // 高山草甸
+            TemperateGrassland,  // 温带草原
+            GravelGobi,          // 砾质戈壁
+            Yardang,             // 风蚀城堡
+            LandBridgeIsthmus    // 陆桥地峡
         }
 
         /// <summary>海洋分级</summary>
