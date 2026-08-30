@@ -183,21 +183,13 @@ namespace CivilizationEvolution.Core
             System.Random rng = new System.Random(seed);
             float[] fragmentNoise = new float[tiles.Length];
 
+            // 大陆形态生成（多倍频噪声高度场 + 山脉脊线 + 河流追踪）
+            var terrainGen = new TerrainGenerator(seed);
+            terrainGen.Generate(tiles, mapWidth, mapHeight,
+                config.continentScale, config.mountainStrength);
+
             for (int i = 0; i < tiles.Length; i++)
             {
-                int x = i % mapWidth;
-                int y = i / mapWidth;
-                float nx = (float)x / mapWidth;
-                float ny = (float)y / mapHeight;
-
-                float height = 0f;
-                height += Mathf.Sin(nx * 6.28f * 3f + seed) * 0.3f;
-                height += Mathf.Sin(ny * 6.28f * 2f + seed * 0.5f) * 0.25f;
-                height += Mathf.Sin((nx + ny) * 6.28f * 4f) * 0.15f;
-                height += (float)(rng.NextDouble() - 0.5) * 0.1f;
-
-                tiles[i].elevation01 = Mathf.Clamp(height, -1f, 1f);
-                tiles[i].slopeDegree = Mathf.Abs(height) * 30f;
                 fragmentNoise[i] = (float)rng.NextDouble();
                 _terrainDirtyTiles.Add(i);
             }
@@ -211,6 +203,9 @@ namespace CivilizationEvolution.Core
 
             _seaLandGenerator.SetFragmentNoise(fragmentNoise);
             RecalculateAll();
+
+            // 河流追踪（须在 isLand 判定完成后）
+            terrainGen.TrackRivers(tiles);
 
             for (int i = 0; i < tiles.Length; i++)
             {

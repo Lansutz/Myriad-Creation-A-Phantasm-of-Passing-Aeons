@@ -19,6 +19,9 @@ namespace CivilizationEvolution.Core
         public int ownerRealmId;
         public int occupyingRealmId;
 
+        /// <summary>河流标记（TerrainGenerator 河流追踪后赋值）</summary>
+        public bool isRiver;
+
         /// <summary>地块是否存在（支持任意形状地图，false=虚空/地图外）</summary>
         public bool exists;
 

@@ -221,6 +221,8 @@ namespace CivilizationEvolution.Render
             switch (displayMode)
             {
                 case MapDisplayMode.Terrain:
+                    // 河流优先着色（水系蓝）
+                    if (tile.isRiver) return new Color(0.25f, 0.45f, 0.85f, 1f);
                     int terrainIndex = Mathf.Clamp(Mathf.RoundToInt((tile.elevation01 + 1f) / 2f * 255f), 0, 255);
                     return _terrainColors[terrainIndex];
 

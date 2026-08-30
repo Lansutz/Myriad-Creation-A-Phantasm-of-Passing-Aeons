@@ -27,6 +27,12 @@ namespace CivilizationEvolution.Core
         [Range(70f, 90f)] public float planetMaxLat = 90f;
         [Range(280f, 400f)] public float planetTotalLon = 360f;
 
+        [Header("大陆形态")]
+        [Tooltip("大陆尺度（越小大陆越大块）")]
+        [Range(0.5f, 3f)] public float continentScale = 1f;
+        [Tooltip("山脉强度（山脊线叠加量）")]
+        [Range(0f, 1f)] public float mountainStrength = 0.6f;
+
         [Header("气候参数-基础")]
         public GameEnums.CirculationMode circulationMode = GameEnums.CirculationMode.TripleCell;
         [Range(-30f, 30f)] public float thermalEquatorLat = 7f;
