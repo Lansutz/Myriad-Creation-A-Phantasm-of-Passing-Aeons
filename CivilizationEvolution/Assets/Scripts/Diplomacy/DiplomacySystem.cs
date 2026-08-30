@@ -230,11 +230,11 @@ namespace CivilizationEvolution.Diplomacy
     /// </summary>
     public enum SubordinationType
     {
-        Tributary,          // 朝贡：内政完全自主，象征性臣服+进贡（自治度0.9）
-        Vassal,             // 附庸：外交权受限，军事义务，内政基本自主（自治度0.65）
-        Associate,          // 附属：内政受法定监督（顾问/否决法律），外交国防代理（自治度0.45）
+        Tributary,          // 朝贡国：内政完全自主，象征性臣服+进贡（自治度0.9）
+        Vassal,             // 附庸国：外交权受限，军事义务，内政基本自主（自治度0.65）
+        Associate,          // 附属国：内政受法定监督（顾问/否决法律），外交国防代理（自治度0.45）
         Protectorate,       // 保护国：内政自主，外交与宣战权完全转让（自治度0.3）
-        Puppet              // 傀儡：首脑由宗主指定，一切重大决策需批准（自治度0.1）
+        Puppet              // 傀儡国：首脑由宗主指定，一切重大决策需批准（自治度0.1）
     }
 
     /// <summary>
@@ -932,26 +932,28 @@ namespace CivilizationEvolution.Diplomacy
                 relationRequirement = requiredRelation
             };
 
-            // 设置盟约效果
+            // 设置盟约效果（5种平等盟约）
             switch (type)
             {
-                case AllianceType.TradeAgreement:
-                    alliance.tradeEfficiencyBonus = 0.2f;
-                    alliance.tariffReduction = 0.3f;
-                    break;
-                case AllianceType.CustomsUnion:
-                    alliance.tradeEfficiencyBonus = 0.5f;
-                    alliance.tariffReduction = 1f;
+                case AllianceType.NonAggressionPact:
+                    // 互不侵犯：无军事效果，仅承诺不开战
                     break;
                 case AllianceType.DefensiveAlliance:
                     alliance.mutualDefense = true;
                     break;
                 case AllianceType.OffensiveAlliance:
-                    alliance.mutualDefense = true;
                     alliance.jointOffensive = true;
                     break;
-                case AllianceType.MilitaryAccess:
+                case AllianceType.TotalAlliance:
+                    alliance.mutualDefense = true;
+                    alliance.jointOffensive = true;
                     alliance.militaryAccess = true;
+                    break;
+                case AllianceType.Faction:
+                    alliance.mutualDefense = true;
+                    alliance.jointOffensive = true;
+                    alliance.militaryAccess = true;
+                    // 阵营：额外的集体安全效果（由阵营系统处理）
                     break;
             }
 
@@ -1003,7 +1005,7 @@ namespace CivilizationEvolution.Diplomacy
                     sub.autonomy = 0.9f;
                     break;
                 case SubordinationType.Vassal:
-                    // 附庸：外交权受限，军事义务，内政基本自主
+                    // 附庸国：外交权受限，军事义务，内政基本自主
                     sub.tributeRatio = 0.15f;
                     sub.militaryObligation = true;
                     sub.foreignPolicyControl = true;
@@ -1183,11 +1185,8 @@ namespace CivilizationEvolution.Diplomacy
                 AllianceType.NonAggressionPact => "互不侵犯条约",
                 AllianceType.DefensiveAlliance => "防御同盟",
                 AllianceType.OffensiveAlliance => "进攻同盟",
-                AllianceType.TradeAgreement => "贸易协定",
-                AllianceType.CustomsUnion => "关税同盟",
-                AllianceType.MilitaryAccess => "军事通行权",
-                AllianceType.RoyalMarriage => "王室联姻",
-                AllianceType.CulturalExchange => "文化交流协定",
+                AllianceType.TotalAlliance => "全面同盟",
+                AllianceType.Faction => "阵营",
                 _ => type.ToString()
             };
         }
@@ -1250,7 +1249,8 @@ namespace CivilizationEvolution.Diplomacy
         {
             var rel = GetRelation(fromRealm, throughRealm);
             if (rel == null) return false;
-            return rel.activeAlliances.Exists(a => a.type == AllianceType.MilitaryAccess && a.militaryAccess);
+            // 军事通行权：全面同盟/阵营盟约包含通行权，或单独的通行权协议（由通行管制系统处理）
+            return rel.activeAlliances.Exists(a => a.isActive && a.militaryAccess);
         }
     }
 }
