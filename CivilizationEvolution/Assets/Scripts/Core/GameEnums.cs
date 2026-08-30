@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CivilizationEvolution.Core
@@ -75,6 +77,79 @@ namespace CivilizationEvolution.Core
             MerchantFreeman,
             Peasant,
             Slave
+        }
+
+        /// <summary>
+        /// 社会亚阶层（用户定稿：农民/自由民/奴隶三阶层细分——主枚举不动保存档兼容）
+        /// 农民四层：自耕农（有地）/佃农（租地）/农奴（人身束缚）/雇农（无地）
+        /// 自由民四民：市民（公民权）/商人/工匠/士人（士农工商）
+        /// 奴隶四源：家奴/官奴（国有劳役）/债务奴（抵债）/战俘奴
+        /// </summary>
+        public enum SocialSubclass
+        {
+            // ===== 农民 Peasant =====
+            Freeholder,     // 自耕农：拥有土地的独立农民
+            Tenant,         // 佃农：租地耕种（交租）
+            Serf,           // 农奴：人身束缚于土地（中世纪欧洲）
+            HiredLaborer,   // 雇农：无地雇工（长工/短工）
+            // ===== 自由民 MerchantFreeman =====
+            Citizen,        // 市民：城邦公民（公民权）
+            Merchant,       // 商人：行商坐贾
+            Artisan,        // 工匠：手艺人（行会）
+            Scholar,        // 士人/文士（士农工商）
+            // ===== 奴隶 Slave =====
+            DomesticSlave,  // 家奴：家庭侍从
+            StateSlave,     // 官奴：国有劳役
+            DebtSlave,      // 债务奴：抵债为奴（自卖）
+            WarCaptiveSlave // 战俘奴：战败俘虏
+        }
+
+        /// <summary>亚阶层 ↔ 主阶层 映射与查询</summary>
+        public static class SocialClassHierarchy
+        {
+            /// <summary>亚阶层所属主阶层</summary>
+            public static SocialClass GetClass(SocialSubclass subclass)
+            {
+                switch (subclass)
+                {
+                    case SocialSubclass.Freeholder:
+                    case SocialSubclass.Tenant:
+                    case SocialSubclass.Serf:
+                    case SocialSubclass.HiredLaborer:
+                        return SocialClass.Peasant;
+                    case SocialSubclass.Citizen:
+                    case SocialSubclass.Merchant:
+                    case SocialSubclass.Artisan:
+                    case SocialSubclass.Scholar:
+                        return SocialClass.MerchantFreeman;
+                    default:
+                        return SocialClass.Slave;
+                }
+            }
+
+            /// <summary>主阶层全部亚阶层</summary>
+            public static List<SocialSubclass> GetSubclasses(SocialClass socialClass)
+            {
+                var result = new List<SocialSubclass>();
+                foreach (SocialSubclass s in Enum.GetValues(typeof(SocialSubclass)))
+                {
+                    if (GetClass(s) == socialClass)
+                        result.Add(s);
+                }
+                return result;
+            }
+
+            /// <summary>主阶层默认亚阶层（细分前的默认值；未细分阶层返回 null）</summary>
+            public static SocialSubclass? GetDefaultSubclass(SocialClass socialClass)
+            {
+                switch (socialClass)
+                {
+                    case SocialClass.Peasant: return SocialSubclass.Freeholder;
+                    case SocialClass.MerchantFreeman: return SocialSubclass.Citizen;
+                    case SocialClass.Slave: return SocialSubclass.DomesticSlave;
+                    default: return null; // Royalty/NobilityClergy 未细分
+                }
+            }
         }
 
         /// <summary>政体类型</summary>

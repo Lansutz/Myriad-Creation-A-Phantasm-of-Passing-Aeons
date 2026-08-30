@@ -33,6 +33,18 @@ namespace CivilizationEvolution.Role
         /// <summary>社会阶层（经济系统对接——政体资格判定/阶层好感依赖；默认农民）</summary>
         public GameEnums.SocialClass socialClass = GameEnums.SocialClass.Peasant;
 
+        /// <summary>社会亚阶层（阶层细分——默认对应该主阶层的默认亚类）</summary>
+        public GameEnums.SocialSubclass socialSubclass = GameEnums.SocialSubclass.Freeholder;
+
+        /// <summary>设置社会阶层（自动同步默认亚阶层；未细分阶层保留原亚类）</summary>
+        public void SetSocialClass(GameEnums.SocialClass cls)
+        {
+            socialClass = cls;
+            var def = GameEnums.SocialClassHierarchy.GetDefaultSubclass(cls);
+            if (def.HasValue)
+                socialSubclass = def.Value;
+        }
+
         // 身份
         public int realmId = -1;
         public int familyId = -1;
