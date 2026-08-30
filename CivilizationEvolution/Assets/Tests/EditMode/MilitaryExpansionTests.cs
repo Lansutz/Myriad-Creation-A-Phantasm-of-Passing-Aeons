@@ -113,6 +113,39 @@ namespace CivilizationEvolution.Tests
             Assert.IsTrue(_world.unitDefs[300].requiredInnovations.Contains(402), "桨帆船需桨帆船革新");
         }
 
+        [Test]
+        public void SuperHeavyCavalry_Tier4_RequiresCataphract()
+        {
+            // 超重装骑兵（用户设计：tier 4 超重型——cataphract/铁浮屠式）
+            var cataphract = _world.unitDefs[203];
+            Assert.AreEqual(4, cataphract.tier, "超重装骑兵=超重型 tier4");
+            Assert.AreEqual(GameEnums.UnitCategory.Cavalry, cataphract.category);
+            Assert.IsTrue(cataphract.requiredInnovations.Contains(1006), "超重装骑兵需具装甲骑革新");
+            Assert.Greater(cataphract.defense, _world.unitDefs[202].defense, "防御高于精锐骑兵");
+            Assert.Less(cataphract.speed, _world.unitDefs[202].speed, "重甲速度更慢");
+
+            // 具装甲骑革新在位（前置重装骑兵+炼钢）
+            var innovation = _tree.GetInnovation(1006);
+            Assert.IsNotNull(innovation, "具装甲骑革新应存在");
+            Assert.IsTrue(innovation.prerequisites.Contains(303), "前置重装骑兵");
+            Assert.IsTrue(innovation.prerequisites.Contains(203), "前置炼钢术");
+            Assert.AreEqual(InnovationField.MilitaryInstitution, innovation.field, "军制类");
+
+            // 可用性端到端：无革新时不可征募
+            Assert.IsFalse(IsUnitAvailable(_world, 203, _tree, 1), "无具装甲骑时超重装骑兵不可征募");
+
+            // 完整链（骑兵链+铁器链+重装骑兵+炼钢）后可用
+            Complete(_tree, 911); Complete(_tree, 919); Complete(_tree, 922);
+            Complete(_tree, 923);
+            Complete(_tree, 200); Complete(_tree, 201); Complete(_tree, 300);
+            Complete(_tree, 202); Complete(_tree, 301); Complete(_tree, 302);
+            Complete(_tree, 924); Complete(_tree, 303); // 重装骑兵
+            Complete(_tree, 802); Complete(_tree, 803); // 深井采矿（炼钢前置 803）
+            Complete(_tree, 203); // 炼钢术（前置 202 已在上段完成）
+            Complete(_tree, 1006); // 具装甲骑
+            Assert.IsTrue(IsUnitAvailable(_world, 203, _tree, 1), "具装甲骑后超重装骑兵可征募");
+        }
+
         /// <summary>兵种可用性判定（requiredInnovations 全部持有——任一前置不满足不可征募）</summary>
         private static bool IsUnitAvailable(GameWorld world, int unitId, InnovationTree tree, int realmId)
         {

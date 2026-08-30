@@ -2093,6 +2093,20 @@
       "affinityTags": [],
       "innovationName": "军屯",
       "description": "戍卒屯田自给（军屯）；兵农合一，边地自养。"
+    },
+    {
+      "innovationId": 1006,
+      "field": 18,
+      "era": 4,
+      "researchCost": 600,
+      "prerequisites": [
+        303,
+        203
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "具装甲骑",
+      "description": "人马俱披重甲，冲阵如墙（拜占庭甲骑/铁浮屠/帕提亚具装）；重骑兵的终极形态。"
     }
   ]
 }

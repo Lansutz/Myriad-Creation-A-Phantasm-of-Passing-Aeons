@@ -636,6 +636,7 @@ namespace CivilizationEvolution.Core
             AddUnitDef(200, "轻骑兵", GameEnums.UnitCategory.Cavalry, 1, 12f, 5f, 8f, 65f, 4f, 1.5f, 60f, 1f, 923);
             AddUnitDef(201, "重骑兵", GameEnums.UnitCategory.Cavalry, 2, 20f, 8f, 18f, 75f, 3f, 2.5f, 100f, 1.5f, 924);
             AddUnitDef(202, "精锐骑兵", GameEnums.UnitCategory.Cavalry, 3, 28f, 10f, 25f, 85f, 2.5f, 3f, 150f, 2f, 303);
+            AddUnitDef(203, "超重装骑兵", GameEnums.UnitCategory.Cavalry, 4, 36f, 12f, 32f, 95f, 2f, 4f, 200f, 3f, 1006); // 具装甲骑（人马俱甲）
             // 水军
             AddUnitDef(300, "桨帆船", GameEnums.UnitCategory.Navy, 1, 15f, 10f, 10f, 60f, 3f, 2f, 80f, 1f, 402);
             AddUnitDef(301, "帆船战舰", GameEnums.UnitCategory.Navy, 2, 20f, 15f, 15f, 70f, 4f, 2.5f, 120f, 1.5f, 405);
