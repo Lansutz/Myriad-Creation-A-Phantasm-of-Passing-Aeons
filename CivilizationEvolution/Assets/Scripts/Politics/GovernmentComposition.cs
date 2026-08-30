@@ -88,42 +88,69 @@ namespace CivilizationEvolution.Politics
 
     // ==================== B. 中央权力 ====================
 
-    /// <summary>B1·中央权力·交接：中央机构/官僚如何产生</summary>
+    /// <summary>
+    /// B1·中央权力·交接：选人依据（怎么选官——用户定稿：产生机制 4 种；
+    /// 考课晋升=管理非产生（移除）；恩庇推举=集体选择的范围（并入 Elected））
+    /// </summary>
     public enum CentralSuccession
     {
-        Appointed,          // 君主任命：官僚由君主任免
-        HereditaryOffice,   // 官位世袭：官职父子相传（世卿世禄）
-        Elected,            // 选举产生：议会/公民选出
-        Examination,        // 考试选任：科举/文官考试
-        MeritPromotion,     // 考课晋升：绩效/军功升迁（秦汉考课、军功爵）
-        Patronage           // 恩庇推举：门阀/荐举（九品中正）
+        Appointed,      // 上级决断：君主/中枢任免
+        Elected,        // 集体选择：选举/推举（范围=资格要素：大众/贵族/权贵）
+        Examination,    // 客观标准：考试/竞争选任（科举/文官考试）
+        Hereditary      // 血缘：官位世袭（世卿世禄）
     }
 
-    /// <summary>B2·中央权力·分配：有无中央机构/形态与职能</summary>
+    /// <summary>
+    /// B2·中央权力·分配：机构性质（谁掌权的机构类型；
+    /// 一院/两院/等级=议会的构成要素 AssemblyComposition，非独立机构）
+    /// </summary>
     public enum CentralInstitution
     {
         None,                   // 无常设：部落临时集会
         Court,                  // 王庭：王室+近臣（宫廷决策）
-        UnicameralAssembly,     // 一院制议会：公民大会/元老院（单院）
-        BicameralAssembly,      // 两院制议会：贵族院+平民院（英国上下院）
-        EstateAssembly,         // 等级会议：按等级分庭（法国三级会议/帝国议会）
+        Assembly,               // 议会/元老院：代表审议（构成=AssemblyComposition）
         EldersCouncil,          // 长老议事会：长老资格制（部落/贵族传统——非共和）
         BureaucraticCore,       // 官僚中枢：宰相府/尚书台（文书行政）
-        ReligiousCouncil,       // 宗教会议：教廷/长老会（教阶制）
+        ReligiousCouncil,       // 宗教会议：教廷/教阶
         MilitaryCouncil         // 军事委员会：将领共议
+    }
+
+    /// <summary>议会构成要素（B2=Assembly 时生效——谁来开会：一院/两院/按等级分庭）</summary>
+    public enum AssemblyComposition
+    {
+        Unicameral,     // 一院制：单一代表院（雅典公民大会/罗马元老院）
+        Bicameral,      // 两院制：贵族院+平民院（英国上下院）
+        Estate          // 等级会议：按等级分庭（法国三级会议/神罗帝国议会）
+    }
+
+    /// <summary>任命主体要素（C1=Appointed 时生效——谁任命地方官）</summary>
+    public enum LocalAppointAuthority
+    {
+        Central,        // 中央派任（流官/总督——郡县/行省）
+        Religious,      // 教区委任（教区体系）
+        Military        // 军事上级任免（军管区）
+    }
+
+    /// <summary>领有身份要素（C1=Hereditary 时生效——世袭领有者身份）</summary>
+    public enum LocalLordship
+    {
+        Vassal,         // 世袭封臣（封建契约——异姓功臣）
+        Appanage,       // 宗室采邑（分封宗亲——西周/阿拔斯）
+        MeritLord       // 军功领邑（战功封赏）
     }
 
     // ==================== C. 地方权力 ====================
 
-    /// <summary>C1·地方权力·交接：地方权力者如何产生</summary>
+    /// <summary>
+    /// C1·地方权力·交接：产生方式（怎么产生地方权力者——
+    /// 任命[主体要素]/选举[范围要素]/世袭[身份要素]；城市特许=自治权契约来源，独立保留）
+    /// </summary>
     public enum LocalSuccession
     {
-        CentralAppointed,   // 中央任命：流官制（郡县/行省）
-        HereditaryVassal,   // 世袭封臣：封建契约领有（西欧封臣）
-        FeudalAppanage,     // 宗室采邑：分封宗亲（西周/阿拔斯）
-        LocalElected,       // 地方推举：城邦/部族自治选举
-        CityCharter,        // 城市特许自治：特许状（中世纪自由城市）
-        ReligiousAppointed  // 教区委任：宗教体系任免
+        Appointed,      // 任命（主体=LocalAppointAuthority：中央/教会/军事）
+        Elected,        // 选举/推举（范围=资格要素：本地公民/部落/自治市）
+        Hereditary,     // 世袭领有（身份=LocalLordship：封臣/宗室/军功）
+        CityCharter     // 城市特许自治：自治权来源=特许状契约（中世纪自由城市——内部选举+特许保障）
     }
 
     /// <summary>C2·地方权力·分配：地方治理管什么（职能范围）</summary>
@@ -256,14 +283,30 @@ namespace CivilizationEvolution.Politics
         public ComponentChoice centralInstitution = new ComponentChoice((int)CentralInstitution.BureaucraticCore);
 
         // ===== C. 地方权力 =====
-        public ComponentChoice localSuccession = new ComponentChoice((int)LocalSuccession.CentralAppointed);
+        public ComponentChoice localSuccession = new ComponentChoice((int)LocalSuccession.Appointed);
         public ComponentChoice localScope = new ComponentChoice((int)LocalScope.FiscalJudicial);
 
         // ===== D. 央地结构（第七维） =====
         public ComponentChoice spatialStructure = new ComponentChoice((int)SpatialStructure.Unitary);
 
-        /// <summary>通用资格规则（横切属性——对所有交接方式生效：世袭候选/选举被选举权/推举资格/轮值资格）</summary>
-        public EligibilityRules eligibility = new EligibilityRules();
+        /// <summary>通用资格规则（横切属性——用户定稿：性别等要素横切所有交接方式，且**分层应用**：
+        /// 最高/中央/地方各层资格可不同——中世纪欧洲最高权力男子优先、地方可有女领主）</summary>
+        public EligibilityRules supremeEligibility = new EligibilityRules();
+
+        /// <summary>中央层资格（B 层——官员/中央机构成员资格；默认与最高层一致语义，可独立配置）</summary>
+        public EligibilityRules centralEligibility = new EligibilityRules();
+
+        /// <summary>地方层资格（C 层——地方官/领主资格；可独立配置——女领主继承）</summary>
+        public EligibilityRules localEligibility = new EligibilityRules();
+
+        /// <summary>议会构成要素（B2=Assembly 时生效：一院/两院/等级会议）</summary>
+        public AssemblyComposition assemblyComposition = AssemblyComposition.Unicameral;
+
+        /// <summary>任命主体要素（C1=Appointed 时生效：中央/教会/军事）</summary>
+        public LocalAppointAuthority localAppointAuthority = LocalAppointAuthority.Central;
+
+        /// <summary>领有身份要素（C1=Hereditary 时生效：封臣/宗室/军功）</summary>
+        public LocalLordship localLordship = LocalLordship.Vassal;
 
         /// <summary>A1=世袭时的子选项=继承法（四轴人序+头衔模式+领地模式）</summary>
         public InheritanceLaw successionLaw = InheritanceLaw.Primogeniture();
@@ -281,10 +324,11 @@ namespace CivilizationEvolution.Politics
                 supremeScope = new ComponentChoice((int)SupremeScope.Absolute),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Appointed),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.BureaucraticCore),
-                localSuccession = new ComponentChoice((int)LocalSuccession.CentralAppointed),
+                localSuccession = new ComponentChoice((int)LocalSuccession.Appointed),
+            localAppointAuthority = LocalAppointAuthority.Central,
                 localScope = new ComponentChoice((int)LocalScope.None),
                 spatialStructure = new ComponentChoice((int)SpatialStructure.Unitary),
-            eligibility = new EligibilityRules { gender = InheritanceGender.MalePreference, scope = EligibilityScope.FreePeople },  // 秦：男子优先·自由民,
+            supremeEligibility = new EligibilityRules { gender = InheritanceGender.MalePreference, scope = EligibilityScope.FreePeople },  // 秦：男子优先·自由民
                 successionLaw = InheritanceLaw.ChinesePartible() // 宗祧+析产
             };
         }
@@ -296,12 +340,13 @@ namespace CivilizationEvolution.Politics
             {
                 supremeSuccession = new ComponentChoice((int)SupremeSuccession.Hereditary),
                 supremeScope = new ComponentChoice((int)SupremeScope.Absolute),
-                centralSuccession = new ComponentChoice((int)CentralSuccession.HereditaryOffice),
+                centralSuccession = new ComponentChoice((int)CentralSuccession.Hereditary),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.Court),
-                localSuccession = new ComponentChoice((int)LocalSuccession.FeudalAppanage),
+                localSuccession = new ComponentChoice((int)LocalSuccession.Hereditary),
+            localLordship = LocalLordship.Appanage,
                 localScope = new ComponentChoice((int)LocalScope.FullAutonomy),
                 spatialStructure = new ComponentChoice((int)SpatialStructure.Confederal),
-            eligibility = new EligibilityRules { gender = InheritanceGender.MalePreference, scope = EligibilityScope.ClanOnly },  // 西周：男子优先·宗族,
+            supremeEligibility = new EligibilityRules { gender = InheritanceGender.MalePreference, scope = EligibilityScope.ClanOnly },  // 西周：男子优先·宗族
                 successionLaw = InheritanceLaw.Primogeniture()
             };
         }
@@ -314,11 +359,12 @@ namespace CivilizationEvolution.Politics
                 supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveDirect),
                 supremeScope = new ComponentChoice((int)SupremeScope.Consensual),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Elected),
-                centralInstitution = new ComponentChoice((int)CentralInstitution.UnicameralAssembly),
-                localSuccession = new ComponentChoice((int)LocalSuccession.LocalElected),
+                centralInstitution = new ComponentChoice((int)CentralInstitution.Assembly),
+                localSuccession = new ComponentChoice((int)LocalSuccession.Elected),
+            assemblyComposition = AssemblyComposition.Unicameral,
                 localScope = new ComponentChoice((int)LocalScope.FullAutonomy),
                 spatialStructure = new ComponentChoice((int)SpatialStructure.Unitary),
-            eligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.Citizens },  // 雅典：男子专属·公民
+            supremeEligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.Citizens },  // 雅典：男子专属·公民
             };
         }
 
@@ -329,12 +375,13 @@ namespace CivilizationEvolution.Politics
             {
                 supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveDirect),
                 supremeScope = new ComponentChoice((int)SupremeScope.LegallyBound),
-                centralSuccession = new ComponentChoice((int)CentralSuccession.Patronage),
-                centralInstitution = new ComponentChoice((int)CentralInstitution.UnicameralAssembly),
-                localSuccession = new ComponentChoice((int)LocalSuccession.CentralAppointed),
+                centralSuccession = new ComponentChoice((int)CentralSuccession.Elected),
+                centralInstitution = new ComponentChoice((int)CentralInstitution.Assembly),
+                localSuccession = new ComponentChoice((int)LocalSuccession.Appointed),
+            assemblyComposition = AssemblyComposition.Unicameral,
                 localScope = new ComponentChoice((int)LocalScope.FiscalJudicial),
                 spatialStructure = new ComponentChoice((int)SpatialStructure.Federal),
-            eligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.Citizens },  // 罗马：男子专属·公民
+            supremeEligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.Citizens },  // 罗马：男子专属·公民
             };
         }
 
@@ -347,10 +394,11 @@ namespace CivilizationEvolution.Politics
                 supremeScope = new ComponentChoice((int)SupremeScope.DivinelyBound),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Appointed),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.ReligiousCouncil),
-                localSuccession = new ComponentChoice((int)LocalSuccession.ReligiousAppointed),
+                localSuccession = new ComponentChoice((int)LocalSuccession.Appointed),
+            localAppointAuthority = LocalAppointAuthority.Religious,
                 localScope = new ComponentChoice((int)LocalScope.FullAutonomy),
                 spatialStructure = new ComponentChoice((int)SpatialStructure.Unitary),
-            eligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.Clergy },  // 神权：男子专属·教阶
+            supremeEligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.Clergy },  // 神权：男子专属·教阶
             };
         }
 
@@ -361,12 +409,13 @@ namespace CivilizationEvolution.Politics
             {
                 supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveDirect, (int)SupremeSuccession.Hereditary), // 忽里台推举+黄金家族世袭
                 supremeScope = new ComponentChoice((int)SupremeScope.Absolute),
-                centralSuccession = new ComponentChoice((int)CentralSuccession.MeritPromotion),
+                centralSuccession = new ComponentChoice((int)CentralSuccession.Appointed),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.MilitaryCouncil),
-                localSuccession = new ComponentChoice((int)LocalSuccession.HereditaryVassal),
+                localSuccession = new ComponentChoice((int)LocalSuccession.Hereditary),
+            localLordship = LocalLordship.Vassal,
                 localScope = new ComponentChoice((int)LocalScope.FullAutonomy),
                 spatialStructure = new ComponentChoice((int)SpatialStructure.Confederal),
-            eligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.Nobility },  // 蒙古：男子专属·贵族,
+            supremeEligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.Nobility },  // 蒙古：男子专属·贵族
                 successionLaw = InheritanceLaw.Tanistry() // 兄终弟及
             };
         }
@@ -379,11 +428,12 @@ namespace CivilizationEvolution.Politics
                 supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveRepresentative),
                 supremeScope = new ComponentChoice((int)SupremeScope.Consensual),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Elected),
-                centralInstitution = new ComponentChoice((int)CentralInstitution.BicameralAssembly),
-                localSuccession = new ComponentChoice((int)LocalSuccession.CentralAppointed),
+                centralInstitution = new ComponentChoice((int)CentralInstitution.Assembly),
+                localSuccession = new ComponentChoice((int)LocalSuccession.Appointed),
+            assemblyComposition = AssemblyComposition.Bicameral,
                 localScope = new ComponentChoice((int)LocalScope.FiscalJudicial),
                 spatialStructure = new ComponentChoice((int)SpatialStructure.Unitary),
-            eligibility = new EligibilityRules { gender = InheritanceGender.MalePreference, scope = EligibilityScope.FreePeople },  // 立宪早期：男子优先·自由民,
+            supremeEligibility = new EligibilityRules { gender = InheritanceGender.MalePreference, scope = EligibilityScope.FreePeople },  // 立宪早期：男子优先·自由民
                 // 世袭君主不在成分中——头衔（国王）为外交称号
             };
         }
@@ -395,12 +445,13 @@ namespace CivilizationEvolution.Politics
             {
                 supremeSuccession = new ComponentChoice((int)SupremeSuccession.Hereditary, (int)SupremeSuccession.Usurpation),
                 supremeScope = new ComponentChoice((int)SupremeScope.Absolute),
-                centralSuccession = new ComponentChoice((int)CentralSuccession.Patronage),
-                centralInstitution = new ComponentChoice((int)CentralInstitution.UnicameralAssembly),
-                localSuccession = new ComponentChoice((int)LocalSuccession.CentralAppointed),
+                centralSuccession = new ComponentChoice((int)CentralSuccession.Elected),
+                centralInstitution = new ComponentChoice((int)CentralInstitution.Assembly),
+                localSuccession = new ComponentChoice((int)LocalSuccession.Appointed),
+            assemblyComposition = AssemblyComposition.Unicameral,
                 localScope = new ComponentChoice((int)LocalScope.FiscalJudicial),
                 spatialStructure = new ComponentChoice((int)SpatialStructure.Unitary),
-            eligibility = new EligibilityRules { gender = InheritanceGender.MalePreference, scope = EligibilityScope.FreePeople },  // 罗马帝国：男子优先·自由民
+            supremeEligibility = new EligibilityRules { gender = InheritanceGender.MalePreference, scope = EligibilityScope.FreePeople },  // 罗马帝国：男子优先·自由民
             };
         }
 
@@ -411,12 +462,14 @@ namespace CivilizationEvolution.Politics
             {
                 supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveRepresentative),
                 supremeScope = new ComponentChoice((int)SupremeScope.Absolute), // 皇帝当选后个人全能=选举君主；帝国议会=中央机构（B2）
-                centralSuccession = new ComponentChoice((int)CentralSuccession.Patronage),
-                centralInstitution = new ComponentChoice((int)CentralInstitution.EstateAssembly),
-                localSuccession = new ComponentChoice((int)LocalSuccession.HereditaryVassal),
+                centralSuccession = new ComponentChoice((int)CentralSuccession.Elected),
+                centralInstitution = new ComponentChoice((int)CentralInstitution.Assembly),
+                localSuccession = new ComponentChoice((int)LocalSuccession.Hereditary),
+            assemblyComposition = AssemblyComposition.Estate,
+                        localLordship = LocalLordship.Vassal,
                 localScope = new ComponentChoice((int)LocalScope.FullAutonomy),
                 spatialStructure = new ComponentChoice((int)SpatialStructure.Confederal),
-            eligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.Nobility },  // 神罗：男子专属·选帝侯贵族
+            supremeEligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.Nobility },  // 神罗：男子专属·选帝侯贵族
             };
         }
 
@@ -428,11 +481,12 @@ namespace CivilizationEvolution.Politics
                 supremeSuccession = new ComponentChoice((int)SupremeSuccession.ElectiveDirect),
                 supremeScope = new ComponentChoice((int)SupremeScope.Consensual),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Elected),
-                centralInstitution = new ComponentChoice((int)CentralInstitution.BicameralAssembly),
+                centralInstitution = new ComponentChoice((int)CentralInstitution.Assembly),
                 localSuccession = new ComponentChoice((int)LocalSuccession.CityCharter),
+            assemblyComposition = AssemblyComposition.Bicameral,
                 localScope = new ComponentChoice((int)LocalScope.FullAutonomy),
                 spatialStructure = new ComponentChoice((int)SpatialStructure.Unitary),
-            eligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.Nobility },  // 威尼斯：男子专属·贵族
+            supremeEligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.Nobility },  // 威尼斯：男子专属·贵族
             };
         }
 
@@ -473,12 +527,10 @@ namespace CivilizationEvolution.Politics
 
         public static string NameCentralSuccession(int c) => c switch
         {
-            (int)CentralSuccession.Appointed => "君主任命",
-            (int)CentralSuccession.HereditaryOffice => "官位世袭",
-            (int)CentralSuccession.Elected => "选举产生",
-            (int)CentralSuccession.Examination => "考试选任",
-            (int)CentralSuccession.MeritPromotion => "考课晋升",
-            (int)CentralSuccession.Patronage => "恩庇推举",
+            (int)CentralSuccession.Appointed => "上级决断",
+            (int)CentralSuccession.Elected => "集体选择",
+            (int)CentralSuccession.Examination => "客观标准",
+            (int)CentralSuccession.Hereditary => "血缘世袭",
             _ => "?"
         };
 
@@ -486,9 +538,7 @@ namespace CivilizationEvolution.Politics
         {
             (int)CentralInstitution.None => "无常设",
             (int)CentralInstitution.Court => "王庭",
-            (int)CentralInstitution.UnicameralAssembly => "一院议会",
-            (int)CentralInstitution.BicameralAssembly => "两院议会",
-            (int)CentralInstitution.EstateAssembly => "等级会议",
+            (int)CentralInstitution.Assembly => "议会/元老院",
             (int)CentralInstitution.EldersCouncil => "长老议事会",
             (int)CentralInstitution.BureaucraticCore => "官僚中枢",
             (int)CentralInstitution.ReligiousCouncil => "宗教会议",
@@ -498,12 +548,10 @@ namespace CivilizationEvolution.Politics
 
         public static string NameLocalSuccession(int c) => c switch
         {
-            (int)LocalSuccession.CentralAppointed => "中央任官",
-            (int)LocalSuccession.HereditaryVassal => "世袭封臣",
-            (int)LocalSuccession.FeudalAppanage => "宗室采邑",
-            (int)LocalSuccession.LocalElected => "地方推举",
+            (int)LocalSuccession.Appointed => "任命",
+            (int)LocalSuccession.Elected => "选举推举",
+            (int)LocalSuccession.Hereditary => "世袭领有",
             (int)LocalSuccession.CityCharter => "城市特许自治",
-            (int)LocalSuccession.ReligiousAppointed => "教区委任",
             _ => "?"
         };
 

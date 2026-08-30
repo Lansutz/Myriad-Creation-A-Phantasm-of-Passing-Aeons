@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using CivilizationEvolution.Politics;
@@ -177,12 +178,18 @@ namespace CivilizationEvolution.Tests
         }
 
         [Test]
-        public void ElectiveMonarchy_TitleElected()
+        public void TitleInheritance_PureDistribution()
         {
-            // 选举王（波兰自由选王/神罗选帝侯）：头衔选举产生
-            var law = InheritanceLaw.ElectiveMonarchy();
-            Assert.AreEqual(TitleInheritanceMode.Elective, law.titleMode, "头衔选举");
-            Assert.AreEqual(InheritanceGender.Equal, law.gender, "选举不区分性别");
+            // 用户定稿：头衔继承=纯分配维度（Elective 已移除——选举是产生方式，A1 表达）
+            // 分配选项：SoleHeir 独得 / FamilyShared 家族共享（法兰克诸子皆王）
+            var law = InheritanceLaw.Primogeniture();
+            Assert.AreEqual(TitleInheritanceMode.SoleHeir, law.titleMode, "长子继承=头衔唯一");
+            var frankish = InheritanceLaw.FrankishPartible();
+            Assert.AreEqual(TitleInheritanceMode.FamilyShared, frankish.titleMode, "法兰克=头衔家族共享");
+
+            // 选举不在继承法（产生方式由 GovernmentComposition.supremeSuccession 表达）
+            Assert.IsTrue(Enum.GetValues(typeof(TitleInheritanceMode)).Length == 2,
+                "头衔模式只含分配（独得/家族共享）");
         }
 
         [Test]

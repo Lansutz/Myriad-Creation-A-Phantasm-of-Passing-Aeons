@@ -78,7 +78,7 @@ namespace CivilizationEvolution.Tests
             Assert.AreEqual((int)CentralSuccession.Appointed, comp.centralSuccession.primary);
             Assert.AreEqual((int)CentralInstitution.BureaucraticCore, comp.centralInstitution.primary);
             // C. 地方权力
-            Assert.AreEqual((int)LocalSuccession.CentralAppointed, comp.localSuccession.primary);
+            Assert.AreEqual((int)LocalSuccession.Appointed, comp.localSuccession.primary);
             Assert.AreEqual((int)LocalScope.FiscalJudicial, comp.localScope.primary);
             // D. 央地结构（第七维）
             Assert.AreEqual((int)SpatialStructure.Unitary, comp.spatialStructure.primary, "央地结构独立维度");
@@ -133,9 +133,9 @@ namespace CivilizationEvolution.Tests
             // 贵族共和=选举+贵族范围（scope 要素——不是独立形态！）
             var rome = GovernmentComposition.SenatorialRepublic();
             Assert.AreEqual((int)SupremeSuccession.ElectiveDirect, rome.supremeSuccession.primary, "罗马=选举");
-            Assert.AreEqual(EligibilityScope.Citizens, rome.eligibility.scope, "罗马选举范围=公民（百人团）");
+            Assert.AreEqual(EligibilityScope.Citizens, rome.supremeEligibility.scope, "罗马选举范围=公民（百人团）");
             var venice = GovernmentComposition.VenetianRepublic();
-            Assert.AreEqual(EligibilityScope.Nobility, venice.eligibility.scope, "威尼斯选举范围=贵族（大议会）——贵族共和的'贵族'是范围！");
+            Assert.AreEqual(EligibilityScope.Nobility, venice.supremeEligibility.scope, "威尼斯选举范围=贵族（大议会）——贵族共和的'贵族'是范围！");
 
             // 蒙古：选举·直接（忽里台）+ 世袭次要
             var mongol = GovernmentComposition.MongolHorde();
@@ -147,17 +147,17 @@ namespace CivilizationEvolution.Tests
         public void CentralInstitution_AssemblyThreeForms()
         {
             // 议会三形态：一院（雅典公民大会/罗马元老院）/两院（英国上下院）/等级会议（三级会议/帝国议会）
-            Assert.AreEqual((int)CentralInstitution.UnicameralAssembly, GovernmentComposition.AthenianDemocracy().centralInstitution.primary);
-            Assert.AreEqual((int)CentralInstitution.BicameralAssembly, GovernmentComposition.ConstitutionalMonarchy().centralInstitution.primary);
-            Assert.AreEqual((int)CentralInstitution.EstateAssembly, GovernmentComposition.HolyRomanEmpire().centralInstitution.primary);
+            Assert.AreEqual((int)CentralInstitution.Assembly, GovernmentComposition.AthenianDemocracy().centralInstitution.primary);
+            Assert.AreEqual((int)CentralInstitution.Assembly, GovernmentComposition.ConstitutionalMonarchy().centralInstitution.primary);
+            Assert.AreEqual((int)CentralInstitution.Assembly, GovernmentComposition.HolyRomanEmpire().centralInstitution.primary);
         }
 
         [Test]
         public void LocalSuccession_LordTwoForms()
         {
             // 领主两分：世袭封臣（封建契约）vs 宗室采邑（分封宗亲）
-            Assert.AreEqual((int)LocalSuccession.HereditaryVassal, GovernmentComposition.MongolHorde().localSuccession.primary);
-            Assert.AreEqual((int)LocalSuccession.FeudalAppanage, GovernmentComposition.FeudalFiefdom().localSuccession.primary);
+            Assert.AreEqual((int)LocalSuccession.Hereditary, GovernmentComposition.MongolHorde().localSuccession.primary);
+            Assert.AreEqual((int)LocalSuccession.Hereditary, GovernmentComposition.FeudalFiefdom().localSuccession.primary);
             // 城市特许自治（自由城市）
             Assert.AreEqual((int)LocalSuccession.CityCharter, GovernmentComposition.VenetianRepublic().localSuccession.primary);
         }
@@ -181,7 +181,7 @@ namespace CivilizationEvolution.Tests
             var comp = GovernmentComposition.ConstitutionalMonarchy();
             Assert.AreEqual((int)SupremeSuccession.ElectiveRepresentative, comp.supremeSuccession.primary,
                 "最高权力在议会，不在君主");
-            Assert.AreEqual((int)CentralInstitution.BicameralAssembly, comp.centralInstitution.primary);
+            Assert.AreEqual((int)CentralInstitution.Assembly, comp.centralInstitution.primary);
         }
 
         [Test]
@@ -195,7 +195,7 @@ namespace CivilizationEvolution.Tests
             };
             Assert.AreEqual((int)CentralInstitution.EldersCouncil, comp.centralInstitution.primary);
             var republic = GovernmentComposition.SenatorialRepublic();
-            Assert.AreEqual((int)CentralInstitution.UnicameralAssembly, republic.centralInstitution.primary,
+            Assert.AreEqual((int)CentralInstitution.Assembly, republic.centralInstitution.primary,
                 "共和制（罗马）中央机构为元老院，非长老会");
         }
 
@@ -230,7 +230,7 @@ namespace CivilizationEvolution.Tests
             // 威尼斯：委员会选举+两院+城市特许
             var venice = GovernmentComposition.VenetianRepublic();
             Assert.AreEqual((int)SupremeSuccession.ElectiveDirect, venice.supremeSuccession.primary);
-            Assert.AreEqual((int)CentralInstitution.BicameralAssembly, venice.centralInstitution.primary);
+            Assert.AreEqual((int)CentralInstitution.Assembly, venice.centralInstitution.primary);
             Assert.AreEqual((int)LocalSuccession.CityCharter, venice.localSuccession.primary);
 
             // 储君制帝国：生前指定+考课晋升
@@ -253,7 +253,7 @@ namespace CivilizationEvolution.Tests
                 supremeScope = new ComponentChoice((int)SupremeScope.CustomBound),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Examination),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.Court),
-                localSuccession = new ComponentChoice((int)LocalSuccession.ReligiousAppointed),
+                localSuccession = new ComponentChoice((int)LocalSuccession.Appointed),
                 localScope = new ComponentChoice((int)LocalScope.MilitaryOnly),
                 spatialStructure = new ComponentChoice((int)SpatialStructure.Federal)
             };
@@ -282,23 +282,23 @@ namespace CivilizationEvolution.Tests
             // 用户定稿：性别等要素横切所有交接方式——选举/推举/轮座/神命同样有资格问题
             // 雅典（选举）：男子专属·本城邦公民
             var athens = GovernmentComposition.AthenianDemocracy();
-            Assert.AreEqual(InheritanceGender.MaleOnly, athens.eligibility.gender, "雅典选举：男子专属被选举权");
-            Assert.AreEqual(EligibilityScope.Citizens, athens.eligibility.scope, "雅典：限本城邦公民");
+            Assert.AreEqual(InheritanceGender.MaleOnly, athens.supremeEligibility.gender, "雅典选举：男子专属被选举权");
+            Assert.AreEqual(EligibilityScope.Citizens, athens.supremeEligibility.scope, "雅典：限本城邦公民");
 
             // 罗马共和（推举）：男子专属·公民
             var rome = GovernmentComposition.SenatorialRepublic();
-            Assert.AreEqual(InheritanceGender.MaleOnly, rome.eligibility.gender, "罗马推举：男子专属");
+            Assert.AreEqual(InheritanceGender.MaleOnly, rome.supremeEligibility.gender, "罗马推举：男子专属");
 
             // 神权（神命）：男子专属·教阶
             var theo = GovernmentComposition.Theocracy();
-            Assert.AreEqual(EligibilityScope.Clergy, theo.eligibility.scope, "神权：限教阶");
+            Assert.AreEqual(EligibilityScope.Clergy, theo.supremeEligibility.scope, "神权：限教阶");
 
             // 蒙古（轮座/世袭）：男子专属·贵族（忽里台）
             var mongol = GovernmentComposition.MongolHorde();
-            Assert.AreEqual(EligibilityScope.Nobility, mongol.eligibility.scope, "蒙古：限贵族");
+            Assert.AreEqual(EligibilityScope.Nobility, mongol.supremeEligibility.scope, "蒙古：限贵族");
 
             // 资格过滤验证：男子专属时女性被过滤
-            var filtered = rome.eligibility.Filter(new List<CharacterData>
+            var filtered = rome.supremeEligibility.Filter(new List<CharacterData>
             {
                 MakeEligibleChar(1, true), MakeEligibleChar(2, false)
             });
@@ -312,13 +312,29 @@ namespace CivilizationEvolution.Tests
             // 萨利克双轨：资格=男子专属（门槛）+ 继承排序=男子优先（偏好）
             // 资格规则在 composition.eligibility，排序在 successionLaw.gender
             var comp = new GovernmentComposition();
-            comp.eligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.ClanOnly };
+            comp.supremeEligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.ClanOnly };
             comp.successionLaw = InheritanceLaw.Salic();
 
-            Assert.AreEqual(InheritanceGender.MaleOnly, comp.eligibility.gender, "资格门槛：男子专属");
+            Assert.AreEqual(InheritanceGender.MaleOnly, comp.supremeEligibility.gender, "资格门槛：男子专属");
             Assert.AreEqual(InheritanceGender.MaleOnly, comp.successionLaw.gender, "继承排序：男子专属（萨利克）");
-            Assert.IsTrue(comp.eligibility.IsGenderEligible(true), "男性合格");
-            Assert.IsFalse(comp.eligibility.IsGenderEligible(false), "女性不合格");
+            Assert.IsTrue(comp.supremeEligibility.IsGenderEligible(true), "男性合格");
+            Assert.IsFalse(comp.supremeEligibility.IsGenderEligible(false), "女性不合格");
+        }
+
+        [Test]
+        public void Eligibility_LayeredByPowerLevel()
+        {
+            // 用户定稿：性别等要素横切所有交接方式，且分层应用——
+            // 最高/中央/地方各层资格可不同（中世纪欧洲：最高男子优先、地方可有女领主）
+            var comp = new GovernmentComposition();
+            comp.supremeEligibility = new EligibilityRules { gender = InheritanceGender.MalePreference };
+            comp.centralEligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly };
+            comp.localEligibility = new EligibilityRules { gender = InheritanceGender.Equal };
+
+            // 各层独立判定
+            Assert.IsTrue(comp.supremeEligibility.IsGenderEligible(false), "最高层男子优先：女性可继承（排序靠后）");
+            Assert.IsFalse(comp.centralEligibility.IsGenderEligible(false), "中央层男子专属：女性不可为官");
+            Assert.IsTrue(comp.localEligibility.IsGenderEligible(false), "地方层平等：女领主可领有");
         }
 
         private static CharacterData MakeEligibleChar(int id, bool isMale)

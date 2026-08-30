@@ -47,17 +47,15 @@ namespace CivilizationEvolution.Politics
     }
 
     /// <summary>
-    /// 头衔继承模式（学术：头衔如何传承）
-    /// SoleHeir=唯一继承（整体传位）/ FamilyShared=家族共享（法兰克传统：
-    /// 所有兄弟共享"法兰克之王"王号，各自统治领地部分——凡尔登843三分的是
-    /// 领地而非头衔）/ Elective=选举（波兰自由选王、神罗选帝侯、教宗）
-    /// 注：共治君主（拜占庭 co-emperor）是生前统治形态，与继承正交，不属于继承模式
+    /// 头衔继承模式（分配维度——称号怎么分；用户定稿：Elective 移除——
+    /// 选举是产生方式（A1 交接方式表达），头衔模式只表达分配）
+    /// SoleHeir=唯一继承（称号整体传予一人）/ FamilyShared=家族共享（法兰克：
+    /// 所有兄弟共享"法兰克之王"王号，各自统治领地部分）
     /// </summary>
     public enum TitleInheritanceMode
     {
         SoleHeir,       // 唯一继承：头衔整体传予一人
-        FamilyShared,   // 家族共享：头衔由全体继承人共同领有（墨洛温/加洛林：诸子皆王）
-        Elective        // 选举：由选举产生（波兰 liberum veto、神罗选帝侯）
+        FamilyShared    // 家族共享：头衔由全体继承人共同领有（墨洛温/加洛林：诸子皆王）
     }
 
     /// <summary>
@@ -153,11 +151,13 @@ namespace CivilizationEvolution.Politics
                 InheritanceGender.MalePreference, InheritanceAge.Seniority,
                 TitleInheritanceMode.SoleHeir, LandInheritanceMode.Partible);
 
-        /// <summary>选举王（波兰自由选王）：头衔选举产生，领地维持原状</summary>
+        /// <summary>选举王（波兰自由选王/教宗）——注意：选举是产生方式（A1 交接方式表达），
+        /// 继承法（世袭内部规则）不含选举；此方法保留作兼容参考，头衔模式已无 Elective</summary>
+        [System.Obsolete("选举是产生方式（A1 交接方式），继承法不含选举——使用 GovernmentComposition 的 supremeSuccession 表达")]
         public static InheritanceLaw ElectiveMonarchy() =>
             new InheritanceLaw(InheritanceScope.CognaticKin, InheritanceBranch.EldestLine,
                 InheritanceGender.Equal, InheritanceAge.Seniority,
-                TitleInheritanceMode.Elective, LandInheritanceMode.Primogeniture);
+                TitleInheritanceMode.SoleHeir, LandInheritanceMode.Primogeniture);
 
         /// <summary>继承法名称（中文）</summary>
         public string GetName()
@@ -178,7 +178,6 @@ namespace CivilizationEvolution.Politics
             {
                 TitleInheritanceMode.SoleHeir => "头衔唯一",
                 TitleInheritanceMode.FamilyShared => "头衔家族共享",
-                TitleInheritanceMode.Elective => "头衔选举",
                 _ => "头衔唯一"
             };
             string landName = landMode switch
