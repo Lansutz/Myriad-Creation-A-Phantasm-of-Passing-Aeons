@@ -38,6 +38,16 @@ namespace CivilizationEvolution.UI
         private InputField _seedInput;
         private Button _randomSeedBtn;
         private Dropdown _genModeDropdown;
+        private Dropdown _projectionDropdown;
+        private MapProjectionMode _currentProjection = MapProjectionMode.Planar;
+        private Action<MapProjectionMode> _onProjectionChanged;
+
+        /// <summary>地图投影模式</summary>
+        public enum MapProjectionMode
+        {
+            Planar,   // 平面地图（柱状/左右连通）
+            Spherical // 球形地图（3D球面投影）
+        }
 
         // ===== 海陆参数控件 =====
         private Toggle _outerSeaBufferToggle;
@@ -89,12 +99,14 @@ namespace CivilizationEvolution.UI
 
         /// <summary>初始化生成参数面板</summary>
         public void Initialize(MapGenerationConfig config,
-            Action onGenerateTerrain, Action onCalculateClimate, Action onRecalculateHydrology)
+            Action onGenerateTerrain, Action onCalculateClimate, Action onRecalculateHydrology,
+            Action<MapProjectionMode> onProjectionChanged = null)
         {
             _config = config ?? new MapGenerationConfig();
             _onGenerateTerrain = onGenerateTerrain;
             _onCalculateClimate = onCalculateClimate;
             _onRecalculateHydrology = onRecalculateHydrology;
+            _onProjectionChanged = onProjectionChanged;
 
             CreatePanel();
             SyncUIFromConfig();
@@ -260,6 +272,19 @@ namespace CivilizationEvolution.UI
                 _config.Basemap = (MapGenerationConfig.MapBasemap)v;
                 UpdateParamVisibility();
                 UpdateStatus($"底图来源: {_genModeDropdown.options[v].text}");
+            });
+            y -= 32f;
+
+            // 投影模式（平面/球形）
+            CreateLabel("地图投影", y);
+            _projectionDropdown = CreateDropdown(_panelRoot.transform,
+                new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f),
+                new List<string> { "平面地图", "球形地图" });
+            _projectionDropdown.onValueChanged.AddListener(v =>
+            {
+                _currentProjection = (MapProjectionMode)v;
+                _onProjectionChanged?.Invoke(_currentProjection);
+                UpdateStatus($"投影模式: {_projectionDropdown.options[v].text}");
             });
             y -= 32f;
 
@@ -461,10 +486,11 @@ namespace CivilizationEvolution.UI
 
             slider = CreateSlider(_panelRoot.transform,
                 new Vector2(12f, y), new Vector2(ContentWidth, 18f), min, max, (min + max) / 2f);
+            var valueTextRef = valueText; // out参数不能在lambda中使用，先保存引用
             slider.onValueChanged.AddListener(v =>
             {
                 onChanged?.Invoke(v);
-                valueText.text = v.ToString("F2");
+                valueTextRef.text = v.ToString("F2");
             });
             return y - 26f;
         }

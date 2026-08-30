@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
@@ -478,6 +478,25 @@ namespace CivilizationEvolution.Render
         }
 
         /// <summary>强制刷新地图纹理（编辑器绘制后调用）</summary>
+        /// <summary>当前投影模式</summary>
+        private MapProjectionMode _projection = MapProjectionMode.Planar;
+
+        /// <summary>设置地图投影模式（平面/球形）</summary>
+        public void SetProjectionMode(MapProjectionMode mode)
+        {
+            _projection = mode;
+            Debug.Log($"[MapRenderer] 投影模式切换为: {mode}");
+            // 球形投影的具体渲染实现待完善（球面UV映射+经纬度坐标转换）
+            ForceRefresh();
+        }
+
+        /// <summary>地图投影模式</summary>
+        public enum MapProjectionMode
+        {
+            Planar,    // 平面地图（柱状投影，左右连通）
+            Spherical  // 球形地图（3D球面投影）
+        }
+
         public void ForceRefresh()
         {
             _forceMapRefresh = true;
