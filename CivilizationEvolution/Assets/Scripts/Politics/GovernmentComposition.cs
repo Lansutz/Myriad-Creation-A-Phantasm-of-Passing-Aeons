@@ -50,11 +50,12 @@ namespace CivilizationEvolution.Politics
     /// <summary>B2·中央权力·分配：有无中央机构/形态与职能</summary>
     public enum CentralInstitution
     {
-        None,               // 无常设：部落议事会/临时集会
+        None,               // 无常设：部落临时集会
         Court,              // 王庭：王室+近臣（宫廷决策）
-        Assembly,           // 议会：贵族院/公民院/两院
+        Assembly,           // 议会/元老院：公民或代表制（共和机构）
+        EldersCouncil,      // 长老议事会：长老资格制（部落/贵族传统——非共和）
         BureaucraticCore,   // 官僚中枢：宰相府/尚书台（文书行政）
-        ReligiousCouncil,   // 宗教会议：教廷/长老会
+        ReligiousCouncil,   // 宗教会议：教廷/长老会（教阶制）
         MilitaryCouncil     // 军事委员会：将领共议
     }
 
@@ -220,20 +221,20 @@ namespace CivilizationEvolution.Politics
         // ===== 正交组合示例（最高权力主体 ≠ 中央机构存在——两者独立组合） =====
 
         /// <summary>
-        /// 君主立宪（英式）：世袭君主+法理受限+任命/议会选举+议会+中央任命+征税司法
-        /// 君主存在，中央机构（议会）同样存在——最高权力与中央机构正交
+        /// 君主立宪（英式）：最高权力在议会（parliamentary sovereignty），
+        /// 君主仅为虚位元首（外交头衔/纯称号，不占成分）——A1 为选举/议会而非世袭
         /// </summary>
         public static GovernmentComposition ConstitutionalMonarchy()
         {
             return new GovernmentComposition
             {
-                supremeSuccession = new ComponentChoice((int)SupremeSuccession.Hereditary),
-                supremeScope = new ComponentChoice((int)SupremeScope.LegallyBound),
-                centralSuccession = new ComponentChoice((int)CentralSuccession.Appointed),
+                supremeSuccession = new ComponentChoice((int)SupremeSuccession.Election),
+                supremeScope = new ComponentChoice((int)SupremeScope.Consensual),
+                centralSuccession = new ComponentChoice((int)CentralSuccession.Elected),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.Assembly),
                 localSuccession = new ComponentChoice((int)LocalSuccession.CentralAppointed),
-                localScope = new ComponentChoice((int)LocalScope.FiscalJudicial),
-                successionLaw = InheritanceLaw.Primogeniture()
+                localScope = new ComponentChoice((int)LocalScope.FiscalJudicial)
+                // 世袭君主不在六维成分中——头衔（国王）为外交称号，不产生机制影响
             };
         }
 
@@ -317,7 +318,8 @@ namespace CivilizationEvolution.Politics
         {
             (int)CentralInstitution.None => "无常设",
             (int)CentralInstitution.Court => "王庭",
-            (int)CentralInstitution.Assembly => "议会",
+            (int)CentralInstitution.Assembly => "议会/元老院",
+            (int)CentralInstitution.EldersCouncil => "长老议事会",
             (int)CentralInstitution.BureaucraticCore => "官僚中枢",
             (int)CentralInstitution.ReligiousCouncil => "宗教会议",
             (int)CentralInstitution.MilitaryCouncil => "军事委员会",

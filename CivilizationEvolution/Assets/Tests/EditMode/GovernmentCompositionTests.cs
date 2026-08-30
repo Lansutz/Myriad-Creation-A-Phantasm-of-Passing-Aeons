@@ -102,13 +102,33 @@ namespace CivilizationEvolution.Tests
         // ===== 正交组合（最高权力主体 ≠ 中央机构——自由组合） =====
 
         [Test]
-        public void ConstitutionalMonarchy_MonarchWithAssembly()
+        public void ConstitutionalMonarchy_SovereigntyInParliament()
         {
-            // 君主立宪：君主存在 + 中央机构（议会）同样存在——正交组合
+            // 君主立宪：最高权力在议会（parliamentary sovereignty）——非世袭君主！
+            // 君主仅为虚位元首（外交头衔，不占成分）
             var comp = GovernmentComposition.ConstitutionalMonarchy();
-            Assert.AreEqual((int)SupremeSuccession.Hereditary, comp.supremeSuccession.primary, "君主存在");
-            Assert.AreEqual((int)CentralInstitution.Assembly, comp.centralInstitution.primary, "议会并存");
-            Assert.AreEqual((int)SupremeScope.LegallyBound, comp.supremeScope.primary, "法理受限（立宪）");
+            Assert.AreEqual((int)SupremeSuccession.Election, comp.supremeSuccession.primary,
+                "最高权力在议会（选举产生），不在君主");
+            Assert.AreEqual((int)SupremeScope.Consensual, comp.supremeScope.primary, "共议制约");
+            Assert.AreEqual((int)CentralInstitution.Assembly, comp.centralInstitution.primary, "议会机构");
+        }
+
+        [Test]
+        public void EldersCouncil_NotRepublican()
+        {
+            // 长老议事会（部落/长老资格制）≠ 议会/元老院（共和制）——独立机构形态
+            var comp = new GovernmentComposition
+            {
+                supremeSuccession = new ComponentChoice((int)SupremeSuccession.Designation),
+                centralInstitution = new ComponentChoice((int)CentralInstitution.EldersCouncil)
+            };
+            Assert.AreEqual((int)CentralInstitution.EldersCouncil, comp.centralInstitution.primary,
+                "长老议事会为独立选项（非共和制）");
+
+            var republic = GovernmentComposition.SenatorialRepublic();
+            Assert.AreNotEqual((int)CentralInstitution.EldersCouncil, republic.centralInstitution.primary,
+                "共和制（罗马）中央机构为元老院/议会，非长老会");
+            Assert.AreEqual((int)CentralInstitution.Assembly, republic.centralInstitution.primary);
         }
 
         [Test]
