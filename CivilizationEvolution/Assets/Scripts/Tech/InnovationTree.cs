@@ -20,6 +20,9 @@ namespace CivilizationEvolution.Tech
         private readonly Dictionary<int, float> _realmResearchPoints = new Dictionary<int, float>();
         private readonly Dictionary<int, int> _realmCurrentResearch = new Dictionary<int, int>();
 
+        /// <summary>革新完成事件（realmId, innovationId——阶层出现/政体改革等联动订阅）</summary>
+        public event System.Action<int, int> OnInnovationCompleted;
+
         public InnovationTree()
         {
             LoadFromRegistry();
@@ -110,6 +113,9 @@ namespace CivilizationEvolution.Tech
 
             if (_innovations.TryGetValue(innovationId, out var def))
                 Debug.Log($"[Innovation] 政权 {realmId} 完成研究：{def.GetName()}（{def.Domain}/{def.field}）");
+
+            // 完成事件（阶层出现检测/政体改革联动订阅）
+            OnInnovationCompleted?.Invoke(realmId, innovationId);
         }
 
         /// <summary>检查是否拥有革新</summary>
