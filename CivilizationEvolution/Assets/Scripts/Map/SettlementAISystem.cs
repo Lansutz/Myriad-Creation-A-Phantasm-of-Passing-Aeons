@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CivilizationEvolution.Core;
 using UnityEngine;
 
@@ -18,6 +18,17 @@ namespace CivilizationEvolution.Map
 
         /// <summary>每万人口最大聚落数</summary>
         public const float SettlementPer10kPopulation = 0.5f;
+
+        /// <summary>
+        /// 建筑可用性前置检查（地形/水文/群系限制）
+        /// 不符合条件的建筑AI不会建造，UI也不会显示
+        /// </summary>
+        private static bool CheckBuildingAvailability(BuildableType type, TileData tile,
+            BurgData existingBurg = null, int techLevel = 0)
+        {
+            var result = BuildingAvailabilitySystem.CheckAvailability(type, tile, existingBurg, techLevel);
+            return result.available;
+        }
 
         /// <summary>
         /// 计算地区城镇容量硬上限
@@ -135,6 +146,13 @@ namespace CivilizationEvolution.Map
             int currentFortCount, int maxForts)
         {
             var decision = new AIBuildDecision { shouldBuild = false, priority = 0f, reason = "" };
+
+            // 建筑可用性前置检查（地形/水文/群系限制）
+            if (!CheckBuildingAvailability(BuildableType.PassFort, tile))
+            {
+                decision.reason = "地形条件不满足关口堡修建要求";
+                return decision;
+            }
 
             // 必须是瓶颈节点
             if (bottleneck == BottleneckType.None)

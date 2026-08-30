@@ -18,7 +18,7 @@ namespace CivilizationEvolution.Map
         /// </summary>
         public static void DeriveInitialType(BurgData burg, TileData tile, int width, int height)
         {
-            if (burg == null || tile == null) return;
+            if (burg == null) return;
 
             // 1. 判定是否为瓶颈节点
             burg.bottleneckType = DetectBottleneck(tile, width, height);
