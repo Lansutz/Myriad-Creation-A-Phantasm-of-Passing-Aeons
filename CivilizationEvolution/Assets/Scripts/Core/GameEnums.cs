@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -99,7 +99,46 @@ namespace CivilizationEvolution.Core
             TemperateGrassland,  // 温带草原
             GravelGobi,          // 砾质戈壁
             Yardang,             // 风蚀城堡
-            LandBridgeIsthmus    // 陆桥地峡
+            LandBridgeIsthmus,    // 陆桥地峡
+
+            // ===== D系：海洋群系与特殊生境 =====
+            CoralReef,            // 珊瑚礁
+            KelpForest,           // 海带森林
+            SeagrassMeadow,       // 海草床
+            HydrothermalVent,     // 热液喷口
+            AbyssalPlain,         // 深海平原
+            OceanicTrench,        // 海沟
+            ContinentalShelf,     // 大陆架
+            ContinentalSlope,     // 大陆坡
+            MidOceanRidge,        // 洋中脊
+            SeaMount,             // 海山
+            Estuary,              // 河口湾
+            Lagoon,               // 潟湖
+            TidalFlat,            // 潮滩
+            UpwellingZone,        // 上升流区
+            PolarSea,             // 极地海域
+            SeaIce,               // 浮冰区
+            CloudForest,          // 云雾林
+            TropicalSeasonalForest, // 热带季雨林
+            TemperateMixedForest,   // 温带混交林
+            MediterraneanScrub,     // 地中海灌丛
+            Parkland,               // 疏林草原
+            TundraWetland,          // 苔原湿地
+            HotSpringOasis,         // 热泉绿洲
+            PermafrostPlateau,      // 永久冻土高原
+            Thermokarst,            // 热喀斯特
+            BadlandsDesert,         // 恶地荒漠
+            ErgSea,                 // 沙海
+            CalderaLake,            // 破火山口湖
+            GeyserField,            // 间歇泉区
+            TowerKarst,             // 峰林
+            GlacialValley,          // 冰川谷
+            RiftValley,             // 裂谷
+            CustomBiome1,           // 自定义群系1
+            CustomBiome2,           // 自定义群系2
+            CustomBiome3,           // 自定义群系3
+            CustomBiome4,           // 自定义群系4
+            CustomBiome5            // 自定义群系5
         }
 
         /// <summary>海洋分级</summary>
@@ -109,6 +148,8 @@ namespace CivilizationEvolution.Core
             Land,
             Coast,
             NearSea,
+            MidSea,
+            FarSea,
             DeepSea
         }
 

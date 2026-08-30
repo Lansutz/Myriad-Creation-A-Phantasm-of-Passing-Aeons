@@ -28,6 +28,7 @@ namespace CivilizationEvolution.Setup
         // 运行时创建的引用
         private GameWorld _world;
         private MapRenderer _renderer;
+        private SphericalMapRenderer _sphericalRenderer;
         private MapEditor _mapEditor;
         private EditorUIPanel _toolPanel;
         private MapGenerationPanel _genPanel;
@@ -38,6 +39,7 @@ namespace CivilizationEvolution.Setup
             CreateCamera();
             CreateWorld();
             CreateRenderer();
+            CreateSphericalRenderer();
             CreateMapEditor();
             CreateCanvasAndPanels();
             ConnectPanelCallbacks();
@@ -93,6 +95,17 @@ namespace CivilizationEvolution.Setup
             _renderer.BindWorld(_world);
         }
 
+        // ===== 创建SphericalMapRenderer（默认隐藏） =====
+        private void CreateSphericalRenderer()
+        {
+            var sphereGo = new GameObject("SphericalMapRenderer");
+            sphereGo.transform.SetParent(_world.transform, false);
+            _sphericalRenderer = sphereGo.AddComponent<SphericalMapRenderer>();
+            _sphericalRenderer.planarRenderer = _renderer;
+            _sphericalRenderer.radius = 50f;
+            sphereGo.SetActive(false); // 默认平面模式
+        }
+
         // ===== 创建MapEditor（画笔工具，普通类非MonoBehaviour） =====
         private void CreateMapEditor()
         {
@@ -131,7 +144,26 @@ namespace CivilizationEvolution.Setup
                 () => { _world.GenerateTerrainWithConfig(); _renderer.ForceRefresh(); },
                 () => { _world.CalculateClimate(); _renderer.ForceRefresh(); },
                 () => { _world.RecalculateHydrology(); _renderer.ForceRefresh(); },
-                mode => { _renderer.SetProjectionMode((MapRenderer.MapProjectionMode)mode); }
+                mode =>
+                {
+                    bool isSpherical = (MapRenderer.MapProjectionMode)mode == MapRenderer.MapProjectionMode.Spherical;
+                    _renderer.gameObject.SetActive(!isSpherical);
+                    _sphericalRenderer.gameObject.SetActive(isSpherical);
+                    if (isSpherical)
+                    {
+                        _sphericalRenderer.RefreshTexture();
+                        _camera.orthographic = false; // 球形用透视相机
+                        _camera.fieldOfView = 60f;
+                        _camera.transform.position = new Vector3(0f, 0f, -120f);
+                    }
+                    else
+                    {
+                        _camera.orthographic = true; // 平面用正交相机
+                        _camera.orthographicSize = cameraSize;
+                        _camera.transform.position = new Vector3(0f, 0f, -10f);
+                    }
+                    _renderer.SetProjectionMode((MapRenderer.MapProjectionMode)mode);
+                }
             );
             _genPanel.Show();
         }

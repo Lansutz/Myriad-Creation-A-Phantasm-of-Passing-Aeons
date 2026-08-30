@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CivilizationEvolution.Map;
 using CivilizationEvolution.Render;
 using MapEditor = CivilizationEvolution.Render.MapEditor;
@@ -265,6 +265,18 @@ namespace CivilizationEvolution.UI
             loadBtn.onClick.AddListener(() => {
                 if (_saveSystem != null && !string.IsNullOrEmpty(_saveNameInput.text))
                     _saveSystem.LoadMap(_saveNameInput.text);
+            });
+            y -= 34f;
+
+            // 重算海洋按钮（绘制完陆地后重新计算海洋等级）
+            var recalcOceanBtn = CreateButton(_panelRoot.transform, "重算海洋",
+                new Vector2(10f, y), new Vector2(contentWidth, 26f));
+            recalcOceanBtn.onClick.AddListener(() => {
+                if (_editor != null)
+                {
+                    _editor.RecalculateOceanZones();
+                    if (_renderer != null) _renderer.ForceRefresh();
+                }
             });
             y -= 34f;
 

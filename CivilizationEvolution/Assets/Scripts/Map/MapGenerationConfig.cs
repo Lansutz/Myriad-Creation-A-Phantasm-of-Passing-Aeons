@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace CivilizationEvolution.Map
@@ -47,7 +47,7 @@ namespace CivilizationEvolution.Map
         [Range(20, 2000)] public int ProvinceCount = 200;
 
         [Tooltip("平均每个省份的地块数量。地块是省界划分的最小调整单位，不参与模拟。总地块数=省份数×每省地块数。")]
-        [Range(4, 100)] public int TilesPerProvince = 12;
+        [Range(8, 200)] public int TilesPerProvince = 24;
 
         [Tooltip("大陆布局形态。单陆=一块主大陆；双陆=两块大陆；环形陆地=大陆环绕中央海；成片群岛=无大块陆地。")]
         public ContinentShape Shape = ContinentShape.SingleLandmass;
@@ -66,14 +66,16 @@ namespace CivilizationEvolution.Map
         /// <summary>地图尺寸预设</summary>
         public enum MapSizePreset
         {
-            [Tooltip("小地图：128×64=8192地块。快速生成，适合测试。")]
+            [Tooltip("微型：256×128=32768地块。快速测试用。")]
+            Tiny,
+            [Tooltip("小型：512×256=131072地块。平衡性能与细节。")]
             Small,
-            [Tooltip("中地图：256×128=32768地块。平衡性能与细节，默认推荐。")]
+            [Tooltip("中型：1024×512=524288地块。默认推荐，细节丰富。")]
             Medium,
-            [Tooltip("大地图：512×256=131072地块。细节丰富，生成较慢。")]
+            [Tooltip("大型：2048×1024=2097152地块。大战略地图，生成较慢。")]
             Large,
-            [Tooltip("超大地图：1024×512=524288地块。极致细节，生成很慢。")]
-            ExtraLarge
+            [Tooltip("巨型：4096×2048=8388608地块。极致细节，需高性能电脑。")]
+            Huge
         }
 
         /// <summary>大陆布局形态</summary>
@@ -94,11 +96,12 @@ namespace CivilizationEvolution.Map
         {
             return MapSize switch
             {
-                MapSizePreset.Small => (128, 64),
-                MapSizePreset.Medium => (256, 128),
-                MapSizePreset.Large => (512, 256),
-                MapSizePreset.ExtraLarge => (1024, 512),
-                _ => (256, 128)
+                MapSizePreset.Tiny => (256, 128),
+                MapSizePreset.Small => (512, 256),
+                MapSizePreset.Medium => (1024, 512),
+                MapSizePreset.Large => (2048, 1024),
+                MapSizePreset.Huge => (4096, 2048),
+                _ => (1024, 512)
             };
         }
 

@@ -239,7 +239,7 @@ namespace CivilizationEvolution.UI
             CreateLabel("地图尺寸", y);
             _mapSizeDropdown = CreateDropdown(_panelRoot.transform,
                 new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f),
-                new List<string> { "小 128×64", "中 256×128", "大 512×256", "超大 1024×512" });
+                new List<string> { "微型 256×128", "小型 512×256", "中型 1024×512", "大型 2048×1024", "巨型 4096×2048" });
             _mapSizeDropdown.onValueChanged.AddListener(v => { _config.MapSize = (MapGenerationConfig.MapSizePreset)v; UpdateStatus("地图尺寸已更新"); });
             y -= 32f;
 
@@ -345,7 +345,7 @@ namespace CivilizationEvolution.UI
 
         private float CreateProvinceSection(float y)
         {
-            y = CreateSliderRow("省份数量", 20f, 500f, out _provinceCountSlider, out _provinceCountText, y,
+            y = CreateSliderRow("省份数量", 50f, 8000f, out _provinceCountSlider, out _provinceCountText, y,
                 v => { _config.ProvinceCount = (int)v; });
             y = CreateSliderRow("大小差异", 0f, 1f, out _provinceSizeVarSlider, out _provinceSizeVarText, y,
                 v => { _config.ProvinceSizeVariance = v; });

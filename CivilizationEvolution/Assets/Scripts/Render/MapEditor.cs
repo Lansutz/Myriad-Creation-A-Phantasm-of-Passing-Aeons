@@ -470,5 +470,131 @@ namespace CivilizationEvolution.Render
             }
             return result;
         }
+
+        // ===== 海洋地块重算 =====
+        /// <summary>
+        /// 重新计算所有海洋地块的等级（海岸/近海/中海/远海/深海）
+        /// 使用多源BFS从陆地出发计算每个海洋格到最近陆地的距离
+        /// 绘制完陆地后调用此方法，用于海军和贸易系统
+        /// </summary>
+        public void RecalculateOceanZones()
+        {
+            int w = _world.mapWidth;
+            int h = _world.mapHeight;
+            int total = w * h;
+
+            // 距离数组：-1表示未访问，陆地格距离为0
+            int[] dist = new int[total];
+            for (int i = 0; i < total; i++) dist[i] = -1;
+
+            // BFS队列：先把所有陆地格入队（距离0）
+            var queue = new Queue<int>();
+            for (int i = 0; i < total; i++)
+            {
+                if (_world.tiles[i].isLand)
+                {
+                    dist[i] = 0;
+                    queue.Enqueue(i);
+                }
+            }
+
+            // 4方向邻居（上下左右）
+            int[] dx = { 0, 0, -1, 1 };
+            int[] dy = { -1, 1, 0, 0 };
+
+            // 多源BFS
+            while (queue.Count > 0)
+            {
+                int cur = queue.Dequeue();
+                int cx = cur % w;
+                int cy = cur / w;
+
+                for (int d = 0; d < 4; d++)
+                {
+                    int nx = cx + dx[d];
+                    int ny = cy + dy[d];
+
+                    // 左右环绕（柱面/环面）
+                    if (_world.wrapMode == MapWrapMode.Cylindrical || _world.wrapMode == MapWrapMode.Toroidal)
+                        nx = (nx + w) % w;
+                    if (_world.wrapMode == MapWrapMode.Toroidal)
+                        ny = (ny + h) % h;
+
+                    // 平面模式边界检查
+                    if (_world.wrapMode == MapWrapMode.Flat)
+                    {
+                        if (nx < 0 || nx >= w || ny < 0 || ny >= h) continue;
+                    }
+
+                    int nidx = ny * w + nx;
+                    if (dist[nidx] == -1)
+                    {
+                        dist[nidx] = dist[cur] + 1;
+                        queue.Enqueue(nidx);
+                    }
+                }
+            }
+
+            // 根据距离设置海洋等级
+            int coastCount = 0, nearCount = 0, midCount = 0, farCount = 0, deepCount = 0;
+            for (int i = 0; i < total; i++)
+            {
+                ref TileData tile = ref _world.tiles[i];
+                if (tile.isLand)
+                {
+                    tile.oceanTier = GameEnums.OceanTier.Land;
+                    tile.isCoast = false;
+                    tile.oceanDepth01 = 0f;
+                    continue;
+                }
+
+                int d = dist[i];
+                tile.isCoast = (d == 1); // 紧邻陆地的海洋格
+
+                if (d <= 1)
+                {
+                    tile.oceanTier = GameEnums.OceanTier.Coast;
+                    tile.oceanDepth01 = 0.1f;
+                    coastCount++;
+                }
+                else if (d <= 3)
+                {
+                    tile.oceanTier = GameEnums.OceanTier.NearSea;
+                    tile.oceanDepth01 = 0.25f;
+                    nearCount++;
+                }
+                else if (d <= 6)
+                {
+                    tile.oceanTier = GameEnums.OceanTier.MidSea;
+                    tile.oceanDepth01 = 0.45f;
+                    midCount++;
+                }
+                else if (d <= 11)
+                {
+                    tile.oceanTier = GameEnums.OceanTier.FarSea;
+                    tile.oceanDepth01 = 0.7f;
+                    farCount++;
+                }
+                else
+                {
+                    tile.oceanTier = GameEnums.OceanTier.DeepSea;
+                    tile.oceanDepth01 = Mathf.Clamp01(0.85f + d * 0.01f);
+                    deepCount++;
+                }
+            }
+
+            Debug.Log($"[MapEditor] 海洋重算完成: 海岸{coastCount} 近海{nearCount} 中海{midCount} 远海{farCount} 深海{deepCount}");
+        }
+
+        /// <summary>获取指定海洋等级的地块数量</summary>
+        public int GetOceanTileCount(GameEnums.OceanTier tier)
+        {
+            int count = 0;
+            for (int i = 0; i < _world.tiles.Length; i++)
+            {
+                if (_world.tiles[i].oceanTier == tier) count++;
+            }
+            return count;
+        }
     }
 }
