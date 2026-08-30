@@ -70,8 +70,8 @@ namespace CivilizationEvolution.Politics
         private static readonly List<int> C1Elected = new List<int> { 980, 500 };
         /// <summary>世袭领有：封建制度/庄园</summary>
         private static readonly List<int> C1Hereditary = new List<int> { 501, 952 };
-        /// <summary>城市特许：自由城市（城市特许——暂无独立革新，用铸币/贸易）</summary>
-        private static readonly List<int> C1CityCharter = new List<int> { 701, 700 };
+        /// <summary>城市特许：城市特许状（994——自由城市制度革新）</summary>
+        private static readonly List<int> C1CityCharter = new List<int> { 994 };
 
         // ===== C2 地方权力·分配 =====
         /// <summary>全权自治：部落联盟/邦联（自治传统）</summary>

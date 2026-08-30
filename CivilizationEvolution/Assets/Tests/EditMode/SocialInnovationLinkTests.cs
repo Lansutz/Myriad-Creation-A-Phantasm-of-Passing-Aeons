@@ -161,5 +161,90 @@ namespace CivilizationEvolution.Tests
             Assert.IsTrue(PolityComponentInnovations.IsComponentAvailable(
                 PolityComponentInnovations.PolityDimension.CentralSuccession, (int)CentralSuccession.Examination, null, 1), "未注入革新树时宽松可用");
         }
+
+        // ===== 文化传统 × 革新前置 + 族群革新挂载 + 城市特许 =====
+
+        [Test]
+        public void Tradition_RequiresInnovations()
+        {
+            // 用户定稿：革新与文化传统互相约束——必须持有革新才能持有传统
+            Assert.IsTrue(ContentRegistry.TryGetTradition("trad_agrarian_rites", out var agrarian));
+            Assert.IsTrue(agrarian.requiredInnovations.Contains(100), "农耕礼俗需刀耕火种");
+
+            Assert.IsTrue(ContentRegistry.TryGetTradition("trad_ancestor_cult", out var ancestor));
+            Assert.IsTrue(ancestor.requiredInnovations.Contains(809), "祖先崇拜需宗族祭祀");
+
+            Assert.IsTrue(ContentRegistry.TryGetTradition("trad_pastoral_riding", out var riding));
+            Assert.IsTrue(riding.requiredInnovations.Contains(922), "游牧骑术需马的驯化");
+
+            // 全部 11 条传统都有前置（互相约束全覆盖）
+            foreach (var trad in ContentRegistry.Traditions.Values)
+            {
+                Assert.That(trad.requiredInnovations.Count, Is.GreaterThan(0),
+                    $"传统 {trad.traditionId} 应有革新前置");
+            }
+        }
+
+        [Test]
+        public void EthnicGroup_InnovationsMounted_NotPillar()
+        {
+            // 革新挂载在族群上但非支柱（支柱=族群精神/语言/文化传统）
+            Assert.IsTrue(ContentRegistry.TryGetEthnicGroup("ethnos_laethis", out var group));
+            Assert.IsTrue(group.innovationIds.Contains(600), "族群拥有文字革新");
+            Assert.IsTrue(group.innovationIds.Contains(100), "族群拥有刀耕火种");
+
+            // 支柱字段仍为原三件套
+            Assert.AreEqual("ethos_scholarly", group.ethosId, "族群精神=支柱");
+            Assert.AreEqual("laethis_lang", group.languageId, "语言=支柱");
+            Assert.That(group.traditionIds.Count, Is.GreaterThan(0), "文化传统=支柱");
+        }
+
+        [Test]
+        public void LearningDifficulty_PrerequisiteCompletion()
+        {
+            // 无前置革新=1.0（没有困难）
+            Assert.That(_tree.GetLearningDifficulty(1, 902), Is.EqualTo(1f).Within(0.001f), "石器打制无前置");
+
+            // 缺前置：0.4 + 0.6×完成比例（轮作制 102 前置仅休耕制 101：0 完成=0.4）
+            Assert.That(_tree.GetLearningDifficulty(1, 102), Is.EqualTo(0.4f).Within(0.001f), "缺前置学习慢");
+
+            // 完成前置链后=1.0（速度快）
+            Complete(_tree, 100);
+            Complete(_tree, 101);
+            Assert.That(_tree.GetLearningDifficulty(1, 102), Is.EqualTo(1f).Within(0.001f), "前置全完成速度快");
+        }
+
+        [Test]
+        public void EffectiveRate_DifficultyAndAffinity()
+        {
+            // Laethis 文化亲和 Agriculture/Craft/Script（field 级）
+            Assert.IsTrue(ContentRegistry.TryGetCulture(1, out var pack));
+            var culture = pack.data;
+
+            // 农耕革新（field=Agriculture）亲和 → ×1.25；无前置难度 1.0
+            float rate = _tree.GetEffectiveResearchRate(1, 100, 10f, culture);
+            Assert.That(rate, Is.EqualTo(12.5f).Within(0.001f), "亲和加成 1.25");
+
+            // 无亲和文化（临时造一个空亲和）→ 无加成
+            var noAffinity = new CultureData { cultureId = 99, cultureName = "无亲和", innovationAffinities = new List<string>() };
+            float rate2 = _tree.GetEffectiveResearchRate(1, 100, 10f, noAffinity);
+            Assert.That(rate2, Is.EqualTo(10f).Within(0.001f), "无亲和无加成");
+        }
+
+        [Test]
+        public void CityCharter_IsInstitutionInnovation()
+        {
+            // 城市特许=独立制度革新（用户定稿）
+            var def = _tree.GetInnovation(994);
+            Assert.IsNotNull(def, "城市特许状应存在");
+            Assert.AreEqual(InnovationField.Governance, def.field, "城市特许=制度-政制");
+            Assert.IsTrue(def.prerequisites.Contains(701), "前置铸币");
+            Assert.IsTrue(def.prerequisites.Contains(505), "前置成文法（特许状=法律文书）");
+
+            // C1.CityCharter 支撑革新=994
+            Assert.IsTrue(PolityComponentInnovations.GetRequiredInnovations(
+                PolityComponentInnovations.PolityDimension.LocalSuccession,
+                (int)LocalSuccession.CityCharter).Contains(994), "城市特许成分由特许状革新支撑");
+        }
     }
 }

@@ -149,6 +149,63 @@ namespace CivilizationEvolution.Tech
             return result;
         }
 
+        // ===== 学习速率机制（用户定稿：速率由多种参数共同构成） =====
+
+        /// <summary>
+        /// 学习难度（前置完成比例 0~1）：
+        /// 前置全完成=1.0（没有困难，速度很快）；缺前置=0.4 + 0.6×完成比例
+        /// （需要花时间——超前学习/链未补齐时学习慢）
+        /// </summary>
+        public float GetLearningDifficulty(int realmId, int innovationId)
+        {
+            if (!_innovations.TryGetValue(innovationId, out var def)) return 0f;
+
+            int total = def.prerequisites.Count;
+            int done = 0;
+            foreach (int prereq in def.prerequisites)
+                if (HasInnovation(realmId, prereq)) done++;
+
+            // OR 前置：任一满足即算完成
+            if (def.prerequisitesAny != null && def.prerequisitesAny.Count > 0)
+            {
+                total += 1;
+                bool anyMet = false;
+                foreach (int alt in def.prerequisitesAny)
+                    if (HasInnovation(realmId, alt)) { anyMet = true; break; }
+                if (anyMet) done++;
+            }
+
+            if (total == 0) return 1f;
+            float ratio = (float)done / total;
+            return 0.4f + 0.6f * ratio;
+        }
+
+        /// <summary>
+        /// 有效研究速率（用户定稿：速率=基础×学习难度×文化亲和加成）
+        /// 文化亲和：革新的 field 名 或 affinityTags 与文化的 innovationAffinities
+        /// 匹配 → ×1.25（Laethis 亲和 Agriculture/Craft/Script 是 field 级；
+        /// Clay/Manor 等是节点级标签——两级都查）
+        /// </summary>
+        public float GetEffectiveResearchRate(int realmId, int innovationId, float baseRate,
+            Culture.CultureData culture)
+        {
+            float rate = baseRate * GetLearningDifficulty(realmId, innovationId);
+
+            if (culture != null && _innovations.TryGetValue(innovationId, out var def))
+            {
+                bool affinity = culture.HasInnovationAffinity(def.field.ToString());
+                if (!affinity && def.affinityTags != null)
+                {
+                    foreach (var tag in def.affinityTags)
+                    {
+                        if (culture.HasInnovationAffinity(tag)) { affinity = true; break; }
+                    }
+                }
+                if (affinity) rate *= 1.25f;
+            }
+            return rate;
+        }
+
         /// <summary>获取某大类的全部革新（AI 偏好/UI 筛选用）</summary>
         public List<InnovationDef> GetInnovationsByDomain(InnovationDomain domain)
         {

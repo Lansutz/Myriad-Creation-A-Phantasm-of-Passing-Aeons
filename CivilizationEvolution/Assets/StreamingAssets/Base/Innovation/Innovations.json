@@ -1929,6 +1929,20 @@
       "affinityTags": [],
       "innovationName": "星盘导航",
       "description": "观星定纬、测角知位（伊斯兰星盘传欧）；远洋有了天上的路标。"
+    },
+    {
+      "innovationId": 994,
+      "field": 14,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        701,
+        505
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "城市特许状",
+      "description": "领主颁赐特许状，城市自治、市民免赋役（中世纪自由城市）；城墙内的公民有了自己的法度。"
     }
   ]
 }

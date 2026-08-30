@@ -51,6 +51,10 @@ namespace CivilizationEvolution.Core
         public List<EffectEntry> effects = new List<EffectEntry>();
         /// <summary>互斥传统（同族群不可同时承载）</summary>
         public List<string> incompatibleWith = new List<string>();
+        /// <summary>
+        /// 解锁前置革新（用户定稿：革新与文化传统互相约束——必须持有革新才能持有传统）
+        /// </summary>
+        public List<int> requiredInnovations = new List<int>();
 
         public string GetName() => Localization.Get(traditionId + "_name");
         public string GetDescription() => Localization.Get(traditionId + "_desc");
@@ -90,6 +94,11 @@ namespace CivilizationEvolution.Core
         public string languageId;
         /// <summary>文化传统列表（TraditionDef.traditionId）</summary>
         public List<string> traditionIds = new List<string>();
+        /// <summary>
+        /// 族群拥有的革新（innovationId 列表——挂载在族群上但**不属于支柱**；
+        /// 支柱=族群精神/语言/文化传统；革新增益于族群研究起始点）
+        /// </summary>
+        public List<int> innovationIds = new List<int>();
 
         public string GetName() => Localization.Get(groupId + "_name");
         public string GetDescription() => Localization.Get(groupId + "_desc");

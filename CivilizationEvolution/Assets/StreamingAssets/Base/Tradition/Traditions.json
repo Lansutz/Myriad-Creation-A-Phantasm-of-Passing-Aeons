@@ -1,15 +1,190 @@
 {
   "traditions": [
-    { "traditionId": "trad_agrarian_rites", "effects": [ { "key": "fertility", "value": 0.05 }, { "key": "agriculture", "value": 0.1 } ] },
-    { "traditionId": "trad_pastoral_riding", "effects": [ { "key": "cavalry", "value": 0.1 }, { "key": "mobility", "value": 0.05 } ] },
-    { "traditionId": "trad_maritime_trade", "effects": [ { "key": "trade", "value": 0.15 }, { "key": "navy", "value": 0.05 } ] },
-    { "traditionId": "trad_craft_guild", "effects": [ { "key": "craft", "value": 0.1 }, { "key": "development", "value": 0.05 } ] },
-    { "traditionId": "trad_ancestor_cult", "effects": [ { "key": "unity", "value": 0.05 }, { "key": "faith_influence", "value": 0.05 } ], "incompatibleWith": [ "trad_iconoclast" ] },
-    { "traditionId": "trad_iconoclast", "effects": [ { "key": "piety", "value": 0.08 }, { "key": "order", "value": -0.05 } ], "incompatibleWith": [ "trad_ancestor_cult" ] },
-    { "traditionId": "trad_epic_oral", "effects": [ { "key": "learning", "value": 0.05 }, { "key": "prestige", "value": 0.05 } ] },
-    { "traditionId": "trad_council_assembly", "effects": [ { "key": "order", "value": 0.05 }, { "key": "class_relation", "value": 0.05 }, { "key": "expansion", "value": -0.05 } ] },
-    { "traditionId": "trad_communal_field", "effects": [ { "key": "fertility", "value": 0.05 }, { "key": "unity", "value": 0.05 } ] },
-    { "traditionId": "trad_war_bands", "effects": [ { "key": "levy", "value": 0.1 }, { "key": "loyalty", "value": 0.05 } ] },
-    { "traditionId": "trad_boundary_rites", "effects": [ { "key": "stability", "value": 0.05 }, { "key": "order", "value": 0.05 } ] }
+    {
+      "traditionId": "trad_agrarian_rites",
+      "effects": [
+        {
+          "key": "fertility",
+          "value": 0.05
+        },
+        {
+          "key": "agriculture",
+          "value": 0.1
+        }
+      ],
+      "requiredInnovations": [
+        100
+      ]
+    },
+    {
+      "traditionId": "trad_pastoral_riding",
+      "effects": [
+        {
+          "key": "cavalry",
+          "value": 0.1
+        },
+        {
+          "key": "mobility",
+          "value": 0.05
+        }
+      ],
+      "requiredInnovations": [
+        922
+      ]
+    },
+    {
+      "traditionId": "trad_maritime_trade",
+      "effects": [
+        {
+          "key": "trade",
+          "value": 0.15
+        },
+        {
+          "key": "navy",
+          "value": 0.05
+        }
+      ],
+      "requiredInnovations": [
+        401
+      ]
+    },
+    {
+      "traditionId": "trad_craft_guild",
+      "effects": [
+        {
+          "key": "craft",
+          "value": 0.1
+        },
+        {
+          "key": "development",
+          "value": 0.05
+        }
+      ],
+      "requiredInnovations": [
+        200
+      ]
+    },
+    {
+      "traditionId": "trad_ancestor_cult",
+      "effects": [
+        {
+          "key": "unity",
+          "value": 0.05
+        },
+        {
+          "key": "faith_influence",
+          "value": 0.05
+        }
+      ],
+      "incompatibleWith": [
+        "trad_iconoclast"
+      ],
+      "requiredInnovations": [
+        809
+      ]
+    },
+    {
+      "traditionId": "trad_iconoclast",
+      "effects": [
+        {
+          "key": "piety",
+          "value": 0.08
+        },
+        {
+          "key": "order",
+          "value": -0.05
+        }
+      ],
+      "incompatibleWith": [
+        "trad_ancestor_cult"
+      ],
+      "requiredInnovations": [
+        601
+      ]
+    },
+    {
+      "traditionId": "trad_epic_oral",
+      "effects": [
+        {
+          "key": "learning",
+          "value": 0.05
+        },
+        {
+          "key": "prestige",
+          "value": 0.05
+        }
+      ],
+      "requiredInnovations": [
+        815
+      ]
+    },
+    {
+      "traditionId": "trad_council_assembly",
+      "effects": [
+        {
+          "key": "order",
+          "value": 0.05
+        },
+        {
+          "key": "class_relation",
+          "value": 0.05
+        },
+        {
+          "key": "expansion",
+          "value": -0.05
+        }
+      ],
+      "requiredInnovations": [
+        500
+      ]
+    },
+    {
+      "traditionId": "trad_communal_field",
+      "effects": [
+        {
+          "key": "fertility",
+          "value": 0.05
+        },
+        {
+          "key": "unity",
+          "value": 0.05
+        }
+      ],
+      "requiredInnovations": [
+        100
+      ]
+    },
+    {
+      "traditionId": "trad_war_bands",
+      "effects": [
+        {
+          "key": "levy",
+          "value": 0.1
+        },
+        {
+          "key": "loyalty",
+          "value": 0.05
+        }
+      ],
+      "requiredInnovations": [
+        300
+      ]
+    },
+    {
+      "traditionId": "trad_boundary_rites",
+      "effects": [
+        {
+          "key": "stability",
+          "value": 0.05
+        },
+        {
+          "key": "order",
+          "value": 0.05
+        }
+      ],
+      "requiredInnovations": [
+        800
+      ]
+    }
   ]
 }
