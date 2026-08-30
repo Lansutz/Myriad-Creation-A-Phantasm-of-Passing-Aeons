@@ -387,6 +387,20 @@ namespace CivilizationEvolution.Politics
                             new SubOption { name = "自治市议会", value = 2, description = "自治市议会选举" }
                         }
                     });
+                    // 考试 → 考试体系（官僚体系精英选拔）
+                    groups.Add(new SubOptionGroup
+                    {
+                        groupName = "考试体系",
+                        parentDimension = "LocalSuccession",
+                        parentValue = (int)LocalSuccession.Examination,
+                        options = new List<SubOption>
+                        {
+                            new SubOption { name = "科举制", value = 0, description = "中式科举——分科考试选拔文官" },
+                            new SubOption { name = "文官考试", value = 1, description = "近代文官考试制度" },
+                            new SubOption { name = "荐举制", value = 2, description = "地方荐举+中央考核（察举制）" },
+                            new SubOption { name = "九品中正", value = 3, description = "中正官评定品级（魏晋式）" }
+                        }
+                    });
                     // 城市特许 → 特许类型（可选项）
                     groups.Add(new SubOptionGroup
                     {
