@@ -1943,6 +1943,156 @@
       "affinityTags": [],
       "innovationName": "城市特许状",
       "description": "领主颁赐特许状，城市自治、市民免赋役（中世纪自由城市）；城墙内的公民有了自己的法度。"
+    },
+    {
+      "innovationId": 995,
+      "field": 18,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [
+        500
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "军队编制",
+      "description": "什伍相连、十夫百夫层层有长（部落武装的制度化）；散兵游勇从此有了编制。"
+    },
+    {
+      "innovationId": 998,
+      "field": 18,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        995,
+        505
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "军功爵制",
+      "description": "斩首赐爵、战功授田（秦二十等爵）；耕战之民有了上升之阶。"
+    },
+    {
+      "innovationId": 1002,
+      "field": 18,
+      "era": 3,
+      "researchCost": 450,
+      "prerequisites": [
+        995,
+        502
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "常备军",
+      "description": "脱产职业军人，国家供养（罗马军团）；平时也握刀的军队。"
+    },
+    {
+      "innovationId": 1003,
+      "field": 18,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        995,
+        701
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "募兵制",
+      "description": "金钱募勇、佣兵从征（雇佣兵）；兵为钱卖，亦为钱叛。"
+    },
+    {
+      "innovationId": 996,
+      "field": 18,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [
+        500
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "号角军令",
+      "description": "号角旗鼓传令进退（金鼓之节）；千军万马听一个声音。"
+    },
+    {
+      "innovationId": 999,
+      "field": 18,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        800,
+        996
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "烽燧传警",
+      "description": "烽火相望、昼夜传警（长城烽燧）；边警一日千里。"
+    },
+    {
+      "innovationId": 1005,
+      "field": 18,
+      "era": 3,
+      "researchCost": 300,
+      "prerequisites": [
+        823,
+        996
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "急递铺",
+      "description": "十里一铺、铺铺换马接力（宋元急递）；军情文书昼夜兼程。"
+    },
+    {
+      "innovationId": 997,
+      "field": 18,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        807
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "粮秣辎重",
+      "description": "粮车辎队随军而行（车兵粮道）；兵马未动，粮草先行。"
+    },
+    {
+      "innovationId": 1000,
+      "field": 18,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        997,
+        808
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "兵站补给",
+      "description": "沿线设站储粮转运（补给线）；远征之师不断炊。"
+    },
+    {
+      "innovationId": 1001,
+      "field": 7,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        919
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "驮运畜力",
+      "description": "骡马骆驼载货随行（驮队）；大漠商道与军道同源。"
+    },
+    {
+      "innovationId": 1004,
+      "field": 18,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        997,
+        100
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "军屯",
+      "description": "戍卒屯田自给（军屯）；兵农合一，边地自养。"
     }
   ]
 }

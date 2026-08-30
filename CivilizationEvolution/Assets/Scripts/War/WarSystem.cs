@@ -28,6 +28,12 @@ namespace CivilizationEvolution.War
 
         // 地形偏好
         public Dictionary<GameEnums.TerrainTacticType, float> terrainModifiers;
+
+        /// <summary>
+        /// 解锁前置革新（用户定稿：兵种必须有对应革新才能征募——重骑兵需马镫等）
+        /// 由 AddUnitDef 赋值（struct 不能带字段初始化器）
+        /// </summary>
+        public List<int> requiredInnovations;
     }
 
     /// <summary>军团（兵力块集合）</summary>

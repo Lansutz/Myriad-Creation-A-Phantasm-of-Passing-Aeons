@@ -626,24 +626,24 @@ namespace CivilizationEvolution.Core
 
         private void InitializeUnitDefs()
         {
-            // 步兵
+            // 步兵（兵种×革新：重装需铁制武器、精锐需炼钢、弩手需弩）
             AddUnitDef(100, "轻装步兵", GameEnums.UnitCategory.Infantry, 1, 10f, 0f, 8f, 60f, 2f, 1f, 50f, 1f);
-            AddUnitDef(101, "重装步兵", GameEnums.UnitCategory.Infantry, 2, 15f, 0f, 15f, 70f, 1.5f, 1.5f, 80f, 1.5f);
-            AddUnitDef(102, "精锐步兵", GameEnums.UnitCategory.Infantry, 3, 20f, 0f, 22f, 80f, 1.2f, 2f, 120f, 2f);
-            AddUnitDef(110, "弓箭手", GameEnums.UnitCategory.Infantry, 1, 5f, 12f, 6f, 50f, 2f, 0.8f, 40f, 1f);
-            AddUnitDef(111, "弩手", GameEnums.UnitCategory.Infantry, 2, 6f, 18f, 8f, 55f, 1.5f, 1f, 60f, 1.2f);
-            // 骑兵
-            AddUnitDef(200, "轻骑兵", GameEnums.UnitCategory.Cavalry, 1, 12f, 5f, 8f, 65f, 4f, 1.5f, 60f, 1f);
-            AddUnitDef(201, "重骑兵", GameEnums.UnitCategory.Cavalry, 2, 20f, 8f, 18f, 75f, 3f, 2.5f, 100f, 1.5f);
-            AddUnitDef(202, "精锐骑兵", GameEnums.UnitCategory.Cavalry, 3, 28f, 10f, 25f, 85f, 2.5f, 3f, 150f, 2f);
+            AddUnitDef(101, "重装步兵", GameEnums.UnitCategory.Infantry, 2, 15f, 0f, 15f, 70f, 1.5f, 1.5f, 80f, 1.5f, 301);
+            AddUnitDef(102, "精锐步兵", GameEnums.UnitCategory.Infantry, 3, 20f, 0f, 22f, 80f, 1.2f, 2f, 120f, 2f, 203);
+            AddUnitDef(110, "弓箭手", GameEnums.UnitCategory.Infantry, 1, 5f, 12f, 6f, 50f, 2f, 0.8f, 40f, 1f, 907);
+            AddUnitDef(111, "弩手", GameEnums.UnitCategory.Infantry, 2, 6f, 18f, 8f, 55f, 1.5f, 1f, 60f, 1.2f, 304);
+            // 骑兵（轻骑需骑乘术、重骑需马镫——用户点名、精锐需重装骑兵）
+            AddUnitDef(200, "轻骑兵", GameEnums.UnitCategory.Cavalry, 1, 12f, 5f, 8f, 65f, 4f, 1.5f, 60f, 1f, 923);
+            AddUnitDef(201, "重骑兵", GameEnums.UnitCategory.Cavalry, 2, 20f, 8f, 18f, 75f, 3f, 2.5f, 100f, 1.5f, 924);
+            AddUnitDef(202, "精锐骑兵", GameEnums.UnitCategory.Cavalry, 3, 28f, 10f, 25f, 85f, 2.5f, 3f, 150f, 2f, 303);
             // 水军
-            AddUnitDef(300, "桨帆船", GameEnums.UnitCategory.Navy, 1, 15f, 10f, 10f, 60f, 3f, 2f, 80f, 1f);
-            AddUnitDef(301, "帆船战舰", GameEnums.UnitCategory.Navy, 2, 20f, 15f, 15f, 70f, 4f, 2.5f, 120f, 1.5f);
+            AddUnitDef(300, "桨帆船", GameEnums.UnitCategory.Navy, 1, 15f, 10f, 10f, 60f, 3f, 2f, 80f, 1f, 402);
+            AddUnitDef(301, "帆船战舰", GameEnums.UnitCategory.Navy, 2, 20f, 15f, 15f, 70f, 4f, 2.5f, 120f, 1.5f, 405);
         }
 
         private void AddUnitDef(int id, string name, GameEnums.UnitCategory category, int tier,
             float melee, float ranged, float def, float morale, float speed, float supply,
-            float manpower, float recruitCost)
+            float manpower, float recruitCost, params int[] requiredInnovations)
         {
             unitDefs[id] = new UnitDef
             {
@@ -658,6 +658,7 @@ namespace CivilizationEvolution.Core
                 speed = speed,
                 supplyConsumption = supply,
                 manpowerCost = manpower,
+                requiredInnovations = new List<int>(requiredInnovations),
                 recruitCost = new Dictionary<int, float> { { 70, recruitCost } },
                 terrainModifiers = new Dictionary<GameEnums.TerrainTacticType, float>()
             };
