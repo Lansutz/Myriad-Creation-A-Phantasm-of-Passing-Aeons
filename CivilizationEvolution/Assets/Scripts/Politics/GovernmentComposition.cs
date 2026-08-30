@@ -323,7 +323,16 @@ namespace CivilizationEvolution.Politics
         public ComponentChoice supremeSuccession = new ComponentChoice((int)SupremeSuccession.Hereditary);
         public ComponentChoice supremeScope = new ComponentChoice((int)SupremeScope.Absolute);
 
+        /// <summary>最高头衔分配（独享/家族共享——法兰克人式家族共享最高头衔）</summary>
+        public GovernmentConstraints.TitleDistribution titleDistribution = GovernmentConstraints.TitleDistribution.Exclusive;
+
+        /// <summary>最高领地分配（独享/均分/采邑——诸子均分或嫡长子继承核心其余分封）</summary>
+        public GovernmentConstraints.DomainDistribution domainDistribution = GovernmentConstraints.DomainDistribution.Exclusive;
+
         // ===== B. 中央权力 =====
+        /// <summary>中央权力有无（无常设/有常设——选了"有"才显示机构类型和子选项）</summary>
+        public GovernmentConstraints.CentralExistence centralExistence = GovernmentConstraints.CentralExistence.Established;
+
         public ComponentChoice centralSuccession = new ComponentChoice((int)CentralSuccession.Appointed);
         public ComponentChoice centralInstitution = new ComponentChoice((int)CentralInstitution.BureaucraticCore);
 
