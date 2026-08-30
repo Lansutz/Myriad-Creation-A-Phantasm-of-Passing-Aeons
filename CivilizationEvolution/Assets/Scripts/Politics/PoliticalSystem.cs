@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Economy;
@@ -19,6 +19,16 @@ namespace CivilizationEvolution.Politics
         public float prestige = 50f;
         public float stability = 50f;
         public float centralization = 0.5f; // 集权度 0~1
+
+        // ===== 通行管制（外交联动）=====
+        /// <summary>全国默认通行管制等级</summary>
+        public GameEnums.MovementControlLevel movementControl = GameEnums.MovementControlLevel.Loose;
+
+        /// <summary>关键城镇/关隘的单独管制等级覆盖（tileIndex -> 管制等级）</summary>
+        public Dictionary<int, GameEnums.MovementControlLevel> tileMovementControlOverrides = new Dictionary<int, GameEnums.MovementControlLevel>();
+
+        /// <summary>已授予军事通行权的政权ID列表（严格管制下这些政权的军队可通过）</summary>
+        public HashSet<int> militaryAccessGranted = new HashSet<int>();
 
         // 税收系统（每个政权独立）
         public TaxSystem taxSystem = new TaxSystem();

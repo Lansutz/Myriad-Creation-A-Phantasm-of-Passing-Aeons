@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Politics;
 using UnityEngine;
 
 namespace CivilizationEvolution.Map
@@ -141,6 +142,39 @@ namespace CivilizationEvolution.Map
                 cost *= 0.95f;
 
             return Mathf.Max(0.2f, cost);
+        }
+
+        /// <summary>
+        /// 计算军队通过某地块的实际通行成本（含通行管制）
+        /// 综合：基础地形成本、堡垒区域影响、通行管制（外交）
+        /// </summary>
+        public static float CalculateActualMovementCostWithControl(TileData tile, int armyRealmId,
+            int fortOwnerRealmId, RealmData ownerRealm, bool isAtWar)
+        {
+            float cost = CalculateActualMovementCost(tile, armyRealmId, fortOwnerRealmId);
+
+            // 通行管制加成
+            if (ownerRealm != null && ownerRealm.realmId != armyRealmId)
+            {
+                cost *= MovementControlSystem.CalculateControlCostMultiplier(
+                    tile, armyRealmId, ownerRealm, isAtWar);
+            }
+
+            return Mathf.Max(0.2f, cost);
+        }
+
+        /// <summary>
+        /// 检查军队是否可通行某地块（含通行管制）
+        /// 综合：不可通行地区、关隘封锁、通行管制（外交）
+        /// </summary>
+        public static bool IsPassableWithControl(TileData tile, int armyRealmId,
+            RealmData ownerRealm, bool isAtWar, bool isAtWarWithBarrierOwner = true)
+        {
+            // 基础可通行检查（不可通行地区+关隘）
+            if (!IsPassable(tile, armyRealmId, isAtWarWithBarrierOwner)) return false;
+
+            // 通行管制检查
+            return MovementControlSystem.CanMilitaryPass(tile, armyRealmId, ownerRealm, isAtWar);
         }
 
         // ===== 军队损耗计算 =====
@@ -295,6 +329,33 @@ namespace CivilizationEvolution.Map
                 status.Add(tile.roadLevel.ToString());
 
             return status.Count > 0 ? string.Join(" / ", status) : "正常通行";
+        }
+
+        /// <summary>
+        /// 获取完整通行状态描述（含管制，用于UI显示）
+        /// </summary>
+        public static string GetFullMovementStatus(TileData tile, int armyRealmId,
+            int fortOwnerRealmId, RealmData ownerRealm, bool isAtWar)
+        {
+            var status = new List<string>();
+
+            // 基础状态
+            string baseStatus = GetMovementStatus(tile, armyRealmId, fortOwnerRealmId);
+            if (baseStatus != "正常通行") status.Add(baseStatus);
+
+            // 管制状态
+            if (ownerRealm != null && ownerRealm.realmId != armyRealmId)
+            {
+                string controlStatus = MovementControlSystem.GetPassStatus(
+                    tile, armyRealmId, ownerRealm, isAtWar);
+                status.Add(controlStatus);
+            }
+            else if (ownerRealm != null && ownerRealm.realmId == armyRealmId)
+            {
+                status.Add("己方领土");
+            }
+
+            return status.Count > 0 ? string.Join(" | ", status) : "正常通行";
         }
     }
 }

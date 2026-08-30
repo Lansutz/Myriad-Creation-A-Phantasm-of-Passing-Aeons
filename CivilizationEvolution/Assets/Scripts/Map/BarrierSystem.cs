@@ -14,15 +14,24 @@ namespace CivilizationEvolution.Map
     /// </summary>
     public static class BarrierSystem
     {
-        // ===== 坡度阈值 =====
-        /// <summary>不可通行坡度阈值（度）</summary>
-        public const float ImpassableSlope = 45f;
+        // ===== 坡度/海拔阈值（综合判定可通行性）=====
+        /// <summary>不可通行海拔阈值（高于此海拔且坡度足够陡峭才不可通行）</summary>
+        public const float ImpassableElevation = 0.85f;
+
+        /// <summary>不可通行坡度阈值（度）——需同时满足高海拔</summary>
+        public const float ImpassableSlope = 50f;
 
         /// <summary>高通行成本坡度阈值（度）</summary>
         public const float HighCostSlope = 30f;
 
         /// <summary>中等通行成本坡度阈值（度）</summary>
         public const float MediumCostSlope = 15f;
+
+        /// <summary>高海拔阈值（雪线/高原，通行成本增加）</summary>
+        public const float HighElevation = 0.7f;
+
+        /// <summary>中海拔阈值（山地，通行成本增加）</summary>
+        public const float MediumElevation = 0.5f;
 
         // ===== 关隘建造条件 =====
         /// <summary>关隘所需的通道狭窄度（两侧不可通行/高成本地块的最小数量）</summary>
@@ -52,8 +61,12 @@ namespace CivilizationEvolution.Map
                     continue;
                 }
 
-                // 坡度决定可通行性
-                tile.passable = tile.slopeDegree < ImpassableSlope;
+                // 综合海拔+坡度决定可通行性
+                // 只有高海拔(>0.85)且极陡峭(>50°)才不可通行（高山绝壁/雪线以上陡峭山峰）
+                // 山脉中间的山口（高海拔但坡度较低）可以通行
+                // 低海拔的陡坡（峡谷峭壁）一般也有小径可通行
+                tile.passable = !(tile.elevation01 >= ImpassableElevation &&
+                                  tile.slopeDegree >= ImpassableSlope);
 
                 // 基础通行成本（平原=1.0）
                 tile.movementCost = CalculateBaseMovementCost(tile);
@@ -61,7 +74,8 @@ namespace CivilizationEvolution.Map
         }
 
         /// <summary>
-        /// 计算单地块基础通行成本
+        /// 计算单地块基础通行成本（综合海拔+坡度+道路+水文）
+        /// 平原=1.0，山脉山口=2-4，高山绝壁=不可通行
         /// </summary>
         public static float CalculateBaseMovementCost(TileData tile)
         {
@@ -69,7 +83,7 @@ namespace CivilizationEvolution.Map
 
             float cost = 1.0f;
 
-            // 坡度加成
+            // ===== 坡度加成 =====
             if (tile.slopeDegree >= HighCostSlope)
                 cost *= 3.0f;
             else if (tile.slopeDegree >= MediumCostSlope)
@@ -77,7 +91,23 @@ namespace CivilizationEvolution.Map
             else if (tile.slopeDegree >= 8f)
                 cost *= 1.3f;
 
-            // 道路减成
+            // ===== 海拔加成（高海拔缺氧/严寒，通行成本增加）=====
+            if (tile.elevation01 >= HighElevation)
+                cost *= 2.0f; // 雪线/高原
+            else if (tile.elevation01 >= MediumElevation)
+                cost *= 1.4f; // 山地
+
+            // ===== 海拔×坡度交互（山脉山口：高海拔但坡度适中，成本低于陡峭低海拔）=====
+            // 高海拔+低坡度 = 高原/山口，比高海拔+高坡度容易通行
+            if (tile.elevation01 >= HighElevation && tile.slopeDegree < MediumCostSlope)
+                cost *= 0.7f; // 高原/山口减免
+
+            // 中海拔+高坡度 = 陡峭山地，但比高海拔+高坡度容易
+            if (tile.elevation01 >= MediumElevation && tile.elevation01 < HighElevation &&
+                tile.slopeDegree >= HighCostSlope)
+                cost *= 0.85f;
+
+            // ===== 道路减成 =====
             cost *= tile.roadLevel switch
             {
                 GameEnums.RoadLevel.ImperialHighway => 0.5f,
@@ -86,11 +116,12 @@ namespace CivilizationEvolution.Map
                 _ => 1.0f
             };
 
-            // 河流渡口加成（无桥的河流需要渡河）
+            // ===== 水文加成 =====
+            // 河流渡口（无桥的河流需要渡河）
             if (tile.isRiver && tile.roadLevel == GameEnums.RoadLevel.None)
                 cost *= 1.5f;
 
-            // 海岸加成（沿海滩涂）
+            // 海岸滩涂
             if (tile.isCoast && tile.elevation01 < 0.3f)
                 cost *= 1.2f;
 

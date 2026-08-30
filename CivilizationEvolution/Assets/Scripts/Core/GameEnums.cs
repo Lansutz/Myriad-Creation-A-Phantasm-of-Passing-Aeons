@@ -162,6 +162,15 @@ namespace CivilizationEvolution.Core
             ImperialHighway
         }
 
+        /// <summary>通行管制等级（外交联动，严格管制需军事通行权）</summary>
+        public enum MovementControlLevel
+        {
+            None,           // 无管制：军队可自由通过
+            Loose,          // 松散管制：军队可通过，但有关税/检查，速度略降
+            Limited,        // 有限管制：军队可通过，但需登记，速度明显下降，可能被监视
+            Strict          // 严格管制：军队必须请求军事通行权，否则不可通过
+        }
+
         /// <summary>社会阶层</summary>
         public enum SocialClass
         {
