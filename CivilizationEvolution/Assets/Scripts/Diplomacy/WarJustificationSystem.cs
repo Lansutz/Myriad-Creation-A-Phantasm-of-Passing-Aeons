@@ -462,10 +462,9 @@ namespace CivilizationEvolution.Diplomacy
                         break;
                     case TreatyClauseType.TradeRights:
                     case TreatyClauseType.TradePrivileges:
-                        rel.activeAlliances.Add(new Alliance { type = AllianceType.TradeAgreement, realmAId = treaty.signerAId, realmBId = treaty.signerBId, signedDay = currentDay, durationDays = 365 * 10, tradeEfficiencyBonus = 0.2f, tariffReduction = 0.3f });
-                        break;
                     case TreatyClauseType.NavigationRights:
-                        rel.activeAlliances.Add(new Alliance { type = AllianceType.MilitaryAccess, realmAId = clause.toRealmId, realmBId = clause.fromRealmId, signedDay = currentDay, durationDays = 365 * 5, militaryAccess = true });
+                    case TreatyClauseType.ResourceConcession:
+                        // 经济类条款：记录在条约中，由经济系统执行（贸易权/航行权/资源特许权）
                         break;
                     case TreatyClauseType.PersonalUnion:
                         rel.SetSpecialBond(SpecialBondType.PersonalUnion);
@@ -474,10 +473,13 @@ namespace CivilizationEvolution.Diplomacy
                         rel.ClearSpecialBond();
                         break;
                     case TreatyClauseType.RoyalMarriage:
-                        rel.activeAlliances.Add(new Alliance { type = AllianceType.RoyalMarriage, realmAId = treaty.signerAId, realmBId = treaty.signerBId, signedDay = currentDay, durationDays = -1 });
+                        // 王室联姻：记录在条约中，由人物/王朝系统执行
                         break;
                     case TreatyClauseType.ArbitrationAgreement:
-                        rel.activeAlliances.Add(new Alliance { type = AllianceType.CulturalExchange, realmAId = treaty.signerAId, realmBId = treaty.signerBId, signedDay = currentDay, durationDays = 365 * 5 });
+                    case TreatyClauseType.ReligiousFreedom:
+                    case TreatyClauseType.MinorityProtection:
+                    case TreatyClauseType.CulturalAssimilation:
+                        // 人文类条款：记录在条约中，由文化/宗教系统执行
                         break;
                     default:
                         // 其他条款（领土/赔款/裁军等）记录在条约中，由对应系统执行

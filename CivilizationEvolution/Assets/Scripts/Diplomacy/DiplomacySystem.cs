@@ -184,15 +184,11 @@ namespace CivilizationEvolution.Diplomacy
     /// </summary>
     public enum AllianceType
     {
-        NonAggressionPact,    // 互不侵犯条约：承诺不开战，可单方撕毁（信誉惩罚）
+        NonAggressionPact,    // 互不侵犯：承诺不开战，可单方撕毁（信誉惩罚）
         DefensiveAlliance,     // 防御同盟：仅被第三方攻击时共同作战
-        OffensiveAlliance,     // 全面同盟（进攻性）：任何一方宣战另一方必须加入
-        TradeAgreement,        // 贸易协定
-        CustomsUnion,          // 关税同盟
-        MilitaryAccess,        // 军事通行权
-        RoyalMarriage,         // 王室联姻
-        CulturalExchange,      // 文化交流协定
-        Confederation          // 邦联/联邦式联盟：常设协调机构+保留退出权+最终否决权（瑞士邦联/欧盟前身）
+        OffensiveAlliance,     // 进攻同盟：主动宣战时共同作战，防御时不强制
+        TotalAlliance,         // 全面同盟：任何情况共同作战，共享军事情报
+        Faction                // 阵营：多边军事政治集团，常设协调机构+集体安全
     }
 
     /// <summary>盟约</summary>
@@ -234,15 +230,11 @@ namespace CivilizationEvolution.Diplomacy
     /// </summary>
     public enum SubordinationType
     {
-        Tributary,          // 朝贡国：内政完全自主，象征性臣服+进贡（明清朝鲜）
-        Protectorate,       // 保护国：内政自主，外交与宣战权转让（19世纪埃及/英法）
-        Vassal,             // 附庸国：总督/高级专员控制，法理仍为"国"（斯洛伐克傀儡）
-        Puppet,             // 傀儡国：首脑由宗主指定，一切重大决策需批准（汪精卫政权）
-        MilitaryOccupation, // 军事占领（非从属，附加态）
-        FeudalTenant,       // 封建藩属
-        SubjectState,       // 臣属国（广义从属）
-        PersonalUnion,      // [废弃] 联合统治——已移入特殊纽带槽位（SpecialBondType.PersonalUnion），勿再使用
-        Associate           // 附属国：内政受法定监督（顾问/否决法律），外交国防全权代理，保留名义君主（一战前波斯）
+        Tributary,          // 朝贡：内政完全自主，象征性臣服+进贡（自治度0.9）
+        Vassal,             // 附庸：外交权受限，军事义务，内政基本自主（自治度0.65）
+        Associate,          // 附属：内政受法定监督（顾问/否决法律），外交国防代理（自治度0.45）
+        Protectorate,       // 保护国：内政自主，外交与宣战权完全转让（自治度0.3）
+        Puppet              // 傀儡：首脑由宗主指定，一切重大决策需批准（自治度0.1）
     }
 
     /// <summary>
@@ -918,13 +910,10 @@ namespace CivilizationEvolution.Diplomacy
             float requiredRelation = type switch
             {
                 AllianceType.NonAggressionPact => -20f,
-                AllianceType.TradeAgreement => 0f,
                 AllianceType.DefensiveAlliance => 30f,
                 AllianceType.OffensiveAlliance => 50f,
-                AllianceType.RoyalMarriage => 20f,
-                AllianceType.CulturalExchange => 10f,
-                AllianceType.MilitaryAccess => 10f,
-                AllianceType.CustomsUnion => 40f,
+                AllianceType.TotalAlliance => 70f,
+                AllianceType.Faction => 80f,
                 _ => 0f
             };
 
@@ -1005,44 +994,38 @@ namespace CivilizationEvolution.Diplomacy
                 establishedDay = CurrentDay
             };
 
-            // 设置从属条款（用户定稿谱系二：自治度 朝贡0.9→保护0.7→附属0.5→附庸0.35→傀儡0.1）
+            // 设置从属条款（5种不平等从属：自治度 朝贡0.9→附庸0.65→附属0.45→保护国0.3→傀儡0.1）
             switch (type)
             {
                 case SubordinationType.Tributary:
+                    // 朝贡：内政完全自主，象征性臣服+进贡
                     sub.tributeRatio = 0.1f;
                     sub.autonomy = 0.9f;
                     break;
-                case SubordinationType.Protectorate:
-                    sub.foreignPolicyControl = true;
-                    sub.autonomy = 0.7f;
-                    break;
-                case SubordinationType.Associate:
-                    // 附属国：内政受监督（自治度中），外交国防全权代理，保留名义君主
-                    sub.foreignPolicyControl = true;
-                    sub.militaryObligation = true;
-                    sub.autonomy = 0.5f;
-                    break;
                 case SubordinationType.Vassal:
-                    // 附庸国：总督/高级专员控制，法理仍为"国"
+                    // 附庸：外交权受限，军事义务，内政基本自主
                     sub.tributeRatio = 0.15f;
                     sub.militaryObligation = true;
                     sub.foreignPolicyControl = true;
-                    sub.autonomy = 0.35f;
+                    sub.autonomy = 0.65f;
+                    break;
+                case SubordinationType.Associate:
+                    // 附属：内政受法定监督（顾问/否决法律），外交国防全权代理
+                    sub.foreignPolicyControl = true;
+                    sub.militaryObligation = true;
+                    sub.autonomy = 0.45f;
+                    break;
+                case SubordinationType.Protectorate:
+                    // 保护国：内政自主，外交与宣战权完全转让
+                    sub.foreignPolicyControl = true;
+                    sub.autonomy = 0.3f;
                     break;
                 case SubordinationType.Puppet:
-                    // 傀儡国：首脑由宗主指定，一切重大决策需批准
+                    // 傀儡：首脑由宗主指定，一切重大决策需批准
                     sub.foreignPolicyControl = true;
                     sub.militaryObligation = true;
                     sub.successionControl = true;
                     sub.autonomy = 0.1f;
-                    break;
-                case SubordinationType.PersonalUnion:
-                    Debug.LogWarning("[Diplomacy] PersonalUnion 已移入特殊纽带槽位（SpecialBondType），请改用 EstablishPersonalUnion");
-                    return null;
-                case SubordinationType.MilitaryOccupation:
-                    sub.autonomy = 0f;
-                    sub.foreignPolicyControl = true;
-                    sub.militaryObligation = true;
                     break;
             }
 
