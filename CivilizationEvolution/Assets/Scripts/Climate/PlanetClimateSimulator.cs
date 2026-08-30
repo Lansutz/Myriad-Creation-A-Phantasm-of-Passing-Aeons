@@ -341,21 +341,21 @@ namespace CivilizationEvolution.Climate
         /// <summary>群系匹配</summary>
         private GameEnums.BiomeType DetermineBiome(GameEnums.ClimateZone zone, float temp, float precip, float elevation, float soilHumidity)
         {
-            if (elevation > 0.7f) return GameEnums.BiomeType.Alpine;
+            if (elevation > 0.7f) return GameEnums.BiomeType.AlpineMeadow;
             if (temp < -15f) return GameEnums.BiomeType.IceSheet;
-            if (soilHumidity > 85f && elevation < 0.3f) return GameEnums.BiomeType.Wetland;
+            if (soilHumidity > 85f && elevation < 0.3f) return GameEnums.BiomeType.WetMarshPlain;
 
             return zone switch
             {
                 GameEnums.ClimateZone.PolarFrigid => GameEnums.BiomeType.IceSheet,
                 GameEnums.ClimateZone.Subarctic => precip > 300 ? GameEnums.BiomeType.Tundra : GameEnums.BiomeType.Tundra,
-                GameEnums.ClimateZone.TemperateCold => precip > 500 ? GameEnums.BiomeType.BorealForest : GameEnums.BiomeType.Steppe,
-                GameEnums.ClimateZone.TemperateMild => precip > 600 ? GameEnums.BiomeType.TemperateForest : GameEnums.BiomeType.TemperateGrassland,
-                GameEnums.ClimateZone.TemperateWarm => precip > 700 ? GameEnums.BiomeType.TemperateForest : GameEnums.BiomeType.TemperateGrassland,
-                GameEnums.ClimateZone.Subtropical => precip > 800 ? GameEnums.BiomeType.TropicalMonsoon : (precip > 400 ? GameEnums.BiomeType.Savanna : GameEnums.BiomeType.Desert),
-                GameEnums.ClimateZone.Tropical => precip > 2000 ? GameEnums.BiomeType.TropicalRainforest : (precip > 800 ? GameEnums.BiomeType.TropicalMonsoon : (precip > 400 ? GameEnums.BiomeType.Savanna : GameEnums.BiomeType.Desert)),
-                GameEnums.ClimateZone.HighlandAlpine => GameEnums.BiomeType.Alpine,
-                GameEnums.ClimateZone.InlandAridTemperate => precip < 200 ? GameEnums.BiomeType.Desert : GameEnums.BiomeType.Steppe,
+                GameEnums.ClimateZone.TemperateCold => precip > 500 ? GameEnums.BiomeType.BorealForest : GameEnums.BiomeType.TemperateGrassland,
+                GameEnums.ClimateZone.TemperateMild => precip > 600 ? GameEnums.BiomeType.DeciduousForest : GameEnums.BiomeType.TemperateGrassland,
+                GameEnums.ClimateZone.TemperateWarm => precip > 700 ? GameEnums.BiomeType.DeciduousForest : GameEnums.BiomeType.TemperateGrassland,
+                GameEnums.ClimateZone.Subtropical => precip > 800 ? GameEnums.BiomeType.TropicalMonsoon : (precip > 400 ? GameEnums.BiomeType.Savanna : GameEnums.BiomeType.HotDesert),
+                GameEnums.ClimateZone.Tropical => precip > 2000 ? GameEnums.BiomeType.TropicalRainforest : (precip > 800 ? GameEnums.BiomeType.TropicalMonsoon : (precip > 400 ? GameEnums.BiomeType.Savanna : GameEnums.BiomeType.HotDesert)),
+                GameEnums.ClimateZone.HighlandAlpine => GameEnums.BiomeType.AlpineMeadow,
+                GameEnums.ClimateZone.InlandAridTemperate => precip < 200 ? GameEnums.BiomeType.HotDesert : GameEnums.BiomeType.TemperateGrassland,
                 _ => GameEnums.BiomeType.TemperateGrassland
             };
         }

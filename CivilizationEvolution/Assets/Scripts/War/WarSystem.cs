@@ -245,10 +245,10 @@ namespace CivilizationEvolution.War
         private GameEnums.TerrainTacticType GetTerrainTacticType(TileData tile)
         {
             if (tile.elevation01 > 0.5f) return GameEnums.TerrainTacticType.Mountain;
-            if (tile.biome == GameEnums.BiomeType.BorealForest || tile.biome == GameEnums.BiomeType.TemperateForest || tile.biome == GameEnums.BiomeType.TropicalRainforest)
+            if (tile.biome == GameEnums.BiomeType.BorealForest || tile.biome == GameEnums.BiomeType.DeciduousForest || tile.biome == GameEnums.BiomeType.TropicalRainforest)
                 return GameEnums.TerrainTacticType.Forest;
-            if (tile.biome == GameEnums.BiomeType.Wetland) return GameEnums.TerrainTacticType.Wetland;
-            if (tile.biome == GameEnums.BiomeType.Desert) return GameEnums.TerrainTacticType.Desert;
+            if (tile.biome == GameEnums.BiomeType.WetMarshPlain) return GameEnums.TerrainTacticType.Wetland;
+            if (tile.biome == GameEnums.BiomeType.HotDesert) return GameEnums.TerrainTacticType.Desert;
             if (tile.buildingLevels[3] > 0) return GameEnums.TerrainTacticType.Fortress;
             return GameEnums.TerrainTacticType.Plain;
         }

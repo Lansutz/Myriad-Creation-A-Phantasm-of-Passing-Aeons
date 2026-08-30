@@ -35,7 +35,54 @@ namespace CivilizationEvolution.Map
         /// <summary>河流等级（Strahler stream order）</summary>
         public int[] StreamOrder { get; private set; }
 
-        private readonly int _width;
+        /// <summary>
+    /// 最小堆（Min-Heap），用于Priority-Flood算法的优先队列
+    /// 替代.NET 6+的PriorityQueue（兼容Unity的.NET版本）
+    /// </summary>
+    private class MinHeap
+    {
+        private struct HeapNode { public int item; public float priority; }
+        private readonly List<HeapNode> _nodes = new List<HeapNode>();
+
+        public int Count => _nodes.Count;
+
+        public void Enqueue(int item, float priority)
+        {
+            _nodes.Add(new HeapNode { item = item, priority = priority });
+            int i = _nodes.Count - 1;
+            while (i > 0)
+            {
+                int parent = (i - 1) / 2;
+                if (_nodes[parent].priority <= _nodes[i].priority) break;
+                (_nodes[parent], _nodes[i]) = (_nodes[i], _nodes[parent]);
+                i = parent;
+            }
+        }
+
+        public int Dequeue()
+        {
+            int result = _nodes[0].item;
+            int last = _nodes.Count - 1;
+            _nodes[0] = _nodes[last];
+            _nodes.RemoveAt(last);
+
+            int i = 0;
+            while (true)
+            {
+                int left = 2 * i + 1;
+                int right = 2 * i + 2;
+                int smallest = i;
+                if (left < _nodes.Count && _nodes[left].priority < _nodes[smallest].priority) smallest = left;
+                if (right < _nodes.Count && _nodes[right].priority < _nodes[smallest].priority) smallest = right;
+                if (smallest == i) break;
+                (_nodes[smallest], _nodes[i]) = (_nodes[i], _nodes[smallest]);
+                i = smallest;
+            }
+            return result;
+        }
+    }
+
+    private readonly int _width;
         private readonly int _height;
         private readonly bool _wrapX;
 
@@ -85,8 +132,7 @@ namespace CivilizationEvolution.Map
             Array.Fill(FlowDirection, -1);
 
             // 优先队列：最小堆（按填充高程排序）
-            // C# PriorityQueue (.NET 6+) 或用 SortedDictionary 模拟
-            var pq = new PriorityQueue<int, float>();
+            var pq = new MinHeap();
             var processed = new bool[n];
 
             // 初始化：所有海洋点和边界点加入队列

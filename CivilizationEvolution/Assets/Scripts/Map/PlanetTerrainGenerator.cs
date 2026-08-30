@@ -170,13 +170,67 @@ namespace CivilizationEvolution.Map
                 tile.airHumidityPct = Mathf.Clamp01(tile.annualPrecipMm / 2000f);
             });
 
-            // ===== 第6步：Priority-Flood水文模拟 =====
+            // 准备isLand数组（后续多个算法使用）
             var isLandArray = new bool[n];
             for (int i = 0; i < n; i++) isLandArray[i] = tiles[i].isLand;
+
+            // ===== 第5.5步：水力侵蚀（修改高程，形成河谷/峡谷/冲积扇）=====
+            var erosion = new HydraulicErosion(width, height, _seed + 2000);
+            erosion.ParticleCount = Mathf.Min(120000, n / 4); // 粒子数随地图大小调整
+            erosion.Run(rawElevation, isLandArray);
+            erosion.ApplyToTiles(tiles, rawElevation);
+            Debug.Log($"[PlanetTerrainGenerator] 水力侵蚀完成");
+
+            // 侵蚀后重新计算坡度和温度（高程已改变）
+            ParallelLoop(0, n, i =>
+            {
+                int x = i % width;
+                int y = i / height;
+                ref TileData tile = ref tiles[i];
+                if (!tile.isLand) return;
+
+                // 重新计算坡度
+                float maxDiff = 0f;
+                if (x > 0) maxDiff = Mathf.Max(maxDiff, Mathf.Abs(tile.elevation01 - tiles[i - 1].elevation01));
+                if (x < width - 1) maxDiff = Mathf.Max(maxDiff, Mathf.Abs(tile.elevation01 - tiles[i + 1].elevation01));
+                if (y > 0) maxDiff = Mathf.Max(maxDiff, Mathf.Abs(tile.elevation01 - tiles[i - width].elevation01));
+                if (y < height - 1) maxDiff = Mathf.Max(maxDiff, Mathf.Abs(tile.elevation01 - tiles[i + width].elevation01));
+                tile.slopeDegree = maxDiff * 90f;
+
+                // 重新计算温度（高程已改变）
+                float lat = 90f - (y / (float)height) * 180f;
+                float latFactor = Mathf.Cos(lat * Mathf.Deg2Rad);
+                float baseTemp = -10f + latFactor * 38f;
+                float elevationCooling = tile.elevation01 * 65f;
+                float landEffect = tile.isCoast ? 0f : -2f;
+                tile.annualTemp = baseTemp - elevationCooling + landEffect + GlobalTempOffset;
+            });
+
+            // ===== 第5.8步：大气环流GCM（气压带+三圈环流+科里奥利+季风+地形降水）=====
+            var tempArray = new float[n];
+            for (int i = 0; i < n; i++) tempArray[i] = tiles[i].annualTemp;
+            var gcm = new AtmosphericCirculation(width, height);
+            gcm.AxialTilt = AxialTilt;
+            gcm.Run(rawElevation, isLandArray, tempArray);
+            gcm.ApplyToTiles(tiles, tempArray);
+            Debug.Log($"[PlanetTerrainGenerator] 大气环流GCM完成");
+
+            // ===== 第5.9步：洋流模拟（风生环流+科里奥利+大陆阻挡+暖流寒流）=====
+            var ocean = new OceanCurrentSimulator(width, height);
+            ocean.Run(isLandArray, gcm.WindU, gcm.WindV, tempArray);
+            ocean.ApplyCoastalEffects(tiles, isLandArray);
+            Debug.Log($"[PlanetTerrainGenerator] 洋流模拟完成");
+
+            // ===== 第6步：Priority-Flood水文模拟 =====
             var hydro = new HydrologySystem(width, height, wrapX: true);
             hydro.Run(rawElevation, isLandArray, RiverThreshold);
             hydro.ApplyToTiles(tiles);
             Debug.Log($"[PlanetTerrainGenerator] 水文模拟完成：河流{hydro.GetRiverTileCount()}地块，最大等级={hydro.GetMaxStreamOrder()}");
+
+            // ===== 第6.5步：PCA地形特征提取（地形分类+大陆主轴）=====
+            var pca = new TerrainPCA(width, height);
+            pca.Run(rawElevation, isLandArray);
+            Debug.Log($"[PlanetTerrainGenerator] PCA地形特征完成：大陆主轴=({pca.ContinentPrincipalAxis.x:F2}, {pca.ContinentPrincipalAxis.y:F2})");
 
             // ===== 第7步：Holdridge生命地带群系分类 + 肥力 =====
             ParallelLoop(0, n, i =>
