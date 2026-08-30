@@ -57,6 +57,7 @@ namespace CivilizationEvolution.Politics
         /// <summary>政体维度枚举</summary>
         public enum GovernmentDimension
         {
+            SupremeSovereignty,   // A0 最高权力归属（君主制/共和制）
             SupremeSuccession,    // A1 最高权力·交接
             SupremeScope,         // A2 最高权力·分配（头衔+领地）
             CentralExistence,     // B0 中央权力·有无
@@ -65,6 +66,15 @@ namespace CivilizationEvolution.Politics
             LocalSuccession,      // C1 地方权力·交接
             LocalScope,           // C2 地方权力·职能
             SpatialStructure      // D 央地结构
+        }
+
+        // ===== 2. 最高权力归属（A0） =====
+
+        /// <summary>最高权力归属：君主制 / 共和制</summary>
+        public enum SupremeSovereignty
+        {
+            Monarchy,     // 君主制：最高权力在一人（君主）手中，必须有最高头衔
+            Republic      // 共和制：最高权力在机构或多人手中，最高头衔可选
         }
 
         // ===== 2. 继承法四轴（世袭君主专用） =====
@@ -102,11 +112,17 @@ namespace CivilizationEvolution.Politics
 
         // ===== 3. 最高权力分配（头衔+领地） =====
 
-        /// <summary>最高头衔分配</summary>
+        /// <summary>
+        /// 最高头衔分配
+        /// 君主制：必须有最高头衔，独享或家族共享
+        /// 共和制：最高头衔可选，无则中央机构为主导
+        /// </summary>
         public enum TitleDistribution
         {
-            Exclusive,          // 独享（一人独占最高头衔）
-            FamilyShared        // 家族共享（法兰克人式，家族共享最高头衔）
+            Exclusive,          // 独享（一人独占最高头衔——君主制）
+            FamilyShared,       // 家族共享（法兰克人式，家族共享最高头衔——君主制）
+            HasTitle,           // 有最高头衔（共和制可选——如执政官/独裁官）
+            NoTitle             // 无最高头衔（共和制——中央机构为主导，如元老院）
         }
 
         /// <summary>最高领地分配</summary>
@@ -256,16 +272,21 @@ namespace CivilizationEvolution.Politics
                     break;
 
                 // A2 最高权力分配的子选项（头衔分配+领地分配，双轴并行）
+                // 头衔分配根据A0最高权力归属（君主制/共和制）显示不同选项
                 case GovernmentDimension.SupremeScope:
                     groups.Add(new SubOptionGroup
                     {
                         groupName = "头衔分配",
                         parentDimension = "SupremeScope",
-                        parentValue = -1,  // 始终显示
+                        parentValue = -1,  // 始终显示，但选项根据A0过滤
                         options = new List<SubOption>
                         {
-                            new SubOption { name = "独享", value = 0, description = "一人独占最高头衔" },
-                            new SubOption { name = "家族共享", value = 1, description = "法兰克人式，家族共享最高头衔" }
+                            // 君主制选项
+                            new SubOption { name = "独享（君主制）", value = 0, description = "一人独占最高头衔——君主制" },
+                            new SubOption { name = "家族共享（君主制）", value = 1, description = "法兰克人式，家族共享最高头衔——君主制" },
+                            // 共和制选项
+                            new SubOption { name = "有最高头衔（共和制）", value = 2, description = "有最高头衔如执政官/独裁官——共和制" },
+                            new SubOption { name = "无最高头衔（共和制）", value = 3, description = "无最高头衔，中央机构为主导如元老院——共和制" }
                         }
                     });
                     groups.Add(new SubOptionGroup
@@ -662,6 +683,7 @@ namespace CivilizationEvolution.Politics
         {
             switch (dimension)
             {
+                case GovernmentDimension.SupremeSovereignty: return (int)comp.supremeSovereignty;
                 case GovernmentDimension.SupremeSuccession: return comp.supremeSuccession.primary;
                 case GovernmentDimension.SupremeScope: return comp.supremeScope.primary;
                 case GovernmentDimension.CentralExistence: return (int)comp.centralExistence;
@@ -678,6 +700,7 @@ namespace CivilizationEvolution.Politics
         {
             return dim switch
             {
+                GovernmentDimension.SupremeSovereignty => "最高权力·归属",
                 GovernmentDimension.SupremeSuccession => "最高权力·交接",
                 GovernmentDimension.SupremeScope => "最高权力·分配",
                 GovernmentDimension.CentralExistence => "中央权力·有无",
@@ -694,6 +717,8 @@ namespace CivilizationEvolution.Politics
         {
             switch (dim)
             {
+                case GovernmentDimension.SupremeSovereignty:
+                    return ((SupremeSovereignty)value).ToString();
                 case GovernmentDimension.SupremeSuccession:
                     return ((SupremeSuccession)value).ToString();
                 case GovernmentDimension.SupremeScope:
@@ -719,6 +744,8 @@ namespace CivilizationEvolution.Politics
         {
             switch (dimension)
             {
+                case GovernmentDimension.SupremeSovereignty:
+                    return Enum.GetValues(typeof(SupremeSovereignty)).Cast<int>().ToList();
                 case GovernmentDimension.SupremeSuccession:
                     return Enum.GetValues(typeof(SupremeSuccession)).Cast<int>().ToList();
                 case GovernmentDimension.SupremeScope:
@@ -737,6 +764,76 @@ namespace CivilizationEvolution.Politics
                     return Enum.GetValues(typeof(SpatialStructure)).Cast<int>().ToList();
                 default:
                     return new List<int>();
+            }
+        }
+
+        /// <summary>
+        /// 获取某维度的可用选项（根据当前政体组合过滤）
+        /// 核心规则：
+        /// - A0=共和制 → A1不能有世袭/僭夺/神命等君主制专属选项
+        /// - A0=君主制 → A2头衔分配只能有独享/家族共享
+        /// - A0=共和制 → A2头衔分配只能有有头衔/无头衔
+        /// </summary>
+        public static List<int> GetAvailableOptions(
+            GovernmentDimension dimension, GovernmentComposition comp)
+        {
+            var allOptions = GetAllOptions(dimension);
+            var available = new List<int>();
+
+            // A0最高权力归属：不过滤
+            if (dimension == GovernmentDimension.SupremeSovereignty)
+                return allOptions;
+
+            // A1最高权力交接：根据A0过滤
+            if (dimension == GovernmentDimension.SupremeSuccession)
+            {
+                foreach (var option in allOptions)
+                {
+                    var succession = (SupremeSuccession)option;
+                    if (comp.supremeSovereignty == SupremeSovereignty.Republic)
+                    {
+                        // 共和制：排除世袭/僭夺/神命等君主制专属选项
+                        if (succession == SupremeSuccession.Hereditary ||
+                            succession == SupremeSuccession.Usurpation ||
+                            succession == SupremeSuccession.Divine)
+                            continue;
+                    }
+                    // 君主制：所有选项可用（包括选举君主/推举君主）
+                    available.Add(option);
+                }
+                return available;
+            }
+
+            // A2最高权力分配：根据A0过滤头衔分配（但这里是SupremeScope枚举，不是TitleDistribution）
+            // SupremeScope是权力分配（全能/受限等），头衔分配是子选项
+            // 所以A2本身不过滤，子选项在GetActiveSubOptionGroups中过滤
+
+            // 其他维度：不过滤
+            return allOptions;
+        }
+
+        /// <summary>
+        /// 获取头衔分配的可用选项（根据A0最高权力归属过滤）
+        /// 君主制：独享/家族共享
+        /// 共和制：有最高头衔/无最高头衔
+        /// </summary>
+        public static List<TitleDistribution> GetAvailableTitleDistributions(GovernmentComposition comp)
+        {
+            if (comp.supremeSovereignty == SupremeSovereignty.Monarchy)
+            {
+                return new List<TitleDistribution>
+                {
+                    TitleDistribution.Exclusive,
+                    TitleDistribution.FamilyShared
+                };
+            }
+            else // Republic
+            {
+                return new List<TitleDistribution>
+                {
+                    TitleDistribution.HasTitle,
+                    TitleDistribution.NoTitle
+                };
             }
         }
     }

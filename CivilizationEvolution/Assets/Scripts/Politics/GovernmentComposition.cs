@@ -320,6 +320,9 @@ namespace CivilizationEvolution.Politics
     public class GovernmentComposition
     {
         // ===== A. 最高权力 =====
+        /// <summary>最高权力归属（A0）：君主制 / 共和制</summary>
+        public GovernmentConstraints.SupremeSovereignty supremeSovereignty = GovernmentConstraints.SupremeSovereignty.Monarchy;
+
         public ComponentChoice supremeSuccession = new ComponentChoice((int)SupremeSuccession.Hereditary);
         public ComponentChoice supremeScope = new ComponentChoice((int)SupremeScope.Absolute);
 
