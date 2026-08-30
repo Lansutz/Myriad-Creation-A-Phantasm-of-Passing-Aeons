@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using CivilizationEvolution.Politics;
 using CivilizationEvolution.Diplomacy;
@@ -7,7 +7,7 @@ namespace CivilizationEvolution.Tests
 {
     /// <summary>
     /// 外交层三槽位 EditMode 测试（用户定稿：主权状态/条约义务/特殊纽带 彻底解耦）
-    /// 谱系二 5 级（朝贡→保护→附属→附庸→傀儡）+ 谱系一邦联 + 谱系三君合国
+    /// 谱系二 5 级（朝贡→保护→附属→附庸→傀儡）+ 谱系一阵营 + 谱系三君合国
     /// </summary>
     public class DiplomacySystemTests
     {
@@ -67,7 +67,7 @@ namespace CivilizationEvolution.Tests
             Assert.IsNull(rel.GetSovereigntyStatus(1), "独立后从属国视角应返回独立");
         }
 
-        // ===== 槽位3：特殊纽带（谱系三：君合国/共主邦联） =====
+        // ===== 槽位3：特殊纽带（谱系三：君合国/共主阵营） =====
 
         [Test]
         public void SpecialBond_PersonalUnion_IndependentOfSubordination()
@@ -77,9 +77,9 @@ namespace CivilizationEvolution.Tests
             Assert.AreEqual(SpecialBondType.PersonalUnion, rel.specialBond, "特殊纽带槽位应设置");
             Assert.IsNull(rel.subordination, "君合国不应产生从属关系（双方各自保留主权）");
 
-            // 共主邦联可切换（同一对政权仅一个活跃纽带）
+            // 共主阵营可切换（同一对政权仅一个活跃纽带）
             rel.SetSpecialBond(SpecialBondType.CompositeMonarchy);
-            Assert.AreEqual(SpecialBondType.CompositeMonarchy, rel.specialBond, "纽带可切换为共主邦联");
+            Assert.AreEqual(SpecialBondType.CompositeMonarchy, rel.specialBond, "纽带可切换为共主阵营");
         }
 
         [Test]
@@ -91,25 +91,27 @@ namespace CivilizationEvolution.Tests
         }
 
         [Test]
-        public void SpecialBond_PersonalUnionLegacy_Rejected()
+        public void SpecialBond_PersonalUnion_Established()
         {
-            // PersonalUnion 已移出从属枚举：走旧路径应拒绝并提示
-            Assert.IsNull(_dm.EstablishSubordination(0, 1, SubordinationType.PersonalUnion),
-                "PersonalUnion 不再作为从属关系建立");
+            // PersonalUnion 通过特殊纽带建立
+            bool result = _dm.EstablishPersonalUnion(0, 1, SpecialBondType.PersonalUnion);
+            Assert.IsTrue(result, "君合国特殊纽带应可建立");
+            var rel = _dm.GetRelation(0, 1);
+            Assert.AreEqual(SpecialBondType.PersonalUnion, rel.specialBond, "槽位3应含君合国纽带");
         }
 
-        // ===== 槽位2：条约义务（谱系一：邦联） =====
+        // ===== 槽位2：条约义务（谱系一：阵营） =====
 
         [Test]
         public void TreatyObligation_Confederation_Established()
         {
             _dm.ModifyRelation(0, 1, 60f, "测试好感");
-            var alliance = _dm.ProposeAlliance(0, 1, AllianceType.Confederation);
-            Assert.IsNotNull(alliance, "邦联盟约应可建立");
-            Assert.AreEqual(AllianceType.Confederation, alliance.type);
+            var alliance = _dm.ProposeAlliance(0, 1, AllianceType.Faction);
+            Assert.IsNotNull(alliance, "阵营盟约应可建立");
+            Assert.AreEqual(AllianceType.Faction, alliance.type);
 
             var rel = _dm.GetRelation(0, 1);
-            Assert.IsTrue(rel.HasTreatyObligation(AllianceType.Confederation), "槽位2应含邦联义务");
+            Assert.IsTrue(rel.HasTreatyObligation(AllianceType.Faction), "槽位2应含阵营义务");
             Assert.IsFalse(rel.HasTreatyObligation(AllianceType.OffensiveAlliance), "不应误报其他盟约");
         }
     }

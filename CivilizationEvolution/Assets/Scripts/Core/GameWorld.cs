@@ -46,6 +46,8 @@ namespace CivilizationEvolution.Core
         public Dictionary<int, TradeCenter> tradeCenters = new Dictionary<int, TradeCenter>();
         public Dictionary<int, GoodsDef> goodsDefs = new Dictionary<int, GoodsDef>();
         public Dictionary<int, RealmData> realms = new Dictionary<int, RealmData>();
+        /// <summary>玩家政权ID（-1表示无玩家/观察者模式）</summary>
+        public int PlayerRealmId = -1;
         public Dictionary<int, UnitDef> unitDefs = new Dictionary<int, UnitDef>();
         /// <summary>省份（provinceId → Province——地图结构层）</summary>
         public Dictionary<int, Province> provinces = new Dictionary<int, Province>();

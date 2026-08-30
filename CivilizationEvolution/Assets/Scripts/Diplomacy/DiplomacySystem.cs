@@ -1042,6 +1042,29 @@ namespace CivilizationEvolution.Diplomacy
             return sub;
         }
 
+        /// <summary>获取两个政权之间的从属关系</summary>
+        public Subordination GetSubordination(int realmA, int realmB)
+        {
+            return _subordinations.Find(s => s.isActive &&
+                ((s.suzerainId == realmA && s.vassalId == realmB) ||
+                 (s.suzerainId == realmB && s.vassalId == realmA)));
+        }
+
+        /// <summary>解除从属关系</summary>
+        public bool ReleaseSubordination(int suzerainId, int vassalId)
+        {
+            var sub = _subordinations.Find(s => s.suzerainId == suzerainId && s.vassalId == vassalId && s.isActive);
+            if (sub == null) return false;
+
+            sub.isActive = false;
+            var rel = GetRelation(suzerainId, vassalId);
+            if (rel != null) rel.subordination = null;
+
+            ModifyRelation(suzerainId, vassalId, -15f, "解除从属关系");
+            Debug.Log($"[Diplomacy] 政权 {suzerainId} 解除对 {vassalId} 的从属关系");
+            return true;
+        }
+
         /// <summary>
         /// 建立特殊纽带（谱系三：君合国/共主邦联——横向人身/王朝联合）
         /// 独立于从属与盟约：双方各自保留主权，仅共享君主

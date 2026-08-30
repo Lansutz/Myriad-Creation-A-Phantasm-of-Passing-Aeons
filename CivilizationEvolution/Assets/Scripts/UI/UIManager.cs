@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -26,6 +26,9 @@ namespace CivilizationEvolution.UI
     /// </summary>
     public class UIManager : MonoBehaviour
     {
+        /// <summary>UI管理器单例</summary>
+        public static UIManager Instance { get; private set; }
+
         [Header("引用")]
         [SerializeField] private GameWorld world;
         [SerializeField] private MapRenderer mapRenderer;
@@ -96,6 +99,7 @@ namespace CivilizationEvolution.UI
 
         void Start()
         {
+            Instance = this;
             ApplyChineseFont();
             InitializeUI();
             AddEventLog("游戏启动", EventLogKind.System);
