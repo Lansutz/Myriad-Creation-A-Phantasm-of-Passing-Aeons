@@ -11,7 +11,8 @@ namespace CivilizationEvolution.Politics
     {
         public int realmId;
         public string realmName;
-        public GameEnums.GovernmentType governmentType;
+        // 政体：旧单标签 GovernmentType 枚举已废弃，统一由下方 composition 七维成分组合表达；
+        // 粗分类（君主制/共和制）由 SupremeSuccessionLevel.IsMonarchy/IsRepublic 推导。
 
         // 财政
         public float treasury = 1000f;
@@ -197,18 +198,10 @@ namespace CivilizationEvolution.Politics
             return Mathf.Clamp01(control);
         }
 
-        /// <summary>政体改革</summary>
-        public bool ReformGovernment(int realmId, GameEnums.GovernmentType newType)
-        {
-            if (!_realms.TryGetValue(realmId, out var realm)) return false;
-
-            // 政体改革触发贵族反抗
-            realm.AdjustClassRelation(GameEnums.SocialClass.NobilityClergy, -30f);
-            realm.governmentType = newType;
-            realm.stability = Mathf.Max(0f, realm.stability - 20f);
-
-            return true;
-        }
+        /// <summary>
+        /// 政体改革已统一到七维成分模型——见 GovernmentReform.Reform（按 PolityDimension 改 composition，
+        /// 需支撑革新已持有，触发稳定性下降与编年史）。旧的单标签 GovernmentType 枚举与本方法已废弃。
+        /// </summary>
 
         /// <summary>每日政治Tick</summary>
         public void DailyTick()

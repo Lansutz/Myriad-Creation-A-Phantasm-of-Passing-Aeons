@@ -84,6 +84,15 @@ namespace CivilizationEvolution.UI
         // Toast 队列
         private readonly Queue<string> _toastQueue = new Queue<string>();
         private Coroutine _toastRoutine;
+        // 地图编辑器UI面板
+        private EditorUIPanel _editorPanel;
+
+        [Header("地图信息")]
+        [SerializeField] private Text mapInfoText;
+
+        // UI 数据更新节流（避免每帧全量遍历 8192 地块算总人口等重操作）
+        private float _uiUpdateTimer;
+        private const float UiUpdateInterval = 0.2f; // 5 次/秒，足够人眼流畅
 
         void Start()
         {
@@ -113,13 +122,21 @@ namespace CivilizationEvolution.UI
             Debug.Log($"[UIManager] 中文字体已应用：{count} 处 UI 文本");
         }
 
-        void Update()
+                void Update()
         {
-            UpdateTopBar();
-            UpdateTileInfo();
+            // 鼠标点击需要实时响应，不节流
             HandleMouseClick();
-            if (characterPanel != null && characterPanel.activeSelf)
-                UpdateCharacterPanel();
+
+            // UI 数据展示节流：0.2 秒更新一次（5fps），避免每帧全量遍历地块算总人口
+            _uiUpdateTimer += Time.unscaledDeltaTime;
+            if (_uiUpdateTimer >= UiUpdateInterval)
+            {
+                _uiUpdateTimer = 0f;
+                UpdateTopBar();
+                UpdateTileInfo();
+                if (characterPanel != null && characterPanel.activeSelf)
+                    UpdateCharacterPanel();
+            }
         }
 
         /// <summary>初始化UI</summary>
@@ -152,6 +169,16 @@ namespace CivilizationEvolution.UI
             if (charNextButton != null) charNextButton.onClick.AddListener(() => { _charIndex++; UpdateCharacterPanel(); });
             if (charCloseButton != null) charCloseButton.onClick.AddListener(CloseCharacterPanel);
 
+            // 地图编辑器UI面板（代码动态生成，无需在Inspector手动搭建）
+            if (mapRenderer != null)
+            {
+                var editorPanelObj = new GameObject("EditorUIPanel");
+                editorPanelObj.transform.SetParent(transform, false);
+                _editorPanel = editorPanelObj.AddComponent<EditorUIPanel>();
+                var editor = mapRenderer.GetMapEditor();
+                _editorPanel.Initialize(mapRenderer, editor);
+                AddEventLog("编辑器UI面板已加载（Tab键显示/隐藏）", EventLogKind.System);
+            }
             Debug.Log("[UIManager] UI初始化完成");
         }
 
@@ -182,7 +209,16 @@ namespace CivilizationEvolution.UI
                 enumerator.MoveNext();
                 treasuryText.text = $"国库: {Mathf.RoundToInt(enumerator.Current.Value.treasury)}";
             }
-        }
+        
+            // 地图信息：尺寸 + 地块数 + 省份数
+            if (mapInfoText != null)
+            {
+                int totalTiles = world.tiles.Length;
+                int landTiles = world.GetLandTileCount();
+                int seaTiles = world.GetSeaTileCount();
+                int provinceCount = world.provinces != null ? world.provinces.Count : 0;
+                mapInfoText.text = $"地图 {world.mapWidth}×{world.mapHeight}  地块 {totalTiles}(陆{landTiles}/海{seaTiles})  省份 {provinceCount}";
+            }}
 
         /// <summary>更新地块详情</summary>
         private void UpdateTileInfo()
@@ -456,6 +492,14 @@ namespace CivilizationEvolution.UI
             if (eventLogPanel != null)
                 eventLogPanel.SetActive(!eventLogPanel.activeSelf);
         }
+        /// <summary>切换地图编辑器面板显示/隐藏</summary>
+        public void ToggleEditorPanel()
+        {
+            _editorPanel?.TogglePanel();
+        }
+
+        /// <summary>获取地图编辑器面板</summary>
+        public EditorUIPanel GetEditorPanel() => _editorPanel;
 
         public int GetSelectedTile() => _selectedTile;
         public void SetSelectedTile(int tile) => _selectedTile = tile;

@@ -186,6 +186,19 @@ namespace CivilizationEvolution.Core
         public string GetName() => Localization.Get(templateId + "_name");
         public string GetDescription() => Localization.Get(templateId + "_desc");
 
+        /// <summary>按人格维度取生成偏移（七维 bias 的统一枚举入口；供 CharacterManager.ApplyTemplate 遍历）</summary>
+        public float GetPersonalityBias(PersonalityDimension dim) => dim switch
+        {
+            PersonalityDimension.Boldness => boldnessBias,
+            PersonalityDimension.Compassion => compassionBias,
+            PersonalityDimension.Greed => greedBias,
+            PersonalityDimension.Honor => honorBias,
+            PersonalityDimension.Rationality => rationalityBias,
+            PersonalityDimension.Vengefulness => vengefulnessBias,
+            PersonalityDimension.Piety => pietyBias,
+            _ => 0f
+        };
+
         /// <summary>统计范围约束是否启用（任一维 > 0）</summary>
         public bool HasStatConstraints()
         {

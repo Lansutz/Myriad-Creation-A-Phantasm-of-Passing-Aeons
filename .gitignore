@@ -3,3 +3,6 @@ debug.log
 *.log
 # 验证工作区（编译日志/测试产物/报告），不入库
 .reverse/
+
+# 编译日志（Unity batchmode 输出）
+compile_log*.txt

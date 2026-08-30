@@ -46,6 +46,8 @@ namespace CivilizationEvolution.Core
         public Dictionary<int, UnitDef> unitDefs = new Dictionary<int, UnitDef>();
         /// <summary>省份（provinceId → Province——地图结构层）</summary>
         public Dictionary<int, Province> provinces = new Dictionary<int, Province>();
+        /// <summary>子地块/Burg（burgId → BurgData——省份内定居点，对齐 CK3 男爵领）</summary>
+        public Dictionary<int, BurgData> burgs = new Dictionary<int, BurgData>();
         /// <summary>军队（armyId → Army——战争闭环）</summary>
         public Dictionary<int, Army> armies = new Dictionary<int, Army>();
         /// <summary>战争状态列表（战争闭环——分数/胜负判定）</summary>
@@ -220,17 +222,37 @@ namespace CivilizationEvolution.Core
 
             // 省份生成（沃罗诺伊+Lloyd 松弛——地图结构层）
             GenerateProvinces(seed);
+            GenerateBurgs(seed);
 
             Debug.Log($"[GameWorld] 地形生成完成，陆地{GetLandTileCount()}地块，海洋{GetSeaTileCount()}地块，省份{provinces.Count}个");
         }
 
-        private void GenerateProvinces(int seed)
+                private void GenerateProvinces(int seed)
         {
+            // 省份密度随地图尺寸动态调整：大地图每省地块更多，避免省份数量爆炸
+            // 公式：Max(48, sqrt(总地块) * 0.3)
+            // 128×64(8192)→48地块/省≈170省；512×256(131072)→109≈1200省；1920×1080(2073600)→432≈4800省（对齐参考项目5226省）
+            int totalTiles = mapWidth * mapHeight;
+            int cellsPerProvince = Mathf.Max(48, (int)(Mathf.Sqrt(totalTiles) * 0.3));
+
             var generator = new ProvinceGenerator(tiles, mapWidth, mapHeight, config.wrapX);
-            provinces = generator.Generate(seed + 777, ProvinceGenerator.DefaultCellsPerProvince,
+            provinces = generator.Generate(seed + 777, cellsPerProvince,
                 ProvinceGenerator.DefaultLloydIterations);
+            Debug.Log($"[GameWorld] 省份生成：{cellsPerProvince}地块/省 → {provinces.Count}省");
         }
 
+
+        /// <summary>生成子地块/Burg（省份内定居点：城市/港口/要塞/村庄）</summary>
+        private void GenerateBurgs(int seed)
+        {
+            var generator = new BurgGenerator(tiles, mapWidth, mapHeight, provinces, seed);
+            burgs = generator.Generate();
+            int cityCount=0, portCount=0, fortCount=0, villageCount=0;
+            foreach (var b in burgs.Values) {
+                switch (b.type) { case BurgType.City: cityCount++; break; case BurgType.Port: portCount++; break; case BurgType.Fortress: fortCount++; break; default: villageCount++; break; }
+            }
+            Debug.Log($"[GameWorld] 子地块生成：{burgs.Count}个（城{cityCount}/港{portCount}/寨{fortCount}/村{villageCount}）");
+        }
         /// <summary>计算地块基础肥力</summary>
         private float CalculateBaseFertility(int index)
         {

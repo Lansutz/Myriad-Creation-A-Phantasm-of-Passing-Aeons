@@ -28,6 +28,18 @@ namespace CivilizationEvolution.Render
         /// <summary>省界描边颜色（Terrain 模式下省区边界）</summary>
         [SerializeField] private Color provinceBorderColor = new Color(0.9f, 0.9f, 0.9f, 1f);
 
+        // 地图纹理更新节流：世界数据每 1 秒才 Tick 一次，无需每帧（60fps）全量重绘 8192 像素
+        private float _mapTextureTimer;
+        private const float MapTextureInterval = 0.2f; // 5 次/秒，人眼无感延迟
+        private bool _forceMapRefresh = true; // 首次/切换模式时立即重绘
+        // 地图编辑器
+        private MapEditor _mapEditor;
+        private int _hoverTile = -1; // 鼠标悬停地块（画笔预览）
+
+        // 像素数组缓存：避免每次重绘都 new Color[8192] 产生 GC
+        private Color[] _pixelBuffer;
+        private static readonly Color VoidColor = new Color(0.05f, 0.05f, 0.08f, 1f);
+
         /// <summary>省界判定：与任一邻域省份归属不同即为边界地块</summary>
         public bool IsProvinceBorder(int tileIndex)
         {
@@ -63,19 +75,61 @@ namespace CivilizationEvolution.Render
         private bool _isDragging = false;
         private Vector3 _lastMousePosition;
 
-        void Start()
+                void Start()
         {
+            // 先从绑定的世界同步地图尺寸，避免纹理用默认 128×64 创建导致大地图不渲染
+            if (world != null)
+            {
+                mapWidth = world.mapWidth;
+                mapHeight = world.mapHeight;
+                Debug.Log($"[MapRenderer] 从世界同步地图尺寸：{mapWidth}×{mapHeight}");
+            }
             InitializeRenderer();
             InitializeColors();
             _mainCamera = Camera.main;
+            _mapEditor = new MapEditor(world, this);
+            _forceMapRefresh = true; // 尺寸同步后强制重绘
         }
 
-        void Update()
+                void Update()
         {
+            // 相机输入需要实时响应，不节流
             HandleCameraInput();
-            UpdateMapTexture();
+            // 地图编辑器鼠标处理（编辑模式下左键绘制）
+            HandleEditorInput();
+
+            // 地图纹理重绘节流：0.2 秒一次或强制刷新时
+            _mapTextureTimer += Time.unscaledDeltaTime;
+            if (_forceMapRefresh || _mapTextureTimer >= MapTextureInterval)
+            {
+                _mapTextureTimer = 0f;
+                _forceMapRefresh = false;
+                UpdateMapTexture();
+            }
         }
 
+
+        /// <summary>编辑器鼠标输入处理（左键按下拖动绘制，悬停更新画笔预览）</summary>
+        private void HandleEditorInput()
+        {
+            if (_mapEditor == null || !_mapEditor.IsEditMode) return;
+
+            int tile = ScreenToTile(Input.mousePosition);
+            _hoverTile = tile;
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                _mapEditor.OnPaintStart(tile);
+            }
+            else if (Input.GetMouseButton(0) && _mapEditor.IsPainting)
+            {
+                _mapEditor.OnPaintDrag(tile);
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                _mapEditor.OnPaintEnd();
+            }
+        }
         /// <summary>初始化渲染器</summary>
         private void InitializeRenderer()
         {
@@ -202,24 +256,80 @@ namespace CivilizationEvolution.Render
         }
 
         /// <summary>更新地图纹理</summary>
-        private void UpdateMapTexture()
+                private void UpdateMapTexture()
         {
             if (world == null || world.tiles == null) return;
             if (world.tiles.Length != mapWidth * mapHeight) return;
 
-            var pixels = new Color[mapWidth * mapHeight];
+            // 复用像素缓冲区，仅在尺寸变化时重新分配
+            int pixelCount = mapWidth * mapHeight;
+            if (_pixelBuffer == null || _pixelBuffer.Length != pixelCount)
+                _pixelBuffer = new Color[pixelCount];
 
             for (int i = 0; i < world.tiles.Length; i++)
             {
                 if (!world.tiles[i].exists)
                 {
-                    pixels[i] = new Color(0.05f, 0.05f, 0.08f, 1f); // 虚空/地图外：深色
+                    _pixelBuffer[i] = VoidColor; // 虚空/地图外：深色
                     continue;
                 }
-                pixels[i] = GetTileColor(i);
+                _pixelBuffer[i] = GetTileColor(i);
             }
 
-            mapTexture.SetPixels(pixels);
+            // ===== 子地块/Burg 标记绘制（在地形纹理上叠加彩色像素点）=====
+            if (world.burgs != null && world.burgs.Count > 0)
+            {
+                foreach (var burg in world.burgs.Values)
+                {
+                    // 村庄太小不显示，只显示主要定居点
+                    if (!burg.IsMajorSettlement) continue;
+                    if (burg.tileIndex < 0 || burg.tileIndex >= pixelCount) continue;
+
+                    Color burgColor = burg.type switch
+                    {
+                        BurgType.Capital => new Color(1f, 0.85f, 0.2f, 1f),   // 金色：首都
+                        BurgType.City => new Color(1f, 1f, 1f, 1f),              // 白色：城市
+                        BurgType.Port => new Color(0.3f, 0.6f, 1f, 1f),          // 蓝色：港口
+                        BurgType.Fortress => new Color(0.9f, 0.3f, 0.2f, 1f),    // 红色：要塞
+                        BurgType.Town => new Color(0.9f, 0.8f, 0.4f, 1f),        // 黄色：集镇
+                        _ => new Color(0.6f, 0.6f, 0.6f, 1f)                      // 灰色
+                    };
+
+                    // 在Burg所在地块画 2x2 像素标记（大地图画3x3）
+                    int bx = burg.tileIndex % mapWidth;
+                    int by = burg.tileIndex / mapWidth;
+                    int markSize = mapWidth > 512 ? 2 : 1;
+                    for (int dy = 0; dy < markSize; dy++)
+                    {
+                        for (int dx = 0; dx < markSize; dx++)
+                        {
+                            int px = bx + dx;
+                            int py = by + dy;
+                            if (px >= 0 && px < mapWidth && py >= 0 && py < mapHeight)
+                            {
+                                int pi = py * mapWidth + px;
+                                _pixelBuffer[pi] = burgColor;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 编辑器画笔预览（编辑模式下高亮鼠标悬停的画笔范围）
+            if (_mapEditor != null && _mapEditor.IsEditMode && _hoverTile >= 0 && _mapEditor.CurrentTool != EditorTool.None)
+            {
+                var brushTiles = _mapEditor.GetBrushTileIndices(_hoverTile);
+                Color previewColor = new Color(1f, 1f, 1f, 0.4f); // 半透明白色预览
+                foreach (int bt in brushTiles)
+                {
+                    if (bt >= 0 && bt < pixelCount)
+                    {
+                        _pixelBuffer[bt] = Color.Lerp(_pixelBuffer[bt], previewColor, 0.5f);
+                    }
+                }
+            }
+            mapTexture.SetPixels(_pixelBuffer);
+
             mapTexture.Apply();
         }
 
@@ -311,12 +421,26 @@ namespace CivilizationEvolution.Render
         }
 
         /// <summary>切换显示模式</summary>
-        public void SetDisplayMode(MapDisplayMode mode)
+                public void SetDisplayMode(MapDisplayMode mode)
         {
             displayMode = mode;
+            _forceMapRefresh = true; // 切换显示模式立即重绘
             Debug.Log($"[MapRenderer] 切换显示模式：{mode}");
         }
 
+        /// <summary>强制刷新地图纹理（编辑器绘制后调用）</summary>
+        public void ForceRefresh()
+        {
+            _forceMapRefresh = true;
+        }
+        /// <summary>获取当前地图纹理（用于导出PNG）</summary>
+        public Texture2D GetMapTexture() => mapTexture;
+
+        /// <summary>获取地图编辑器实例</summary>
+        public MapEditor GetMapEditor() => _mapEditor;
+
+        /// <summary>当前鼠标悬停地块（画笔预览用）</summary>
+        public int HoverTile => _hoverTile;
         /// <summary>屏幕坐标转地块索引（支持左右连通环绕）</summary>
         public int ScreenToTile(Vector3 screenPos)
         {

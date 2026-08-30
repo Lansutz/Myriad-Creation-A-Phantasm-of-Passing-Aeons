@@ -408,7 +408,8 @@ namespace CivilizationEvolution.Core
     {
         public int realmId;
         public string realmName;
-        public int governmentType;
+        /// <summary>政体七维成分组合（整体序列化；GovernmentComposition 及其成员类全部 [Serializable]，无 Dictionary）</summary>
+        public GovernmentComposition composition = new GovernmentComposition();
         public float treasury;
         public float prestige;
         public float stability;
@@ -427,7 +428,7 @@ namespace CivilizationEvolution.Core
             {
                 realmId = r.realmId,
                 realmName = r.realmName,
-                governmentType = (int)r.governmentType,
+                composition = r.composition,
                 treasury = r.treasury,
                 prestige = r.prestige,
                 stability = r.stability,
@@ -454,7 +455,7 @@ namespace CivilizationEvolution.Core
             {
                 realmId = realmId,
                 realmName = realmName,
-                governmentType = (GameEnums.GovernmentType)governmentType,
+                composition = composition,
                 treasury = treasury,
                 prestige = prestige,
                 stability = stability,

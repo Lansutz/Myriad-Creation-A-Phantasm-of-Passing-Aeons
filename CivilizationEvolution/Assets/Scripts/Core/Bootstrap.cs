@@ -7,11 +7,24 @@ namespace CivilizationEvolution.Core
     /// 游戏启动入口
     /// 挂载到场景中的Bootstrap物体上，自动初始化GameManager和GameWorld
     /// </summary>
+    /// <summary>地图尺寸预设（宽×高，总地块数）</summary>
+    public enum MapSizePreset
+    {
+        Tiny,    // 64×32 = 2,048 地块
+        Small,   // 128×64 = 8,192 地块
+        Medium,  // 256×128 = 32,768 地块
+        Large,   // 512×256 = 131,072 地块
+        Huge,    // 1024×512 = 524,288 地块
+        Reference // 1920×1080 = 2,073,600 地块（对齐参考项目）
+    }
+
     public class Bootstrap : MonoBehaviour
     {
         [Header("地图配置")]
-        [SerializeField] private int mapWidth = 128;
-        [SerializeField] private int mapHeight = 64;
+        [SerializeField] private MapSizePreset mapSizePreset = MapSizePreset.Large;
+        // 运行时从预设解析的实际尺寸
+        private int _mapWidth;
+        private int _mapHeight;
         [SerializeField] private int randomSeed = 42;
         [SerializeField] private bool autoStartOnBoot = true;
 
@@ -21,6 +34,18 @@ namespace CivilizationEvolution.Core
 
         private void Awake()
         {
+            // 从预设解析地图尺寸
+            (_mapWidth, _mapHeight) = mapSizePreset switch
+            {
+                MapSizePreset.Tiny => (64, 32),
+                MapSizePreset.Small => (128, 64),
+                MapSizePreset.Medium => (256, 128),
+                MapSizePreset.Large => (512, 256),
+                MapSizePreset.Huge => (1024, 512),
+                MapSizePreset.Reference => (1920, 1080),
+                _ => (256, 128)
+            };
+
             Debug.Log($"[{GameConstants.GameNameShort}] {GameConstants.GameNameEn} | {GameConstants.GameNameZh} | v{GameConstants.Version}");
 
             // 加载内容注册表（Base/Mods 双目录数据驱动）
@@ -42,8 +67,8 @@ namespace CivilizationEvolution.Core
             if (mainCamera != null)
             {
                 mainCamera.orthographic = true;
-                mainCamera.orthographicSize = 50f;
-                mainCamera.transform.position = new Vector3(64f, 100f, 32f);
+                mainCamera.orthographicSize = _mapHeight * 0.6f;
+                mainCamera.transform.position = new Vector3(_mapWidth * 0.5f, 100f, _mapHeight * 0.5f);
                 mainCamera.transform.rotation = Quaternion.Euler(60f, 0f, 0f);
                 mainCamera.clearFlags = CameraClearFlags.SolidColor;
                 mainCamera.backgroundColor = new Color(0.1f, 0.15f, 0.25f);
@@ -71,8 +96,8 @@ namespace CivilizationEvolution.Core
         /// <summary>开始新游戏</summary>
         public void StartNewGame()
         {
-            GameManager.Instance.StartNewGame(mapWidth, mapHeight, randomSeed);
-            Debug.Log($"[Bootstrap] 新游戏已启动：{mapWidth}x{mapHeight}，种子={randomSeed}");
+            GameManager.Instance.StartNewGame(_mapWidth, _mapHeight, randomSeed);
+            Debug.Log($"[Bootstrap] 新游戏已启动：{_mapWidth}x{_mapHeight}（{mapSizePreset}），种子={randomSeed}，总地块={_mapWidth * _mapHeight}");
         }
 
         /// <summary>保存游戏</summary>

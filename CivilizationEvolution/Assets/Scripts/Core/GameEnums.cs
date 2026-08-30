@@ -152,17 +152,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
-        /// <summary>政体类型</summary>
-        public enum GovernmentType
-        {
-            Tribal,
-            Chiefdom,
-            Feudal,
-            Centralized,
-            Theocratic,
-            Republic,
-            NomadicConfederation
-        }
+        /// <summary>政体类型已废弃：政体由 GovernmentComposition 七维成分组合表达，
+        /// 粗分类（君主/共和）由 SupremeSuccessionLevel 推导，不再使用单标签枚举。</summary>
 
         /// <summary>文化阶段</summary>
         public enum CultureStage

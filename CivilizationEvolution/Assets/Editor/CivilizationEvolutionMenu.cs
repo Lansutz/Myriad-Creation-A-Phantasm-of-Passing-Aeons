@@ -74,7 +74,7 @@ namespace CivilizationEvolution.EditorTools
             lightGo.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
 
             // ---- MapEditor ----
-            var editor = worldGo.AddComponent<MapEditor>();
+            var editor = worldGo.AddComponent<CivilizationEvolution.Map.MapEditor>();
             SetField(editor, "world", world);
             SetField(editor, "mapRenderer", renderer);
             SetField(editor, "mainCamera", cam);
