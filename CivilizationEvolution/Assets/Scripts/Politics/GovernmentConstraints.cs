@@ -196,31 +196,61 @@ namespace CivilizationEvolution.Politics
                             new SubOption { name = "长幼轴", value = 3, description = "年长者先 / 年幼者先" }
                         }
                     });
-                    // 选举君主 → 选举范围
+                    // 选举君主 → 两轴：身份范围 + 性别（区别于世袭的血缘范围四轴）
                     groups.Add(new SubOptionGroup
                     {
-                        groupName = "选举范围",
+                        groupName = "选举范围（身份）",
                         parentDimension = "SupremeSuccession",
                         parentValue = (int)SupremeSuccession.ElectiveDirect,
                         options = new List<SubOption>
                         {
-                            new SubOption { name = "全体公民", value = 0, description = "所有公民直接投票" },
-                            new SubOption { name = "公民大会", value = 1, description = "公民大会选举" },
-                            new SubOption { name = "部落联盟", value = 2, description = "各部落代表选举" }
+                            new SubOption { name = "全体公民", value = 0, description = "所有公民直接投票（雅典式）" },
+                            new SubOption { name = "公民大会", value = 1, description = "公民大会代表选举" },
+                            new SubOption { name = "部落联盟", value = 2, description = "各部落代表选举" },
+                            new SubOption { name = "自由民", value = 3, description = "全体自由民选举" }
                         }
                     });
-                    // 推举君主 → 推举主体
                     groups.Add(new SubOptionGroup
                     {
-                        groupName = "推举主体",
+                        groupName = "性别资格",
+                        parentDimension = "SupremeSuccession",
+                        parentValue = (int)SupremeSuccession.ElectiveDirect,
+                        options = new List<SubOption>
+                        {
+                            new SubOption { name = "仅男性", value = 0, description = "只有男性可被选举" },
+                            new SubOption { name = "男性优先", value = 1, description = "男性优先，女性可被选举" },
+                            new SubOption { name = "男女平等", value = 2, description = "男女平等选举权" },
+                            new SubOption { name = "女性优先", value = 3, description = "女性优先" },
+                            new SubOption { name = "仅女性", value = 4, description = "只有女性可被选举" }
+                        }
+                    });
+                    // 推举君主 → 两轴：推举主体身份 + 性别
+                    groups.Add(new SubOptionGroup
+                    {
+                        groupName = "推举主体（身份）",
                         parentDimension = "SupremeSuccession",
                         parentValue = (int)SupremeSuccession.ElectiveRepresentative,
                         options = new List<SubOption>
                         {
-                            new SubOption { name = "贵族推举", value = 0, description = "贵族阶层推举" },
+                            new SubOption { name = "贵族推举", value = 0, description = "贵族阶层推举（波兰式）" },
                             new SubOption { name = "元老院推举", value = 1, description = "元老院推举（罗马式）" },
                             new SubOption { name = "选帝侯", value = 2, description = "选帝侯推举（神罗式）" },
-                            new SubOption { name = "军队推举", value = 3, description = "军队推举（罗马禁卫军式）" }
+                            new SubOption { name = "军队推举", value = 3, description = "军队推举（罗马禁卫军式）" },
+                            new SubOption { name = "教会推举", value = 4, description = "教阶推举（教皇选举式）" }
+                        }
+                    });
+                    groups.Add(new SubOptionGroup
+                    {
+                        groupName = "性别资格",
+                        parentDimension = "SupremeSuccession",
+                        parentValue = (int)SupremeSuccession.ElectiveRepresentative,
+                        options = new List<SubOption>
+                        {
+                            new SubOption { name = "仅男性", value = 0, description = "只有男性可被推举" },
+                            new SubOption { name = "男性优先", value = 1, description = "男性优先，女性可被推举" },
+                            new SubOption { name = "男女平等", value = 2, description = "男女平等被推举权" },
+                            new SubOption { name = "女性优先", value = 3, description = "女性优先" },
+                            new SubOption { name = "仅女性", value = 4, description = "只有女性可被推举" }
                         }
                     });
                     break;
@@ -272,7 +302,7 @@ namespace CivilizationEvolution.Politics
                     {
                         groupName = "长老构成",
                         parentDimension = "CentralInstitution",
-                        parentValue = (int)CentralInstitution.CouncilOfElders,
+                        parentValue = (int)CentralInstitution.EldersCouncil,
                         options = new List<SubOption>
                         {
                             new SubOption { name = "氏族长老", value = 0, description = "各氏族长老组成" },
