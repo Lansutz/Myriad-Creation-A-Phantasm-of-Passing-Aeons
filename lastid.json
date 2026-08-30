@@ -1,0 +1,11 @@
+﻿{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "document": {
+      "content": "<fragment mode=\"keyword\" keyword=\"板块数量\"><excerpt top-block-id=\"doxcnCJp2zvyK8ttYQtod6oGYZg\"><table id=\"doxcnCJp2zvyK8ttYQtod6oGYZg\"><thead><tr><th vertical-align=\"top\"><p id=\"doxcnc4Dq28hGBnnWpNMEW2QNbc\">参数</p></th><th vertical-align=\"top\"><p id=\"doxcnwSbsqvc0S35dR0ADj1kmdb\">范围</p></th><th vertical-align=\"top\"><p id=\"doxcnKQEb9sEsmczg2D0glM1Ukb\">默认</p></th><th vertical-align=\"top\"><p id=\"doxcn8TlPY0YTePqnwzUg6WZkxf\">说明</p></th></tr></thead><tbody><tr><td vertical-align=\"top\"><p id=\"doxcnNSK7cmCfuBMkrrz4ZEqITb\">板块数量</p></td><td vertical-align=\"top\"><p id=\"doxcnNCLRVWAoeaTNnmaP2al5Bh\">6/8/12/16/20</p></td><td vertical-align=\"top\"><p id=\"doxcnCFWdwqf3blApj2f0YeKpof\">12</p></td><td vertical-align=\"top\"><p id=\"doxcnSi53mZXe9NYMtku4LdjKie\">构造板块数。板块越多，山脉带越密集。球面Voronoi生成。</p></td></tr></tbody></table></excerpt></fragment>",
+      "document_id": "DvNCduoAAotDspxOKrncSWnpnUf",
+      "revision_id": 729
+    }
+  }
+}

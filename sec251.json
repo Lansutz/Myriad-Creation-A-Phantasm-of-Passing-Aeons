@@ -1,0 +1,11 @@
+﻿{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "document": {
+      "content": "<fragment mode=\"section\" requested-start=\"doxcnCbx0s7AckmHvsRirB5mwOh\"><h3 id=\"doxcnCbx0s7AckmHvsRirB5mwOh\">2.5.1 核心工作流（三阶段）</h3><p id=\"doxcnKkG2a1SkmfEQELsnEA583d\"><b>设计原则</b>：先编辑地形，再计算派生数据。地形是因，气候/水文/群系是果。玩家始终掌握地形的最终控制权。</p><p id=\"doxcnnq7dbpWUnXwM4uH7eriWec\"><b>阶段一：地形创建</b></p><ul><li id=\"doxcnQ0tvtyN806k8hb03vmrFvc\">程序化生成：调整参数，点击生成地形</li><li id=\"doxcn9wWvejrYI3yaabCb23iMMf\">空白地图：从零开始手动绘制</li><li id=\"doxcneb9yIiDdr59jgGJYwuzFtc\">导入高度图：导入外部灰度图作为高程基础</li></ul><p id=\"doxcnYsTPsMf27xhIpGiQ9Ez94c\"><b>阶段二：地形编辑</b></p><ul><li id=\"doxcnd2mpNMwz71CEwDgdDbv9ad\">画笔工具：升高 / 降低 / 平滑 / 噪声 / 平整</li><li id=\"doxcn0ZciDf0Zksvn0VCiazi14b\">海平面滑块：实时调整海陆分界</li><li id=\"doxcnir3UMM4cwLdePe9Z6bNcze\">预设地形模板：一键应用地球类/冰期/温室/干旱等预设</li></ul><p id=\"doxcnw8apP3ARc1cv9x13rbZvxw\"><b>阶段三：气候与水文计算</b></p><ul><li id=\"doxcnPpf5WuiYurx9PWx5fuo3he\">点击计算气候按钮，自动执行完整管线：温度、降水、洋流、水力侵蚀、河网、Holdridge群系、PCA地形特征</li><li id=\"doxcnuUPH8i8dcNgIz4ltMOIlXf\">支持仅重算水文：修改地形后只重算河网，不重算气候</li><li id=\"doxcnSjs4Ezf1x9yxdCjW7ymdj5\">计算过程中显示进度条，可取消</li></ul></fragment>",
+      "document_id": "DvNCduoAAotDspxOKrncSWnpnUf",
+      "revision_id": 728
+    }
+  }
+}
