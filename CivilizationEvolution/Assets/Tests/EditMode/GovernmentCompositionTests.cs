@@ -5,15 +5,15 @@ using CivilizationEvolution.Politics;
 namespace CivilizationEvolution.Tests
 {
     /// <summary>
-    /// 政体系统 EditMode 测试（用户定稿：三权力层级 × 交接/分配 = 六维结构）
-    /// 政体 = 六维成分组合；成分是模组化接口；继承法=最高权力·交接=世袭子选项
+    /// 政体系统 EditMode 测试（用户定稿 v3：七维——三权力层级×交接/分配 + 央地结构）
+    /// 政体 = 七维成分自由组合；成分是模组化接口；继承法=最高权力·交接=世袭子选项
     /// </summary>
     public class GovernmentCompositionTests
     {
-        // ===== 六维结构完整性 =====
+        // ===== 七维结构完整性 =====
 
         [Test]
-        public void SixDimensions_AllPresent()
+        public void SevenDimensions_AllPresent()
         {
             var comp = new GovernmentComposition();
             // A. 最高权力
@@ -25,157 +25,145 @@ namespace CivilizationEvolution.Tests
             // C. 地方权力
             Assert.AreEqual((int)LocalSuccession.CentralAppointed, comp.localSuccession.primary);
             Assert.AreEqual((int)LocalScope.FiscalJudicial, comp.localScope.primary);
+            // D. 央地结构（第七维）
+            Assert.AreEqual((int)SpatialStructure.Unitary, comp.spatialStructure.primary, "央地结构独立维度");
 
             // 世袭子选项=继承法（默认长子继承）
             Assert.AreEqual(InheritanceGender.MalePreference, comp.successionLaw.gender);
         }
 
-        // ===== 经典政体组合（学术示例） =====
+        // ===== 细分成分（A1 九选/议会三形态/领主两分/央地结构） =====
 
         [Test]
-        public void BureaucraticMonarchy_QinStyle()
+        public void SupremeSuccession_RefinedOptions()
         {
-            // 秦式：世袭+全能+任命+官僚中枢+中央任官+完全直辖（宗祧+析产）
-            var comp = GovernmentComposition.BureaucraticMonarchy();
-            Assert.AreEqual((int)SupremeSuccession.Hereditary, comp.supremeSuccession.primary);
-            Assert.AreEqual((int)CentralInstitution.BureaucraticCore, comp.centralInstitution.primary);
-            Assert.AreEqual((int)LocalSuccession.CentralAppointed, comp.localSuccession.primary);
-            Assert.AreEqual((int)LocalScope.None, comp.localScope.primary);
-            Assert.AreEqual(LandInheritanceMode.Partible, comp.successionLaw.landMode, "析产：领地诸子均分");
-            StringAssert.Contains("官僚中枢", comp.GetName());
+            // 选举三分：公民大会直接/代议/委员会
+            Assert.AreEqual((int)SupremeSuccession.DirectAssembly, GovernmentComposition.AthenianDemocracy().supremeSuccession.primary);
+            Assert.AreEqual((int)SupremeSuccession.CollegialElection, GovernmentComposition.SenatorialRepublic().supremeSuccession.primary);
+            Assert.AreEqual((int)SupremeSuccession.RepresentativeElection, GovernmentComposition.ConstitutionalMonarchy().supremeSuccession.primary);
+            // 指定储君（非世袭非选举——中国预立太子）
+            Assert.AreEqual((int)SupremeSuccession.SuccessorDesignation, GovernmentComposition.SuccessorDesignationEmpire().supremeSuccession.primary);
+            // 贵族推举（选帝侯）
+            Assert.AreEqual((int)SupremeSuccession.NobleDesignation, GovernmentComposition.HolyRomanEmpire().supremeSuccession.primary);
         }
 
         [Test]
-        public void FeudalFiefdom_ZhouStyle()
+        public void CentralInstitution_AssemblyThreeForms()
         {
-            // 西周式：世袭领主+全权自治（封国）
-            var comp = GovernmentComposition.FeudalFiefdom();
-            Assert.AreEqual((int)CentralSuccession.HereditaryOffice, comp.centralSuccession.primary);
-            Assert.AreEqual((int)CentralInstitution.Court, comp.centralInstitution.primary);
-            Assert.AreEqual((int)LocalSuccession.HereditaryLord, comp.localSuccession.primary);
-            Assert.AreEqual((int)LocalScope.FullAutonomy, comp.localScope.primary);
+            // 议会三形态：一院（雅典公民大会/罗马元老院）/两院（英国上下院）/等级会议（三级会议/帝国议会）
+            Assert.AreEqual((int)CentralInstitution.UnicameralAssembly, GovernmentComposition.AthenianDemocracy().centralInstitution.primary);
+            Assert.AreEqual((int)CentralInstitution.BicameralAssembly, GovernmentComposition.ConstitutionalMonarchy().centralInstitution.primary);
+            Assert.AreEqual((int)CentralInstitution.EstateAssembly, GovernmentComposition.HolyRomanEmpire().centralInstitution.primary);
         }
 
         [Test]
-        public void AthenianDemocracy_AssemblyRule()
+        public void LocalSuccession_LordTwoForms()
         {
-            // 雅典式：选举+共议+选举+议会+地方推举+全权自治
-            var comp = GovernmentComposition.AthenianDemocracy();
-            Assert.AreEqual((int)SupremeSuccession.Election, comp.supremeSuccession.primary);
-            Assert.AreEqual((int)SupremeScope.Consensual, comp.supremeScope.primary);
-            Assert.AreEqual((int)CentralInstitution.Assembly, comp.centralInstitution.primary);
+            // 领主两分：世袭封臣（封建契约）vs 宗室采邑（分封宗亲）
+            Assert.AreEqual((int)LocalSuccession.HereditaryVassal, GovernmentComposition.MongolHorde().localSuccession.primary);
+            Assert.AreEqual((int)LocalSuccession.FeudalAppanage, GovernmentComposition.FeudalFiefdom().localSuccession.primary);
+            // 城市特许自治（自由城市）
+            Assert.AreEqual((int)LocalSuccession.CityCharter, GovernmentComposition.VenetianRepublic().localSuccession.primary);
         }
 
         [Test]
-        public void SenatorialRepublic_RomeStyle()
+        public void SpatialStructure_SeventhDimension()
         {
-            // 罗马共和式：推举+法理受限+恩庇+元老院+中央任命+征税司法
-            var comp = GovernmentComposition.SenatorialRepublic();
-            Assert.AreEqual((int)SupremeSuccession.Designation, comp.supremeSuccession.primary);
-            Assert.AreEqual((int)SupremeScope.LegallyBound, comp.supremeScope.primary);
-            Assert.AreEqual((int)CentralSuccession.Patronage, comp.centralSuccession.primary);
-            Assert.AreEqual((int)LocalScope.FiscalJudicial, comp.localScope.primary);
+            // 央地结构独立：秦=单一/罗马共和=联邦/西周神罗蒙古=邦联
+            Assert.AreEqual((int)SpatialStructure.Unitary, GovernmentComposition.BureaucraticMonarchy().spatialStructure.primary);
+            Assert.AreEqual((int)SpatialStructure.Federal, GovernmentComposition.SenatorialRepublic().spatialStructure.primary);
+            Assert.AreEqual((int)SpatialStructure.Confederal, GovernmentComposition.FeudalFiefdom().spatialStructure.primary);
+            Assert.AreEqual((int)SpatialStructure.Confederal, GovernmentComposition.HolyRomanEmpire().spatialStructure.primary);
         }
 
-        [Test]
-        public void Theocracy_DivineRule()
-        {
-            // 神权式：神命+神意约束+宗教会议+教区委任
-            var comp = GovernmentComposition.Theocracy();
-            Assert.AreEqual((int)SupremeSuccession.DivineMandate, comp.supremeSuccession.primary);
-            Assert.AreEqual((int)SupremeScope.DivinelyBound, comp.supremeScope.primary);
-            Assert.AreEqual((int)CentralInstitution.ReligiousCouncil, comp.centralInstitution.primary);
-            Assert.AreEqual((int)LocalSuccession.ReligiousAppointed, comp.localSuccession.primary);
-        }
-
-        [Test]
-        public void MongolHorde_TanistrySuccession()
-        {
-            // 蒙古式：军事委员会+世袭领主+全权自治+兄终弟及继承法
-            var comp = GovernmentComposition.MongolHorde();
-            Assert.AreEqual((int)CentralInstitution.MilitaryCouncil, comp.centralInstitution.primary);
-            Assert.AreEqual((int)LocalScope.FullAutonomy, comp.localScope.primary);
-            Assert.AreEqual(InheritanceGender.MaleOnly, comp.successionLaw.gender, "兄终弟及男子专属");
-            Assert.AreEqual(InheritanceBranch.Collateral, comp.successionLaw.branch, "横向继承");
-        }
-
-        // ===== 正交组合（最高权力主体 ≠ 中央机构——自由组合） =====
+        // ===== 概念边界（用户定稿修正） =====
 
         [Test]
         public void ConstitutionalMonarchy_SovereigntyInParliament()
         {
-            // 君主立宪：最高权力在议会（parliamentary sovereignty）——非世袭君主！
-            // 君主仅为虚位元首（外交头衔，不占成分）
+            // 君主立宪：最高权力在议会（代议）——非世袭君主！
             var comp = GovernmentComposition.ConstitutionalMonarchy();
-            Assert.AreEqual((int)SupremeSuccession.Election, comp.supremeSuccession.primary,
-                "最高权力在议会（选举产生），不在君主");
-            Assert.AreEqual((int)SupremeScope.Consensual, comp.supremeScope.primary, "共议制约");
-            Assert.AreEqual((int)CentralInstitution.Assembly, comp.centralInstitution.primary, "议会机构");
+            Assert.AreEqual((int)SupremeSuccession.RepresentativeElection, comp.supremeSuccession.primary,
+                "最高权力在议会，不在君主");
+            Assert.AreEqual((int)CentralInstitution.BicameralAssembly, comp.centralInstitution.primary);
         }
 
         [Test]
         public void EldersCouncil_NotRepublican()
         {
-            // 长老议事会（部落/长老资格制）≠ 议会/元老院（共和制）——独立机构形态
+            // 长老议事会（长老资格制）≠ 议会/元老院（共和制）
             var comp = new GovernmentComposition
             {
-                supremeSuccession = new ComponentChoice((int)SupremeSuccession.Designation),
+                supremeSuccession = new ComponentChoice((int)SupremeSuccession.NobleDesignation),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.EldersCouncil)
             };
-            Assert.AreEqual((int)CentralInstitution.EldersCouncil, comp.centralInstitution.primary,
-                "长老议事会为独立选项（非共和制）");
-
+            Assert.AreEqual((int)CentralInstitution.EldersCouncil, comp.centralInstitution.primary);
             var republic = GovernmentComposition.SenatorialRepublic();
-            Assert.AreNotEqual((int)CentralInstitution.EldersCouncil, republic.centralInstitution.primary,
-                "共和制（罗马）中央机构为元老院/议会，非长老会");
-            Assert.AreEqual((int)CentralInstitution.Assembly, republic.centralInstitution.primary);
+            Assert.AreEqual((int)CentralInstitution.UnicameralAssembly, republic.centralInstitution.primary,
+                "共和制（罗马）中央机构为元老院，非长老会");
         }
 
-        [Test]
-        public void ImperialSenate_EmperorWithSenate()
-        {
-            // 罗马帝国：皇帝（世袭/僭夺）+ 元老院——与共和元老院层级对等
-            var comp = GovernmentComposition.ImperialSenate();
-            Assert.AreEqual((int)CentralInstitution.Assembly, comp.centralInstitution.primary, "元老院");
-            Assert.IsTrue(comp.supremeSuccession.Contains((int)SupremeSuccession.Usurpation), "皇帝可僭夺产生");
+        // ===== 经典政体（11 个）抽查 =====
 
-            // 与共和制元老院（SenatorialRepublic）对比：中央机构同层级
+        [Test]
+        public void ClassicalPolities_Sample()
+        {
+            // 秦式：官僚中枢+完全直辖
+            var qin = GovernmentComposition.BureaucraticMonarchy();
+            Assert.AreEqual((int)CentralInstitution.BureaucraticCore, qin.centralInstitution.primary);
+            Assert.AreEqual((int)LocalScope.None, qin.localScope.primary);
+            Assert.AreEqual(LandInheritanceMode.Partible, qin.successionLaw.landMode, "析产");
+
+            // 蒙古：军事委员会+兄终弟及
+            var mongol = GovernmentComposition.MongolHorde();
+            Assert.AreEqual((int)CentralInstitution.MilitaryCouncil, mongol.centralInstitution.primary);
+            Assert.AreEqual(InheritanceGender.MaleOnly, mongol.successionLaw.gender);
+
+            // 神权：神命+宗教会议
+            var theo = GovernmentComposition.Theocracy();
+            Assert.AreEqual((int)SupremeSuccession.DivineMandate, theo.supremeSuccession.primary);
+            Assert.AreEqual((int)CentralInstitution.ReligiousCouncil, theo.centralInstitution.primary);
+
+            // 罗马帝国：皇帝+元老院（与共和元老院层级对等）
+            var empire = GovernmentComposition.ImperialSenate();
             var republic = GovernmentComposition.SenatorialRepublic();
-            Assert.AreEqual(comp.centralInstitution.primary, republic.centralInstitution.primary,
-                "皇帝制与共和制的元老院在层级上对等");
-            Assert.AreNotEqual(comp.supremeSuccession.primary, republic.supremeSuccession.primary,
-                "最高权力主体不同（皇帝 vs 推举执政）");
+            Assert.AreEqual(empire.centralInstitution.primary, republic.centralInstitution.primary,
+                "皇帝制与共和制元老院同层级");
+            Assert.AreNotEqual(empire.supremeSuccession.primary, republic.supremeSuccession.primary);
+
+            // 威尼斯：委员会选举+两院+城市特许
+            var venice = GovernmentComposition.VenetianRepublic();
+            Assert.AreEqual((int)SupremeSuccession.CollegialElection, venice.supremeSuccession.primary);
+            Assert.AreEqual((int)CentralInstitution.BicameralAssembly, venice.centralInstitution.primary);
+            Assert.AreEqual((int)LocalSuccession.CityCharter, venice.localSuccession.primary);
+
+            // 储君制帝国：生前指定+考课晋升
+            var tang = GovernmentComposition.SuccessorDesignationEmpire();
+            Assert.AreEqual((int)SupremeSuccession.SuccessorDesignation, tang.supremeSuccession.primary);
+            Assert.AreEqual((int)CentralSuccession.MeritPromotion, tang.centralSuccession.primary);
         }
 
-        [Test]
-        public void HolyRomanEmpire_ElectedEmperorWithImperialDiet()
-        {
-            // 神罗：选帝侯选举（非世袭）+ 帝国议会
-            var comp = GovernmentComposition.HolyRomanEmpire();
-            Assert.AreEqual((int)SupremeSuccession.Designation, comp.supremeSuccession.primary, "选帝侯推举");
-            Assert.AreEqual((int)CentralInstitution.Assembly, comp.centralInstitution.primary, "帝国议会");
-            Assert.AreEqual((int)LocalScope.FullAutonomy, comp.localScope.primary, "诸侯全权自治");
-        }
-
-        // ===== 成分组合自由性（模组化接口：任意组合合法） =====
+        // ===== 组合自由性（模组化接口：任意组合合法） =====
 
         [Test]
-        public void FreeCombination_AnySixComponents()
+        public void FreeCombination_AnySevenComponents()
         {
-            // 成分自由组合：如 僭主+全能+考试选任+王庭+教区委任+仅军事——非法治但合法组合
+            // 任意组合：僭主+惯例约束+考试选任+王庭+教区委任+仅军事+联邦制
             var comp = new GovernmentComposition
             {
                 supremeSuccession = new ComponentChoice((int)SupremeSuccession.Usurpation),
-                supremeScope = new ComponentChoice((int)SupremeScope.Absolute),
+                supremeScope = new ComponentChoice((int)SupremeScope.CustomBound),
                 centralSuccession = new ComponentChoice((int)CentralSuccession.Examination),
                 centralInstitution = new ComponentChoice((int)CentralInstitution.Court),
                 localSuccession = new ComponentChoice((int)LocalSuccession.ReligiousAppointed),
-                localScope = new ComponentChoice((int)LocalScope.MilitaryOnly)
+                localScope = new ComponentChoice((int)LocalScope.MilitaryOnly),
+                spatialStructure = new ComponentChoice((int)SpatialStructure.Federal)
             };
             Assert.AreEqual((int)SupremeSuccession.Usurpation, comp.supremeSuccession.primary);
-            Assert.AreEqual((int)CentralSuccession.Examination, comp.centralSuccession.primary);
-            Assert.AreEqual((int)LocalScope.MilitaryOnly, comp.localScope.primary);
+            Assert.AreEqual((int)SupremeScope.CustomBound, comp.supremeScope.primary);
+            Assert.AreEqual((int)SpatialStructure.Federal, comp.spatialStructure.primary);
             StringAssert.Contains("王庭", comp.GetName());
+            StringAssert.Contains("联邦制", comp.GetName());
         }
 
         // ===== 次要成分（○）支持 =====
@@ -184,10 +172,10 @@ namespace CivilizationEvolution.Tests
         public void SecondaryComponents_Supported()
         {
             var comp = new GovernmentComposition();
-            comp.supremeScope = new ComponentChoice((int)SupremeScope.Absolute, (int)SupremeScope.Consensual);
-            Assert.IsTrue(comp.supremeScope.Contains((int)SupremeScope.Absolute), "主导成分");
-            Assert.IsTrue(comp.supremeScope.Contains((int)SupremeScope.Consensual), "次要成分");
-            Assert.AreEqual(1, comp.supremeScope.secondary.Count, "0~2 个次要");
+            comp.supremeSuccession = new ComponentChoice((int)SupremeSuccession.Hereditary, (int)SupremeSuccession.SuccessorDesignation);
+            Assert.IsTrue(comp.supremeSuccession.Contains((int)SupremeSuccession.Hereditary));
+            Assert.IsTrue(comp.supremeSuccession.Contains((int)SupremeSuccession.SuccessorDesignation));
+            Assert.AreEqual(1, comp.supremeSuccession.secondary.Count, "0~2 个次要");
         }
 
         // ===== RealmData 挂载 =====
@@ -196,9 +184,8 @@ namespace CivilizationEvolution.Tests
         public void RealmData_Composition_Integrated()
         {
             var realm = new RealmData { realmId = 1 };
-            Assert.IsNotNull(realm.composition, "政权应带六维政体成分");
-            Assert.AreEqual((int)SupremeSuccession.Hereditary, realm.composition.supremeSuccession.primary);
-            // 便捷访问继承法（世袭子选项）
+            Assert.IsNotNull(realm.composition, "政权应带七维政体成分");
+            Assert.AreEqual((int)SpatialStructure.Unitary, realm.composition.spatialStructure.primary);
             Assert.AreEqual(InheritanceGender.MalePreference, realm.SuccessionLaw.gender, "默认长子继承");
             // 可整体替换为蒙古汗国式
             realm.composition = GovernmentComposition.MongolHorde();
