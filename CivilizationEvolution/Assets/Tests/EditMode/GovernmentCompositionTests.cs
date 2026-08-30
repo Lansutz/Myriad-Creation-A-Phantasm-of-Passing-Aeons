@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Politics;
+using CivilizationEvolution.Role;
 
 namespace CivilizationEvolution.Tests
 {
@@ -230,6 +231,65 @@ namespace CivilizationEvolution.Tests
             Assert.IsTrue(comp.supremeSuccession.Contains((int)SupremeSuccession.Hereditary));
             Assert.IsTrue(comp.supremeSuccession.Contains((int)SupremeSuccession.SuccessorDesignation));
             Assert.AreEqual(1, comp.supremeSuccession.secondary.Count, "0~2 个次要");
+        }
+
+        [Test]
+        public void Eligibility_GenderCrosscutsAllSuccession()
+        {
+            // 用户定稿：性别等要素横切所有交接方式——选举/推举/轮座/神命同样有资格问题
+            // 雅典（选举）：男子专属·本城邦公民
+            var athens = GovernmentComposition.AthenianDemocracy();
+            Assert.AreEqual(InheritanceGender.MaleOnly, athens.eligibility.gender, "雅典选举：男子专属被选举权");
+            Assert.AreEqual(EligibilityScope.Citizens, athens.eligibility.scope, "雅典：限本城邦公民");
+
+            // 罗马共和（推举）：男子专属·公民
+            var rome = GovernmentComposition.SenatorialRepublic();
+            Assert.AreEqual(InheritanceGender.MaleOnly, rome.eligibility.gender, "罗马推举：男子专属");
+
+            // 神权（神命）：男子专属·教阶
+            var theo = GovernmentComposition.Theocracy();
+            Assert.AreEqual(EligibilityScope.Clergy, theo.eligibility.scope, "神权：限教阶");
+
+            // 蒙古（轮座/世袭）：男子专属·贵族（忽里台）
+            var mongol = GovernmentComposition.MongolHorde();
+            Assert.AreEqual(EligibilityScope.Nobility, mongol.eligibility.scope, "蒙古：限贵族");
+
+            // 资格过滤验证：男子专属时女性被过滤
+            var filtered = rome.eligibility.Filter(new List<CharacterData>
+            {
+                MakeEligibleChar(1, true), MakeEligibleChar(2, false)
+            });
+            Assert.AreEqual(1, filtered.Count, "男子专属：女性被过滤");
+            Assert.IsTrue(filtered[0].isMale);
+        }
+
+        [Test]
+        public void Eligibility_Salic_TwoTier()
+        {
+            // 萨利克双轨：资格=男子专属（门槛）+ 继承排序=男子优先（偏好）
+            // 资格规则在 composition.eligibility，排序在 successionLaw.gender
+            var comp = new GovernmentComposition();
+            comp.eligibility = new EligibilityRules { gender = InheritanceGender.MaleOnly, scope = EligibilityScope.ClanOnly };
+            comp.successionLaw = InheritanceLaw.Salic();
+
+            Assert.AreEqual(InheritanceGender.MaleOnly, comp.eligibility.gender, "资格门槛：男子专属");
+            Assert.AreEqual(InheritanceGender.MaleOnly, comp.successionLaw.gender, "继承排序：男子专属（萨利克）");
+            Assert.IsTrue(comp.eligibility.IsGenderEligible(true), "男性合格");
+            Assert.IsFalse(comp.eligibility.IsGenderEligible(false), "女性不合格");
+        }
+
+        private static CharacterData MakeEligibleChar(int id, bool isMale)
+        {
+            return new CharacterData
+            {
+                characterId = id,
+                firstName = "C" + id,
+                lastName = "氏",
+                age = 30,
+                isMale = isMale,
+                familyId = 1
+                // isAlive 只读（deathDay<0 推导），默认存活
+            };
         }
 
         // ===== RealmData 挂载 =====
