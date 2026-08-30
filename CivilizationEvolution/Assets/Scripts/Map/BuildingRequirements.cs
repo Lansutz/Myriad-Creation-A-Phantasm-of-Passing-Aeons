@@ -17,7 +17,8 @@ namespace CivilizationEvolution.Map
     public enum BuildableType
     {
         // ===== 堡垒亚型（18种）=====
-        PassFort,           // 关口堡
+        Barrier,            // 关隘（建在狭窄通道，直接阻挡敌对势力通行）
+        PassFort,           // 关口堡垒（建在关隘附近，区域控制，不直接阻挡通行）
         HighlandKeep,       // 高地堡
         ManorFort,          // 坞堡庄园
         PlainGarrison,      // 平原屯堡

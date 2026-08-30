@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,6 +31,28 @@ namespace CivilizationEvolution.Core
         public float terrainShade;
         public bool isGate;
         public GameEnums.RoadLevel roadLevel;
+
+        // ===== 通行系统（军事地理）=====
+        /// <summary>是否可通行（根据坡度计算，>45°为不可通行地区）</summary>
+        public bool passable;
+
+        /// <summary>基础通行成本（根据地形/坡度/道路计算，1.0=平原正常道路）</summary>
+        public float movementCost;
+
+        /// <summary>是否有关隘封锁（关隘可直接阻挡敌对势力通行）</summary>
+        public bool hasBarrier;
+
+        /// <summary>关隘所属政权ID（-1=无）</summary>
+        public int barrierOwnerRealmId;
+
+        /// <summary>关隘强度（0-10，影响攻破难度和防御加成）</summary>
+        public float barrierStrength;
+
+        /// <summary>附近堡垒ID（-1=无，用于堡垒区域影响计算）</summary>
+        public int nearbyFortId;
+
+        /// <summary>堡垒影响等级（0=无，1-3=影响强度，决定损耗/补给加成幅度）</summary>
+        public int fortInfluenceLevel;
 
         // ===== 海陆属性 =====
         public bool isLand;

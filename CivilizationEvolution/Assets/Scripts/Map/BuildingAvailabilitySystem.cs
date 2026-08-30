@@ -29,13 +29,24 @@ namespace CivilizationEvolution.Map
         private static void RegisterAllRequirements()
         {
             // ===== 堡垒亚型 =====
+            Register(BuildableType.Barrier, new BuildingRequirement
+            {
+                name = "关隘",
+                requireBottleneck = true,
+                requireLand = true,
+                minSlope = 5f,
+                maxSlope = 40f,
+                description = "必须建在狭窄通道（山口/峡谷/海峡），直接阻挡敌对势力通行，需攻破才能通过",
+                allowedBiomes = new[] { GameEnums.BiomeType.FoldMountains, GameEnums.BiomeType.KarstMountains, GameEnums.BiomeType.LowHills, GameEnums.BiomeType.HighMountains, GameEnums.BiomeType.CoastalLowland, GameEnums.BiomeType.Fjord }
+            });
+
             Register(BuildableType.PassFort, new BuildingRequirement
             {
-                name = "关口堡",
+                name = "关口堡垒",
                 requireBottleneck = true,
                 minElevation = 0.3f,
                 maxSlope = 45f,
-                description = "必须建在山口/峡谷/海峡等瓶颈节点",
+                description = "建在关隘附近的堡垒，区域控制（敌对经过有损耗/减速，己方给补给支援），不直接阻挡通行",
                 allowedBiomes = new[] { GameEnums.BiomeType.FoldMountains, GameEnums.BiomeType.KarstMountains, GameEnums.BiomeType.LowHills, GameEnums.BiomeType.HighMountains }
             });
 
