@@ -792,24 +792,46 @@ namespace CivilizationEvolution.Politics
                     var succession = (SupremeSuccession)option;
                     if (comp.supremeSovereignty == SupremeSovereignty.Republic)
                     {
-                        // 共和制：
-                        // - 主导成分：排除世袭/神命（僭夺可以有，走主次逻辑）
-                        // - 次要成分：僭夺可以有（如罗马共和制下的僭主）
-                        if (isPrimary)
-                        {
-                            if (succession == SupremeSuccession.Hereditary ||
-                                succession == SupremeSuccession.Divine)
-                                continue;
-                        }
-                        else
-                        {
-                            // 次要成分：排除世袭/神命，僭夺可以有
-                            if (succession == SupremeSuccession.Hereditary ||
-                                succession == SupremeSuccession.Divine)
-                                continue;
-                        }
+                        // 共和制：排除世袭/神命（僭夺可以有，走主次逻辑）
+                        if (succession == SupremeSuccession.Hereditary ||
+                            succession == SupremeSuccession.Divine)
+                            continue;
                     }
-                    // 君主制：所有选项可用（包括选举君主/推举君主/僭夺）
+                    // 君主制：所有选项可用
+                    available.Add(option);
+                }
+                return available;
+            }
+
+            // B1中央权力交接：共和制下排除世袭
+            if (dimension == GovernmentDimension.CentralSuccession)
+            {
+                foreach (var option in allOptions)
+                {
+                    var succession = (CentralSuccession)option;
+                    if (comp.supremeSovereignty == SupremeSovereignty.Republic)
+                    {
+                        // 共和制：排除世袭
+                        if (succession == CentralSuccession.Hereditary)
+                            continue;
+                    }
+                    available.Add(option);
+                }
+                return available;
+            }
+
+            // C1地方权力交接：共和制下排除世袭
+            if (dimension == GovernmentDimension.LocalSuccession)
+            {
+                foreach (var option in allOptions)
+                {
+                    var succession = (LocalSuccession)option;
+                    if (comp.supremeSovereignty == SupremeSovereignty.Republic)
+                    {
+                        // 共和制：排除世袭（城市特许可以有，属于自治）
+                        if (succession == LocalSuccession.Hereditary)
+                            continue;
+                    }
                     available.Add(option);
                 }
                 return available;
