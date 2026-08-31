@@ -2,4 +2,5 @@
   <Project Path="CivilizationEvolution.Runtime.csproj" />
   <Project Path="CivilizationEvolution.Tests.csproj" />
   <Project Path="CivilizationEvolution.Editor.csproj" />
+  <Project Path="CivilizationEvolution.Tests.PlayMode.csproj" />
 </Solution>

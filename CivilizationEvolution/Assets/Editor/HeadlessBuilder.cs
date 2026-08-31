@@ -57,6 +57,44 @@ namespace CivilizationEvolution.EditorTools
                 Debug.LogWarning($"[HeadlessBuilder] 场景不存在：{ScenePath}，请先执行菜单 Civilization Evolution/1. 一键搭建游戏场景");
         }
 
+        /// <summary>
+        /// 构建玩家（第三关：打包验证）——Windows x64
+        /// 命令行：Unity.exe -batchmode -quit -projectPath &lt;项目&gt;
+        ///         -executeMethod CivilizationEvolution.EditorTools.HeadlessBuilder.BuildPlayer
+        /// </summary>
+        public static void BuildPlayer()
+        {
+            Debug.Log("[HeadlessBuilder] 开始构建玩家……");
+
+            // 确保场景在 Build Settings（缺场景=打包黑屏的典型原因）
+            if (EditorBuildSettings.scenes == null || EditorBuildSettings.scenes.Length == 0
+                || !System.Array.Exists(EditorBuildSettings.scenes, s => s.path == ScenePath))
+            {
+                EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
+            }
+
+            var options = new BuildPlayerOptions
+            {
+                scenes = new[] { ScenePath },
+                locationPathName = System.IO.Path.Combine(
+                    System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(Application.dataPath)), "Builds", "CivilizationEvolution.exe"),
+                target = BuildTarget.StandaloneWindows64,
+                options = BuildOptions.None
+            };
+
+            var report = BuildPipeline.BuildPlayer(options);
+            if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
+                Debug.Log($"[HeadlessBuilder] 构建成功：{options.locationPathName}");
+            else
+            {
+                Debug.LogError($"[HeadlessBuilder] 构建失败：{report.summary.result}");
+                foreach (var err in report.steps)
+                    foreach (var msg in err.messages)
+                        if (msg.type == UnityEditor.Build.Reporting.LogType.Error)
+                            Debug.LogError(msg.content);
+            }
+        }
+
         private static void EnsureFolder(string parent, string child)
         {
             string path = $"{parent}/{child}";

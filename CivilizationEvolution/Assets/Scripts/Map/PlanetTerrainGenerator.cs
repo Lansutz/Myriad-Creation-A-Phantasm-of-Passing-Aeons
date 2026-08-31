@@ -185,7 +185,7 @@ namespace CivilizationEvolution.Map
             ParallelLoop(0, n, i =>
             {
                 int x = i % width;
-                int y = i / height;
+                int y = i / width; // 修复：原为 i/height（height<width 时 y 算大→访问 tiles[i-width] 越界）
                 ref TileData tile = ref tiles[i];
                 if (!tile.isLand) return;
 
