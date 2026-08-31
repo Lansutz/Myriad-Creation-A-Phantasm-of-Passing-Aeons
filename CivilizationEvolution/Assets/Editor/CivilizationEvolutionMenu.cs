@@ -253,6 +253,38 @@ namespace CivilizationEvolution.EditorTools
             Debug.Log("[CE菜单] 角色面板已就地添加，请保存场景。");
         }
 
+        [MenuItem(MenuRoot + "8. 就地添加社会政治面板", false, 8)]
+        public static void AddSocietyPanelToExistingScene()
+        {
+            var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+            if (canvas == null)
+            {
+                Debug.LogWarning("[CE菜单] 未找到 Canvas，请先执行菜单 1 一键搭建游戏场景。");
+                return;
+            }
+            if (canvas.transform.Find("SocietyPanel") != null)
+            {
+                Debug.Log("[CE菜单] 社会政治面板已存在。");
+                return;
+            }
+
+            var ui = Object.FindFirstObjectByType<UIManager>(FindObjectsInactive.Include);
+            if (ui == null)
+            {
+                Debug.LogWarning("[CE菜单] 未找到 UIManager，请先执行菜单 1 一键搭建游戏场景。");
+                return;
+            }
+
+            // 顶部入口按钮（TopBar 存在则补建）
+            var topBar = canvas.transform.Find("TopBar");
+            if (topBar != null && topBar.Find("SocietyOpenBtn") == null)
+                SetField(ui, "societyOpenButton", CreateButton("SocietyOpenBtn", topBar, "社会"));
+
+            BuildSocietyPanel(canvas.transform, ui);
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Debug.Log("[CE菜单] 社会政治面板已就地添加，请保存场景。");
+        }
+
         // ================= UGUI 代码构建 =================
 
         /// <summary>构建整套界面并通过反射注入UIManager</summary>
@@ -348,6 +380,47 @@ namespace CivilizationEvolution.EditorTools
 
             // ---- 角色面板（右侧，地块面板上方）----
             BuildCharacterPanel(canvas, ui);
+
+            // ---- 社会政治面板（右侧）----
+            BuildSocietyPanel(canvas, ui);
+        }
+
+        /// <summary>构建社会政治面板（阶层画像/派系/政体变迁；供一键搭建与就地升级共用）</summary>
+        private static void BuildSocietyPanel(Transform canvas, UIManager ui)
+        {
+            var socPanel = CreatePanel("SocietyPanel", canvas).gameObject;
+            SetAnchor(socPanel.GetComponent<RectTransform>(),
+                new Vector2(1, 1), new Vector2(1, 1), new Vector2(-720, -12), new Vector2(420, 600));
+            var cv = socPanel.AddComponent<VerticalLayoutGroup>();
+            cv.spacing = 6; cv.padding = new RectOffset(12, 12, 10, 10);
+            cv.childForceExpandWidth = true;
+
+            // 标题行：标题 + 关闭按钮
+            var titleRow = new GameObject("SocTitleRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            titleRow.transform.SetParent(socPanel.transform, false);
+            var trLayout = titleRow.GetComponent<HorizontalLayoutGroup>();
+            trLayout.spacing = 6; trLayout.childAlignment = TextAnchor.MiddleCenter;
+            trLayout.childForceExpandWidth = false;
+
+            var title = CreateText("SocTitle", titleRow.transform, "社会政治", 18);
+            title.color = UITheme.Accent;
+            title.fontStyle = FontStyle.Bold;
+            SetField(ui, "societyCloseButton", CreateButton("SocCloseBtn", titleRow.transform, "✕"));
+
+            // 滚动正文
+            var scroll = socPanel.AddComponent<ScrollRect>();
+            var socText = CreateText("SocietyText", socPanel.transform, "（打开面板刷新）", 15);
+            SetAnchor(socText.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            socText.rectTransform.offsetMax = new Vector2(-8, -30);
+            socText.rectTransform.offsetMin = new Vector2(8, 4);
+            socText.verticalOverflow = VerticalWrapMode.Overflow;
+            socText.alignment = TextAnchor.UpperLeft;
+            socText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            scroll.content = socText.rectTransform;
+
+            SetField(ui, "societyPanel", socPanel);
+            SetField(ui, "societyText", socText);
+            socPanel.SetActive(false); // 默认隐藏（顶栏"社会"按钮打开）
         }
 
         /// <summary>构建角色面板（含入口按钮；供一键搭建与就地升级共用）</summary>

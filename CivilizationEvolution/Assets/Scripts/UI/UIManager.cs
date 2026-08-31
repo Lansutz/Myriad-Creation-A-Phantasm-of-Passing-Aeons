@@ -68,6 +68,12 @@ namespace CivilizationEvolution.UI
         [SerializeField] private Button charPrevButton;
         [SerializeField] private Button charNextButton;
         [SerializeField] private Button charCloseButton;
+
+        [Header("社会政治面板")]
+        [SerializeField] private GameObject societyPanel;
+        [SerializeField] private Text societyText;
+        [SerializeField] private Button societyOpenButton;
+        [SerializeField] private Button societyCloseButton;
         [SerializeField] private Text charNameText;
         [SerializeField] private Text charStatusText;
         [SerializeField] private Text charStatsText;
@@ -140,6 +146,8 @@ namespace CivilizationEvolution.UI
                 UpdateTileInfo();
                 if (characterPanel != null && characterPanel.activeSelf)
                     UpdateCharacterPanel();
+                if (societyPanel != null && societyPanel.activeSelf)
+                    RefreshSocietyPanel();
             }
         }
 
@@ -172,6 +180,10 @@ namespace CivilizationEvolution.UI
             if (charPrevButton != null) charPrevButton.onClick.AddListener(() => { _charIndex--; UpdateCharacterPanel(); });
             if (charNextButton != null) charNextButton.onClick.AddListener(() => { _charIndex++; UpdateCharacterPanel(); });
             if (charCloseButton != null) charCloseButton.onClick.AddListener(CloseCharacterPanel);
+
+            // 社会政治面板按钮
+            if (societyOpenButton != null) societyOpenButton.onClick.AddListener(OpenSocietyPanel);
+            if (societyCloseButton != null) societyCloseButton.onClick.AddListener(CloseSocietyPanel);
 
             // 地图编辑器UI面板（代码动态生成，无需在Inspector手动搭建）
             if (mapRenderer != null)
@@ -305,6 +317,30 @@ namespace CivilizationEvolution.UI
         public void CloseCharacterPanel()
         {
             if (characterPanel != null) characterPanel.SetActive(false);
+        }
+
+        /// <summary>打开社会政治面板</summary>
+        private void OpenSocietyPanel()
+        {
+            if (societyPanel != null) societyPanel.SetActive(true);
+            RefreshSocietyPanel();
+        }
+
+        /// <summary>关闭社会政治面板</summary>
+        private void CloseSocietyPanel()
+        {
+            if (societyPanel != null) societyPanel.SetActive(false);
+        }
+
+        /// <summary>刷新社会政治面板（阶层画像/派系/政体变迁）</summary>
+        private void RefreshSocietyPanel()
+        {
+            if (societyText == null || world == null) return;
+            int realmId = world.PlayerRealmId >= 0 ? world.PlayerRealmId : 0;
+            if (!world.realms.TryGetValue(realmId, out var realm)) return;
+
+            societyText.text = SocietyPanelText.Build(realm,
+                world.GetRealmSociety(realmId), world.Factions, world.RegimeDynamics, world.currentDay);
         }
 
         /// <summary>刷新角色面板（每帧调用，角色数据动态变化）</summary>
