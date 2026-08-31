@@ -189,7 +189,8 @@ namespace CivilizationEvolution.Core
             VillageRaid,    // 劫掠村镇：掠夺物资，破坏建筑，可能俘虏人口
             TownAttack,     // 攻击城镇：攻击小型城镇，掠夺更多物资，可能触发宣战
             SupplyRaiding,  // 补给劫掠：攻击商队/补给线，不直接攻击聚落
-            SlaveRaiding    // 掠奴：专门掠夺人口为奴
+            SlaveRaiding,   // 掠奴：专门掠夺人口为奴
+            Massacre        // 屠城：大规模屠杀与焚毁（人口大损+恐怖威慑+重外交惩罚）
         }
 
         /// <summary>战争借口类型（Casus Belli——为什么开战）</summary>

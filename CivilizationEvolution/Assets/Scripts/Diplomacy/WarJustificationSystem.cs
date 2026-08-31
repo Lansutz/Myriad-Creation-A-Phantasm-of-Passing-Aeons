@@ -119,6 +119,7 @@ namespace CivilizationEvolution.Diplomacy
                 {
                     GameEnums.RaidType.TownAttack => 80f,
                     GameEnums.RaidType.SlaveRaiding => 75f,
+                    GameEnums.RaidType.Massacre => 95f, // 屠城：最重报复借口
                     GameEnums.RaidType.VillageRaid => 60f,
                     GameEnums.RaidType.SupplyRaiding => 40f,
                     GameEnums.RaidType.BorderSkirmish => 30f,

@@ -715,7 +715,7 @@ namespace CivilizationEvolution.Diplomacy
 
         /// <summary>劫掠聚落（敌对状态下的低烈度行动，不触发全面战争）</summary>
         public (bool success, bool warDeclared, float lootValue) RaidSettlement(
-            int raiderId, int targetId, int tileIndex, GameEnums.RaidType raidType)
+            int raiderId, int targetId, int tileIndex, GameEnums.RaidType raidType, TileData[] tiles = null)
         {
             var rel = GetRelation(raiderId, targetId);
             if (rel == null || rel.isAtWar) return (false, false, 0f);
@@ -723,6 +723,22 @@ namespace CivilizationEvolution.Diplomacy
             rel.lastRaidAttackerId = raiderId;
             rel.lastRaidDay = CurrentDay;
             rel.raidCount++;
+
+            // 屠城：大规模屠杀——削减地块人口 30%（恐怖威慑）
+            if (raidType == GameEnums.RaidType.Massacre && tiles != null
+                && tileIndex >= 0 && tileIndex < tiles.Length)
+            {
+                var tile = tiles[tileIndex];
+                if (tile.populationBlocks != null)
+                {
+                    for (int i = 0; i < tile.populationBlocks.Count; i++)
+                    {
+                        var pb = tile.populationBlocks[i];
+                        pb.count *= 0.7f;
+                        tile.populationBlocks[i] = pb;
+                    }
+                }
+            }
 
             // 被劫掠方获得战争借口（劫掠报复）
             var raidCB = WarJustificationSystem.GenerateRaidReprisalCB(
@@ -735,6 +751,7 @@ namespace CivilizationEvolution.Diplomacy
                 GameEnums.RaidType.TownAttack => UnityEngine.Random.Range(150f, 500f),
                 GameEnums.RaidType.SupplyRaiding => UnityEngine.Random.Range(30f, 150f),
                 GameEnums.RaidType.SlaveRaiding => UnityEngine.Random.Range(80f, 300f),
+                GameEnums.RaidType.Massacre => UnityEngine.Random.Range(400f, 1200f),
                 _ => 50f
             };
             float hostilityIncrease = raidType switch
@@ -744,6 +761,7 @@ namespace CivilizationEvolution.Diplomacy
                 GameEnums.RaidType.TownAttack => 30f,
                 GameEnums.RaidType.SupplyRaiding => 10f,
                 GameEnums.RaidType.SlaveRaiding => 25f,
+                GameEnums.RaidType.Massacre => 50f, // 屠城：极高敌意+恐怖威慑
                 _ => 10f
             };
             IncreaseHostility(targetId, raiderId, hostilityIncrease, raidType + "劫掠");
