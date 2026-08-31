@@ -536,6 +536,17 @@ namespace CivilizationEvolution.Core
                     if (races.TryGetValue(pb.raceId, out var race))
                     {
                         float growthRate = race.CalculatePopulationGrowthRate(tiles[i], pb.satisfaction);
+
+                        // 人口承载约束（超载抑制增长——地理/仓储/贸易决定上限）
+                        float capacity = CarryingCapacitySystem.CalculateCarryingCapacity(tiles[i], tradeCenters);
+                        float overload = CarryingCapacitySystem.GetOverloadRatio(tiles[i], capacity);
+                        if (overload > 1f)
+                        {
+                            // 超载 10% 起线性抑制，超载 200% 完全停止
+                            float suppression = Mathf.Clamp01((overload - 1.1f) / 0.9f);
+                            growthRate *= 1f - suppression;
+                        }
+
                         pb.count *= (1f + growthRate * daysPerTick);
                     }
 

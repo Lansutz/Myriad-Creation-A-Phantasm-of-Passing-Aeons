@@ -339,9 +339,38 @@ namespace CivilizationEvolution.Economy
             _taxSystem = taxSystem;
         }
 
+        /// <summary>
+        /// 仓储容量随建筑更新：地区内农业建筑（粮仓——Agriculture 槽）每级 +10% 仓储容量。
+        /// 仓储=地区物资仓库（本地产出+贸易品），容量决定能存多少物资
+        /// </summary>
+        public void UpdateStorageCapacities()
+        {
+            if (_tiles == null || _tradeCenters == null) return;
+
+            foreach (var kv in _tradeCenters)
+            {
+                var tc = kv.Value;
+                int baseCapacity = 10000;
+
+                // 统计该地区农业建筑最高等级（粮仓类→存储容量）
+                int maxAgriLevel = 0;
+                for (int i = 0; i < _tiles.Length; i++)
+                {
+                    if (_tiles[i].regionId != tc.regionId) continue;
+                    if (_tiles[i].buildingLevels != null && _tiles[i].buildingLevels[0] > maxAgriLevel)
+                        maxAgriLevel = _tiles[i].buildingLevels[0];
+                }
+
+                tc.inventoryCapacity = baseCapacity * (1f + maxAgriLevel * 0.1f);
+            }
+        }
+
         /// <summary>每日经济Tick</summary>
         public void DailyTick()
         {
+            // 0. 仓储容量随建筑更新（粮仓等农业建筑→地区仓储容量）
+            UpdateStorageCapacities();
+
             // 1. 更新所有贸易中心供需
             UpdateAllSupplyDemand();
 
