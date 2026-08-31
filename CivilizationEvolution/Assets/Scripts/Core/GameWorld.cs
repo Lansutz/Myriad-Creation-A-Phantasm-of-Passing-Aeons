@@ -941,6 +941,7 @@ namespace CivilizationEvolution.Core
             AddUnitDef(201, "重骑兵", GameEnums.UnitCategory.Cavalry, 2, 20f, 8f, 18f, 75f, 3f, 2.5f, 100f, 1.5f, 924);
             AddUnitDef(202, "精锐骑兵", GameEnums.UnitCategory.Cavalry, 3, 28f, 10f, 25f, 85f, 2.5f, 3f, 150f, 2f, 303);
             AddUnitDef(203, "超重装骑兵", GameEnums.UnitCategory.Cavalry, 4, 36f, 12f, 32f, 95f, 2f, 4f, 200f, 3f, 1006); // 具装甲骑（人马俱甲）
+            AddUnitDef(210, "战车兵", GameEnums.UnitCategory.Cavalry, 2, 20f, 6f, 14f, 70f, 3.5f, 2.5f, 100f, 2f, 1013); // 双马战车（青铜时代战场主宰）
             // 水军（桨帆需桨帆船、战舰需克拉克、撞角需撞角战术、远洋贸易船需远洋贸易）
             AddUnitDef(300, "桨帆船", GameEnums.UnitCategory.Navy, 1, 15f, 10f, 10f, 60f, 3f, 2f, 80f, 1f, 402);
             AddUnitDef(301, "帆船战舰", GameEnums.UnitCategory.Navy, 2, 20f, 15f, 15f, 70f, 4f, 2.5f, 120f, 1.5f, 405);
@@ -955,6 +956,7 @@ namespace CivilizationEvolution.Core
             SetUnitRecruitCosts(201, (70, 1.2f), (71, 1.2f), (20, 1.5f));
             SetUnitRecruitCosts(202, (70, 1.5f), (71, 1.5f), (20, 2f));
             SetUnitRecruitCosts(203, (70, 2f), (71, 2f), (20, 2.5f)); // 超重装：人马双甲
+            SetUnitRecruitCosts(210, (70, 1.2f), (20, 2f)); // 战车：武器+双马
             // 船只：原木/加工木材 + 铁矿/棉花
             SetUnitRecruitCosts(300, (30, 2f), (31, 1f));
             SetUnitRecruitCosts(301, (31, 2f), (50, 1f));

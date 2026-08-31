@@ -459,6 +459,86 @@
     {
       "key": "trad_conqueror_legacy_desc",
       "value": "Martial customs passed down generations; expansion and conquest are held in honor."
+    },
+    {
+      "key": "1009_name",
+      "value": "Leatherworking"
+    },
+    {
+      "key": "1009_desc",
+      "value": "Tanning and sewing of hides — the base material craft for waterskins, straps, and early armor."
+    },
+    {
+      "key": "1010_name",
+      "value": "Leather Armor"
+    },
+    {
+      "key": "1010_desc",
+      "value": "Armor stitched from layered leather — the primary protection before metal armor."
+    },
+    {
+      "key": "1011_name",
+      "value": "Solid Wheel"
+    },
+    {
+      "key": "1011_desc",
+      "value": "Wheels of solid timber or planks — the heavy-load foundation of oxcarts and wagons."
+    },
+    {
+      "key": "1012_name",
+      "value": "Spoked Wheel"
+    },
+    {
+      "key": "1012_desc",
+      "value": "Lightened wheel with spokes — the key breakthrough of chariot speed."
+    },
+    {
+      "key": "1013_name",
+      "value": "Chariot"
+    },
+    {
+      "key": "1013_desc",
+      "value": "Two-horse chariot formations — masters of the Bronze Age battlefield."
+    },
+    {
+      "key": "1014_name",
+      "value": "Bronze Armor"
+    },
+    {
+      "key": "1014_desc",
+      "value": "Bronze breastplates and greaves — metallic protection for heavy warriors."
+    },
+    {
+      "key": "1015_name",
+      "value": "Camp Followers"
+    },
+    {
+      "key": "1015_desc",
+      "value": "Women accompanying armies in camp — life services and morale maintenance (a historically universal institution)."
+    },
+    {
+      "key": "1016_name",
+      "value": "Newspapers"
+    },
+    {
+      "key": "1016_desc",
+      "value": "Regularly printed mass publications — the vehicle of public opinion."
+    },
+    {
+      "key": "1017_name",
+      "value": "Nationalism"
+    },
+    {
+      "key": "1017_desc",
+      "value": "National community consciousness — collective identity forged from shared language, history, and culture."
+    },
+    {
+      "key": "1018_name",
+      "value": "Nation-State"
+    },
+    {
+      "key": "1018_desc",
+      "value": "Territorial sovereign state organized around the nation — the modern form of bureaucratic governance."
     }
   ]
 }

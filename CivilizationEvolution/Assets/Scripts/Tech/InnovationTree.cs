@@ -141,6 +141,17 @@ namespace CivilizationEvolution.Tech
             return null;
         }
 
+        /// <summary>
+        /// 直接前置（仅最近一层——多链各一条；UI 展示不推全链）
+        /// 返回 (prerequisites AND 链, prerequisitesAny OR 链) 的直接前置 ID
+        /// </summary>
+        public (List<int> and, List<int> or) GetDirectPrerequisites(int innovationId)
+        {
+            if (!_innovations.TryGetValue(innovationId, out var def))
+                return (new List<int>(), new List<int>());
+            return (new List<int>(def.prerequisites), new List<int>(def.prerequisitesAny));
+        }
+
         /// <summary>获取可研究的革新列表</summary>
         public List<InnovationDef> GetAvailableInnovations(int realmId)
         {

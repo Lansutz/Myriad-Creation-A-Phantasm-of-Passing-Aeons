@@ -54,7 +54,8 @@ namespace CivilizationEvolution.Tech
         Ritual,             // 仪礼
         Festival,           // 岁时
         Folkways,           // 民俗
-        Heritage            // 传承
+        Heritage,           // 传承
+        SocialThought       // 思潮（民族意识/意识形态——现代性思想）
     }
 
     /// <summary>子类→大类归属映射（子类唯一归属，推导 domain 用）</summary>
@@ -79,6 +80,7 @@ namespace CivilizationEvolution.Tech
                 [InnovationField.NaturalCognition] = InnovationDomain.Thought,
                 [InnovationField.Theology] = InnovationDomain.Thought,
                 [InnovationField.MilitaryThought] = InnovationDomain.Thought,
+                [InnovationField.SocialThought] = InnovationDomain.Thought,
                 // 制度
                 [InnovationField.Governance] = InnovationDomain.Institution,
                 [InnovationField.Law] = InnovationDomain.Institution,

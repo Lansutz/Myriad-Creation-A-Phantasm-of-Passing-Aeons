@@ -2134,6 +2134,163 @@
       "affinityTags": [],
       "innovationName": "远洋贸易",
       "description": "远洋商路贯通（香料丝绸瓷器跨海而行）；海商们把世界缝在了一起。"
+    },
+    {
+      "innovationId": 1009,
+      "field": 6,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [
+        900
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Leather"
+      ],
+      "innovationName": "皮革加工",
+      "description": "兽皮鞣制与缝纫——皮囊、革带与早期护具的基础材料工艺。"
+    },
+    {
+      "innovationId": 1010,
+      "field": 5,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        1009,
+        903
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Leather"
+      ],
+      "innovationName": "皮甲",
+      "description": "多层皮革缝制的护甲——金属甲普及前最主要的防护。"
+    },
+    {
+      "innovationId": 1011,
+      "field": 7,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        807
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Wheel"
+      ],
+      "innovationName": "实心轮",
+      "description": "整木或拼板实心车轮——牛车马车的重载基础。"
+    },
+    {
+      "innovationId": 1012,
+      "field": 7,
+      "era": 2,
+      "researchCost": 220,
+      "prerequisites": [
+        1011
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Wheel"
+      ],
+      "innovationName": "辐条轮",
+      "description": "轮辐轻量化——战车速度的关键突破（青铜时代战车革命）。"
+    },
+    {
+      "innovationId": 1013,
+      "field": 18,
+      "era": 2,
+      "researchCost": 280,
+      "prerequisites": [
+        1012,
+        922,
+        300
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Chariot"
+      ],
+      "innovationName": "战车",
+      "description": "双马战车编队——青铜时代战场的主宰（赫梯/商/埃及战车）。"
+    },
+    {
+      "innovationId": 1014,
+      "field": 5,
+      "era": 2,
+      "researchCost": 260,
+      "prerequisites": [
+        300,
+        1010
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "BronzeArmor"
+      ],
+      "innovationName": "青铜盔甲",
+      "description": "青铜胸甲与护胫——重装战士的金属防护。"
+    },
+    {
+      "innovationId": 1015,
+      "field": 18,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        995
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "CampFollowers"
+      ],
+      "innovationName": "随营军妓",
+      "description": "军队编制中的随营女性——战地生活服务与士气维系（历史普遍存在的制度）。"
+    },
+    {
+      "innovationId": 1016,
+      "field": 20,
+      "era": 4,
+      "researchCost": 420,
+      "prerequisites": [
+        979,
+        823
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Press"
+      ],
+      "innovationName": "报纸",
+      "description": "定期印刷发行的大众读物——公共舆论的载体。"
+    },
+    {
+      "innovationId": 1017,
+      "field": 25,
+      "era": 5,
+      "researchCost": 520,
+      "prerequisites": [
+        1016,
+        600
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Nationalism"
+      ],
+      "innovationName": "民族主义",
+      "description": "民族共同体意识——以共同语言/历史/文化凝聚的集体认同。"
+    },
+    {
+      "innovationId": 1018,
+      "field": 14,
+      "era": 5,
+      "researchCost": 580,
+      "prerequisites": [
+        1017,
+        503
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "NationState"
+      ],
+      "innovationName": "民族国家",
+      "description": "以民族为政治单元的领土主权国家——官僚治理的现代形态。"
     }
   ]
 }
