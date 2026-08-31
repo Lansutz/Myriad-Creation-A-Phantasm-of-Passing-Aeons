@@ -90,7 +90,7 @@ namespace CivilizationEvolution.EditorTools
                 Debug.LogError($"[HeadlessBuilder] 构建失败：{report.summary.result}");
                 foreach (var err in report.steps)
                     foreach (var msg in err.messages)
-                        if (msg.type == UnityEditor.Build.Reporting.LogType.Error)
+                        if (msg.type == UnityEngine.LogType.Error)
                             Debug.LogError(msg.content);
             }
         }
