@@ -27,20 +27,20 @@ namespace CivilizationEvolution.Tests
         [Test]
         public void SovereigntySpectrum_AutonomyDescending()
         {
-            // 自治度 朝贡0.9 > 保护0.7 > 附属0.5 > 附庸0.35 > 傀儡0.1（内政自主递减）
+            // 自治度 朝贡0.9 > 附庸0.65 > 附属0.45 > 保护0.3 > 傀儡0.1（内政自主递减）
             var tributary = _dm.EstablishSubordination(0, 1, SubordinationType.Tributary);
             var protectorate = _dm.EstablishSubordination(0, 2, SubordinationType.Protectorate);
             var associate = _dm.EstablishSubordination(0, 3, SubordinationType.Associate);
 
             Assert.That(tributary.autonomy, Is.EqualTo(0.9f).Within(0.001f), "朝贡国内政完全自主");
-            Assert.That(protectorate.autonomy, Is.EqualTo(0.7f).Within(0.001f), "保护国内政自主");
-            Assert.That(associate.autonomy, Is.EqualTo(0.5f).Within(0.001f), "附属国内政受监督");
+            Assert.That(protectorate.autonomy, Is.EqualTo(0.3f).Within(0.001f), "保护国外交宣战权完全转让");
+            Assert.That(associate.autonomy, Is.EqualTo(0.45f).Within(0.001f), "附属国内政受监督");
             Assert.IsTrue(associate.foreignPolicyControl, "附属国外交权全权代理");
             Assert.IsTrue(associate.militaryObligation, "附属国国防代理");
 
             var vassal = _dm.EstablishSubordination(1, 0, SubordinationType.Vassal);
             var puppet = _dm.EstablishSubordination(2, 0, SubordinationType.Puppet);
-            Assert.That(vassal.autonomy, Is.EqualTo(0.35f).Within(0.001f), "附庸国总督控制");
+            Assert.That(vassal.autonomy, Is.EqualTo(0.65f).Within(0.001f), "附庸国外交权受限内政基本自主");
             Assert.That(puppet.autonomy, Is.EqualTo(0.1f).Within(0.001f), "傀儡国首脑指定");
             Assert.IsTrue(puppet.successionControl, "傀儡国继承/更替由宗主控制");
         }
@@ -105,7 +105,7 @@ namespace CivilizationEvolution.Tests
         [Test]
         public void TreatyObligation_Confederation_Established()
         {
-            _dm.ModifyRelation(0, 1, 60f, "测试好感");
+            _dm.ModifyRelation(0, 1, 85f, "测试好感"); // 阵营盟约要求关系 ≥ 80
             var alliance = _dm.ProposeAlliance(0, 1, AllianceType.Faction);
             Assert.IsNotNull(alliance, "阵营盟约应可建立");
             Assert.AreEqual(AllianceType.Faction, alliance.type);
