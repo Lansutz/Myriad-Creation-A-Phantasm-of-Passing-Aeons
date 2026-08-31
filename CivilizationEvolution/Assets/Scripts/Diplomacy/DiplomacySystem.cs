@@ -401,6 +401,21 @@ namespace CivilizationEvolution.Diplomacy
             }
         }
 
+        /// <summary>获取两国外交关系（不存在则创建——外交动作自动建立关系）</summary>
+        public DiplomaticRelation GetOrCreateRelation(int realmA, int realmB)
+        {
+            var existing = GetRelation(realmA, realmB);
+            if (existing != null) return existing;
+
+            var rel = new DiplomaticRelation
+            {
+                realmAId = realmA,
+                realmBId = realmB
+            };
+            _relations[GetRelationKey(realmA, realmB)] = rel;
+            return rel;
+        }
+
         /// <summary>获取两国外交关系</summary>
         public DiplomaticRelation GetRelation(int realmA, int realmB)
         {
@@ -413,8 +428,7 @@ namespace CivilizationEvolution.Diplomacy
         /// <summary>修改关系值</summary>
         public void ModifyRelation(int realmA, int realmB, float delta, string reason)
         {
-            var rel = GetRelation(realmA, realmB);
-            if (rel == null) return;
+            var rel = GetOrCreateRelation(realmA, realmB);
 
             rel.relation = Mathf.Clamp(rel.relation + delta, -100f, 100f);
             rel.AddEvent(new DiplomaticEvent

@@ -290,7 +290,7 @@ namespace CivilizationEvolution.Politics
             return pool[0];
         }
 
-        /// <summary>是否与指定角色为同辈兄弟（共享任一父母）</summary>
+        /// <summary>是否与指定角色为同辈兄弟（共享任一父母；无父母记录不算兄弟）</summary>
         private static bool IsSibling(CharacterData a, CharacterData ruler)
         {
             if (ruler == null) return false;

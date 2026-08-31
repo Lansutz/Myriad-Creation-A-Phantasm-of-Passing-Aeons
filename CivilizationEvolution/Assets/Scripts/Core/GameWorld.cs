@@ -505,6 +505,9 @@ namespace CivilizationEvolution.Core
             // 9. 角色与家族
             _characterManager.DailyTick(currentDay, currentYear);
 
+            // 9.5 继位扶正（统治者死亡→继承人扶正→政体变迁注入）
+            CheckRulerSuccessions();
+
             // 10. 思想与规范
             _thoughtManager.DailyTick(currentYear);
 
@@ -697,6 +700,31 @@ namespace CivilizationEvolution.Core
                               + ruler.martial + ruler.warfare + ruler.learning) / 6f;
             if (competence >= 70f && ruler.boldness >= 20f)
                 _regimeDynamics.NotifyEvent(d, realmId, CriticalJunctureType.StrongReformer, competence * 0.8f);
+        }
+
+        /// <summary>每日继位检查：统治者死亡 → 扶正/争议 → 编年史 + 政体变迁注入</summary>
+        private void CheckRulerSuccessions()
+        {
+            foreach (var realm in realms.Values)
+            {
+                var result = SuccessionSystem.ExecuteSuccession(realm, _characterManager, currentDay);
+                if (!result.triggered) continue;
+
+                if (result.disputed)
+                {
+                    _chronicle?.Add("succession_crisis",
+                        $"{realm.realmName} 继承危机：{result.reason}", major: true, realm.realmId);
+                    NotifyRulerTransition(realm.realmId, -1, true, currentDay);
+                }
+                else if (result.succeeded)
+                {
+                    var newRuler = _characterManager?.GetCharacter(result.newRulerId);
+                    string rulerName = newRuler != null ? $"{newRuler.firstName} {newRuler.lastName}" : "?";
+                    _chronicle?.Add("succession",
+                        $"{realm.realmName} 新君即位：{rulerName}", major: true, realm.realmId);
+                    NotifyRulerTransition(realm.realmId, result.newRulerId, false, currentDay);
+                }
+            }
         }
 
         /// <summary>时间推进</summary>

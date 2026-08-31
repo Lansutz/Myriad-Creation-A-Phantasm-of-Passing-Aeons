@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using CivilizationEvolution.Core;
 using CivilizationEvolution.Politics;
 using CivilizationEvolution.Diplomacy;
 
@@ -16,6 +17,11 @@ namespace CivilizationEvolution.Tests
         [SetUp]
         public void Setup()
         {
+            // 自包含初始化（技能铁律：不依赖其他测试类先跑——跨类静态顺序耦合会随机假失败）
+            ContentRegistry.Reset();
+            ContentRegistry.Initialize();
+            Localization.Initialize("zh-Hans");
+
             var realms = new Dictionary<int, RealmData>();
             for (int i = 0; i < 4; i++)
                 realms[i] = new RealmData { realmId = i, realmName = "国" + i };
@@ -105,7 +111,7 @@ namespace CivilizationEvolution.Tests
         [Test]
         public void TreatyObligation_Confederation_Established()
         {
-            _dm.ModifyRelation(0, 1, 85f, "测试好感"); // 阵营盟约要求关系 ≥ 80
+            _dm.ModifyRelation(0, 1, 105f, "测试好感"); // 初始关系随机 -20~20，+105 保证 ≥85 ≥ 阵营门槛 80
             var alliance = _dm.ProposeAlliance(0, 1, AllianceType.Faction);
             Assert.IsNotNull(alliance, "阵营盟约应可建立");
             Assert.AreEqual(AllianceType.Faction, alliance.type);
