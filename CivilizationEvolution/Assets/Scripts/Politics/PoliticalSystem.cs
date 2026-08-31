@@ -221,13 +221,8 @@ namespace CivilizationEvolution.Politics
                 // 稳定值自然恢复
                 realm.stability = Mathf.Lerp(realm.stability, 50f, 0.001f);
 
-                // 阶层好感自然恢复
-                var keys = new List<GameEnums.SocialClass>(realm.classRelations.Keys);
-                foreach (var cls in keys)
-                {
-                    float current = realm.classRelations[cls];
-                    realm.classRelations[cls] = Mathf.Lerp(current, 50f, 0.0005f);
-                }
+                // 阶层好感不再机械回归中性值——由 SocietyManager 按各阶层需求满足度驱动：
+                // ClassNeedsSystem 评估多维需求 → ApplyClassRelations 平滑趋近满足度（见 GameWorld 政治Tick）。
 
                 // 叛乱风险检测
                 if (realm.CalculateRebellionRisk() > 70f && Random.value < 0.01f)

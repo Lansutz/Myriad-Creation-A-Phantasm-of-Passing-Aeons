@@ -71,6 +71,14 @@ namespace CivilizationEvolution.Core
         private CurrencySystem _currencySystem;
         private TaxSystem _taxSystem;
         private PoliticalManager _politicalManager;
+
+        // 社会-派系-政体变迁链路（阶层需求→政治能量→派系组织化→关键节点博弈）
+        private SocietyManager _societyManager = new SocietyManager();
+        private FactionManager _factionManager = new FactionManager();
+        private RegimeChangeDynamics _regimeDynamics;
+        private readonly Dictionary<int, RealmSociety> _societyCache = new Dictionary<int, RealmSociety>();
+        private float _differentiationTimer = 0f;
+        private const float DifferentiationIntervalDays = 25f; // 社会分工/阶层分化推进间隔（天）
         private CombatManager _combatManager;
         private DiplomacyManager _diplomacyManager;
         private CharacterManager _characterManager;
@@ -177,6 +185,8 @@ namespace CivilizationEvolution.Core
             _innovationTree = new InnovationTree();
             _characterManager.Innovations = _innovationTree; // 注入革新树（家族传统解锁前置依赖）
             _chronicle = new Chronicle(); // 编年史（世界大事日志）
+            // 政体变迁动力学需要革新树（可行性约束）与编年史（记录节点）
+            _regimeDynamics = new RegimeChangeDynamics(_innovationTree, _chronicle);
             _diplomacyManager.Chronicle = _chronicle;
             _aiManager = new AIManager();
         }
@@ -486,6 +496,10 @@ namespace CivilizationEvolution.Core
                 _chronicle?.Add("war_end", outcomeText, major: true, war.attackerId, war.defenderId);
                 _diplomacyManager.ForcePeace(war.attackerId, war.defenderId, currentDay,
                     _diplomacyManager.WarRules.truceYears, outcomeText);
+
+                // 政体变迁接线：战败暴露国家无能，为战败方打开关键节点窗口（战胜/白和不触发）
+                if (war.outcome == "victory" && war.winnerId >= 0)
+                    NotifyWarDefeat(war, currentDay);
             }
 
             // 9. 角色与家族
@@ -584,6 +598,11 @@ namespace CivilizationEvolution.Core
         /// <summary>政治Tick（兼容层：税收结算+稳定值）</summary>
         private void PoliticsTick()
         {
+            // 社会分化按固定间隔推进（对所有政权同步），避免每天搬运人口
+            _differentiationTimer += daysPerTick;
+            bool doDifferentiation = _differentiationTimer >= DifferentiationIntervalDays;
+            if (doDifferentiation) _differentiationTimer = 0f;
+
             foreach (var realm in realms.Values)
             {
                 float taxIncome = _economyManager.SettleTaxes(realm.realmId);
@@ -595,7 +614,89 @@ namespace CivilizationEvolution.Core
                     float targetStability = 50f + realm.centralization * 20f;
                     tiles[i].stability = Mathf.Lerp(tiles[i].stability, targetStability, 0.01f * daysPerTick);
                 }
+
+                // 社会-派系-政体变迁脉冲（税收/稳定之后，外交/战争之前）
+                SocietyPulse(realm, doDifferentiation);
             }
+        }
+
+        /// <summary>
+        /// 社会-派系-政体变迁脉冲：情境采集 → 阶层需求满足度 → 政治能量 → 派系组织化 → 关键节点博弈。
+        /// 阶层好感在此由真实需求满足度驱动（替代旧的机械回归中性值）。
+        /// </summary>
+        private void SocietyPulse(RealmData realm, bool doDifferentiation)
+        {
+            var sit = RealmSituationBuilder.Build(realm, tiles, _economyManager, _wars, armies,
+                _disasterSystem, _innovationTree);
+
+            // 先推进社会分工（人口在阶层间缓慢、守恒转移），再统计社会画像，保证派系看到的是最新阶层结构
+            if (doDifferentiation)
+                SocialDifferentiation.DifferentiateRealm(realm, tiles, sit);
+
+            var society = _societyManager.EvaluateRealm(realm, tiles, sit);
+            _societyManager.ApplyClassRelations(realm, society, daysPerTick);
+            var characters = _characterManager.GetCharactersByRealm(realm.realmId);
+            _factionManager.UpdateRealmFactions(society, realm, characters);
+            _regimeDynamics.Tick(currentDay, realm, society, sit, _factionManager);
+            _societyCache[realm.realmId] = society;
+        }
+
+        /// <summary>查询政权社会画像（UI/AI 用）</summary>
+        public RealmSociety GetRealmSociety(int realmId) => _societyCache.GetValueOrDefault(realmId);
+        public SocietyManager Society => _societyManager;
+        public FactionManager Factions => _factionManager;
+        public RegimeChangeDynamics RegimeDynamics => _regimeDynamics;
+
+        /// <summary>
+        /// 战争结束 → 政体变迁关键节点注入：按战败方领土被占比例区分普通战败与外部征服。
+        /// 事件烈度仍需盖过"基础阈值+制度黏性"才真正开窗——低张力战败会被现制度吸收。
+        /// </summary>
+        private void NotifyWarDefeat(WarState war, int day)
+        {
+            if (_regimeDynamics == null) return;
+            int winner = war.winnerId;
+            int loser = winner == war.attackerId ? war.defenderId : war.attackerId;
+            if (!realms.ContainsKey(loser)) return;
+
+            int ownTiles = 0, occupiedByWinner = 0;
+            foreach (var t in tiles)
+            {
+                if (!t.exists || t.ownerRealmId != loser) continue;
+                ownTiles++;
+                if (t.occupyingRealmId == winner) occupiedByWinner++;
+            }
+            float occupiedRatio = ownTiles > 0 ? (float)occupiedByWinner / ownTiles : 0f;
+            var type = occupiedRatio >= 0.30f
+                ? CriticalJunctureType.ForeignConquest
+                : CriticalJunctureType.WarDefeat;
+            float loserStability = realms[loser].stability;
+            float severity = Mathf.Clamp(55f + occupiedRatio * 70f + (100f - loserStability) * 0.15f, 0f, 100f);
+            _regimeDynamics.NotifyEvent(day, loser, type, severity);
+        }
+
+        /// <summary>
+        /// 统治者更替 → 政体变迁关键节点注入（供未来继位系统 / 宫廷事件调用）。
+        /// disputed=继位争议（绝嗣/幼主/僭夺）→继承危机；平稳继位但新君能力卓绝且大胆→强势改革者窗口；
+        /// 平庸且无争议的平稳继位不打开窗口（制度平稳延续）。
+        /// </summary>
+        public void NotifyRulerTransition(int realmId, int newRulerCharId, bool disputed, int day = -1)
+        {
+            if (_regimeDynamics == null || !realms.ContainsKey(realmId)) return;
+            int d = day >= 0 ? day : currentDay;
+
+            if (disputed)
+            {
+                float severity = Mathf.Clamp(50f + (100f - realms[realmId].stability) * 0.25f, 0f, 100f);
+                _regimeDynamics.NotifyEvent(d, realmId, CriticalJunctureType.SuccessionCrisis, severity);
+                return;
+            }
+
+            var ruler = _characterManager?.GetCharacter(newRulerCharId);
+            if (ruler == null) return;
+            float competence = (ruler.diplomacy + ruler.stewardship + ruler.intrigue
+                              + ruler.martial + ruler.warfare + ruler.learning) / 6f;
+            if (competence >= 70f && ruler.boldness >= 20f)
+                _regimeDynamics.NotifyEvent(d, realmId, CriticalJunctureType.StrongReformer, competence * 0.8f);
         }
 
         /// <summary>时间推进</summary>

@@ -179,6 +179,38 @@ namespace CivilizationEvolution.Role
             if (def.HasValue)
                 socialSubclass = def.Value;
         }
+        /// <summary>
+        /// 角色身份（CharacterRole）到社会主阶层映射。
+        /// 角色是其所属阶层的有名代言人，身份必须与人口系统阶层对齐。
+        /// 前现代有名军官多出身贵族行伍，故 Military 归贵族教士层；普通士兵由人口块表达，不建角色。
+        /// </summary>
+        public static GameEnums.SocialClass RoleToClass(CharacterRole role) => role switch
+        {
+            CharacterRole.Ruler or CharacterRole.Heir or CharacterRole.Spouse => GameEnums.SocialClass.Royalty,
+            CharacterRole.Noble or CharacterRole.Clergy or CharacterRole.Courtier
+                or CharacterRole.Military => GameEnums.SocialClass.NobilityClergy,
+            CharacterRole.Merchant or CharacterRole.Scholar => GameEnums.SocialClass.MerchantFreeman,
+            CharacterRole.Commoner => GameEnums.SocialClass.Peasant,
+            _ => GameEnums.SocialClass.Peasant
+        };
+
+        /// <summary>角色身份到社会亚阶层（无细分阶层返回 null，由默认值处理）</summary>
+        public static GameEnums.SocialSubclass? RoleToSubclass(CharacterRole role) => role switch
+        {
+            CharacterRole.Merchant => GameEnums.SocialSubclass.Merchant,
+            CharacterRole.Scholar => GameEnums.SocialSubclass.Scholar,
+            CharacterRole.Commoner => GameEnums.SocialSubclass.Freeholder,
+            _ => null
+        };
+
+        /// <summary>按身份同步社会阶层与亚阶层（创建、继位、封官等身份变更时调用）</summary>
+        public void SyncClassFromRole()
+        {
+            socialClass = RoleToClass(role);
+            var sub = RoleToSubclass(role);
+            socialSubclass = sub ?? GameEnums.SocialClassHierarchy.GetDefaultSubclass(socialClass)
+                ?? GameEnums.SocialSubclass.Freeholder;
+        }
 
         // 身份
         public int realmId = -1;
@@ -1608,6 +1640,8 @@ namespace CivilizationEvolution.Role
             if (template != null)
                 ApplyTemplate(character, template);
 
+            // 身份与社会阶层对齐（修复角色阶层与人口系统断裂）
+            character.SyncClassFromRole();
             _characters[character.characterId] = character;
             return character;
         }
