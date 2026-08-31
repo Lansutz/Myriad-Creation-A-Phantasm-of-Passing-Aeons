@@ -6,6 +6,7 @@ using CivilizationEvolution.Culture;
 using CivilizationEvolution.Economy;
 using CivilizationEvolution.Politics;
 using CivilizationEvolution.Race;
+using CivilizationEvolution.War;
 
 namespace CivilizationEvolution.Core
 {
