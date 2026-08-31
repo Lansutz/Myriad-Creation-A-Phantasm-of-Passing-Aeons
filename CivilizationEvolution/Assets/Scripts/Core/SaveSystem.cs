@@ -136,6 +136,7 @@ namespace CivilizationEvolution.Core
             foreach (var kv in world.realms) data.realms.Add(RealmDTO.FromRealmData(kv.Value));
             foreach (var kv in world.tradeCenters) data.tradeCenters.Add(TradeCenterDTO.FromTradeCenter(kv.Value));
             foreach (var kv in world.goodsDefs) data.goodsDefs.Add(kv.Value);
+            data.wars = world.GetWars() != null ? new List<WarState>(world.GetWars()) : new List<WarState>();
             return data;
         }
 
@@ -175,6 +176,15 @@ namespace CivilizationEvolution.Core
             if (!string.IsNullOrEmpty(data.configJson))
                 JsonUtility.FromJsonOverwrite(data.configJson, world.config);
 
+            // 战争状态恢复（读档后战争闭环继续）
+            var wars = world.GetWars();
+            if (wars != null)
+            {
+                wars.Clear();
+                if (data.wars != null)
+                    wars.AddRange(data.wars);
+            }
+
             // 重新初始化子系统（引用类型无法序列化，需要重建）
             world.ReinitializeSubsystems();
         }
@@ -205,6 +215,9 @@ namespace CivilizationEvolution.Core
         public List<TradeCenterDTO> tradeCenters;
         public List<GoodsDef> goodsDefs;
         public string configJson; // WorldConfig(ScriptableObject)的JSON快照
+
+        // 战争状态（WarState 无字典字段，可直接序列化——读档恢复战争闭环）
+        public List<WarState> wars;
     }
 
     /// <summary>通用键值包装（JsonUtility 不支持 Dictionary，存档用 List 包装）</summary>

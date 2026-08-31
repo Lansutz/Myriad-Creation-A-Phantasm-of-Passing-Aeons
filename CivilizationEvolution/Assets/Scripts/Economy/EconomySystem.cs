@@ -365,11 +365,18 @@ namespace CivilizationEvolution.Economy
             }
         }
 
+        private int _storageUpdateDay = -1;
+
         /// <summary>每日经济Tick</summary>
         public void DailyTick()
         {
-            // 0. 仓储容量随建筑更新（粮仓等农业建筑→地区仓储容量）
-            UpdateStorageCapacities();
+            // 0. 仓储容量随建筑更新（粮仓等农业建筑→地区仓储容量；30 天限频——全扫代价高）
+            if (_storageUpdateDay < 0 || _storageUpdateDay >= 30)
+            {
+                UpdateStorageCapacities();
+                _storageUpdateDay = 0;
+            }
+            else _storageUpdateDay++;
 
             // 1. 更新所有贸易中心供需
             UpdateAllSupplyDemand();
