@@ -17,14 +17,20 @@ namespace CivilizationEvolution.Culture
         public string religionName;
         /// <summary>父宗教（-1=宗教根；&gt;=0=宗派）</summary>
         public int parentReligionId = -1;
-        /// <summary>礼拜仪轨（传统第三级——如"圣餐仪轨"/"火祭仪轨"）</summary>
-        public string rite = "";
-        /// <summary>教义学派（传统第三级——如"唯信派"/"圣像派"）</summary>
+        /// <summary>
+        /// 礼拜仪轨列表（传统第三级·高级——如"罗马礼"/"希腊礼"/"科普特礼"：
+        /// 礼是实践，与学派同等级但高于学派——礼仪本身包含学派思想）
+        /// </summary>
+        public List<string> rites = new List<string>();
+        /// <summary>教义学派（传统第三级·次级——如"经院学派"/"中观学派"；学派可升格为礼）</summary>
         public string school = "";
         /// <summary>地图基色（RGBA 0-255；未配置时按 id 自动分配）</summary>
         public Color color = Color.white;
 
         public bool IsRoot => parentReligionId < 0;
+
+        /// <summary>主礼拜仪轨（rites 第一项——传统级显示用；无礼返回空）</summary>
+        public string PrimaryRite => rites != null && rites.Count > 0 ? rites[0] : "";
     }
 
     /// <summary>宗教数据表（ContentRegistry 加载 Religions.json——数据驱动）</summary>
@@ -56,6 +62,7 @@ namespace CivilizationEvolution.Culture
             return cur;
         }
 
+        
         /// <summary>地图色（按级别：宗教=根色 / 宗派=自身色 / 传统=rite/school 哈希偏移色）</summary>
         public static Color GetColor(int religionId, ReligionMapLevel level)
         {
@@ -67,10 +74,11 @@ namespace CivilizationEvolution.Culture
                 case ReligionMapLevel.Religion:
                     return GetRoot(religionId)?.color ?? def.color;
                 case ReligionMapLevel.Sect:
-                    return def.color;
+                    return def.color; // 自身色（所有非根节点=宗派——含裂教深层宗派）
                 case ReligionMapLevel.Tradition:
-                    // 传统级：rite/school 哈希 → 色相偏移（同宗派内不同传统可区分）
-                    int hash = (def.rite + "|" + def.school).GetHashCode() & 0x7fffffff;
+                    // 传统级：礼拜仪轨优先（礼=高级传统），无礼用教义学派（次级）——哈希色相偏移
+                    string trad = !string.IsNullOrEmpty(def.PrimaryRite) ? def.PrimaryRite : def.school;
+                    int hash = (trad).GetHashCode() & 0x7fffffff;
                     float hue = (hash % 360) / 360f;
                     Color.RGBToHSV(def.color, out float h, out float s, out float v);
                     return Color.HSVToRGB(hue, Mathf.Clamp01(s * 0.7f), Mathf.Clamp01(v * 0.9f));

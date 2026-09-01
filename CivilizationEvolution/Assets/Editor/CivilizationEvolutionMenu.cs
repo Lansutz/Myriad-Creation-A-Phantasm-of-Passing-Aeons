@@ -478,8 +478,16 @@ namespace CivilizationEvolution.EditorTools
             SetField(ui, "speed1Button", CreateButton("Speed1Btn", speedGroup, "x1"));
             SetField(ui, "speed2Button", CreateButton("Speed2Btn", speedGroup, "x2"));
             SetField(ui, "speed3Button", CreateButton("Speed3Btn", speedGroup, "x5"));
+            // ---- 地图模式栏（可折叠：折叠按钮 + 类别 Dropdown + 子项 Dropdown）----
+            var mapModeBar = CreatePanel("MapModeBar", speedGroup).gameObject;
+            var mmLayout = mapModeBar.AddComponent<HorizontalLayoutGroup>();
+            mmLayout.spacing = 6; mmLayout.childAlignment = TextAnchor.MiddleCenter;
+            mmLayout.childForceExpandWidth = false;
+            SetField(ui, "mapModeBar", mapModeBar);
+            SetField(ui, "mapModeToggleButton", CreateButton("MapModeToggle", mapModeBar.transform, "地图▾"));
+
             var dropdownGo = new GameObject("DisplayModeDropdown", typeof(RectTransform));
-            dropdownGo.transform.SetParent(speedGroup, false);
+            dropdownGo.transform.SetParent(mapModeBar.transform, false);
             var ddImage = dropdownGo.AddComponent<Image>();
             ddImage.color = UITheme.ButtonNormal;
             ddImage.sprite = UITheme.RoundedButtonSprite;
@@ -487,7 +495,7 @@ namespace CivilizationEvolution.EditorTools
             var dd = dropdownGo.AddComponent<TMP_Dropdown>();
             dd.targetGraphic = ddImage;
             UITheme.ApplyButtonTint(dd);
-            var ddCaption = CreateText("Label", dropdownGo.transform, "地形", 16);
+            var ddCaption = CreateText("Label", dropdownGo.transform, "政治", 16);
             ddCaption.alignment = TextAlignmentOptions.Center;
             ddCaption.rectTransform.anchorMin = Vector2.zero;
             ddCaption.rectTransform.anchorMax = Vector2.one;
@@ -497,9 +505,33 @@ namespace CivilizationEvolution.EditorTools
             ddCaptionLe.minWidth = 0;
             dd.captionText = ddCaption;
             var ddLe = dropdownGo.AddComponent<LayoutElement>();
-            ddLe.preferredWidth = 150; ddLe.preferredHeight = 32;
+            ddLe.preferredWidth = 110; ddLe.preferredHeight = 32;
             BuildDropdownTemplate(dd, dropdownGo.transform);
             SetField(ui, "displayModeDropdown", dd);
+
+            // 子项 Dropdown（外交/文化/宗教类别时显示——初始宗教→宗派）
+            var subGo = new GameObject("DisplayModeSubDropdown", typeof(RectTransform));
+            subGo.transform.SetParent(mapModeBar.transform, false);
+            var subImage = subGo.AddComponent<Image>();
+            subImage.color = UITheme.ButtonNormal;
+            subImage.sprite = UITheme.RoundedButtonSprite;
+            subImage.type = Image.Type.Sliced;
+            var subDd = subGo.AddComponent<TMP_Dropdown>();
+            subDd.targetGraphic = subImage;
+            UITheme.ApplyButtonTint(subDd);
+            var subCaption = CreateText("Label", subGo.transform, "宗派", 16);
+            subCaption.alignment = TextAlignmentOptions.Center;
+            subCaption.rectTransform.anchorMin = Vector2.zero;
+            subCaption.rectTransform.anchorMax = Vector2.one;
+            subCaption.rectTransform.offsetMin = new Vector2(8, 0);
+            subCaption.rectTransform.offsetMax = new Vector2(-12, 0);
+            var subCaptionLe = subCaption.GetComponent<LayoutElement>();
+            subCaptionLe.minWidth = 0;
+            subDd.captionText = subCaption;
+            var subLe = subGo.AddComponent<LayoutElement>();
+            subLe.preferredWidth = 110; subLe.preferredHeight = 32;
+            BuildDropdownTemplate(subDd, subGo.transform);
+            SetField(ui, "displayModeSubDropdown", subDd);
 
             // ---- 地块详情面板（右侧）----
             var tilePanel = CreatePanel("TileInfoPanel", canvas).gameObject;

@@ -62,6 +62,9 @@ namespace CivilizationEvolution.UI
 
         [Header("显示模式切换")]
         [SerializeField] private TMPro.TMP_Dropdown displayModeDropdown;
+        [SerializeField] private TMPro.TMP_Dropdown displayModeSubDropdown;
+        [SerializeField] private Button mapModeToggleButton;
+        [SerializeField] private GameObject mapModeBar;
 
         [Header("角色面板")]
         [SerializeField] private GameObject characterPanel;
@@ -178,17 +181,23 @@ namespace CivilizationEvolution.UI
             if (speed3Button != null)
                 speed3Button.onClick.AddListener(() => SetGameSpeed(3f)); // 修复：原为 5f（与按钮标注 3x 不符）
 
-            // 显示模式下拉框
+            // 地图模式（两级：类别 Dropdown + 子项 Dropdown——政治第 1；宗教默认宗派）
             if (displayModeDropdown != null)
             {
                 displayModeDropdown.ClearOptions();
-                displayModeDropdown.AddOptions(new List<string>
-                {
-                    "地形", "气候", "群系", "政治", "人口", "经济",
-                    "外交关系", "联盟阵营", "文化", "文化分支", "宗教", "宗教-宗派", "宗教-传统"
-                });
-                displayModeDropdown.onValueChanged.AddListener(OnDisplayModeChanged);
+                displayModeDropdown.AddOptions(MapModeCategories); // 9 类（政治第 1）
+                displayModeDropdown.onValueChanged.AddListener(OnMapCategoryChanged);
             }
+            if (displayModeSubDropdown != null)
+                displayModeSubDropdown.onValueChanged.AddListener(OnMapSubModeChanged);
+            if (mapModeToggleButton != null)
+                mapModeToggleButton.onClick.AddListener(ToggleMapModeBar);
+
+            // 默认：宗教类别 + 宗派子项（用户定稿——默认地图=宗派地图）
+            if (displayModeDropdown != null) displayModeDropdown.value = 8; // 宗教
+            OnMapCategoryChanged(displayModeDropdown != null ? displayModeDropdown.value : 8);
+            if (displayModeSubDropdown != null) displayModeSubDropdown.value = 1; // 宗派
+            ApplyMapMode();
 
             // 角色面板按钮
             if (charOpenButton != null) charOpenButton.onClick.AddListener(OpenCharacterPanel);
@@ -323,10 +332,83 @@ namespace CivilizationEvolution.UI
         }
 
         /// <summary>显示模式切换</summary>
-        private void OnDisplayModeChanged(int index)
+        // ===== 地图模式两级切换（类别 → 子项） =====
+
+        /// <summary>地图类别（政治第 1——第一政权常态地图）</summary>
+        private static readonly List<string> MapModeCategories = new List<string>
+        {
+            "政治", "地形", "气候", "群系", "人口", "经济", "外交", "文化", "宗教"
+        };
+
+        /// <summary>类别 → 子项选项（null=无子项——隐藏子 Dropdown）</summary>
+        private static readonly Dictionary<int, List<string>> MapModeSubs = new Dictionary<int, List<string>>
+        {
+            [6] = new List<string> { "一般外交", "联盟阵营" },   // 外交
+            [7] = new List<string> { "主文化", "分支文化" },    // 文化
+            [8] = new List<string> { "宗教", "宗派", "传统" }   // 宗教（默认宗派）
+        };
+
+        /// <summary>类别+子项 → MapDisplayMode（无子项类别直接用类别映射）</summary>
+        private static readonly Dictionary<(int cat, int sub), MapDisplayMode> ModeMap = new Dictionary<(int, int), MapDisplayMode>
+        {
+            [(0, 0)] = MapDisplayMode.Political,
+            [(1, 0)] = MapDisplayMode.Terrain,
+            [(2, 0)] = MapDisplayMode.Climate,
+            [(3, 0)] = MapDisplayMode.Biome,
+            [(4, 0)] = MapDisplayMode.Population,
+            [(5, 0)] = MapDisplayMode.Economy,
+            [(6, 0)] = MapDisplayMode.Diplomacy,
+            [(6, 1)] = MapDisplayMode.Alliance,
+            [(7, 0)] = MapDisplayMode.Culture,
+            [(7, 1)] = MapDisplayMode.CultureBranch,
+            [(8, 0)] = MapDisplayMode.Religion,
+            [(8, 1)] = MapDisplayMode.ReligionSect,
+            [(8, 2)] = MapDisplayMode.ReligionTradition
+        };
+
+        private int _mapCategory = 8;   // 当前类别（默认宗教）
+        private int _mapSub = 1;         // 当前子项（默认宗派）
+
+        /// <summary>类别切换：填充子项选项（无子项隐藏子 Dropdown）</summary>
+        private void OnMapCategoryChanged(int index)
+        {
+            _mapCategory = index;
+            if (displayModeSubDropdown != null)
+            {
+                if (MapModeSubs.TryGetValue(index, out var subs))
+                {
+                    displayModeSubDropdown.ClearOptions();
+                    displayModeSubDropdown.AddOptions(subs);
+                    displayModeSubDropdown.gameObject.SetActive(true);
+                    displayModeSubDropdown.value = 0;
+                    _mapSub = 0;
+                }
+                else
+                {
+                    displayModeSubDropdown.gameObject.SetActive(false);
+                    _mapSub = 0;
+                }
+            }
+            ApplyMapMode();
+        }
+
+        private void OnMapSubModeChanged(int index)
+        {
+            _mapSub = index;
+            ApplyMapMode();
+        }
+
+        private void ApplyMapMode()
         {
             if (mapRenderer == null) return;
-            mapRenderer.SetDisplayMode((MapDisplayMode)index);
+            if (ModeMap.TryGetValue((_mapCategory, _mapSub), out var mode))
+                mapRenderer.SetDisplayMode(mode);
+        }
+
+        /// <summary>折叠/展开地图模式栏（顶部按钮——箭头下拉式）</summary>
+        private void ToggleMapModeBar()
+        {
+            if (mapModeBar != null) mapModeBar.SetActive(!mapModeBar.activeSelf);
         }
 
         // ===== 角色面板 =====

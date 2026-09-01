@@ -1,15 +1,110 @@
 {
   "religions": [
-    { "religionId": 100, "religionName": "先灵崇拜", "parentReligionId": -1, "rite": "", "school": "" },
-    { "religionId": 101, "religionName": "祖灵派", "parentReligionId": 100, "rite": "宗祠祭礼", "school": "祖先学派" },
-    { "religionId": 102, "religionName": "自然灵派", "parentReligionId": 100, "rite": "山川献祭", "school": "万物有灵派" },
-
-    { "religionId": 200, "religionName": "河神信仰", "parentReligionId": -1, "rite": "", "school": "" },
-    { "religionId": 201, "religionName": "主流河神派", "parentReligionId": 200, "rite": "河祭仪轨", "school": "正典派" },
-    { "religionId": 202, "religionName": "潜流派", "parentReligionId": 200, "rite": "夜祭仪轨", "school": "秘仪派" },
-
-    { "religionId": 300, "religionName": "天象崇拜", "parentReligionId": -1, "rite": "", "school": "" },
-    { "religionId": 301, "religionName": "日轮宗", "parentReligionId": 300, "rite": "晨昏祭礼", "school": "日神学派" },
-    { "religionId": 302, "religionName": "星象宗", "parentReligionId": 300, "rite": "观星仪轨", "school": "占星学派" }
+    {
+      "religionId": 100,
+      "religionName": "早期基督教",
+      "parentReligionId": -1,
+      "rites": [],
+      "school": ""
+    },
+    {
+      "religionId": 101,
+      "religionName": "迦克墩派",
+      "parentReligionId": 100,
+      "rites": [],
+      "school": "二性论派"
+    },
+    {
+      "religionId": 102,
+      "religionName": "合性论派",
+      "parentReligionId": 100,
+      "rites": [
+        "西叙利亚礼",
+        "科普特礼",
+        "亚美尼亚礼"
+      ],
+      "school": "合性论学派"
+    },
+    {
+      "religionId": 103,
+      "religionName": "亚述教会",
+      "parentReligionId": 100,
+      "rites": [
+        "东叙利亚礼（亚述礼）",
+        "粟特礼"
+      ],
+      "school": "聂斯脱利派"
+    },
+    {
+      "religionId": 104,
+      "religionName": "罗马公教会",
+      "parentReligionId": 101,
+      "rites": [
+        "罗马礼",
+        "高卢礼",
+        "加洛林礼",
+        "安布罗修礼"
+      ],
+      "school": "经院学派"
+    },
+    {
+      "religionId": 105,
+      "religionName": "正统大公教会",
+      "parentReligionId": 101,
+      "rites": [
+        "希腊礼",
+        "罗斯礼"
+      ],
+      "school": "教父学派"
+    },
+    {
+      "religionId": 200,
+      "religionName": "伊斯兰教",
+      "parentReligionId": -1,
+      "rites": [],
+      "school": ""
+    },
+    {
+      "religionId": 201,
+      "religionName": "逊尼派",
+      "parentReligionId": 200,
+      "rites": [],
+      "school": "哈乃斐/沙斐仪等学派"
+    },
+    {
+      "religionId": 202,
+      "religionName": "什叶派",
+      "parentReligionId": 200,
+      "rites": [],
+      "school": "贾法里学派"
+    },
+    {
+      "religionId": 203,
+      "religionName": "哈瓦利吉派",
+      "parentReligionId": 200,
+      "rites": [],
+      "school": "伊巴德学派"
+    },
+    {
+      "religionId": 300,
+      "religionName": "佛教",
+      "parentReligionId": -1,
+      "rites": [],
+      "school": ""
+    },
+    {
+      "religionId": 301,
+      "religionName": "上座部佛教",
+      "parentReligionId": 300,
+      "rites": [],
+      "school": "分别说部"
+    },
+    {
+      "religionId": 302,
+      "religionName": "大乘佛教",
+      "parentReligionId": 300,
+      "rites": [],
+      "school": "中观/唯识学派"
+    }
   ]
 }

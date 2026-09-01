@@ -31,8 +31,19 @@ namespace CivilizationEvolution.Tests
             var sect = ReligionCatalog.Get(101);
             Assert.IsFalse(sect.IsRoot, "101 是宗派");
             Assert.AreEqual(100, sect.parentReligionId, "宗派从属宗教");
-            Assert.IsNotEmpty(sect.rite, "宗派有礼拜仪轨");
             Assert.IsNotEmpty(sect.school, "宗派有教义学派");
+
+            // 合性论派挂多礼（西叙利亚/科普特/亚美尼亚礼）
+            var miaphysite = ReligionCatalog.Get(102);
+            Assert.AreEqual(3, miaphysite.rites.Count, "合性论派三个礼");
+            Assert.AreEqual("西叙利亚礼", miaphysite.PrimaryRite, "主礼第一项");
+
+            // 罗马公教会（迦克墩裂出）挂四礼
+            var catholic = ReligionCatalog.Get(104);
+            Assert.AreEqual(101, catholic.parentReligionId, "罗马公教会=迦克墩裂出");
+            Assert.IsTrue(catholic.rites.Contains("罗马礼"), "罗马礼");
+            Assert.IsTrue(catholic.rites.Contains("安布罗修礼"), "安布罗修礼");
+            Assert.IsTrue(catholic.rites.Contains("加洛林礼"), "加洛林礼");
         }
 
         [Test]
@@ -56,6 +67,16 @@ namespace CivilizationEvolution.Tests
                 "宗派在宗教级显示根色");
             Assert.AreNotEqual(Color.gray, sectColor, "宗派色非灰（自动分配）");
             Assert.AreNotEqual(sectColor, tradColor, "传统级色相偏移（同宗派内区分传统）");
+
+            // 深层裂教宗派（罗马公教会）显示自身色——宗派就是宗派（用户纠正）
+            var catholicColor = ReligionCatalog.GetColor(104, ReligionMapLevel.Sect);
+            Assert.AreEqual(ReligionCatalog.Get(104).color, catholicColor, "深层宗派显示自身色");
+            Assert.AreNotEqual(ReligionCatalog.GetColor(104, ReligionMapLevel.Religion), catholicColor,
+                "宗派色≠宗教根色（不把宗派算作宗教）");
+
+            // 传统级：有礼用礼色（罗马公教会→罗马礼哈希）
+            var catholicTrad = ReligionCatalog.GetColor(104, ReligionMapLevel.Tradition);
+            Assert.AreNotEqual(catholicColor, catholicTrad, "礼色与宗派色不同");
         }
 
         [Test]
