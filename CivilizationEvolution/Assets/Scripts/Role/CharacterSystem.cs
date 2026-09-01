@@ -6,6 +6,7 @@ using CivilizationEvolution.Economy;
 using CivilizationEvolution.Politics;
 using CivilizationEvolution.Race;
 using CivilizationEvolution.Tech;
+using CivilizationEvolution.Thought;
 
 namespace CivilizationEvolution.Role
 {
@@ -219,6 +220,10 @@ namespace CivilizationEvolution.Role
         public int raceId;
         /// <summary>社会信仰（展示给社会的——公开合法——原 faithId 语义）</summary>
         public int faithId;
+        /// <summary>灵性满足（0-100——体验支柱动态化——角色与信仰的真实关系：
+        /// 美德特质增长/罪行特质下降/秘密信仰煎熬——CK3 唯主是依 Spiritual
+        /// Fulfillment；区别于人格维度 piety 虔信——这是虔诚资源）</summary>
+        public float spiritualFulfillment = 50f;
         /// <summary>私人信仰（本人真实信仰——默认同社会信仰——可不同——
         /// 冲突时转入秘密信仰状态）</summary>
         public int privateFaithId = -1;
@@ -2450,6 +2455,25 @@ namespace CivilizationEvolution.Role
         {
             if (c == null) return;
             c.isSecretBeliever = HasFaithDivergence(c);
+        }
+
+        /// <summary>
+        /// 灵性满足每日更新（角色虔诚——体验支柱动态化）：
+        /// 美德特质 +0.01/日（等级制——3 级美德 +0.03）｜罪行特质 -0.02/日｜
+        /// 秘密信徒（私人≠社会）额外 -0.01（信仰撕裂——灵性煎熬）
+        /// 虔诚上限型：0-100——高虔诚=圣人候选资格/统治合法性加成
+        /// </summary>
+        public void UpdatePiety(CharacterData c, FaithSystem faith)
+        {
+            if (c == null) return;
+            float delta = 0f;
+            if (faith != null)
+            {
+                delta += faith.GetVirtueScore(c) * 0.01f;
+                delta -= faith.GetSinScore(c) * 0.02f;
+            }
+            if (c.isSecretBeliever) delta -= 0.01f;
+            c.spiritualFulfillment = Mathf.Clamp(c.spiritualFulfillment + delta, 0f, 100f);
         }
     }
 }

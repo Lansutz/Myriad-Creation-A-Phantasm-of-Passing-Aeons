@@ -458,5 +458,43 @@ namespace CivilizationEvolution.Tests
             float div = ReligionCatalog.GetDivergence(catholic, orthodox);
             Assert.Greater(div, 0f, "天主教/东正教有偏离（神职婚姻差异）");
         }
+
+        [Test]
+        public void Piety_SpiritualFulfillment()
+        {
+            // 灵性满足：美德增长/罪行下降/秘密信徒煎熬——clamp 0-100
+            var cm = new CharacterManager();
+            var faith = new FaithSystem { faithId = 104 };
+            faith.virtues = new List<string> { "forgiving" };
+            faith.sins = new List<string> { "lustful" };
+
+            var saint = cm.CreateCharacter("圣", "徒", 40, true, 0, 0, 0, CharacterRole.Commoner);
+            saint.traits = new List<PersonalityTrait>
+            {
+                new PersonalityTrait { traitId = "forgiving_3", traitName = "宽恕" },
+                new PersonalityTrait { traitId = "forgiving_1", traitName = "宽恕" }
+            };
+            saint.spiritualFulfillment = 50f;
+            for (int i = 0; i < 100; i++) cm.UpdatePiety(saint, faith);
+            Assert.Greater(saint.spiritualFulfillment, 50f, "美德增长虔诚");
+            Assert.LessOrEqual(saint.spiritualFulfillment, 100f, "虔诚上限");
+
+            var sinner = cm.CreateCharacter("罪", "人", 40, true, 0, 0, 0, CharacterRole.Commoner);
+            sinner.traits = new List<PersonalityTrait>
+            {
+                new PersonalityTrait { traitId = "lustful_2", traitName = "好色" }
+            };
+            sinner.spiritualFulfillment = 50f;
+            for (int i = 0; i < 100; i++) cm.UpdatePiety(sinner, faith);
+            Assert.Less(sinner.spiritualFulfillment, 50f, "罪行下降虔诚");
+            Assert.GreaterOrEqual(sinner.spiritualFulfillment, 0f, "虔诚下限");
+
+            // 秘密信徒煎熬（私人≠社会）
+            var secret = cm.CreateCharacter("秘", "密", 40, true, 0, 0, 0, CharacterRole.Commoner);
+            secret.spiritualFulfillment = 50f;
+            secret.isSecretBeliever = true;
+            cm.UpdatePiety(secret, null);
+            Assert.Less(secret.spiritualFulfillment, 50f, "秘密信徒灵性煎熬");
+        }
     }
 }
