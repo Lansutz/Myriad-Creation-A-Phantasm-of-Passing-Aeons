@@ -2,7 +2,7 @@
   "religions": [
     {
       "religionId": 100,
-      "religionName": "早期基督教",
+      "religionName": "基督教",
       "parentReligionId": -1,
       "rites": [],
       "school": ""
@@ -105,6 +105,13 @@
       "parentReligionId": 300,
       "rites": [],
       "school": "中观/唯识学派"
+    },
+    {
+      "religionId": 303,
+      "religionName": "金刚乘",
+      "parentReligionId": 300,
+      "rites": [],
+      "school": "密宗学派"
     }
   ]
 }
