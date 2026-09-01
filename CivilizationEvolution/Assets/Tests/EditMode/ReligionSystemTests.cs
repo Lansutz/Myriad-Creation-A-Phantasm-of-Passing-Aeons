@@ -265,5 +265,51 @@ namespace CivilizationEvolution.Tests
             cm.InitPrivateFaith(c);
             Assert.AreEqual(300, c.privateFaithId, "已有私人信仰不被覆盖");
         }
+
+        [Test]
+        public void Beneficiary_InheritanceLine_SoleHeir()
+        {
+            // 长子继承：长子线内（不能受益）——次子线外（可受益）
+            var cm = new CharacterManager();
+            var father = cm.CreateCharacter("父", "王", 60, true, 0, 0, 0, CharacterRole.Ruler);
+            var eldest = cm.CreateCharacter("长", "子", 30, true, 0, 0, 0, CharacterRole.Commoner);
+            var second = cm.CreateCharacter("次", "子", 25, true, 0, 0, 0, CharacterRole.Commoner);
+            eldest.familyId = father.familyId;
+            second.familyId = father.familyId;
+            eldest.realmId = 1;
+            second.realmId = 1;
+
+            var realm = new RealmData { realmId = 1 };
+            realm.monarchId = father.characterId;
+            var law = InheritanceLaw.Primogeniture();
+
+            // 领地 1 块（SoleHeir 线宽 1）
+            Assert.IsTrue(SuccessionSystem.IsInInheritanceLine(realm, cm, law, eldest.characterId, 1), "长子在线内");
+            Assert.IsFalse(SuccessionSystem.IsInInheritanceLine(realm, cm, law, second.characterId, 1), "次子线外——可受益");
+
+            // 领地 2 块（均分场景线宽 2）——长子次子都在线内
+            Assert.IsTrue(SuccessionSystem.IsInInheritanceLine(realm, cm, law, second.characterId, 2), "领地够分次子线内");
+        }
+
+        [Test]
+        public void Beneficiary_DaughterSalicLaw()
+        {
+            // 萨利克（男子专属）：女儿完全无继承权——可当受益人（即便直系血脉）
+            var cm = new CharacterManager();
+            var father = cm.CreateCharacter("王", "父", 60, true, 0, 0, 0, CharacterRole.Ruler);
+            var son = cm.CreateCharacter("儿", "子", 30, true, 0, 0, 0, CharacterRole.Commoner);
+            var daughter = cm.CreateCharacter("女", "儿", 20, false, 0, 0, 0, CharacterRole.Commoner);
+            son.familyId = father.familyId;
+            daughter.familyId = father.familyId;
+            son.realmId = 2;
+            daughter.realmId = 2;
+
+            var realm = new RealmData { realmId = 2 };
+            realm.monarchId = father.characterId;
+            var salic = InheritanceLaw.Salic();
+
+            Assert.IsTrue(SuccessionSystem.IsInInheritanceLine(realm, cm, salic, son.characterId, 1), "儿子在线内");
+            Assert.IsFalse(SuccessionSystem.IsInInheritanceLine(realm, cm, salic, daughter.characterId, 1), "女儿线外——可受益");
+        }
     }
 }

@@ -233,6 +233,17 @@ namespace CivilizationEvolution.Politics
         /// </summary>
         public CharacterData DetermineHeir(List<CharacterData> candidates, CharacterData currentRuler)
         {
+            var pool = GetHeirOrderedPool(candidates, currentRuler);
+            if (pool == null || pool.Count == 0) return null;
+            return pool[0];
+        }
+
+        /// <summary>
+        /// 继承候选过滤+排序池（轴1 范围/轴3 性别硬过滤 + 复合排序：
+        /// 性别偏好 > 支系 > 长幼）——DetermineHeir 与继承线判定共用
+        /// </summary>
+        public List<CharacterData> GetHeirOrderedPool(List<CharacterData> candidates, CharacterData currentRuler)
+        {
             if (candidates == null || candidates.Count == 0) return null;
 
             var pool = new List<CharacterData>(candidates);
@@ -287,7 +298,7 @@ namespace CivilizationEvolution.Politics
                 return age == InheritanceAge.Seniority ? b.age.CompareTo(a.age) : a.age.CompareTo(b.age);
             });
 
-            return pool[0];
+            return pool;
         }
 
         /// <summary>是否与指定角色为同辈兄弟（共享任一父母；无父母记录不算兄弟）</summary>

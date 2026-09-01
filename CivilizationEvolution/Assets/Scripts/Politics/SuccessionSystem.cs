@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 using CivilizationEvolution.Role;
 
 namespace CivilizationEvolution.Politics
@@ -89,6 +90,54 @@ namespace CivilizationEvolution.Politics
             if (eligible == null || eligible.Count == 0) return null;
             eligible.Sort((a, b) => b.prestige.CompareTo(a.prestige));
             return eligible[0];
+
+
+        }
+
+        // ===== 大圣战受益人资格（继承法判定） =====
+
+        /// <summary>
+        /// 继承线判定（IsInInheritanceLine——大圣战受益人资格）：
+        /// 线宽 = min(继承顺位候选数, 可分的领地/头衔数)
+        /// 顺位 ≤ 线宽 → 在线内（继承法下会继承——不能当受益人——哪怕他是儿子）
+        /// 顺位 > 线宽 → 线外（轮不到——可以当受益人——哪怕他是儿子/女儿）
+        /// 均分制领地不够分时顺位靠后照样线外（幼子靠圣战挣地=历史常态）
+        /// </summary>
+        public static bool IsInInheritanceLine(RealmData realm, CharacterManager characters, InheritanceLaw law, int characterId, int divisibleEstates)
+        {
+            if (realm == null || characters == null || law == null) return false;
+            var rulerId = realm.GetSupremeRulerId();
+            var ruler = rulerId >= 0 ? characters.GetCharacter(rulerId) : null;
+
+            // 候选池=同 realm 角色（过滤+排序——复用继承法四轴）
+            var candidates = characters.GetCharactersByRealm(realm.realmId);
+            var ordered = law.GetHeirOrderedPool(candidates, ruler);
+            if (ordered == null || ordered.Count == 0) return false;
+
+            int position = ordered.FindIndex(c => c.characterId == characterId);
+            if (position < 0) return false;
+
+            // 线宽 = min(候选数, 领地可分数)——领地不够分→顺位靠后线外
+            int lineWidth = Mathf.Min(ordered.Count, divisibleEstates);
+            return position < lineWidth;
+        }
+
+        /// <summary>
+        /// 大圣战受益人候选（继承线外者——可受益）：
+        /// 候选=同 realm 角色中 IsInInheritanceLine=false 者——
+        /// 继承与受益制度性分离（圣战土地永不回流家族）
+        /// </summary>
+        public static List<int> GetGreatHolyWarBeneficiaryCandidates(RealmData realm, CharacterManager characters, InheritanceLaw law, int divisibleEstates)
+        {
+            var result = new List<int>();
+            if (realm == null || characters == null || law == null) return result;
+            foreach (var c in characters.GetCharactersByRealm(realm.realmId))
+            {
+                if (c == null) continue;
+                if (!IsInInheritanceLine(realm, characters, law, c.characterId, divisibleEstates))
+                    result.Add(c.characterId);
+            }
+            return result;
         }
     }
 }
