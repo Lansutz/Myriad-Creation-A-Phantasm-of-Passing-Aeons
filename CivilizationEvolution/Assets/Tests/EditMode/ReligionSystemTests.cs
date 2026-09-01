@@ -152,5 +152,81 @@ namespace CivilizationEvolution.Tests
             Assert.AreEqual(1, PopulationStats.GetDominantCulture(tile), "主流文化=文化1");
             Assert.AreEqual(100, PopulationStats.GetDominantFaith(tile), "主流信仰=信仰100");
         }
+
+        [Test]
+        public void Evolution_CreateSuccession_Schism()
+        {
+            // 裂教：迦克墩（101）裂出东正教——新教统节点（同宗教内——根不变）
+            var orthodox = ReligionCatalog.CreateSuccession(101, "正统大公教会", "牧首", "拜占庭礼", "拜占庭传统");
+            Assert.IsNotNull(orthodox, "裂教创建新教统");
+            Assert.AreEqual(ReligionNodeType.Succession, orthodox.nodeType, "裂教产物=教统");
+            Assert.AreEqual(101, orthodox.parentReligionId, "组织父=迦克墩派");
+            Assert.AreEqual("牧首", orthodox.headName, "新教统领袖");
+            Assert.IsTrue(orthodox.rites.Contains("拜占庭礼"), "新教统分家礼仪");
+
+            // 根不变（仍是基督教体系）
+            var root = ReligionCatalog.GetRoot(orthodox.religionId);
+            Assert.AreEqual(100, root.religionId, "裂教=同宗教内分裂（根不变）——不是创教");
+        }
+
+        [Test]
+        public void Evolution_CreateReligion_NewRoot()
+        {
+            // 创教：异端升格→新宗教根（跨宗教）
+            var newRel = ReligionCatalog.CreateReligion("新教", "一神", "先知甲");
+            Assert.IsNotNull(newRel, "创教创建新宗教");
+            Assert.AreEqual(ReligionNodeType.Religion, newRel.nodeType, "创教产物=宗教根");
+            Assert.AreEqual(-1, newRel.parentReligionId, "新宗教独立于原宗教树");
+
+            // 与裂教区别：裂教根不变/创教新根
+            var schism = ReligionCatalog.CreateSuccession(100, "裂出派", "领袖", "", "");
+            Assert.AreEqual(100, ReligionCatalog.GetRoot(schism.religionId).religionId, "裂教=同根");
+            Assert.AreEqual(newRel.religionId, ReligionCatalog.GetRoot(newRel.religionId).religionId, "创教=新根");
+        }
+
+        [Test]
+        public void Divergence_DoctrineOptionDifferences()
+        {
+            // 同选项=0 偏离
+            var a = new ReligionDef { religionId = 9001, religionName = "A" };
+            a.selectedDoctrines.Add("doctrine_monotheism");
+            var b = new ReligionDef { religionId = 9002, religionName = "B" };
+            b.selectedDoctrines.Add("doctrine_monotheism");
+            Assert.AreEqual(0f, ReligionCatalog.GetDivergence(a, b), "同选项=0 偏离");
+
+            // 对立选项（一神 vs 多神——教义支柱权重 0.30×30×1.0）→ 偏离 > 0
+            var c = new ReligionDef { religionId = 9003, religionName = "C" };
+            c.selectedDoctrines.Add("doctrine_polytheism");
+            float d1 = ReligionCatalog.GetDivergence(a, c);
+            Assert.Greater(d1, 0f, "对立选项有偏离");
+            Assert.LessOrEqual(d1, 100f, "偏离上限 100");
+
+            // 无选择=0（未配支柱的节点无偏离）
+            var empty = new ReligionDef { religionId = 9004, religionName = "空" };
+            Assert.AreEqual(0f, ReligionCatalog.GetDivergence(a, empty), "空选择=0");
+        }
+
+        [Test]
+        public void Divergence_Threshold_Heresy()
+        {
+            // 传统偏离 80+ = 异端条件（裂教门槛）
+            var orthodoxStandard = new ReligionDef { religionId = 9100, religionName = "正统" };
+            orthodoxStandard.selectedDoctrines.Add("doctrine_monotheism");
+            orthodoxStandard.selectedDoctrines.Add("doctrine_icon_veneration");
+
+            var heretic = new ReligionDef { religionId = 9101, religionName = "异端" };
+            heretic.selectedDoctrines.Add("doctrine_polytheism");
+            heretic.selectedDoctrines.Add("doctrine_iconoclasm");
+            heretic.selectedDoctrines.Add("doctrine_human_sacrifice");
+
+            // 多选项冲突累积——异端偏离应显著高于多样性
+            var moderate = new ReligionDef { religionId = 9102, religionName = "温和" };
+            moderate.selectedDoctrines.Add("doctrine_monotheism");
+            moderate.selectedDoctrines.Add("doctrine_icon_veneration");
+
+            float dHeretic = ReligionCatalog.GetDivergence(orthodoxStandard, heretic);
+            float dModerate = ReligionCatalog.GetDivergence(orthodoxStandard, moderate);
+            Assert.Greater(dHeretic, dModerate, "异端偏离 > 温和偏离");
     }
+}
 }

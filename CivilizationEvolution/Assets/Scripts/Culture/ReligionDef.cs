@@ -50,6 +50,9 @@ namespace CivilizationEvolution.Culture
         /// <summary>主流传统标记（传播基准——大众实践；领袖传统=正统基准——
         /// 无领袖传统的宗教用共识[逊尼=乌里玛共识/多神=无中央标准]）</summary>
         public bool isMainstreamTradition = false;
+        /// <summary>支柱选择（该节点从 DoctrinePool 选的选项 id——教统的支柱
+        /// 以领袖传统为准；选项差异=偏离度来源）</summary>
+        public List<string> selectedDoctrines = new List<string>();
         /// <summary>
         /// 具体礼名列表（狭义——如"科普特礼"/"埃塞俄比亚礼"：
         /// 同一礼仪传统下可有多个具体礼——埃塞俄比亚礼属亚历山大传统）
@@ -136,6 +139,100 @@ namespace CivilizationEvolution.Culture
                 def.rites.Add(riteName);
             if (!string.IsNullOrEmpty(riteFamily))
                 def.riteFamily = riteFamily;
+        }
+
+        /// <summary>
+        /// 裂教（Schism——创建新教统——同一宗教内教统分裂）
+        /// 条件由调用方判定（传统偏离 80+ + 传承）——1054 大分裂同构
+        /// </summary>
+        public static ReligionDef CreateSuccession(int parentId, string name, string headName, string rite, string riteFamily)
+        {
+            int id = _nextId++;
+            var def = new ReligionDef
+            {
+                religionId = id,
+                religionName = name,
+                parentReligionId = parentId,
+                schoolParentId = -1,
+                nodeType = ReligionNodeType.Succession,
+                hasSuccession = true,
+                headName = headName,
+                communionName = Get(parentId)?.communionName ?? "",
+                riteFamily = riteFamily
+            };
+            if (!string.IsNullOrEmpty(rite))
+                def.rites.Add(rite);
+            _religions[id] = def;
+            return def;
+        }
+
+        /// <summary>
+        /// 宗教创生（创建新宗教——新根节点）
+        /// 三路径：异端升格（基督教←犹太教）/融合（摩尼教）/独立崇拜升格（雅威→犹太教）
+        /// </summary>
+        public static ReligionDef CreateReligion(string name, string worldview, string founder, int schoolParentId = -1)
+        {
+            int id = _nextId++;
+            var def = new ReligionDef
+            {
+                religionId = id,
+                religionName = name,
+                parentReligionId = -1,
+                schoolParentId = schoolParentId,
+                nodeType = ReligionNodeType.Religion,
+                hasSuccession = true,
+                worldview = worldview,
+                founder = founder
+            };
+            _religions[id] = def;
+            return def;
+        }
+
+        /// <summary>
+        /// 偏离度计算（支柱选项差异加权——个人层/传统层共用）
+        /// 同选项=0；同支柱不同选项=30（变体）；对立选项=60；无选择对照=按支柱权重
+        /// 权重：教义 0.30/仪式 0.20/伦理 0.15/制度 0.15/神话 0.10/体验 0.05/物质 0.05
+        /// </summary>
+        public static float GetDivergence(ReligionDef a, ReligionDef b)
+        {
+            if (a == null || b == null) return 0f;
+            // 任一方无支柱选择=无既定标准（未成形/原始崇拜）——偏离 0
+            if (a.selectedDoctrines.Count == 0 || b.selectedDoctrines.Count == 0) return 0f;
+
+            // 对称偏离：两向差异取平均（a 有 b 无 + b 有 a 无）
+            float scoreA = CalcOneWayDivergence(a, b);
+            float scoreB = CalcOneWayDivergence(b, a);
+            return Mathf.Min(100f, (scoreA + scoreB) * 0.5f);
+        }
+
+        private static float CalcOneWayDivergence(ReligionDef from, ReligionDef to)
+        {
+            float score = 0f;
+            foreach (var d in from.selectedDoctrines)
+            {
+                if (to.selectedDoctrines.Contains(d)) continue; // 同选项=0
+                var option = DoctrinePool.Get(d);
+                if (option == null) continue;
+                float weight = GetPillarWeight(option.pillar);
+                // 教义支柱冲突最重（×1.0）——其他支柱 ×0.8（行为/实践分歧轻于教义）
+                score += 30f * weight * (option.pillar == "doctrine" ? 1f : 0.8f);
+            }
+            return score;
+        }
+
+        private static float GetPillarWeight(string pillar)
+        {
+            switch (pillar)
+            {
+                case "doctrine": return 0.30f;
+                case "ritual": return 0.20f;
+                case "ethics": return 0.15f;
+                case "institution": return 0.15f;
+                case "myth": return 0.10f;
+                case "experience": return 0.05f;
+                case "material": return 0.05f;
+                default: return 0.1f;
+            }
         }
 
         /// <summary>地图色（按级别：宗教=根色 / 教统=自身色 / 传统=rite/school 哈希偏移色）</summary>
