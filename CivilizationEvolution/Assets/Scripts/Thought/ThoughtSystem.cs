@@ -99,6 +99,49 @@ namespace CivilizationEvolution.Thought
         // 宗教间关系
         public Dictionary<int, float> faithRelations = new Dictionary<int, float>();
 
+        // ===== 美德/罪行（宗教对性格的判定——引用 PersonalityTraitDatabase 基 id） =====
+        public List<string> virtues = new List<string>();
+        public List<string> sins = new List<string>();
+
+        // ===== 信仰热忱（Fervor——大圣战可用性数值） =====
+        /// <summary>热忱 0-100（大圣战可用条件：≥60 + 存在宗教领袖）</summary>
+        public float fervor = 50f;
+        /// <summary>大圣战可用阈值</summary>
+        public const float GreatHolyWarThreshold = 60f;
+
+        /// <summary>热忱变化（增长：异教冲突+25/圣地丢失+50/殉道+25/圣战胜利+15/
+        /// 大公会议成功+10；下降：内部丑闻-30/圣战失败-20/长期和平冷却-10）</summary>
+        public void AddFervor(float delta)
+        {
+            fervor = Mathf.Clamp(fervor + delta, 0f, 100f);
+        }
+
+        /// <summary>大圣战是否可用（热忱达标+有宗教领袖——教宗/哈里发）</summary>
+        public bool CanDeclareGreatHolyWar() => fervor >= GreatHolyWarThreshold && highPriestCharacterId >= 0;
+
+        /// <summary>美德/罪行得分（宗教对性格的判定——traitId 匹配基 id 前缀）</summary>
+        public int GetVirtueScore(CivilizationEvolution.Role.CharacterData character)
+        {
+            if (character == null || character.traits == null) return 0;
+            int score = 0;
+            foreach (var t in character.traits)
+                foreach (var v in virtues)
+                    if (t.traitId == v || t.traitId.StartsWith(v + "_"))
+                        score++;
+            return score;
+        }
+
+        public int GetSinScore(CivilizationEvolution.Role.CharacterData character)
+        {
+            if (character == null || character.traits == null) return 0;
+            int score = 0;
+            foreach (var t in character.traits)
+                foreach (var s in sins)
+                    if (t.traitId == s || t.traitId.StartsWith(s + "_"))
+                        score++;
+            return score;
+        }
+
         /// <summary>计算宗教权威</summary>
         public float CalculateReligiousAuthority()
         {

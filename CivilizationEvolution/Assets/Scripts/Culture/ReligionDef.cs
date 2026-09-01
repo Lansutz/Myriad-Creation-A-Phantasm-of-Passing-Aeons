@@ -28,6 +28,28 @@ namespace CivilizationEvolution.Culture
         public ReligionNodeType nodeType = ReligionNodeType.Succession;
         /// <summary>教统（使徒统绪/法脉——组织连续性；宗派必须有；无教统学派不能独立组织化）</summary>
         public bool hasSuccession = true;
+
+        /// <summary>宇宙观形态（一神/多神/二元/泛灵/祭祀型/mana）</summary>
+        public string worldview = "";
+        /// <summary>创教者（琐罗亚斯德/摩尼/佛陀/耶稣/穆罕默德——宗教创生事件）</summary>
+        public string founder = "";
+        /// <summary>正统/异端标记（教派斗争——正统清洗异端）</summary>
+        public bool orthodoxy = true;
+        /// <summary>美德特质（宗教对性格的判定——引用 PersonalityTraitDatabase 基 id：
+        /// 持美德者虔诚+同信仰好感+可成圣人候选）</summary>
+        public List<string> virtues = new List<string>();
+        /// <summary>罪行特质（宗教对性格的判定——持罪行者虔诚-+罪行标记：
+        /// 同一性格在不同宗教判定不同——lustful 天主教=罪行/肉欲高扬信仰=美德）</summary>
+        public List<string> sins = new List<string>();
+        /// <summary>教统领袖（中性：教宗/牧首/伊玛目/谢赫/祖师）</summary>
+        public string headName = "";
+        /// <summary>礼仪领袖（可空——米兰主教=安布罗修礼；教宗=拉丁礼）</summary>
+        public string riteHeadName = "";
+        /// <summary>共融归属（罗马共融/东正共融/乌玛/苏菲道统群）</summary>
+        public string communionName = "";
+        /// <summary>主流传统标记（传播基准——大众实践；领袖传统=正统基准——
+        /// 无领袖传统的宗教用共识[逊尼=乌里玛共识/多神=无中央标准]）</summary>
+        public bool isMainstreamTradition = false;
         /// <summary>
         /// 具体礼名列表（狭义——如"科普特礼"/"埃塞俄比亚礼"：
         /// 同一礼仪传统下可有多个具体礼——埃塞俄比亚礼属亚历山大传统）

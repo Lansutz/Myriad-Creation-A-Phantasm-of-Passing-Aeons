@@ -31,7 +31,12 @@
         "罗马礼"
       ],
       "school": "拉丁教父与经院哲学传统",
-      "riteFamily": "罗马传统（拉丁传统）"
+      "riteFamily": "罗马传统（拉丁传统）",
+      "headName": "教宗",
+      "riteHeadName": "教宗（拉丁礼）",
+      "communionName": "罗马共融",
+      "worldview": "一神",
+      "founder": "使徒彼得"
     },
     {
       "religionId": 105,
@@ -44,7 +49,12 @@
         "拜占庭礼"
       ],
       "school": "希腊教父传统",
-      "riteFamily": "拜占庭传统"
+      "riteFamily": "拜占庭传统",
+      "headName": "牧首",
+      "riteHeadName": "牧首（拜占庭礼）",
+      "communionName": "东正教共融",
+      "worldview": "一神",
+      "founder": "使徒安德烈"
     },
     {
       "religionId": 102,
@@ -67,7 +77,12 @@
         "科普特礼"
       ],
       "school": "亚历山大学派（合性论）",
-      "riteFamily": "亚历山大传统"
+      "riteFamily": "亚历山大传统",
+      "headName": "宗主教",
+      "riteHeadName": "",
+      "communionName": "东方正统共融",
+      "worldview": "一神（合性论）",
+      "founder": "圣马可"
     },
     {
       "religionId": 121,
@@ -80,7 +95,12 @@
         "西叙利亚礼"
       ],
       "school": "安条克学派",
-      "riteFamily": "安条克传统"
+      "riteFamily": "安条克传统",
+      "headName": "宗主教",
+      "riteHeadName": "",
+      "communionName": "东方正统共融",
+      "worldview": "一神（合性论）",
+      "founder": "圣彼得"
     },
     {
       "religionId": 122,
@@ -93,7 +113,12 @@
         "亚美尼亚礼"
       ],
       "school": "亚美尼亚学派（合性论）",
-      "riteFamily": "独立传统（受亚历山大与安条克双重影响）"
+      "riteFamily": "独立传统（受亚历山大与安条克双重影响）",
+      "headName": "宗主教",
+      "riteHeadName": "",
+      "communionName": "东方正统共融",
+      "worldview": "一神（合性论）",
+      "founder": "圣格列高利"
     },
     {
       "religionId": 123,
@@ -106,7 +131,12 @@
         "埃塞俄比亚礼"
       ],
       "school": "亚历山大合性论学派",
-      "riteFamily": "亚历山大传统"
+      "riteFamily": "亚历山大传统",
+      "headName": "宗主教",
+      "riteHeadName": "",
+      "communionName": "东方正统共融",
+      "worldview": "一神（合性论）",
+      "founder": "腓利"
     },
     {
       "religionId": 124,
@@ -119,7 +149,12 @@
         "埃塞俄比亚礼"
       ],
       "school": "亚历山大合性论学派",
-      "riteFamily": "亚历山大传统"
+      "riteFamily": "亚历山大传统",
+      "headName": "宗主教",
+      "riteHeadName": "",
+      "communionName": "东方正统共融",
+      "worldview": "一神（合性论）",
+      "founder": "腓利"
     },
     {
       "religionId": 125,
@@ -132,7 +167,12 @@
         "西叙利亚礼"
       ],
       "school": "印度圣多马学派",
-      "riteFamily": "安条克传统"
+      "riteFamily": "安条克传统",
+      "headName": "宗主教",
+      "riteHeadName": "",
+      "communionName": "东方正统共融",
+      "worldview": "一神（合性论）",
+      "founder": "圣多马"
     },
     {
       "religionId": 103,
@@ -145,7 +185,12 @@
         "东叙利亚礼"
       ],
       "school": "安提阿学派（狄奥多若/塞琉西亚-泰西封传承）",
-      "riteFamily": "东叙利亚传统"
+      "riteFamily": "东叙利亚传统",
+      "headName": "宗主教",
+      "riteHeadName": "",
+      "communionName": "亚述教会共融",
+      "worldview": "一神（二性论）",
+      "founder": "圣多马"
     },
     {
       "religionId": 110,
@@ -225,7 +270,12 @@
       "nodeType": 1,
       "hasSuccession": true,
       "rites": [],
-      "school": "哈乃斐/沙斐仪等学派"
+      "school": "哈乃斐/沙斐仪等学派",
+      "headName": "",
+      "riteHeadName": "",
+      "communionName": "乌玛",
+      "worldview": "一神",
+      "founder": "穆罕默德"
     },
     {
       "religionId": 202,
@@ -235,7 +285,12 @@
       "nodeType": 1,
       "hasSuccession": true,
       "rites": [],
-      "school": "贾法里学派"
+      "school": "贾法里学派",
+      "headName": "伊玛目",
+      "riteHeadName": "",
+      "communionName": "乌玛",
+      "worldview": "一神",
+      "founder": "阿里"
     },
     {
       "religionId": 203,
@@ -265,7 +320,12 @@
       "nodeType": 1,
       "hasSuccession": true,
       "rites": [],
-      "school": "分别说部"
+      "school": "分别说部",
+      "headName": "",
+      "riteHeadName": "",
+      "communionName": "僧伽",
+      "worldview": "无神论/非神论",
+      "founder": "佛陀"
     },
     {
       "religionId": 302,
@@ -275,7 +335,12 @@
       "nodeType": 1,
       "hasSuccession": true,
       "rites": [],
-      "school": "中观/唯识学派"
+      "school": "中观/唯识学派",
+      "headName": "",
+      "riteHeadName": "",
+      "communionName": "僧伽",
+      "worldview": "非神论",
+      "founder": "佛陀"
     },
     {
       "religionId": 303,
@@ -285,7 +350,12 @@
       "nodeType": 1,
       "hasSuccession": true,
       "rites": [],
-      "school": "密宗学派"
+      "school": "密宗学派",
+      "headName": "",
+      "riteHeadName": "",
+      "communionName": "僧伽",
+      "worldview": "非神论",
+      "founder": "佛陀"
     },
     {
       "religionId": 304,

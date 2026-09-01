@@ -114,6 +114,7 @@ namespace CivilizationEvolution.Core
         public static Dictionary<string, MentalDisorderDef> MentalDisorders { get; private set; } = new Dictionary<string, MentalDisorderDef>();
         public static Dictionary<int, InnovationDef> Innovations { get; private set; } = new Dictionary<int, InnovationDef>();
         public static Dictionary<int, ReligionDef> Religions { get; private set; } = new Dictionary<int, ReligionDef>();
+        public static Dictionary<string, DoctrineOptionDef> Doctrines { get; private set; } = new Dictionary<string, DoctrineOptionDef>();
 
         public static bool IsInitialized { get; private set; } = false;
 
@@ -228,6 +229,13 @@ namespace CivilizationEvolution.Core
             {
                 try { LoadReligions(religionFile); }
                 catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 宗教定义加载失败：{e.Message}"); }
+            }
+
+            string doctrineFile = Path.Combine(root, "Religion", "Doctrines.json");
+            if (File.Exists(doctrineFile))
+            {
+                try { LoadDoctrines(doctrineFile); }
+                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 教义池加载失败：{e.Message}"); }
             }
 
             // ===== 模组化定义表 =====
@@ -449,6 +457,24 @@ namespace CivilizationEvolution.Core
         private class ReligionListWrapper
         {
             public List<ReligionDef> religions = new List<ReligionDef>();
+        }
+
+        /// <summary>加载教义池（七支柱选项——中性词汇+宗教专属风味化）</summary>
+        private static void LoadDoctrines(string path)
+        {
+            var wrapper = JsonUtility.FromJson<DoctrineListWrapper>(File.ReadAllText(path));
+            Doctrines.Clear();
+            if (wrapper == null || wrapper.doctrines == null) return;
+            foreach (var d in wrapper.doctrines)
+                if (d != null && !string.IsNullOrEmpty(d.optionId))
+                    Doctrines[d.optionId] = d;
+            DoctrinePool.Load(new List<DoctrineOptionDef>(Doctrines.Values));
+        }
+
+        [System.Serializable]
+        private class DoctrineListWrapper
+        {
+            public List<DoctrineOptionDef> doctrines = new List<DoctrineOptionDef>();
         }
 
         /// <summary>加载革新（Innovation）定义表（两级分类：大类+子类；模组可新增）</summary>
