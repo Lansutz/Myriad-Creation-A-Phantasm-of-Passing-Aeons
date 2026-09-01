@@ -425,5 +425,38 @@ namespace CivilizationEvolution.Tests
             Assert.IsTrue(ReligionCatalog.IsAvailable(600, null), "宽松模式");
             Assert.IsTrue(ReligionCatalog.IsAvailable(999999, id => false), "未知 id 宽松");
         }
+
+        [Test]
+        public void SuccessionDoctrines_RealData()
+        {
+            // 教统支柱选择（数据——偏离度计算基础）
+            var catholic = ReligionCatalog.Get(104);
+            Assert.IsTrue(catholic.selectedDoctrines.Contains("doctrine_monotheism"), "天主教=一神论");
+            Assert.IsTrue(catholic.selectedDoctrines.Contains("doctrine_clerical_appointment_spiritual"),
+                "天主教=神职灵性任命（叙任权在教）");
+            Assert.IsTrue(catholic.selectedDoctrines.Contains("doctrine_clerical_marriage_celibate"),
+                "天主教=神职独身");
+
+            var orthodox = ReligionCatalog.Get(105);
+            Assert.IsTrue(orthodox.selectedDoctrines.Contains("doctrine_clerical_marriage_allowed"),
+                "东正教=神职可婚（与天主教偏离——东西方差异教义化）");
+
+            // 儒教=祖先崇拜+君权神授（祭祀型——天命）
+            var confucian = ReligionCatalog.Get(401);
+            Assert.IsTrue(confucian.selectedDoctrines.Contains("doctrine_ancestor_veneration"), "儒教=祖先崇拜");
+            Assert.IsTrue(confucian.selectedDoctrines.Contains("doctrine_sacred_kingship"), "儒教=君权神授（天命）");
+
+            // 什叶=伊玛目无误（专属教义）
+            var shia = ReligionCatalog.Get(202);
+            Assert.IsTrue(shia.selectedDoctrines.Contains("doctrine_imamate"), "什叶=伊玛目无误");
+
+            // 祆教=二元论（善恶二神）
+            var zoroaster = ReligionCatalog.Get(500);
+            Assert.IsTrue(zoroaster.selectedDoctrines.Contains("doctrine_dualism"), "祆教=二元论");
+
+            // 天主教 vs 东正教偏离（神职婚姻差异——伦理/制度支柱）
+            float div = ReligionCatalog.GetDivergence(catholic, orthodox);
+            Assert.Greater(div, 0f, "天主教/东正教有偏离（神职婚姻差异）");
+        }
     }
 }

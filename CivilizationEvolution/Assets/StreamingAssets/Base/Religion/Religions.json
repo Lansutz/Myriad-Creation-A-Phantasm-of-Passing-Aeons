@@ -9,7 +9,8 @@
       "hasSuccession": true,
       "rites": [],
       "school": "",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 101,
@@ -20,7 +21,8 @@
       "hasSuccession": true,
       "rites": [],
       "school": "二性论派",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 104,
@@ -39,7 +41,18 @@
       "communionName": "罗马共融",
       "worldview": "一神",
       "founder": "使徒彼得",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": [
+        "doctrine_monotheism",
+        "doctrine_communion",
+        "doctrine_icon_veneration",
+        "doctrine_clerical_gender_male",
+        "doctrine_clerical_marriage_celibate",
+        "doctrine_clerical_appointment_spiritual",
+        "doctrine_funeral_burial",
+        "doctrine_pilgrimage",
+        "doctrine_homosexuality_shunned"
+      ]
     },
     {
       "religionId": 105,
@@ -58,7 +71,18 @@
       "communionName": "东正教共融",
       "worldview": "一神",
       "founder": "使徒安德烈",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": [
+        "doctrine_monotheism",
+        "doctrine_communion",
+        "doctrine_icon_veneration",
+        "doctrine_clerical_gender_male",
+        "doctrine_clerical_marriage_allowed",
+        "doctrine_clerical_appointment_spiritual",
+        "doctrine_funeral_burial",
+        "doctrine_pilgrimage",
+        "doctrine_homosexuality_shunned"
+      ]
     },
     {
       "religionId": 102,
@@ -69,7 +93,8 @@
       "hasSuccession": true,
       "rites": [],
       "school": "合性论（非迦克墩）",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 120,
@@ -88,7 +113,15 @@
       "communionName": "东方正统共融",
       "worldview": "一神（合性论）",
       "founder": "圣马可",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": [
+        "doctrine_monotheism",
+        "doctrine_communion",
+        "doctrine_icon_veneration",
+        "doctrine_clerical_marriage_allowed",
+        "doctrine_clerical_appointment_spiritual",
+        "doctrine_funeral_burial"
+      ]
     },
     {
       "religionId": 121,
@@ -107,7 +140,15 @@
       "communionName": "东方正统共融",
       "worldview": "一神（合性论）",
       "founder": "圣彼得",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": [
+        "doctrine_monotheism",
+        "doctrine_communion",
+        "doctrine_icon_veneration",
+        "doctrine_clerical_marriage_allowed",
+        "doctrine_clerical_appointment_spiritual",
+        "doctrine_funeral_burial"
+      ]
     },
     {
       "religionId": 122,
@@ -126,7 +167,8 @@
       "communionName": "东方正统共融",
       "worldview": "一神（合性论）",
       "founder": "圣格列高利",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 123,
@@ -145,7 +187,8 @@
       "communionName": "东方正统共融",
       "worldview": "一神（合性论）",
       "founder": "腓利",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 124,
@@ -164,7 +207,8 @@
       "communionName": "东方正统共融",
       "worldview": "一神（合性论）",
       "founder": "腓利",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 125,
@@ -183,7 +227,8 @@
       "communionName": "东方正统共融",
       "worldview": "一神（合性论）",
       "founder": "圣多马",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 103,
@@ -202,7 +247,8 @@
       "communionName": "亚述教会共融",
       "worldview": "一神（二性论）",
       "founder": "圣多马",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 110,
@@ -213,7 +259,8 @@
       "hasSuccession": false,
       "rites": [],
       "school": "",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 111,
@@ -224,7 +271,8 @@
       "hasSuccession": false,
       "rites": [],
       "school": "",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 112,
@@ -235,7 +283,8 @@
       "hasSuccession": false,
       "rites": [],
       "school": "狄奥多若学派",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 113,
@@ -246,7 +295,8 @@
       "hasSuccession": false,
       "rites": [],
       "school": "合性论",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 114,
@@ -257,7 +307,8 @@
       "hasSuccession": false,
       "rites": [],
       "school": "圣多马传统",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 115,
@@ -268,7 +319,8 @@
       "hasSuccession": false,
       "rites": [],
       "school": "安提阿分支（无教统——思想遗产）",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 200,
@@ -279,7 +331,8 @@
       "hasSuccession": true,
       "rites": [],
       "school": "",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 201,
@@ -295,7 +348,14 @@
       "communionName": "乌玛",
       "worldview": "一神",
       "founder": "穆罕默德",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": [
+        "doctrine_monotheism",
+        "doctrine_clerical_marriage_allowed",
+        "doctrine_clerical_appointment_spiritual",
+        "doctrine_funeral_burial",
+        "doctrine_homosexuality_shunned"
+      ]
     },
     {
       "religionId": 202,
@@ -311,7 +371,14 @@
       "communionName": "乌玛",
       "worldview": "一神",
       "founder": "阿里",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": [
+        "doctrine_monotheism",
+        "doctrine_imamate",
+        "doctrine_clerical_marriage_allowed",
+        "doctrine_funeral_burial",
+        "doctrine_homosexuality_shunned"
+      ]
     },
     {
       "religionId": 203,
@@ -322,7 +389,8 @@
       "hasSuccession": true,
       "rites": [],
       "school": "伊巴德学派",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 300,
@@ -333,7 +401,8 @@
       "hasSuccession": true,
       "rites": [],
       "school": "",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 301,
@@ -349,7 +418,12 @@
       "communionName": "僧伽",
       "worldview": "无神论/非神论",
       "founder": "佛陀",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": [
+        "doctrine_ancestor_veneration",
+        "doctrine_asceticism",
+        "doctrine_funeral_cremation"
+      ]
     },
     {
       "religionId": 302,
@@ -365,7 +439,13 @@
       "communionName": "僧伽",
       "worldview": "非神论",
       "founder": "佛陀",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": [
+        "doctrine_ancestor_veneration",
+        "doctrine_asceticism",
+        "doctrine_no_mind",
+        "doctrine_funeral_cremation"
+      ]
     },
     {
       "religionId": 303,
@@ -381,7 +461,8 @@
       "communionName": "僧伽",
       "worldview": "非神论",
       "founder": "佛陀",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 304,
@@ -392,7 +473,8 @@
       "hasSuccession": true,
       "rites": [],
       "school": "天台教学",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 305,
@@ -403,7 +485,8 @@
       "hasSuccession": true,
       "rites": [],
       "school": "如来禅/祖师禅",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 306,
@@ -414,7 +497,8 @@
       "hasSuccession": true,
       "rites": [],
       "school": "瑜伽行唯识学派",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 307,
@@ -425,7 +509,8 @@
       "hasSuccession": true,
       "rites": [],
       "school": "日莲教学",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 308,
@@ -436,7 +521,8 @@
       "hasSuccession": true,
       "rites": [],
       "school": "毗尼多流支传承",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 400,
@@ -453,7 +539,8 @@
       "founder": "（天极信仰——昊天上帝）",
       "requiredInnovations": [
         901
-      ]
+      ],
+      "selectedDoctrines": []
     },
     {
       "religionId": 401,
@@ -473,6 +560,13 @@
       "founder": "孔子（儒家宗教化——董仲舒天人感应）",
       "requiredInnovations": [
         901
+      ],
+      "selectedDoctrines": [
+        "doctrine_ancestor_veneration",
+        "doctrine_sacred_kingship",
+        "doctrine_funeral_burial",
+        "doctrine_ritual_feast",
+        "doctrine_clerical_marriage_allowed"
       ]
     },
     {
@@ -484,7 +578,8 @@
       "hasSuccession": false,
       "rites": [],
       "school": "纬书神学（易纬/尚书纬等七纬）",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 403,
@@ -504,6 +599,13 @@
       "founder": "张道陵（道教——上清/灵宝演化）",
       "requiredInnovations": [
         901
+      ],
+      "selectedDoctrines": [
+        "doctrine_ancestor_veneration",
+        "doctrine_asceticism",
+        "doctrine_esotericism",
+        "doctrine_funeral_burial",
+        "doctrine_clerical_marriage_allowed"
       ]
     },
     {
@@ -517,7 +619,8 @@
         "符箓斋醮"
       ],
       "school": "符箓派（上清/灵宝融合——三山符箓）",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 405,
@@ -530,7 +633,8 @@
         "丹鼎清修"
       ],
       "school": "丹鼎派（王重阳——儒释道三教合一）",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 500,
@@ -550,6 +654,11 @@
       "founder": "琐罗亚斯德",
       "requiredInnovations": [
         901
+      ],
+      "selectedDoctrines": [
+        "doctrine_dualism",
+        "doctrine_sanctity_nature",
+        "doctrine_funeral_burial"
       ]
     },
     {
@@ -563,7 +672,8 @@
         "火祭"
       ],
       "school": "马兹达雅斯纳（萨珊国教）",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 502,
@@ -576,7 +686,8 @@
         "火祭"
       ],
       "school": "印度迁徙支派（伊斯兰征服后迁出）",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 503,
@@ -588,7 +699,8 @@
       "rites": [],
       "school": "时间神祖尔万（祆教×巴比伦聚合——被正统驱逐的异端）",
       "orthodoxy": false,
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 504,
@@ -600,7 +712,8 @@
       "rites": [],
       "school": "社会改革运动（5 世纪——被库思老一世镇压）",
       "orthodoxy": false,
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     },
     {
       "religionId": 505,
@@ -615,7 +728,12 @@
       "school": "严格二元论（祆教+基督教+佛教聚合——新宗教创生）",
       "worldview": "二元论",
       "founder": "摩尼",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": [
+        "doctrine_dualism",
+        "doctrine_asceticism",
+        "doctrine_clerical_marriage_celibate"
+      ]
     },
     {
       "religionId": 600,
@@ -630,7 +748,8 @@
       "school": "mana 非人格化超自然力（前泛灵论——无神祇无人格化）",
       "worldview": "mana",
       "founder": "",
-      "requiredInnovations": []
+      "requiredInnovations": [],
+      "selectedDoctrines": []
     }
   ]
 }
