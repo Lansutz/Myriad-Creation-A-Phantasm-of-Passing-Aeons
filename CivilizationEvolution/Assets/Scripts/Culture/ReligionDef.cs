@@ -54,6 +54,13 @@ namespace CivilizationEvolution.Culture
         /// 以领袖传统为准；选项差异=偏离度来源）</summary>
         public List<string> selectedDoctrines = new List<string>();
         /// <summary>
+        /// 支撑革新（宗教演化×革新对接——革新串联所有系统）：
+        /// 神谱编纂←文字｜教义系统化/经书←文字+哲学｜寺庙圣殿←营建｜
+        /// 国家祭祀[郊祀]←官僚｜教统组织化←行政+文书｜经文传播←印刷术
+        /// 空=基础可用（era0——原始崇拜无前置）
+        /// </summary>
+        public List<int> requiredInnovations = new List<int>();
+        /// <summary>
         /// 具体礼名列表（狭义——如"科普特礼"/"埃塞俄比亚礼"：
         /// 同一礼仪传统下可有多个具体礼——埃塞俄比亚礼属亚历山大传统）
         /// </summary>
@@ -233,6 +240,22 @@ namespace CivilizationEvolution.Culture
                 case "material": return 0.05f;
                 default: return 0.1f;
             }
+        }
+
+        /// <summary>
+        /// 宗教形态是否可用（支撑革新判定——仿政体成分×革新）：
+        /// requiredInnovations 任一持有即可（OR 语义）；空=基础可用；
+        /// innovations null=宽松（不校验）
+        /// </summary>
+        public static bool IsAvailable(int religionId, System.Func<int, bool> hasInnovation)
+        {
+            var def = Get(religionId);
+            if (def == null) return true;
+            if (def.requiredInnovations == null || def.requiredInnovations.Count == 0) return true;
+            if (hasInnovation == null) return true; // 宽松模式
+            foreach (var req in def.requiredInnovations)
+                if (hasInnovation(req)) return true;
+            return false;
         }
 
         /// <summary>地图色（按级别：宗教=根色 / 教统=自身色 / 传统=rite/school 哈希偏移色）</summary>

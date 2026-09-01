@@ -414,5 +414,16 @@ namespace CivilizationEvolution.Tests
             Assert.IsFalse(world.CreateHolySite(401, 10), "去重——不重复创建");
             Assert.AreEqual(1, faith.holySiteTileIndices.Count, "圣地列表 1 个");
         }
+
+        [Test]
+        public void ReligionInnovation_Linkage()
+        {
+            // 华夏祭祀体系/儒教/祆教←文字（901）；原始崇拜=era0 无前置
+            Assert.IsFalse(ReligionCatalog.IsAvailable(400, id => false), "无文字→华夏祭祀体系不可用");
+            Assert.IsTrue(ReligionCatalog.IsAvailable(400, id => id == 901), "有文字→可用");
+            Assert.IsTrue(ReligionCatalog.IsAvailable(600, id => false), "原始崇拜无前置——era0 可用");
+            Assert.IsTrue(ReligionCatalog.IsAvailable(600, null), "宽松模式");
+            Assert.IsTrue(ReligionCatalog.IsAvailable(999999, id => false), "未知 id 宽松");
+        }
     }
 }

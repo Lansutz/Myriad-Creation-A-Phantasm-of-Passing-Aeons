@@ -8,7 +8,8 @@
       "nodeType": 0,
       "hasSuccession": true,
       "rites": [],
-      "school": ""
+      "school": "",
+      "requiredInnovations": []
     },
     {
       "religionId": 101,
@@ -18,7 +19,8 @@
       "nodeType": 1,
       "hasSuccession": true,
       "rites": [],
-      "school": "二性论派"
+      "school": "二性论派",
+      "requiredInnovations": []
     },
     {
       "religionId": 104,
@@ -36,7 +38,8 @@
       "riteHeadName": "教宗（拉丁礼）",
       "communionName": "罗马共融",
       "worldview": "一神",
-      "founder": "使徒彼得"
+      "founder": "使徒彼得",
+      "requiredInnovations": []
     },
     {
       "religionId": 105,
@@ -54,7 +57,8 @@
       "riteHeadName": "牧首（拜占庭礼）",
       "communionName": "东正教共融",
       "worldview": "一神",
-      "founder": "使徒安德烈"
+      "founder": "使徒安德烈",
+      "requiredInnovations": []
     },
     {
       "religionId": 102,
@@ -64,7 +68,8 @@
       "nodeType": 1,
       "hasSuccession": true,
       "rites": [],
-      "school": "合性论（非迦克墩）"
+      "school": "合性论（非迦克墩）",
+      "requiredInnovations": []
     },
     {
       "religionId": 120,
@@ -82,7 +87,8 @@
       "riteHeadName": "",
       "communionName": "东方正统共融",
       "worldview": "一神（合性论）",
-      "founder": "圣马可"
+      "founder": "圣马可",
+      "requiredInnovations": []
     },
     {
       "religionId": 121,
@@ -100,7 +106,8 @@
       "riteHeadName": "",
       "communionName": "东方正统共融",
       "worldview": "一神（合性论）",
-      "founder": "圣彼得"
+      "founder": "圣彼得",
+      "requiredInnovations": []
     },
     {
       "religionId": 122,
@@ -118,7 +125,8 @@
       "riteHeadName": "",
       "communionName": "东方正统共融",
       "worldview": "一神（合性论）",
-      "founder": "圣格列高利"
+      "founder": "圣格列高利",
+      "requiredInnovations": []
     },
     {
       "religionId": 123,
@@ -136,7 +144,8 @@
       "riteHeadName": "",
       "communionName": "东方正统共融",
       "worldview": "一神（合性论）",
-      "founder": "腓利"
+      "founder": "腓利",
+      "requiredInnovations": []
     },
     {
       "religionId": 124,
@@ -154,7 +163,8 @@
       "riteHeadName": "",
       "communionName": "东方正统共融",
       "worldview": "一神（合性论）",
-      "founder": "腓利"
+      "founder": "腓利",
+      "requiredInnovations": []
     },
     {
       "religionId": 125,
@@ -172,7 +182,8 @@
       "riteHeadName": "",
       "communionName": "东方正统共融",
       "worldview": "一神（合性论）",
-      "founder": "圣多马"
+      "founder": "圣多马",
+      "requiredInnovations": []
     },
     {
       "religionId": 103,
@@ -190,7 +201,8 @@
       "riteHeadName": "",
       "communionName": "亚述教会共融",
       "worldview": "一神（二性论）",
-      "founder": "圣多马"
+      "founder": "圣多马",
+      "requiredInnovations": []
     },
     {
       "religionId": 110,
@@ -200,7 +212,8 @@
       "nodeType": 3,
       "hasSuccession": false,
       "rites": [],
-      "school": ""
+      "school": "",
+      "requiredInnovations": []
     },
     {
       "religionId": 111,
@@ -210,7 +223,8 @@
       "nodeType": 3,
       "hasSuccession": false,
       "rites": [],
-      "school": ""
+      "school": "",
+      "requiredInnovations": []
     },
     {
       "religionId": 112,
@@ -220,7 +234,8 @@
       "nodeType": 3,
       "hasSuccession": false,
       "rites": [],
-      "school": "狄奥多若学派"
+      "school": "狄奥多若学派",
+      "requiredInnovations": []
     },
     {
       "religionId": 113,
@@ -230,7 +245,8 @@
       "nodeType": 3,
       "hasSuccession": false,
       "rites": [],
-      "school": "合性论"
+      "school": "合性论",
+      "requiredInnovations": []
     },
     {
       "religionId": 114,
@@ -240,7 +256,8 @@
       "nodeType": 3,
       "hasSuccession": false,
       "rites": [],
-      "school": "圣多马传统"
+      "school": "圣多马传统",
+      "requiredInnovations": []
     },
     {
       "religionId": 115,
@@ -250,7 +267,8 @@
       "nodeType": 3,
       "hasSuccession": false,
       "rites": [],
-      "school": "安提阿分支（无教统——思想遗产）"
+      "school": "安提阿分支（无教统——思想遗产）",
+      "requiredInnovations": []
     },
     {
       "religionId": 200,
@@ -260,7 +278,8 @@
       "nodeType": 0,
       "hasSuccession": true,
       "rites": [],
-      "school": ""
+      "school": "",
+      "requiredInnovations": []
     },
     {
       "religionId": 201,
@@ -275,7 +294,8 @@
       "riteHeadName": "",
       "communionName": "乌玛",
       "worldview": "一神",
-      "founder": "穆罕默德"
+      "founder": "穆罕默德",
+      "requiredInnovations": []
     },
     {
       "religionId": 202,
@@ -290,7 +310,8 @@
       "riteHeadName": "",
       "communionName": "乌玛",
       "worldview": "一神",
-      "founder": "阿里"
+      "founder": "阿里",
+      "requiredInnovations": []
     },
     {
       "religionId": 203,
@@ -300,7 +321,8 @@
       "nodeType": 1,
       "hasSuccession": true,
       "rites": [],
-      "school": "伊巴德学派"
+      "school": "伊巴德学派",
+      "requiredInnovations": []
     },
     {
       "religionId": 300,
@@ -310,7 +332,8 @@
       "nodeType": 0,
       "hasSuccession": true,
       "rites": [],
-      "school": ""
+      "school": "",
+      "requiredInnovations": []
     },
     {
       "religionId": 301,
@@ -325,7 +348,8 @@
       "riteHeadName": "",
       "communionName": "僧伽",
       "worldview": "无神论/非神论",
-      "founder": "佛陀"
+      "founder": "佛陀",
+      "requiredInnovations": []
     },
     {
       "religionId": 302,
@@ -340,7 +364,8 @@
       "riteHeadName": "",
       "communionName": "僧伽",
       "worldview": "非神论",
-      "founder": "佛陀"
+      "founder": "佛陀",
+      "requiredInnovations": []
     },
     {
       "religionId": 303,
@@ -355,7 +380,8 @@
       "riteHeadName": "",
       "communionName": "僧伽",
       "worldview": "非神论",
-      "founder": "佛陀"
+      "founder": "佛陀",
+      "requiredInnovations": []
     },
     {
       "religionId": 304,
@@ -365,7 +391,8 @@
       "nodeType": 2,
       "hasSuccession": true,
       "rites": [],
-      "school": "天台教学"
+      "school": "天台教学",
+      "requiredInnovations": []
     },
     {
       "religionId": 305,
@@ -375,7 +402,8 @@
       "nodeType": 2,
       "hasSuccession": true,
       "rites": [],
-      "school": "如来禅/祖师禅"
+      "school": "如来禅/祖师禅",
+      "requiredInnovations": []
     },
     {
       "religionId": 306,
@@ -385,7 +413,8 @@
       "nodeType": 2,
       "hasSuccession": true,
       "rites": [],
-      "school": "瑜伽行唯识学派"
+      "school": "瑜伽行唯识学派",
+      "requiredInnovations": []
     },
     {
       "religionId": 307,
@@ -395,7 +424,8 @@
       "nodeType": 2,
       "hasSuccession": true,
       "rites": [],
-      "school": "日莲教学"
+      "school": "日莲教学",
+      "requiredInnovations": []
     },
     {
       "religionId": 308,
@@ -405,7 +435,8 @@
       "nodeType": 2,
       "hasSuccession": true,
       "rites": [],
-      "school": "毗尼多流支传承"
+      "school": "毗尼多流支传承",
+      "requiredInnovations": []
     },
     {
       "religionId": 400,
@@ -419,7 +450,10 @@
       "headName": "天子",
       "communionName": "天下",
       "worldview": "祭祀型",
-      "founder": "（天极信仰——昊天上帝）"
+      "founder": "（天极信仰——昊天上帝）",
+      "requiredInnovations": [
+        901
+      ]
     },
     {
       "religionId": 401,
@@ -436,7 +470,10 @@
       "headName": "天子",
       "communionName": "天下",
       "worldview": "祭祀型",
-      "founder": "孔子（儒家宗教化——董仲舒天人感应）"
+      "founder": "孔子（儒家宗教化——董仲舒天人感应）",
+      "requiredInnovations": [
+        901
+      ]
     },
     {
       "religionId": 402,
@@ -446,7 +483,8 @@
       "nodeType": 4,
       "hasSuccession": false,
       "rites": [],
-      "school": "纬书神学（易纬/尚书纬等七纬）"
+      "school": "纬书神学（易纬/尚书纬等七纬）",
+      "requiredInnovations": []
     },
     {
       "religionId": 403,
@@ -463,7 +501,10 @@
       "headName": "天师",
       "communionName": "道门",
       "worldview": "泛灵/多神",
-      "founder": "张道陵（道教——上清/灵宝演化）"
+      "founder": "张道陵（道教——上清/灵宝演化）",
+      "requiredInnovations": [
+        901
+      ]
     },
     {
       "religionId": 404,
@@ -475,7 +516,8 @@
       "rites": [
         "符箓斋醮"
       ],
-      "school": "符箓派（上清/灵宝融合——三山符箓）"
+      "school": "符箓派（上清/灵宝融合——三山符箓）",
+      "requiredInnovations": []
     },
     {
       "religionId": 405,
@@ -487,7 +529,8 @@
       "rites": [
         "丹鼎清修"
       ],
-      "school": "丹鼎派（王重阳——儒释道三教合一）"
+      "school": "丹鼎派（王重阳——儒释道三教合一）",
+      "requiredInnovations": []
     },
     {
       "religionId": 500,
@@ -504,7 +547,10 @@
       "headName": "穆护",
       "communionName": "光明王国",
       "worldview": "二元论",
-      "founder": "琐罗亚斯德"
+      "founder": "琐罗亚斯德",
+      "requiredInnovations": [
+        901
+      ]
     },
     {
       "religionId": 501,
@@ -516,7 +562,8 @@
       "rites": [
         "火祭"
       ],
-      "school": "马兹达雅斯纳（萨珊国教）"
+      "school": "马兹达雅斯纳（萨珊国教）",
+      "requiredInnovations": []
     },
     {
       "religionId": 502,
@@ -528,7 +575,8 @@
       "rites": [
         "火祭"
       ],
-      "school": "印度迁徙支派（伊斯兰征服后迁出）"
+      "school": "印度迁徙支派（伊斯兰征服后迁出）",
+      "requiredInnovations": []
     },
     {
       "religionId": 503,
@@ -539,7 +587,8 @@
       "hasSuccession": false,
       "rites": [],
       "school": "时间神祖尔万（祆教×巴比伦聚合——被正统驱逐的异端）",
-      "orthodoxy": false
+      "orthodoxy": false,
+      "requiredInnovations": []
     },
     {
       "religionId": 504,
@@ -550,7 +599,8 @@
       "hasSuccession": false,
       "rites": [],
       "school": "社会改革运动（5 世纪——被库思老一世镇压）",
-      "orthodoxy": false
+      "orthodoxy": false,
+      "requiredInnovations": []
     },
     {
       "religionId": 505,
@@ -564,7 +614,8 @@
       ],
       "school": "严格二元论（祆教+基督教+佛教聚合——新宗教创生）",
       "worldview": "二元论",
-      "founder": "摩尼"
+      "founder": "摩尼",
+      "requiredInnovations": []
     },
     {
       "religionId": 600,
@@ -578,7 +629,8 @@
       ],
       "school": "mana 非人格化超自然力（前泛灵论——无神祇无人格化）",
       "worldview": "mana",
-      "founder": ""
+      "founder": "",
+      "requiredInnovations": []
     }
   ]
 }
