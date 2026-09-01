@@ -316,6 +316,76 @@ namespace CivilizationEvolution.EditorTools
             Debug.Log("[CE菜单] 音乐播放器已就地添加，请保存场景。");
         }
 
+        [MenuItem(MenuRoot + "10. 就地添加家族树面板", false, 10)]
+        public static void AddFamilyTreePanelToExistingScene()
+        {
+            var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+            if (canvas == null)
+            {
+                Debug.LogWarning("[CE菜单] 未找到 Canvas，请先执行菜单 1 一键搭建游戏场景。");
+                return;
+            }
+            if (canvas.transform.Find("FamilyTreePanel") != null)
+            {
+                Debug.Log("[CE菜单] 家族树面板已存在。");
+                return;
+            }
+
+            var ui = Object.FindFirstObjectByType<UIManager>(FindObjectsInactive.Include);
+            if (ui == null)
+            {
+                Debug.LogWarning("[CE菜单] 未找到 UIManager，请先执行菜单 1 一键搭建游戏场景。");
+                return;
+            }
+
+            var topBar = canvas.transform.Find("TopBar");
+            if (topBar != null && topBar.Find("FamilyTreeOpenBtn") == null)
+                SetField(ui, "familyTreeOpenButton", CreateButton("FamilyTreeOpenBtn", topBar, "家族"));
+
+            BuildFamilyTreePanel(canvas.transform, ui);
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Debug.Log("[CE菜单] 家族树面板已就地添加，请保存场景。");
+        }
+
+        /// <summary>构建家族树面板（分层树状文本+角色切换；供一键搭建与就地升级共用）</summary>
+        private static void BuildFamilyTreePanel(Transform canvas, UIManager ui)
+        {
+            var ftPanel = CreatePanel("FamilyTreePanel", canvas).gameObject;
+            SetAnchor(ftPanel.GetComponent<RectTransform>(),
+                new Vector2(1, 1), new Vector2(1, 1), new Vector2(-720, -632), new Vector2(420, 600));
+            var cv = ftPanel.AddComponent<VerticalLayoutGroup>();
+            cv.spacing = 6; cv.padding = new RectOffset(12, 12, 10, 10);
+            cv.childForceExpandWidth = true;
+
+            // 标题行 + 切换
+            var titleRow = new GameObject("FtTitleRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            titleRow.transform.SetParent(ftPanel.transform, false);
+            var trLayout = titleRow.GetComponent<HorizontalLayoutGroup>();
+            trLayout.spacing = 6; trLayout.childAlignment = TextAnchor.MiddleCenter;
+            trLayout.childForceExpandWidth = false;
+
+            var title = CreateText("FtTitle", titleRow.transform, "家族树", 18);
+            title.color = UITheme.Accent;
+            title.fontStyle = FontStyle.Bold;
+            SetField(ui, "familyTreePrevButton", CreateButton("FtPrevBtn", titleRow.transform, "◀"));
+            SetField(ui, "familyTreeNextButton", CreateButton("FtNextBtn", titleRow.transform, "▶"));
+            SetField(ui, "familyTreeCloseButton", CreateButton("FtCloseBtn", titleRow.transform, "✕"));
+
+            // 滚动正文
+            var scroll = ftPanel.AddComponent<ScrollRect>();
+            var ftText = CreateText("FamilyTreeText", ftPanel.transform, "（打开加载家族）", 15);
+            SetAnchor(ftText.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            ftText.rectTransform.offsetMax = new Vector2(-8, -30);
+            ftText.rectTransform.offsetMin = new Vector2(8, 4);
+            ftText.verticalOverflow = VerticalWrapMode.Overflow;
+            ftText.alignment = TextAnchor.UpperLeft;
+            scroll.content = ftText.rectTransform;
+
+            SetField(ui, "familyTreePanel", ftPanel);
+            SetField(ui, "familyTreeText", ftText);
+            ftPanel.SetActive(false); // 默认隐藏（顶栏"家族"按钮打开）
+        }
+
         /// <summary>构建音乐播放器面板（曲目列表+控制+音量；供一键搭建与就地升级共用）</summary>
         private static void BuildMusicPanel(Transform canvas, UIManager ui)
         {

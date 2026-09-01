@@ -223,6 +223,8 @@ namespace CivilizationEvolution.Role
         // 血缘（DNA 遗传与近亲系数计算依赖）
         public int fatherId = -1;
         public int motherId = -1;
+        /// <summary>配偶（-1=未婚；婚姻双向设置）</summary>
+        public int spouseId = -1;
 
         // DNA（有名角色专属；人口块不存个体 DNA）
         public DnaData dna;
@@ -2009,7 +2011,129 @@ namespace CivilizationEvolution.Role
             return "无名";
         }
 
-        /// <summary>自主生育（最小机制）：成年异性同政权配对，低概率产子，保证 DNA 遗传持续发生</summary>
+        // ===== 婚姻与家族树（2026-09-01：配偶/子女遍历——家族树与生育衔接） =====
+
+        /// <summary>婚姻：双向设置配偶（异性/成年/存活/非直系——与 Procreate 同检查）</summary>
+        public bool Marry(int aId, int bId)
+        {
+            var a = GetCharacter(aId);
+            var b = GetCharacter(bId);
+            if (a == null || b == null) return false;
+            if (!a.isAlive || !b.isAlive) return false;
+            if (a.isMale == b.isMale) return false;
+            if (a.characterId == b.characterId) return false;
+            if (a.age < 16 || b.age < 16) return false;
+            if (IsDirectLineage(a, b)) return false;
+            if (a.spouseId >= 0 || b.spouseId >= 0) return false; // 已有配偶不重婚
+
+            a.spouseId = b.characterId;
+            b.spouseId = a.characterId;
+            return true;
+        }
+
+        /// <summary>获取角色配偶（无返回 null）</summary>
+        public CharacterData GetSpouse(int characterId)
+        {
+            var c = GetCharacter(characterId);
+            return c != null && c.spouseId >= 0 ? GetCharacter(c.spouseId) : null;
+        }
+
+        /// <summary>获取子女（父或母=指定角色——反查）</summary>
+        public List<CharacterData> GetChildren(int characterId)
+        {
+            var result = new List<CharacterData>();
+            foreach (var c in _characters.Values)
+                if (c.fatherId == characterId || c.motherId == characterId)
+                    result.Add(c);
+            return result;
+        }
+
+        /// <summary>获取兄弟姐妹（共享任一父母，排除自身）</summary>
+        public List<CharacterData> GetSiblings(int characterId)
+        {
+            var c = GetCharacter(characterId);
+            var result = new List<CharacterData>();
+            if (c == null) return result;
+            foreach (var other in _characters.Values)
+            {
+                if (other.characterId == characterId) continue;
+                if ((c.fatherId >= 0 && other.fatherId == c.fatherId)
+                    || (c.motherId >= 0 && other.motherId == c.motherId))
+                    result.Add(other);
+            }
+            return result;
+        }
+
+        /// <summary>获取祖先链（父系优先递归，含父母/祖父母…）</summary>
+        public List<CharacterData> GetAncestors(int characterId, int maxDepth = 4)
+        {
+            var result = new List<CharacterData>();
+            var c = GetCharacter(characterId);
+            int depth = 0;
+            while (c != null && depth < maxDepth)
+            {
+                var parent = c.fatherId >= 0 ? GetCharacter(c.fatherId) : null;
+                if (parent == null && c.motherId >= 0) parent = GetCharacter(c.motherId);
+                if (parent == null) break;
+                result.Add(parent);
+                c = parent;
+                depth++;
+            }
+            return result;
+        }
+
+        /// <summary>获取孙辈及以下（子女的子女——深度 2）</summary>
+        public List<CharacterData> GetGrandchildren(int characterId)
+        {
+            var result = new List<CharacterData>();
+            foreach (var child in GetChildren(characterId))
+                result.AddRange(GetChildren(child.characterId));
+            return result;
+        }
+
+        /// <summary>家族树文本（分代缩进：配偶/祖辈/本人/子女/孙辈——家族树面板用）</summary>
+        public string BuildFamilyTreeText(int characterId)
+        {
+            var sb = new System.Text.StringBuilder();
+            var c = GetCharacter(characterId);
+            if (c == null) return "（无角色）";
+
+            sb.AppendLine($"◆ {c.firstName} {c.lastName}（{c.age}岁，{(c.isMale ? "男" : "女")}）");
+
+            // 配偶
+            var spouse = GetSpouse(characterId);
+            sb.AppendLine(spouse != null ? $"  配偶：{spouse.firstName} {spouse.lastName}（{spouse.age}岁）" : "  配偶：无");
+
+            // 祖辈
+            var ancestors = GetAncestors(characterId);
+            if (ancestors.Count > 0)
+            {
+                sb.AppendLine("  祖辈：");
+                foreach (var a in ancestors)
+                    sb.AppendLine($"    - {a.firstName} {a.lastName}（{a.age}岁）");
+            }
+
+            // 子女
+            var children = GetChildren(characterId);
+            if (children.Count > 0)
+            {
+                sb.AppendLine($"  子女（{children.Count}）：");
+                foreach (var ch in children)
+                    sb.AppendLine($"    - {ch.firstName} {ch.lastName}（{ch.age}岁，{(ch.isMale ? "男" : "女")}）");
+            }
+
+            // 孙辈
+            var grands = GetGrandchildren(characterId);
+            if (grands.Count > 0)
+            {
+                sb.AppendLine($"  孙辈（{grands.Count}）：");
+                foreach (var g in grands)
+                    sb.AppendLine($"    - {g.firstName} {g.lastName}（{g.age}岁）");
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>自主生育（已婚夫妇优先——配偶生育；未婚保留随机配对，保证 DNA 遗传持续发生）</summary>
         private void AutoProcreate(int currentYear)
         {
             var males = new List<CharacterData>();
@@ -2021,9 +2145,31 @@ namespace CivilizationEvolution.Role
             }
             if (males.Count == 0 || females.Count == 0) return;
 
+            // 已婚夫妇优先生育（spouseId 双向配对——婚姻制度的生育）
             foreach (var male in males)
             {
-                if (CountChildren(male.characterId) >= 8) continue; // 子女上限
+                if (male.spouseId < 0) continue;
+                var wife = GetCharacter(male.spouseId);
+                if (wife == null || !wife.isAlive) continue;
+                if (wife.age < 16 || wife.age > 45) continue;
+                if (CountChildren(male.characterId) >= 8) continue;
+                if (CountChildren(wife.characterId) >= 8) continue;
+                if (IsDirectLineage(male, wife)) continue;
+
+                // 已婚夫妇每年约 25% 生育概率（≈0.0007/天——比未婚配对高）
+                if (UnityEngine.Random.value < 0.0007f)
+                {
+                    var child = Procreate(male.characterId, wife.characterId, currentYear);
+                    if (child != null)
+                        Debug.Log($"[Character] 已婚生育：{male.firstName}×{wife.firstName} → {child.firstName} {child.lastName}");
+                }
+            }
+
+            // 未婚随机配对（原有机制保留——简化社会未婚生育）
+            foreach (var male in males)
+            {
+                if (male.spouseId >= 0) continue; // 已婚不再随机配对
+                if (CountChildren(male.characterId) >= 8) continue;
 
                 foreach (var female in females)
                 {

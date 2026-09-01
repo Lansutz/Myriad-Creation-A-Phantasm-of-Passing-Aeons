@@ -85,6 +85,14 @@ namespace CivilizationEvolution.UI
         [SerializeField] private Button musicNextButton;
         [SerializeField] private Button musicPrevButton;
         [SerializeField] private UnityEngine.UI.Slider musicVolumeSlider;
+
+        [Header("家族树面板")]
+        [SerializeField] private GameObject familyTreePanel;
+        [SerializeField] private Text familyTreeText;
+        [SerializeField] private Button familyTreeOpenButton;
+        [SerializeField] private Button familyTreeCloseButton;
+        [SerializeField] private Button familyTreePrevButton;
+        [SerializeField] private Button familyTreeNextButton;
         [SerializeField] private Text charNameText;
         [SerializeField] private Text charStatusText;
         [SerializeField] private Text charStatsText;
@@ -161,6 +169,8 @@ namespace CivilizationEvolution.UI
                     RefreshSocietyPanel();
                 if (musicPanel != null && musicPanel.activeSelf)
                     RefreshMusicPanel();
+                if (familyTreePanel != null && familyTreePanel.activeSelf)
+                    RefreshFamilyTreePanel();
             }
         }
 
@@ -210,6 +220,12 @@ namespace CivilizationEvolution.UI
                 if (MusicPlayer() != null) musicVolumeSlider.value = MusicPlayer().Volume;
                 musicVolumeSlider.onValueChanged.AddListener(v => { if (MusicPlayer() != null) MusicPlayer().Volume = v; });
             }
+
+            // 家族树面板按钮
+            if (familyTreeOpenButton != null) familyTreeOpenButton.onClick.AddListener(OpenFamilyTreePanel);
+            if (familyTreeCloseButton != null) familyTreeCloseButton.onClick.AddListener(CloseFamilyTreePanel);
+            if (familyTreePrevButton != null) familyTreePrevButton.onClick.AddListener(() => { _charIndex--; RefreshFamilyTreePanel(); });
+            if (familyTreeNextButton != null) familyTreeNextButton.onClick.AddListener(() => { _charIndex++; RefreshFamilyTreePanel(); });
 
             // 地图编辑器UI面板（代码动态生成，无需在Inspector手动搭建）
             if (mapRenderer != null)
@@ -412,6 +428,50 @@ namespace CivilizationEvolution.UI
             if (mp.Playlist.Count == 0)
                 sb.AppendLine("（无曲目——请放入 Resources/Music/ 的 ogg/mp3）");
             musicText.text = sb.ToString();
+        }
+
+        /// <summary>打开家族树面板</summary>
+        private void OpenFamilyTreePanel()
+        {
+            RefreshCharacterList();
+            if (familyTreePanel != null) familyTreePanel.SetActive(true);
+            RefreshFamilyTreePanel();
+        }
+
+        /// <summary>关闭家族树面板</summary>
+        private void CloseFamilyTreePanel()
+        {
+            if (familyTreePanel != null) familyTreePanel.SetActive(false);
+        }
+
+        /// <summary>刷新家族树面板（当前角色分代树状）</summary>
+        private void RefreshFamilyTreePanel()
+        {
+            if (familyTreeText == null || world == null) return;
+            var cm = world.GetCharacterManager();
+            if (cm == null) return;
+            if (_characterList.Count == 0) RefreshCharacterList();
+            if (_characterList.Count == 0)
+            {
+                familyTreeText.text = "（无角色）";
+                return;
+            }
+
+            _charIndex = (_charIndex + _characterList.Count) % _characterList.Count;
+            familyTreeText.text = cm.BuildFamilyTreeText(_characterList[_charIndex].characterId);
+        }
+
+        /// <summary>刷新角色列表（角色面板数据源）</summary>
+        private void RefreshCharacterList()
+        {
+            if (world == null) return;
+            var cm = world.GetCharacterManager();
+            if (cm == null) return;
+            _characterList.Clear();
+            foreach (var c in cm.GetCharactersByRealm(world.PlayerRealmId >= 0 ? world.PlayerRealmId : 0))
+                _characterList.Add(c);
+            if (_characterList.Count > 0)
+                _charIndex = Mathf.Clamp(_charIndex, 0, _characterList.Count - 1);
         }
 
         /// <summary>刷新角色面板（每帧调用，角色数据动态变化）</summary>
