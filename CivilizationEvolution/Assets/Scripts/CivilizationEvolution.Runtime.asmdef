@@ -2,7 +2,8 @@
     "name": "CivilizationEvolution.Runtime",
     "rootNamespace": "CivilizationEvolution",
     "references": [
-        "UnityEngine.UI"
+        "UnityEngine.UI",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

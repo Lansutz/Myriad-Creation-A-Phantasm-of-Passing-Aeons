@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Render;
@@ -34,23 +35,23 @@ namespace CivilizationEvolution.UI
         [SerializeField] private MapRenderer mapRenderer;
 
         [Header("顶部信息栏")]
-        [SerializeField] private Text dateText;
-        [SerializeField] private Text treasuryText;
-        [SerializeField] private Text populationText;
-        [SerializeField] private Text realmNameText;
+        [SerializeField] private TMP_Text dateText;
+        [SerializeField] private TMP_Text treasuryText;
+        [SerializeField] private TMP_Text populationText;
+        [SerializeField] private TMP_Text realmNameText;
 
         [Header("地块详情面板")]
         [SerializeField] private GameObject tileInfoPanel;
-        [SerializeField] private Text tileNameText;
-        [SerializeField] private Text tileTerrainText;
-        [SerializeField] private Text tileClimateText;
-        [SerializeField] private Text tileBiomeText;
-        [SerializeField] private Text tilePopulationText;
-        [SerializeField] private Text tileEconomyText;
+        [SerializeField] private TMP_Text tileNameText;
+        [SerializeField] private TMP_Text tileTerrainText;
+        [SerializeField] private TMP_Text tileClimateText;
+        [SerializeField] private TMP_Text tileBiomeText;
+        [SerializeField] private TMP_Text tilePopulationText;
+        [SerializeField] private TMP_Text tileEconomyText;
 
         [Header("事件日志")]
         [SerializeField] private GameObject eventLogPanel;
-        [SerializeField] private Text eventLogText;
+        [SerializeField] private TMP_Text eventLogText;
         [SerializeField] private ScrollRect eventLogScroll;
 
         [Header("速度控制")]
@@ -60,7 +61,7 @@ namespace CivilizationEvolution.UI
         [SerializeField] private Button speed3Button;
 
         [Header("显示模式切换")]
-        [SerializeField] private Dropdown displayModeDropdown;
+        [SerializeField] private TMPro.TMP_Dropdown displayModeDropdown;
 
         [Header("角色面板")]
         [SerializeField] private GameObject characterPanel;
@@ -71,13 +72,13 @@ namespace CivilizationEvolution.UI
 
         [Header("社会政治面板")]
         [SerializeField] private GameObject societyPanel;
-        [SerializeField] private Text societyText;
+        [SerializeField] private TMP_Text societyText;
         [SerializeField] private Button societyOpenButton;
         [SerializeField] private Button societyCloseButton;
 
         [Header("音乐播放器")]
         [SerializeField] private GameObject musicPanel;
-        [SerializeField] private Text musicText;
+        [SerializeField] private TMP_Text musicText;
         [SerializeField] private Button musicOpenButton;
         [SerializeField] private Button musicCloseButton;
         [SerializeField] private Button musicPlayButton;
@@ -88,17 +89,17 @@ namespace CivilizationEvolution.UI
 
         [Header("家族树面板")]
         [SerializeField] private GameObject familyTreePanel;
-        [SerializeField] private Text familyTreeText;
+        [SerializeField] private TMP_Text familyTreeText;
         [SerializeField] private Button familyTreeOpenButton;
         [SerializeField] private Button familyTreeCloseButton;
         [SerializeField] private Button familyTreePrevButton;
         [SerializeField] private Button familyTreeNextButton;
-        [SerializeField] private Text charNameText;
-        [SerializeField] private Text charStatusText;
-        [SerializeField] private Text charStatsText;
-        [SerializeField] private Text charPersonalityText;
-        [SerializeField] private Text charDescText;
-        [SerializeField] private Text charDnaText;
+        [SerializeField] private TMP_Text charNameText;
+        [SerializeField] private TMP_Text charStatusText;
+        [SerializeField] private TMP_Text charStatsText;
+        [SerializeField] private TMP_Text charPersonalityText;
+        [SerializeField] private TMP_Text charDescText;
+        [SerializeField] private TMP_Text charDnaText;
 
         // 选中的地块
         private int _selectedTile = -1;
@@ -116,7 +117,7 @@ namespace CivilizationEvolution.UI
         private EditorUIPanel _editorPanel;
 
         [Header("地图信息")]
-        [SerializeField] private Text mapInfoText;
+        [SerializeField] private TMP_Text mapInfoText;
 
         // UI 数据更新节流（避免每帧全量遍历 8192 地块算总人口等重操作）
         private float _uiUpdateTimer;
@@ -136,19 +137,9 @@ namespace CivilizationEvolution.UI
         /// </summary>
         public void ApplyChineseFont()
         {
-            var font = Resources.Load<Font>("Fonts/simhei");
-            if (font == null)
-            {
-                Debug.LogWarning("[UIManager] 中文字体缺失（Resources/Fonts/simhei.ttf）——UI 中文可能显示异常");
-                return;
-            }
-            int count = 0;
-            foreach (var text in FindObjectsOfType<UnityEngine.UI.Text>(true))
-            {
-                text.font = font;
-                count++;
-            }
-            Debug.Log($"[UIManager] 中文字体已应用：{count} 处 UI 文本");
+            // TMP SDF 中文字体（simhei → 4096 SDF 动态图集——替换 Legacy 字体）
+            int count = TMPFontUtility.ApplyChineseFontToAll();
+            Debug.Log($"[UIManager] TMP 中文字体已应用：{count} 处 UI 文本");
         }
 
                 void Update()
@@ -607,13 +598,13 @@ namespace CivilizationEvolution.UI
 
             var txtGo = new GameObject("Text", typeof(RectTransform));
             txtGo.transform.SetParent(go.transform, false);
-            var txt = txtGo.AddComponent<Text>();
-            txt.font = Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei UI", "Segoe UI" }, 18);
+            var txt = txtGo.AddComponent<TMPro.TextMeshProUGUI>();
+            txt.font = TMPFontUtility.GetChineseFont();
             txt.text = message;
             txt.fontSize = 18;
             txt.color = UITheme.TextMain;
-            txt.alignment = TextAnchor.MiddleCenter;
-            txt.horizontalOverflow = HorizontalWrapMode.Overflow;
+            txt.alignment = TextAlignmentOptions.Center;
+            txt.overflowMode = TextOverflowModes.Overflow;
             txt.rectTransform.anchorMin = Vector2.zero;
             txt.rectTransform.anchorMax = Vector2.one;
             txt.rectTransform.offsetMin = Vector2.zero;

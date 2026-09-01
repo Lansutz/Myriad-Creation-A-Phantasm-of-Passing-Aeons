@@ -2,6 +2,7 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Render;
@@ -23,7 +24,6 @@ namespace CivilizationEvolution.EditorTools
         // UI 主题（统一色板/圆角/Tint，见 CivilizationEvolution.UI.UITheme）
         private static readonly Color PanelColor = UITheme.PanelBg;
         private static readonly Color TextColor = UITheme.TextMain;
-        private static readonly Font UiFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
         [MenuItem(MenuRoot + "1. 一键搭建游戏场景", false, 1)]
         public static void BuildGameScene()
@@ -139,7 +139,7 @@ namespace CivilizationEvolution.EditorTools
         [MenuItem(MenuRoot + "5. 就地升级 Dropdown 展开模板", false, 5)]
         public static void UpgradeExistingDropdown()
         {
-            var dd = Object.FindFirstObjectByType<Dropdown>(FindObjectsInactive.Include);
+            var dd = Object.FindFirstObjectByType<TMP_Dropdown>(FindObjectsInactive.Include);
             if (dd == null)
             {
                 Debug.LogWarning("[CE菜单] 场景中未找到 Dropdown，请先执行菜单\"1. 一键搭建游戏场景\"。");
@@ -205,7 +205,7 @@ namespace CivilizationEvolution.EditorTools
                 {
                     var lt = CreateText("EventLogTitle", logPanelT, "事件日志", 14);
                     lt.color = UITheme.TextDim;
-                    lt.alignment = TextAnchor.MiddleLeft;
+                    lt.alignment = TextAlignmentOptions.Left;
                     SetAnchor(lt.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -8), Vector2.zero);
                     var logTextT = logPanelT.Find("EventLogText");
                     if (logTextT != null)
@@ -366,7 +366,7 @@ namespace CivilizationEvolution.EditorTools
 
             var title = CreateText("FtTitle", titleRow.transform, "家族树", 18);
             title.color = UITheme.Accent;
-            title.fontStyle = FontStyle.Bold;
+            title.fontStyle = FontStyles.Bold;
             SetField(ui, "familyTreePrevButton", CreateButton("FtPrevBtn", titleRow.transform, "◀"));
             SetField(ui, "familyTreeNextButton", CreateButton("FtNextBtn", titleRow.transform, "▶"));
             SetField(ui, "familyTreeCloseButton", CreateButton("FtCloseBtn", titleRow.transform, "✕"));
@@ -377,8 +377,8 @@ namespace CivilizationEvolution.EditorTools
             SetAnchor(ftText.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             ftText.rectTransform.offsetMax = new Vector2(-8, -30);
             ftText.rectTransform.offsetMin = new Vector2(8, 4);
-            ftText.verticalOverflow = VerticalWrapMode.Overflow;
-            ftText.alignment = TextAnchor.UpperLeft;
+            ftText.overflowMode = TextOverflowModes.Overflow;
+            ftText.alignment = TextAlignmentOptions.TopLeft;
             scroll.content = ftText.rectTransform;
 
             SetField(ui, "familyTreePanel", ftPanel);
@@ -405,7 +405,7 @@ namespace CivilizationEvolution.EditorTools
 
             var title = CreateText("MusTitle", titleRow.transform, "音乐播放器", 18);
             title.color = UITheme.Accent;
-            title.fontStyle = FontStyle.Bold;
+            title.fontStyle = FontStyles.Bold;
             SetField(ui, "musicCloseButton", CreateButton("MusCloseBtn", titleRow.transform, "✕"));
 
             // 控制行：播放/暂停/上一首/下一首
@@ -439,8 +439,8 @@ namespace CivilizationEvolution.EditorTools
             SetAnchor(musText.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             musText.rectTransform.offsetMax = new Vector2(-8, -30);
             musText.rectTransform.offsetMin = new Vector2(8, 4);
-            musText.verticalOverflow = VerticalWrapMode.Overflow;
-            musText.alignment = TextAnchor.UpperLeft;
+            musText.overflowMode = TextOverflowModes.Overflow;
+            musText.alignment = TextAlignmentOptions.TopLeft;
             scroll.content = musText.rectTransform;
 
             SetField(ui, "musicPanel", musPanel);
@@ -462,7 +462,7 @@ namespace CivilizationEvolution.EditorTools
 
             var gameTitle = CreateText("GameTitle", topBar, GameConstants.GameNameShort, 20);
             gameTitle.color = UITheme.Accent;
-            gameTitle.fontStyle = FontStyle.Bold;
+            gameTitle.fontStyle = FontStyles.Bold;
             SetField(ui, "dateText", CreateText("DateText", topBar, "第 0 年 第 0 天", 20));
             SetField(ui, "treasuryText", CreateText("TreasuryText", topBar, "国库：0", 20));
             SetField(ui, "populationText", CreateText("PopulationText", topBar, "人口：0", 20));
@@ -484,11 +484,11 @@ namespace CivilizationEvolution.EditorTools
             ddImage.color = UITheme.ButtonNormal;
             ddImage.sprite = UITheme.RoundedButtonSprite;
             ddImage.type = Image.Type.Sliced;
-            var dd = dropdownGo.AddComponent<Dropdown>();
+            var dd = dropdownGo.AddComponent<TMP_Dropdown>();
             dd.targetGraphic = ddImage;
             UITheme.ApplyButtonTint(dd);
             var ddCaption = CreateText("Label", dropdownGo.transform, "地形", 16);
-            ddCaption.alignment = TextAnchor.MiddleCenter;
+            ddCaption.alignment = TextAlignmentOptions.Center;
             ddCaption.rectTransform.anchorMin = Vector2.zero;
             ddCaption.rectTransform.anchorMax = Vector2.one;
             ddCaption.rectTransform.offsetMin = new Vector2(8, 0);
@@ -523,15 +523,15 @@ namespace CivilizationEvolution.EditorTools
                 new Vector2(0, 0), new Vector2(0, 0), new Vector2(16, 16), new Vector2(420, 220));
             var logTitle = CreateText("EventLogTitle", logPanel.transform, "事件日志", 14);
             logTitle.color = UITheme.TextDim;
-            logTitle.alignment = TextAnchor.MiddleLeft;
+            logTitle.alignment = TextAlignmentOptions.Left;
             SetAnchor(logTitle.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(12, -8), Vector2.zero);
             var scroll = logPanel.AddComponent<ScrollRect>();
             var logText = CreateText("EventLogText", logPanel.transform, "", 16);
             SetAnchor(logText.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             logText.rectTransform.offsetMax = new Vector2(-8, -24);
             logText.rectTransform.offsetMin = new Vector2(8, 4);
-            logText.verticalOverflow = VerticalWrapMode.Overflow;
-            logText.alignment = TextAnchor.UpperLeft;
+            logText.overflowMode = TextOverflowModes.Overflow;
+            logText.alignment = TextAlignmentOptions.TopLeft;
             scroll.content = logText.rectTransform;
             SetField(ui, "eventLogPanel", logPanel);
             SetField(ui, "eventLogText", logText);
@@ -567,7 +567,7 @@ namespace CivilizationEvolution.EditorTools
 
             var title = CreateText("SocTitle", titleRow.transform, "社会政治", 18);
             title.color = UITheme.Accent;
-            title.fontStyle = FontStyle.Bold;
+            title.fontStyle = FontStyles.Bold;
             SetField(ui, "societyCloseButton", CreateButton("SocCloseBtn", titleRow.transform, "✕"));
 
             // 滚动正文
@@ -576,9 +576,9 @@ namespace CivilizationEvolution.EditorTools
             SetAnchor(socText.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             socText.rectTransform.offsetMax = new Vector2(-8, -30);
             socText.rectTransform.offsetMin = new Vector2(8, 4);
-            socText.verticalOverflow = VerticalWrapMode.Overflow;
-            socText.alignment = TextAnchor.UpperLeft;
-            socText.horizontalOverflow = HorizontalWrapMode.Wrap;
+            socText.overflowMode = TextOverflowModes.Overflow;
+            socText.alignment = TextAlignmentOptions.TopLeft;
+            socText.overflowMode = TextOverflowModes.Overflow;
             scroll.content = socText.rectTransform;
 
             SetField(ui, "societyPanel", socPanel);
@@ -604,7 +604,7 @@ namespace CivilizationEvolution.EditorTools
             trLayout.childForceExpandWidth = false;
             SetField(ui, "charPrevButton", CreateButton("CharPrev", titleRow.transform, "◀"));
             var charName = CreateText("CharName", titleRow.transform, "角色", 20);
-            charName.alignment = TextAnchor.MiddleCenter;
+            charName.alignment = TextAlignmentOptions.Center;
             charName.GetComponent<LayoutElement>().minWidth = 140;
             SetField(ui, "charNameText", charName);
             SetField(ui, "charNextButton", CreateButton("CharNext", titleRow.transform, "▶"));
@@ -630,7 +630,7 @@ namespace CivilizationEvolution.EditorTools
 
         /// <summary>构建 UGUI Dropdown 完整展开模板（Template/Viewport/Content/Item+Toggle）</summary>
         /// <remarks>UGUI Dropdown 展开时按名称查找 "Item"/"Item Label"，层级与组件缺一不可</remarks>
-        private static void BuildDropdownTemplate(Dropdown dd, Transform dropdownRoot)
+        private static void BuildDropdownTemplate(TMP_Dropdown dd, Transform dropdownRoot)
         {
             // ---- Template：下拉列表容器（背景 + 滚动）----
             var templateGo = new GameObject("Template", typeof(RectTransform), typeof(Image), typeof(ScrollRect));
@@ -699,14 +699,14 @@ namespace CivilizationEvolution.EditorTools
         }
 
         /// <summary>模板内文本（不带 LayoutElement，避免选项行被撑宽）</summary>
-        private static Text BuildTemplateText(string name, Transform parent, string content)
+        private static TextMeshProUGUI BuildTemplateText(string name, Transform parent, string content)
         {
             var go = new GameObject(name, typeof(RectTransform));
             go.transform.SetParent(parent, false);
-            var txt = go.AddComponent<Text>();
-            txt.font = UiFont; txt.text = content; txt.fontSize = 16;
-            txt.color = TextColor; txt.alignment = TextAnchor.MiddleLeft;
-            txt.horizontalOverflow = HorizontalWrapMode.Overflow;
+            var txt = go.AddComponent<TextMeshProUGUI>();
+            txt.font = TMPFontUtility.GetChineseFont(); txt.text = content; txt.fontSize = 16;
+            txt.color = TextColor; txt.alignment = TextAlignmentOptions.Left;
+            txt.overflowMode = TextOverflowModes.Overflow;
             var rt = (RectTransform)go.transform;
             StretchRect(rt);
             rt.offsetMin = new Vector2(8, 0);
@@ -734,14 +734,14 @@ namespace CivilizationEvolution.EditorTools
             return go.GetComponent<RectTransform>();
         }
 
-        private static Text CreateText(string name, Transform parent, string content, int fontSize)
+        private static TextMeshProUGUI CreateText(string name, Transform parent, string content, int fontSize)
         {
             var go = new GameObject(name, typeof(RectTransform));
             go.transform.SetParent(parent, false);
-            var txt = go.AddComponent<Text>();
-            txt.font = UiFont; txt.text = content; txt.fontSize = fontSize;
-            txt.color = TextColor; txt.alignment = TextAnchor.MiddleLeft;
-            txt.horizontalOverflow = HorizontalWrapMode.Overflow;
+            var txt = go.AddComponent<TextMeshProUGUI>();
+            txt.text = content; txt.fontSize = fontSize;
+            txt.color = TextColor; txt.alignment = TextAlignmentOptions.Left;
+            txt.font = TMPFontUtility.GetChineseFont();
             var le = go.AddComponent<LayoutElement>(); le.minWidth = 120; le.preferredHeight = fontSize + 8;
             return txt;
         }
@@ -759,9 +759,9 @@ namespace CivilizationEvolution.EditorTools
             UITheme.ApplyButtonTint(btn);
             var txtGo = new GameObject("Text", typeof(RectTransform));
             txtGo.transform.SetParent(go.transform, false);
-            var txt = txtGo.AddComponent<Text>();
-            txt.font = UiFont; txt.text = label; txt.fontSize = 16;
-            txt.color = TextColor; txt.alignment = TextAnchor.MiddleCenter;
+            var txt = txtGo.AddComponent<TextMeshProUGUI>();
+            txt.font = TMPFontUtility.GetChineseFont(); txt.text = label; txt.fontSize = 16;
+            txt.color = TextColor; txt.alignment = TextAlignmentOptions.Center;
             txt.rectTransform.anchorMin = Vector2.zero; txt.rectTransform.anchorMax = Vector2.one;
             txt.rectTransform.offsetMin = Vector2.zero; txt.rectTransform.offsetMax = Vector2.zero;
             var le = go.AddComponent<LayoutElement>(); le.minWidth = 44; le.preferredWidth = 52; le.preferredHeight = 32;

@@ -21,6 +21,9 @@ namespace CivilizationEvolution.EditorTools
         {
             Debug.Log("[HeadlessBuilder] 开始无界面构建……");
 
+            // 0. 确保 TMP Settings 资产（TMP 字体运行时依赖——缺失则 CreateFontAsset NRE）
+            EnsureTmpSettings();
+
             // 1. 确保目录存在
             EnsureFolder("Assets", "Scenes");
             EnsureFolder("Assets", "ScriptableObjects");
@@ -55,6 +58,17 @@ namespace CivilizationEvolution.EditorTools
                 EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
             else
                 Debug.LogWarning($"[HeadlessBuilder] 场景不存在：{ScenePath}，请先执行菜单 Civilization Evolution/1. 一键搭建游戏场景");
+        }
+
+        /// <summary>确保 TMP 运行时依赖就位（shader 在 Assets/TextMesh Pro/、Settings 在 Resources）</summary>
+        private static void EnsureTmpSettings()
+        {
+            // TMP 运行时 shader + Settings 资产缺失时告警（首次导入请运行本构建或导入 TMP Essential Resources）
+            if (Shader.Find("TextMeshPro/Distance Field") == null)
+                Debug.LogWarning("[HeadlessBuilder] TMP shader 缺失（Assets/TextMesh Pro/Shaders/）——TMP 字体无法生成");
+            if (System.IO.File.Exists("Assets/TextMesh Pro/Resources/TMP Settings.asset") == false
+                && System.IO.File.Exists("Assets/Resources/TMP Settings.asset") == false)
+                Debug.LogWarning("[HeadlessBuilder] TMP Settings 资产缺失（Resources 下）——TMP 字体无法生成");
         }
 
         /// <summary>

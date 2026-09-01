@@ -3,7 +3,8 @@
     "rootNamespace": "CivilizationEvolution.EditorTools",
     "references": [
         "CivilizationEvolution.Runtime",
-        "UnityEngine.UI"
+        "UnityEngine.UI",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [
         "Editor"
