@@ -60,6 +60,8 @@ namespace CivilizationEvolution.Core
         /// <summary>宗教运行时状态（每教统一个 FaithSystem——热忱/信徒/圣地——
         /// 由 ReligionCatalog 初始化）</summary>
         private readonly List<FaithSystem> _faithSystems = new List<FaithSystem>();
+        /// <summary>圣地丢失已处理标记（faithId→已计热忱的圣地 tile——防重复刷）</summary>
+        private readonly HashSet<int> _holySiteLostProcessed = new HashSet<int>();
         private int _nextWarId = 1;
         private int _nextArmyId = 1;
 
@@ -1217,7 +1219,49 @@ namespace CivilizationEvolution.Core
                 // 长期和平冷却（约每年一次——每 360 天 -10）
                 if (faith.fervor > 10f && currentDay % 360 == 0)
                     faith.AddFervor(-10f);
+
+                // 圣地丢失检测（己方圣地被异教政权控制 → +50——"收复失地"狂热——
+                // 十字军启动器；一次性标记防重复刷）
+                CheckHolySiteLoss(faith);
             }
+        }
+
+        /// <summary>圣地丢失检测（圣地地块被非本教统国教政权控制 → 热忱+50）</summary>
+        private void CheckHolySiteLoss(FaithSystem faith)
+        {
+            foreach (var tileIndex in faith.holySiteTileIndices)
+            {
+                int key = faith.faithId * 100000 + tileIndex;
+                if (_holySiteLostProcessed.Contains(key)) continue;
+                if (tileIndex < 0 || tileIndex >= tiles.Length) continue;
+                int owner = tiles[tileIndex].ownerRealmId;
+                if (owner < 0 || owner >= realms.Count) continue;
+                int ownerFaith = realms[owner].stateReligionId;
+                // 被异教控制（有国教且不同信仰）→ 丢失
+                if (ownerFaith >= 0 && ownerFaith != faith.faithId)
+                {
+                    faith.AddFervor(50f);
+                    _holySiteLostProcessed.Add(key);
+                    _chronicle?.Add("religion", $"圣地失陷：{faith.faithName} 的圣地被异教控制——信仰热忱高涨",
+                        major: true, owner);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 创建圣地（动态——封圣成功[圣髑移入]/圣迹事件/朝圣传统形成
+        /// → 地块获 holy_site 标记——地图高亮——朝圣目标——被异教占领=热忱+50）
+        /// </summary>
+        public bool CreateHolySite(int faithId, int tileIndex)
+        {
+            if (tileIndex < 0 || tileIndex >= tiles.Length) return false;
+            var faith = GetFaithSystem(faithId);
+            if (faith == null) return false;
+            if (faith.holySiteTileIndices.Contains(tileIndex)) return false;
+            faith.holySiteTileIndices.Add(tileIndex);
+            _chronicle?.Add("religion", $"{faith.faithName} 确立新的圣地（地块 {tileIndex}）",
+                major: true);
+            return true;
         }
 
         /// <summary>异教冲突热忱（宣战时调用——双方信仰不同 → +25）</summary>

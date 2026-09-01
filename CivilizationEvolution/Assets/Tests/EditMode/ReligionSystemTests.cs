@@ -382,5 +382,37 @@ namespace CivilizationEvolution.Tests
             Assert.AreEqual("mana", animatism.worldview, "原始崇拜=mana（无人格化）");
             Assert.IsFalse(animatism.hasSuccession, "原始崇拜无教统");
         }
+
+        [Test]
+        public void HolySite_CreateAndLoss()
+        {
+            // 创建圣地（动态——封圣/圣迹/朝圣传统）
+            var world = new GameWorld();
+            typeof(GameWorld).GetMethod("InitializeUnitDefs",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .Invoke(world, null);
+
+            // 反射初始化 _faithSystems（宗教运行时）
+            var faithsField = typeof(GameWorld).GetField("_faithSystems",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var faith = new FaithSystem { faithId = 401, faithName = "儒教", fervor = 40f };
+            var list = new List<FaithSystem> { faith };
+            faithsField.SetValue(world, list);
+
+            // 初始化 tiles（圣地地块）
+            var tilesField = typeof(GameWorld).GetField("tiles",
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            var tiles = new TileData[100];
+            for (int i = 0; i < 100; i++)
+            {
+                tiles[i] = new TileData { tileIndex = i, ownerRealmId = -1 };
+            }
+            tilesField.SetValue(world, tiles);
+
+            // 创建圣地
+            Assert.IsTrue(world.CreateHolySite(401, 10), "创建圣地成功");
+            Assert.IsFalse(world.CreateHolySite(401, 10), "去重——不重复创建");
+            Assert.AreEqual(1, faith.holySiteTileIndices.Count, "圣地列表 1 个");
+        }
     }
 }
