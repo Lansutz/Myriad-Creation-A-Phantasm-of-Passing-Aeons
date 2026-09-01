@@ -4,10 +4,15 @@ using UnityEngine;
 namespace CivilizationEvolution.Culture
 {
     /// <summary>
-    /// 宗教定义（三级谱系：宗教 → 宗派 → 传统（礼拜仪轨/教义学派））
-    /// - religionId + parentReligionId==-1 = 宗教根
-    /// - parentReligionId>=0 = 宗派（从属某宗教）
-    /// - rite/school = 传统第三级（礼拜仪轨/教义学派——地图传统模式显示）
+    /// 宗教组织节点（双维度谱系：组织父 × 学派父）
+    /// 组织父（parentReligionId）：组织谱系树——宗教→宗派（组织性分裂·互斥）
+    ///   →传统（思想性传承·可共存）→分支传统（传播/再分化——任意深度）
+    /// 学派父（schoolParentId）：思想源链——礼仪祖先学派（如亚述教会←
+    ///   赛琉基亚-泰西封学派/狄奥多若——与聂斯托里无关）
+    /// 类型（nodeType）：宗派=组织性；传统=思想性；学派=前组织形态
+    ///   （未稳定——无固定仪轨/座堂圣座——可演化为礼/传统/宗派）
+    /// 教统（hasSuccession）：组织连续性（使徒统绪/法脉）——宗派必须有；
+    ///   无教统学派（如聂斯托里）只能思想并入，不能独立组织化
     /// </summary>
     [System.Serializable]
     public class ReligionDef
@@ -15,8 +20,14 @@ namespace CivilizationEvolution.Culture
         public int religionId;
         /// <summary>内置名（本地化表有 &lt;id&gt;_name 键时优先）</summary>
         public string religionName;
-        /// <summary>父宗教（-1=宗教根；&gt;=0=宗派）</summary>
+        /// <summary>组织父（-1=宗教根；&gt;=0=宗派/传统/分支——组织谱系树）</summary>
         public int parentReligionId = -1;
+        /// <summary>学派父（-1=无思想源；&gt;=0=祖先学派——思想谱系独立于组织谱系）</summary>
+        public int schoolParentId = -1;
+        /// <summary>节点类型（学派=前组织形态——可演化）</summary>
+        public ReligionNodeType nodeType = ReligionNodeType.Sect;
+        /// <summary>教统（使徒统绪/法脉——组织连续性；宗派必须有；无教统学派不能独立组织化）</summary>
+        public bool hasSuccession = true;
         /// <summary>
         /// 礼拜仪轨列表（传统第三级·高级——如"罗马礼"/"希腊礼"/"科普特礼"：
         /// 礼是实践，与学派同等级但高于学派——礼仪本身包含学派思想）
@@ -108,5 +119,14 @@ namespace CivilizationEvolution.Culture
         Religion,   // 宗教（根）
         Sect,       // 宗派
         Tradition   // 传统（礼拜仪轨/教义学派）
+    }
+
+    /// <summary>宗教节点类型（组织性质——非树级别）</summary>
+    public enum ReligionNodeType
+    {
+        Religion,   // 宗教（根·组织最大单位）
+        Sect,       // 宗派（组织性分裂·互斥——必须有教统）
+        Tradition,  // 传统（思想性传承·可共存——禅宗/唯识宗/法华宗）
+        School      // 学派（前组织形态·未稳定——无固定仪轨/座堂圣座——可演化）
     }
 }
