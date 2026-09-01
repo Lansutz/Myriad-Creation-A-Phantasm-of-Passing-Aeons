@@ -2113,6 +2113,22 @@ namespace CivilizationEvolution.Role
                     sb.AppendLine($"    - {a.firstName} {a.lastName}（{a.age}岁）");
             }
 
+            // 父母（双亲显式列出——家族树含父系+母系）
+            if (c.fatherId >= 0 || c.motherId >= 0)
+            {
+                sb.AppendLine("  父母：");
+                if (c.fatherId >= 0)
+                {
+                    var f = GetCharacter(c.fatherId);
+                    if (f != null) sb.AppendLine($"    父 - {f.firstName} {f.lastName}（{f.age}岁）");
+                }
+                if (c.motherId >= 0)
+                {
+                    var m = GetCharacter(c.motherId);
+                    if (m != null) sb.AppendLine($"    母 - {m.firstName} {m.lastName}（{m.age}岁）");
+                }
+            }
+
             // 子女
             var children = GetChildren(characterId);
             if (children.Count > 0)

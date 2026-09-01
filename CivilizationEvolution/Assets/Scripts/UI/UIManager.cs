@@ -458,7 +458,7 @@ namespace CivilizationEvolution.UI
             }
 
             _charIndex = (_charIndex + _characterList.Count) % _characterList.Count;
-            familyTreeText.text = cm.BuildFamilyTreeText(_characterList[_charIndex].characterId);
+            familyTreeText.text = cm.BuildFamilyTreeText(_characterList[_charIndex]);
         }
 
         /// <summary>刷新角色列表（角色面板数据源）</summary>
@@ -469,7 +469,7 @@ namespace CivilizationEvolution.UI
             if (cm == null) return;
             _characterList.Clear();
             foreach (var c in cm.GetCharactersByRealm(world.PlayerRealmId >= 0 ? world.PlayerRealmId : 0))
-                _characterList.Add(c);
+                _characterList.Add(c.characterId);
             if (_characterList.Count > 0)
                 _charIndex = Mathf.Clamp(_charIndex, 0, _characterList.Count - 1);
         }

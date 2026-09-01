@@ -67,7 +67,7 @@ namespace CivilizationEvolution.Tests
             Assert.IsNotNull(child2, "次子出生");
 
             Assert.AreEqual(2, _chars.GetChildren(father.characterId).Count, "父亲两子");
-            Assert.AreEqual(2, _chars.GetSiblings(child1.characterId).Count, "长子有 2 兄弟姐妹（含次子+？）");
+            Assert.AreEqual(1, _chars.GetSiblings(child1.characterId).Count, "长子有 1 个兄弟姐妹（次子）");
             // 兄弟姐妹=共享父母者（次子）
             bool hasBrother = false;
             foreach (var s in _chars.GetSiblings(child1.characterId))
