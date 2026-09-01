@@ -57,6 +57,9 @@ namespace CivilizationEvolution.Core
         public Dictionary<int, Army> armies = new Dictionary<int, Army>();
         /// <summary>战争状态列表（战争闭环——分数/胜负判定）</summary>
         private readonly List<WarState> _wars = new List<WarState>();
+        /// <summary>宗教运行时状态（每教统一个 FaithSystem——热忱/信徒/圣地——
+        /// 由 ReligionCatalog 初始化）</summary>
+        private readonly List<FaithSystem> _faithSystems = new List<FaithSystem>();
         private int _nextWarId = 1;
         private int _nextArmyId = 1;
 
@@ -487,6 +490,7 @@ namespace CivilizationEvolution.Core
 
             // 8. 战争（战争闭环：同地块交战→分数→胜负判定→停战）
             _combatManager.DailyTick(armies, _wars, _diplomacyManager.WarRules, currentDay);
+            UpdateFaithFervor(currentDay);
             var endedWars = CombatManager.UpdateWarOutcomes(_wars, _diplomacyManager.WarRules, currentDay);
             foreach (var war in endedWars)
             {
@@ -1169,6 +1173,61 @@ namespace CivilizationEvolution.Core
 
             if (raceOverrides > 0 || cultureOverrides > 0)
                 Debug.Log($"[GameWorld] 内容注册表覆盖：种族 +{raceOverrides}，文化 +{cultureOverrides}（数据驱动优先）");
+
+            InitializeFaithSystems();
+        }
+
+        /// <summary>初始化宗教运行时（每教统一个 FaithSystem——热忱/美德罪行/领袖）</summary>
+        private void InitializeFaithSystems()
+        {
+            _faithSystems.Clear();
+            foreach (var kv in Culture.ReligionCatalog.All)
+            {
+                var def = kv.Value;
+                if (def.nodeType != Culture.ReligionNodeType.Succession) continue; // 只教统有运行时
+                var faith = new FaithSystem
+                {
+                    faithId = def.religionId,
+                    faithName = def.religionName,
+                    fervor = 50f,
+                    highPriestCharacterId = -1
+                };
+                faith.virtues.AddRange(def.virtues);
+                faith.sins.AddRange(def.sins);
+                _faithSystems.Add(faith);
+            }
+            Debug.Log($"[GameWorld] 宗教运行时初始化：{_faithSystems.Count} 个教统");
+        }
+
+        /// <summary>获取教统运行时（无则 null）</summary>
+        public FaithSystem GetFaithSystem(int faithId)
+            => _faithSystems.Find(f => f.faithId == faithId);
+
+        private int _faithFervorDay = -999;
+        private const int FaithFervorInterval = 30;
+
+        /// <summary>信仰热忱每日更新（30 天限频——长期和平冷却 -10/年——圣地丢失由
+        /// 圣地系统检测；异教冲突由宣战处 AddFervor）</summary>
+        private void UpdateFaithFervor(int currentDay)
+        {
+            if (currentDay - _faithFervorDay < FaithFervorInterval) return;
+            _faithFervorDay = currentDay;
+            foreach (var faith in _faithSystems)
+            {
+                // 长期和平冷却（约每年一次——每 360 天 -10）
+                if (faith.fervor > 10f && currentDay % 360 == 0)
+                    faith.AddFervor(-10f);
+            }
+        }
+
+        /// <summary>异教冲突热忱（宣战时调用——双方信仰不同 → +25）</summary>
+        public void OnWarBetweenFaiths(int faithA, int faithB)
+        {
+            if (faithA == faithB) return;
+            var fa = GetFaithSystem(faithA);
+            var fb = GetFaithSystem(faithB);
+            fa?.AddFervor(25f);
+            fb?.AddFervor(25f);
         }
 
         // ===== 地块增删（自由形状地图支持） =====
@@ -1274,6 +1333,15 @@ namespace CivilizationEvolution.Core
             _wars.Add(new WarState(_nextWarId++, attackerId, defenderId, currentDay));
             _chronicle?.Add("war", $"{realms[attackerId].realmName} 对 {realms[defenderId].realmName} 宣战：{reason}",
                 major: true, attackerId, defenderId);
+
+            // 异教冲突 → 双方信仰热忱 +25（宗教战争狂热——十字军/圣战的心理基础）
+            if (attackerId >= 0 && defenderId >= 0 && attackerId < realms.Count && defenderId < realms.Count)
+            {
+                var faithA = realms[attackerId].stateReligionId;
+                var faithB = realms[defenderId].stateReligionId;
+                if (faithA >= 0 && faithB >= 0 && faithA != faithB)
+                    OnWarBetweenFaiths(faithA, faithB);
+            }
             return true;
         }
 

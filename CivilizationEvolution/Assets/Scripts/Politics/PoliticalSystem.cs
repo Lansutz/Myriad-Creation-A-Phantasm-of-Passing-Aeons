@@ -11,6 +11,11 @@ namespace CivilizationEvolution.Politics
     {
         public int realmId;
         public string realmName;
+        /// <summary>国教（政权选择的教统/传统——-1=无——解锁政权主保圣人）</summary>
+        public int stateReligionId = -1;
+        /// <summary>政权主保圣人（CultObject id——须属国教教统内——
+        /// 国家庇护/政权标识/加冕礼——国教换主保跟着换）</summary>
+        public int statePatronSaintId = -1;
         // 政体：旧单标签 GovernmentType 枚举已废弃，统一由下方 composition 七维成分组合表达；
         // 粗分类（君主制/共和制）由 SupremeSuccessionLevel.IsMonarchy/IsRepublic 推导。
 

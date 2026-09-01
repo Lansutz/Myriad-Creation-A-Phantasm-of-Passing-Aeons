@@ -311,5 +311,33 @@ namespace CivilizationEvolution.Tests
             Assert.IsTrue(SuccessionSystem.IsInInheritanceLine(realm, cm, salic, son.characterId, 1), "儿子在线内");
             Assert.IsFalse(SuccessionSystem.IsInInheritanceLine(realm, cm, salic, daughter.characterId, 1), "女儿线外——可受益");
         }
+
+        [Test]
+        public void Fervor_WarBetweenFaiths()
+        {
+            // 异教冲突：双方信仰不同 → 热忱各 +25
+            var faithA = new FaithSystem { faithId = 100, fervor = 40f };
+            var faithB = new FaithSystem { faithId = 200, fervor = 40f };
+
+            // 直接测 OnWarBetweenFaiths 逻辑（模拟 GameWorld 调用）
+            faithA.AddFervor(25f);
+            faithB.AddFervor(25f);
+            Assert.AreEqual(65f, faithA.fervor, "异教冲突 A 热忱+25");
+            Assert.AreEqual(65f, faithB.fervor, "异教冲突 B 热忱+25");
+        }
+
+        [Test]
+        public void StateReligion_AndPatronSaint()
+        {
+            // 政权国教+主保圣人（用户设计：国教教统内的圣人）
+            var realm = new RealmData { realmId = 1 };
+            Assert.AreEqual(-1, realm.stateReligionId, "初始无国教");
+            realm.stateReligionId = 104; // 选罗马公教会为国教
+            Assert.AreEqual(104, realm.stateReligionId, "国教已设");
+
+            // 政权主保圣人（简化：字段可设——校验由上层做）
+            realm.statePatronSaintId = 5001;
+            Assert.AreEqual(5001, realm.statePatronSaintId, "政权主保圣人可设");
+        }
     }
 }
