@@ -339,5 +339,48 @@ namespace CivilizationEvolution.Tests
             realm.statePatronSaintId = 5001;
             Assert.AreEqual(5001, realm.statePatronSaintId, "政权主保圣人可设");
         }
+
+        [Test]
+        public void SixSystems_CompleteData()
+        {
+            // 六大宗教体系全齐（44 节点）
+            Assert.GreaterOrEqual(ContentRegistry.Religions.Count, 40, "六大体系数据完整");
+
+            // 华夏：祭祀体系根 → 儒教（祭祀型）→ 谶纬（宗教学派）
+            var huaxia = ReligionCatalog.Get(400);
+            Assert.IsTrue(huaxia.IsRoot, "华夏祭祀体系=根");
+            Assert.AreEqual("祭祀型", huaxia.worldview, "祭祀型世界观");
+
+            var confucian = ReligionCatalog.Get(401);
+            Assert.AreEqual(400, confucian.parentReligionId, "儒教←华夏祭祀体系");
+            Assert.IsTrue(confucian.rites.Contains("郊祀礼"), "儒教=郊祀礼");
+
+            var chenwei = ReligionCatalog.Get(402);
+            Assert.AreEqual(ReligionNodeType.ReligiousSchool, chenwei.nodeType, "谶纬=宗教学派（儒教内）");
+
+            // 道教：仙教 → 正一/全真（传统）
+            var taoism = ReligionCatalog.Get(403);
+            Assert.AreEqual(400, taoism.parentReligionId, "仙教←华夏祭祀体系");
+            Assert.AreEqual(ReligionNodeType.Tradition, ReligionCatalog.Get(404).nodeType, "正一道=传统");
+            Assert.AreEqual(ReligionNodeType.Tradition, ReligionCatalog.Get(405).nodeType, "全真道=传统");
+
+            // 祆教：二元论 → 正统/祖尔万（异端）/马兹达克（异端）——帕西（迁徙）
+            var zoroaster = ReligionCatalog.Get(500);
+            Assert.AreEqual("二元论", zoroaster.worldview, "祆教=二元论");
+            Assert.AreEqual("琐罗亚斯德", zoroaster.founder, "创教者");
+            Assert.IsFalse(ReligionCatalog.Get(503).orthodoxy, "祖尔万=异端（被正统驱逐）");
+            Assert.IsFalse(ReligionCatalog.Get(504).orthodoxy, "马兹达克=异端（被镇压）");
+            Assert.AreEqual(501, ReligionCatalog.Get(502).parentReligionId, "帕西←正统派（迁徙支派）");
+
+            // 摩尼教=独立宗教根（组织父=-1——学派父=祆教——聚合创生）
+            var mani = ReligionCatalog.Get(505);
+            Assert.IsTrue(mani.IsRoot, "摩尼教=独立根（创教）");
+            Assert.AreEqual(500, mani.schoolParentId, "摩尼教学派父=祆教（聚合来源）");
+
+            // 原始崇拜=era0 起点（mana——无教统）
+            var animatism = ReligionCatalog.Get(600);
+            Assert.AreEqual("mana", animatism.worldview, "原始崇拜=mana（无人格化）");
+            Assert.IsFalse(animatism.hasSuccession, "原始崇拜无教统");
+        }
     }
 }

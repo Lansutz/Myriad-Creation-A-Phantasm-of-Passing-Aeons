@@ -406,6 +406,179 @@
       "hasSuccession": true,
       "rites": [],
       "school": "毗尼多流支传承"
+    },
+    {
+      "religionId": 400,
+      "religionName": "华夏祭祀体系",
+      "parentReligionId": -1,
+      "schoolParentId": -1,
+      "nodeType": 0,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "",
+      "headName": "天子",
+      "communionName": "天下",
+      "worldview": "祭祀型",
+      "founder": "（天极信仰——昊天上帝）"
+    },
+    {
+      "religionId": 401,
+      "religionName": "儒教",
+      "parentReligionId": 400,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [
+        "郊祀礼"
+      ],
+      "riteFamily": "国家祭祀传统",
+      "school": "礼教",
+      "headName": "天子",
+      "communionName": "天下",
+      "worldview": "祭祀型",
+      "founder": "孔子（儒家宗教化——董仲舒天人感应）"
+    },
+    {
+      "religionId": 402,
+      "religionName": "谶纬",
+      "parentReligionId": 401,
+      "schoolParentId": -1,
+      "nodeType": 4,
+      "hasSuccession": false,
+      "rites": [],
+      "school": "纬书神学（易纬/尚书纬等七纬）"
+    },
+    {
+      "religionId": 403,
+      "religionName": "仙教",
+      "parentReligionId": 400,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [
+        "斋醮科仪"
+      ],
+      "riteFamily": "科仪传统",
+      "school": "黄老道",
+      "headName": "天师",
+      "communionName": "道门",
+      "worldview": "泛灵/多神",
+      "founder": "张道陵（道教——上清/灵宝演化）"
+    },
+    {
+      "religionId": 404,
+      "religionName": "正一道",
+      "parentReligionId": 403,
+      "schoolParentId": -1,
+      "nodeType": 2,
+      "hasSuccession": true,
+      "rites": [
+        "符箓斋醮"
+      ],
+      "school": "符箓派（上清/灵宝融合——三山符箓）"
+    },
+    {
+      "religionId": 405,
+      "religionName": "全真道",
+      "parentReligionId": 403,
+      "schoolParentId": -1,
+      "nodeType": 2,
+      "hasSuccession": true,
+      "rites": [
+        "丹鼎清修"
+      ],
+      "school": "丹鼎派（王重阳——儒释道三教合一）"
+    },
+    {
+      "religionId": 500,
+      "religionName": "祆教",
+      "parentReligionId": -1,
+      "schoolParentId": -1,
+      "nodeType": 0,
+      "hasSuccession": true,
+      "rites": [
+        "火祭"
+      ],
+      "riteFamily": "火祭传统",
+      "school": "善恶二元论",
+      "headName": "穆护",
+      "communionName": "光明王国",
+      "worldview": "二元论",
+      "founder": "琐罗亚斯德"
+    },
+    {
+      "religionId": 501,
+      "religionName": "正统派",
+      "parentReligionId": 500,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [
+        "火祭"
+      ],
+      "school": "马兹达雅斯纳（萨珊国教）"
+    },
+    {
+      "religionId": 502,
+      "religionName": "帕西派",
+      "parentReligionId": 501,
+      "schoolParentId": -1,
+      "nodeType": 2,
+      "hasSuccession": true,
+      "rites": [
+        "火祭"
+      ],
+      "school": "印度迁徙支派（伊斯兰征服后迁出）"
+    },
+    {
+      "religionId": 503,
+      "religionName": "祖尔万派",
+      "parentReligionId": 500,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": false,
+      "rites": [],
+      "school": "时间神祖尔万（祆教×巴比伦聚合——被正统驱逐的异端）",
+      "orthodoxy": false
+    },
+    {
+      "religionId": 504,
+      "religionName": "马兹达克派",
+      "parentReligionId": 500,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": false,
+      "rites": [],
+      "school": "社会改革运动（5 世纪——被库思老一世镇压）",
+      "orthodoxy": false
+    },
+    {
+      "religionId": 505,
+      "religionName": "摩尼教",
+      "parentReligionId": -1,
+      "schoolParentId": 500,
+      "nodeType": 0,
+      "hasSuccession": true,
+      "rites": [
+        "净礼"
+      ],
+      "school": "严格二元论（祆教+基督教+佛教聚合——新宗教创生）",
+      "worldview": "二元论",
+      "founder": "摩尼"
+    },
+    {
+      "religionId": 600,
+      "religionName": "原始崇拜",
+      "parentReligionId": -1,
+      "schoolParentId": -1,
+      "nodeType": 0,
+      "hasSuccession": false,
+      "rites": [
+        "图腾仪式"
+      ],
+      "school": "mana 非人格化超自然力（前泛灵论——无神祇无人格化）",
+      "worldview": "mana",
+      "founder": ""
     }
   ]
 }
