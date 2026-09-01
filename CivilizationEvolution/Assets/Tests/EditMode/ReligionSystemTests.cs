@@ -227,6 +227,43 @@ namespace CivilizationEvolution.Tests
             float dHeretic = ReligionCatalog.GetDivergence(orthodoxStandard, heretic);
             float dModerate = ReligionCatalog.GetDivergence(orthodoxStandard, moderate);
             Assert.Greater(dHeretic, dModerate, "异端偏离 > 温和偏离");
+        }
+
+        [Test]
+        public void ThreeFaithForms_PersonalTenets()
+        {
+            var cm = new CharacterManager();
+            var c = cm.CreateCharacter("信", "徒", 40, true, 0, 0, 0, CharacterRole.Commoner);
+
+            // 创建时私人信仰=社会信仰
+            cm.InitPrivateFaith(c);
+            Assert.AreEqual(c.faithId, c.privateFaithId, "私人信仰初始=社会信仰");
+            Assert.IsFalse(c.isSecretBeliever, "初始非秘密信徒");
+
+            // 添加个人信条（借其他信仰——个人融合）
+            Assert.IsTrue(cm.AddPersonalTenet(c, "doctrine_icon_veneration"), "添加个人信条");
+            Assert.IsFalse(cm.AddPersonalTenet(c, "doctrine_icon_veneration"), "去重");
+            Assert.AreEqual(1, c.personalTenets.Count, "仅一条");
+            Assert.IsTrue(cm.HasFaithDivergence(c), "有信条→偏离社会信仰");
+
+            // 移除后无偏离
+            Assert.IsTrue(cm.RemovePersonalTenet(c, "doctrine_icon_veneration"), "移除");
+            Assert.IsFalse(cm.HasFaithDivergence(c), "移除后无偏离");
+
+            // 私人信仰≠社会信仰 → 秘密信仰
+            c.privateFaithId = 200; // 私下信伊斯兰
+            cm.UpdateSecretBelief(c);
+            Assert.IsTrue(c.isSecretBeliever, "私人≠社会→秘密信仰标记");
+        }
+
+        [Test]
+        public void ThreeFaithForms_InitKeepsExisting()
+        {
+            var cm = new CharacterManager();
+            var c = cm.CreateCharacter("已", "信", 40, true, 0, 0, 0, CharacterRole.Commoner);
+            c.privateFaithId = 300; // 已私下信佛
+            cm.InitPrivateFaith(c);
+            Assert.AreEqual(300, c.privateFaithId, "已有私人信仰不被覆盖");
+        }
     }
-}
 }

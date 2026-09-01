@@ -217,7 +217,16 @@ namespace CivilizationEvolution.Role
         public int familyId = -1;
         public int cultureId;
         public int raceId;
+        /// <summary>社会信仰（展示给社会的——公开合法——原 faithId 语义）</summary>
         public int faithId;
+        /// <summary>私人信仰（本人真实信仰——默认同社会信仰——可不同——
+        /// 冲突时转入秘密信仰状态）</summary>
+        public int privateFaithId = -1;
+        /// <summary>个人信条（Personal Tenets——本人信条——可借其他信仰/
+        /// 组合原有/自创——与官方教义冲突→偏离度）</summary>
+        public List<string> personalTenets = new List<string>();
+        /// <summary>秘密信仰标记（私人≠社会且被禁止时=true——身份暴露风险）</summary>
+        public bool isSecretBeliever = false;
         public CharacterRole role = CharacterRole.Commoner;
 
         // 血缘（DNA 遗传与近亲系数计算依赖）
@@ -2397,6 +2406,50 @@ namespace CivilizationEvolution.Role
         public IReadOnlyDictionary<int, CharacterData> GetAllCharacters() => _characters;
         public IReadOnlyDictionary<int, FamilyNode> GetAllFamilies() => _families;
         public IReadOnlyList<CharacterBond> GetAllBonds() => _bonds;
+        // ===== 三信仰形态（社会/私人/秘密） =====
+
+        /// <summary>初始化私人信仰（角色创建时=社会信仰一致）</summary>
+        public void InitPrivateFaith(CharacterData c)
+        {
+            if (c == null || c.privateFaithId == -1)
+            {
+                if (c != null) c.privateFaithId = c.faithId;
+            }
+        }
+
+        /// <summary>
+        /// 添加个人信条（Personal Tenet——本人信条）
+        /// 来源：借其他信仰（个人融合）/组合原有/自创——与官方教义冲突→偏离度
+        /// </summary>
+        public bool AddPersonalTenet(CharacterData c, string optionId)
+        {
+            if (c == null || string.IsNullOrEmpty(optionId)) return false;
+            if (c.personalTenets.Contains(optionId)) return false;
+            c.personalTenets.Add(optionId);
+            // 私人信仰偏离社会信仰 → 可能触发秘密信仰（由外部判定——此处只记录）
+            return true;
+        }
+
+        /// <summary>移除个人信条</summary>
+        public bool RemovePersonalTenet(CharacterData c, string optionId)
+        {
+            if (c == null) return false;
+            return c.personalTenets.Remove(optionId);
+        }
+
+        /// <summary>私人信仰是否偏离社会信仰（信条差异——偏离度>0）</summary>
+        public bool HasFaithDivergence(CharacterData c)
+        {
+            if (c == null) return false;
+            if (c.privateFaithId != c.faithId) return true;
+            return c.personalTenets.Count > 0;
+        }
+
+        /// <summary>秘密信仰状态更新（私人≠社会且被禁止时=true——暴露风险）</summary>
+        public void UpdateSecretBelief(CharacterData c)
+        {
+            if (c == null) return;
+            c.isSecretBeliever = HasFaithDivergence(c);
+        }
     }
 }
-
