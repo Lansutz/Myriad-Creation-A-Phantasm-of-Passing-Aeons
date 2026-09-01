@@ -9,7 +9,7 @@ namespace CivilizationEvolution.Culture
     ///   →传统（思想性传承·可共存）→分支传统（传播/再分化——任意深度）
     /// 学派父（schoolParentId）：思想源链——礼仪祖先学派（如亚述教会←
     ///   赛琉基亚-泰西封学派/狄奥多若——与聂斯托里无关）
-    /// 类型（nodeType）：宗派=组织性；传统=思想性；学派=前组织形态
+    /// 类型（nodeType）：教统=组织性（有主教链/法脉）；传统=思想性（可创建）；学派=前组织形态
     ///   （未稳定——无固定仪轨/座堂圣座——可演化为礼/传统/宗派）
     /// 教统（hasSuccession）：组织连续性（使徒统绪/法脉）——宗派必须有；
     ///   无教统学派（如聂斯托里）只能思想并入，不能独立组织化
@@ -25,14 +25,20 @@ namespace CivilizationEvolution.Culture
         /// <summary>学派父（-1=无思想源；&gt;=0=祖先学派——思想谱系独立于组织谱系）</summary>
         public int schoolParentId = -1;
         /// <summary>节点类型（学派=前组织形态——可演化）</summary>
-        public ReligionNodeType nodeType = ReligionNodeType.Sect;
+        public ReligionNodeType nodeType = ReligionNodeType.Succession;
         /// <summary>教统（使徒统绪/法脉——组织连续性；宗派必须有；无教统学派不能独立组织化）</summary>
         public bool hasSuccession = true;
         /// <summary>
-        /// 礼拜仪轨列表（传统第三级·高级——如"罗马礼"/"希腊礼"/"科普特礼"：
-        /// 礼是实践，与学派同等级但高于学派——礼仪本身包含学派思想）
+        /// 具体礼名列表（狭义——如"科普特礼"/"埃塞俄比亚礼"：
+        /// 同一礼仪传统下可有多个具体礼——埃塞俄比亚礼属亚历山大传统）
         /// </summary>
         public List<string> rites = new List<string>();
+        /// <summary>
+        /// 礼仪传统（广义——五大礼仪传统之一：罗马传统/拜占庭传统/
+        /// 亚历山大传统/安条克传统/东叙利亚传统；亚美尼亚=独立传统）
+        /// ——具体礼名（rites）从属于礼仪传统（riteFamily）
+        /// </summary>
+        public string riteFamily = "";
         /// <summary>教义学派（传统第三级·次级——如"经院学派"/"中观学派"；学派可升格为礼）</summary>
         public string school = "";
         /// <summary>地图基色（RGBA 0-255；未配置时按 id 自动分配）</summary>
@@ -74,7 +80,43 @@ namespace CivilizationEvolution.Culture
         }
 
         
-        /// <summary>地图色（按级别：宗教=根色 / 宗派=自身色 / 传统=rite/school 哈希偏移色）</summary>
+        private static int _nextId = 1000;
+
+        /// <summary>
+        /// 创建传统（动态——宗教演化：新教义/新仪轨定型→新传统节点；
+        /// 从属指定教统/传统——任意深度）
+        /// </summary>
+        public static ReligionDef CreateTradition(int parentId, string name, string school, bool hasSuccession = false)
+        {
+            int id = _nextId++;
+            var def = new ReligionDef
+            {
+                religionId = id,
+                religionName = name,
+                parentReligionId = parentId,
+                schoolParentId = -1,
+                nodeType = ReligionNodeType.Tradition,
+                hasSuccession = hasSuccession,
+                school = school
+            };
+            _religions[id] = def;
+            return def;
+        }
+
+        /// <summary>
+        /// 创建礼（动态——礼仪实践形成：向指定节点（教统/传统）的
+        /// rites 列表添加具体礼名——礼归属可变）
+        /// </summary>
+        public static void CreateRite(int religionId, string riteName, string riteFamily = "")
+        {
+            if (!_religions.TryGetValue(religionId, out var def)) return;
+            if (!def.rites.Contains(riteName))
+                def.rites.Add(riteName);
+            if (!string.IsNullOrEmpty(riteFamily))
+                def.riteFamily = riteFamily;
+        }
+
+        /// <summary>地图色（按级别：宗教=根色 / 教统=自身色 / 传统=rite/school 哈希偏移色）</summary>
         public static Color GetColor(int religionId, ReligionMapLevel level)
         {
             var def = Get(religionId);
@@ -84,7 +126,7 @@ namespace CivilizationEvolution.Culture
             {
                 case ReligionMapLevel.Religion:
                     return GetRoot(religionId)?.color ?? def.color;
-                case ReligionMapLevel.Sect:
+                case ReligionMapLevel.Succession:
                     return def.color; // 自身色（所有非根节点=宗派——含裂教深层宗派）
                 case ReligionMapLevel.Tradition:
                     // 传统级：礼拜仪轨优先（礼=高级传统），无礼用教义学派（次级）——哈希色相偏移
@@ -116,17 +158,18 @@ namespace CivilizationEvolution.Culture
     /// <summary>宗教地图级别（三级谱系显示）</summary>
     public enum ReligionMapLevel
     {
-        Religion,   // 宗教（根）
-        Sect,       // 宗派
-        Tradition   // 传统（礼拜仪轨/教义学派）
+        Religion,     // 宗教（根）
+        Succession,   // 教统（组织性单位——原宗派）
+        Tradition     // 传统（礼拜仪轨/教义学派）
     }
 
     /// <summary>宗教节点类型（组织性质——非树级别）</summary>
     public enum ReligionNodeType
     {
-        Religion,   // 宗教（根·组织最大单位）
-        Sect,       // 宗派（组织性分裂·互斥——必须有教统）
-        Tradition,  // 传统（思想性传承·可共存——禅宗/唯识宗/法华宗）
-        School      // 学派（前组织形态·未稳定——无固定仪轨/座堂圣座——可演化）
+        Religion,     // 宗教（根·组织最大单位）
+        Succession,   // 教统（组织性单位·互斥——必有主教链/法脉——原"宗派"：
+                      // 罗马公教会/东正教/各自主教会=独立教统）
+        Tradition,    // 传统（思想性传承·可共存——禅宗/唯识宗/法华宗——可创建）
+        School        // 学派（前组织形态·未稳定——无固定仪轨/座堂圣座——可演化）
     }
 }

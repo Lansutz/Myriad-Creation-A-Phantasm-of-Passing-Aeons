@@ -442,8 +442,8 @@ namespace CivilizationEvolution.Render
                 case MapDisplayMode.Religion:
                     return GetReligionColor(tile, ReligionMapLevel.Religion);
 
-                case MapDisplayMode.ReligionSect:
-                    return GetReligionColor(tile, ReligionMapLevel.Sect);
+                case MapDisplayMode.ReligionSuccession:
+                    return GetReligionColor(tile, ReligionMapLevel.Succession);
 
                 case MapDisplayMode.ReligionTradition:
                     return GetReligionColor(tile, ReligionMapLevel.Tradition);
@@ -678,7 +678,7 @@ namespace CivilizationEvolution.Render
         Culture,        // 文化（主文化）
         CultureBranch,  // 文化分支（允许分支的文化显示子文化）
         Religion,       // 宗教（根宗教）
-        ReligionSect,   // 宗教宗派
+        ReligionSuccession, // 宗教-教统（组织性单位）
         ReligionTradition // 宗教传统（礼拜仪轨/教义学派）
     }
 }

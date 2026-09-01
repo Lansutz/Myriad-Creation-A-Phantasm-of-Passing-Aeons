@@ -46,10 +46,11 @@ namespace CivilizationEvolution.Tests
             Assert.AreEqual(ReligionNodeType.School, theo.nodeType, "塞琉西亚-泰西封=学派");
             Assert.AreEqual(111, theo.schoolParentId, "塞琉西亚-泰西封←安提阿学派");
 
-            // 科普特教会←亚历山大学派
+            // 科普特教会←亚历山大学派（礼仪学：具体礼=科普特礼——亚历山大传统）
             var coptic = ReligionCatalog.Get(120);
             Assert.AreEqual(110, coptic.schoolParentId, "科普特←亚历山大学派");
-            Assert.AreEqual("亚历山大礼", coptic.PrimaryRite, "科普特=亚历山大礼");
+            Assert.AreEqual("科普特礼", coptic.PrimaryRite, "具体礼=科普特礼（广义传统=亚历山大传统）");
+            Assert.AreEqual("亚历山大传统", coptic.riteFamily, "礼仪传统=亚历山大传统");
 
             // 聂斯托里=无教统学派（与亚述教会无关——独立思想遗产）
             var nestorius = ReligionCatalog.Get(115);
@@ -58,7 +59,24 @@ namespace CivilizationEvolution.Tests
         }
 
         [Test]
-        public void Sect_HasSuccession_SchoolNot()
+        public void CreateTraditionAndRite_Dynamic()
+        {
+            // 礼/传统可创建（动态——宗教演化机制）
+            var trad = ReligionCatalog.CreateTradition(302, "华严宗", "法界缘起教学");
+            Assert.IsNotNull(trad, "传统已创建");
+            Assert.AreEqual(ReligionNodeType.Tradition, trad.nodeType, "新节点=传统");
+            Assert.AreEqual(302, trad.parentReligionId, "从属大乘（任意深度）");
+            Assert.IsNotNull(ReligionCatalog.Get(trad.religionId), "注册表可查");
+
+            // 创建礼（向节点添加具体礼名）
+            ReligionCatalog.CreateRite(105, "圣瓦西里礼", "拜占庭传统");
+            var orthodox = ReligionCatalog.Get(105);
+            Assert.IsTrue(orthodox.rites.Contains("圣瓦西里礼"), "礼已创建（归属可变）");
+            Assert.AreEqual("拜占庭传统", orthodox.riteFamily, "礼传统");
+        }
+
+        [Test]
+        public void Succession_HasSuccession_SchoolNot()
         {
             Assert.IsTrue(ReligionCatalog.Get(104).hasSuccession, "罗马公教会有教统（主教链）");
             Assert.IsTrue(ReligionCatalog.Get(120).hasSuccession, "科普特教会有教统");
@@ -80,7 +98,7 @@ namespace CivilizationEvolution.Tests
             Assert.AreEqual("毗尼多流支传承", thien.school, "灭喜禅学派传承");
 
             // 宗派/传统/学派类型正确
-            Assert.AreEqual(ReligionNodeType.Sect, ReligionCatalog.Get(302).nodeType, "大乘=宗派");
+            Assert.AreEqual(ReligionNodeType.Succession, ReligionCatalog.Get(302).nodeType, "大乘=宗派");
             Assert.AreEqual(ReligionNodeType.Tradition, ReligionCatalog.Get(305).nodeType, "禅宗=传统");
         }
 
@@ -90,7 +108,7 @@ namespace CivilizationEvolution.Tests
             ReligionCatalog.EnsureColors();
 
             var rootColor = ReligionCatalog.GetColor(100, ReligionMapLevel.Religion);
-            var sectColor = ReligionCatalog.GetColor(120, ReligionMapLevel.Sect);
+            var sectColor = ReligionCatalog.GetColor(120, ReligionMapLevel.Succession);
             var tradColor = ReligionCatalog.GetColor(120, ReligionMapLevel.Tradition);
 
             Assert.AreEqual(rootColor, ReligionCatalog.GetColor(120, ReligionMapLevel.Religion),
@@ -99,7 +117,7 @@ namespace CivilizationEvolution.Tests
             Assert.AreNotEqual(sectColor, tradColor, "传统级礼色相偏移");
 
             // 深层裂教宗派显示自身色（宗派就是宗派）
-            var catholicColor = ReligionCatalog.GetColor(104, ReligionMapLevel.Sect);
+            var catholicColor = ReligionCatalog.GetColor(104, ReligionMapLevel.Succession);
             Assert.AreEqual(ReligionCatalog.Get(104).color, catholicColor, "深层宗派显示自身色");
             Assert.AreNotEqual(ReligionCatalog.GetColor(104, ReligionMapLevel.Religion), catholicColor,
                 "宗派色≠宗教根色");

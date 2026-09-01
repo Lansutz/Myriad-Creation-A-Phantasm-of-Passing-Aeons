@@ -1,42 +1,341 @@
 {
   "religions": [
-    { "religionId": 100, "religionName": "基督教", "parentReligionId": -1, "schoolParentId": -1, "nodeType": 0, "hasSuccession": true, "rites": [], "school": "" },
-
-    { "religionId": 101, "religionName": "迦克墩派", "parentReligionId": 100, "schoolParentId": -1, "nodeType": 1, "hasSuccession": true, "rites": [], "school": "二性论派" },
-    { "religionId": 104, "religionName": "罗马公教会", "parentReligionId": 101, "schoolParentId": -1, "nodeType": 1, "hasSuccession": true, "rites": ["罗马礼"], "school": "拉丁教父与经院哲学传统" },
-    { "religionId": 105, "religionName": "正统大公教会", "parentReligionId": 101, "schoolParentId": -1, "nodeType": 1, "hasSuccession": true, "rites": ["拜占庭礼"], "school": "希腊教父传统" },
-
-    { "religionId": 102, "religionName": "东方正统教会", "parentReligionId": 100, "schoolParentId": -1, "nodeType": 1, "hasSuccession": true, "rites": [], "school": "合性论（非迦克墩）" },
-    { "religionId": 120, "religionName": "亚历山大科普特正教会", "parentReligionId": 102, "schoolParentId": 110, "nodeType": 1, "hasSuccession": true, "rites": ["亚历山大礼"], "school": "亚历山大学派（合性论）" },
-    { "religionId": 121, "religionName": "安条克叙利亚正教会", "parentReligionId": 102, "schoolParentId": 111, "nodeType": 1, "hasSuccession": true, "rites": ["西叙利亚礼"], "school": "安条克学派" },
-    { "religionId": 122, "religionName": "亚美尼亚宗徒教会", "parentReligionId": 102, "schoolParentId": 113, "nodeType": 1, "hasSuccession": true, "rites": ["亚美尼亚礼"], "school": "亚美尼亚学派（合性论）" },
-    { "religionId": 123, "religionName": "埃塞俄比亚正统台瓦西多教会", "parentReligionId": 102, "schoolParentId": 110, "nodeType": 1, "hasSuccession": true, "rites": ["亚历山大礼"], "school": "亚历山大合性论学派" },
-    { "religionId": 124, "religionName": "厄立特里亚正统台瓦西多教会", "parentReligionId": 102, "schoolParentId": 110, "nodeType": 1, "hasSuccession": true, "rites": ["亚历山大礼"], "school": "亚历山大合性论学派" },
-    { "religionId": 125, "religionName": "玛兰卡正统叙利亚教会", "parentReligionId": 102, "schoolParentId": 114, "nodeType": 1, "hasSuccession": true, "rites": ["西叙利亚礼"], "school": "印度圣多马学派" },
-
-    { "religionId": 103, "religionName": "神圣使徒大公东方亚述教会", "parentReligionId": 100, "schoolParentId": 112, "nodeType": 1, "hasSuccession": true, "rites": ["东叙利亚礼"], "school": "安提阿学派（狄奥多若/塞琉西亚-泰西封传承）" },
-
-    { "religionId": 110, "religionName": "亚历山大学派", "parentReligionId": -1, "schoolParentId": -1, "nodeType": 3, "hasSuccession": false, "rites": [], "school": "" },
-    { "religionId": 111, "religionName": "安提阿学派", "parentReligionId": -1, "schoolParentId": -1, "nodeType": 3, "hasSuccession": false, "rites": [], "school": "" },
-    { "religionId": 112, "religionName": "塞琉西亚-泰西封学派", "parentReligionId": -1, "schoolParentId": 111, "nodeType": 3, "hasSuccession": false, "rites": [], "school": "狄奥多若学派" },
-    { "religionId": 113, "religionName": "亚美尼亚学派", "parentReligionId": -1, "schoolParentId": -1, "nodeType": 3, "hasSuccession": false, "rites": [], "school": "合性论" },
-    { "religionId": 114, "religionName": "印度圣多马学派", "parentReligionId": -1, "schoolParentId": -1, "nodeType": 3, "hasSuccession": false, "rites": [], "school": "圣多马传统" },
-    { "religionId": 115, "religionName": "聂斯托里", "parentReligionId": -1, "schoolParentId": 111, "nodeType": 3, "hasSuccession": false, "rites": [], "school": "安提阿分支（无教统——思想遗产）" },
-
-    { "religionId": 200, "religionName": "伊斯兰教", "parentReligionId": -1, "schoolParentId": -1, "nodeType": 0, "hasSuccession": true, "rites": [], "school": "" },
-    { "religionId": 201, "religionName": "逊尼派", "parentReligionId": 200, "schoolParentId": -1, "nodeType": 1, "hasSuccession": true, "rites": [], "school": "哈乃斐/沙斐仪等学派" },
-    { "religionId": 202, "religionName": "什叶派", "parentReligionId": 200, "schoolParentId": -1, "nodeType": 1, "hasSuccession": true, "rites": [], "school": "贾法里学派" },
-    { "religionId": 203, "religionName": "哈瓦利吉派", "parentReligionId": 200, "schoolParentId": -1, "nodeType": 1, "hasSuccession": true, "rites": [], "school": "伊巴德学派" },
-
-    { "religionId": 300, "religionName": "佛教", "parentReligionId": -1, "schoolParentId": -1, "nodeType": 0, "hasSuccession": true, "rites": [], "school": "" },
-    { "religionId": 301, "religionName": "上座部佛教", "parentReligionId": 300, "schoolParentId": -1, "nodeType": 1, "hasSuccession": true, "rites": [], "school": "分别说部" },
-    { "religionId": 302, "religionName": "大乘佛教", "parentReligionId": 300, "schoolParentId": -1, "nodeType": 1, "hasSuccession": true, "rites": [], "school": "中观/唯识学派" },
-    { "religionId": 303, "religionName": "金刚乘", "parentReligionId": 300, "schoolParentId": -1, "nodeType": 1, "hasSuccession": true, "rites": [], "school": "密宗学派" },
-
-    { "religionId": 304, "religionName": "法华宗", "parentReligionId": 302, "schoolParentId": -1, "nodeType": 2, "hasSuccession": true, "rites": [], "school": "天台教学" },
-    { "religionId": 305, "religionName": "禅宗", "parentReligionId": 302, "schoolParentId": -1, "nodeType": 2, "hasSuccession": true, "rites": [], "school": "如来禅/祖师禅" },
-    { "religionId": 306, "religionName": "唯识宗", "parentReligionId": 302, "schoolParentId": -1, "nodeType": 2, "hasSuccession": true, "rites": [], "school": "瑜伽行唯识学派" },
-    { "religionId": 307, "religionName": "日莲宗", "parentReligionId": 304, "schoolParentId": -1, "nodeType": 2, "hasSuccession": true, "rites": [], "school": "日莲教学" },
-    { "religionId": 308, "religionName": "灭喜禅", "parentReligionId": 305, "schoolParentId": -1, "nodeType": 2, "hasSuccession": true, "rites": [], "school": "毗尼多流支传承" }
+    {
+      "religionId": 100,
+      "religionName": "基督教",
+      "parentReligionId": -1,
+      "schoolParentId": -1,
+      "nodeType": 0,
+      "hasSuccession": true,
+      "rites": [],
+      "school": ""
+    },
+    {
+      "religionId": 101,
+      "religionName": "迦克墩派",
+      "parentReligionId": 100,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "二性论派"
+    },
+    {
+      "religionId": 104,
+      "religionName": "罗马公教会",
+      "parentReligionId": 101,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [
+        "罗马礼"
+      ],
+      "school": "拉丁教父与经院哲学传统",
+      "riteFamily": "罗马传统（拉丁传统）"
+    },
+    {
+      "religionId": 105,
+      "religionName": "正统大公教会",
+      "parentReligionId": 101,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [
+        "拜占庭礼"
+      ],
+      "school": "希腊教父传统",
+      "riteFamily": "拜占庭传统"
+    },
+    {
+      "religionId": 102,
+      "religionName": "东方正统教会",
+      "parentReligionId": 100,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "合性论（非迦克墩）"
+    },
+    {
+      "religionId": 120,
+      "religionName": "亚历山大科普特正教会",
+      "parentReligionId": 102,
+      "schoolParentId": 110,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [
+        "科普特礼"
+      ],
+      "school": "亚历山大学派（合性论）",
+      "riteFamily": "亚历山大传统"
+    },
+    {
+      "religionId": 121,
+      "religionName": "安条克叙利亚正教会",
+      "parentReligionId": 102,
+      "schoolParentId": 111,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [
+        "西叙利亚礼"
+      ],
+      "school": "安条克学派",
+      "riteFamily": "安条克传统"
+    },
+    {
+      "religionId": 122,
+      "religionName": "亚美尼亚宗徒教会",
+      "parentReligionId": 102,
+      "schoolParentId": 113,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [
+        "亚美尼亚礼"
+      ],
+      "school": "亚美尼亚学派（合性论）",
+      "riteFamily": "独立传统（受亚历山大与安条克双重影响）"
+    },
+    {
+      "religionId": 123,
+      "religionName": "埃塞俄比亚正统台瓦西多教会",
+      "parentReligionId": 102,
+      "schoolParentId": 110,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [
+        "埃塞俄比亚礼"
+      ],
+      "school": "亚历山大合性论学派",
+      "riteFamily": "亚历山大传统"
+    },
+    {
+      "religionId": 124,
+      "religionName": "厄立特里亚正统台瓦西多教会",
+      "parentReligionId": 102,
+      "schoolParentId": 110,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [
+        "埃塞俄比亚礼"
+      ],
+      "school": "亚历山大合性论学派",
+      "riteFamily": "亚历山大传统"
+    },
+    {
+      "religionId": 125,
+      "religionName": "玛兰卡正统叙利亚教会",
+      "parentReligionId": 102,
+      "schoolParentId": 114,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [
+        "西叙利亚礼"
+      ],
+      "school": "印度圣多马学派",
+      "riteFamily": "安条克传统"
+    },
+    {
+      "religionId": 103,
+      "religionName": "神圣使徒大公东方亚述教会",
+      "parentReligionId": 100,
+      "schoolParentId": 112,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [
+        "东叙利亚礼"
+      ],
+      "school": "安提阿学派（狄奥多若/塞琉西亚-泰西封传承）",
+      "riteFamily": "东叙利亚传统"
+    },
+    {
+      "religionId": 110,
+      "religionName": "亚历山大学派",
+      "parentReligionId": -1,
+      "schoolParentId": -1,
+      "nodeType": 3,
+      "hasSuccession": false,
+      "rites": [],
+      "school": ""
+    },
+    {
+      "religionId": 111,
+      "religionName": "安提阿学派",
+      "parentReligionId": -1,
+      "schoolParentId": -1,
+      "nodeType": 3,
+      "hasSuccession": false,
+      "rites": [],
+      "school": ""
+    },
+    {
+      "religionId": 112,
+      "religionName": "塞琉西亚-泰西封学派",
+      "parentReligionId": -1,
+      "schoolParentId": 111,
+      "nodeType": 3,
+      "hasSuccession": false,
+      "rites": [],
+      "school": "狄奥多若学派"
+    },
+    {
+      "religionId": 113,
+      "religionName": "亚美尼亚学派",
+      "parentReligionId": -1,
+      "schoolParentId": -1,
+      "nodeType": 3,
+      "hasSuccession": false,
+      "rites": [],
+      "school": "合性论"
+    },
+    {
+      "religionId": 114,
+      "religionName": "印度圣多马学派",
+      "parentReligionId": -1,
+      "schoolParentId": -1,
+      "nodeType": 3,
+      "hasSuccession": false,
+      "rites": [],
+      "school": "圣多马传统"
+    },
+    {
+      "religionId": 115,
+      "religionName": "聂斯托里",
+      "parentReligionId": -1,
+      "schoolParentId": 111,
+      "nodeType": 3,
+      "hasSuccession": false,
+      "rites": [],
+      "school": "安提阿分支（无教统——思想遗产）"
+    },
+    {
+      "religionId": 200,
+      "religionName": "伊斯兰教",
+      "parentReligionId": -1,
+      "schoolParentId": -1,
+      "nodeType": 0,
+      "hasSuccession": true,
+      "rites": [],
+      "school": ""
+    },
+    {
+      "religionId": 201,
+      "religionName": "逊尼派",
+      "parentReligionId": 200,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "哈乃斐/沙斐仪等学派"
+    },
+    {
+      "religionId": 202,
+      "religionName": "什叶派",
+      "parentReligionId": 200,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "贾法里学派"
+    },
+    {
+      "religionId": 203,
+      "religionName": "哈瓦利吉派",
+      "parentReligionId": 200,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "伊巴德学派"
+    },
+    {
+      "religionId": 300,
+      "religionName": "佛教",
+      "parentReligionId": -1,
+      "schoolParentId": -1,
+      "nodeType": 0,
+      "hasSuccession": true,
+      "rites": [],
+      "school": ""
+    },
+    {
+      "religionId": 301,
+      "religionName": "上座部佛教",
+      "parentReligionId": 300,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "分别说部"
+    },
+    {
+      "religionId": 302,
+      "religionName": "大乘佛教",
+      "parentReligionId": 300,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "中观/唯识学派"
+    },
+    {
+      "religionId": 303,
+      "religionName": "金刚乘",
+      "parentReligionId": 300,
+      "schoolParentId": -1,
+      "nodeType": 1,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "密宗学派"
+    },
+    {
+      "religionId": 304,
+      "religionName": "法华宗",
+      "parentReligionId": 302,
+      "schoolParentId": -1,
+      "nodeType": 2,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "天台教学"
+    },
+    {
+      "religionId": 305,
+      "religionName": "禅宗",
+      "parentReligionId": 302,
+      "schoolParentId": -1,
+      "nodeType": 2,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "如来禅/祖师禅"
+    },
+    {
+      "religionId": 306,
+      "religionName": "唯识宗",
+      "parentReligionId": 302,
+      "schoolParentId": -1,
+      "nodeType": 2,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "瑜伽行唯识学派"
+    },
+    {
+      "religionId": 307,
+      "religionName": "日莲宗",
+      "parentReligionId": 304,
+      "schoolParentId": -1,
+      "nodeType": 2,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "日莲教学"
+    },
+    {
+      "religionId": 308,
+      "religionName": "灭喜禅",
+      "parentReligionId": 305,
+      "schoolParentId": -1,
+      "nodeType": 2,
+      "hasSuccession": true,
+      "rites": [],
+      "school": "毗尼多流支传承"
+    }
   ]
 }

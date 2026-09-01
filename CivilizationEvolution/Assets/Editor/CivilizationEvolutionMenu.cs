@@ -519,7 +519,7 @@ namespace CivilizationEvolution.EditorTools
             var subDd = subGo.AddComponent<TMP_Dropdown>();
             subDd.targetGraphic = subImage;
             UITheme.ApplyButtonTint(subDd);
-            var subCaption = CreateText("Label", subGo.transform, "宗派", 16);
+            var subCaption = CreateText("Label", subGo.transform, "教统", 16);
             subCaption.alignment = TextAlignmentOptions.Center;
             subCaption.rectTransform.anchorMin = Vector2.zero;
             subCaption.rectTransform.anchorMax = Vector2.one;

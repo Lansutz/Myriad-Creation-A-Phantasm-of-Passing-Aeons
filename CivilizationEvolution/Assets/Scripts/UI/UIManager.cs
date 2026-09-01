@@ -181,7 +181,7 @@ namespace CivilizationEvolution.UI
             if (speed3Button != null)
                 speed3Button.onClick.AddListener(() => SetGameSpeed(3f)); // 修复：原为 5f（与按钮标注 3x 不符）
 
-            // 地图模式（两级：类别 Dropdown + 子项 Dropdown——政治第 1；宗教默认宗派）
+            // 地图模式（两级：类别 Dropdown + 子项 Dropdown——政治第 1；宗教默认教统）
             if (displayModeDropdown != null)
             {
                 displayModeDropdown.ClearOptions();
@@ -193,10 +193,10 @@ namespace CivilizationEvolution.UI
             if (mapModeToggleButton != null)
                 mapModeToggleButton.onClick.AddListener(ToggleMapModeBar);
 
-            // 默认：宗教类别 + 宗派子项（用户定稿——默认地图=宗派地图）
+            // 默认：宗教类别 + 教统子项（用户定稿——默认地图=教统地图）
             if (displayModeDropdown != null) displayModeDropdown.value = 8; // 宗教
             OnMapCategoryChanged(displayModeDropdown != null ? displayModeDropdown.value : 8);
-            if (displayModeSubDropdown != null) displayModeSubDropdown.value = 1; // 宗派
+            if (displayModeSubDropdown != null) displayModeSubDropdown.value = 1; // 教统
             ApplyMapMode();
 
             // 角色面板按钮
@@ -345,7 +345,7 @@ namespace CivilizationEvolution.UI
         {
             [6] = new List<string> { "一般外交", "联盟阵营" },   // 外交
             [7] = new List<string> { "主文化", "分支文化" },    // 文化
-            [8] = new List<string> { "宗教", "宗派", "传统" }   // 宗教（默认宗派）
+            [8] = new List<string> { "宗教", "教统", "传统" }   // 宗教（默认教统）
         };
 
         /// <summary>类别+子项 → MapDisplayMode（无子项类别直接用类别映射）</summary>
@@ -362,12 +362,12 @@ namespace CivilizationEvolution.UI
             [(7, 0)] = MapDisplayMode.Culture,
             [(7, 1)] = MapDisplayMode.CultureBranch,
             [(8, 0)] = MapDisplayMode.Religion,
-            [(8, 1)] = MapDisplayMode.ReligionSect,
+            [(8, 1)] = MapDisplayMode.ReligionSuccession,
             [(8, 2)] = MapDisplayMode.ReligionTradition
         };
 
         private int _mapCategory = 8;   // 当前类别（默认宗教）
-        private int _mapSub = 1;         // 当前子项（默认宗派）
+        private int _mapSub = 1;         // 当前子项（默认教统）
 
         /// <summary>类别切换：填充子项选项（无子项隐藏子 Dropdown）</summary>
         private void OnMapCategoryChanged(int index)
