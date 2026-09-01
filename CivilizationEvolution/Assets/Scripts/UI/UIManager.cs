@@ -280,6 +280,19 @@ namespace CivilizationEvolution.UI
             }}
 
         /// <summary>更新地块详情</summary>
+        private string GetCultureName(int cultureId)
+        {
+            if (world != null && world.cultures.TryGetValue(cultureId, out var c))
+                return c.cultureName;
+            return cultureId.ToString();
+        }
+
+        private string GetReligionName(int faithId)
+        {
+            var def = Culture.ReligionCatalog.Get(faithId);
+            return def != null ? def.religionName : faithId.ToString();
+        }
+
         private void UpdateTileInfo()
         {
             if (tileInfoPanel == null || _selectedTile < 0 || world == null) return;
@@ -302,6 +315,12 @@ namespace CivilizationEvolution.UI
                     foreach (var pb in tile.populationBlocks)
                         pop += pb.count;
                 tilePopulationText.text = $"人口: {Mathf.RoundToInt(pop * 50)}\n人口块: {(tile.populationBlocks?.Count ?? 0)}\n稳定值: {tile.stability:F0}\n秩序: {tile.order:F0}";
+                // 三维占比明细（文化/信仰——传播机制可见：传教/迁移导致的占比变化
+                // 直接看得到——主流易位实时呈现）
+                var shareText = Politics.PopulationStats.BuildShareText(tile,
+                    id => GetCultureName(id), id => GetReligionName(id));
+                if (!string.IsNullOrEmpty(shareText))
+                    tilePopulationText.text += "\n" + shareText;
             }
             if (tileEconomyText != null)
                 tileEconomyText.text = $"法理政权: {tile.ownerRealmId}\n占领政权: {tile.occupyingRealmId}\n道路: {tile.roadLevel}\n连通海域: {tile.seaConnectId}";

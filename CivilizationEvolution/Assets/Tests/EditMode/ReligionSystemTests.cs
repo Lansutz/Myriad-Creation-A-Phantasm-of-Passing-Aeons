@@ -6,6 +6,7 @@ using CivilizationEvolution.Culture;
 using CivilizationEvolution.Role;
 using CivilizationEvolution.Thought;
 using CivilizationEvolution.Politics;
+using CivilizationEvolution.War;
 
 namespace CivilizationEvolution.Tests
 {
@@ -495,6 +496,156 @@ namespace CivilizationEvolution.Tests
             secret.isSecretBeliever = true;
             cm.UpdatePiety(secret, null);
             Assert.Less(secret.spiritualFulfillment, 50f, "秘密信徒灵性煎熬");
+        }
+
+        [Test]
+        public void GreatHolyWar_FullFlow()
+        {
+            GreatHolyWarSystem.ActiveWars.Clear();
+            CanonizationSystem.Reset();
+
+            // 发起条件：热忱≥60+有领袖+目标
+            var war1 = GreatHolyWarSystem.Declare(104, 1, 2, 10, 100, hasLeader: false, fervor: 80f);
+            Assert.IsNull(war1, "无领袖不可发起");
+            var war2 = GreatHolyWarSystem.Declare(104, 1, 2, 10, 100, hasLeader: true, fervor: 50f);
+            Assert.IsNull(war2, "热忱不足不可发起");
+            var war3 = GreatHolyWarSystem.Declare(104, 1, 2, 10, 100, hasLeader: true, fervor: 80f);
+            Assert.IsNotNull(war3, "条件齐→发起成功");
+            Assert.AreEqual(1, war3.callerRealmId, "号召者=教统领袖政权");
+            Assert.IsTrue(war3.participants.Contains(1), "号召者加入参战");
+
+            // 号召：同教统政权强制加入（信仰义务）
+            var realms = new List<RealmData>
+            {
+                new RealmData { realmId = 1, stateReligionId = 104 },
+                new RealmData { realmId = 3, stateReligionId = 104 },
+                new RealmData { realmId = 4, stateReligionId = 200 }
+            };
+            GreatHolyWarSystem.Rally(war3, realms);
+            Assert.IsTrue(war3.participants.Contains(3), "同教统政权响应号召");
+            Assert.IsFalse(war3.participants.Contains(4), "异教政权不响应");
+
+            // 结算：圣战方胜→受益人=继承线外者
+            var cm = new CharacterManager();
+            var king = cm.CreateCharacter("王", "者", 60, true, 0, 0, 0, CharacterRole.Ruler);
+            var eldest = cm.CreateCharacter("长", "子", 30, true, 0, 0, 0, CharacterRole.Commoner);
+            var second = cm.CreateCharacter("次", "子", 25, true, 0, 0, 0, CharacterRole.Commoner);
+            eldest.familyId = king.familyId; second.familyId = king.familyId;
+            eldest.realmId = 1; second.realmId = 1;
+            var callerRealm = new RealmData { realmId = 1 };
+            callerRealm.monarchId = king.characterId;
+
+            war3.holySideWon = true;
+            int beneficiary = GreatHolyWarSystem.Resolve(war3, cm, callerRealm, 1,
+                InheritanceLaw.Primogeniture());
+            Assert.AreEqual(second.characterId, beneficiary, "次子=继承线外→受益人（长子在线内）");
+            Assert.AreEqual(beneficiary, war3.beneficiaryId, "受益人记录");
+
+            // 防御方胜利→无受益人
+            var war4 = GreatHolyWarSystem.Declare(104, 1, 2, 10, 100, true, 80f);
+            war4.holySideWon = false;
+            Assert.AreEqual(-1, GreatHolyWarSystem.Resolve(war4, cm, callerRealm, 1,
+                InheritanceLaw.Primogeniture()), "防御方胜→无受益人");
+        }
+
+        [Test]
+        public void Canonization_SaintFromVirtuousDead()
+        {
+            CanonizationSystem.Reset();
+            var faith = new FaithSystem { faithId = 104, highPriestCharacterId = 1 };
+            faith.virtues = new List<string> { "forgiving", "compassionate", "chaste" };
+
+            var cm = new CharacterManager();
+            var alive = cm.CreateCharacter("活", "圣", 40, true, 0, 0, 0, CharacterRole.Commoner);
+            alive.traits = new List<PersonalityTrait>
+            {
+                new PersonalityTrait { traitId = "forgiving_2", traitName = "宽恕" },
+                new PersonalityTrait { traitId = "compassionate_3", traitName = "慈悲" }
+            };
+            alive.spiritualFulfillment = 90f;
+            Assert.IsFalse(CanonizationSystem.IsCanonizationCandidate(faith, alive), "活着不能封圣");
+
+            alive.deathDay = 1; // 死亡（isAlive=deathDay<0 只读）
+            Assert.IsTrue(CanonizationSystem.IsCanonizationCandidate(faith, alive), "死后+虔诚90+美德2→候选");
+
+            // 无领袖不批准
+            var faithNoHead = new FaithSystem { faithId = 105, highPriestCharacterId = -1 };
+            faithNoHead.virtues = faith.virtues;
+            Assert.IsNull(CanonizationSystem.Canonize(faithNoHead, alive, "战争"), "无教会领袖不封圣");
+
+            // 有领袖→圣人
+            var saint = CanonizationSystem.Canonize(faith, alive, "战争");
+            Assert.IsNotNull(saint, "封圣成功");
+            Assert.AreEqual(alive.characterId, saint.linkedCharacterId, "圣人=角色升格");
+            Assert.AreEqual("战争", saint.domain, "庇护领域");
+            Assert.AreEqual(1, CanonizationSystem.GetSaints(104).Count, "圣人入池");
+
+            // 防重复
+            var again = CanonizationSystem.Canonize(faith, alive, "战争");
+            Assert.AreEqual(saint.saintId, again.saintId, "防重复封圣");
+        }
+
+        [Test]
+        public void Hierarchy_EcclesiasticalTitles()
+        {
+            var faith = new FaithSystem { faithId = 104 };
+            Assert.AreEqual(0, faith.hierarchyLevel, "初始无教阶");
+
+            faith.SetHierarchyLevel(2);
+            Assert.AreEqual(2, faith.hierarchyLevel, "主教区级");
+
+            // 叙任权：俗人任命（世俗君主任命——政教冲突基础）
+            faith.AddHierarchyTitle("科隆大主教", 2, temporalAppointment: false);
+            faith.AddHierarchyTitle("美因茨大主教", 3, temporalAppointment: true);
+            Assert.AreEqual(3, faith.hierarchyLevel, "头衔升级到 大主教区");
+            Assert.AreEqual(2, faith.hierarchyTitles.Count, "两个教阶头衔");
+            Assert.IsTrue(faith.hierarchyTitles[1].temporalAppointment, "俗人任命=叙任权在君");
+        }
+
+        [Test]
+        public void Missionary_ConversionAndTax()
+        {
+            // 传教成功率：同宗教易传/异教难
+            var tile = new TileData
+            {
+                tileIndex = 0,
+                populationBlocks = new List<PopulationBlock>
+                {
+                    new PopulationBlock { count = 100f, cultureId = 1, faithId = 105, socialClass = GameEnums.SocialClass.Peasant }
+                }
+            };
+            // 同宗教（东正 105 → 天主教 104——同根 100）
+            float same = MissionarySystem.CalculateSuccessChance(tile, 104,
+                id => ReligionCatalog.Get(id), id => ReligionCatalog.GetRoot(id)?.religionId ?? -1);
+            Assert.Greater(same, 0.4f, "同宗教不同教统——较易传");
+
+            // 异教（105 → 伊斯兰 201——不同根）
+            float diff = MissionarySystem.CalculateSuccessChance(tile, 201,
+                id => ReligionCatalog.Get(id), id => ReligionCatalog.GetRoot(id)?.religionId ?? -1);
+            Assert.Less(diff, 0.4f, "异教——难传");
+
+            // ConvertTile：新建传教块（从主流分出）
+            var rng = new System.Random(42);
+            bool converted = MissionarySystem.ConvertTile(tile, 201, 1, 1f, rng);
+            Assert.IsTrue(converted, "高成功率→转信成功");
+            Assert.AreEqual(2, tile.populationBlocks.Count, "新建传教块");
+            Assert.AreEqual(201, tile.populationBlocks[1].faithId, "新块=传教信仰");
+
+            // 宗教税压力改宗（吉兹亚——农民先改——阶层参与）
+            var tile2 = new TileData
+            {
+                tileIndex = 1,
+                populationBlocks = new List<PopulationBlock>
+                {
+                    new PopulationBlock { count = 100f, cultureId = 1, faithId = 105, socialClass = GameEnums.SocialClass.Peasant },
+                    new PopulationBlock { count = 100f, cultureId = 1, faithId = 105, socialClass = GameEnums.SocialClass.NobilityClergy }
+                }
+            };
+            // 高税率多次尝试（农民 1.5× 概率——必然先改）
+            bool taxChanged = false;
+            for (int i = 0; i < 200 && !taxChanged; i++)
+                taxChanged = MissionarySystem.TaxPressureConversion(tile2, 201, 40f);
+            Assert.IsTrue(taxChanged, "高税率诱导改宗");
         }
     }
 }

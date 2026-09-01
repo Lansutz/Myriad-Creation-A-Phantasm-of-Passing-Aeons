@@ -103,6 +103,31 @@ namespace CivilizationEvolution.Thought
         public List<string> virtues = new List<string>();
         public List<string> sins = new List<string>();
 
+        // ===== 教阶制（组织支柱机制化——教区→主教区→大主教区→枢机团/牧首会议） =====
+        /// <summary>教阶等级（0=无教阶[原始崇拜/多神松散] 1=教区 2=主教区
+        /// 3=大主教区 4=枢机团/牧首会议——CK3 大主教区+枢机团）</summary>
+        public int hierarchyLevel = 0;
+        /// <summary>教阶头衔列表（头衔名/级别——如"科隆大主教"——叙任权对接）</summary>
+        public List<EcclesiasticalTitle> hierarchyTitles = new List<EcclesiasticalTitle>();
+
+        /// <summary>设立教阶（升级教阶制——组织支柱：教区→大主教区→枢机团）</summary>
+        public void SetHierarchyLevel(int level)
+        {
+            hierarchyLevel = Mathf.Clamp(level, 0, 4);
+        }
+
+        /// <summary>任命教阶头衔（俗人任命=叙任权在君[政教冲突]/灵性任命=在教）</summary>
+        public void AddHierarchyTitle(string titleName, int level, bool temporalAppointment)
+        {
+            hierarchyTitles.Add(new EcclesiasticalTitle
+            {
+                titleName = titleName,
+                level = level,
+                temporalAppointment = temporalAppointment
+            });
+            if (level > hierarchyLevel) hierarchyLevel = level;
+        }
+
         // ===== 信仰热忱（Fervor——大圣战可用性数值） =====
         /// <summary>热忱 0-100（大圣战可用条件：≥60 + 存在宗教领袖）</summary>
         public float fervor = 50f;
@@ -156,6 +181,17 @@ namespace CivilizationEvolution.Thought
         {
             churchInfluence = Mathf.Lerp(churchInfluence, 50f, 0.001f);
         }
+    }
+
+    /// <summary>教阶头衔（教区/主教区/大主教区/枢机——叙任权：俗人/灵性任命）</summary>
+    [System.Serializable]
+    public class EcclesiasticalTitle
+    {
+        public string titleName;
+        public int level;
+        /// <summary>true=俗人任命（世俗君主任命——叙任权之争教义基础——
+        /// doctrine_clerical_appointment_temporal）；false=灵性任命（教会自任）</summary>
+        public bool temporalAppointment;
     }
 
     public enum FaithType
