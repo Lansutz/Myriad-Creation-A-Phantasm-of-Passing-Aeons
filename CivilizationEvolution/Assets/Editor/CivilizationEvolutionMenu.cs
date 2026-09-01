@@ -285,6 +285,99 @@ namespace CivilizationEvolution.EditorTools
             Debug.Log("[CE菜单] 社会政治面板已就地添加，请保存场景。");
         }
 
+        [MenuItem(MenuRoot + "9. 就地添加音乐播放器", false, 9)]
+        public static void AddMusicPanelToExistingScene()
+        {
+            var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+            if (canvas == null)
+            {
+                Debug.LogWarning("[CE菜单] 未找到 Canvas，请先执行菜单 1 一键搭建游戏场景。");
+                return;
+            }
+            if (canvas.transform.Find("MusicPanel") != null)
+            {
+                Debug.Log("[CE菜单] 音乐播放器已存在。");
+                return;
+            }
+
+            var ui = Object.FindFirstObjectByType<UIManager>(FindObjectsInactive.Include);
+            if (ui == null)
+            {
+                Debug.LogWarning("[CE菜单] 未找到 UIManager，请先执行菜单 1 一键搭建游戏场景。");
+                return;
+            }
+
+            var topBar = canvas.transform.Find("TopBar");
+            if (topBar != null && topBar.Find("MusicOpenBtn") == null)
+                SetField(ui, "musicOpenButton", CreateButton("MusicOpenBtn", topBar, "音乐"));
+
+            BuildMusicPanel(canvas.transform, ui);
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Debug.Log("[CE菜单] 音乐播放器已就地添加，请保存场景。");
+        }
+
+        /// <summary>构建音乐播放器面板（曲目列表+控制+音量；供一键搭建与就地升级共用）</summary>
+        private static void BuildMusicPanel(Transform canvas, UIManager ui)
+        {
+            var musPanel = CreatePanel("MusicPanel", canvas).gameObject;
+            SetAnchor(musPanel.GetComponent<RectTransform>(),
+                new Vector2(1, 1), new Vector2(1, 1), new Vector2(-1160, -12), new Vector2(420, 440));
+            var cv = musPanel.AddComponent<VerticalLayoutGroup>();
+            cv.spacing = 6; cv.padding = new RectOffset(12, 12, 10, 10);
+            cv.childForceExpandWidth = true;
+
+            // 标题行
+            var titleRow = new GameObject("MusTitleRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            titleRow.transform.SetParent(musPanel.transform, false);
+            var trLayout = titleRow.GetComponent<HorizontalLayoutGroup>();
+            trLayout.spacing = 6; trLayout.childAlignment = TextAnchor.MiddleCenter;
+            trLayout.childForceExpandWidth = false;
+
+            var title = CreateText("MusTitle", titleRow.transform, "音乐播放器", 18);
+            title.color = UITheme.Accent;
+            title.fontStyle = FontStyle.Bold;
+            SetField(ui, "musicCloseButton", CreateButton("MusCloseBtn", titleRow.transform, "✕"));
+
+            // 控制行：播放/暂停/上一首/下一首
+            var ctrlRow = new GameObject("MusCtrlRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            ctrlRow.transform.SetParent(musPanel.transform, false);
+            var ctrlLayout = ctrlRow.GetComponent<HorizontalLayoutGroup>();
+            ctrlLayout.spacing = 6; ctrlLayout.childAlignment = TextAnchor.MiddleCenter;
+            ctrlLayout.childForceExpandWidth = false;
+            SetField(ui, "musicPrevButton", CreateButton("MusPrevBtn", ctrlRow.transform, "⏮"));
+            SetField(ui, "musicPlayButton", CreateButton("MusPlayBtn", ctrlRow.transform, "▶"));
+            SetField(ui, "musicPauseButton", CreateButton("MusPauseBtn", ctrlRow.transform, "⏸"));
+            SetField(ui, "musicNextButton", CreateButton("MusNextBtn", ctrlRow.transform, "⏭"));
+
+            // 音量滑块
+            var volRow = new GameObject("MusVolRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            volRow.transform.SetParent(musPanel.transform, false);
+            var volLayout = volRow.GetComponent<HorizontalLayoutGroup>();
+            volLayout.spacing = 6; volLayout.childAlignment = TextAnchor.MiddleLeft;
+            volLayout.childForceExpandWidth = false;
+            var volLabel = CreateText("MusVolLabel", volRow.transform, "音量", 14);
+            volLabel.color = UITheme.TextDim;
+            var sliderGo = new GameObject("MusVolSlider", typeof(RectTransform));
+            sliderGo.transform.SetParent(volRow.transform, false);
+            var slider = sliderGo.AddComponent<UnityEngine.UI.Slider>();
+            slider.minValue = 0f; slider.maxValue = 1f; slider.value = 0.6f;
+            SetField(ui, "musicVolumeSlider", slider);
+
+            // 曲目列表（滚动）
+            var scroll = musPanel.AddComponent<ScrollRect>();
+            var musText = CreateText("MusicText", musPanel.transform, "（打开加载曲目）", 15);
+            SetAnchor(musText.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            musText.rectTransform.offsetMax = new Vector2(-8, -30);
+            musText.rectTransform.offsetMin = new Vector2(8, 4);
+            musText.verticalOverflow = VerticalWrapMode.Overflow;
+            musText.alignment = TextAnchor.UpperLeft;
+            scroll.content = musText.rectTransform;
+
+            SetField(ui, "musicPanel", musPanel);
+            SetField(ui, "musicText", musText);
+            musPanel.SetActive(false); // 默认隐藏（顶栏"音乐"按钮打开）
+        }
+
         // ================= UGUI 代码构建 =================
 
         /// <summary>构建整套界面并通过反射注入UIManager</summary>

@@ -74,6 +74,17 @@ namespace CivilizationEvolution.UI
         [SerializeField] private Text societyText;
         [SerializeField] private Button societyOpenButton;
         [SerializeField] private Button societyCloseButton;
+
+        [Header("音乐播放器")]
+        [SerializeField] private GameObject musicPanel;
+        [SerializeField] private Text musicText;
+        [SerializeField] private Button musicOpenButton;
+        [SerializeField] private Button musicCloseButton;
+        [SerializeField] private Button musicPlayButton;
+        [SerializeField] private Button musicPauseButton;
+        [SerializeField] private Button musicNextButton;
+        [SerializeField] private Button musicPrevButton;
+        [SerializeField] private UnityEngine.UI.Slider musicVolumeSlider;
         [SerializeField] private Text charNameText;
         [SerializeField] private Text charStatusText;
         [SerializeField] private Text charStatsText;
@@ -148,6 +159,8 @@ namespace CivilizationEvolution.UI
                     UpdateCharacterPanel();
                 if (societyPanel != null && societyPanel.activeSelf)
                     RefreshSocietyPanel();
+                if (musicPanel != null && musicPanel.activeSelf)
+                    RefreshMusicPanel();
             }
         }
 
@@ -184,6 +197,19 @@ namespace CivilizationEvolution.UI
             // 社会政治面板按钮
             if (societyOpenButton != null) societyOpenButton.onClick.AddListener(OpenSocietyPanel);
             if (societyCloseButton != null) societyCloseButton.onClick.AddListener(CloseSocietyPanel);
+
+            // 音乐播放器按钮
+            if (musicOpenButton != null) musicOpenButton.onClick.AddListener(OpenMusicPanel);
+            if (musicCloseButton != null) musicCloseButton.onClick.AddListener(CloseMusicPanel);
+            if (musicPlayButton != null) musicPlayButton.onClick.AddListener(() => MusicPlayer()?.Play());
+            if (musicPauseButton != null) musicPauseButton.onClick.AddListener(() => MusicPlayer()?.Pause());
+            if (musicNextButton != null) musicNextButton.onClick.AddListener(() => MusicPlayer()?.Next());
+            if (musicPrevButton != null) musicPrevButton.onClick.AddListener(() => MusicPlayer()?.Prev());
+            if (musicVolumeSlider != null)
+            {
+                if (MusicPlayer() != null) musicVolumeSlider.value = MusicPlayer().Volume;
+                musicVolumeSlider.onValueChanged.AddListener(v => { if (MusicPlayer() != null) MusicPlayer().Volume = v; });
+            }
 
             // 地图编辑器UI面板（代码动态生成，无需在Inspector手动搭建）
             if (mapRenderer != null)
@@ -341,6 +367,51 @@ namespace CivilizationEvolution.UI
 
             societyText.text = SocietyPanelText.Build(realm,
                 world.GetRealmSociety(realmId), world.Factions, world.RegimeDynamics, world.currentDay);
+        }
+
+        /// <summary>获取音乐播放器（场景中查找或懒创建）</summary>
+        private static CivilizationEvolution.Audio.MusicPlayerSystem MusicPlayer()
+        {
+            var mp = UnityEngine.Object.FindFirstObjectByType<CivilizationEvolution.Audio.MusicPlayerSystem>(FindObjectsInactive.Include);
+            if (mp == null)
+            {
+                var go = new GameObject("MusicPlayer");
+                mp = go.AddComponent<CivilizationEvolution.Audio.MusicPlayerSystem>();
+                mp.LoadFromResources();
+            }
+            return mp;
+        }
+
+        /// <summary>打开音乐播放器面板</summary>
+        private void OpenMusicPanel()
+        {
+            MusicPlayer();
+            if (musicPanel != null) musicPanel.SetActive(true);
+            RefreshMusicPanel();
+        }
+
+        /// <summary>关闭音乐播放器面板</summary>
+        private void CloseMusicPanel()
+        {
+            if (musicPanel != null) musicPanel.SetActive(false);
+        }
+
+        /// <summary>刷新音乐面板（曲目列表+当前状态）</summary>
+        private void RefreshMusicPanel()
+        {
+            if (musicText == null) return;
+            var mp = MusicPlayer();
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine($"── 音乐播放器 ── 音量 {mp.Volume * 100f:F0}%");
+            sb.AppendLine(mp.IsPlaying ? "▶ 播放中" : "⏸ 暂停");
+            for (int i = 0; i < mp.Playlist.Count; i++)
+            {
+                string mark = i == mp.CurrentIndex ? "▶ " : "  ";
+                sb.AppendLine($"{mark}{i + 1}. {mp.Playlist[i].name}");
+            }
+            if (mp.Playlist.Count == 0)
+                sb.AppendLine("（无曲目——请放入 Resources/Music/ 的 ogg/mp3）");
+            musicText.text = sb.ToString();
         }
 
         /// <summary>刷新角色面板（每帧调用，角色数据动态变化）</summary>
