@@ -50,6 +50,10 @@ namespace CivilizationEvolution.Culture
         public float spreadPower = 1f;
         public int parentCultureId = -1;
         public List<int> childCultureIds = new List<int>();
+        /// <summary>允许分支文化（true=该文化的分支会在地图分支文化模式显示——默认主文化允许）</summary>
+        public bool allowsBranching = true;
+        /// <summary>地图颜色（文化地图着色——未配置时自动分配）</summary>
+        public Color color = Color.white;
 
         /// <summary>
         /// 文明默认继承法（inheritance_*_from_civilization 双轨模式：

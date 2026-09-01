@@ -1162,6 +1162,11 @@ namespace CivilizationEvolution.Core
                 cultureOverrides++;
             }
 
+            // 文化地图颜色自动分配（未配置的文化按 id 取色）
+            foreach (var kv in cultures)
+                if (kv.Value.color == Color.white)
+                    kv.Value.color = Color.HSVToRGB((kv.Key * 0.618f) % 1f, 0.55f, 0.85f);
+
             if (raceOverrides > 0 || cultureOverrides > 0)
                 Debug.Log($"[GameWorld] 内容注册表覆盖：种族 +{raceOverrides}，文化 +{cultureOverrides}（数据驱动优先）");
         }

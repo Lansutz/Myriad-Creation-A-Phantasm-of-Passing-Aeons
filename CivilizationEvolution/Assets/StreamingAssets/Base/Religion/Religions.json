@@ -1,0 +1,15 @@
+{
+  "religions": [
+    { "religionId": 100, "religionName": "先灵崇拜", "parentReligionId": -1, "rite": "", "school": "" },
+    { "religionId": 101, "religionName": "祖灵派", "parentReligionId": 100, "rite": "宗祠祭礼", "school": "祖先学派" },
+    { "religionId": 102, "religionName": "自然灵派", "parentReligionId": 100, "rite": "山川献祭", "school": "万物有灵派" },
+
+    { "religionId": 200, "religionName": "河神信仰", "parentReligionId": -1, "rite": "", "school": "" },
+    { "religionId": 201, "religionName": "主流河神派", "parentReligionId": 200, "rite": "河祭仪轨", "school": "正典派" },
+    { "religionId": 202, "religionName": "潜流派", "parentReligionId": 200, "rite": "夜祭仪轨", "school": "秘仪派" },
+
+    { "religionId": 300, "religionName": "天象崇拜", "parentReligionId": -1, "rite": "", "school": "" },
+    { "religionId": 301, "religionName": "日轮宗", "parentReligionId": 300, "rite": "晨昏祭礼", "school": "日神学派" },
+    { "religionId": 302, "religionName": "星象宗", "parentReligionId": 300, "rite": "观星仪轨", "school": "占星学派" }
+  ]
+}

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using CivilizationEvolution.Diplomacy;
+using CivilizationEvolution.Culture;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Map;
 
@@ -425,10 +427,134 @@ namespace CivilizationEvolution.Render
                     float devT = Mathf.Clamp(tile.development, 0f, 1f);
                     return Color.Lerp(new Color(0.5f, 0.5f, 0.5f), new Color(1f, 0.9f, 0.3f), devT);
 
+                case MapDisplayMode.Diplomacy:
+                    return GetDiplomacyColor(tile);
+
+                case MapDisplayMode.Alliance:
+                    return GetAllianceColor(tile);
+
+                case MapDisplayMode.Culture:
+                    return GetCultureColor(tile, false);
+
+                case MapDisplayMode.CultureBranch:
+                    return GetCultureColor(tile, true);
+
+                case MapDisplayMode.Religion:
+                    return GetReligionColor(tile, ReligionMapLevel.Religion);
+
+                case MapDisplayMode.ReligionSect:
+                    return GetReligionColor(tile, ReligionMapLevel.Sect);
+
+                case MapDisplayMode.ReligionTradition:
+                    return GetReligionColor(tile, ReligionMapLevel.Tradition);
+
                 default:
                     return Color.gray;
             }
         }
+
+        // ===== 地图模式着色辅助（外交/联盟/文化/宗教） =====
+
+        private static readonly Color WarColor = new Color(0.85f, 0.2f, 0.2f, 1f);
+        private static readonly Color HostileColor = new Color(0.9f, 0.55f, 0.2f, 1f);
+        private static readonly Color NeutralColor = new Color(0.55f, 0.55f, 0.55f, 1f);
+        private static readonly Color FriendlyColor = new Color(0.35f, 0.7f, 0.35f, 1f);
+        private static readonly Color AllyColor = new Color(0.3f, 0.5f, 0.9f, 1f);
+        private static readonly Color FactionColor = new Color(0.6f, 0.35f, 0.85f, 1f);
+
+        /// <summary>外交关系色（玩家视角：战争/敌对/盟约/友好/中立）</summary>
+        private Color GetDiplomacyColor(TileData tile)
+        {
+            int owner = tile.ownerRealmId;
+            if (owner < 0) return new Color(0.25f, 0.25f, 0.25f);
+            int player = world != null ? world.PlayerRealmId : -1;
+            if (player < 0) return _politicalColors[owner % _politicalColors.Length];
+
+            var dm = world.GetDiplomacyManager();
+            if (dm == null) return _politicalColors[owner % _politicalColors.Length];
+            if (owner == player) return FriendlyColor;
+
+            var rel = dm.GetRelation(player, owner);
+            if (rel == null) return NeutralColor;
+            if (rel.isAtWar) return WarColor;
+            if (rel.IsHostile) return HostileColor;
+            if (rel.activeAlliances.Exists(a => a.isActive)) return AllyColor;
+            return rel.relation >= 20f ? FriendlyColor : NeutralColor;
+        }
+
+        /// <summary>联盟阵营色（玩家盟友/阵营成员）</summary>
+        private Color GetAllianceColor(TileData tile)
+        {
+            int owner = tile.ownerRealmId;
+            if (owner < 0) return new Color(0.25f, 0.25f, 0.25f);
+            int player = world != null ? world.PlayerRealmId : -1;
+            if (player < 0) return _politicalColors[owner % _politicalColors.Length];
+            if (owner == player) return FriendlyColor;
+
+            var dm = world.GetDiplomacyManager();
+            if (dm == null) return NeutralColor;
+            var rel = dm.GetRelation(player, owner);
+            if (rel == null) return NeutralColor;
+            if (rel.activeAlliances.Exists(a => a.isActive && a.type == AllianceType.Faction))
+                return FactionColor;
+            if (rel.activeAlliances.Exists(a => a.isActive))
+                return AllyColor;
+            return NeutralColor;
+        }
+
+        /// <summary>文化色（branch=true 时允许分支的文化显示子文化色）</summary>
+        private Color GetCultureColor(TileData tile, bool branch)
+        {
+            int cultureId = GetDominantBlockCulture(tile);
+            if (cultureId < 0 || world == null) return NeutralColor;
+            if (!world.cultures.TryGetValue(cultureId, out var culture)) return NeutralColor;
+
+            if (branch)
+            {
+                // 分支文化：子文化（parentCultureId>=0）且父文化允许分支 → 子文化色
+                if (culture.parentCultureId >= 0
+                    && world.cultures.TryGetValue(culture.parentCultureId, out var parent)
+                    && parent.allowsBranching)
+                    return culture.color;
+                return NeutralColor;
+            }
+
+            // 主文化：分支文化显示根文化色（同一谱系同色）
+            if (culture.parentCultureId >= 0
+                && world.cultures.TryGetValue(culture.parentCultureId, out var root))
+                return root.color;
+            return culture.color;
+        }
+
+        /// <summary>宗教色（三级谱系：宗教/宗派/传统）</summary>
+        private Color GetReligionColor(TileData tile, ReligionMapLevel level)
+        {
+            int faithId = GetDominantBlockFaith(tile);
+            if (faithId < 0) return NeutralColor;
+            return ReligionCatalog.GetColor(faithId, level);
+        }
+
+        /// <summary>主人口块的文化（count 最大块——地块主文化）</summary>
+        private static int GetDominantBlockCulture(TileData tile)
+        {
+            if (tile.populationBlocks == null || tile.populationBlocks.Count == 0) return -1;
+            var best = tile.populationBlocks[0];
+            foreach (var pb in tile.populationBlocks)
+                if (pb.count > best.count) best = pb;
+            return best.cultureId;
+        }
+
+        /// <summary>主人口块的信仰（count 最大块——地块主信仰）</summary>
+        private static int GetDominantBlockFaith(TileData tile)
+        {
+            if (tile.populationBlocks == null || tile.populationBlocks.Count == 0) return -1;
+            var best = tile.populationBlocks[0];
+            foreach (var pb in tile.populationBlocks)
+                if (pb.count > best.count) best = pb;
+            return best.faithId;
+        }
+
+
 
         /// <summary>相机输入处理</summary>
         private void HandleCameraInput()
@@ -541,11 +667,18 @@ namespace CivilizationEvolution.Render
 
     public enum MapDisplayMode
     {
-        Terrain,      // 地形
-        Climate,      // 气候
-        Biome,        // 群系
-        Political,    // 政治
-        Population,   // 人口
-        Economy       // 经济
+        Terrain,        // 地形
+        Climate,        // 气候
+        Biome,          // 群系
+        Political,      // 政治（常态）
+        Population,     // 人口
+        Economy,        // 经济
+        Diplomacy,      // 外交关系（玩家视角：战争/敌对/中立/友好/盟约）
+        Alliance,       // 联盟阵营（普通盟友/阵营成员）
+        Culture,        // 文化（主文化）
+        CultureBranch,  // 文化分支（允许分支的文化显示子文化）
+        Religion,       // 宗教（根宗教）
+        ReligionSect,   // 宗教宗派
+        ReligionTradition // 宗教传统（礼拜仪轨/教义学派）
     }
 }

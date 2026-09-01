@@ -184,7 +184,8 @@ namespace CivilizationEvolution.UI
                 displayModeDropdown.ClearOptions();
                 displayModeDropdown.AddOptions(new List<string>
                 {
-                    "地形", "气候", "群系", "政治", "人口", "经济"
+                    "地形", "气候", "群系", "政治", "人口", "经济",
+                    "外交关系", "联盟阵营", "文化", "文化分支", "宗教", "宗教-宗派", "宗教-传统"
                 });
                 displayModeDropdown.onValueChanged.AddListener(OnDisplayModeChanged);
             }

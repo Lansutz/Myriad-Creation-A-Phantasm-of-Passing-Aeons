@@ -113,6 +113,7 @@ namespace CivilizationEvolution.Core
         public static Dictionary<string, TalentDefectDef> TalentDefects { get; private set; } = new Dictionary<string, TalentDefectDef>();
         public static Dictionary<string, MentalDisorderDef> MentalDisorders { get; private set; } = new Dictionary<string, MentalDisorderDef>();
         public static Dictionary<int, InnovationDef> Innovations { get; private set; } = new Dictionary<int, InnovationDef>();
+        public static Dictionary<int, ReligionDef> Religions { get; private set; } = new Dictionary<int, ReligionDef>();
 
         public static bool IsInitialized { get; private set; } = false;
 
@@ -220,6 +221,13 @@ namespace CivilizationEvolution.Core
             {
                 try { LoadRaceDefs(raceFile); }
                 catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 种族定义加载失败：{e.Message}"); }
+            }
+
+            string religionFile = Path.Combine(root, "Religion", "Religions.json");
+            if (File.Exists(religionFile))
+            {
+                try { LoadReligions(religionFile); }
+                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 宗教定义加载失败：{e.Message}"); }
             }
 
             // ===== 模组化定义表 =====
@@ -423,6 +431,24 @@ namespace CivilizationEvolution.Core
                 if (def == null || string.IsNullOrEmpty(def.id)) continue;
                 MentalDisorders[def.id] = def;
             }
+        }
+
+        /// <summary>加载宗教定义（三级谱系：宗教→宗派→传统）</summary>
+        private static void LoadReligions(string path)
+        {
+            var wrapper = JsonUtility.FromJson<ReligionListWrapper>(File.ReadAllText(path));
+            Religions.Clear();
+            if (wrapper == null || wrapper.religions == null) return;
+            foreach (var r in wrapper.religions)
+                if (r != null) Religions[r.religionId] = r;
+            ReligionCatalog.Load(new List<ReligionDef>(Religions.Values));
+            ReligionCatalog.EnsureColors();
+        }
+
+        [System.Serializable]
+        private class ReligionListWrapper
+        {
+            public List<ReligionDef> religions = new List<ReligionDef>();
         }
 
         /// <summary>加载革新（Innovation）定义表（两级分类：大类+子类；模组可新增）</summary>
