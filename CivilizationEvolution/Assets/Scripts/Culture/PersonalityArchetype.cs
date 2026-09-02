@@ -143,47 +143,131 @@ namespace CivilizationEvolution.Culture
             if (c == null) return "";
             float score = EvaluationSystem.CalculateScore(rec);
             EvaluationLevel level = EvaluationSystem.LevelFromScore(score);
+            bool isRuler = c.role == CharacterRole.Ruler;
 
-            // 1. 传奇特殊（900+ 传奇线——极难——领域专属——覆盖一切）
-            if (level >= EvaluationLevel.Legendary)
+            // ===== ① 王级·传奇（苛刻——统治者化历史形象） =====
+            if (isRuler)
             {
-                if (rec.conquests >= 12 && rec.expeditions >= 3)
+                // 征服王（跨文化大征服——亚历山大级——900 传奇线+苛刻领域）
+                if (level >= EvaluationLevel.Legendary && rec.conquests >= 12 && rec.warsWon >= 15)
                     return PromoteToLegendary(c, "征服王") ? "征服王" : c.epithet;
-                if (rec.expeditions >= 10)
+                // 冒险王（一场史诗大冒险[传奇线+远征≥8 且征服≥3=大远征] 或 大量冒险事迹[远征≥12]）
+                if (level >= EvaluationLevel.Legendary &&
+                    ((rec.expeditions >= 8 && rec.conquests >= 3) || rec.expeditions >= 12))
                     return PromoteToLegendary(c, "冒险王") ? "冒险王" : c.epithet;
-                if (rec.cultureActs >= 15)
+                // 诗人王（经历型：行吟远行多[远征≥5]+贤君[评价≥杰出 550]——哈拉尔德式）
+                if (rec.expeditions >= 5 && score >= 550f && rec.poetryActs >= 3)
                     return PromoteToLegendary(c, "诗人王") ? "诗人王" : c.epithet;
+                // 疯王（NPD 式统治风格——未必有病——卡利古拉/尼禄：自恋傲慢+偏执+
+                // 喜怒无常[高报复+低理性]+任性妄为[高大胆+低荣誉]——统治 10 年+行为证据）
+                if (HasTraitLevel(c, "arrogant", 2) && HasTraitAny(c, "paranoid") &&
+                    c.vengefulness > 30f && c.rationality < -20f &&
+                    c.boldness > 30f && c.honor < 0f && rec.reignYears >= 10f)
+                    return GrantEpithet(c, "疯王") ? "疯王" : c.epithet;
             }
 
-            // 2. 普通绰号（中性事实——单项行为——先行——不看评价——
-            // 征服 5 块就是"征服者"——哪怕总体评价平平）
-            if (string.IsNullOrEmpty(c.epithet))
-            {
-                if (rec.conquests >= 5) return GrantEpithet(c, "征服者") ? "征服者" : "";
-                if (rec.schemesSucceeded >= 5) return GrantEpithet(c, "狐狸") ? "狐狸" : "";
-                if (rec.warsWon >= 8 && rec.conquests >= 2) return GrantEpithet(c, "狮子") ? "狮子" : "";
-                if (rec.cultureActs >= 6) return GrantEpithet(c, "智者") ? "智者" : "";
-                if (rec.religionActs >= 6) return GrantEpithet(c, "虔诚者") ? "虔诚者" : "";
-                if (rec.threatsResolved >= 5) return GrantEpithet(c, "警觉者") ? "警觉者" : "";
-                if (rec.expeditions >= 4) return GrantEpithet(c, "大胆者") ? "大胆者" : "";
-                if (rec.lostAllLands > 0 && rec.conquests == 0) return GrantEpithet(c, "无地者") ? "无地者" : "";
-            }
-
-            // 3. 伟大者 the Great（区域影响力判定——独立于成就分——
-            // ≥0.6=区域内前列[中等偏上]——阿尔弗雷德式：未控全英格兰但
-            // 区域内影响力大——发放较多——历史：曼努埃尔[用户认为不够格]/
-            // 科穆宁家约翰未得而曼努埃尔得=历史给法混乱——我们以区域影响力为准）
+            // ===== ② 伟大者 the Great（区域影响力——②高评价档——独立于成就分） =====
             if (rec.regionalInfluence >= 0.6f)
             {
-                if (GrantEpithet(c, "伟大者"))
+                if (GrantEpithet(c, "伟大者")) return "伟大者";
+            }
+
+            // ===== ③ 普通绰号（中性事实——行为/性格判定——先行） =====
+            if (string.IsNullOrEmpty(c.epithet))
+            {
+                // 疯子（临床精神疾病——mentalDisorderId——任何身份——非疯王）
+                if (!string.IsNullOrEmpty(c.mentalDisorderId))
+                    return GrantEpithet(c, "疯子") ? "疯子" : "";
+                // 征服者
+                if (rec.conquests >= 5) return GrantEpithet(c, "征服者") ? "征服者" : "";
+                // 狐狸（诈术）
+                if (rec.schemesSucceeded >= 5) return GrantEpithet(c, "狐狸") ? "狐狸" : "";
+                // 狮子（正面战功）
+                if (rec.warsWon >= 8 && rec.defeatedBattles <= 2)
+                    return GrantEpithet(c, "狮子") ? "狮子" : "";
+                // 常胜者（无败仗）
+                if (rec.warsWon >= 5 && rec.defeatedBattles == 0)
+                    return GrantEpithet(c, "常胜者") ? "常胜者" : "";
+                // 诗人（诗作——双向语义——真才或文人误国看语境）
+                if (rec.poetryActs >= 4) return GrantEpithet(c, "诗人") ? "诗人" : "";
+                // 智者（文治）
+                if (rec.cultureActs >= 6) return GrantEpithet(c, "智者") ? "智者" : "";
+                // 虔诚者（宗教）
+                if (rec.religionActs >= 6) return GrantEpithet(c, "虔诚者") ? "虔诚者" : "";
+                // 叛教者（改宗 2 次+——公开背弃原信仰）
+                if (rec.faithChanges >= 2) return GrantEpithet(c, "叛教者") ? "叛教者" : "";
+                // 警觉者（解危）
+                if (rec.threatsResolved >= 5) return GrantEpithet(c, "警觉者") ? "警觉者" : "";
+                // 忍耐者（低报复+在位久+解危多——逆境坚持）
+                if (rec.reignYears >= 20f && c.vengefulness < 0f && rec.threatsResolved >= 3)
+                    return GrantEpithet(c, "忍耐者") ? "忍耐者" : "";
+                // 仁慈者（悲悯极高+少征战）
+                if (c.compassion > 60f && rec.warsWon <= 2)
+                    return GrantEpithet(c, "仁慈者") ? "仁慈者" : "";
+                // 公正者（无饥荒+少叛乱+在位久）
+                if (!rec.famineUnderRule && rec.reignYears >= 15f)
+                    return GrantEpithet(c, "公正者") ? "公正者" : "";
+                // 谨慎者（低大胆+无败仗）
+                if (c.boldness < -40f && rec.defeatedBattles == 0 && rec.warsWon >= 1)
+                    return GrantEpithet(c, "谨慎者") ? "谨慎者" : "";
+                // 勇敢者（高大胆+胜仗）
+                if (c.boldness > 50f && rec.warsWon >= 3)
+                    return GrantEpithet(c, "勇敢者") ? "勇敢者" : "";
+                // 远行者（远征多——见过世面——诗人王的基础）
+                if (rec.expeditions >= 4) return GrantEpithet(c, "远行者") ? "远行者" : "";
+                // 无地者（失地+未再征服——反讽）
+                if (rec.lostAllLands > 0 && rec.conquests == 0)
+                    return GrantEpithet(c, "无地者") ? "无地者" : "";
+                // 狼（征服+低悲悯——残暴征战）
+                if (rec.conquests >= 4 && c.compassion < -40f)
+                    return GrantEpithet(c, "狼") ? "狼" : "";
+            }
+
+            // ===== ④ 外貌/身体型（bodyMarks——事件/伤病写入——任何身份——
+            // 成对体系：黑/白——统治者=王/继承人或贵族=王子——其余身份=者） =====
+            if (string.IsNullOrEmpty(c.epithet) && c.bodyMarks != null)
+            {
+                foreach (var mark in c.bodyMarks)
                 {
-                    return "伟大者";
+                    string granted = null;
+                    switch (mark)
+                    {
+                        case "秃顶": granted = "秃头"; break;
+                        case "跛足": granted = "瘸子"; break;
+                        case "失明": granted = "瞎子"; break;
+                        case "矮小": granted = "矮子"; break;
+                        case "红须": granted = "红胡子"; break;
+                        case "黑色": granted = isRuler ? "黑王" : HasPrinceRole(c) ? "黑王子" : "黑者"; break;
+                        case "白色": granted = isRuler ? "白王" : HasPrinceRole(c) ? "白王子" : "白者"; break;
+                    }
+                    if (granted != null) return GrantEpithet(c, granted) ? granted : "";
                 }
             }
             return c.epithet;
         }
 
-        /// <summary>
+        private static bool HasTraitLevel(CharacterData c, string baseId, int minLevel)
+        {
+            if (c.traits == null) return false;
+            foreach (var t in c.traits)
+                if (t.traitId == baseId + "_" + minLevel || t.traitId == baseId + "_3")
+                    if (t.traitId.EndsWith("_" + minLevel) || (minLevel == 2 && t.traitId.EndsWith("_3")))
+                        return true;
+            return false;
+        }
+
+        private static bool HasTraitAny(CharacterData c, string baseId)
+        {
+            if (c.traits == null) return false;
+            foreach (var t in c.traits)
+                if (t.traitId.StartsWith(baseId + "_")) return true;
+            return false;
+        }
+
+        private static bool HasPrinceRole(CharacterData c)
+            => c.role == CharacterRole.Heir || c.role == CharacterRole.Noble;
+
+            /// <summary>
         /// 华夏谥号判定（死后——按一生行为定谥——上谥/平谥/下谥）：
         /// 基于行为统计（征战/仁政/文治——简化用七维+计数）
         /// </summary>

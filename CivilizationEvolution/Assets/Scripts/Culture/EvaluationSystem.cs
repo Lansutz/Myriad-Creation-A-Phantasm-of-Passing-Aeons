@@ -64,7 +64,10 @@ namespace CivilizationEvolution.Culture
             public int warsWon;          // 胜仗
             public int conquests;        // 征服领地
             public int cultureActs;      // 文治（学院/法典/艺术）
+            public int poetryActs;       // 诗作/文学创作（诗人/诗人王判定——文治细分）
             public int religionActs;     // 宗教（建寺/朝圣/护教）
+            public int faithChanges;     // 改宗次数（叛教者判定）
+            public int defeatedBattles;  // 败仗（常胜者判定——无败仗）
             public int schemesSucceeded; // 诈术成功（外交欺诈/密谋）
             public int threatsResolved;  // 化解危机（叛乱/密谋/边境）
             public int expeditions;      // 远征/探险
@@ -85,7 +88,9 @@ namespace CivilizationEvolution.Culture
             s += r.warsWon * 30f;
             s += r.conquests * 40f;
             s += r.cultureActs * 35f;
+            s += r.poetryActs * 40f; // 诗作传世权重高（诗人王/诗人的成就源）
             s += r.religionActs * 25f;
+            s -= r.defeatedBattles * 20f; // 败仗扣分
             s += r.schemesSucceeded * 20f;
             s += r.threatsResolved * 30f;
             s += r.expeditions * 45f;

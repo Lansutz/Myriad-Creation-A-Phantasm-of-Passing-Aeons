@@ -220,10 +220,25 @@ namespace CivilizationEvolution.Role
         public int raceId;
         /// <summary>社会信仰（展示给社会的——公开合法——原 faithId 语义）</summary>
         public int faithId;
-        /// <summary>绰号/诨号（行为后验授予——征服者/大冒险家——与原型[性格画像]分离）</summary>
+        /// <summary>绰号/诨号（行为后验授予——中性西方传统——与原型[性格画像]分离）</summary>
         public string epithet = "";
+        /// <summary>身体/外观特征标记（秃顶/跛足/失明/矮小/黑甲/白袍……——
+        /// 事件/伤病系统写入——外貌型绰号[秃头/瘸子/瞎子/黑王]判定源）</summary>
+        public List<string> bodyMarks = new List<string>();
         /// <summary>尊号/谥号（死后——华夏式——按一生行为定谥）</summary>
         public string posthumousTitle = "";
+        /// <summary>传奇评价（"X王"档——征服王/冒险王/诗人王——极难达成的终身成就——
+        /// 与普通绰号分离——升格制：达成传奇可覆盖普通绰号）</summary>
+        public string legendaryTitle = "";
+
+        // ===== 行为计数器（绰号/传奇评价授予依据——后验统计） =====
+        public int conquests = 0;              // 征服领地数（军事扩张）
+        public int warsWon = 0;                // 胜仗数
+        public int diplomaticVictories = 0;    // 外交诈术/背盟成功（狐狸）
+        public int cultureWorks = 0;           // 文治成就（智者/诗人）
+        public int religiousDeeds = 0;         // 宗教行为（虔诚者）
+        public int expeditions = 0;            // 远征次数（冒险者/冒险王）
+        public int vigilanceActs = 0;          // 警觉行为（识破阴谋/平叛）
         /// <summary>灵性满足（0-100——体验支柱动态化——角色与信仰的真实关系：
         /// 美德特质增长/罪行特质下降/秘密信仰煎熬——CK3 唯主是依 Spiritual
         /// Fulfillment；区别于人格维度 piety 虔信——这是虔诚资源）</summary>

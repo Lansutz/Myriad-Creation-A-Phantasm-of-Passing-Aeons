@@ -166,5 +166,77 @@ namespace CivilizationEvolution.Tests
             negligent.compassion = 0f;
             Assert.AreEqual("荒", EpithetSystem.DeterminePosthumousTitle(negligent, 0, 0, true), "饥荒→荒");
         }
+
+        [Test]
+        public void Epithet_MadKing_NPD_Style()
+        {
+            // 疯王=NPD 式统治风格（未必有病）：傲慢(2+)+多疑+喜怒无常(高报复+低理性)
+            // +任性妄为(高大胆+低荣誉)+在位 10 年——卡利古拉式
+            var _cm2 = new CharacterManager();
+            var caligula = _cm2.CreateCharacter("卡", "利古拉", 40, true, 0, 0, 0, CharacterRole.Ruler);
+            caligula.traits = new List<PersonalityTrait>
+            {
+                new PersonalityTrait { traitId = "arrogant_3", traitName = "目中无人" },
+                new PersonalityTrait { traitId = "paranoid_2", traitName = "多疑" }
+            };
+            caligula.boldness = 60f; caligula.rationality = -40f;
+            caligula.vengefulness = 60f; caligula.honor = -30f; caligula.compassion = -50f;
+            var rec = new EvaluationSystem.AchievementRecord { reignYears = 15f };
+            Assert.AreEqual("疯王", EpithetSystem.EvaluateAndGrant(caligula, rec), "NPD 组合+在位→疯王");
+
+            // 有精神疾病≠疯王（疯子=临床——查理六世式）
+            var madman = _cm2.CreateCharacter("查", "理", 40, true, 0, 0, 0, CharacterRole.Commoner);
+            madman.mentalDisorderId = "delirium";
+            var rec2 = new EvaluationSystem.AchievementRecord();
+            Assert.AreEqual("疯子", EpithetSystem.EvaluateAndGrant(madman, rec2), "精神疾病→疯子（非疯王）");
+        }
+
+        [Test]
+        public void Epithet_PoetKing_JourneymanKing()
+        {
+            // 诗人王=经历型传奇：行吟远行(远征 5+)+诗作(3+)+贤君(评价 550+——杰出)
+            var _cm3 = new CharacterManager();
+            var harald = _cm3.CreateCharacter("哈", "拉尔德", 60, true, 0, 0, 0, CharacterRole.Ruler);
+            harald.boldness = 0f; harald.greed = 0f; harald.honor = 40f;
+            harald.rationality = 0f; harald.vengefulness = 0f; harald.piety = 0f;
+            harald.compassion = 40f;
+            var rec = new EvaluationSystem.AchievementRecord
+            {
+                expeditions = 7, poetryActs = 5, warsWon = 8, conquests = 4,
+                religionActs = 2, threatsResolved = 3, reignYears = 20f
+            }; // 50+8*30+4*40+5*40+2*25+3*30 = 880 → 杰出 550+ ✓
+            Assert.AreEqual("诗人王", EpithetSystem.EvaluateAndGrant(harald, rec), "行吟经历+贤君→诗人王");
+
+            // 诗人（普通——双向）——诗作多但非统治者/未达贤君
+            var poet = _cm3.CreateCharacter("游", "吟", 40, true, 0, 0, 0, CharacterRole.Commoner);
+            var rec2 = new EvaluationSystem.AchievementRecord { poetryActs = 5, expeditions = 2 };
+            Assert.AreEqual("诗人", EpithetSystem.EvaluateAndGrant(poet, rec2), "诗作→诗人（普通双向）");
+        }
+
+        [Test]
+        public void Epithet_BodyMarks_AndBlackWhite()
+        {
+            // 外貌绰号（bodyMarks——事件写入）
+            var _cm4 = new CharacterManager();
+            var bald = _cm4.CreateCharacter("秃", "头", 50, true, 0, 0, 0, CharacterRole.Ruler);
+            bald.bodyMarks.Add("秃顶");
+            var rec = new EvaluationSystem.AchievementRecord { reignYears = 5f };
+            Assert.AreEqual("秃头", EpithetSystem.EvaluateAndGrant(bald, rec), "秃顶标记→秃头");
+
+            // 成对体系：黑王子（继承人）/黑王（在位君主）
+            var blackPrince = _cm4.CreateCharacter("黑", "王子", 30, true, 0, 0, 0, CharacterRole.Heir);
+            blackPrince.bodyMarks.Add("黑色");
+            Assert.AreEqual("黑王子", EpithetSystem.EvaluateAndGrant(blackPrince, rec), "黑色+继承人→黑王子");
+
+            var whiteKing = _cm4.CreateCharacter("白", "王", 50, true, 0, 0, 0, CharacterRole.Ruler);
+            whiteKing.bodyMarks.Add("白色");
+            Assert.AreEqual("白王", EpithetSystem.EvaluateAndGrant(whiteKing, rec), "白色+君主→白王");
+
+            // catalog 查询（语义色彩/成对完整）
+            Assert.IsNotNull(EpithetCatalog.Get("epithet_black_king"), "黑王在册");
+            Assert.IsNotNull(EpithetCatalog.Get("epithet_white_prince"), "白王子在册（成对）");
+            Assert.AreEqual(EpithetConnotation.Dual, EpithetCatalog.Get("epithet_poet").connotation, "诗人=双向语义");
+            Assert.AreEqual(EpithetConnotation.Negative, EpithetCatalog.Get("epithet_mad_king").connotation, "疯王=贬");
+        }
     }
 }
