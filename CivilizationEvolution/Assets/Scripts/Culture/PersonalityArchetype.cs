@@ -164,6 +164,11 @@ namespace CivilizationEvolution.Culture
                     c.vengefulness > 30f && c.rationality < -20f &&
                     c.boldness > 30f && c.honor < 0f && rec.reignYears >= 10f)
                     return GrantEpithet(c, "疯王") ? "疯王" : c.epithet;
+                // 圣君（在位圣明——尧舜式——德行×治理双极致：评价≥卓越[750]+
+                // 悲悯荣誉双高[60+]+无饥荒少叛乱——王级苛刻——与圣者[死后封圣]区分）
+                if (score >= 750f && c.compassion >= 60f && c.honor >= 60f &&
+                    !rec.famineUnderRule && rec.reignYears >= 15f)
+                    return PromoteToLegendary(c, "圣君") ? "圣君" : c.epithet;
             }
 
             // ===== ② 伟大者 the Great（区域影响力——②高评价档——独立于成就分） =====
