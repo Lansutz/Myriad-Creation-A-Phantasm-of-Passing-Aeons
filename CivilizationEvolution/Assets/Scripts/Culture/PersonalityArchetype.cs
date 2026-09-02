@@ -188,6 +188,42 @@ namespace CivilizationEvolution.Culture
                 if (!isRuler && EvaluationSystem.CalculateScore(rec) >= 550f &&
                     (rec.warsWon >= 5 || rec.conquests >= 3 || rec.reignYears >= 10f))
                     return GrantEpithet(c, "无冠者") ? "无冠者" : "";
+
+                // 年轻者（青年路易二世式讽刺：幼年即位[<16]是事实——不够老练才是
+                // 核心语义——被摄政架空或决策反复[低理性]——幼稚暗讽）
+                if (isRuler && rec.youngAccession &&
+                    (rec.ruledUnderRegency || c.rationality < -20f))
+                    return GrantEpithet(c, "年轻者") ? "年轻者" : "";
+                // 护国公（摄政护主——非君主但掌实权+名正言顺[为幼主/空位摄政——
+                // 区别于无冠者[僭越式实权]——克伦威尔式）
+                if (!isRuler && rec.ruledUnderRegency && rec.reignYears >= 8f &&
+                    EvaluationSystem.CalculateScore(rec) >= 350f)
+                    return GrantEpithet(c, "护国公") ? "护国公" : "";
+                // 癞病人（病绰号——癞病[麻风]——bodyMarks）
+                if (HasBodyMark(c, "癞病")) return GrantEpithet(c, "癞病人") ? "癞病人" : "";
+                // 驼背（bodyMarks）
+                if (HasBodyMark(c, "驼背")) return GrantEpithet(c, "驼背") ? "驼背" : "";
+                // 美男子（外观俊美——bodyMarks）
+                if (HasBodyMark(c, "俊美")) return GrantEpithet(c, "美男子") ? "美男子" : "";
+                // 金口（雄辩——外交诈术/调停等言辞成就高——非泛演说）
+                if (rec.schemesSucceeded >= 6 && c.rationality >= 40f)
+                    return GrantEpithet(c, "金口") ? "金口" : "";
+                // 背信者（背盟撕约——faithChanges 反向[外交背盟计数近似]——
+                // 用 schemesSucceeded 高+honor 低=言而无信者）
+                if (c.honor < -40f && rec.schemesSucceeded >= 4)
+                    return GrantEpithet(c, "背信者") ? "背信者" : "";
+                // 狂暴者（高报复+高大胆+征战——暴怒君主）
+                if (c.vengefulness > 60f && c.boldness > 50f && rec.warsWon >= 5)
+                    return GrantEpithet(c, "狂暴者") ? "狂暴者" : "";
+                // 调停者（促成和平——多次止战——低战+外交）
+                if (rec.reignYears >= 15f && rec.warsWon <= 1 && rec.schemesSucceeded >= 3)
+                    return GrantEpithet(c, "调停者") ? "调停者" : "";
+                // 不幸者（败仗+灾祸——与幸运者成对）
+                if (rec.defeatedBattles >= 4 || (rec.famineUnderRule && rec.defeatedBattles >= 2))
+                    return GrantEpithet(c, "不幸者") ? "不幸者" : "";
+                // 鹰（威仪+大捷+高荣誉——帝国形象）
+                if (c.honor >= 50f && rec.warsWon >= 6 && rec.defeatedBattles == 0)
+                    return GrantEpithet(c, "鹰") ? "鹰" : "";
                 // 征服者
                 if (rec.conquests >= 5) return GrantEpithet(c, "征服者") ? "征服者" : "";
                 // 狐狸（诈术）
@@ -317,6 +353,12 @@ namespace CivilizationEvolution.Culture
                 }
             }
             return c.epithet;
+        }
+
+        private static bool HasBodyMark(CharacterData c, string mark)
+        {
+            if (c.bodyMarks == null) return false;
+            return c.bodyMarks.Contains(mark);
         }
 
         private static bool HasTraitLevel(CharacterData c, string baseId, int minLevel)

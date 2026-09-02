@@ -96,10 +96,10 @@ namespace CivilizationEvolution.Culture
             Add("epithet_lame", "瘸子", EpithetConnotation.Neutral, EpithetTier.Common, "跛足——提摩太·瘸子");
             Add("epithet_blind", "瞎子", EpithetConnotation.Neutral, EpithetTier.Common, "失明——瞎子约翰[波希米亚]");
             Add("epithet_short", "矮子", EpithetConnotation.Neutral, EpithetTier.Common, "矮小——矮子丕平");
-            Add("epithet_fairhair", "美发者", EpithetConnotation.Positive, EpithetTier.Common,
+            Add("epithet_fairhair", "金发", EpithetConnotation.Positive, EpithetTier.Common,
                 "金发——美发哈拉尔德（发色自然系——任何身份）");
-            Add("epithet_whitehair", "白发者", EpithetConnotation.Neutral, EpithetTier.Common, "白发——发色自然系（任何身份）");
-            Add("epithet_blackhair", "黑发者", EpithetConnotation.Neutral, EpithetTier.Common, "黑发——发色自然系（任何身份）");
+            Add("epithet_whitehair", "白发", EpithetConnotation.Neutral, EpithetTier.Common, "白发——发色自然系（任何身份）");
+            Add("epithet_blackhair", "黑发", EpithetConnotation.Neutral, EpithetTier.Common, "黑发——发色自然系（任何身份）");
             Add("epithet_black_knight", "黑骑士", EpithetConnotation.Neutral, EpithetTier.Common,
                 "黑甲+骑士身份——军事贵族成对体系第一级");
             Add("epithet_white_knight", "白骑士", EpithetConnotation.Neutral, EpithetTier.Common,
@@ -154,6 +154,30 @@ namespace CivilizationEvolution.Culture
                 "宗教传播成就高（接传教系统——religionActs≥10）——改宗传播者");
             Add("epithet_saint", "圣者", EpithetConnotation.Positive, EpithetTier.Common,
                 "死后封圣（联动封圣系统——canonized）——与圣君[在位]区分");
+
+            // ===== 第三批（评价/语境/病绰号——命名通则：特征直接词不加"者"） =====
+            Add("epithet_younger", "年轻者", EpithetConnotation.Negative, EpithetTier.Common,
+                "青年路易二世[洛泰尔一世之子]式：年龄小是事实——核心语义=幼稚不够老练[讽刺——幼年即位+被架空/决策反复——非年龄标注非同名区分]");
+            Add("epithet_leper", "癞病人", EpithetConnotation.Neutral, EpithetTier.Common,
+                "the Leper——癞病[麻风]（病绰号——非头衔式'麻风王'——鲍德温四世）");
+            Add("epithet_goldenmouth", "金口", EpithetConnotation.Positive, EpithetTier.Common,
+                "the Golden-mouth——雄辩——金口约翰[John Chrysostom]（非泛'演说家'）");
+            Add("epithet_hunchback", "驼背", EpithetConnotation.Negative, EpithetTier.Common,
+                "the Hunchback——驼背（bodyMarks——理查三世式或丑化）");
+            Add("epithet_handsome", "美男子", EpithetConnotation.Positive, EpithetTier.Common,
+                "the Fair——外观俊美（腓力四世美男子）");
+            Add("epithet_furious", "狂暴者", EpithetConnotation.Negative, EpithetTier.Common,
+                "the Furious——高报复+高大胆+征战——北欧暴怒君主式");
+            Add("epithet_protector", "护国公", EpithetConnotation.Positive, EpithetTier.Common,
+                "the Protector——摄政护主[幼主/空位摄政]——克伦威尔式");
+            Add("epithet_peacemaker", "调停者", EpithetConnotation.Positive, EpithetTier.Common,
+                "the Peacemaker——促成和平/停战多次（接停战机制）");
+            Add("epithet_perfidious", "背信者", EpithetConnotation.Negative, EpithetTier.Common,
+                "the Perfidious——背盟/撕约多次（言而无信）");
+            Add("epithet_unlucky", "不幸者", EpithetConnotation.Negative, EpithetTier.Common,
+                "the Unlucky——败仗多+灾祸连连（与幸运者成对）");
+            Add("epithet_eagle", "鹰", EpithetConnotation.Positive, EpithetTier.Common,
+                "the Eagle——威仪+大捷+高荣誉（帝国形象——动物系补全）");
 
             // ===== 王级（统治者化历史形象——苛刻） =====
             Add("epithet_mad_king", "疯王", EpithetConnotation.Negative, EpithetTier.Kingly,

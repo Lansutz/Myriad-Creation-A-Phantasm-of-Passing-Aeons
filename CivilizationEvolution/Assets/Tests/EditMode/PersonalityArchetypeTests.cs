@@ -330,5 +330,29 @@ namespace CivilizationEvolution.Tests
             var rec2 = new EvaluationSystem.AchievementRecord { warsWon = 12, conquests = 3, reignYears = 15f };
             Assert.AreNotEqual("无冠者", EpithetSystem.EvaluateAndGrant(king, rec2), "在位君主非无冠者");
         }
+
+        [Test]
+        public void Epithet_Younger_SarcasticMeaning()
+        {
+            // 年轻者（青年路易二世式讽刺——幼年即位是事实——幼稚不够老练才是核心语义）
+            var cm2 = new CharacterManager();
+            var youngLouis = cm2.CreateCharacter("路", "易", 40, true, 0, 0, 0, CharacterRole.Ruler);
+            youngLouis.rationality = -40f; // 决策反复——不够老练
+            var rec = new EvaluationSystem.AchievementRecord
+            {
+                youngAccession = true, ruledUnderRegency = true, reignYears = 20f
+            };
+            Assert.AreEqual("年轻者", EpithetSystem.EvaluateAndGrant(youngLouis, rec), "幼年即位+被摄政→年轻者[讽刺]");
+
+            // 幼年即位但后来英明（无被架空无低理性）→ 不给年轻者（无讽刺语境）
+            var capable = cm2.CreateCharacter("贤", "主", 60, true, 0, 0, 0, CharacterRole.Ruler);
+            capable.rationality = 60f; capable.boldness = 50f;
+            var rec2 = new EvaluationSystem.AchievementRecord
+            {
+                youngAccession = true, ruledUnderRegency = false, reignYears = 40f,
+                warsWon = 8, conquests = 4, cultureActs = 3
+            };
+            Assert.AreNotEqual("年轻者", EpithetSystem.EvaluateAndGrant(capable, rec2), "幼主英明→非年轻者");
+        }
     }
 }

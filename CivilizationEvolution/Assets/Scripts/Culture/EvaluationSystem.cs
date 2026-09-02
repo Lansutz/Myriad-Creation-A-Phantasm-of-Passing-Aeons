@@ -73,6 +73,9 @@ namespace CivilizationEvolution.Culture
             public int defensiveWins;    // 防御大捷（铁锤判定——打退入侵）
             public bool usurpedThrone;   // 篡位上位（篡位者判定）
             public bool canonized;       // 死后封圣（圣者判定——死亡结算传入）
+            public bool youngAccession;     // 幼年即位（年轻者判定——即位时<16——
+                                            // bool 默认 false 安全——struct 无初始化器）
+            public bool ruledUnderRegency;  // 摄政掌权（被架空/护国公/年轻者判定）
             public int schemesSucceeded; // 诈术成功（外交欺诈/密谋）
             public int threatsResolved;  // 化解危机（叛乱/密谋/边境）
             public int expeditions;      // 远征/探险
