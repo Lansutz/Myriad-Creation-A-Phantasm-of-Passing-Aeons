@@ -91,7 +91,8 @@ namespace CivilizationEvolution.Culture
             Add("epithet_wolf", "狼", EpithetConnotation.Negative, EpithetTier.Common, "征服残暴——枭掠");
 
             // ===== 外貌/身体型（bodyMarks 判定——成对体系） =====
-            Add("epithet_bald", "秃头", EpithetConnotation.Neutral, EpithetTier.Common, "秃顶——秃头查理");
+            Add("epithet_bald", "秃头", EpithetConnotation.Neutral, EpithetTier.Common,
+                "秃顶（the Bald——注：秃头查理之'秃头'来源不明非秃顶实证——不作例证）");
             Add("epithet_lame", "瘸子", EpithetConnotation.Neutral, EpithetTier.Common, "跛足——提摩太·瘸子");
             Add("epithet_blind", "瞎子", EpithetConnotation.Neutral, EpithetTier.Common, "失明——瞎子约翰[波希米亚]");
             Add("epithet_short", "矮子", EpithetConnotation.Neutral, EpithetTier.Common, "矮小——矮子丕平");
