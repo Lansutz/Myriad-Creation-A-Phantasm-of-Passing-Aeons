@@ -58,7 +58,8 @@ namespace CivilizationEvolution.Culture
             return EvaluationLevel.Infamous; // 负分=恶名
         }
 
-        /// <summary>行为统计（角色一生——绰号/评价的输入）</summary>
+        /// <summary>行为统计（角色一生——绰号/评价的输入——[Serializable] 供 Unity 序列化分析器）</summary>
+        [System.Serializable]
         public struct AchievementRecord
         {
             public int warsWon;          // 胜仗

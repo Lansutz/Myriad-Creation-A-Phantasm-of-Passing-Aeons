@@ -152,7 +152,7 @@ namespace CivilizationEvolution.UI
         // ===== UI 创建 =====
         private void CreatePanel()
         {
-            var canvas = FindObjectOfType<Canvas>();
+            var canvas = FindAnyObjectByType<Canvas>();
             if (canvas == null)
             {
                 Debug.LogError("[MapGenerationPanel] 场景中没有Canvas");

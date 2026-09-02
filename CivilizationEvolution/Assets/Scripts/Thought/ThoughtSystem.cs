@@ -38,10 +38,12 @@ namespace CivilizationEvolution.Thought
         public float spreadPower = 1f;
         public float conversionRate = 0.01f;
         public List<int> followerCharacterIds = new List<int>();
-        public Dictionary<int, float> regionPenetration = new Dictionary<int, float>();
+        [NonSerialized] Dictionary<int, float> regionPenetration = new Dictionary<int, float>();
+
 
         // 学派间关系
-        public Dictionary<int, float> schoolRelations = new Dictionary<int, float>();
+        [NonSerialized] Dictionary<int, float> schoolRelations = new Dictionary<int, float>();
+
 
         /// <summary>计算学派综合影响力</summary>
         public float CalculateInfluence()
@@ -93,11 +95,13 @@ namespace CivilizationEvolution.Thought
         // 传播与信徒
         public float missionaryZeal = 0.5f;
         public float tolerance = 0.5f;
-        public Dictionary<int, float> regionAdherence = new Dictionary<int, float>();
+        [NonSerialized] Dictionary<int, float> regionAdherence = new Dictionary<int, float>();
+
         public List<int> followerCharacterIds = new List<int>();
 
         // 宗教间关系
-        public Dictionary<int, float> faithRelations = new Dictionary<int, float>();
+        [NonSerialized] Dictionary<int, float> faithRelations = new Dictionary<int, float>();
+
 
         // ===== 美德/罪行（宗教对性格的判定——引用 PersonalityTraitDatabase 基 id） =====
         public List<string> virtues = new List<string>();
@@ -261,7 +265,8 @@ namespace CivilizationEvolution.Thought
         public List<Law> laws = new List<Law>();
 
         // 罪行定义
-        public Dictionary<CrimeType, CrimeDefinition> crimes = new Dictionary<CrimeType, CrimeDefinition>();
+        [NonSerialized] Dictionary<CrimeType, CrimeDefinition> crimes = new Dictionary<CrimeType, CrimeDefinition>();
+
 
         // 司法效率
         public float judicialEfficiency = 0.5f;
@@ -494,7 +499,8 @@ namespace CivilizationEvolution.Thought
 
         // 核心主张
         public List<string> coreTenets = new List<string>();
-        public Dictionary<string, float> policyPositions = new Dictionary<string, float>();
+        [NonSerialized] Dictionary<string, float> policyPositions = new Dictionary<string, float>();
+
 
         // 传播
         public float momentum = 0f;       // 势头 0~100
@@ -503,7 +509,8 @@ namespace CivilizationEvolution.Thought
 
         // 参与者
         public List<int> supporterCharacterIds = new List<int>();
-        public Dictionary<int, float> regionSupport = new Dictionary<int, float>();
+        [NonSerialized] Dictionary<int, float> regionSupport = new Dictionary<int, float>();
+
 
         // 关联学派/信仰
         public List<int> associatedSchoolIds = new List<int>();

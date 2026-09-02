@@ -15,7 +15,8 @@ namespace CivilizationEvolution.UI
     {
         [Header("引用")]
         [SerializeField] private GameWorld world;
-        [SerializeField] private DiplomacyManager diplomacy;
+        // 运行时注入（Initialize——非场景序列化——[SerializeField] 会触发 UAC1010）
+        private DiplomacyManager diplomacy;
 
         [Header("面板")]
         [SerializeField] private GameObject panelRoot;

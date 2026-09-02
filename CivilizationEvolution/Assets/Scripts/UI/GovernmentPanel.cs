@@ -39,7 +39,7 @@ namespace CivilizationEvolution.UI
 
         public void Init()
         {
-            if (!world) world = FindObjectOfType<GameWorld>();
+            if (!world) world = FindAnyObjectByType<GameWorld>();
             _current = (world?.realms?.Count > targetRealmId) ? (world.realms[targetRealmId].composition ?? new GovernmentComposition()) : new GovernmentComposition();
             Refresh();
         }

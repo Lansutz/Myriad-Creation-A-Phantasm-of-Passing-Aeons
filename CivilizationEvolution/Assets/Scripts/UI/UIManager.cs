@@ -521,7 +521,7 @@ namespace CivilizationEvolution.UI
         /// <summary>获取音乐播放器（场景中查找或懒创建）</summary>
         private static CivilizationEvolution.Audio.MusicPlayerSystem MusicPlayer()
         {
-            var mp = UnityEngine.Object.FindFirstObjectByType<CivilizationEvolution.Audio.MusicPlayerSystem>(FindObjectsInactive.Include);
+            var mp = UnityEngine.Object.FindAnyObjectByType<CivilizationEvolution.Audio.MusicPlayerSystem>(FindObjectsInactive.Include);
             if (mp == null)
             {
                 var go = new GameObject("MusicPlayer");

@@ -24,11 +24,13 @@ namespace CivilizationEvolution.War
         public float supplyConsumption; // 每日补给消耗
 
         // 招募消耗
-        public Dictionary<int, float> recruitCost; // goodsId -> 数量
+        [NonSerialized] Dictionary<int, float> recruitCost; // goodsId -> 数量
+
         public float manpowerCost; // 人力消耗
 
         // 地形偏好
-        public Dictionary<GameEnums.TerrainTacticType, float> terrainModifiers;
+        [NonSerialized] Dictionary<GameEnums.TerrainTacticType, float> terrainModifiers;
+
 
         /// <summary>
         /// 解锁前置革新（用户定稿：兵种必须有对应革新才能征募——重骑兵需马镫等）
@@ -48,7 +50,8 @@ namespace CivilizationEvolution.War
         public int currentTileIndex;
 
         // 兵力块：unitId -> 数量
-        public Dictionary<int, float> unitCounts = new Dictionary<int, float>();
+        [NonSerialized] Dictionary<int, float> unitCounts = new Dictionary<int, float>();
+
 
         // 状态
         public GameEnums.CombatState state = GameEnums.CombatState.Idle;

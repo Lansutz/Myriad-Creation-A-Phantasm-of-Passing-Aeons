@@ -61,8 +61,10 @@ namespace CivilizationEvolution.Race
         }
 
         [Header("经济偏好")]
-        public Dictionary<GameEnums.GoodsCategory, float> productionModifiers = new Dictionary<GameEnums.GoodsCategory, float>();
-        public Dictionary<GameEnums.GoodsCategory, float> consumptionModifiers = new Dictionary<GameEnums.GoodsCategory, float>();
+        [NonSerialized] Dictionary<GameEnums.GoodsCategory, float> productionModifiers = new Dictionary<GameEnums.GoodsCategory, float>();
+
+        [NonSerialized] Dictionary<GameEnums.GoodsCategory, float> consumptionModifiers = new Dictionary<GameEnums.GoodsCategory, float>();
+
 
         [Header("军事偏好")]
         [Range(0.5f, 2.0f)] public float infantryBonus = 1.0f;
