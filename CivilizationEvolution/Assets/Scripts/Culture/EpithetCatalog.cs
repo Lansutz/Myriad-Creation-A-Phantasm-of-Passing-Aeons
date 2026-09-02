@@ -179,6 +179,22 @@ namespace CivilizationEvolution.Culture
             Add("epithet_eagle", "鹰", EpithetConnotation.Positive, EpithetTier.Common,
                 "the Eagle——威仪+大捷+高荣誉（帝国形象——动物系补全）");
 
+            // ===== 女性专属绰号（史实——女性特有境遇：未婚/疯囚/太后/圣洁/美貌/残酷贬称） =====
+            Add("epithet_virgin_queen", "童贞女王", EpithetConnotation.Positive, EpithetTier.Common,
+                "the Virgin Queen——终身未婚的女王——伊丽莎白一世");
+            Add("epithet_mad_woman", "疯女", EpithetConnotation.Neutral, EpithetTier.Common,
+                "la Loca——女性+精神疾病[真疯或被污名]——疯女胡安娜——女性版'疯子'");
+            Add("epithet_rich_woman", "富女", EpithetConnotation.Neutral, EpithetTier.Common,
+                "the Rich——富国/巨额继承的女君——勃艮第的玛丽");
+            Add("epithet_holy_maiden", "圣女", EpithetConnotation.Positive, EpithetTier.Common,
+                "La Pucelle——女性封圣[殉道/圣洁]——圣女贞德——圣者女性版");
+            Add("epithet_she_wolf", "母狼", EpithetConnotation.Negative, EpithetTier.Common,
+                "the She-Wolf——女性残酷叛逆[低悲悯+密谋/篡]——法兰西的伊莎贝拉");
+            Add("epithet_black_queen", "黑王后", EpithetConnotation.Negative, EpithetTier.Common,
+                "the Black Queen——摄政太后+阴谋——凯瑟琳·德·美第奇");
+            Add("epithet_belle", "美人", EpithetConnotation.Positive, EpithetTier.Common,
+                "la Belle——女性俊美——美男子女性版");
+
             // ===== 王级（统治者化历史形象——苛刻） =====
             Add("epithet_mad_king", "疯王", EpithetConnotation.Negative, EpithetTier.Kingly,
                 "NPD 式统治风格（未必有病）：自恋傲慢[arrogant]+偏执[paranoid]+喜怒无常[高报复+低理性]+任性妄为[高大胆+低荣誉]——卡利古拉/尼禄");

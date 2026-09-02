@@ -180,14 +180,36 @@ namespace CivilizationEvolution.Culture
             // ===== ③ 普通绰号（中性事实——行为/性格判定——先行） =====
             if (string.IsNullOrEmpty(c.epithet))
             {
-                // 疯子（临床精神疾病——mentalDisorderId——任何身份——非疯王）
+                // 疯子/疯女（临床精神疾病——按性别：男性=疯子/女性=疯女[胡安娜式]）
                 if (!string.IsNullOrEmpty(c.mentalDisorderId))
-                    return GrantEpithet(c, "疯子") ? "疯子" : "";
+                    return GrantEpithet(c, c.isMale ? "疯子" : "疯女") ? (c.isMale ? "疯子" : "疯女") : "";
                 // 无冠者（实权无冕——非在位君主但达成君主级成就——宫相式——
                 // 身份型综合先于行为型绰号判定）
                 if (!isRuler && EvaluationSystem.CalculateScore(rec) >= 550f &&
                     (rec.warsWon >= 5 || rec.conquests >= 3 || rec.reignYears >= 10f))
                     return GrantEpithet(c, "无冠者") ? "无冠者" : "";
+
+                // ===== 女性专有判定（女性特有境遇——先于通用行为型） =====
+                if (!c.isMale)
+                {
+                    // 圣女（女性封圣——贞德式——圣者女性版）
+                    if (rec.canonized) return GrantEpithet(c, "圣女") ? "圣女" : "";
+                    // 童贞女王（终身未婚的女王——死时无配偶）
+                    if (isRuler && c.spouseId < 0 && rec.reignYears >= 5f)
+                        return GrantEpithet(c, "童贞女王") ? "童贞女王" : "";
+                    // 母狼（女性残酷叛逆——密谋+低悲悯+报复——伊莎贝拉式）
+                    if (c.compassion < -30f && c.vengefulness > 40f && rec.schemesSucceeded >= 3)
+                        return GrantEpithet(c, "母狼") ? "母狼" : "";
+                    // 黑王后（女性统治者/摄政+阴谋——凯瑟琳·德·美第奇式）
+                    if (isRuler && rec.schemesSucceeded >= 5 && c.honor < 0f)
+                        return GrantEpithet(c, "黑王后") ? "黑王后" : "";
+                    // 富女（富国/富庶稳定女君——勃艮第玛丽式）
+                    if (isRuler && rec.reignYears >= 15f && !rec.famineUnderRule
+                        && rec.rebellions == 0)
+                        return GrantEpithet(c, "富女") ? "富女" : "";
+                    // 美人（女性俊美——bodyMarks——美男子女性版）
+                    if (HasBodyMark(c, "俊美")) return GrantEpithet(c, "美人") ? "美人" : "";
+                }
 
                 // 年轻者（青年路易二世式讽刺：幼年即位[<16]是事实——不够老练才是
                 // 核心语义——被摄政架空或决策反复[低理性]——幼稚暗讽）
@@ -287,8 +309,9 @@ namespace CivilizationEvolution.Culture
                 if (c.obesity > 70f) return GrantEpithet(c, "胖子") ? "胖子" : "";
                 // 篡位者（篡位上位）
                 if (rec.usurpedThrone) return GrantEpithet(c, "篡位者") ? "篡位者" : "";
-                // 恐怖者（暴政恐惧统治——低悲悯+镇压+在位久）
-                if (c.compassion < -60f && (rec.threatsResolved >= 3 || rec.warsWon >= 5)
+                // 恐怖者（暴政恐惧统治——低悲悯+镇压[屠城/平叛/征伐]+在位久——伊凡雷帝）
+                if (c.compassion < -60f &&
+                    (rec.threatsResolved >= 3 || rec.warsWon >= 5 || rec.massacres >= 1)
                     && rec.reignYears >= 10f)
                     return GrantEpithet(c, "恐怖者") ? "恐怖者" : "";
                 // 和平者（在位久+无战）

@@ -354,5 +354,53 @@ namespace CivilizationEvolution.Tests
             };
             Assert.AreNotEqual("年轻者", EpithetSystem.EvaluateAndGrant(capable, rec2), "幼主英明→非年轻者");
         }
+
+        [Test]
+        public void Epithet_FemaleSpecific()
+        {
+            var cm2 = new CharacterManager();
+
+            // 童贞女王（女性统治者+终身未婚）
+            var elizabeth = cm2.CreateCharacter("伊", "丽莎白", 60, false, 0, 0, 0, CharacterRole.Ruler);
+            elizabeth.compassion = 30f; elizabeth.rationality = 40f;
+            var rec = new EvaluationSystem.AchievementRecord { reignYears = 30f, warsWon = 3 };
+            Assert.AreEqual("童贞女王", EpithetSystem.EvaluateAndGrant(elizabeth, rec), "未婚女王→童贞女王");
+
+            // 疯女（女性+精神疾病——胡安娜式——男性则疯子）
+            var joan = cm2.CreateCharacter("胡", "安娜", 50, false, 0, 0, 0, CharacterRole.Ruler);
+            joan.mentalDisorderId = "melancholy";
+            var rec2 = new EvaluationSystem.AchievementRecord { reignYears = 10f };
+            Assert.AreEqual("疯女", EpithetSystem.EvaluateAndGrant(joan, rec2), "女性精神疾病→疯女");
+
+            // 血腥玛丽（女性统治者+镇压）
+            // 女性镇压者→屠夫[通用——血腥玛丽=人名化专称不作通用绰号]
+            var mary = cm2.CreateCharacter("玛", "丽", 40, false, 0, 0, 0, CharacterRole.Ruler);
+            mary.compassion = -70f;
+            mary.spouseId = 1;
+            var rec3 = new EvaluationSystem.AchievementRecord { massacres = 2, reignYears = 12f };
+            Assert.AreEqual("屠夫", EpithetSystem.EvaluateAndGrant(mary, rec3), "女性屠城者→屠夫[通用]");
+
+            // 圣女（女性封圣）
+            var joanArc = cm2.CreateCharacter("贞", "德", 30, false, 0, 0, 0, CharacterRole.Commoner);
+            joanArc.deathDay = 1;
+            var rec4 = new EvaluationSystem.AchievementRecord { canonized = true };
+            Assert.AreEqual("圣女", EpithetSystem.EvaluateAndGrant(joanArc, rec4), "女性封圣→圣女");
+
+            // 美人（女性俊美——空成就 rec——不误触圣女）
+            var belle = cm2.CreateCharacter("美", "人", 30, false, 0, 0, 0, CharacterRole.Noble);
+            belle.bodyMarks.Add("俊美");
+            var recBelle = new EvaluationSystem.AchievementRecord();
+            Assert.AreEqual("美人", EpithetSystem.EvaluateAndGrant(belle, recBelle), "女性俊美→美人");
+
+            // 女性行为绰号通用（已婚女性征服者→征服者——不分性别——
+            // 女性专有不命中[已婚非圣女等]才走通用行为型）
+            var conqueress = cm2.CreateCharacter("女", "王", 50, false, 0, 0, 0, CharacterRole.Ruler);
+            conqueress.spouseId = 1; // 已婚（不触发童贞女王）
+            conqueress.boldness = 0f; conqueress.greed = 0f; conqueress.honor = 0f;
+            conqueress.rationality = 0f; conqueress.vengefulness = 0f; conqueress.piety = 0f;
+            conqueress.compassion = 0f;
+            var rec5 = new EvaluationSystem.AchievementRecord { conquests = 6, warsWon = 3, reignYears = 10f };
+            Assert.AreEqual("征服者", EpithetSystem.EvaluateAndGrant(conqueress, rec5), "已婚女性征服者→征服者通用");
+        }
     }
 }
