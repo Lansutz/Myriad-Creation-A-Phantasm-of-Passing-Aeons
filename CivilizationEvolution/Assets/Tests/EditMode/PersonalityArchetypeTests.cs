@@ -67,13 +67,77 @@ namespace CivilizationEvolution.Tests
         }
 
         [Test]
+        public void EvaluationLevels_OrderAndScores()
+        {
+            // 8 级评价（传奇>卓越>杰出>优秀>平平>平庸>无名>遗臭）
+            Assert.AreEqual(EvaluationLevel.Legendary, EvaluationSystem.LevelFromScore(950f), "950→传奇");
+            Assert.AreEqual(EvaluationLevel.Preeminent, EvaluationSystem.LevelFromScore(800f), "800→卓越");
+            Assert.AreEqual(EvaluationLevel.Distinguished, EvaluationSystem.LevelFromScore(600f), "600→杰出");
+            Assert.AreEqual(EvaluationLevel.Excellent, EvaluationSystem.LevelFromScore(400f), "400→优秀");
+            Assert.AreEqual(EvaluationLevel.Mediocre, EvaluationSystem.LevelFromScore(250f), "250→平平");
+            Assert.AreEqual(EvaluationLevel.Ordinary, EvaluationSystem.LevelFromScore(150f), "150→平庸");
+            Assert.AreEqual(EvaluationLevel.Obscure, EvaluationSystem.LevelFromScore(50f), "50→无名");
+            Assert.AreEqual(EvaluationLevel.Infamous, EvaluationSystem.LevelFromScore(-50f), "负分→遗臭");
+
+            // 等级名（评价词非绰号——无"伟大"）
+            Assert.AreEqual("卓越", EvaluationSystem.LevelName(EvaluationLevel.Preeminent), "卓越级名");
+            Assert.AreEqual("传奇", EvaluationSystem.LevelName(EvaluationLevel.Legendary), "传奇级名");
+        }
+
+        [Test]
+        public void Epithet_EvaluateAndGrant_Tiers()
+        {
+            // 普通绰号（征服者——行为阈值）
+            var conqueror = _cm.CreateCharacter("征", "者", 60, true, 0, 0, 0, CharacterRole.Ruler);
+            var rec = new EvaluationSystem.AchievementRecord { warsWon = 4, conquests = 6 };
+            Assert.AreEqual("征服者", EpithetSystem.EvaluateAndGrant(conqueror, rec), "征服 6 块→征服者");
+
+            // 狐狸（诈术——不覆盖已有）
+            var fox = _cm.CreateCharacter("狡", "狐", 60, true, 0, 0, 0, CharacterRole.Ruler);
+            var recFox = new EvaluationSystem.AchievementRecord { schemesSucceeded = 6 };
+            Assert.AreEqual("狐狸", EpithetSystem.EvaluateAndGrant(fox, recFox), "诈术 6 次→狐狸");
+
+            // 伟大者（区域影响力≥0.6——独立于成就分——阿尔弗雷德式：
+            // 未控全英格兰但区域内影响力大——发放较多——不是严苛评价）
+            var great = _cm.CreateCharacter("中", "兴", 60, true, 0, 0, 0, CharacterRole.Ruler);
+            var recGreat = new EvaluationSystem.AchievementRecord
+            {
+                warsWon = 2, conquests = 1, reignYears = 25f, // 成就一般——评价不高
+                regionalInfluence = 0.7f                       // 但区域内影响力前列
+            };
+            Assert.AreEqual("伟大者", EpithetSystem.EvaluateAndGrant(great, recGreat), "区域影响力前列→伟大者");
+
+            // 区域影响力不足（0.4）→ 不给伟大者（普通绰号照常）
+            var minor = _cm.CreateCharacter("小", "邦", 60, true, 0, 0, 0, CharacterRole.Ruler);
+            var recMinor = new EvaluationSystem.AchievementRecord
+            {
+                warsWon = 4, conquests = 6, regionalInfluence = 0.3f
+            };
+            Assert.AreEqual("征服者", EpithetSystem.EvaluateAndGrant(minor, recMinor), "影响力不足→征服者非伟大者");
+
+            // 传奇升格（征服王——传奇线 900+ 跨文化大征服——覆盖普通绰号）
+            var alexander = _cm.CreateCharacter("亚", "历山大", 60, true, 0, 0, 0, CharacterRole.Ruler);
+            var recLeg = new EvaluationSystem.AchievementRecord
+            {
+                warsWon = 20, conquests = 15, expeditions = 5, cultureActs = 3, religionActs = 1,
+                reignYears = 13f
+            }; // 20*30+15*40+5*45+50 = 1475 → 传奇
+            Assert.AreEqual("征服王", EpithetSystem.EvaluateAndGrant(alexander, recLeg), "跨文化大征服→征服王（覆盖）");
+
+            // 无地者（反讽中性）
+            var landless = _cm.CreateCharacter("无", "地", 60, true, 0, 0, 0, CharacterRole.Ruler);
+            var recLand = new EvaluationSystem.AchievementRecord { lostAllLands = 1 };
+            Assert.AreEqual("无地者", EpithetSystem.EvaluateAndGrant(landless, recLand), "失地→无地者");
+        }
+
+        [Test]
         public void Epithet_GrantAndPosthumous()
         {
-            // 绰号：行为成就授予（一次不覆盖）
+            // 绰号：直接授予（一次不覆盖）
             var c = _cm.CreateCharacter("征", "者", 60, true, 0, 0, 0, CharacterRole.Ruler);
-            Assert.IsTrue(EpithetSystem.TryGrantEpithet(c, "征服者"), "授予绰号");
+            Assert.IsTrue(EpithetSystem.GrantEpithet(c, "征服者"), "授予绰号");
             Assert.AreEqual("征服者", c.epithet, "绰号记录");
-            Assert.IsFalse(EpithetSystem.TryGrantEpithet(c, "大冒险家"), "已有绰号不覆盖");
+            Assert.IsFalse(EpithetSystem.GrantEpithet(c, "大冒险家"), "已有绰号不覆盖");
 
             // 谥号：华夏式（行为定谥——显式设全七维防隐性随机）
             var martial = _cm.CreateCharacter("武", "功", 60, true, 0, 0, 0, CharacterRole.Ruler);

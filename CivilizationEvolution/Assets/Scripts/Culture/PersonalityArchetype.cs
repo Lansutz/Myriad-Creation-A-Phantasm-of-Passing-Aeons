@@ -109,18 +109,78 @@ namespace CivilizationEvolution.Culture
 
     /// <summary>
     /// 称号/绰号/诨号系统（行为后验荣誉——与原型[性格画像]分离）：
-    /// 生前：行为成就→绰号（征服者/大冒险家……）
-    /// 死后：谥号/尊号（华夏式——按一生行为定谥：文/武/明/仁 vs 厉/灵/幽）
+    /// 三档：普通绰号（中性事实——征服者/狐狸/狮子……）→
+    /// 伟大者 the Great（评价≥优秀线——区域影响力中等偏上——发放较多——
+    /// 历史参照：阿尔弗雷德/卡努特——不是严苛评价）→
+    /// 传奇特殊（征服王/冒险王/诗人王——传奇线+领域——极难——亚历山大级）
+    /// 谥号（死后——华夏式——按一生行为定谥）
     /// </summary>
     public static class EpithetSystem
     {
-        /// <summary>授予绰号（行为成就阈值判定——一次授予不覆盖）</summary>
-        public static bool TryGrantEpithet(CharacterData c, string epithet)
+        /// <summary>授予绰号（已有不覆盖——除非升格传奇）</summary>
+        public static bool GrantEpithet(CharacterData c, string epithet)
         {
             if (c == null || string.IsNullOrEmpty(epithet)) return false;
-            if (!string.IsNullOrEmpty(c.epithet)) return false; // 已有绰号不覆盖
+            if (!string.IsNullOrEmpty(c.epithet)) return false;
             c.epithet = epithet;
             return true;
+        }
+
+        /// <summary>传奇升格（征服者→征服王——覆盖普通绰号）</summary>
+        public static bool PromoteToLegendary(CharacterData c, string legendaryEpithet)
+        {
+            if (c == null || string.IsNullOrEmpty(legendaryEpithet)) return false;
+            c.epithet = legendaryEpithet; // 覆盖（一生最终评价）
+            return true;
+        }
+
+        /// <summary>
+        /// 行为评估并授予绰号（返回授予的绰号——空=未达任何条件）：
+        /// 普通绰号=单项行为阈值；伟大者=评价≥优秀（350）；传奇=评价≥传奇（900）+领域
+        /// </summary>
+        public static string EvaluateAndGrant(CharacterData c, EvaluationSystem.AchievementRecord rec)
+        {
+            if (c == null) return "";
+            float score = EvaluationSystem.CalculateScore(rec);
+            EvaluationLevel level = EvaluationSystem.LevelFromScore(score);
+
+            // 1. 传奇特殊（900+ 传奇线——极难——领域专属——覆盖一切）
+            if (level >= EvaluationLevel.Legendary)
+            {
+                if (rec.conquests >= 12 && rec.expeditions >= 3)
+                    return PromoteToLegendary(c, "征服王") ? "征服王" : c.epithet;
+                if (rec.expeditions >= 10)
+                    return PromoteToLegendary(c, "冒险王") ? "冒险王" : c.epithet;
+                if (rec.cultureActs >= 15)
+                    return PromoteToLegendary(c, "诗人王") ? "诗人王" : c.epithet;
+            }
+
+            // 2. 普通绰号（中性事实——单项行为——先行——不看评价——
+            // 征服 5 块就是"征服者"——哪怕总体评价平平）
+            if (string.IsNullOrEmpty(c.epithet))
+            {
+                if (rec.conquests >= 5) return GrantEpithet(c, "征服者") ? "征服者" : "";
+                if (rec.schemesSucceeded >= 5) return GrantEpithet(c, "狐狸") ? "狐狸" : "";
+                if (rec.warsWon >= 8 && rec.conquests >= 2) return GrantEpithet(c, "狮子") ? "狮子" : "";
+                if (rec.cultureActs >= 6) return GrantEpithet(c, "智者") ? "智者" : "";
+                if (rec.religionActs >= 6) return GrantEpithet(c, "虔诚者") ? "虔诚者" : "";
+                if (rec.threatsResolved >= 5) return GrantEpithet(c, "警觉者") ? "警觉者" : "";
+                if (rec.expeditions >= 4) return GrantEpithet(c, "大胆者") ? "大胆者" : "";
+                if (rec.lostAllLands > 0 && rec.conquests == 0) return GrantEpithet(c, "无地者") ? "无地者" : "";
+            }
+
+            // 3. 伟大者 the Great（区域影响力判定——独立于成就分——
+            // ≥0.6=区域内前列[中等偏上]——阿尔弗雷德式：未控全英格兰但
+            // 区域内影响力大——发放较多——历史：曼努埃尔[用户认为不够格]/
+            // 科穆宁家约翰未得而曼努埃尔得=历史给法混乱——我们以区域影响力为准）
+            if (rec.regionalInfluence >= 0.6f)
+            {
+                if (GrantEpithet(c, "伟大者"))
+                {
+                    return "伟大者";
+                }
+            }
+            return c.epithet;
         }
 
         /// <summary>
