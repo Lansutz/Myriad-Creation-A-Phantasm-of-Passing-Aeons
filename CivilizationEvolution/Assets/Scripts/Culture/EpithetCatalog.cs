@@ -132,8 +132,7 @@ namespace CivilizationEvolution.Culture
             Add("epithet_great", "伟大者", EpithetConnotation.Positive, EpithetTier.Great,
                 "区域影响力≥0.6[区域内前列·中等偏上]——阿尔弗雷德式——发放较多非严苛");
             Add("epithet_holy_king", "圣君", EpithetConnotation.Positive, EpithetTier.Kingly,
-                "在位圣明[尧舜式]——德行×治理双极致：评价≥卓越[750]+悲悯荣誉双高[60+]+
-                无饥荒少叛乱——王级苛刻——几乎不可得——与圣者[死后封圣·普通]区分");
+                "在位圣明[尧舜式]——德行×治理双极致：评价≥卓越+悲悯荣誉双高+无饥荒少叛乱——王级苛刻——与圣者[死后封圣]区分");
         }
     }
 }
