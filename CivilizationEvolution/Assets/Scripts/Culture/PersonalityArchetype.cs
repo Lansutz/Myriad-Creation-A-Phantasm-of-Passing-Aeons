@@ -237,8 +237,19 @@ namespace CivilizationEvolution.Culture
                         case "失明": granted = "瞎子"; break;
                         case "矮小": granted = "矮子"; break;
                         case "红须": granted = "红胡子"; break;
-                        case "黑色": granted = isRuler ? "黑王" : HasPrinceRole(c) ? "黑王子" : "黑者"; break;
-                        case "白色": granted = isRuler ? "白王" : HasPrinceRole(c) ? "白王子" : "白者"; break;
+                        // 黑/白=军事贵族成对体系（甲色/发色形象——按身份阶梯）：
+                        // 骑士→黑/白骑士；继承人/贵族→黑/白王子；君主→黑/白王
+                        case "黑色":
+                            granted = isRuler ? "黑王" : HasPrinceRole(c) ? "黑王子"
+                                : c.role == CharacterRole.Military ? "黑骑士" : null;
+                            break;
+                        case "白色":
+                            granted = isRuler ? "白王" : HasPrinceRole(c) ? "白王子"
+                                : c.role == CharacterRole.Military ? "白骑士" : null;
+                            break;
+                        case "金发": granted = "美发者"; break;
+                        case "白发": granted = "白发者"; break;
+                        case "黑发": granted = "黑发者"; break;
                     }
                     if (granted != null) return GrantEpithet(c, granted) ? granted : "";
                 }

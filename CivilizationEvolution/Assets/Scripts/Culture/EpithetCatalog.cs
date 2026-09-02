@@ -93,17 +93,23 @@ namespace CivilizationEvolution.Culture
             Add("epithet_lame", "瘸子", EpithetConnotation.Neutral, EpithetTier.Common, "跛足——提摩太·瘸子");
             Add("epithet_blind", "瞎子", EpithetConnotation.Neutral, EpithetTier.Common, "失明——瞎子约翰[波希米亚]");
             Add("epithet_short", "矮子", EpithetConnotation.Neutral, EpithetTier.Common, "矮小——矮子丕平");
-            Add("epithet_black", "黑者", EpithetConnotation.Neutral, EpithetTier.Common, "黑甲/黑发——黑王子爱德华");
-            Add("epithet_white", "白者", EpithetConnotation.Neutral, EpithetTier.Common, "白袍/白发——白王（成对体系）");
+            Add("epithet_fairhair", "美发者", EpithetConnotation.Positive, EpithetTier.Common,
+                "金发——美发哈拉尔德（发色自然系——任何身份）");
+            Add("epithet_whitehair", "白发者", EpithetConnotation.Neutral, EpithetTier.Common, "白发——发色自然系（任何身份）");
+            Add("epithet_blackhair", "黑发者", EpithetConnotation.Neutral, EpithetTier.Common, "黑发——发色自然系（任何身份）");
+            Add("epithet_black_knight", "黑骑士", EpithetConnotation.Neutral, EpithetTier.Common,
+                "黑甲+骑士身份——军事贵族成对体系第一级");
+            Add("epithet_white_knight", "白骑士", EpithetConnotation.Neutral, EpithetTier.Common,
+                "白甲+骑士身份——成对体系（圣殿骑士白袍形象）");
             Add("epithet_redbeard", "红胡子", EpithetConnotation.Neutral, EpithetTier.Common, "红须——巴巴罗萨");
             Add("epithet_black_prince", "黑王子", EpithetConnotation.Neutral, EpithetTier.Common,
-                "黑色特征[黑甲/黑发]+继承人/贵族——黑王子爱德华（成对体系——有黑必有白）");
+                "黑甲/黑发+继承人/贵族——黑王子爱德华（军事贵族成对体系——平民不适用）");
             Add("epithet_white_prince", "白王子", EpithetConnotation.Neutral, EpithetTier.Common,
-                "白色特征[白袍/白发]+继承人/贵族——成对体系");
+                "白甲/白发+继承人/贵族——成对体系（军事贵族专属）");
             Add("epithet_black_king", "黑王", EpithetConnotation.Neutral, EpithetTier.Kingly,
-                "黑色特征+在位君主——黑王（成对体系）");
+                "黑甲/黑发+在位君主——黑王（亲征/发色形象）");
             Add("epithet_white_king", "白王", EpithetConnotation.Neutral, EpithetTier.Kingly,
-                "白色特征+在位君主——白王（成对体系）");
+                "白甲/白发+在位君主——白王（形象）");
 
             // ===== 贬讽型 =====
             Add("epithet_landless", "无地者", EpithetConnotation.Negative, EpithetTier.Common, "失地——无地王约翰（调侃）");

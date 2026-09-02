@@ -232,6 +232,19 @@ namespace CivilizationEvolution.Tests
             whiteKing.bodyMarks.Add("白色");
             Assert.AreEqual("白王", EpithetSystem.EvaluateAndGrant(whiteKing, rec), "白色+君主→白王");
 
+            // 骑士级成对（军事身份——黑甲→黑骑士）
+            var blackKnight = _cm4.CreateCharacter("黑", "骑", 30, true, 0, 0, 0, CharacterRole.Military);
+            blackKnight.bodyMarks.Add("黑色");
+            Assert.AreEqual("黑骑士", EpithetSystem.EvaluateAndGrant(blackKnight, rec), "黑甲+骑士→黑骑士");
+
+            // 平民黑色标记→无黑白绰号（甲色系与平民无关——发色自然系另给）
+            var peasant = _cm4.CreateCharacter("农", "夫", 40, true, 0, 0, 0, CharacterRole.Commoner);
+            peasant.bodyMarks.Add("黑色");
+            Assert.AreEqual("", EpithetSystem.EvaluateAndGrant(peasant, rec), "平民黑甲标记→无黑白绰号");
+            peasant.bodyMarks.Clear();
+            peasant.bodyMarks.Add("金发");
+            Assert.AreEqual("美发者", EpithetSystem.EvaluateAndGrant(peasant, rec), "金发→美发者（任何身份）");
+
             // catalog 查询（语义色彩/成对完整）
             Assert.IsNotNull(EpithetCatalog.Get("epithet_black_king"), "黑王在册");
             Assert.IsNotNull(EpithetCatalog.Get("epithet_white_prince"), "白王子在册（成对）");
