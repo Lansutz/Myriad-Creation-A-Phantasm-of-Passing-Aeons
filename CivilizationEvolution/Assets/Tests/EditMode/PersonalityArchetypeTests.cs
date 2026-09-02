@@ -304,5 +304,31 @@ namespace CivilizationEvolution.Tests
             var recT = new EvaluationSystem.AchievementRecord { reignYears = 12f, rebellions = 4 };
             Assert.AreEqual("被憎恨者", EpithetSystem.EvaluateAndGrant(hated, recT), "叛乱多苛政→被憎恨者");
         }
+
+        [Test]
+        public void Epithet_Crownless_PowerWithoutCrown()
+        {
+            // 无冠者：非在位君主但达成君主级成就（宫相查理·马特式）
+            var cm2 = new CharacterManager();
+            var mayor = cm2.CreateCharacter("马", "特", 60, true, 0, 0, 0, CharacterRole.Military);
+            mayor.boldness = 0f; mayor.greed = 0f; mayor.honor = 20f;
+            mayor.rationality = 0f; mayor.vengefulness = 0f; mayor.piety = 0f;
+            mayor.compassion = 0f;
+            var rec = new EvaluationSystem.AchievementRecord
+            {
+                warsWon = 8, defensiveWins = 4, reignYears = 15f, expeditions = 2, cultureActs = 1
+            }; // 50+240+100+15=405——不足 550？——warsWon 8*30=240+defensive 4*25=100+reign?
+            // CalculateScore 无 reignYears 分——405——补 conquests
+            rec.conquests = 3; // +120 → 525？仍不足——加 warsWon 12 → 645 ✓
+            rec.warsWon = 12;
+            Assert.AreEqual("无冠者", EpithetSystem.EvaluateAndGrant(mayor, rec), "军事实权无冕→无冠者");
+
+            // 在位君主不给无冠者（有冕）
+            var king = cm2.CreateCharacter("王", "者", 60, true, 0, 0, 0, CharacterRole.Ruler);
+            king.boldness = 0f; king.greed = 0f; king.honor = 0f;
+            king.rationality = 0f; king.vengefulness = 0f; king.piety = 0f; king.compassion = 0f;
+            var rec2 = new EvaluationSystem.AchievementRecord { warsWon = 12, conquests = 3, reignYears = 15f };
+            Assert.AreNotEqual("无冠者", EpithetSystem.EvaluateAndGrant(king, rec2), "在位君主非无冠者");
+        }
     }
 }

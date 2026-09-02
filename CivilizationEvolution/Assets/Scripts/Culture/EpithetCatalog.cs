@@ -135,6 +135,8 @@ namespace CivilizationEvolution.Culture
                 "无叛乱+宽仁+在位久（民心所向）");
             Add("epithet_hated", "被憎恨者", EpithetConnotation.Negative, EpithetTier.Common,
                 "叛乱多+苛政（与受爱戴者对立）");
+            Add("epithet_crownless", "无冠者", EpithetConnotation.Neutral, EpithetTier.Common,
+                "实权无冕——非在位君主但达成君主级成就（宫相查理·马特式——摄政掌权者）");
             Add("epithet_peaceful", "和平者", EpithetConnotation.Positive, EpithetTier.Common,
                 "在位久+无战+外交成就（和平缔造者）");
             Add("epithet_scholar", "学者", EpithetConnotation.Positive, EpithetTier.Common,

@@ -183,6 +183,11 @@ namespace CivilizationEvolution.Culture
                 // 疯子（临床精神疾病——mentalDisorderId——任何身份——非疯王）
                 if (!string.IsNullOrEmpty(c.mentalDisorderId))
                     return GrantEpithet(c, "疯子") ? "疯子" : "";
+                // 无冠者（实权无冕——非在位君主但达成君主级成就——宫相式——
+                // 身份型综合先于行为型绰号判定）
+                if (!isRuler && EvaluationSystem.CalculateScore(rec) >= 550f &&
+                    (rec.warsWon >= 5 || rec.conquests >= 3 || rec.reignYears >= 10f))
+                    return GrantEpithet(c, "无冠者") ? "无冠者" : "";
                 // 征服者
                 if (rec.conquests >= 5) return GrantEpithet(c, "征服者") ? "征服者" : "";
                 // 狐狸（诈术）
