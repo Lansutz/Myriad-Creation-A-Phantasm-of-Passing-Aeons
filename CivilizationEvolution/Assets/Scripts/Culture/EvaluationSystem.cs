@@ -68,6 +68,11 @@ namespace CivilizationEvolution.Culture
             public int religionActs;     // 宗教（建寺/朝圣/护教）
             public int faithChanges;     // 改宗次数（叛教者判定）
             public int defeatedBattles;  // 败仗（常胜者判定——无败仗）
+            public int massacres;        // 屠城（屠夫判定——负评价）
+            public int rebellions;       // 叛乱次数（受爱戴/被憎恨判定）
+            public int defensiveWins;    // 防御大捷（铁锤判定——打退入侵）
+            public bool usurpedThrone;   // 篡位上位（篡位者判定）
+            public bool canonized;       // 死后封圣（圣者判定——死亡结算传入）
             public int schemesSucceeded; // 诈术成功（外交欺诈/密谋）
             public int threatsResolved;  // 化解危机（叛乱/密谋/边境）
             public int expeditions;      // 远征/探险
@@ -91,6 +96,11 @@ namespace CivilizationEvolution.Culture
             s += r.poetryActs * 40f; // 诗作传世权重高（诗人王/诗人的成就源）
             s += r.religionActs * 25f;
             s -= r.defeatedBattles * 20f; // 败仗扣分
+            s -= r.massacres * 60f;      // 屠城重扣（暴行——屠夫绰号负评价）
+            s -= r.rebellions * 15f;     // 叛乱扣分（治理不稳）
+            s += r.defensiveWins * 25f;  // 卫国大捷加分
+            if (r.usurpedThrone) s -= 30f; // 篡位减分（合法性）
+            if (r.canonized) s += 80f;   // 封圣大加分
             s += r.schemesSucceeded * 20f;
             s += r.threatsResolved * 30f;
             s += r.expeditions * 45f;

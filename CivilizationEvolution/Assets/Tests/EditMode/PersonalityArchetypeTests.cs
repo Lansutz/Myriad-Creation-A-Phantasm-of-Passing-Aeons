@@ -251,5 +251,58 @@ namespace CivilizationEvolution.Tests
             Assert.AreEqual(EpithetConnotation.Dual, EpithetCatalog.Get("epithet_poet").connotation, "诗人=双向语义");
             Assert.AreEqual(EpithetConnotation.Negative, EpithetCatalog.Get("epithet_mad_king").connotation, "疯王=贬");
         }
+
+        [Test]
+        public void Epithet_SecondBatch_Judgments()
+        {
+            var cm2 = new CharacterManager();
+            var rec = new EvaluationSystem.AchievementRecord { reignYears = 10f };
+
+            // 屠夫（屠城）
+            var butcher = cm2.CreateCharacter("屠", "夫", 50, true, 0, 0, 0, CharacterRole.Ruler);
+            butcher.compassion = -80f;
+            var recB = new EvaluationSystem.AchievementRecord { massacres = 2 };
+            Assert.AreEqual("屠夫", EpithetSystem.EvaluateAndGrant(butcher, recB), "屠城→屠夫");
+
+            // 胖子（肥胖系统）
+            var fatty = cm2.CreateCharacter("胖", "子", 50, true, 0, 0, 0, CharacterRole.Ruler);
+            fatty.obesity = 80f;
+            Assert.AreEqual("胖子", EpithetSystem.EvaluateAndGrant(fatty, rec), "肥胖 80→胖子");
+
+            // 篡位者
+            var usurper = cm2.CreateCharacter("篡", "位", 50, true, 0, 0, 0, CharacterRole.Ruler);
+            var recU = new EvaluationSystem.AchievementRecord { usurpedThrone = true };
+            Assert.AreEqual("篡位者", EpithetSystem.EvaluateAndGrant(usurper, recU), "篡位→篡位者");
+
+            // 和平者（在位久无战）
+            var pacifist = cm2.CreateCharacter("和", "平", 50, true, 0, 0, 0, CharacterRole.Ruler);
+            pacifist.boldness = -40f; pacifist.compassion = 30f;
+            var recP = new EvaluationSystem.AchievementRecord { reignYears = 25f, rebellions = 2 };
+            // 有内乱但对外无战→和平者（公正者需无叛乱——区分）
+            Assert.AreEqual("和平者", EpithetSystem.EvaluateAndGrant(pacifist, recP), "对外无战在位久→和平者");
+
+            // 铁锤（防御大捷）
+            var hammer = cm2.CreateCharacter("铁", "锤", 50, true, 0, 0, 0, CharacterRole.Ruler);
+            hammer.compassion = 0f;
+            var recH = new EvaluationSystem.AchievementRecord { defensiveWins = 4, reignYears = 8f };
+            Assert.AreEqual("铁锤", EpithetSystem.EvaluateAndGrant(hammer, recH), "防御大捷 4→铁锤");
+
+            // 圣者（死后封圣——与圣君区分）
+            var saint = cm2.CreateCharacter("圣", "者", 70, true, 0, 0, 0, CharacterRole.Commoner);
+            saint.deathDay = 1; // 已死
+            var recS = new EvaluationSystem.AchievementRecord { canonized = true };
+            Assert.AreEqual("圣者", EpithetSystem.EvaluateAndGrant(saint, recS), "死后封圣→圣者");
+
+            // 受爱戴者 vs 被憎恨者
+            var beloved = cm2.CreateCharacter("爱", "民", 50, true, 0, 0, 0, CharacterRole.Ruler);
+            beloved.compassion = 60f; beloved.greed = -20f; beloved.honor = 40f;
+            var recL = new EvaluationSystem.AchievementRecord { reignYears = 20f, rebellions = 0 };
+            Assert.AreEqual("受爱戴者", EpithetSystem.EvaluateAndGrant(beloved, recL), "无叛乱宽仁→受爱戴者");
+
+            var hated = cm2.CreateCharacter("苛", "政", 50, true, 0, 0, 0, CharacterRole.Ruler);
+            hated.compassion = -50f;
+            var recT = new EvaluationSystem.AchievementRecord { reignYears = 12f, rebellions = 4 };
+            Assert.AreEqual("被憎恨者", EpithetSystem.EvaluateAndGrant(hated, recT), "叛乱多苛政→被憎恨者");
+        }
     }
 }

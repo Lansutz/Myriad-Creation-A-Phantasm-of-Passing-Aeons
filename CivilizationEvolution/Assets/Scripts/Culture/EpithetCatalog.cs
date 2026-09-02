@@ -118,6 +118,40 @@ namespace CivilizationEvolution.Culture
             Add("epithet_vassal_king", "儿皇帝", EpithetConnotation.Negative, EpithetTier.Common, "傀儡附庸君主——石敬瑭");
             Add("epithet_madman", "疯子", EpithetConnotation.Neutral, EpithetTier.Common, "精神疾病（临床——mentalDisorderId）——查理六世");
 
+            // ===== 第二批（行为/特征扩充——与既有系统接） =====
+            Add("epithet_butcher", "屠夫", EpithetConnotation.Negative, EpithetTier.Common,
+                "发动屠城/大屠杀（接 Massacre 系统）——残酷镇压者");
+            Add("epithet_fat", "胖子", EpithetConnotation.Neutral, EpithetTier.Common,
+                "肥胖值高（接肥胖系统——obesity>70）——胖子查理");
+            Add("epithet_lazy_king", "懒王", EpithetConnotation.Negative, EpithetTier.Common,
+                "长期不理政（在位久但零建树——权力旁落）——墨洛温懒王");
+            Add("epithet_usurper", "篡位者", EpithetConnotation.Negative, EpithetTier.Common,
+                "篡位/政变上位（接篡位机制）");
+            Add("epithet_terrible", "恐怖者", EpithetConnotation.Negative, EpithetTier.Common,
+                "暴政恐惧统治（低悲悯+镇压多+在位久）——伊凡雷帝");
+            Add("epithet_good", "好人", EpithetConnotation.Positive, EpithetTier.Common,
+                "综合评价正+宽仁无大过（较低门槛泛褒）——好人约翰");
+            Add("epithet_beloved", "受爱戴者", EpithetConnotation.Positive, EpithetTier.Common,
+                "无叛乱+宽仁+在位久（民心所向）");
+            Add("epithet_hated", "被憎恨者", EpithetConnotation.Negative, EpithetTier.Common,
+                "叛乱多+苛政（与受爱戴者对立）");
+            Add("epithet_peaceful", "和平者", EpithetConnotation.Positive, EpithetTier.Common,
+                "在位久+无战+外交成就（和平缔造者）");
+            Add("epithet_scholar", "学者", EpithetConnotation.Positive, EpithetTier.Common,
+                "文教学术成就高（比智者偏学术——学院/典籍——cultureActs≥10）");
+            Add("epithet_magnanimous", "宽宏者", EpithetConnotation.Positive, EpithetTier.Common,
+                "低贪婪+宽仁施散（与吝啬鬼成对）——阿方索五世");
+            Add("epithet_miser", "吝啬鬼", EpithetConnotation.Negative, EpithetTier.Common,
+                "高贪婪+聚敛（与宽宏者成对）——守财之君");
+            Add("epithet_fortunate", "幸运者", EpithetConnotation.Neutral, EpithetTier.Common,
+                "远征多+无败仗无饥荒（好事连连）——幸运者曼努埃尔[葡萄牙]");
+            Add("epithet_hammer", "铁锤", EpithetConnotation.Positive, EpithetTier.Common,
+                "防御大捷多次（卫国——打退入侵）——铁锤查理");
+            Add("epithet_apostle", "传道者", EpithetConnotation.Positive, EpithetTier.Common,
+                "宗教传播成就高（接传教系统——religionActs≥10）——改宗传播者");
+            Add("epithet_saint", "圣者", EpithetConnotation.Positive, EpithetTier.Common,
+                "死后封圣（联动封圣系统——canonized）——与圣君[在位]区分");
+
             // ===== 王级（统治者化历史形象——苛刻） =====
             Add("epithet_mad_king", "疯王", EpithetConnotation.Negative, EpithetTier.Kingly,
                 "NPD 式统治风格（未必有病）：自恋傲慢[arrogant]+偏执[paranoid]+喜怒无常[高报复+低理性]+任性妄为[高大胆+低荣誉]——卡利古拉/尼禄");

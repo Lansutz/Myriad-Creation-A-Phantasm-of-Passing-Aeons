@@ -209,11 +209,17 @@ namespace CivilizationEvolution.Culture
                 // 仁慈者（悲悯极高+少征战）
                 if (c.compassion > 60f && rec.warsWon <= 2)
                     return GrantEpithet(c, "仁慈者") ? "仁慈者" : "";
+                // 受爱戴者（无叛乱+宽仁+在位久——民心所向——先于公正者[司法]）
+                if (rec.rebellions == 0 && c.compassion >= 40f && rec.reignYears >= 15f)
+                    return GrantEpithet(c, "受爱戴者") ? "受爱戴者" : "";
+                // 被憎恨者（叛乱多+苛政——与受爱戴者对立）
+                if (rec.rebellions >= 3 && c.compassion < 0f)
+                    return GrantEpithet(c, "被憎恨者") ? "被憎恨者" : "";
                 // 无情者（悲悯极低+铁腕成就——冷酷统治——与仁慈者成对）
                 if (c.compassion < -60f && (rec.warsWon >= 3 || rec.threatsResolved >= 2))
                     return GrantEpithet(c, "无情者") ? "无情者" : "";
-                // 公正者（无饥荒+少叛乱+在位久）
-                if (!rec.famineUnderRule && rec.reignYears >= 15f)
+                // 公正者（司法稳定=无饥荒+无叛乱+在位久——与和平者[对外无战]区分）
+                if (!rec.famineUnderRule && rec.reignYears >= 15f && rec.rebellions == 0)
                     return GrantEpithet(c, "公正者") ? "公正者" : "";
                 // 谨慎者（低大胆+无败仗）
                 if (c.boldness < -40f && rec.defeatedBattles == 0 && rec.warsWon >= 1)
@@ -229,6 +235,49 @@ namespace CivilizationEvolution.Culture
                 // 狼（征服+低悲悯——残暴征战）
                 if (rec.conquests >= 4 && c.compassion < -40f)
                     return GrantEpithet(c, "狼") ? "狼" : "";
+            }
+
+            // ===== 第二批判定（行为/特征扩充） =====
+            if (string.IsNullOrEmpty(c.epithet))
+            {
+                // 屠夫（屠城——接 Massacre 系统）
+                if (rec.massacres >= 1) return GrantEpithet(c, "屠夫") ? "屠夫" : "";
+                // 胖子（肥胖值——接肥胖系统）
+                if (c.obesity > 70f) return GrantEpithet(c, "胖子") ? "胖子" : "";
+                // 篡位者（篡位上位）
+                if (rec.usurpedThrone) return GrantEpithet(c, "篡位者") ? "篡位者" : "";
+                // 恐怖者（暴政恐惧统治——低悲悯+镇压+在位久）
+                if (c.compassion < -60f && (rec.threatsResolved >= 3 || rec.warsWon >= 5)
+                    && rec.reignYears >= 10f)
+                    return GrantEpithet(c, "恐怖者") ? "恐怖者" : "";
+                // 和平者（在位久+无战）
+                if (rec.reignYears >= 20f && rec.warsWon == 0 && rec.conquests == 0)
+                    return GrantEpithet(c, "和平者") ? "和平者" : "";
+                // 学者（学术成就——高于智者门槛）
+                if (rec.cultureActs >= 10) return GrantEpithet(c, "学者") ? "学者" : "";
+                // 宽宏者（低贪婪+宽仁——与吝啬鬼成对）
+                if (c.greed < -40f && c.compassion >= 30f)
+                    return GrantEpithet(c, "宽宏者") ? "宽宏者" : "";
+                // 吝啬鬼（高贪婪聚敛）
+                if (c.greed > 60f) return GrantEpithet(c, "吝啬鬼") ? "吝啬鬼" : "";
+                // 幸运者（远征顺遂——好事连连）
+                if (rec.expeditions >= 4 && rec.defeatedBattles == 0 && !rec.famineUnderRule)
+                    return GrantEpithet(c, "幸运者") ? "幸运者" : "";
+                // 铁锤（防御大捷——卫国）
+                if (rec.defensiveWins >= 3) return GrantEpithet(c, "铁锤") ? "铁锤" : "";
+                // 传道者（宗教传播——高于虔诚者门槛）
+                if (rec.religionActs >= 10) return GrantEpithet(c, "传道者") ? "传道者" : "";
+                // 懒王（在位久+零建树——不理政被架空）
+                if (rec.reignYears >= 15f && rec.warsWon == 0 && rec.conquests == 0
+                    && rec.cultureActs == 0 && rec.religionActs == 0)
+                    return GrantEpithet(c, "懒王") ? "懒王" : "";
+                // 好人（综合评价正+宽仁无大过——低门槛泛褒）
+                float sc = EvaluationSystem.CalculateScore(rec);
+                if (sc >= 350f && c.compassion >= 30f && c.honor >= 30f && !rec.famineUnderRule
+                    && !rec.usurpedThrone)
+                    return GrantEpithet(c, "好人") ? "好人" : "";
+                // 圣者（死后封圣——联动封圣系统——死亡结算传入 canonized）
+                if (rec.canonized) return GrantEpithet(c, "圣者") ? "圣者" : "";
             }
 
             // ===== ④ 外貌/身体型（bodyMarks——事件/伤病写入——任何身份——
