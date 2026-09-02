@@ -50,6 +50,22 @@ namespace CivilizationEvolution.Culture
         /// <summary>主流传统标记（传播基准——大众实践；领袖传统=正统基准——
         /// 无领袖传统的宗教用共识[逊尼=乌里玛共识/多神=无中央标准]）</summary>
         public bool isMainstreamTradition = false;
+        /// <summary>
+        /// 仪式语言（口头仪式用语——礼拜/弥撒/祭祀进行时说的话——
+        /// 与日常语言分离——神圣性载体）：
+        /// 拉丁语[天主教弥撒]/教会斯拉夫语[东正教]/科普特语[科普特礼拜]/
+        /// 古典叙利亚语[叙利亚·亚述礼拜]/古典阿拉伯语[伊斯兰礼拜——必用]/
+        /// 文言[儒教祭祀祝辞]；原始崇拜=无（口语）
+        /// </summary>
+        public string liturgicalLanguage = "";
+        /// <summary>
+        /// 经典语言（圣典/经文写作语言——文本神圣性——经典不可译性）：
+        /// 希伯来语·希腊语[圣经原文]/拉丁语[武加大]/古典阿拉伯语[古兰经——
+        /// 不可译——礼拜必用原文]/巴利语[上座部三藏]/梵语[大乘经]/
+        /// 阿维斯陀语[祆教经]/文言[五经四书]——经典语言是神学的语言门槛
+        /// （改宗须习经典语言——识字阶层垄断神学解释）
+        /// </summary>
+        public string scripturalLanguage = "";
         /// <summary>支柱选择（该节点从 DoctrinePool 选的选项 id——教统的支柱
         /// 以领袖传统为准；选项差异=偏离度来源）</summary>
         public List<string> selectedDoctrines = new List<string>();

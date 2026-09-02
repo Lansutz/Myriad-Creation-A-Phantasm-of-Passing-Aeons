@@ -493,6 +493,9 @@ namespace CivilizationEvolution.Core
             // 8. 战争（战争闭环：同地块交战→分数→胜负判定→停战）
             _combatManager.DailyTick(armies, _wars, _diplomacyManager.WarRules, currentDay);
             UpdateFaithFervor(currentDay);
+
+            // 大圣战结算钩子（关联战争结束→圣战方胜→受益人谈判）
+            CheckGreatHolyWarSettlements();
             var endedWars = CombatManager.UpdateWarOutcomes(_wars, _diplomacyManager.WarRules, currentDay);
             foreach (var war in endedWars)
             {
@@ -1248,6 +1251,48 @@ namespace CivilizationEvolution.Core
             }
         }
 
+        /// <summary>大圣战结算检查（关联 WarState 结束→OnLinkedWarEnded——
+        /// 圣战方胜→受益人谈判[继承法线外者]——土地归受益人[简化：目标地块转移]）</summary>
+        private void CheckGreatHolyWarSettlements()
+        {
+            var active = new List<War.GreatHolyWarState>(War.GreatHolyWarSystem.ActiveWars);
+            foreach (var ghw in active)
+            {
+                if (ghw.ended) continue;
+                var linked = _wars.Find(w => w.warId == ghw.linkedWarId);
+                if (linked == null || !linked.ended) continue;
+
+                bool holySideWon = linked.winnerId == ghw.callerRealmId;
+                ghw.holySideWon = holySideWon;
+                var callerRealm = ghw.callerRealmId >= 0 && ghw.callerRealmId < realms.Count
+                    ? realms[ghw.callerRealmId] : null;
+                int beneficiary = War.GreatHolyWarSystem.Resolve(ghw, GetCharacterManager(),
+                    callerRealm, Mathf.Max(1, GetRealmDivisibleEstates(ghw.callerRealmId)),
+                    GetEffectiveLaw(ghw.callerRealmId));
+                if (holySideWon && beneficiary >= 0 && ghw.targetTile >= 0 && ghw.targetTile < tiles.Length)
+                {
+                    // 目标地块归受益人（新政权/附庸——简化：地块归属转移+编年史）
+                    tiles[ghw.targetTile].ownerRealmId = ghw.callerRealmId;
+                    _chronicle?.Add("religion",
+                        $"大圣战胜利：{GetCharacterName(beneficiary)} 受封圣地（地块 {ghw.targetTile}）",
+                        major: true, ghw.callerRealmId);
+                }
+                ghw.ended = true;
+            }
+            War.GreatHolyWarSystem.Cleanup();
+        }
+
+        private int GetRealmDivisibleEstates(int realmId) => 1; // 简化：领地可分数=1（细化待领地系统）
+
+        private Politics.InheritanceLaw GetEffectiveLaw(int realmId) => Politics.InheritanceLaw.Primogeniture(); // 简化：默认长子继承
+
+        private string GetCharacterName(int characterId)
+        {
+            var cm = GetCharacterManager();
+            var c = cm?.GetCharacter(characterId);
+            return c != null ? c.firstName + " " + c.lastName : characterId.ToString();
+        }
+
         /// <summary>
         /// 创建圣地（动态——封圣成功[圣髑移入]/圣迹事件/朝圣传统形成
         /// → 地块获 holy_site 标记——地图高亮——朝圣目标——被异教占领=热忱+50）
@@ -1386,6 +1431,37 @@ namespace CivilizationEvolution.Core
                 if (faithA >= 0 && faithB >= 0 && faithA != faithB)
                     OnWarBetweenFaiths(faithA, faithB);
             }
+            return true;
+        }
+
+        /// <summary>
+        /// 发起大圣战（号召制——热忱≥60+有领袖——创建 WarState 正常结算——
+        /// 战争结束圣战方胜→受益人谈判[继承法线外者]——土地归受益人）
+        /// </summary>
+        public bool DeclareGreatHolyWar(int faithId, int callerRealmId, int targetRealmId,
+            int targetTile, string reason)
+        {
+            var faith = GetFaithSystem(faithId);
+            if (faith == null) return false;
+            // 条件：热忱≥60 + 有宗教领袖（教宗/哈里发——领袖落角色后判定）
+            if (!faith.CanDeclareGreatHolyWar()) return false;
+            if (callerRealmId < 0 || callerRealmId >= realms.Count) return false;
+            if (targetRealmId < 0 || targetRealmId >= realms.Count) return false;
+
+            var war = War.GreatHolyWarSystem.Declare(faithId, callerRealmId, targetRealmId,
+                targetTile, currentDay, hasLeader: true, fervor: faith.fervor);
+            if (war == null) return false;
+
+            // 战争结算绑定：创建 WarState（圣战方=号召者）——正常分数制
+            if (!_diplomacyManager.DeclareWar(callerRealmId, targetRealmId, reason)) return false;
+            var warState = new WarState(_nextWarId++, callerRealmId, targetRealmId, currentDay);
+            _wars.Add(warState);
+            War.GreatHolyWarSystem.BindWar(war, warState.warId);
+
+            // 异教冲突热忱（大圣战=异教战争——已由 DeclareWar 处理——不重复）
+            _chronicle?.Add("religion",
+                $"{realms[callerRealmId].realmName} 号召大圣战讨伐 {realms[targetRealmId].realmName}",
+                major: true, callerRealmId, targetRealmId);
             return true;
         }
 

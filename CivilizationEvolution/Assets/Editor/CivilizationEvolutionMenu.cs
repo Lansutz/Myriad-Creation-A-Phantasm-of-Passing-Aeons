@@ -253,6 +253,28 @@ namespace CivilizationEvolution.EditorTools
             Debug.Log("[CE菜单] 角色面板已就地添加，请保存场景。");
         }
 
+        [MenuItem(MenuRoot + "11. 就地添加宗教面板", false, 11)]
+        public static void AddReligionPanelToExistingScene()
+        {
+            var canvas = GameObject.Find("Canvas");
+            if (canvas == null) { Debug.LogWarning("[CE菜单] 未找到 Canvas——请先执行菜单 1"); return; }
+            var ui = canvas.GetComponent<UIManager>();
+            if (ui == null) { Debug.LogWarning("[CE菜单] Canvas 无 UIManager"); return; }
+
+            var topBar = canvas.transform.Find("SpeedGroup") ?? canvas.transform;
+            if (canvas.transform.Find("ReligionPanel") == null)
+                BuildReligionPanel(canvas.transform, ui);
+
+            // 顶栏入口按钮（幂等）
+            if (canvas.transform.Find("SpeedGroup/ReligionOpenBtn") == null)
+            {
+                var btn = CreateButton("ReligionOpenBtn", topBar, "宗教");
+                SetField(ui, "religionOpenButton", btn);
+            }
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Debug.Log("[CE菜单] 宗教面板已就位（顶栏\"宗教\"按钮）——请保存场景。");
+        }
+
         [MenuItem(MenuRoot + "8. 就地添加社会政治面板", false, 8)]
         public static void AddSocietyPanelToExistingScene()
         {
@@ -578,9 +600,49 @@ namespace CivilizationEvolution.EditorTools
 
             // ---- 社会政治面板（右侧）----
             BuildSocietyPanel(canvas, ui);
+            BuildReligionPanel(canvas, ui);
+            SetField(ui, "religionOpenButton", CreateButton("ReligionOpenBtn", canvas.Find("SpeedGroup") ?? canvas, "宗教"));
         }
 
         /// <summary>构建社会政治面板（阶层画像/派系/政体变迁；供一键搭建与就地升级共用）</summary>
+        /// <summary>构建宗教面板（教统信息/支柱/圣人——一键搭建与就地升级共用）</summary>
+        private static void BuildReligionPanel(Transform canvas, UIManager ui)
+        {
+            var relPanel = CreatePanel("ReligionPanel", canvas).gameObject;
+            SetAnchor(relPanel.GetComponent<RectTransform>(),
+                new Vector2(1, 1), new Vector2(1, 1), new Vector2(-1150, -12), new Vector2(420, 600));
+            var cv = relPanel.AddComponent<VerticalLayoutGroup>();
+            cv.spacing = 6; cv.padding = new RectOffset(12, 12, 10, 10);
+            cv.childForceExpandWidth = true;
+
+            // 标题行：标题 + 关闭按钮
+            var titleRow = new GameObject("RelTitleRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            titleRow.transform.SetParent(relPanel.transform, false);
+            var trLayout = titleRow.GetComponent<HorizontalLayoutGroup>();
+            trLayout.spacing = 6; trLayout.childAlignment = TextAnchor.MiddleCenter;
+            trLayout.childForceExpandWidth = false;
+
+            var title = CreateText("RelTitle", titleRow.transform, "宗教", 18);
+            title.color = UITheme.Accent;
+            title.fontStyle = FontStyles.Bold;
+            SetField(ui, "religionCloseButton", CreateButton("RelCloseBtn", titleRow.transform, "✕"));
+
+            // 滚动正文
+            var scroll = relPanel.AddComponent<ScrollRect>();
+            var relText = CreateText("ReligionText", relPanel.transform, "（打开面板刷新）", 15);
+            relText.rectTransform.anchorMin = Vector2.zero;
+            relText.rectTransform.anchorMax = Vector2.one;
+            relText.rectTransform.offsetMax = new Vector2(-8, -30);
+            relText.rectTransform.offsetMin = new Vector2(8, 4);
+            relText.overflowMode = TextOverflowModes.Overflow;
+            relText.alignment = TextAlignmentOptions.TopLeft;
+            scroll.content = relText.rectTransform;
+
+            SetField(ui, "religionPanel", relPanel);
+            SetField(ui, "religionPanelText", relText);
+            relPanel.SetActive(false); // 默认隐藏（顶栏"宗教"按钮打开）
+        }
+
         private static void BuildSocietyPanel(Transform canvas, UIManager ui)
         {
             var socPanel = CreatePanel("SocietyPanel", canvas).gameObject;

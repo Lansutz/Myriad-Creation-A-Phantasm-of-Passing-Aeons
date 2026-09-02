@@ -647,5 +647,60 @@ namespace CivilizationEvolution.Tests
                 taxChanged = MissionarySystem.TaxPressureConversion(tile2, 201, 40f);
             Assert.IsTrue(taxChanged, "高税率诱导改宗");
         }
+
+        [Test]
+        public void LiturgicalVsScripturalLanguage()
+        {
+            // 仪式语言（口头）× 经典语言（圣典）两维分离
+            var catholic = ReligionCatalog.Get(104);
+            Assert.AreEqual("拉丁语", catholic.liturgicalLanguage, "天主教弥撒=拉丁语（仪式）");
+            Assert.IsTrue(catholic.scripturalLanguage.Contains("武加大"), "经典=武加大译本");
+
+            var islam = ReligionCatalog.Get(201);
+            Assert.AreEqual("古典阿拉伯语", islam.liturgicalLanguage, "伊斯兰礼拜=阿拉伯语（仪式必用）");
+            Assert.IsTrue(islam.scripturalLanguage.Contains("不可译"), "古兰经不可译（经典神圣性）");
+
+            // 佛教：仪式用本地语言——经典保留原文
+            var theravada = ReligionCatalog.Get(301);
+            Assert.IsTrue(theravada.scripturalLanguage.Contains("巴利语"), "上座部经典=巴利语（三藏）");
+            Assert.IsTrue(theravada.liturgicalLanguage.Contains("本地语言"), "仪式用本地语言");
+
+            // 儒教：文言=仪式+经典（祭祀祝辞+五经）
+            var confucian = ReligionCatalog.Get(401);
+            Assert.AreEqual("文言（祭祀祝辞）", confucian.liturgicalLanguage, "儒教仪式=文言祝辞");
+            Assert.IsTrue(confucian.scripturalLanguage.Contains("五经"), "儒教经典=五经文言");
+
+            // 祆教：阿维斯陀语=仪式+经典（火祭+经文）
+            var zoroaster = ReligionCatalog.Get(500);
+            Assert.AreEqual("阿维斯陀语", zoroaster.liturgicalLanguage, "祆教仪式=阿维斯陀语");
+            Assert.AreEqual("阿维斯陀语（《阿维斯陀》）", zoroaster.scripturalLanguage, "祆教经典=阿维斯陀");
+
+            // 原始崇拜=无文字（口语）
+            var animatism = ReligionCatalog.Get(600);
+            Assert.AreEqual("", animatism.liturgicalLanguage, "原始崇拜仪式=无（口语）");
+            Assert.AreEqual("", animatism.scripturalLanguage, "原始崇拜无经典");
+        }
+
+        [Test]
+        public void ReligionPanelText_Build()
+        {
+            // 面板文本（教统信息+两维语言+支柱+热忱+圣人）
+            var succession = ReligionCatalog.Get(104);
+            var faith = new FaithSystem { faithId = 104, fervor = 70f, highPriestCharacterId = 1 };
+            var text = ReligionPanelText.Build(succession, faith, -1);
+
+            Assert.IsTrue(text.Contains("罗马公教会"), "教统名");
+            Assert.IsTrue(text.Contains("教宗"), "领袖");
+            Assert.IsTrue(text.Contains("仪式语言：拉丁语"), "仪式语言显示");
+            Assert.IsTrue(text.Contains("经典语言"), "经典语言显示");
+            Assert.IsTrue(text.Contains("信仰热忱：70"), "热忱显示");
+            Assert.IsTrue(text.Contains("大圣战可用"), "热忱≥60+领袖→可用提示");
+            Assert.IsTrue(text.Contains("支柱选择"), "支柱区");
+            Assert.IsTrue(text.Contains("一神论"), "支柱选项显示");
+
+            // 无国教
+            var none = ReligionPanelText.Build(null, null, -1);
+            Assert.IsTrue(none.Contains("未确立国教"), "无国教提示");
+        }
     }
 }

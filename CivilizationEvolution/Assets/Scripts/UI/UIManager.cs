@@ -75,6 +75,10 @@ namespace CivilizationEvolution.UI
 
         [Header("社会政治面板")]
         [SerializeField] private GameObject societyPanel;
+        [SerializeField] private GameObject religionPanel;
+        [SerializeField] private TMPro.TMP_Text religionPanelText;
+        [SerializeField] private Button religionOpenButton;
+        [SerializeField] private Button religionCloseButton;
         [SerializeField] private TMP_Text societyText;
         [SerializeField] private Button societyOpenButton;
         [SerializeField] private Button societyCloseButton;
@@ -159,6 +163,8 @@ namespace CivilizationEvolution.UI
                 UpdateTileInfo();
                 if (characterPanel != null && characterPanel.activeSelf)
                     UpdateCharacterPanel();
+                if (religionPanel != null && religionPanel.activeSelf)
+                    RefreshReligionPanel();
                 if (societyPanel != null && societyPanel.activeSelf)
                     RefreshSocietyPanel();
                 if (musicPanel != null && musicPanel.activeSelf)
@@ -207,6 +213,8 @@ namespace CivilizationEvolution.UI
 
             // 社会政治面板按钮
             if (societyOpenButton != null) societyOpenButton.onClick.AddListener(OpenSocietyPanel);
+            if (religionOpenButton != null) religionOpenButton.onClick.AddListener(OpenReligionPanel);
+            if (religionCloseButton != null) religionCloseButton.onClick.AddListener(CloseReligionPanel);
             if (societyCloseButton != null) societyCloseButton.onClick.AddListener(CloseSocietyPanel);
 
             // 音乐播放器按钮
@@ -455,6 +463,38 @@ namespace CivilizationEvolution.UI
         }
 
         /// <summary>打开社会政治面板</summary>
+        /// <summary>刷新宗教面板（国教教统信息+支柱+圣人——静态文本生成）</summary>
+        private void RefreshReligionPanel()
+        {
+            if (world == null || religionPanelText == null) return;
+            int playerRealm = world.PlayerRealmId;
+            Culture.ReligionDef succession = null;
+            Thought.FaithSystem faith = null;
+            int patronSaint = -1;
+            if (playerRealm >= 0 && playerRealm < world.realms.Count)
+            {
+                var realm = world.realms[playerRealm];
+                succession = Culture.ReligionCatalog.Get(realm.stateReligionId);
+                faith = world.GetFaithSystem(realm.stateReligionId);
+                patronSaint = realm.statePatronSaintId;
+            }
+            religionPanelText.text = Culture.ReligionPanelText.Build(succession, faith, patronSaint);
+        }
+
+        private void OpenReligionPanel()
+        {
+            if (religionPanel != null)
+            {
+                RefreshReligionPanel();
+                religionPanel.SetActive(true);
+            }
+        }
+
+        private void CloseReligionPanel()
+        {
+            if (religionPanel != null) religionPanel.SetActive(false);
+        }
+
         private void OpenSocietyPanel()
         {
             if (societyPanel != null) societyPanel.SetActive(true);

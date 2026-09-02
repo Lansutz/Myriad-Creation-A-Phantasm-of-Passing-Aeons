@@ -26,6 +26,8 @@ namespace CivilizationEvolution.War
         public int beneficiaryId = -1; // 受益人（谈判后选定——继承法线外者）
         public List<int> participants = new List<int>(); // 参战政权（号召加入）
         public List<int> contributors = new List<int>(); // 有贡献的政权（分战利品资格）
+        /// <summary>关联的 WarState（战争结算——分数制——圣战方胜→受益人谈判）</summary>
+        public int linkedWarId = -1;
     }
 
     /// <summary>大圣战系统（号召制+受益人谈判——CK3 great_holy_wars.info 同构）</summary>
@@ -53,10 +55,29 @@ namespace CivilizationEvolution.War
                 targetRealmId = targetRealmId,
                 targetTile = targetTile,
                 startDay = day,
+                linkedWarId = -1,
             };
             war.participants.Add(callerRealmId);
             ActiveWars.Add(war);
             return war;
+        }
+
+        /// <summary>绑定战争结算（GHW 发起后由 GameWorld 创建 WarState 并绑定——
+        /// 战争正常分数制结算——结束→圣战方胜→Resolve 受益人谈判）</summary>
+        public static void BindWar(GreatHolyWarState war, int warId)
+        {
+            if (war == null) return;
+            war.linkedWarId = warId;
+        }
+
+        /// <summary>战争结算钩子（GameWorld.UpdateWarOutcomes 后调用：
+        /// 关联战争结束→圣战方胜→Resolve；防御方胜→结束无受益人）</summary>
+        public static void OnLinkedWarEnded(GreatHolyWarState war, bool attackerWon,
+            CharacterManager characters, RealmData callerRealm, int divisibleEstates, InheritanceLaw law)
+        {
+            if (war == null || war.ended) return;
+            war.holySideWon = attackerWon; // 圣战方=攻击方（号召者发起）
+            Resolve(war, characters, callerRealm, divisibleEstates, law);
         }
 
         /// <summary>号召（该教统/宗教的其他政权响应参战——强制加入[信仰义务]）</summary>

@@ -10,7 +10,9 @@
       "rites": [],
       "school": "",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "",
+      "scripturalLanguage": ""
     },
     {
       "religionId": 101,
@@ -22,7 +24,9 @@
       "rites": [],
       "school": "二性论派",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "希腊语",
+      "scripturalLanguage": "希腊语"
     },
     {
       "religionId": 104,
@@ -52,7 +56,9 @@
         "doctrine_funeral_burial",
         "doctrine_pilgrimage",
         "doctrine_homosexuality_shunned"
-      ]
+      ],
+      "liturgicalLanguage": "拉丁语",
+      "scripturalLanguage": "拉丁语（武加大）/希伯来语·希腊语[原典]"
     },
     {
       "religionId": 105,
@@ -82,7 +88,9 @@
         "doctrine_funeral_burial",
         "doctrine_pilgrimage",
         "doctrine_homosexuality_shunned"
-      ]
+      ],
+      "liturgicalLanguage": "希腊语/教会斯拉夫语",
+      "scripturalLanguage": "希腊语（七十士译本）"
     },
     {
       "religionId": 102,
@@ -94,7 +102,9 @@
       "rites": [],
       "school": "合性论（非迦克墩）",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "希腊语",
+      "scripturalLanguage": "希腊语"
     },
     {
       "religionId": 120,
@@ -121,7 +131,9 @@
         "doctrine_clerical_marriage_allowed",
         "doctrine_clerical_appointment_spiritual",
         "doctrine_funeral_burial"
-      ]
+      ],
+      "liturgicalLanguage": "科普特语",
+      "scripturalLanguage": "科普特语（圣经译本）"
     },
     {
       "religionId": 121,
@@ -148,7 +160,9 @@
         "doctrine_clerical_marriage_allowed",
         "doctrine_clerical_appointment_spiritual",
         "doctrine_funeral_burial"
-      ]
+      ],
+      "liturgicalLanguage": "古典叙利亚语",
+      "scripturalLanguage": "古典叙利亚语（别西大译本）"
     },
     {
       "religionId": 122,
@@ -168,7 +182,9 @@
       "worldview": "一神（合性论）",
       "founder": "圣格列高利",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "古典亚美尼亚语",
+      "scripturalLanguage": "古典亚美尼亚语"
     },
     {
       "religionId": 123,
@@ -188,7 +204,9 @@
       "worldview": "一神（合性论）",
       "founder": "腓利",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "吉兹语",
+      "scripturalLanguage": "吉兹语"
     },
     {
       "religionId": 124,
@@ -208,7 +226,9 @@
       "worldview": "一神（合性论）",
       "founder": "腓利",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "吉兹语",
+      "scripturalLanguage": "吉兹语"
     },
     {
       "religionId": 125,
@@ -228,7 +248,9 @@
       "worldview": "一神（合性论）",
       "founder": "圣多马",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "古典叙利亚语",
+      "scripturalLanguage": "古典叙利亚语"
     },
     {
       "religionId": 103,
@@ -248,7 +270,9 @@
       "worldview": "一神（二性论）",
       "founder": "圣多马",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "古典叙利亚语",
+      "scripturalLanguage": "古典叙利亚语"
     },
     {
       "religionId": 110,
@@ -260,7 +284,9 @@
       "rites": [],
       "school": "",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "",
+      "scripturalLanguage": ""
     },
     {
       "religionId": 111,
@@ -272,7 +298,9 @@
       "rites": [],
       "school": "",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "",
+      "scripturalLanguage": ""
     },
     {
       "religionId": 112,
@@ -284,7 +312,9 @@
       "rites": [],
       "school": "狄奥多若学派",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "",
+      "scripturalLanguage": ""
     },
     {
       "religionId": 113,
@@ -296,7 +326,9 @@
       "rites": [],
       "school": "合性论",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "",
+      "scripturalLanguage": ""
     },
     {
       "religionId": 114,
@@ -308,7 +340,9 @@
       "rites": [],
       "school": "圣多马传统",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "",
+      "scripturalLanguage": ""
     },
     {
       "religionId": 115,
@@ -320,7 +354,9 @@
       "rites": [],
       "school": "安提阿分支（无教统——思想遗产）",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "",
+      "scripturalLanguage": ""
     },
     {
       "religionId": 200,
@@ -332,7 +368,9 @@
       "rites": [],
       "school": "",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "古典阿拉伯语",
+      "scripturalLanguage": "古典阿拉伯语（古兰经——不可译）"
     },
     {
       "religionId": 201,
@@ -355,7 +393,9 @@
         "doctrine_clerical_appointment_spiritual",
         "doctrine_funeral_burial",
         "doctrine_homosexuality_shunned"
-      ]
+      ],
+      "liturgicalLanguage": "古典阿拉伯语",
+      "scripturalLanguage": "古典阿拉伯语（古兰经——不可译）"
     },
     {
       "religionId": 202,
@@ -378,7 +418,9 @@
         "doctrine_clerical_marriage_allowed",
         "doctrine_funeral_burial",
         "doctrine_homosexuality_shunned"
-      ]
+      ],
+      "liturgicalLanguage": "古典阿拉伯语",
+      "scripturalLanguage": "古典阿拉伯语（古兰经——不可译）"
     },
     {
       "religionId": 203,
@@ -390,7 +432,9 @@
       "rites": [],
       "school": "伊巴德学派",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "古典阿拉伯语",
+      "scripturalLanguage": "古典阿拉伯语（古兰经——不可译）"
     },
     {
       "religionId": 300,
@@ -402,7 +446,9 @@
       "rites": [],
       "school": "",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "",
+      "scripturalLanguage": ""
     },
     {
       "religionId": 301,
@@ -423,7 +469,9 @@
         "doctrine_ancestor_veneration",
         "doctrine_asceticism",
         "doctrine_funeral_cremation"
-      ]
+      ],
+      "liturgicalLanguage": "本地语言（仪式）",
+      "scripturalLanguage": "巴利语（三藏）"
     },
     {
       "religionId": 302,
@@ -445,7 +493,9 @@
         "doctrine_asceticism",
         "doctrine_no_mind",
         "doctrine_funeral_cremation"
-      ]
+      ],
+      "liturgicalLanguage": "本地语言（仪式）",
+      "scripturalLanguage": "梵语（大乘经）/汉语佛经[汉传]"
     },
     {
       "religionId": 303,
@@ -462,7 +512,9 @@
       "worldview": "非神论",
       "founder": "佛陀",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "藏语",
+      "scripturalLanguage": "藏语（译自梵语经典）"
     },
     {
       "religionId": 304,
@@ -474,7 +526,9 @@
       "rites": [],
       "school": "天台教学",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "汉语（仪轨）",
+      "scripturalLanguage": "汉语佛经（天台宗依《法华经》）"
     },
     {
       "religionId": 305,
@@ -486,7 +540,9 @@
       "rites": [],
       "school": "如来禅/祖师禅",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "汉语（仪轨）",
+      "scripturalLanguage": "汉语佛经"
     },
     {
       "religionId": 306,
@@ -498,7 +554,9 @@
       "rites": [],
       "school": "瑜伽行唯识学派",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "汉语（仪轨）",
+      "scripturalLanguage": "汉语佛经"
     },
     {
       "religionId": 307,
@@ -510,7 +568,9 @@
       "rites": [],
       "school": "日莲教学",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "日语（仪轨）",
+      "scripturalLanguage": "汉语佛经（日莲宗）"
     },
     {
       "religionId": 308,
@@ -522,7 +582,9 @@
       "rites": [],
       "school": "毗尼多流支传承",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "越南语（仪轨）",
+      "scripturalLanguage": "汉语佛经"
     },
     {
       "religionId": 400,
@@ -540,7 +602,9 @@
       "requiredInnovations": [
         901
       ],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "",
+      "scripturalLanguage": ""
     },
     {
       "religionId": 401,
@@ -567,7 +631,9 @@
         "doctrine_funeral_burial",
         "doctrine_ritual_feast",
         "doctrine_clerical_marriage_allowed"
-      ]
+      ],
+      "liturgicalLanguage": "文言（祭祀祝辞）",
+      "scripturalLanguage": "文言（五经——经典神圣化）"
     },
     {
       "religionId": 402,
@@ -579,7 +645,9 @@
       "rites": [],
       "school": "纬书神学（易纬/尚书纬等七纬）",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "文言",
+      "scripturalLanguage": "文言（纬书）"
     },
     {
       "religionId": 403,
@@ -606,7 +674,9 @@
         "doctrine_esotericism",
         "doctrine_funeral_burial",
         "doctrine_clerical_marriage_allowed"
-      ]
+      ],
+      "liturgicalLanguage": "文言（斋醮）",
+      "scripturalLanguage": "文言（道经）"
     },
     {
       "religionId": 404,
@@ -620,7 +690,9 @@
       ],
       "school": "符箓派（上清/灵宝融合——三山符箓）",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "文言（斋醮）",
+      "scripturalLanguage": "文言（道经）"
     },
     {
       "religionId": 405,
@@ -634,7 +706,9 @@
       ],
       "school": "丹鼎派（王重阳——儒释道三教合一）",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "文言（清修）",
+      "scripturalLanguage": "文言（道经）"
     },
     {
       "religionId": 500,
@@ -659,7 +733,9 @@
         "doctrine_dualism",
         "doctrine_sanctity_nature",
         "doctrine_funeral_burial"
-      ]
+      ],
+      "liturgicalLanguage": "阿维斯陀语",
+      "scripturalLanguage": "阿维斯陀语（《阿维斯陀》）"
     },
     {
       "religionId": 501,
@@ -673,7 +749,9 @@
       ],
       "school": "马兹达雅斯纳（萨珊国教）",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "阿维斯陀语",
+      "scripturalLanguage": "阿维斯陀语"
     },
     {
       "religionId": 502,
@@ -687,7 +765,9 @@
       ],
       "school": "印度迁徙支派（伊斯兰征服后迁出）",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "阿维斯陀语",
+      "scripturalLanguage": "阿维斯陀语"
     },
     {
       "religionId": 503,
@@ -700,7 +780,9 @@
       "school": "时间神祖尔万（祆教×巴比伦聚合——被正统驱逐的异端）",
       "orthodoxy": false,
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "阿维斯陀语",
+      "scripturalLanguage": "阿维斯陀语"
     },
     {
       "religionId": 504,
@@ -713,7 +795,9 @@
       "school": "社会改革运动（5 世纪——被库思老一世镇压）",
       "orthodoxy": false,
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "阿维斯陀语",
+      "scripturalLanguage": "阿维斯陀语"
     },
     {
       "religionId": 505,
@@ -733,7 +817,9 @@
         "doctrine_dualism",
         "doctrine_asceticism",
         "doctrine_clerical_marriage_celibate"
-      ]
+      ],
+      "liturgicalLanguage": "叙利亚语",
+      "scripturalLanguage": "叙利亚语/中古波斯语（摩尼经）"
     },
     {
       "religionId": 600,
@@ -749,7 +835,9 @@
       "worldview": "mana",
       "founder": "",
       "requiredInnovations": [],
-      "selectedDoctrines": []
+      "selectedDoctrines": [],
+      "liturgicalLanguage": "",
+      "scripturalLanguage": ""
     }
   ]
 }
