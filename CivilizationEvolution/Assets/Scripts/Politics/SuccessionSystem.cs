@@ -16,6 +16,7 @@ namespace CivilizationEvolution.Politics
             public bool succeeded;      // 是否完成扶正
             public bool disputed;       // 争议（绝嗣/幼主）
             public int newRulerId = -1;
+            public int deadRulerId = -1; // 死亡统治者（绰号/谥号评估用）
             public string reason = "";
         }
 
@@ -28,6 +29,7 @@ namespace CivilizationEvolution.Politics
             int rulerId = realm.GetSupremeRulerId();
             var ruler = rulerId >= 0 ? characters.GetCharacter(rulerId) : null;
             if (ruler == null || ruler.isAlive) return result; // 无统治者或未死亡
+            result.deadRulerId = ruler.characterId; // 死亡统治者（评估用）
 
             result.triggered = true;
             bool monarchy = SupremeSuccessionLevel.IsMonarchy(realm.composition);

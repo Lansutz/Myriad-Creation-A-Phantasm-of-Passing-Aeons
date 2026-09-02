@@ -225,6 +225,13 @@ namespace CivilizationEvolution.Role
         /// <summary>身体/外观特征标记（秃顶/跛足/失明/矮小/黑甲/白袍……——
         /// 事件/伤病系统写入——外貌型绰号[秃头/瘸子/瞎子/黑王]判定源）</summary>
         public List<string> bodyMarks = new List<string>();
+        /// <summary>一生成就计数（行为计数器——GameWorld 各系统事件写入——
+        /// 死亡时 EvaluateAndGrant 评估绰号/谥号——评价分级的数据源）</summary>
+        public Culture.EvaluationSystem.AchievementRecord achievements;
+        /// <summary>即位日（在位年数 reignYears 计算——继位时写入）</summary>
+        public int accessionDay = -1;
+        /// <summary>绰号已评估标记（死亡评估一次）</summary>
+        public bool epithetEvaluated = false;
         /// <summary>尊号/谥号（死后——华夏式——按一生行为定谥）</summary>
         public string posthumousTitle = "";
         /// <summary>传奇评价（"X王"档——征服王/冒险王/诗人王——极难达成的终身成就——

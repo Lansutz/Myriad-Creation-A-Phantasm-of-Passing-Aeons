@@ -499,6 +499,16 @@ namespace CivilizationEvolution.Core
             var endedWars = CombatManager.UpdateWarOutcomes(_wars, _diplomacyManager.WarRules, currentDay);
             foreach (var war in endedWars)
             {
+                // 战争行为计数器（绰号/评价数据：胜仗/败仗/防御大捷）
+                if (war.outcome == "victory" && war.winnerId >= 0)
+                {
+                    AddWarAchievement(war.winnerId, won: true);
+                    int loserId = war.winnerId == war.attackerId ? war.defenderId : war.attackerId;
+                    AddWarAchievement(loserId, won: false);
+                    // 防御大捷（被打的一方赢了——卫国成功——铁锤判定）
+                    if (war.winnerId == war.defenderId) AddDefensiveWin(war.winnerId);
+                }
+
                 string outcomeText = war.outcome == "victory"
                     ? $"{realms[war.winnerId].realmName} 赢得战争胜利"
                     : "双方白和";
@@ -730,6 +740,23 @@ namespace CivilizationEvolution.Core
                 var result = SuccessionSystem.ExecuteSuccession(realm, _characterManager, currentDay);
                 if (!result.triggered) continue;
 
+                // 死亡统治者一生评估（绰号+谥号+评价——行为计数器数据源）
+                if (result.deadRulerId >= 0)
+                    EvaluateDeadRulerLife(result.deadRulerId, realm);
+
+                // 新君即位记录（即位日/幼主标记——年轻者绰号数据）
+                if (result.succeeded && result.newRulerId >= 0)
+                {
+                    var nr = _characterManager?.GetCharacter(result.newRulerId);
+                    if (nr != null && nr.accessionDay < 0)
+                    {
+                        nr.accessionDay = currentDay;
+                        if (nr.age < 16) nr.achievements.youngAccession = true;
+                        // 摄政架空标记（幼主+争议或稳定度低——简化：争议=权臣摄政）
+                        if (result.disputed) nr.achievements.ruledUnderRegency = true;
+                    }
+                }
+
                 if (result.disputed)
                 {
                     _chronicle?.Add("succession_crisis",
@@ -745,6 +772,78 @@ namespace CivilizationEvolution.Core
                     NotifyRulerTransition(realm.realmId, result.newRulerId, false, currentDay);
                 }
             }
+        }
+
+        /// <summary>战争胜利/失败计数器（统治者 achievements）</summary>
+        private void AddWarAchievement(int realmId, bool won)
+        {
+            var ruler = GetRealmRuler(realmId);
+            if (ruler == null) return;
+            if (won) ruler.achievements.warsWon++;
+            else ruler.achievements.defeatedBattles++;
+        }
+
+        /// <summary>防御大捷计数器（卫国——铁锤判定）</summary>
+        private void AddDefensiveWin(int realmId)
+        {
+            var ruler = GetRealmRuler(realmId);
+            if (ruler != null) ruler.achievements.defensiveWins++;
+        }
+
+        private Role.CharacterData GetRealmRuler(int realmId)
+        {
+            if (realmId < 0 || realmId >= realms.Count) return null;
+            var realm = realms[realmId];
+            if (realm == null) return null;
+            int rulerId = realm.GetSupremeRulerId();
+            return rulerId >= 0 ? _characterManager?.GetCharacter(rulerId) : null;
+        }
+
+        /// <summary>
+        /// 死亡统治者一生评估（行为计数器→评价/绰号/谥号）：
+        /// reignYears 由即位日算——regionalInfluence 由领土规模近似——
+        /// 授予绰号+谥号+编年史
+        /// </summary>
+        private void EvaluateDeadRulerLife(int charId, RealmData realm)
+        {
+            var c = _characterManager?.GetCharacter(charId);
+            if (c == null || c.epithetEvaluated) return;
+            c.epithetEvaluated = true;
+
+            // 在位年数（即位日-死亡日）
+            if (c.accessionDay >= 0 && c.deathDay >= 0)
+            {
+                int days = c.deathDay - c.accessionDay + (c.deathYear - c.birthYear) * 365;
+                c.achievements.reignYears = Mathf.Max(0f, days / 365f);
+            }
+            // 区域影响力近似（死亡时政权领土占全图比例×2 clamp——区域前列≈0.6+）
+            float landShare = realm != null ? GetRealmLandShare(realm.realmId) : 0f;
+            c.achievements.regionalInfluence = Mathf.Clamp01(landShare * 3f);
+
+            string epithet = Culture.EpithetSystem.EvaluateAndGrant(c, c.achievements);
+            string posthumous = Culture.EpithetSystem.DeterminePosthumousTitle(c,
+                c.achievements.warsWon, c.achievements.conquests, c.achievements.famineUnderRule);
+            if (!string.IsNullOrEmpty(posthumous)) c.posthumousTitle = posthumous;
+
+            string name = $"{c.firstName} {c.lastName}";
+            string epi = string.IsNullOrEmpty(epithet) ? "" : $"「{epithet}」";
+            string post = string.IsNullOrEmpty(posthumous) ? "" : $"（谥{posthumous}）";
+            if (!string.IsNullOrEmpty(epithet) || !string.IsNullOrEmpty(posthumous))
+                _chronicle?.Add("life_eval",
+                    $"{name}{epi}{post} 逝世——一生盖棺定论", major: true, realm?.realmId ?? -1);
+        }
+
+        /// <summary>政权陆地占比（0-1——领土数/总陆地块——区域影响力近似源）</summary>
+        private float GetRealmLandShare(int realmId)
+        {
+            int owned = 0, total = 0;
+            foreach (var t in tiles)
+            {
+                if (!t.isLand) continue;
+                total++;
+                if (t.ownerRealmId == realmId) owned++;
+            }
+            return total > 0 ? (float)owned / total : 0f;
         }
 
         /// <summary>时间推进</summary>
