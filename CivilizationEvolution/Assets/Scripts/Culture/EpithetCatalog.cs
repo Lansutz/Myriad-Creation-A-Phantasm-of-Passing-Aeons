@@ -92,9 +92,7 @@ namespace CivilizationEvolution.Culture
 
             // ===== 外貌/身体型（bodyMarks 判定——成对体系） =====
             Add("epithet_bald", "秃头", EpithetConnotation.Neutral, EpithetTier.Common,
-                "双语义（the Bald）：①生理秃顶（一般用法——bodyMarks判定）②秃头查理式=
-                头无王冠装饰[无冠可戴——未得王冠/更高头衔——与无冠者同源——
-                查理二世在父兄称帝期间头无皇冠——非生理秃]——②语义由无冠者表达");
+                "双语义（the Bald）：①生理秃顶[bodyMarks判定] ②秃头查理式=头无王冠装饰[查理二世有王冠无皇帝冠——非生理秃——独立语义——与无冠者不同]");
             Add("epithet_lame", "瘸子", EpithetConnotation.Neutral, EpithetTier.Common, "跛足——提摩太·瘸子");
             Add("epithet_blind", "瞎子", EpithetConnotation.Neutral, EpithetTier.Common, "失明——瞎子约翰[波希米亚]");
             Add("epithet_short", "矮子", EpithetConnotation.Neutral, EpithetTier.Common, "矮小——矮子丕平");
