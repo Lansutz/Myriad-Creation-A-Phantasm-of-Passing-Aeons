@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using System;
 
 namespace CivilizationEvolution.Race
 {
@@ -61,9 +62,9 @@ namespace CivilizationEvolution.Race
         }
 
         [Header("经济偏好")]
-        [NonSerialized] Dictionary<GameEnums.GoodsCategory, float> productionModifiers = new Dictionary<GameEnums.GoodsCategory, float>();
+        [NonSerialized] public Dictionary<GameEnums.GoodsCategory, float> productionModifiers = new Dictionary<GameEnums.GoodsCategory, float>();
 
-        [NonSerialized] Dictionary<GameEnums.GoodsCategory, float> consumptionModifiers = new Dictionary<GameEnums.GoodsCategory, float>();
+        [NonSerialized] public Dictionary<GameEnums.GoodsCategory, float> consumptionModifiers = new Dictionary<GameEnums.GoodsCategory, float>();
 
 
         [Header("军事偏好")]

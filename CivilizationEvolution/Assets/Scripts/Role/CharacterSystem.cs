@@ -322,11 +322,11 @@ namespace CivilizationEvolution.Role
         public List<PersonalityTrait> traits = new List<PersonalityTrait>();
 
         // 关系
-        [NonSerialized] Dictionary<int, CharacterRelation> relations = new Dictionary<int, CharacterRelation>();
+        [NonSerialized] public Dictionary<int, CharacterRelation> relations = new Dictionary<int, CharacterRelation>();
 
 
         // 技能/经验
-        [NonSerialized] Dictionary<string, float> skills = new Dictionary<string, float>();
+        [NonSerialized] public Dictionary<string, float> skills = new Dictionary<string, float>();
 
 
         // 财产
@@ -1409,7 +1409,7 @@ namespace CivilizationEvolution.Role
         // 家族属性
         public float familyPrestige = 0f;
         public float familyWealth = 0f;
-        [NonSerialized] Dictionary<string, float> familyTraditions = new Dictionary<string, float>();
+        [NonSerialized] public Dictionary<string, float> familyTraditions = new Dictionary<string, float>();
 
 
         /// <summary>家族所属政权（-1=未知；家族传统解锁前置革新按此政权检查）</summary>

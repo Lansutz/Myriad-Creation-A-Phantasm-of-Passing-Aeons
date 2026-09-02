@@ -24,12 +24,12 @@ namespace CivilizationEvolution.War
         public float supplyConsumption; // 每日补给消耗
 
         // 招募消耗
-        [NonSerialized] Dictionary<int, float> recruitCost; // goodsId -> 数量
+        [System.NonSerialized] public Dictionary<int, float> recruitCost; // goodsId -> 数量
 
         public float manpowerCost; // 人力消耗
 
         // 地形偏好
-        [NonSerialized] Dictionary<GameEnums.TerrainTacticType, float> terrainModifiers;
+        [System.NonSerialized] public Dictionary<GameEnums.TerrainTacticType, float> terrainModifiers;
 
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace CivilizationEvolution.War
         public int currentTileIndex;
 
         // 兵力块：unitId -> 数量
-        [NonSerialized] Dictionary<int, float> unitCounts = new Dictionary<int, float>();
+        [System.NonSerialized] public Dictionary<int, float> unitCounts = new Dictionary<int, float>();
 
 
         // 状态
