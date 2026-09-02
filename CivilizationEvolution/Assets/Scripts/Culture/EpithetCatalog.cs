@@ -64,6 +64,8 @@ namespace CivilizationEvolution.Culture
             Add("epithet_merciful", "仁慈者", EpithetConnotation.Positive, EpithetTier.Common, "悲悯极高+少征战——宽政");
             Add("epithet_just", "公正者", EpithetConnotation.Positive, EpithetTier.Common, "无饥荒+少叛乱+在位久——司法稳定");
             Add("epithet_cautious", "谨慎者", EpithetConnotation.Neutral, EpithetTier.Common, "低大胆+无败仗——谋定后动");
+            Add("epithet_merciless", "无情者", EpithetConnotation.Negative, EpithetTier.Common,
+                "悲悯极低+铁腕成就——冷酷高效两面（与仁慈者成对）——无情者哈康");
 
             // ===== 行为型 =====
             Add("epithet_conqueror", "征服者", EpithetConnotation.Neutral, EpithetTier.Common, "征服 5 块——征服者威廉");

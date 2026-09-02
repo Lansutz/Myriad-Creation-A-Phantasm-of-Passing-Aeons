@@ -204,6 +204,9 @@ namespace CivilizationEvolution.Culture
                 // 仁慈者（悲悯极高+少征战）
                 if (c.compassion > 60f && rec.warsWon <= 2)
                     return GrantEpithet(c, "仁慈者") ? "仁慈者" : "";
+                // 无情者（悲悯极低+铁腕成就——冷酷统治——与仁慈者成对）
+                if (c.compassion < -60f && (rec.warsWon >= 3 || rec.threatsResolved >= 2))
+                    return GrantEpithet(c, "无情者") ? "无情者" : "";
                 // 公正者（无饥荒+少叛乱+在位久）
                 if (!rec.famineUnderRule && rec.reignYears >= 15f)
                     return GrantEpithet(c, "公正者") ? "公正者" : "";
