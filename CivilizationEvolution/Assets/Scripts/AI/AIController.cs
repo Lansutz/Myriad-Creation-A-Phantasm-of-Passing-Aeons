@@ -472,14 +472,6 @@ namespace CivilizationEvolution.AI
                         militaryBias = 0.8f, aggression = 0.6f, riskTolerance = 0.95f,
                         researchMultiplier = 0.9f, fixedArchetype = fixedArchetype
                     };
-                case "machiavellian": // 马基雅维利：权谋——外交手腕+侵略野心+谨慎
-                    return new AIPersonality
-                    {
-                        personalityName = "马基雅维利",
-                        expansionBias = 0.6f, economicBias = 0.5f, diplomaticBias = 0.9f,
-                        militaryBias = 0.55f, aggression = 0.65f, riskTolerance = 0.45f,
-                        researchMultiplier = 1.1f, fixedArchetype = fixedArchetype
-                    };
                 case "builder": // 建设者：经济+研究
                     return new AIPersonality
                     {

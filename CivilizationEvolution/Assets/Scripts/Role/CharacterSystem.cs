@@ -220,6 +220,10 @@ namespace CivilizationEvolution.Role
         public int raceId;
         /// <summary>社会信仰（展示给社会的——公开合法——原 faithId 语义）</summary>
         public int faithId;
+        /// <summary>绰号/诨号（行为后验授予——征服者/大冒险家——与原型[性格画像]分离）</summary>
+        public string epithet = "";
+        /// <summary>尊号/谥号（死后——华夏式——按一生行为定谥）</summary>
+        public string posthumousTitle = "";
         /// <summary>灵性满足（0-100——体验支柱动态化——角色与信仰的真实关系：
         /// 美德特质增长/罪行特质下降/秘密信仰煎熬——CK3 唯主是依 Spiritual
         /// Fulfillment；区别于人格维度 piety 虔信——这是虔诚资源）</summary>

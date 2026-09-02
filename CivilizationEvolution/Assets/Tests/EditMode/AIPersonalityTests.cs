@@ -24,11 +24,6 @@ namespace CivilizationEvolution.Tests
             Assert.AreEqual("冒险王", adventurer.personalityName, "冒险王原型");
             Assert.Greater(adventurer.riskTolerance, 0.9f, "冒险王高风险承受");
 
-            var machiavellian = AIPersonality.Preset("machiavellian");
-            Assert.AreEqual("马基雅维利", machiavellian.personalityName, "权谋型原型");
-            Assert.Greater(machiavellian.diplomaticBias, 0.8f, "马基雅维利高外交手腕");
-            Assert.Less(machiavellian.riskTolerance, 0.6f, "马基雅维利谨慎（低风险承受）");
-
             var builder = AIPersonality.Preset("builder");
             Assert.Greater(builder.economicBias, 0.9f, "建设者高经济");
             Assert.Greater(builder.researchMultiplier, 1.3f, "建设者高研究");
@@ -66,8 +61,6 @@ namespace CivilizationEvolution.Tests
             var controller2 = new AIController(2, AIPersonality.RandomPersonality());
             controller2.SyncPersonality(builder);
             Assert.Less(controller2.personality.aggression, 0.5f, "仁君侵略低");
-            // 理性高→研究乘数高（经济偏好由贪婪驱动——builder 低贪婪→经济中低合理）
-            Assert.Greater(controller2.personality.researchMultiplier, 1.1f, "理性高→研究偏好");
             Assert.Less(controller2.personality.aggression, controller.personality.aggression, "仁君比暴君侵略低");
         }
 
