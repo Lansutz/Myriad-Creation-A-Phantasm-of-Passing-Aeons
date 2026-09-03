@@ -88,10 +88,63 @@ namespace CivilizationEvolution.Core
         /// <summary>示例词汇（风味展示，数据非文本）</summary>
         public List<string> sampleWords = new List<string>();
 
+        // ===== 语言模组化字段（2026-09-03 用户设计：人名/地名后缀——
+        // 全部数据驱动可模组化——ContentRegistry 加载——Mods 覆盖） =====
+
+        /// <summary>男性名池（人物生成——GenerateName type=0 用）</summary>
+        public List<string> maleNames = new List<string>();
+        /// <summary>女性名池（type=1 用）</summary>
+        public List<string> femaleNames = new List<string>();
+        /// <summary>姓氏池（type=2 用——家族名）</summary>
+        public List<string> familyNames = new List<string>();
+        /// <summary>城名池（type=3 用——兼容旧城名——新体系走 placeSuffixes 语义组合）</summary>
+        public List<string> cityNames = new List<string>();
+        /// <summary>
+        /// 地名后缀（按语义类组织——组合引擎 PlaceNameGenerator 用：
+        /// 某人之地/家园=Region 模糊地区、城=City、堡垒=Fort、新城=NewCity、
+        /// 建者之城=FoundedCity、地形类[Plain 平原/Highland 高原/Cliff 山崖]…
+        /// 语义=组合自由度——规则限制在生成器）
+        /// </summary>
+        public List<PlaceSuffixDef> placeSuffixes = new List<PlaceSuffixDef>();
+
         public string GetName() => Localization.Get(languageId + "_name");
         public string GetDescription() => Localization.Get(languageId + "_desc");
         public string GetScriptType() => Localization.Get(languageId + "_script");
         public string GetNamingStyle() => Localization.Get(languageId + "_naming");
+    }
+
+    /// <summary>
+    /// 地名后缀定义（语言内——语义类+词形）：
+    /// 语义分类使自由组合可行（山崖+城=山崖之城——翻译为语言真实形态）
+    /// </summary>
+    [Serializable]
+    public class PlaceSuffixDef
+    {
+        /// <summary>语义类键（region 模糊地/city 城/fort 堡垒/newcity 新城/
+        /// founded 建者城/plain 平原/highland 高原/cliff 山崖/port 港…）</summary>
+        public string semantic;
+        /// <summary>词形（语言真实词——如城=该语言实际词）</summary>
+        public string word;
+    }
+
+    /// <summary>
+    /// 头衔定义（位阶柔性数值体系——2026-09-03 用户设计）：
+    /// 三类（官僚/贵族/君主）+ 国名后缀（政权名层）
+    /// TitleRank 位阶值=实数（2.0 王/2.4 王上王/1.8 藩王——整数=大等级
+    /// 小数=同级微差）——权重=同级内选择——语义=组合/含义字段
+    /// </summary>
+    [Serializable]
+    public class TitleDef
+    {
+        public string titleId;          // 键名（title_king_cn…）
+        /// <summary>类别：bureaucratic 官僚/noble 贵族/monarch 君主/realmSuffix 国名后缀</summary>
+        public string kind;
+        /// <summary>位阶值（柔性实数——同级微差用小数的）</summary>
+        public float rank;
+        /// <summary>权重（同级内用哪个头衔——文化/政权默认选择加权）</summary>
+        public float weight = 1f;
+        /// <summary>语义字段（含义/类别——组合/显示用）</summary>
+        public string semantic = "";
     }
 
     /// <summary>

@@ -183,20 +183,42 @@ namespace CivilizationEvolution.Core
         public static bool TryGetMentalDisorder(string id, out MentalDisorderDef def) => MentalDisorders.TryGetValue(id, out def);
         public static bool TryGetInnovation(int id, out InnovationDef def) => Innovations.TryGetValue(id, out def);
 
-        /// <summary>从文化包提取随机名字（type: 0男名 1女名 2姓氏 3城名，可传 null 随机池）</summary>
+        /// <summary>
+        /// 从文化包提取随机名字（type: 0男名 1女名 2姓氏 3城名，可传 null 随机池）
+        /// 2026-09-03 升级：语言池优先（文化→languageId→LanguageDef 男/女/姓/城池——
+        /// 同语言文化共享名字——模组化）——空回退文化包旧池（兼容旧数据）
+        /// </summary>
         public static string GetRandomName(CultureContentPack pack, int type, System.Random rng = null)
         {
             rng = rng ?? new System.Random();
-            var list = type switch
+            List<string> list = null;
+
+            // 语言池优先（文化挂语言——语言内名字池）
+            if (pack != null && pack.data != null && !string.IsNullOrEmpty(pack.data.languageId)
+                && TryGetLanguage(pack.data.languageId, out var lang))
             {
-                1 => pack.names.femaleNames,
-                2 => pack.names.lastNames,
-                3 => pack.names.cityNames,
-                _ => pack.names.maleNames
-            };
-            // 空池回退姓氏或包名
-            if (list.Count == 0 && type != 2) list = pack.names.lastNames;
-            if (list.Count == 0) return pack.data.cultureName;
+                list = type switch
+                {
+                    1 => lang.femaleNames,
+                    2 => lang.familyNames,
+                    3 => lang.cityNames,
+                    _ => lang.maleNames
+                };
+            }
+            if (list == null || list.Count == 0)
+            {
+                // 回退文化包旧池（兼容）
+                if (pack == null) return "无名";
+                list = type switch
+                {
+                    1 => pack.names.femaleNames,
+                    2 => pack.names.lastNames,
+                    3 => pack.names.cityNames,
+                    _ => pack.names.maleNames
+                };
+                if (list.Count == 0 && type != 2) list = pack.names.lastNames;
+                if (list.Count == 0) return pack.data.cultureName;
+            }
             return list[rng.Next(list.Count)];
         }
 
@@ -378,6 +400,13 @@ namespace CivilizationEvolution.Core
                 Debug.LogWarning($"[ContentRegistry] 语言包 {Path.GetFileName(dir)} 定义无效（languageId 缺失）");
                 return;
             }
+            // 语言级名字池 CSV（2026-09-03 升级：同语言目录可选
+            // CharacterFirstNames_Male/Female.csv+LastNames+CityNames——
+            // 语言共享名字——模组化；文化级 CSV 仍兼容[回退链]）
+            PackCsv(def.maleNames, Path.Combine(dir, "CharacterFirstNames_Male.csv"));
+            PackCsv(def.femaleNames, Path.Combine(dir, "CharacterFirstNames_Female.csv"));
+            PackCsv(def.familyNames, Path.Combine(dir, "CharacterLastNames.csv"));
+            PackCsv(def.cityNames, Path.Combine(dir, "CityNames.csv"));
             Languages[def.languageId] = def;
         }
 
