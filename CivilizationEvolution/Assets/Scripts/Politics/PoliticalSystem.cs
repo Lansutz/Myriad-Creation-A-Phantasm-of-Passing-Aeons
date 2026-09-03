@@ -13,6 +13,10 @@ namespace CivilizationEvolution.Politics
         public string realmName;
         /// <summary>国教（政权选择的教统/传统——-1=无——解锁政权主保圣人）</summary>
         public int stateReligionId = -1;
+        /// <summary>官职持有者（OfficialOffice→角色 id——-1=空缺——
+        /// Governor 等 6 官职——GameWorld.EnsureOfficeHolders 任命——
+        /// OfficeTitleCatalog 提供文化定制称号）</summary>
+        public Dictionary<int, int> officeHolders = new Dictionary<int, int>();
         /// <summary>政权主保圣人（CultObject id——须属国教教统内——
         /// 国家庇护/政权标识/加冕礼——国教换主保跟着换）</summary>
         public int statePatronSaintId = -1;

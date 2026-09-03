@@ -42,18 +42,78 @@ namespace CivilizationEvolution.AI
             TileData[] tiles,
             DiplomacyManager diplomacy,
             EconomyManager economy,
-            InnovationTree innovations)
+            InnovationTree innovations,
+            CivilizationEvolution.Role.CharacterManager characters = null)
         {
             _decisionTimer++;
 
             // 日常行为
             DailyActions(realms, tiles, economy, innovations);
 
+            // 劫掠机会（低烈度冲突——好战 AI 对敌对政权劫掠——屠城计数）
+            TryRaid(realms, tiles, diplomacy, characters);
+
             // 重大决策
             if (_decisionTimer >= DecisionInterval)
             {
                 _decisionTimer = 0f;
                 MakeMajorDecision(realms, tiles, diplomacy);
+            }
+        }
+
+        private int _raidCooldown = 0;
+        private const int RaidInterval = 45; // 每 45 天可劫掠一次
+
+        /// <summary>
+        /// 劫掠决策（敌对状态下的低烈度冲突——RaidSettlement 的 AI 调用方）：
+        /// 好战性格[aggression/expansionBias]驱动——屠城[Massacre]低概率
+        /// [高侵略+随机]——成功屠城→执行政权统治者 massacres++（绰号判定数据）
+        /// </summary>
+        private void TryRaid(Dictionary<int, RealmData> realms, TileData[] tiles,
+            DiplomacyManager diplomacy, CivilizationEvolution.Role.CharacterManager characters)
+        {
+            _raidCooldown++;
+            if (_raidCooldown < RaidInterval) return;
+            // 性格门槛：侵略或扩张偏好达标才劫掠
+            if (personality.aggression < 0.45f && personality.expansionBias < 0.55f) return;
+            if (realms == null || !realms.ContainsKey(realmId)) return;
+
+            // 找敌对政权（hostility ≥50——含开战? 劫掠限非战争敌对）
+            var relations = diplomacy.GetAllRelations();
+            int targetId = -1;
+            foreach (var kv in relations)
+            {
+                var rel = kv.Value;
+                if (rel == null || rel.isAtWar) continue;
+                int other = rel.realmAId == realmId ? rel.realmBId : rel.realmBId == realmId ? rel.realmAId : -1;
+                if (other < 0 || other == realmId) continue;
+                if (rel.IsHostile && !rel.isAtWar) { targetId = other; break; }
+            }
+            if (targetId < 0 || tiles == null) return;
+
+            // 目标政权地块（首块属于目标的）
+            int targetTile = -1;
+            foreach (var t in tiles)
+            {
+                if (t.ownerRealmId == targetId) { targetTile = t.tileIndex; break; }
+            }
+            if (targetTile < 0) return;
+
+            // 类型：高侵略+低概率=屠城（恐怖威慑）；否则普通劫掠
+            GameEnums.RaidType type = GameEnums.RaidType.VillageRaid;
+            if (personality.aggression > 0.6f && UnityEngine.Random.value < 0.12f)
+                type = GameEnums.RaidType.Massacre;
+
+            var result = diplomacy.RaidSettlement(realmId, targetId, targetTile, type, tiles);
+            if (result.success)
+            {
+                _raidCooldown = 0;
+                // 屠城→执行政权统治者 massacres++（绰号[屠夫/恐怖者]判定数据）
+                if (type == GameEnums.RaidType.Massacre && characters != null)
+                {
+                    var ruler = characters.FindRulerOfRealm(realmId);
+                    if (ruler != null) ruler.achievements.massacres++;
+                }
             }
         }
 
@@ -555,11 +615,12 @@ namespace CivilizationEvolution.AI
             TileData[] tiles,
             DiplomacyManager diplomacy,
             EconomyManager economy,
-            InnovationTree innovations)
+            InnovationTree innovations,
+            CivilizationEvolution.Role.CharacterManager characters = null)
         {
             foreach (var controller in _controllers.Values)
             {
-                controller.DailyTick(realms, tiles, diplomacy, economy, innovations);
+                controller.DailyTick(realms, tiles, diplomacy, economy, innovations, characters);
             }
         }
 

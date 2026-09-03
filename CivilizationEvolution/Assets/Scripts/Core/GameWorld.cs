@@ -516,7 +516,10 @@ namespace CivilizationEvolution.Core
                 _diplomacyManager.ForcePeace(war.attackerId, war.defenderId, currentDay,
                     _diplomacyManager.WarRules.truceYears, outcomeText);
 
-                // 政体变迁接线：战败暴露国家无能，为战败方打开关键节点窗口（战胜/白和不触发）
+                // 官职补缺（死亡/空缺时任命——OfficeTitle 消费方）
+            EnsureOfficeHolders();
+
+            // 政体变迁接线：战败暴露国家无能，为战败方打开关键节点窗口（战胜/白和不触发）
                 if (war.outcome == "victory" && war.winnerId >= 0)
                     NotifyWarDefeat(war, currentDay);
             }
@@ -532,7 +535,8 @@ namespace CivilizationEvolution.Core
 
             // 11. AI决策（先同步统治者人格到 AI 偏置——人格漂移实时反映）
             _aiManager.SyncRulers(_characterManager);
-            _aiManager.DailyTick(realms, tiles, _diplomacyManager, _economyManager, _innovationTree);
+            _aiManager.DailyTick(realms, tiles, _diplomacyManager, _economyManager, _innovationTree,
+                _characterManager); // characters 传入——AI 劫掠屠城计数器
 
             // 12. 事件处理
             ProcessEvents();
@@ -788,6 +792,42 @@ namespace CivilizationEvolution.Core
         {
             var ruler = GetRealmRuler(realmId);
             if (ruler != null) ruler.achievements.defensiveWins++;
+        }
+
+        /// <summary>
+        /// 官职任命（Governor 等 6 官职——空缺补任——从政权角色中选非统治者者——
+        /// OfficeTitle 官职称号系统的持有者数据源）
+        /// </summary>
+        private void EnsureOfficeHolders()
+        {
+            if (_characterManager == null) return;
+            for (int i = 0; i < realms.Count; i++)
+            {
+                var realm = realms[i];
+                if (realm == null) continue;
+                int rulerId = realm.GetSupremeRulerId();
+                for (int o = 0; o < 6; o++)
+                {
+                    if (realm.officeHolders.ContainsKey(o) && realm.officeHolders[o] >= 0) continue;
+                    // 空缺——从政权角色选（非统治者——优先 Noble/Military）
+                    var candidates = _characterManager.GetCharactersByRealm(realm.realmId);
+                    CharacterData pick = null;
+                    foreach (var c in candidates)
+                    {
+                        if (c == null || c.characterId == rulerId || !c.isAlive) continue;
+                        if (c.role == Role.CharacterRole.Noble || c.role == Role.CharacterRole.Military
+                            || c.role == Role.CharacterRole.Scholar)
+                        { pick = c; break; }
+                    }
+                    if (pick == null && candidates.Count > 0)
+                        foreach (var c in candidates)
+                            if (c != null && c.characterId != rulerId && c.isAlive) { pick = c; break; }
+                    if (pick != null)
+                        realm.officeHolders[o] = pick.characterId;
+                    else
+                        realm.officeHolders[o] = -1; // 无人可任（保留空缺位）
+                }
+            }
         }
 
         private Role.CharacterData GetRealmRuler(int realmId)
