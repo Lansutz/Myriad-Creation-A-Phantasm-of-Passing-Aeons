@@ -5,7 +5,7 @@ PROJECT="D:/Myriad-Creation-A-Phantasm-of-Passing-Aeons/CivilizationEvolution"
 REVERSE="$PROJECT/.reverse"
 RESULTS="$REVERSE/playmode_tests_results.xml"
 LOG="$REVERSE/playmode_tests.log"
-UNITY="/d/Unity Hub/6000.5.8f1/Editor/Unity.exe"
+UNITY="/d/Unity Hub/6000.6.0f1/Editor/Unity.exe"
 mkdir -p "$REVERSE"
 echo "[run_playmode] PlayMode 测试启动: $(date '+%H:%M:%S')"
 "$UNITY" -batchmode -projectPath "$PROJECT" -runTests -testPlatform PlayMode \

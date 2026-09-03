@@ -17,7 +17,7 @@ case "$RESULTS_ARG" in
   *) RESULTS="$(cd "$(dirname "$RESULTS_ARG")" && pwd)/$(basename "$RESULTS_ARG")" ;;
 esac
 LOG="$REVERSE/canonical_tests.log"
-UNITY="/d/Unity Hub/6000.5.8f1/Editor/Unity.exe"
+UNITY="/d/Unity Hub/6000.6.0f1/Editor/Unity.exe"
 
 mkdir -p "$REVERSE"
 echo "[run_tests] Unity EditMode 测试启动: $(date '+%H:%M:%S')"
