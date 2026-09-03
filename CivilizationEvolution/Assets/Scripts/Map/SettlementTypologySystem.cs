@@ -79,7 +79,6 @@ namespace CivilizationEvolution.Map
             // 山地隘口：高海拔且周围有低海拔通道
             if (tile.elevation01 > 0.6f && tile.isLand)
             {
-                bool lowNeighbor = false;
                 for (int dy = -1; dy <= 1; dy++)
                 {
                     for (int dx = -1; dx <= 1; dx++)

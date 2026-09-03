@@ -52,9 +52,11 @@ namespace CivilizationEvolution.Politics
         [Range(0f, 100f)] public float disasterSeverity;    // 近期灾害/饥荒/瘟疫严重度
 
         // —— 税负：各阶层税负痛感 0~100（越高越痛；由 TaxSystem.GetTaxSatisfactionImpact 换算）——
+        [System.NonSerialized]
         public Dictionary<GameEnums.SocialClass, float> taxPain = new Dictionary<GameEnums.SocialClass, float>();
 
         // —— 政治通道：各阶层在当前政体下的通道畅通度 0~1（由 PoliticalAccessAnalyzer 解析 composition）——
+        [System.NonSerialized]
         public Dictionary<GameEnums.SocialClass, float> politicalAccess = new Dictionary<GameEnums.SocialClass, float>();
 
         // —— 经济 ——
@@ -62,6 +64,7 @@ namespace CivilizationEvolution.Politics
         [Range(0f, 1f)] public float monetaryStability = 1f;// 货币稳定度（1-通胀归一）
 
         // —— 制度承认：各阶层是否被制度/革新承认为合法存在（SocialClassAvailability 预计算）——
+        [System.NonSerialized]
         public Dictionary<GameEnums.SocialClass, bool> classRecognized = new Dictionary<GameEnums.SocialClass, bool>();
 
         // —— 合法性 ——
@@ -90,6 +93,7 @@ namespace CivilizationEvolution.Politics
     public class ClassNeedReport
     {
         public GameEnums.SocialClass socialClass;
+        [System.NonSerialized]
         public Dictionary<ClassNeedDimension, NeedDimensionScore> dimensions = new Dictionary<ClassNeedDimension, NeedDimensionScore>();
         [Range(0f, 100f)] public float overallSatisfaction = 50f;  // 加权综合满足度
         public ClassNeedDimension worstDimension;                  // 最差维度（主要矛盾）

@@ -41,19 +41,28 @@ namespace CivilizationEvolution.Core
 
         // ===== 核心数据 =====
         public TileData[] tiles;
+        [System.NonSerialized]
         public Dictionary<int, RaceData> races = new Dictionary<int, RaceData>();
+        [System.NonSerialized]
         public Dictionary<int, CultureData> cultures = new Dictionary<int, CultureData>();
+        [System.NonSerialized]
         public Dictionary<int, TradeCenter> tradeCenters = new Dictionary<int, TradeCenter>();
+        [System.NonSerialized]
         public Dictionary<int, GoodsDef> goodsDefs = new Dictionary<int, GoodsDef>();
+        [System.NonSerialized]
         public Dictionary<int, RealmData> realms = new Dictionary<int, RealmData>();
         /// <summary>玩家政权ID（-1表示无玩家/观察者模式）</summary>
         public int PlayerRealmId = -1;
+        [System.NonSerialized]
         public Dictionary<int, UnitDef> unitDefs = new Dictionary<int, UnitDef>();
         /// <summary>省份（provinceId → Province——地图结构层）</summary>
+        [System.NonSerialized]
         public Dictionary<int, Province> provinces = new Dictionary<int, Province>();
         /// <summary>子地块/Burg（burgId → BurgData——省份内定居点，对齐 CK3 男爵领）</summary>
+        [System.NonSerialized]
         public Dictionary<int, BurgData> burgs = new Dictionary<int, BurgData>();
         /// <summary>军队（armyId → Army——战争闭环）</summary>
+        [System.NonSerialized]
         public Dictionary<int, Army> armies = new Dictionary<int, Army>();
         /// <summary>战争状态列表（战争闭环——分数/胜负判定）</summary>
         private readonly List<WarState> _wars = new List<WarState>();

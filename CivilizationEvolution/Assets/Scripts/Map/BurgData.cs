@@ -109,8 +109,8 @@ namespace CivilizationEvolution.Map
         /// <summary>当前形态的稳定度（0~100），越高越难被演化推动改变</summary>
         public float settlementStability;
 
-        /// <summary>形态演化的目标方向（null表示自然演化）</summary>
-        public SettlementType? evolutionTarget;
+        /// <summary>形态演化的目标方向（null表示自然演化——可空类型不参与 Unity 序列化）</summary>
+        [System.NonSerialized] public SettlementType? evolutionTarget;
 
         /// <summary>距上次形态切换的Tick数（用于冷却期）</summary>
         public int ticksSinceLastTransition;

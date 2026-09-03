@@ -45,7 +45,7 @@ namespace CivilizationEvolution.UI
             if (font == null) return 0;
 
             int count = 0;
-            foreach (var tmp in Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var tmp in Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include))
             {
                 if (tmp.font == null || tmp.font.name != "simhei-SDF")
                 {

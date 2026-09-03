@@ -8,6 +8,7 @@ using CivilizationEvolution.Core;
 using CivilizationEvolution.Render;
 using CivilizationEvolution.Race;
 using CivilizationEvolution.Role;
+using CivilizationEvolution.Politics;
 
 namespace CivilizationEvolution.UI
 {

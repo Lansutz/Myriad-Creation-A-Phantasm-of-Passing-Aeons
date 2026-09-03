@@ -28,7 +28,9 @@ namespace CivilizationEvolution.AI
         // 当前目标
         private AIGoal _currentGoal = AIGoal.None;
         private int _targetRealmId = -1;
+#pragma warning disable 0414 // 预留：AI 目标地块（未来目标系统使用——保留不删）
         private int _targetTileIndex = -1;
+#pragma warning restore 0414
 
         public AIController(int realmId, AIPersonality personality)
         {

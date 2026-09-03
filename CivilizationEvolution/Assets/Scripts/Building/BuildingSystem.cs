@@ -209,6 +209,7 @@ namespace CivilizationEvolution.Building
         public BuildingCategory category;
         public int tier;
         public float buildCost;
+        [System.NonSerialized]
         public Dictionary<int, float> materialCost;
         public int buildDays;
         public float maintenanceCost;

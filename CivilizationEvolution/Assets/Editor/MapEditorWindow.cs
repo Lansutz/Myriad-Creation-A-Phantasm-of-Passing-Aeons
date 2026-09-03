@@ -61,8 +61,8 @@ namespace CivilizationEvolution.EditorTools
         /// <summary>定位场景对象与配置资产（进入/退出播放模式后对象会被重建）</summary>
         private void ResolveReferences()
         {
-            editor = Object.FindFirstObjectByType<MapEditor>(FindObjectsInactive.Include);
-            world = Object.FindFirstObjectByType<GameWorld>(FindObjectsInactive.Include);
+            editor = Object.FindAnyObjectByType<MapEditor>(FindObjectsInactive.Include);
+            world = Object.FindAnyObjectByType<GameWorld>(FindObjectsInactive.Include);
 
             configAsset = AssetDatabase.LoadAssetAtPath<WorldConfig>(DefaultConfigPath);
             if (configAsset == null)

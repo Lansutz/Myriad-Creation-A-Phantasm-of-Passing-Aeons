@@ -16,6 +16,7 @@ namespace CivilizationEvolution.Politics
         /// <summary>官职持有者（OfficialOffice→角色 id——-1=空缺——
         /// Governor 等 6 官职——GameWorld.EnsureOfficeHolders 任命——
         /// OfficeTitleCatalog 提供文化定制称号）</summary>
+        [System.NonSerialized]
         public Dictionary<int, int> officeHolders = new Dictionary<int, int>();
         /// <summary>政权主保圣人（CultObject id——须属国教教统内——
         /// 国家庇护/政权标识/加冕礼——国教换主保跟着换）</summary>
@@ -34,9 +35,11 @@ namespace CivilizationEvolution.Politics
         public GameEnums.MovementControlLevel movementControl = GameEnums.MovementControlLevel.Loose;
 
         /// <summary>关键城镇/关隘的单独管制等级覆盖（tileIndex -> 管制等级）</summary>
+        [System.NonSerialized]
         public Dictionary<int, GameEnums.MovementControlLevel> tileMovementControlOverrides = new Dictionary<int, GameEnums.MovementControlLevel>();
 
         /// <summary>已授予军事通行权的政权ID列表（严格管制下这些政权的军队可通过）</summary>
+        [System.NonSerialized]
         public HashSet<int> militaryAccessGranted = new HashSet<int>();
 
         // 税收系统（每个政权独立）
@@ -46,10 +49,13 @@ namespace CivilizationEvolution.Politics
         public CurrencySystem currencySystem = new CurrencySystem();
 
         // 阶层好感度
+        [System.NonSerialized]
         public Dictionary<GameEnums.SocialClass, float> classRelations = new Dictionary<GameEnums.SocialClass, float>();
 
         // 法理领土
+        [System.NonSerialized]
         public HashSet<int> coreTiles = new HashSet<int>();
+        [System.NonSerialized]
         public HashSet<int> claimedTiles = new HashSet<int>();
 
         // 附庸关系

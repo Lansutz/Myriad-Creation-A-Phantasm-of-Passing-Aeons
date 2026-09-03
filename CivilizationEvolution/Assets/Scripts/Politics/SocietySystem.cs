@@ -43,6 +43,7 @@ namespace CivilizationEvolution.Politics
     public class RealmSociety
     {
         public int realmId;
+        [System.NonSerialized]
         public Dictionary<GameEnums.SocialClass, ClassProfile> classes
             = new Dictionary<GameEnums.SocialClass, ClassProfile>();
         public float totalPopulation;

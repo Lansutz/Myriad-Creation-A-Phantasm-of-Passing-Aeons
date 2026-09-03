@@ -73,6 +73,7 @@ namespace CivilizationEvolution.Politics
         public FactionStance stance;
 
         /// <summary>阶层基础：各社会阶层对本派系的支持权重（0~1，可跨阶层结盟）</summary>
+        [System.NonSerialized]
         public Dictionary<GameEnums.SocialClass, float> classBacking = new Dictionary<GameEnums.SocialClass, float>();
         /// <summary>主要代表阶层（backing 最高者）</summary>
         public GameEnums.SocialClass primaryClass = GameEnums.SocialClass.Peasant;

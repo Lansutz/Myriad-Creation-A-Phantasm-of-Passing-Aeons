@@ -28,12 +28,15 @@ namespace CivilizationEvolution.Economy
         public string centerName;
         public int centerTileIndex;
 
+        [System.NonSerialized]
         public Dictionary<int, float> inventory = new Dictionary<int, float>();
         public float inventoryCapacity = 10000f;
 
         public List<TradeRoute> tradeRoutes = new List<TradeRoute>();
 
+        [System.NonSerialized]
         public Dictionary<int, float> localDemand = new Dictionary<int, float>();
+        [System.NonSerialized]
         public Dictionary<int, float> localSupply = new Dictionary<int, float>();
 
         /// <summary>获取物资价格（供需决定）</summary>
@@ -176,6 +179,7 @@ namespace CivilizationEvolution.Economy
         public int fromRegionId;
         public int toRegionId;
         public int currentNodeIndex;
+        [System.NonSerialized]
         public Dictionary<int, float> cargo = new Dictionary<int, float>();
         public float capacity = 500f;
         public float speed = 1f;
@@ -281,6 +285,7 @@ namespace CivilizationEvolution.Economy
         public float saltMonopolyTax = 0.5f;
         public float wartimeSpecialTax = 0f;
 
+        [System.NonSerialized]
         public Dictionary<GameEnums.SocialClass, bool> taxExemptions = new Dictionary<GameEnums.SocialClass, bool>();
 
         /// <summary>计算地块实际税收</summary>
