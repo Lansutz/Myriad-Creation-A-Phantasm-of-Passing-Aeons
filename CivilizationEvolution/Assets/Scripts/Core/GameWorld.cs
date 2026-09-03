@@ -911,6 +911,57 @@ namespace CivilizationEvolution.Core
                     $"{name}{epi}{post} 逝世——一生盖棺定论", major: true, realm?.realmId ?? -1);
         }
 
+        /// <summary>
+        /// 建城（事件接口——君主/政权在地块建城——纪念命名）：
+        /// 命名优先=建城者名+城语义后缀[FounderCity——亚历山大城式——
+        /// 查建城者文化→语言→城词]——语言缺城词→回退程序化生成
+        /// </summary>
+        public Map.BurgData CreateCity(int realmId, int tileIndex, int founderCharId)
+        {
+            if (tileIndex < 0 || tileIndex >= tiles.Length) return null;
+            if (!tiles[tileIndex].isLand) return null;
+            ref TileData tile = ref tiles[tileIndex];
+            if (tile.ownerRealmId != realmId) return null; // 只能在本政权领地建城
+
+            int nextId = 1;
+            foreach (var b in burgs.Keys) if (b >= nextId) nextId = b + 1;
+
+            string name = "";
+            var founder = _characterManager?.GetCharacter(founderCharId);
+            if (founder != null)
+            {
+                // 建城者文化→语言→城词（纪念名）
+                if (cultures != null && cultures.TryGetValue(founder.cultureId, out var cd))
+                {
+                    if (ContentRegistry.TryGetLanguage(cd.languageId, out var lang))
+                        name = Culture.PlaceNameGenerator.FounderCity(
+                            $"{founder.firstName}{founder.lastName}", lang);
+                }
+            }
+            if (string.IsNullOrEmpty(name))
+                name = "新市镇";
+
+            var burg = new Map.BurgData
+            {
+                burgId = nextId,
+                burgName = name,
+                type = Map.BurgType.City,
+                provinceId = tile.provinceId,
+                tileIndex = tileIndex,
+                x = 0.5f, y = 0.5f,
+                isCoastal = tile.isCoast,
+                buildLevel = 1,
+            };
+            Map.SettlementTypologySystem.DeriveInitialType(burg, tile, mapWidth, mapHeight);
+            burg.settlementType = Map.SettlementEvolutionSystem.InferFromBurgType(burg.type);
+            burgs[burg.burgId] = burg;
+            string founderName = founder != null ? founder.firstName + founder.lastName : "某人";
+            _chronicle?.Add("city_founded",
+                $"{founderName} 建立城市 {name}",
+                major: true, realmId);
+            return burg;
+        }
+
         /// <summary>政权陆地占比（0-1——领土数/总陆地块——区域影响力近似源）</summary>
         private float GetRealmLandShare(int realmId)
         {
