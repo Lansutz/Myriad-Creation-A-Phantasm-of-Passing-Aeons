@@ -531,6 +531,8 @@ namespace CivilizationEvolution.Core
 
                 // 官职补缺（死亡/空缺时任命——OfficeTitle 消费方）
             EnsureOfficeHolders();
+            // 行政区划树（空才生成——分封 4/郡县容量 2-5——政体改革重建后续）
+            EnsureAdminDivisions();
 
             // 政体变迁接线：战败暴露国家无能，为战败方打开关键节点窗口（战胜/白和不触发）
                 if (war.outcome == "victory" && war.winnerId >= 0)
@@ -805,6 +807,29 @@ namespace CivilizationEvolution.Core
         {
             var ruler = GetRealmRuler(realmId);
             if (ruler != null) ruler.achievements.defensiveWins++;
+        }
+
+        /// <summary>
+        /// 行政区划树生成（政权辖境→AdminDivisionSystem——治理模式定层数：
+        /// 分封 4 层/郡县=行政容量弹性——官僚头衔随层绑定——批4）
+        /// </summary>
+        private void EnsureAdminDivisions()
+        {
+            for (int i = 0; i < realms.Count; i++)
+            {
+                var realm = realms[i];
+                if (realm == null || realm.adminDivisions.Count > 0) continue;
+                // 辖境=核心+占领地块
+                var territory = new HashSet<int>(realm.coreTiles);
+                for (int t = 0; t < tiles.Length; t++)
+                    if (tiles[t].ownerRealmId == realm.realmId) territory.Add(t);
+                if (territory.Count == 0) continue;
+                var effects = realm.composition != null
+                    ? Politics.GovernmentEffects.CalculateEffects(realm.composition) : null;
+                float capacity = effects != null ? effects.administrativeCapacity : 0.5f;
+                realm.adminDivisions = Culture.AdminDivisionSystem.Generate(realm,
+                    realm.composition, capacity, territory);
+            }
         }
 
         /// <summary>

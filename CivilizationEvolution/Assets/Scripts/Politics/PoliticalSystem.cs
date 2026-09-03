@@ -18,6 +18,10 @@ namespace CivilizationEvolution.Politics
         /// OfficeTitleCatalog 提供文化定制称号）</summary>
         [System.NonSerialized]
         public Dictionary<int, int> officeHolders = new Dictionary<int, int>();
+        /// <summary>行政区划树（AdminDivisionSystem.Generate——政权=根——
+        /// 分封 4 层/郡县容量 2-5——批4——每节点治理头衔/holder）</summary>
+        public System.Collections.Generic.List<Culture.AdminDivision> adminDivisions
+            = new System.Collections.Generic.List<Culture.AdminDivision>();
         /// <summary>政权主保圣人（CultObject id——须属国教教统内——
         /// 国家庇护/政权标识/加冕礼——国教换主保跟着换）</summary>
         public int statePatronSaintId = -1;
