@@ -48,6 +48,7 @@ namespace CivilizationEvolution.UI
         [SerializeField] private TMP_Text tileClimateText;
         [SerializeField] private TMP_Text tileBiomeText;
         [SerializeField] private TMP_Text tilePopulationText;
+        [SerializeField] private Button viewRealmButton;
         [SerializeField] private TMP_Text tileEconomyText;
 
         [Header("事件日志")]
@@ -79,6 +80,9 @@ namespace CivilizationEvolution.UI
         [SerializeField] private GameObject startMenuPanel;
         [SerializeField] private Button startGameButton;
         [SerializeField] private GameObject religionPanel;
+        [SerializeField] private GameObject overviewPanel;
+        [SerializeField] private TMP_Text overviewText;
+        [SerializeField] private Button overviewCloseButton;
         [SerializeField] private TMPro.TMP_Text religionPanelText;
         [SerializeField] private Button religionOpenButton;
         [SerializeField] private Button religionCloseButton;
@@ -113,6 +117,11 @@ namespace CivilizationEvolution.UI
 
         // 选中的地块
         private int _selectedTile = -1;
+        /// <summary>当前查看政权（视角——默认玩家政权——点选地块自动跟随其
+        /// 所属政权——顶栏政权名/社会/宗教面板都以此为准——政权总览入口）</summary>
+        private int _viewRealmId = -1;
+        /// <summary>查看政权（公开——面板刷新用）</summary>
+        public int ViewRealmId => _viewRealmId >= 0 ? _viewRealmId : (world != null ? world.PlayerRealmId : 0);
         private readonly List<string> _eventLog = new List<string>();
         private const int MaxLogEntries = 100;
 
@@ -218,6 +227,8 @@ namespace CivilizationEvolution.UI
             if (societyOpenButton != null) societyOpenButton.onClick.AddListener(OpenSocietyPanel);
             if (religionOpenButton != null) religionOpenButton.onClick.AddListener(OpenReligionPanel);
             if (startGameButton != null) startGameButton.onClick.AddListener(StartGameFromMenu);
+            if (viewRealmButton != null) viewRealmButton.onClick.AddListener(OpenViewRealmPanel);
+            if (overviewCloseButton != null) overviewCloseButton.onClick.AddListener(CloseOverviewPanel);
             if (religionCloseButton != null) religionCloseButton.onClick.AddListener(CloseReligionPanel);
             if (societyCloseButton != null) societyCloseButton.onClick.AddListener(CloseSocietyPanel);
 
@@ -268,6 +279,18 @@ namespace CivilizationEvolution.UI
                     : $"已历 {ey} 年 {ed} 天";
             }
 
+            // 顶栏政权名（当前查看政权——点选跟随——死显示"未选择势力"修复）
+            if (realmNameText != null)
+            {
+                int vr = ViewRealmId;
+                if (world.realms.TryGetValue(vr, out var vrealm))
+                {
+                    bool isPlayer = vr == world.PlayerRealmId;
+                    realmNameText.text = isPlayer ? $"{vrealm.realmName}（本家）" : vrealm.realmName;
+                }
+                else realmNameText.text = "无政权";
+            }
+
             // 顶栏精简：国库/总人口移除（用户定稿——政权数据进政权界面——
             // 同时消除每 0.2s 全遍历地块算总人口的重操作）
 
@@ -280,6 +303,8 @@ namespace CivilizationEvolution.UI
                 int provinceCount = world.provinces != null ? world.provinces.Count : 0;
                 mapInfoText.text = $"地图 {world.mapWidth}×{world.mapHeight}  地块 {totalTiles}(陆{landTiles}/海{seaTiles})  省份 {provinceCount}";
             }
+        }
+
         /// <summary>更新地块详情</summary>
         private string GetCultureName(int cultureId)
         {
@@ -302,7 +327,13 @@ namespace CivilizationEvolution.UI
             ref TileData tile = ref world.tiles[_selectedTile];
 
             if (tileNameText != null)
-                tileNameText.text = $"地块 #{_selectedTile}";
+            {
+                // 标题=所属政权（无主=蛮荒）——政权级入口标识
+                int owner = tile.ownerRealmId;
+                string realmTag = owner >= 0 && world.realms.TryGetValue(owner, out var or)
+                    ? or.realmName : "无主之地";
+                tileNameText.text = $"{realmTag} · 地块 #{_selectedTile}";
+            }
             if (tileTerrainText != null)
                 tileTerrainText.text = $"高程: {tile.elevation01:F2}\n坡度: {tile.slopeDegree:F1}°\n海陆: {(tile.isLand ? "陆地" : "海洋")}\n海洋分级: {tile.oceanTier}";
             if (tileClimateText != null)
@@ -336,6 +367,9 @@ namespace CivilizationEvolution.UI
                 if (tile >= 0)
                 {
                     _selectedTile = tile;
+                    // 视角跟随：点地块→查看其所属政权（政权总览数据源）
+                    if (world != null && tile < world.tiles.Length && world.tiles[tile].ownerRealmId >= 0)
+                        _viewRealmId = world.tiles[tile].ownerRealmId;
                     if (tileInfoPanel != null)
                         tileInfoPanel.SetActive(true);
                     AddEventLog($"选中地块 #{tile}");
@@ -460,13 +494,13 @@ namespace CivilizationEvolution.UI
         private void RefreshReligionPanel()
         {
             if (world == null || religionPanelText == null) return;
-            int playerRealm = world.PlayerRealmId;
+            int viewRealm = ViewRealmId; // 视角政权（点选跟随——非固定玩家）
             Culture.ReligionDef succession = null;
             Thought.FaithSystem faith = null;
             int patronSaint = -1;
-            if (playerRealm >= 0 && playerRealm < world.realms.Count)
+            if (viewRealm >= 0 && viewRealm < world.realms.Count)
             {
-                var realm = world.realms[playerRealm];
+                var realm = world.realms[viewRealm];
                 succession = Culture.ReligionCatalog.Get(realm.stateReligionId);
                 faith = world.GetFaithSystem(realm.stateReligionId);
                 patronSaint = realm.statePatronSaintId;
@@ -481,6 +515,46 @@ namespace CivilizationEvolution.UI
             if (bootstrap != null && (world == null || world.tiles.Length == 0))
                 bootstrap.StartNewGame(); // 建世界（GameManager 初始化）
             if (startMenuPanel != null) startMenuPanel.SetActive(false);
+        }
+
+        /// <summary>查看政权总览（打开聚合面板——人口/国库/官职/宗教——
+        /// 数据源=已有系统聚合——设计定稿）</summary>
+        private void OpenViewRealmPanel()
+        {
+            if (overviewPanel != null)
+            {
+                RefreshOverviewPanel();
+                overviewPanel.SetActive(true);
+            }
+        }
+
+        private void CloseOverviewPanel()
+        {
+            if (overviewPanel != null) overviewPanel.SetActive(false);
+        }
+
+        /// <summary>刷新政权总览（_viewRealmId 视角政权——聚合各系统）</summary>
+        private void RefreshOverviewPanel()
+        {
+            if (world == null || overviewText == null) return;
+            int realmId = ViewRealmId;
+            if (!world.realms.TryGetValue(realmId, out var realm))
+            {
+                overviewText.text = Culture.RealmOverviewText.Build(null, null);
+                return;
+            }
+            var society = world.GetRealmSociety(realmId);
+            var officeDisplay = BuildOfficeDisplay(world, realm);
+            Culture.ReligionDef religion = realm.stateReligionId >= 0
+                ? Culture.ReligionCatalog.Get(realm.stateReligionId) : null;
+            string saint = "";
+            if (realm.statePatronSaintId > 0 && religion != null)
+            {
+                foreach (var snt in Culture.CanonizationSystem.GetSaints(realm.stateReligionId))
+                    if (snt.saintId == realm.statePatronSaintId) { saint = snt.saintName; break; }
+            }
+            overviewText.text = Culture.RealmOverviewText.Build(realm, society, officeDisplay,
+                religion, saint, realmId == world.PlayerRealmId);
         }
 
         private void OpenReligionPanel()
@@ -513,7 +587,7 @@ namespace CivilizationEvolution.UI
         private void RefreshSocietyPanel()
         {
             if (societyText == null || world == null) return;
-            int realmId = world.PlayerRealmId >= 0 ? world.PlayerRealmId : 0;
+            int realmId = ViewRealmId; // 当前查看政权（点选地块自动跟随——非固定玩家）
             if (!world.realms.TryGetValue(realmId, out var realm)) return;
 
             // 官职显示组装（officeHolders→文化定制称号+持有者名——OfficeTitle 消费）

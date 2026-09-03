@@ -266,6 +266,19 @@ namespace CivilizationEvolution.EditorTools
             Debug.Log("[CE菜单] 主菜单已添加（全屏标题+开始游戏按钮）——请保存场景");
         }
 
+        [MenuItem(MenuRoot + "14. 就地添加政权总览面板", false, 14)]
+        public static void AddOverviewPanelToExistingScene()
+        {
+            var canvas = GameObject.Find("Canvas");
+            if (canvas == null) { Debug.LogWarning("[CE菜单] 未找到 Canvas"); return; }
+            var ui = canvas.GetComponent<UIManager>();
+            if (ui == null) return;
+            if (canvas.transform.Find("OverviewPanel") == null)
+                BuildOverviewPanel(canvas.transform, ui);
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Debug.Log("[CE菜单] 政权总览面板已就位（点地块卡'查看政权总览'打开）");
+        }
+
         [MenuItem(MenuRoot + "12. 一键修复编辑器界面（打开主场景+重置布局）", false, 12)]
         public static void FixEditorLayoutAndScene()
         {
@@ -634,11 +647,14 @@ namespace CivilizationEvolution.EditorTools
             vLayout.childForceExpandWidth = true;
             SetField(ui, "tileInfoPanel", tilePanel);
             SetField(ui, "tileNameText", CreateText("TileName", tilePanel.transform, "地块", 22));
+            // 信息层级（用户定稿）：地块人口优先显示（首行——然后是政权按钮→政权界面）
+            SetField(ui, "tilePopulationText", CreateText("TilePop", tilePanel.transform, "人口：-", 18));
             SetField(ui, "tileTerrainText", CreateText("TileTerrain", tilePanel.transform, "地形：-", 18));
             SetField(ui, "tileClimateText", CreateText("TileClimate", tilePanel.transform, "气候：-", 18));
             SetField(ui, "tileBiomeText", CreateText("TileBiome", tilePanel.transform, "群系：-", 18));
-            SetField(ui, "tilePopulationText", CreateText("TilePop", tilePanel.transform, "人口：-", 18));
             SetField(ui, "tileEconomyText", CreateText("TileEconomy", tilePanel.transform, "经济：-", 18));
+            // 查看政权总览按钮（点进政权界面——政权级人口/国库等）
+            SetField(ui, "viewRealmButton", CreateButton("ViewRealmBtn", tilePanel.transform, "查看政权总览"));
             tilePanel.SetActive(false);
 
             // ---- 事件日志（左下）----
@@ -672,10 +688,46 @@ namespace CivilizationEvolution.EditorTools
             BuildSocietyPanel(canvas, ui);
             BuildReligionPanel(canvas, ui);
             BuildStartMenu(canvas, ui);
+            BuildOverviewPanel(canvas, ui);
             SetField(ui, "religionOpenButton", CreateButton("ReligionOpenBtn", canvas.Find("SpeedGroup") ?? canvas, "宗教"));
         }
 
         /// <summary>构建社会政治面板（阶层画像/派系/政体变迁；供一键搭建与就地升级共用）</summary>
+        /// <summary>构建政权总览面板（聚合人口/国库/官职/宗教——定稿——共用）</summary>
+        private static void BuildOverviewPanel(Transform canvas, UIManager ui)
+        {
+            var panel = CreatePanel("OverviewPanel", canvas).gameObject;
+            SetAnchor(panel.GetComponent<RectTransform>(),
+                new Vector2(1, 1), new Vector2(1, 1), new Vector2(-720, -12), new Vector2(420, 500));
+            var cv = panel.AddComponent<VerticalLayoutGroup>();
+            cv.spacing = 6; cv.padding = new RectOffset(12, 12, 10, 10);
+            cv.childForceExpandWidth = true;
+
+            var titleRow = new GameObject("OvTitleRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            titleRow.transform.SetParent(panel.transform, false);
+            var tr = titleRow.GetComponent<HorizontalLayoutGroup>();
+            tr.spacing = 6; tr.childAlignment = TextAnchor.MiddleCenter;
+            tr.childForceExpandWidth = false;
+            var title = CreateText("OvTitle", titleRow.transform, "政权总览", 18);
+            title.color = UITheme.Accent;
+            title.fontStyle = FontStyles.Bold;
+            SetField(ui, "overviewCloseButton", CreateButton("OvCloseBtn", titleRow.transform, "✕"));
+
+            var scroll = panel.AddComponent<ScrollRect>();
+            var text = CreateText("OverviewText", panel.transform, "（点地块卡'查看政权总览'）", 15);
+            text.rectTransform.anchorMin = Vector2.zero;
+            text.rectTransform.anchorMax = Vector2.one;
+            text.rectTransform.offsetMax = new Vector2(-8, -30);
+            text.rectTransform.offsetMin = new Vector2(8, 4);
+            text.overflowMode = TextOverflowModes.Overflow;
+            text.alignment = TextAlignmentOptions.TopLeft;
+            scroll.content = text.rectTransform;
+
+            SetField(ui, "overviewPanel", panel);
+            SetField(ui, "overviewText", text);
+            panel.SetActive(false);
+        }
+
         /// <summary>构建宗教面板（教统信息/支柱/圣人——一键搭建与就地升级共用）</summary>
         private static void BuildReligionPanel(Transform canvas, UIManager ui)
         {
