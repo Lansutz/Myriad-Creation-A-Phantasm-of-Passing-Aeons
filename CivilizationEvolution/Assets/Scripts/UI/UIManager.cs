@@ -328,12 +328,21 @@ namespace CivilizationEvolution.UI
 
             if (tileNameText != null)
             {
-                // 标题=所属政权（无主=蛮荒）——政权级入口标识
+                // 标题=归属（CK3 式：点政权领=政权名——点无主=状态）
                 int owner = tile.ownerRealmId;
-                string realmTag = owner >= 0 && world.realms.TryGetValue(owner, out var or)
-                    ? or.realmName : "无主之地";
+                string realmTag;
+                if (owner >= 0 && world.realms.TryGetValue(owner, out var or))
+                    realmTag = or.realmName;
+                else
+                {
+                    bool hasPop = tile.populationBlocks != null && tile.populationBlocks.Count > 0;
+                    realmTag = hasPop ? "无主之地 · 聚落" : "无主之地 · 荒野";
+                }
                 tileNameText.text = $"{realmTag} · 地块 #{_selectedTile}";
             }
+            // 查看政权按钮：仅领地块可用（无主无政权可看——隐藏）
+            if (viewRealmButton != null)
+                viewRealmButton.gameObject.SetActive(tile.ownerRealmId >= 0);
             if (tileTerrainText != null)
                 tileTerrainText.text = $"高程: {tile.elevation01:F2}\n坡度: {tile.slopeDegree:F1}°\n海陆: {(tile.isLand ? "陆地" : "海洋")}\n海洋分级: {tile.oceanTier}";
             if (tileClimateText != null)
@@ -346,13 +355,26 @@ namespace CivilizationEvolution.UI
                 if (tile.populationBlocks != null)
                     foreach (var pb in tile.populationBlocks)
                         pop += pb.count;
-                tilePopulationText.text = $"人口: {Mathf.RoundToInt(pop * 50)}\n人口块: {(tile.populationBlocks?.Count ?? 0)}\n稳定值: {tile.stability:F0}\n秩序: {tile.order:F0}";
-                // 三维占比明细（文化/信仰——传播机制可见：传教/迁移导致的占比变化
-                // 直接看得到——主流易位实时呈现）
-                var shareText = Politics.PopulationStats.BuildShareText(tile,
-                    id => GetCultureName(id), id => GetReligionName(id));
-                if (!string.IsNullOrEmpty(shareText))
-                    tilePopulationText.text += "\n" + shareText;
+                long people = (long)(pop * 50f);
+
+                // 地块归属分级（CK3 式——点任何地块都有准确反馈）：
+                // 有主=政权领地；无主有人=部落/自由聚落；无主无人=荒野
+                int owner = tile.ownerRealmId;
+                if (owner >= 0 && world.realms.TryGetValue(owner, out var ownRealm))
+                {
+                    tilePopulationText.text = $"人口: {people:N0} 人\n所属: {ownRealm.realmName}";
+                }
+                else if (pop > 0f)
+                {
+                    // 无主聚落（部落/自由民——无人涂色但有人——待征服/演化）
+                    int domCulture = Politics.PopulationStats.GetDominantCulture(tile);
+                    string cName = GetCultureName(domCulture);
+                    tilePopulationText.text = $"人口: {people:N0} 人（无主聚落·{cName}）";
+                }
+                else
+                {
+                    tilePopulationText.text = "荒芜之地（无政权·无人烟）";
+                }
             }
             if (tileEconomyText != null)
                 tileEconomyText.text = $"法理政权: {tile.ownerRealmId}\n占领政权: {tile.occupyingRealmId}\n道路: {tile.roadLevel}\n连通海域: {tile.seaConnectId}";
