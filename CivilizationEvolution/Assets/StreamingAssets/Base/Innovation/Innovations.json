@@ -2291,19 +2291,18 @@
       ],
       "innovationName": "民族国家",
       "description": "以民族为政治单元的领土主权国家——官僚治理的现代形态。"
+    },
+    {
+      "innovationId": 1025,
+      "field": 14,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        500
+      ],
+      "prerequisitesAny": [],
+      "innovationName": "领土王国",
+      "description": "疆域想象的形成——先是某某人之王，而后才有王国：头衔所辖从'人'延展为'土地'，王国成为领土实体，地图上开始出现以国为名的疆域。"
     }
   ]
-
-  {
-    "innovationId": 1025,
-    "field": 14,
-    "era": 2,
-    "researchCost": 200,
-    "prerequisites": [
-      500
-    ],
-    "prerequisitesAny": [],
-    "innovationName": "领土王国",
-    "description": "疆域想象的形成——先是某某人之王，而后才有王国：头衔所辖从'人'延展为'土地'，王国成为领土实体，地图上开始出现以国为名的疆域。"
-  }
 }
