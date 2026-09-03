@@ -151,6 +151,8 @@ namespace CivilizationEvolution.Core
         public float weight = 1f;
         /// <summary>语义字段（含义/类别——组合/显示用）</summary>
         public string semantic = "";
+        /// <summary>文化专属（-1=通用——文化专属头衔优先于通用——模组配置）</summary>
+        public int cultureId = -1;
     }
 
     /// <summary>

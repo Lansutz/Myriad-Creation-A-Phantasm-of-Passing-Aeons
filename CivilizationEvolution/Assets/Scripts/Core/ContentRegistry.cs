@@ -109,6 +109,9 @@ namespace CivilizationEvolution.Core
         public static Dictionary<string, LanguageDef> Languages { get; private set; } = new Dictionary<string, LanguageDef>();
         public static Dictionary<string, EthnicGroupDef> EthnicGroups { get; private set; } = new Dictionary<string, EthnicGroupDef>();
         public static Dictionary<string, FamilyTraditionDef> FamilyTraditions { get; private set; } = new Dictionary<string, FamilyTraditionDef>();
+        /// <summary>头衔表（titleId→定义——2026-09-03 批3——三类+国名后缀——
+        /// cultureId 空=通用——模组可加/覆盖）</summary>
+        public static Dictionary<string, TitleDef> Titles { get; private set; } = new Dictionary<string, TitleDef>();
         public static Dictionary<string, CharacterTemplateDef> CharacterTemplates { get; private set; } = new Dictionary<string, CharacterTemplateDef>();
         public static Dictionary<string, TalentDefectDef> TalentDefects { get; private set; } = new Dictionary<string, TalentDefectDef>();
         public static Dictionary<string, MentalDisorderDef> MentalDisorders { get; private set; } = new Dictionary<string, MentalDisorderDef>();
@@ -125,6 +128,7 @@ namespace CivilizationEvolution.Core
             Cultures = new Dictionary<int, CultureContentPack>();
             Races = new Dictionary<int, RaceData>();
             Ethos = new Dictionary<string, EthosDef>();
+            Titles = new Dictionary<string, TitleDef>();
             Traditions = new Dictionary<string, TraditionDef>();
             Languages = new Dictionary<string, LanguageDef>();
             EthnicGroups = new Dictionary<string, EthnicGroupDef>();
@@ -271,7 +275,9 @@ namespace CivilizationEvolution.Core
             string traditionFile = Path.Combine(root, "Tradition", "Traditions.json");
             if (File.Exists(traditionFile))
             {
-                try { LoadTraditions(traditionFile); }
+                try { LoadTraditions(traditionFile);
+            string titleFile = Path.Combine(root, "Title", "Titles.json");
+            if (File.Exists(titleFile)) LoadTitlesFile(titleFile); }
                 catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 文化传统定义加载失败：{e.Message}"); }
             }
 
@@ -411,6 +417,23 @@ namespace CivilizationEvolution.Core
         }
 
         /// <summary>加载族群（EthnicGroup）定义</summary>
+        [Serializable]
+        private class TitlesWrapper
+        {
+            public List<TitleDef> titles = new List<TitleDef>();
+        }
+
+        /// <summary>加载头衔表（Title/Titles.json——{ "titles": [...] }——模组覆盖）</summary>
+        private static void LoadTitlesFile(string path)
+        {
+            if (!File.Exists(path)) return;
+            var wrapper = JsonUtility.FromJson<TitlesWrapper>(File.ReadAllText(path));
+            if (wrapper == null || wrapper.titles == null) return;
+            foreach (var t in wrapper.titles)
+                if (t != null && !string.IsNullOrEmpty(t.titleId))
+                    Titles[t.titleId] = t; // 同名覆盖（模组优先——后加载赢）
+        }
+
         private static void LoadEthnicGroups(string path)
         {
             var wrapper = JsonUtility.FromJson<EthnicGroupsWrapper>(File.ReadAllText(path));
