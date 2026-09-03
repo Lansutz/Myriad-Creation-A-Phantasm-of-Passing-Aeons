@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 namespace CivilizationEvolution.EditorTools
@@ -31,7 +32,7 @@ namespace CivilizationEvolution.EditorTools
                 // 当前无已打开场景或打开的是默认 Untitled 时自动开主场景
                 if (SceneManager.GetActiveScene().path != ScenePath)
                 {
-                    SceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+                    EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
                     Debug.Log("[AutoOpen] 已自动打开主场景：" + ScenePath + "——按 Play 开始游戏");
                 }
             };
