@@ -139,7 +139,7 @@ namespace CivilizationEvolution.EditorTools
         [MenuItem(MenuRoot + "5. 就地升级 Dropdown 展开模板", false, 5)]
         public static void UpgradeExistingDropdown()
         {
-            var dd = Object.FindFirstObjectByType<TMP_Dropdown>(FindObjectsInactive.Include);
+            var dd = Object.FindAnyObjectByType<TMP_Dropdown>(FindObjectsInactive.Include);
             if (dd == null)
             {
                 Debug.LogWarning("[CE菜单] 场景中未找到 Dropdown，请先执行菜单\"1. 一键搭建游戏场景\"。");
@@ -157,7 +157,7 @@ namespace CivilizationEvolution.EditorTools
         public static void UpgradeGlobalStyle()
         {
             // ---- 按钮：统一圆角 + ColorTint ----
-            var buttons = Object.FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var buttons = Object.FindObjectsByType<Button>(FindObjectsInactive.Include);
             foreach (var b in buttons)
             {
                 if (b.targetGraphic is Image img)
@@ -170,7 +170,7 @@ namespace CivilizationEvolution.EditorTools
             }
 
             // ---- Dropdown：统一圆角 + ColorTint ----
-            var dropdowns = Object.FindObjectsByType<Dropdown>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var dropdowns = Object.FindObjectsByType<Dropdown>(FindObjectsInactive.Include);
             foreach (var dd in dropdowns)
             {
                 if (dd.targetGraphic is Image img)
@@ -183,7 +183,7 @@ namespace CivilizationEvolution.EditorTools
             }
 
             // ---- 面板：圆角 + 主题色 ----
-            var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+            var canvas = Object.FindAnyObjectByType<Canvas>(FindObjectsInactive.Include);
             if (canvas != null)
             {
                 foreach (var panelName in new[] { "TopBar", "SpeedGroup", "TileInfoPanel", "EventLogPanel" })
@@ -224,7 +224,7 @@ namespace CivilizationEvolution.EditorTools
         [MenuItem(MenuRoot + "7. 就地添加角色面板", false, 7)]
         public static void AddCharacterPanelToExistingScene()
         {
-            var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+            var canvas = Object.FindAnyObjectByType<Canvas>(FindObjectsInactive.Include);
             if (canvas == null)
             {
                 Debug.LogWarning("[CE菜单] 未找到 Canvas，请先执行菜单 1 一键搭建游戏场景。");
@@ -236,7 +236,7 @@ namespace CivilizationEvolution.EditorTools
                 return;
             }
 
-            var ui = Object.FindFirstObjectByType<UIManager>(FindObjectsInactive.Include);
+            var ui = Object.FindAnyObjectByType<UIManager>(FindObjectsInactive.Include);
             if (ui == null)
             {
                 Debug.LogWarning("[CE菜单] 未找到 UIManager，请先执行菜单 1 一键搭建游戏场景。");
@@ -302,7 +302,7 @@ namespace CivilizationEvolution.EditorTools
         [MenuItem(MenuRoot + "8. 就地添加社会政治面板", false, 8)]
         public static void AddSocietyPanelToExistingScene()
         {
-            var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+            var canvas = Object.FindAnyObjectByType<Canvas>(FindObjectsInactive.Include);
             if (canvas == null)
             {
                 Debug.LogWarning("[CE菜单] 未找到 Canvas，请先执行菜单 1 一键搭建游戏场景。");
@@ -314,7 +314,7 @@ namespace CivilizationEvolution.EditorTools
                 return;
             }
 
-            var ui = Object.FindFirstObjectByType<UIManager>(FindObjectsInactive.Include);
+            var ui = Object.FindAnyObjectByType<UIManager>(FindObjectsInactive.Include);
             if (ui == null)
             {
                 Debug.LogWarning("[CE菜单] 未找到 UIManager，请先执行菜单 1 一键搭建游戏场景。");
@@ -334,7 +334,7 @@ namespace CivilizationEvolution.EditorTools
         [MenuItem(MenuRoot + "9. 就地添加音乐播放器", false, 9)]
         public static void AddMusicPanelToExistingScene()
         {
-            var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+            var canvas = Object.FindAnyObjectByType<Canvas>(FindObjectsInactive.Include);
             if (canvas == null)
             {
                 Debug.LogWarning("[CE菜单] 未找到 Canvas，请先执行菜单 1 一键搭建游戏场景。");
@@ -346,7 +346,7 @@ namespace CivilizationEvolution.EditorTools
                 return;
             }
 
-            var ui = Object.FindFirstObjectByType<UIManager>(FindObjectsInactive.Include);
+            var ui = Object.FindAnyObjectByType<UIManager>(FindObjectsInactive.Include);
             if (ui == null)
             {
                 Debug.LogWarning("[CE菜单] 未找到 UIManager，请先执行菜单 1 一键搭建游戏场景。");
@@ -365,7 +365,7 @@ namespace CivilizationEvolution.EditorTools
         [MenuItem(MenuRoot + "10. 就地添加家族树面板", false, 10)]
         public static void AddFamilyTreePanelToExistingScene()
         {
-            var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+            var canvas = Object.FindAnyObjectByType<Canvas>(FindObjectsInactive.Include);
             if (canvas == null)
             {
                 Debug.LogWarning("[CE菜单] 未找到 Canvas，请先执行菜单 1 一键搭建游戏场景。");
@@ -377,7 +377,7 @@ namespace CivilizationEvolution.EditorTools
                 return;
             }
 
-            var ui = Object.FindFirstObjectByType<UIManager>(FindObjectsInactive.Include);
+            var ui = Object.FindAnyObjectByType<UIManager>(FindObjectsInactive.Include);
             if (ui == null)
             {
                 Debug.LogWarning("[CE菜单] 未找到 UIManager，请先执行菜单 1 一键搭建游戏场景。");
