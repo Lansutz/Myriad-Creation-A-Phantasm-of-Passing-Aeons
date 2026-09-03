@@ -106,6 +106,12 @@ namespace CivilizationEvolution.Core
         /// 语义=组合自由度——规则限制在生成器）
         /// </summary>
         public List<PlaceSuffixDef> placeSuffixes = new List<PlaceSuffixDef>();
+        /// <summary>
+        /// 地形词干（自然词——组合引擎词干输入——semantic: mountain 山地/
+        /// plain 平原/cliff 山崖/river 河/sea 海/valley 河谷/coast 滨海…
+        /// word=语言真实词——同 placeSuffixes 结构）
+        /// </summary>
+        public List<PlaceSuffixDef> terrainWords = new List<PlaceSuffixDef>();
 
         public string GetName() => Localization.Get(languageId + "_name");
         public string GetDescription() => Localization.Get(languageId + "_desc");
