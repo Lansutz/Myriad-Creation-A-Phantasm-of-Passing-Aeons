@@ -256,28 +256,18 @@ namespace CivilizationEvolution.UI
             if (world == null) return;
 
             if (dateText != null)
-                dateText.text = $"第 {world.currentYear} 年 第 {world.currentDay} 天";
-
-            // 计算总人口
-            float totalPop = 0f;
-            for (int i = 0; i < world.tiles.Length; i++)
             {
-                if (world.tiles[i].populationBlocks != null)
-                    foreach (var pb in world.tiles[i].populationBlocks)
-                        totalPop += pb.count;
+                // 时间=已历时长（开局起算——非纪元年第——用户定稿）
+                int ey = world.currentYear - world.startYear;
+                int ed = world.currentDay - world.startDay;
+                if (ed < 0) { ed += 365; ey -= 1; }
+                dateText.text = ey <= 0 && ed <= 0 ? "开局"
+                    : $"已历 {ey} 年 {ed} 天";
             }
 
-            if (populationText != null)
-                populationText.text = $"人口: {Mathf.RoundToInt(totalPop * 50)}";
+            // 顶栏精简：国库/总人口移除（用户定稿——政权数据进政权界面——
+            // 同时消除每 0.2s 全遍历地块算总人口的重操作）
 
-            // 国库（简化：取第一个政权）
-            if (treasuryText != null && world.realms.Count > 0)
-            {
-                var enumerator = world.realms.GetEnumerator();
-                enumerator.MoveNext();
-                treasuryText.text = $"国库: {Mathf.RoundToInt(enumerator.Current.Value.treasury)}";
-            }
-        
             // 地图信息：尺寸 + 地块数 + 省份数
             if (mapInfoText != null)
             {
@@ -286,8 +276,7 @@ namespace CivilizationEvolution.UI
                 int seaTiles = world.GetSeaTileCount();
                 int provinceCount = world.provinces != null ? world.provinces.Count : 0;
                 mapInfoText.text = $"地图 {world.mapWidth}×{world.mapHeight}  地块 {totalTiles}(陆{landTiles}/海{seaTiles})  省份 {provinceCount}";
-            }}
-
+            }
         /// <summary>更新地块详情</summary>
         private string GetCultureName(int cultureId)
         {

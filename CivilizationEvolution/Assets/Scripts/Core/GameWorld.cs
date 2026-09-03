@@ -69,6 +69,9 @@ namespace CivilizationEvolution.Core
         /// <summary>宗教运行时状态（每教统一个 FaithSystem——热忱/信徒/圣地——
         /// 由 ReligionCatalog 初始化）</summary>
         private readonly List<FaithSystem> _faithSystems = new List<FaithSystem>();
+        /// <summary>开局年月（时间显示=已历时长——开局时记录）</summary>
+        public int startYear = -1;
+        public int startDay = -1;
         /// <summary>圣地丢失已处理标记（faithId→已计热忱的圣地 tile——防重复刷）</summary>
         private readonly HashSet<int> _holySiteLostProcessed = new HashSet<int>();
         private int _nextWarId = 1;
@@ -127,6 +130,7 @@ namespace CivilizationEvolution.Core
         /// <summary>初始化世界</summary>
         public void InitializeWorld()
         {
+            if (startYear < 0) { startYear = currentYear; startDay = currentDay; }
             // 内容注册表幂等初始化（与 Bootstrap.Awake 无执行顺序依赖）
             if (!ContentRegistry.IsInitialized)
                 ContentRegistry.Initialize();

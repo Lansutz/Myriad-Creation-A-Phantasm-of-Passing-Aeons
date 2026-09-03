@@ -509,9 +509,8 @@ namespace CivilizationEvolution.EditorTools
             var gameTitle = CreateText("GameTitle", topBar, GameConstants.GameNameShort, 20);
             gameTitle.color = UITheme.Accent;
             gameTitle.fontStyle = FontStyles.Bold;
-            SetField(ui, "dateText", CreateText("DateText", topBar, "第 0 年 第 0 天", 20));
-            SetField(ui, "treasuryText", CreateText("TreasuryText", topBar, "国库：0", 20));
-            SetField(ui, "populationText", CreateText("PopulationText", topBar, "人口：0", 20));
+            SetField(ui, "dateText", CreateText("DateText", topBar, "开局", 20));
+            // 顶栏精简（用户定稿）：国库/总人口不显示在最上——政权数据进政权界面
             SetField(ui, "realmNameText", CreateText("RealmNameText", topBar, "未选择势力", 20));
 
             // ---- 速度控制 + 显示模式（顶部右侧）----
