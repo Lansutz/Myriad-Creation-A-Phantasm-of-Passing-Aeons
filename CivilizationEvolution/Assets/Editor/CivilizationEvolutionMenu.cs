@@ -253,6 +253,30 @@ namespace CivilizationEvolution.EditorTools
             Debug.Log("[CE菜单] 角色面板已就地添加，请保存场景。");
         }
 
+        [MenuItem(MenuRoot + "12. 一键修复编辑器界面（打开主场景+重置布局）", false, 12)]
+        public static void FixEditorLayoutAndScene()
+        {
+            // 1. 打开主场景（用户每次开 Unity 停在空白 3D Scene——Main.unity 才有游戏内容）
+            var mainScene = "Assets/Scenes/Main.unity";
+            if (System.IO.File.Exists(mainScene))
+            {
+                UnityEditor.SceneManagement.EditorSceneManager.OpenScene(mainScene);
+                Debug.Log("[修复] 已打开主场景：" + mainScene + "——按 Play 即可见游戏");
+            }
+            else
+            {
+                Debug.LogWarning("[修复] 未找到 " + mainScene);
+            }
+
+            // 2. 重置编辑器布局（多窗口/UI 乱——恢复出厂布局）
+            EditorApplication.ExecuteMenuItem("Window/Layouts/Revert Factory Settings");
+
+            // 3. 聚焦 Game 视图（让用户直接看到游戏画面而非 Scene 3D）
+            EditorApplication.ExecuteMenuItem("Window/General/Game");
+
+            Debug.Log("[修复] 布局已重置——若仍 UI 乱请关闭 Unity 后删除工程 Library 文件夹重开（或 Hub 加 -force-d3d11 参数）");
+        }
+
         [MenuItem(MenuRoot + "11. 就地添加宗教面板", false, 11)]
         public static void AddReligionPanelToExistingScene()
         {
