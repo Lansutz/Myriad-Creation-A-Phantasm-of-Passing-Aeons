@@ -514,8 +514,48 @@ namespace CivilizationEvolution.UI
             int realmId = world.PlayerRealmId >= 0 ? world.PlayerRealmId : 0;
             if (!world.realms.TryGetValue(realmId, out var realm)) return;
 
+            // 官职显示组装（officeHolders→文化定制称号+持有者名——OfficeTitle 消费）
+            var officeDisplay = BuildOfficeDisplay(world, realm);
             societyText.text = SocietyPanelText.Build(realm,
-                world.GetRealmSociety(realmId), world.Factions, world.RegimeDynamics, world.currentDay);
+                world.GetRealmSociety(realmId), world.Factions, world.RegimeDynamics, world.currentDay,
+                officeDisplay);
+        }
+
+        /// <summary>
+        /// 组装官职显示（6 官职——文化定制称号[OfficeTitleCatalog]+持有者名——
+        /// 政体语境键粗分：君主制 Kingdom/共和制 Republic——无持有者显示空缺）
+        /// </summary>
+        private static Dictionary<int, string> BuildOfficeDisplay(GameWorld world, RealmData realm)
+        {
+            var result = new Dictionary<int, string>();
+            if (world == null || realm == null || realm.officeHolders == null) return result;
+            string polityKey = "Kingdom";
+            if (realm.composition != null &&
+                realm.composition.supremeSovereignty == GovernmentConstraints.SupremeSovereignty.Monarchy)
+                polityKey = "Kingdom";
+            else
+                polityKey = "Republic";
+
+            var cm = world.GetCharacterManager();
+            for (int o = 0; o < 6; o++)
+            {
+                if (!realm.officeHolders.TryGetValue(o, out int holderId)) continue;
+                string officeName = ((Politics.OfficialOffice)o).ToString();
+                // 文化定制称号（holder 的文化——无则默认）
+                string title = Politics.OfficeTitleCatalog.GetDefaultTitleKey(officeName);
+                var holder = cm?.GetCharacter(holderId);
+                if (holder != null)
+                {
+                    var culture = world.cultures.TryGetValue(holder.cultureId, out var cd) ? cd : null;
+                    title = Politics.OfficeTitleCatalog.GetTitle(culture, (Politics.OfficialOffice)o, polityKey);
+                    result[o] = $"{(int)o + 1}. {title}：{holder.firstName} {holder.lastName}";
+                }
+                else
+                {
+                    result[o] = $"{(int)o + 1}. {title}：空缺";
+                }
+            }
+            return result;
         }
 
         /// <summary>获取音乐播放器（场景中查找或懒创建）</summary>

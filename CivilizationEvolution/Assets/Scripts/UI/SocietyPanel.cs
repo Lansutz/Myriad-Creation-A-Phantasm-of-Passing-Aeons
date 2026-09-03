@@ -12,11 +12,21 @@ namespace CivilizationEvolution.UI
     {
         /// <summary>生成面板全文（阶层区/派系区/政体变迁区）</summary>
         public static string Build(RealmData realm, RealmSociety society,
-            FactionManager factions, RegimeChangeDynamics regime, int currentDay)
+            FactionManager factions, RegimeChangeDynamics regime, int currentDay,
+            IReadOnlyDictionary<int, string> officeDisplay = null)
         {
             var sb = new StringBuilder();
             sb.AppendLine($"【{realm.realmName}】稳定 {realm.stability:F0} | 集权 {realm.centralization:F2} | 国库 {realm.treasury:F0}");
             sb.AppendLine();
+
+            // ===== 官职体系区（officeHolders 持有者——OfficeTitle 消费） =====
+            if (officeDisplay != null && officeDisplay.Count > 0)
+            {
+                sb.AppendLine("── 官职体系 ──");
+                foreach (var kv in officeDisplay)
+                    sb.AppendLine(kv.Value);
+                sb.AppendLine();
+            }
 
             // ===== 阶层区 =====
             sb.AppendLine("── 阶层画像 ──");
