@@ -91,8 +91,8 @@ namespace CivilizationEvolution.Core
         [Serializable]
         private class LocalizationEntry
         {
-            public string key;
-            public string value;
+            public string key = string.Empty;
+            public string value = string.Empty;
         }
     }
 }

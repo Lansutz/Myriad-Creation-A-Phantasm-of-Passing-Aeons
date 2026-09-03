@@ -36,6 +36,9 @@ namespace CivilizationEvolution.Core
         [SerializeField] private int randomSeed = 42;
         [SerializeField] private MapWrapMode wrapMode = MapWrapMode.Cylindrical;
         [SerializeField] private bool autoStartOnBoot = true;
+        /// <summary>主菜单模式（true=启动显示主菜单——点开始游戏才建世界——
+        /// 用于正式游戏流程；编辑器测试可关）</summary>
+        [SerializeField] private bool startViaMenu = true;
 
         [Header("引用")]
         [SerializeField] private Camera mainCamera;
@@ -96,9 +99,15 @@ namespace CivilizationEvolution.Core
 
         private void Start()
         {
-            if (autoStartOnBoot)
+            // 主菜单模式：延迟到玩家点"开始游戏"（UIManager.StartGameFromMenu 调 StartNewGame）
+            if (autoStartOnBoot && !startViaMenu)
             {
                 StartNewGame();
+            }
+            else if (autoStartOnBoot && startViaMenu)
+            {
+                // 通知 UIManager 显示主菜单（世界未建——等玩家操作）
+                Debug.Log("[Bootstrap] 主菜单模式——等待玩家开始游戏");
             }
         }
 

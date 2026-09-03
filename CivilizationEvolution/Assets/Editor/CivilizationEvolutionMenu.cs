@@ -253,6 +253,19 @@ namespace CivilizationEvolution.EditorTools
             Debug.Log("[CE菜单] 角色面板已就地添加，请保存场景。");
         }
 
+        [MenuItem(MenuRoot + "13. 就地添加主菜单", false, 13)]
+        public static void AddStartMenuToExistingScene()
+        {
+            var canvas = GameObject.Find("Canvas");
+            if (canvas == null) { Debug.LogWarning("[CE菜单] 未找到 Canvas——请先执行菜单 1"); return; }
+            var ui = canvas.GetComponent<UIManager>();
+            if (ui == null) { Debug.LogWarning("[CE菜单] Canvas 无 UIManager"); return; }
+            if (canvas.transform.Find("StartMenuPanel") == null)
+                BuildStartMenu(canvas.transform, ui);
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Debug.Log("[CE菜单] 主菜单已添加（全屏标题+开始游戏按钮）——请保存场景");
+        }
+
         [MenuItem(MenuRoot + "12. 一键修复编辑器界面（打开主场景+重置布局）", false, 12)]
         public static void FixEditorLayoutAndScene()
         {
@@ -275,6 +288,40 @@ namespace CivilizationEvolution.EditorTools
             EditorApplication.ExecuteMenuItem("Window/General/Game");
 
             Debug.Log("[修复] 布局已重置——若仍 UI 乱请关闭 Unity 后删除工程 Library 文件夹重开（或 Hub 加 -force-d3d11 参数）");
+        }
+
+        /// <summary>构建主菜单（全屏覆盖——标题+开始游戏——一键搭建与就地共用）</summary>
+        private static void BuildStartMenu(Transform canvas, UIManager ui)
+        {
+            var menu = CreatePanel("StartMenuPanel", canvas).gameObject;
+            var rt = menu.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero; rt.offsetMax = Vector2.zero;
+            menu.GetComponent<UnityEngine.UI.Image>().color = new Color32(24, 30, 38, 255); // 深色全屏底
+
+            var vLayout = menu.AddComponent<VerticalLayoutGroup>();
+            vLayout.spacing = 30; vLayout.childAlignment = TextAnchor.MiddleCenter;
+            vLayout.padding = new RectOffset(40, 40, 20, 20);
+
+            // 标题
+            var title = CreateText("MenuTitle", menu.transform, GameConstants.GameNameShort, 64);
+            title.color = UITheme.Accent;
+            title.fontStyle = FontStyles.Bold;
+            title.alignment = TextAlignmentOptions.Center;
+            title.GetComponent<LayoutElement>().minHeight = 90;
+
+            var sub = CreateText("MenuSubtitle", menu.transform, "文明演化——架空世界历史模拟", 22);
+            sub.color = new Color32(200, 190, 160, 255);
+            sub.alignment = TextAlignmentOptions.Center;
+            sub.GetComponent<LayoutElement>().minHeight = 40;
+
+            // 开始按钮
+            var startBtn = CreateButton("StartGameBtn", menu.transform, "开 始 游 戏");
+            startBtn.GetComponent<LayoutElement>().minHeight = 60;
+            startBtn.GetComponent<LayoutElement>().minWidth = 300;
+            SetField(ui, "startGameButton", startBtn);
+
+            SetField(ui, "startMenuPanel", menu);
         }
 
         [MenuItem(MenuRoot + "11. 就地添加宗教面板", false, 11)]
@@ -624,6 +671,7 @@ namespace CivilizationEvolution.EditorTools
             // ---- 社会政治面板（右侧）----
             BuildSocietyPanel(canvas, ui);
             BuildReligionPanel(canvas, ui);
+            BuildStartMenu(canvas, ui);
             SetField(ui, "religionOpenButton", CreateButton("ReligionOpenBtn", canvas.Find("SpeedGroup") ?? canvas, "宗教"));
         }
 

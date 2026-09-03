@@ -25,7 +25,13 @@ namespace CivilizationEvolution.Tests
             var world = Object.FindAnyObjectByType<GameWorld>();
             Assert.IsNotNull(world, "GameWorld 应存在（场景 Bootstrap 创建）");
 
-            // 等待开局（地形生成+初始政权——Bootstrap.Start 触发）
+            // 主菜单模式适配：显式开始游戏（原依赖 Bootstrap 自动 StartNewGame——
+            // startViaMenu=true 后需手动触发——模拟玩家点"开始游戏"）
+            var bootstrap = Object.FindAnyObjectByType<Bootstrap>();
+            if (bootstrap != null && world.GetLandTileCount() <= 0)
+                bootstrap.StartNewGame();
+
+            // 等待开局（地形生成+初始政权）
             float wait = 0f;
             while (world.GetLandTileCount() <= 0 && wait < 30f)
             {

@@ -76,6 +76,8 @@ namespace CivilizationEvolution.UI
 
         [Header("社会政治面板")]
         [SerializeField] private GameObject societyPanel;
+        [SerializeField] private GameObject startMenuPanel;
+        [SerializeField] private Button startGameButton;
         [SerializeField] private GameObject religionPanel;
         [SerializeField] private TMPro.TMP_Text religionPanelText;
         [SerializeField] private Button religionOpenButton;
@@ -215,6 +217,7 @@ namespace CivilizationEvolution.UI
             // 社会政治面板按钮
             if (societyOpenButton != null) societyOpenButton.onClick.AddListener(OpenSocietyPanel);
             if (religionOpenButton != null) religionOpenButton.onClick.AddListener(OpenReligionPanel);
+            if (startGameButton != null) startGameButton.onClick.AddListener(StartGameFromMenu);
             if (religionCloseButton != null) religionCloseButton.onClick.AddListener(CloseReligionPanel);
             if (societyCloseButton != null) societyCloseButton.onClick.AddListener(CloseSocietyPanel);
 
@@ -469,6 +472,15 @@ namespace CivilizationEvolution.UI
                 patronSaint = realm.statePatronSaintId;
             }
             religionPanelText.text = Culture.ReligionPanelText.Build(succession, faith, patronSaint);
+        }
+
+        /// <summary>主菜单开始游戏（世界初始化——玩家操作后启动——隐藏菜单进游戏）</summary>
+        private void StartGameFromMenu()
+        {
+            var bootstrap = FindAnyObjectByType<Bootstrap>();
+            if (bootstrap != null && (world == null || world.tiles.Length == 0))
+                bootstrap.StartNewGame(); // 建世界（GameManager 初始化）
+            if (startMenuPanel != null) startMenuPanel.SetActive(false);
         }
 
         private void OpenReligionPanel()
