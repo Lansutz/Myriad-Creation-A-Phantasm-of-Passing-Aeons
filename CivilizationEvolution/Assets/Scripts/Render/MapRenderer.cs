@@ -32,7 +32,10 @@ namespace CivilizationEvolution.Render
 
         // 地图纹理更新节流：世界数据每 1 秒才 Tick 一次，无需每帧（60fps）全量重绘 8192 像素
         private float _mapTextureTimer;
-        private const float MapTextureInterval = 0.2f; // 5 次/秒，人眼无感延迟
+        // 纹理重绘间隔（优化 2026-09-04：世界 1 秒 1 Tick——运行 1s 足够；
+        // 编辑模式涂色用 0.2s 实时——模式切换/涂色走 force 即时）
+        private const float MapTextureInterval = 1f;
+        private const float MapTextureIntervalEdit = 0.2f;
         private bool _forceMapRefresh = true; // 首次/切换模式时立即重绘
         // 地图编辑器
         private MapEditor _mapEditor;
@@ -100,9 +103,11 @@ namespace CivilizationEvolution.Render
             // 地图编辑器鼠标处理（编辑模式下左键绘制）
             HandleEditorInput();
 
-            // 地图纹理重绘节流：0.2 秒一次或强制刷新时
+            // 重绘节流：运行 1s[数据每秒才变]/编辑 0.2s[涂色实时]——force 即时
             _mapTextureTimer += Time.unscaledDeltaTime;
-            if (_forceMapRefresh || _mapTextureTimer >= MapTextureInterval)
+            bool editing = _mapEditor != null && _mapEditor.IsEditMode;
+            float interval = editing ? MapTextureIntervalEdit : MapTextureInterval;
+            if (_forceMapRefresh || _mapTextureTimer >= interval)
             {
                 _mapTextureTimer = 0f;
                 _forceMapRefresh = false;
