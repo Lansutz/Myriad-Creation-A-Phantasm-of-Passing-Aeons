@@ -116,6 +116,27 @@ namespace CivilizationEvolution.Render
         }
 
 
+        /// <summary>
+        /// 相机位置边界限制（地图世界范围——wrap 轴不限制）：
+        /// 世界宽=mapWidth×hexSize——高=mapHeight×hexSize×0.75（y 轴密度系数）
+        /// </summary>
+        private void ClampCameraToMap()
+        {
+            if (_mainCamera == null) return;
+            bool wrapX = world != null && world.config.wrapX;
+            bool wrapY = world != null && world.config.wrapY;
+            var pos = _mainCamera.transform.position;
+            float worldW = mapWidth * hexSize;
+            float worldH = mapHeight * hexSize * 0.75f;
+            float viewHalfW = _zoomLevel;   // 正交半宽≈zoom（保守）
+            float viewHalfH = _zoomLevel;
+            if (!wrapX)
+                pos.x = Mathf.Clamp(pos.x, viewHalfW * 0.5f, worldW - viewHalfW * 0.5f);
+            if (!wrapY)
+                pos.z = Mathf.Clamp(pos.z, viewHalfH * 0.5f, worldH - viewHalfH * 0.5f);
+            _mainCamera.transform.position = pos;
+        }
+
         /// <summary>编辑器鼠标输入处理（左键按下拖动绘制，悬停更新画笔预览）</summary>
         private void HandleEditorInput()
         {
@@ -598,6 +619,10 @@ namespace CivilizationEvolution.Render
             float moveX = Input.GetAxis("Horizontal") * _zoomLevel * 0.02f;
             float moveZ = Input.GetAxis("Vertical") * _zoomLevel * 0.02f;
             _mainCamera.transform.position += new Vector3(moveX, 0f, moveZ);
+
+            // 相机边界（查漏补缺：拖出地图范围=黑屏——clamp 到地图世界范围——
+            // wrapX/Y 环绕地图不限制对应轴[环行视觉连续]）
+            ClampCameraToMap();
         }
 
         /// <summary>切换显示模式</summary>

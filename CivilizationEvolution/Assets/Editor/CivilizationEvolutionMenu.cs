@@ -683,6 +683,8 @@ namespace CivilizationEvolution.EditorTools
 
             // ---- 角色面板（右侧，地块面板上方）----
             BuildCharacterPanel(canvas, ui);
+            BuildMusicPanel(canvas, ui);
+            BuildFamilyTreePanel(canvas, ui);
 
             // ---- 社会政治面板（右侧）----
             BuildSocietyPanel(canvas, ui);
