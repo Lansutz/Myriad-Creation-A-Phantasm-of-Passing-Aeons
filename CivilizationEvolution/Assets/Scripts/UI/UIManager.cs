@@ -83,6 +83,12 @@ namespace CivilizationEvolution.UI
         [SerializeField] private GameObject overviewPanel;
         [SerializeField] private TMP_Text overviewText;
         [SerializeField] private Button overviewCloseButton;
+        [SerializeField] private Button overviewBackButton;
+        [SerializeField] private UnityEngine.UI.HorizontalLayoutGroup divisionButtonsRoot;
+        /// <summary>下钻导航状态：-1=政权总览；≥0=查看区划（divisionId）</summary>
+        private int _viewingDivisionId = -1;
+        /// <summary>区划导航栈（返回用——父链）</summary>
+        private readonly List<int> _divisionNavStack = new List<int>();
         [SerializeField] private TMPro.TMP_Text religionPanelText;
         [SerializeField] private Button religionOpenButton;
         [SerializeField] private Button religionCloseButton;
@@ -229,6 +235,7 @@ namespace CivilizationEvolution.UI
             if (startGameButton != null) startGameButton.onClick.AddListener(StartGameFromMenu);
             if (viewRealmButton != null) viewRealmButton.onClick.AddListener(OpenViewRealmPanel);
             if (overviewCloseButton != null) overviewCloseButton.onClick.AddListener(CloseOverviewPanel);
+            if (overviewBackButton != null) overviewBackButton.onClick.AddListener(OnOverviewBack);
             if (religionCloseButton != null) religionCloseButton.onClick.AddListener(CloseReligionPanel);
             if (societyCloseButton != null) societyCloseButton.onClick.AddListener(CloseSocietyPanel);
 
@@ -545,9 +552,29 @@ namespace CivilizationEvolution.UI
         {
             if (overviewPanel != null)
             {
+                _viewingDivisionId = -1; // 每次打开回政权总览层
+                _divisionNavStack.Clear();
                 RefreshOverviewPanel();
                 overviewPanel.SetActive(true);
             }
+        }
+
+        /// <summary>返回上一级（区划详情→父区划/政权总览）</summary>
+        private void OnOverviewBack()
+        {
+            if (_viewingDivisionId < 0) { CloseOverviewPanel(); return; }
+            _viewingDivisionId = _divisionNavStack.Count > 0
+                ? _divisionNavStack[_divisionNavStack.Count - 1] : -1;
+            if (_divisionNavStack.Count > 0) _divisionNavStack.RemoveAt(_divisionNavStack.Count - 1);
+            RefreshOverviewPanel();
+        }
+
+        /// <summary>下钻到区划（按钮点击——push 当前——显示子详情）</summary>
+        private void OnDivisionClicked(int divisionId)
+        {
+            if (_viewingDivisionId >= 0) _divisionNavStack.Add(_viewingDivisionId);
+            _viewingDivisionId = divisionId;
+            RefreshOverviewPanel();
         }
 
         private void CloseOverviewPanel()
@@ -575,8 +602,94 @@ namespace CivilizationEvolution.UI
                 foreach (var snt in Culture.CanonizationSystem.GetSaints(realm.stateReligionId))
                     if (snt.saintId == realm.statePatronSaintId) { saint = snt.saintName; break; }
             }
-            overviewText.text = Culture.RealmOverviewText.Build(realm, society, officeDisplay,
-                religion, saint, realmId == world.PlayerRealmId);
+            // 两态显示：-1=政权总览（含区划树）——≥0=区划详情（下钻页）
+            if (_viewingDivisionId < 0)
+            {
+                overviewText.text = Culture.RealmOverviewText.Build(realm, society, officeDisplay,
+                    religion, saint, realmId == world.PlayerRealmId, realm.adminDivisions, -1);
+            }
+            else
+            {
+                var division = FindDivision(realm.adminDivisions, _viewingDivisionId);
+                long pop = -1;
+                if (division != null)
+                {
+                    long sum = 0;
+                    foreach (int t in division.tiles)
+                    {
+                        var tile = t >= 0 && t < world.tiles.Length ? world.tiles[t] : default;
+                        if (tile.populationBlocks != null)
+                            foreach (var pb in tile.populationBlocks) sum += (long)pb.count;
+                    }
+                    pop = sum * 50L;
+                }
+                overviewText.text = Culture.RealmDivisionText.Build(division,
+                    realm.adminDivisions, pop, "", realm.realmName);
+            }
+
+            // 区划按钮（当前层的直接子区划——下钻入口——动态重建）
+            RefreshDivisionButtons(realm);
+            // 返回按钮（详情态显示）
+            if (overviewBackButton != null)
+                overviewBackButton.gameObject.SetActive(_viewingDivisionId >= 0);
+        }
+
+        /// <summary>查找区划（divisionId）</summary>
+        private static Culture.AdminDivision FindDivision(
+            System.Collections.Generic.List<Culture.AdminDivision> all, int divisionId)
+        {
+            if (all == null) return null;
+            foreach (var d in all)
+                if (d.divisionId == divisionId) return d;
+            return null;
+        }
+
+        /// <summary>动态重建区划按钮（当前查看层[根或区划]的直接子——≤4 个）</summary>
+        private void RefreshDivisionButtons(RealmData realm)
+        {
+            if (divisionButtonsRoot == null) return;
+            // 清旧按钮
+            foreach (Transform child in divisionButtonsRoot.transform)
+                Destroy(child.gameObject);
+            if (realm == null || realm.adminDivisions == null) return;
+
+            int parentId = _viewingDivisionId < 0 ? -1 : _viewingDivisionId;
+            // 收集直接子
+            var children = new List<Culture.AdminDivision>();
+            foreach (var d in realm.adminDivisions)
+                if (d.parentDivisionId == parentId && d.level > 1) children.Add(d);
+            // 区划树显示模式：总览态展示层2入口按钮；详情态展示下一层
+            if (_viewingDivisionId < 0)
+            {
+                foreach (var d in realm.adminDivisions)
+                    if (d.level == 2 && !children.Contains(d)) children.Add(d);
+            }
+            foreach (var d in children)
+            {
+                var btn = CreateRuntimeButton(d.name);
+                int captured = d.divisionId;
+                btn.onClick.AddListener(() => OnDivisionClicked(captured));
+                btn.transform.SetParent(divisionButtonsRoot.transform, false);
+            }
+        }
+
+        /// <summary>运行时按钮（代码构建——区划下钻入口）</summary>
+        private UnityEngine.UI.Button CreateRuntimeButton(string label)
+        {
+            var go = new GameObject("DivBtn_" + label, typeof(RectTransform));
+            var img = go.AddComponent<UnityEngine.UI.Image>();
+            img.color = new Color32(52, 62, 78, 255);
+            var btn = go.AddComponent<UnityEngine.UI.Button>();
+            var textGo = new GameObject("Text", typeof(RectTransform));
+            textGo.transform.SetParent(go.transform, false);
+            var text = textGo.AddComponent<TMPro.TextMeshProUGUI>();
+            text.text = label;
+            text.fontSize = 14;
+            text.alignment = TMPro.TextAlignmentOptions.Center;
+            text.color = Color.white;
+            var lt = go.AddComponent<UnityEngine.UI.LayoutElement>();
+            lt.minWidth = 90; lt.minHeight = 28;
+            return btn;
         }
 
         private void OpenReligionPanel()

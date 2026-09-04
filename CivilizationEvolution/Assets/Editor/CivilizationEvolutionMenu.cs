@@ -712,6 +712,21 @@ namespace CivilizationEvolution.EditorTools
             title.color = UITheme.Accent;
             title.fontStyle = FontStyles.Bold;
             SetField(ui, "overviewCloseButton", CreateButton("OvCloseBtn", titleRow.transform, "✕"));
+            // 返回按钮（区划详情态显示——回上级）
+            var backBtn = CreateButton("OvBackBtn", titleRow.transform, "◀ 返回");
+            backBtn.gameObject.SetActive(false);
+            SetField(ui, "overviewBackButton", backBtn);
+
+            // 区划下钻按钮行（动态重建——层2区划入口）
+            var divRow = new GameObject("DivisionButtons", typeof(RectTransform),
+                typeof(UnityEngine.UI.HorizontalLayoutGroup));
+            divRow.transform.SetParent(panel.transform, false);
+            var dl = divRow.GetComponent<UnityEngine.UI.HorizontalLayoutGroup>();
+            dl.spacing = 6; dl.childAlignment = TextAnchor.MiddleLeft;
+            dl.childForceExpandWidth = false;
+            var del = divRow.AddComponent<UnityEngine.UI.LayoutElement>();
+            del.minHeight = 32;
+            SetField(ui, "divisionButtonsRoot", dl);
 
             var scroll = panel.AddComponent<ScrollRect>();
             var text = CreateText("OverviewText", panel.transform, "（点地块卡'查看政权总览'）", 15);

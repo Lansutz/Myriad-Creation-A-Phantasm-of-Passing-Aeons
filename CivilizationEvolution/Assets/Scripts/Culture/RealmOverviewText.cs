@@ -17,7 +17,9 @@ namespace CivilizationEvolution.Culture
         public static string Build(RealmData realm, RealmSociety society,
             IReadOnlyDictionary<int, string> officeDisplay = null,
             ReligionDef stateReligion = null, string patronSaintName = "",
-            bool isPlayerRealm = false)
+            bool isPlayerRealm = false,
+            IReadOnlyList<AdminDivision> adminDivisions = null,
+            int? selectedDivisionId = null)
         {
             var sb = new StringBuilder();
             if (realm == null)
@@ -68,7 +70,30 @@ namespace CivilizationEvolution.Culture
                     sb.AppendLine(kv.Value);
             }
 
+            // 行政区划树（治理层级——分封 4/郡县 2-5——树状缩进——
+            // 选中区划时显示其详情[RealmDivisionText]）
+            if (adminDivisions != null && adminDivisions.Count > 1)
+            {
+                sb.AppendLine();
+                sb.AppendLine("── 行政区划 ──");
+                AppendTree(sb, adminDivisions, realm.realmId, -1, selectedDivisionId); // 根 parent=-1
+            }
+
             return sb.ToString();
+        }
+
+        /// <summary>树状递归（层缩进——标记选中）</summary>
+        private static void AppendTree(System.Text.StringBuilder sb,
+            IReadOnlyList<AdminDivision> all, int realmId, int parentId, int? selected)
+        {
+            foreach (var d in all)
+            {
+                if (d.realmId != realmId || d.parentDivisionId != parentId) continue;
+                string mark = selected.HasValue && selected.Value == d.divisionId ? "▶ " : "  ";
+                string title = string.IsNullOrEmpty(d.titleId) ? "" : $"（{d.titleId}）";
+                sb.AppendLine($"{mark}{new string('　', d.level - 1)}{d.name}{title}");
+                AppendTree(sb, all, realmId, d.divisionId, selected); // 递归子区划
+            }
         }
     }
 }
