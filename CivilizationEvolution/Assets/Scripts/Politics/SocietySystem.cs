@@ -92,24 +92,37 @@ namespace CivilizationEvolution.Politics
         /// 统计并评估一个政权的社会结构。
         /// tiles：全图地块（按 ownerRealmId 过滤本政权核心+领有地块）。
         /// </summary>
-        public RealmSociety EvaluateRealm(RealmData realm, TileData[] tiles, RealmSituation sit)
+        public RealmSociety EvaluateRealm(RealmData realm, TileData[] tiles, RealmSituation sit,
+            IReadOnlyList<int> realmTiles = null)
         {
             var society = new RealmSociety { realmId = realm.realmId };
 
-            // 1) 汇总各阶层人口
+            // 1) 汇总各阶层人口（优化 2026-09-04：调用方传领地索引——
+            // 替代 核心+全扫补占领 的 N×tiles——无索引时原逻辑兼容）
             var popByClass = new Dictionary<GameEnums.SocialClass, float>();
             float totalPop = 0f;
-            foreach (int idx in realm.coreTiles)
+            if (realmTiles != null)
             {
-                if (idx < 0 || idx >= tiles.Length) continue;
-                Accumulate(tiles[idx], popByClass, ref totalPop);
+                foreach (int idx in realmTiles)
+                {
+                    if (idx < 0 || idx >= tiles.Length) continue;
+                    Accumulate(tiles[idx], popByClass, ref totalPop);
+                }
             }
-            // 领有但未核心化的地块也计入（占领地社会压力同样存在）
-            for (int i = 0; i < tiles.Length; i++)
+            else
             {
-                if (tiles[i].ownerRealmId != realm.realmId) continue;
-                if (realm.coreTiles.Contains(i)) continue;
-                Accumulate(tiles[i], popByClass, ref totalPop);
+                foreach (int idx in realm.coreTiles)
+                {
+                    if (idx < 0 || idx >= tiles.Length) continue;
+                    Accumulate(tiles[idx], popByClass, ref totalPop);
+                }
+                // 领有但未核心化的地块也计入（占领地社会压力同样存在）
+                for (int i = 0; i < tiles.Length; i++)
+                {
+                    if (tiles[i].ownerRealmId != realm.realmId) continue;
+                    if (realm.coreTiles.Contains(i)) continue;
+                    Accumulate(tiles[i], popByClass, ref totalPop);
+                }
             }
             society.totalPopulation = totalPop;
 

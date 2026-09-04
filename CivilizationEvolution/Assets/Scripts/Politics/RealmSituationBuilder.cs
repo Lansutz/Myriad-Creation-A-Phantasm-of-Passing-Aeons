@@ -37,7 +37,8 @@ namespace CivilizationEvolution.Politics
             List<WarState> wars = null,
             Dictionary<int, Army> armies = null,
             DisasterSystem disasters = null,
-            InnovationTree innovations = null)
+            InnovationTree innovations = null,
+            IReadOnlyList<int> realmTiles = null)
         {
             var sit = new RealmSituation { realmId = realm.realmId };
 
@@ -48,7 +49,7 @@ namespace CivilizationEvolution.Politics
             float disasterAccum = 0f;
             bool occupiedHomeSoil = false;
 
-            foreach (int idx in EnumerateRealmTiles(realm, tiles))
+            foreach (int idx in EnumerateRealmTiles(realm, tiles, realmTiles))
             {
                 ref TileData t = ref tiles[idx];
                 regions.Add(t.regionId);
@@ -165,8 +166,17 @@ namespace CivilizationEvolution.Politics
         }
 
         /// <summary>枚举政权所有领有地块（核心 + 非核心领有），去重</summary>
-        static IEnumerable<int> EnumerateRealmTiles(RealmData realm, TileData[] tiles)
+        static IEnumerable<int> EnumerateRealmTiles(RealmData realm, TileData[] tiles,
+            IReadOnlyList<int> realmTiles = null)
         {
+            // 优化 2026-09-04：调用方传入领地索引（每日一次全扫构建）——
+            // 避免每政权全扫（N×tiles）——无索引时原逻辑（兼容）
+            if (realmTiles != null)
+            {
+                foreach (int idx in realmTiles)
+                    if (idx >= 0 && idx < tiles.Length) yield return idx;
+                yield break;
+            }
             var seen = new HashSet<int>();
             foreach (int idx in realm.coreTiles)
             {

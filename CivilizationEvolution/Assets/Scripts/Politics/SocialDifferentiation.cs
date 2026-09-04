@@ -45,14 +45,15 @@ namespace CivilizationEvolution.Politics
         /// 对单个政权执行一次社会分化（就地修改其地块人口块）。
         /// 应由主循环以固定间隔（如每 20~30 天）调用一次，配合 ConvergeAlpha 实现缓慢演化。
         /// </summary>
-        public static void DifferentiateRealm(RealmData realm, TileData[] tiles, RealmSituation sit)
+        public static void DifferentiateRealm(RealmData realm, TileData[] tiles, RealmSituation sit,
+            IReadOnlyList<int> realmTiles = null)
         {
             if (realm == null || tiles == null || sit == null) return;
 
             // 1) 政权平均发展度（0~1）与各地块列表
             float devSum = 0f; int devN = 0;
             var realmTiles = new List<int>();
-            foreach (int idx in EnumerateRealmTiles(realm, tiles))
+            foreach (int idx in EnumerateRealmTiles(realm, tiles, realmTiles))
             {
                 ref TileData t = ref tiles[idx];
                 if (!t.isLand || t.populationBlocks == null || t.populationBlocks.Count == 0) continue;
@@ -234,8 +235,15 @@ namespace CivilizationEvolution.Politics
         }
 
         /// <summary>枚举政权所有领有陆地地块（核心 + 非核心领有，去重）</summary>
-        static IEnumerable<int> EnumerateRealmTiles(RealmData realm, TileData[] tiles)
+        static IEnumerable<int> EnumerateRealmTiles(RealmData realm, TileData[] tiles,
+            IReadOnlyList<int> realmTiles = null)
         {
+            if (realmTiles != null)
+            {
+                foreach (int idx in realmTiles)
+                    if (idx >= 0 && idx < tiles.Length) yield return idx;
+                yield break;
+            }
             var seen = new HashSet<int>();
             foreach (int idx in realm.coreTiles)
             {

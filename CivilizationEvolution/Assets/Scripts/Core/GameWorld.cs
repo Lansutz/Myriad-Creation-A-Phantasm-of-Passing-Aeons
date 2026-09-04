@@ -671,20 +671,51 @@ namespace CivilizationEvolution.Core
             bool doDifferentiation = _differentiationTimer >= DifferentiationIntervalDays;
             if (doDifferentiation) _differentiationTimer = 0f;
 
+            // 税收结算（政权循环——轻）
             foreach (var realm in realms.Values)
             {
                 float taxIncome = _economyManager.SettleTaxes(realm.realmId);
                 realm.treasury += taxIncome;
+            }
 
+            // 稳定值收敛（优化 2026-09-04：原为政权循环内嵌全图扫=N×tiles——
+            // 改单次全扫 O(tiles)——每 tile 按其所属政权集权度收敛）
+            {
+                // 政权集权度缓存（每 tick 一次构建——避免循环内 realms 查）
+                var centralCache = new Dictionary<int, float>(realms.Count);
+                foreach (var r in realms.Values)
+                    if (r != null) centralCache[r.realmId] = 50f + r.centralization * 20f;
                 for (int i = 0; i < tiles.Length; i++)
                 {
-                    if (!tiles[i].exists || tiles[i].ownerRealmId != realm.realmId) continue;
-                    float targetStability = 50f + realm.centralization * 20f;
-                    tiles[i].stability = Mathf.Lerp(tiles[i].stability, targetStability, 0.01f * daysPerTick);
+                    if (!tiles[i].exists) continue;
+                    int owner = tiles[i].ownerRealmId;
+                    if (owner < 0) continue;
+                    if (centralCache.TryGetValue(owner, out float target))
+                        tiles[i].stability = Mathf.Lerp(tiles[i].stability, target, 0.01f * daysPerTick);
                 }
+            }
 
-                // 社会-派系-政体变迁脉冲（税收/稳定之后，外交/战争之前）
-                SocietyPulse(realm, doDifferentiation);
+            // 领地索引（优化：单次全扫构建 ownerRealmId→地块——各政权社会
+            // 评估复用——替代每政权全扫[N×tiles]）
+            var realmTilesIndex = new Dictionary<int, List<int>>();
+            for (int i = 0; i < tiles.Length; i++)
+            {
+                if (!tiles[i].exists) continue;
+                int owner = tiles[i].ownerRealmId;
+                if (owner < 0) continue;
+                if (!realmTilesIndex.TryGetValue(owner, out var list))
+                {
+                    list = new List<int>();
+                    realmTilesIndex[owner] = list;
+                }
+                list.Add(i);
+            }
+
+            // 社会-派系-政体变迁脉冲（每政权——内部评估——用领地索引免全扫）
+            foreach (var realm in realms.Values)
+            {
+                realmTilesIndex.TryGetValue(realm.realmId, out var rt);
+                SocietyPulse(realm, doDifferentiation, rt);
             }
         }
 
@@ -692,16 +723,17 @@ namespace CivilizationEvolution.Core
         /// 社会-派系-政体变迁脉冲：情境采集 → 阶层需求满足度 → 政治能量 → 派系组织化 → 关键节点博弈。
         /// 阶层好感在此由真实需求满足度驱动（替代旧的机械回归中性值）。
         /// </summary>
-        private void SocietyPulse(RealmData realm, bool doDifferentiation)
+        private void SocietyPulse(RealmData realm, bool doDifferentiation,
+            IReadOnlyList<int> realmTiles = null)
         {
             var sit = RealmSituationBuilder.Build(realm, tiles, _economyManager, _wars, armies,
-                _disasterSystem, _innovationTree);
+                _disasterSystem, _innovationTree, null, realmTiles);
 
             // 先推进社会分工（人口在阶层间缓慢、守恒转移），再统计社会画像，保证派系看到的是最新阶层结构
             if (doDifferentiation)
-                SocialDifferentiation.DifferentiateRealm(realm, tiles, sit);
+                SocialDifferentiation.DifferentiateRealm(realm, tiles, sit, realmTiles);
 
-            var society = _societyManager.EvaluateRealm(realm, tiles, sit);
+            var society = _societyManager.EvaluateRealm(realm, tiles, sit, realmTiles);
             _societyManager.ApplyClassRelations(realm, society, daysPerTick);
             var characters = _characterManager.GetCharactersByRealm(realm.realmId);
             _factionManager.UpdateRealmFactions(society, realm, characters);
