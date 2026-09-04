@@ -71,6 +71,12 @@ namespace CivilizationEvolution.Core
         private readonly List<FaithSystem> _faithSystems = new List<FaithSystem>();
         /// <summary>开局年月（时间显示=已历时长——开局时记录）</summary>
         public int startYear = -1;
+        /// <summary>并行段用随机（ThreadLocal——每线程独立——Parallel.For 内
+        /// UnityEngine.Random 全局状态竞争会导致值错乱）</summary>
+        private static readonly System.Threading.ThreadLocal<System.Random> ThreadRng
+            = new System.Threading.ThreadLocal<System.Random>(
+                () => new System.Random(System.Environment.TickCount
+                    ^ System.Threading.Thread.CurrentThread.ManagedThreadId));
         public int startDay = -1;
         /// <summary>圣地丢失已处理标记（faithId→已计热忱的圣地 tile——防重复刷）</summary>
         private readonly HashSet<int> _holySiteLostProcessed = new HashSet<int>();
@@ -560,12 +566,18 @@ namespace CivilizationEvolution.Core
             AdvanceTime();
         }
 
-        /// <summary>人口Tick：自然增长、满意度、迁徙</summary>
+        /// <summary>
+        /// 人口Tick：自然增长、满意度、迁徙——Parallel.For 多核并行
+        /// （优化 2026-09-04：52万-472万地块每日热循环——每 tile 独立无
+        /// 共享写——事件入队改并发收集[ConcurrentQueue]后主线程统一入队——
+        /// 读共享字典/贸易中心安全[模拟单线程 Tick 内独占并行段]）
+        /// </summary>
         private void PopulationTick()
         {
-            for (int i = 0; i < tiles.Length; i++)
+            var parallelEvents = new System.Collections.Concurrent.ConcurrentQueue<GameEvent>();
+            System.Threading.Tasks.Parallel.For(0, tiles.Length, i =>
             {
-                if (!tiles[i].exists || !tiles[i].isLand || tiles[i].populationBlocks == null) continue;
+                if (!tiles[i].exists || !tiles[i].isLand || tiles[i].populationBlocks == null) return;
 
                 for (int j = 0; j < tiles[i].populationBlocks.Count; j++)
                 {
@@ -591,9 +603,9 @@ namespace CivilizationEvolution.Core
                     float satisfactionDelta = CalculateSatisfactionDelta(i, pb);
                     pb.satisfaction = Mathf.Clamp(pb.satisfaction + satisfactionDelta, 0f, 100f);
 
-                    if (pb.satisfaction < 20f && Random.value < 0.01f)
+                    if (pb.satisfaction < 20f && ThreadRng.Value.NextDouble() < 0.01)
                     {
-                        EnqueueEvent(new GameEvent
+                        parallelEvents.Enqueue(new GameEvent
                         {
                             eventType = GameEventType.Rebellion,
                             tileIndex = i,
@@ -610,7 +622,7 @@ namespace CivilizationEvolution.Core
                     float totalPop = GetTilePopulation(i);
                     if (foodStock < totalPop * 0.01f && totalPop > 0)
                     {
-                        EnqueueEvent(new GameEvent
+                        parallelEvents.Enqueue(new GameEvent
                         {
                             eventType = GameEventType.Famine,
                             tileIndex = i,
@@ -618,7 +630,11 @@ namespace CivilizationEvolution.Core
                         });
                     }
                 }
-            }
+            });
+
+            // 并发收集事件统一入队（EnqueueEvent 主线程专用——顺序无关）
+            while (parallelEvents.TryDequeue(out var ev))
+                EnqueueEvent(ev);
         }
 
         /// <summary>计算人口块满意度变化</summary>
