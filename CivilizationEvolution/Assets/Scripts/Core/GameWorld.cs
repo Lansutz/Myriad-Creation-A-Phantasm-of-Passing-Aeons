@@ -208,6 +208,8 @@ namespace CivilizationEvolution.Core
             _buildingSystem = new BuildingSystem(tiles);
             _innovationTree = new InnovationTree();
             _characterManager.Innovations = _innovationTree; // 注入革新树（家族传统解锁前置依赖）
+            // 阶层出现事件订阅（革新完成→检测解锁阶层→编年史——查漏补缺接线）
+            _innovationTree.OnInnovationCompleted += OnInnovationCompletedHandler;
             _chronicle = new Chronicle(); // 编年史（世界大事日志）
             // 政体变迁动力学需要革新树（可行性约束）与编年史（记录节点）
             _regimeDynamics = new RegimeChangeDynamics(_innovationTree, _chronicle);
@@ -555,6 +557,9 @@ namespace CivilizationEvolution.Core
             _thoughtManager.DailyTick(currentYear);
 
             // 11. AI决策（先同步统治者人格到 AI 偏置——人格漂移实时反映）
+            // 传教定期推进（15 天一次——政权传教渠道——查漏补缺接线）
+            MissionaryTick();
+
             _aiManager.SyncRulers(_characterManager);
             _aiManager.DailyTick(realms, tiles, _diplomacyManager, _economyManager, _innovationTree,
                 _characterManager); // characters 传入——AI 劫掠屠城计数器
@@ -878,6 +883,60 @@ namespace CivilizationEvolution.Core
                 realm.adminDivisions = Culture.AdminDivisionSystem.Generate(realm,
                     realm.composition, capacity, territory);
             }
+        }
+
+        /// <summary>
+        /// 革新完成→阶层出现事件（查漏补缺接线：ClassEmergenceEvents 原为
+        /// 孤儿——订阅 InnovationTree.OnInnovationCompleted——铸币→商人/
+        /// 庄园→农奴/文字+官僚→士人……）
+        /// </summary>
+        private int _missionaryTimer = 0;
+        private const int MissionaryIntervalDays = 15;
+        private readonly System.Random _missionaryRng = new System.Random(20260904);
+
+        /// <summary>
+        /// 政权传教（15 天一次——国教政权对其境内异教主流块传教——
+        /// 成功率=冲突度[同根 0.6/异教 0.2]——ConvertTile——限频省扫描）
+        /// </summary>
+        private void MissionaryTick()
+        {
+            _missionaryTimer += daysPerTick;
+            if (_missionaryTimer < MissionaryIntervalDays) return;
+            _missionaryTimer = 0;
+            if (tiles == null) return;
+
+            // 政权→国教映射（一次构建）
+            var realmFaith = new Dictionary<int, int>();
+            foreach (var r in realms.Values)
+                if (r != null && r.stateReligionId >= 0) realmFaith[r.realmId] = r.stateReligionId;
+            if (realmFaith.Count == 0) return;
+
+            for (int i = 0; i < tiles.Length; i++)
+            {
+                ref TileData tile = ref tiles[i];
+                if (!tile.exists || tile.populationBlocks == null || tile.populationBlocks.Count == 0) continue;
+                int owner = tile.ownerRealmId;
+                if (owner < 0 || !realmFaith.TryGetValue(owner, out int stateFaith)) continue;
+                // 本地主流已是国教→跳过
+                int localFaith = Politics.PopulationStats.GetDominantFaith(tile);
+                if (localFaith == stateFaith) continue;
+                // 传教（成功率=冲突度）
+                float chance = Culture.MissionarySystem.CalculateSuccessChance(tile, stateFaith,
+                    id => Culture.ReligionCatalog.Get(id),
+                    id => { var r = Culture.ReligionCatalog.GetRoot(id); return r != null ? r.religionId : -1; });
+                if (chance > 0f)
+                    Culture.MissionarySystem.ConvertTile(tile, stateFaith, owner, chance, _missionaryRng);
+            }
+        }
+
+        private void OnInnovationCompletedHandler(int realmId, int innovationId)
+        {
+            if (!realms.TryGetValue(realmId, out var realm)) return;
+            CultureData culture = null;
+            if (realm.primaryCultureId >= 0)
+                cultures.TryGetValue(realm.primaryCultureId, out culture);
+            Economy.ClassEmergenceEvents.RecordEmergence(innovationId, realm.realmName,
+                culture, _innovationTree, realmId, _chronicle);
         }
 
         /// <summary>
