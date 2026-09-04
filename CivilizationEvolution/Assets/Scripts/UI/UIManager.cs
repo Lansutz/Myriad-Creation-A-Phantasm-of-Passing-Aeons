@@ -128,6 +128,8 @@ namespace CivilizationEvolution.UI
         private int _viewRealmId = -1;
         /// <summary>查看政权（公开——面板刷新用）</summary>
         public int ViewRealmId => _viewRealmId >= 0 ? _viewRealmId : (world != null ? world.PlayerRealmId : 0);
+        /// <summary>场景是否有主菜单 UI（Bootstrap 兜底判定——无菜单则自动开局防卡死）</summary>
+        public bool HasStartMenu => startMenuPanel != null;
         private readonly List<string> _eventLog = new List<string>();
         private const int MaxLogEntries = 100;
 

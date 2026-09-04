@@ -52,23 +52,23 @@ namespace CivilizationEvolution.Politics
 
             // 1) 政权平均发展度（0~1）与各地块列表
             float devSum = 0f; int devN = 0;
-            var realmTiles = new List<int>();
+            var tileList = new List<int>();
             foreach (int idx in EnumerateRealmTiles(realm, tiles, realmTiles))
             {
                 ref TileData t = ref tiles[idx];
                 if (!t.isLand || t.populationBlocks == null || t.populationBlocks.Count == 0) continue;
-                realmTiles.Add(idx);
+                tileList.Add(idx);tileList.Add(idx);
                 devSum += Mathf.Clamp01(t.development);
                 devN++;
             }
-            if (realmTiles.Count == 0) return;
+            if (tileList.Count == 0) return;
             float avgDev = devN > 0 ? devSum / devN : 0f;
 
             // 2) 政权级目标占比（由制度承认 + 物质条件决定）
             var goalShare = ComputeGoalShares(realm, sit, avgDev);
 
             // 3) 逐地块向目标结构做守恒再平衡（城镇/高发展地块承担更多工商人口）
-            foreach (int idx in realmTiles)
+            foreach (int idx in tileList)
             {
                 ref TileData t = ref tiles[idx];
                 RebalanceTile(ref t, goalShare, Mathf.Clamp01(t.development), Mathf.Max(0.05f, avgDev));

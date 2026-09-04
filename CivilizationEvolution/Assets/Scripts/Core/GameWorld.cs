@@ -727,7 +727,7 @@ namespace CivilizationEvolution.Core
             IReadOnlyList<int> realmTiles = null)
         {
             var sit = RealmSituationBuilder.Build(realm, tiles, _economyManager, _wars, armies,
-                _disasterSystem, _innovationTree, null, realmTiles);
+                _disasterSystem, _innovationTree, realmTiles);
 
             // 先推进社会分工（人口在阶层间缓慢、守恒转移），再统计社会画像，保证派系看到的是最新阶层结构
             if (doDifferentiation)
