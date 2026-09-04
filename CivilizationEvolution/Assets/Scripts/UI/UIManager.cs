@@ -37,8 +37,6 @@ namespace CivilizationEvolution.UI
 
         [Header("顶部信息栏")]
         [SerializeField] private TMP_Text dateText;
-        [SerializeField] private TMP_Text treasuryText;
-        [SerializeField] private TMP_Text populationText;
         [SerializeField] private TMP_Text realmNameText;
 
         [Header("地块详情面板")]
