@@ -462,8 +462,46 @@ namespace CivilizationEvolution.Render
             mapTexture.Apply();
         }
 
-        /// <summary>获取地块颜色</summary>
+        /// <summary>
+        /// 地块颜色（大陆底图渲染——2026-09 用户定稿方向：大陆有纸纹/笔触
+        /// 质感[参照《地图上发生的事》terrain 分色+纸感]）：
+        /// 基色 + 确定性纸纹调制——低频斑驳[地形性色带]+高频颗粒[笔触感]——
+        /// 海洋保持平滑（水无纸纹）——modes 也带纸感[政权色如彩绘]
+        /// </summary>
         private Color GetTileColor(int tileIndex)
+        {
+            ref TileData tile = ref world.tiles[tileIndex];
+            Color c = GetTileColorRaw(tileIndex);
+
+            // 纸纹调制（确定性——同 seed 同画面——hash 高频颗粒 + 低频斑驳）
+            if (tile.exists && tile.isLand)
+            {
+                int x = tileIndex % mapWidth;
+                int y = tileIndex / mapWidth;
+                float h1 = HashNoise(x, y, 0);         // 高频颗粒（笔触）
+                float h2 = HashNoise(x / 4, y / 4, 1); // 低频斑驳（色带）
+                float grain = (h1 - 0.5f) * 0.05f + (h2 - 0.5f) * 0.08f;
+                c.r = Mathf.Clamp01(c.r + grain);
+                c.g = Mathf.Clamp01(c.g + grain);
+                c.b = Mathf.Clamp01(c.b + grain * 0.7f);
+            }
+            return c;
+        }
+
+        /// <summary>确定性噪声（整数坐标 hash——纸纹颗粒——同 seed 复现）</summary>
+        private static float HashNoise(int x, int y, int salt)
+        {
+            unchecked
+            {
+                uint h = (uint)(x * 374761393 + y * 668265263 + salt * 2246822519);
+                h = (h ^ (h >> 13)) * 1274126177;
+                h = h ^ (h >> 16);
+                return (h & 0xFFFF) / 65535f;
+            }
+        }
+
+        /// <summary>地块基色（模式分派——biome/政权/人口/宗教……）</summary>
+        private Color GetTileColorRaw(int tileIndex)
         {
             ref TileData tile = ref world.tiles[tileIndex];
 
