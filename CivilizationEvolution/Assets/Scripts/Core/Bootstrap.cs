@@ -10,12 +10,12 @@ namespace CivilizationEvolution.Core
     /// <summary>地图尺寸预设（宽×高，总地块数）——去掉过小档，最大支持470万+地块</summary>
     public enum MapSizePreset
     {
-        Small,     // 256×128 = 32,768 地块
-        Medium,    // 512×256 = 131,072 地块
-        Large,     // 1024×512 = 524,288 地块
-        Huge,      // 2048×1024 = 2,097,152 地块
+        // 小尺寸已删除（2026-09-04 用户定稿：过小世界无意义——最小 Large——
+        // 尺寸精神照架空地图模拟器[FMS 8192×4096 级——技术上限 Enormous]）
+        Large,     // 1024×512 = 524,288 地块（最小）
+        Huge,      // 2048×1024 = 2,097,152 地块（默认——平衡）
         Reference, // 1920×1080 = 2,073,600 地块（对齐参考项目）
-        Enormous   // 3072×1536 = 4,718,592 地块（超大，需16GB+内存）
+        Enormous   // 3072×1536 = 4,718,592 地块（最大——需16GB+内存）
     }
 
     /// <summary>地图环绕模式——决定边界是否连通</summary>
@@ -29,7 +29,7 @@ namespace CivilizationEvolution.Core
     public class Bootstrap : MonoBehaviour
     {
         [Header("地图配置")]
-        [SerializeField] private MapSizePreset mapSizePreset = MapSizePreset.Large;
+        [SerializeField] private MapSizePreset mapSizePreset = MapSizePreset.Huge;
         // 运行时从预设解析的实际尺寸
         private int _mapWidth;
         private int _mapHeight;
@@ -49,8 +49,6 @@ namespace CivilizationEvolution.Core
             // 从预设解析地图尺寸
             (_mapWidth, _mapHeight) = mapSizePreset switch
             {
-                MapSizePreset.Small => (256, 128),
-                MapSizePreset.Medium => (512, 256),
                 MapSizePreset.Large => (1024, 512),
                 MapSizePreset.Huge => (2048, 1024),
                 MapSizePreset.Reference => (1920, 1080),

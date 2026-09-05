@@ -77,6 +77,17 @@ namespace CivilizationEvolution.UI
         [SerializeField] private GameObject societyPanel;
         [SerializeField] private GameObject startMenuPanel;
         [SerializeField] private Button startGameButton;
+        [SerializeField] private Button editorButton;        // 主菜单第 2 行：编辑器
+        [SerializeField] private Button settingsButton;      // 主菜单第 3 行：设置
+        [SerializeField] private GameObject settingsPanel;   // 设置面板
+        [SerializeField] private TMPro.TMP_Text resolutionButtonText;  // 分辨率循环按钮标签
+        [SerializeField] private Button resolutionButton;
+        [SerializeField] private TMPro.TMP_Text windowModeButtonText;  // 窗口模式循环按钮标签
+        [SerializeField] private Button windowModeButton;
+        private int _resIndex = 0;          // 当前分辨率索引（设置面板循环）
+        private int _windowModeIndex = 0;   // 0 全屏/1 窗口/2 最大化
+        [SerializeField] private Button settingsApplyButton;
+        [SerializeField] private Button settingsCloseButton;
         [SerializeField] private GameObject religionPanel;
         [SerializeField] private GameObject overviewPanel;
         [SerializeField] private TMP_Text overviewText;
@@ -233,6 +244,12 @@ namespace CivilizationEvolution.UI
             if (societyOpenButton != null) societyOpenButton.onClick.AddListener(OpenSocietyPanel);
             if (religionOpenButton != null) religionOpenButton.onClick.AddListener(OpenReligionPanel);
             if (startGameButton != null) startGameButton.onClick.AddListener(StartGameFromMenu);
+            if (editorButton != null) editorButton.onClick.AddListener(EnterEditorFromMenu);
+            if (settingsButton != null) settingsButton.onClick.AddListener(OpenSettingsPanel);
+            if (resolutionButton != null) resolutionButton.onClick.AddListener(CycleResolution);
+            if (windowModeButton != null) windowModeButton.onClick.AddListener(CycleWindowMode);
+            if (settingsApplyButton != null) settingsApplyButton.onClick.AddListener(ApplySettings);
+            if (settingsCloseButton != null) settingsCloseButton.onClick.AddListener(CloseSettingsPanel);
             if (viewRealmButton != null) viewRealmButton.onClick.AddListener(OpenViewRealmPanel);
             if (overviewCloseButton != null) overviewCloseButton.onClick.AddListener(CloseOverviewPanel);
             if (overviewBackButton != null) overviewBackButton.onClick.AddListener(OnOverviewBack);
@@ -538,6 +555,123 @@ namespace CivilizationEvolution.UI
         }
 
         /// <summary>主菜单开始游戏（世界初始化——玩家操作后启动——隐藏菜单进游戏）</summary>
+        /// <summary>主菜单第 2 行：编辑器（生成世界并进入编辑模式——Tab 编辑器面板）</summary>
+        private void EnterEditorFromMenu()
+        {
+            var bootstrap = FindAnyObjectByType<Bootstrap>();
+            if (bootstrap != null && (world == null || world.tiles.Length == 0))
+                bootstrap.StartNewGame();
+            if (startMenuPanel != null) startMenuPanel.SetActive(false);
+            // 打开编辑器面板（Tab 编辑器——编辑地图）
+            if (_editorPanel != null) _editorPanel.ShowPanel();
+        }
+
+        /// <summary>主菜单第 3 行：设置（分辨率/窗口模式——循环按钮简化版）</summary>
+        private void OpenSettingsPanel()
+        {
+            if (settingsPanel == null) return;
+            // 当前分辨率（Screen）→索引定位
+            _resIndex = 0;
+            var res = Screen.resolutions;
+            var list = BuildResolutionList();
+            for (int i = 0; i < list.Count; i++)
+                if (list[i].width == Screen.width && list[i].height == Screen.height) { _resIndex = i; break; }
+            _windowModeIndex = Screen.fullScreenMode switch
+            {
+                FullScreenMode.FullScreenWindow => 0,
+                FullScreenMode.Windowed => 1,
+                _ => 2
+            };
+            RefreshSettingsLabels();
+            settingsPanel.SetActive(true);
+        }
+
+        /// <summary>分辨率去重列表（从高到低——宽≥1280）</summary>
+        private static List<Resolution> BuildResolutionList()
+        {
+            var seen = new HashSet<string>();
+            var list = new List<Resolution>();
+            var res = Screen.resolutions;
+            for (int i = res.Length - 1; i >= 0; i--)
+            {
+                if (res[i].width < 1280) continue;
+                if (seen.Add($"{res[i].width}×{res[i].height}"))
+                    list.Add(res[i]);
+            }
+            if (list.Count == 0) list.Add(new Resolution { width = 1920, height = 1080 });
+            return list;
+        }
+
+        private void RefreshSettingsLabels()
+        {
+            var list = BuildResolutionList();
+            _resIndex = Mathf.Clamp(_resIndex, 0, list.Count - 1);
+            if (resolutionButtonText != null)
+                resolutionButtonText.text = $"分辨率：{list[_resIndex].width}×{list[_resIndex].height}";
+            string[] modes = { "全屏（无边框）", "窗口", "最大化窗口" };
+            if (windowModeButtonText != null)
+                windowModeButtonText.text = $"窗口模式：{modes[_windowModeIndex]}";
+        }
+
+        private void CycleResolution()
+        {
+            var list = BuildResolutionList();
+            _resIndex = (_resIndex + 1) % list.Count;
+            RefreshSettingsLabels();
+        }
+
+        private void CycleWindowMode()
+        {
+            _windowModeIndex = (_windowModeIndex + 1) % 3;
+            RefreshSettingsLabels();
+        }
+
+        private void CloseSettingsPanel()
+        {
+            if (settingsPanel != null) settingsPanel.SetActive(false);
+        }
+
+        /// <summary>应用设置（分辨率+窗口模式——PlayerPrefs 保存——启动时恢复）</summary>
+        private void ApplySettings()
+        {
+            var list = BuildResolutionList();
+            _resIndex = Mathf.Clamp(_resIndex, 0, list.Count - 1);
+            var target = list[_resIndex];
+            Screen.SetResolution(target.width, target.height, Screen.fullScreenMode);
+            PlayerPrefs.SetInt("screen_width", target.width);
+            PlayerPrefs.SetInt("screen_height", target.height);
+            // 窗口模式（0 全屏/1 窗口/2 最大化）
+            _windowModeIndex = Mathf.Clamp(_windowModeIndex, 0, 2);
+            Screen.fullScreenMode = _windowModeIndex switch
+            {
+                0 => FullScreenMode.FullScreenWindow,
+                1 => FullScreenMode.Windowed,
+                _ => FullScreenMode.MaximizedWindow
+            };
+            PlayerPrefs.SetInt("screen_mode", _windowModeIndex);
+            PlayerPrefs.Save();
+            UnityEngine.Debug.Log($"[设置] {target.width}×{target.height} mode={Screen.fullScreenMode} 已应用");
+        }
+
+        /// <summary>启动时恢复保存的显示设置（Bootstrap/GameManager 调）</summary>
+        public static void RestoreDisplaySettings()
+        {
+            int w = PlayerPrefs.GetInt("screen_width", 0);
+            int h = PlayerPrefs.GetInt("screen_height", 0);
+            int mode = PlayerPrefs.GetInt("screen_mode", -1);
+            if (w > 0 && h > 0)
+            {
+                var fm = mode switch
+                {
+                    0 => FullScreenMode.FullScreenWindow,
+                    1 => FullScreenMode.Windowed,
+                    2 => FullScreenMode.MaximizedWindow,
+                    _ => FullScreenMode.FullScreenWindow
+                };
+                Screen.SetResolution(w, h, fm);
+            }
+        }
+
         private void StartGameFromMenu()
         {
             var bootstrap = FindAnyObjectByType<Bootstrap>();

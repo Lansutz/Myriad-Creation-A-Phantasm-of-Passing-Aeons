@@ -328,13 +328,68 @@ namespace CivilizationEvolution.EditorTools
             sub.alignment = TextAlignmentOptions.Center;
             sub.GetComponent<LayoutElement>().minHeight = 40;
 
-            // 开始按钮
-            var startBtn = CreateButton("StartGameBtn", menu.transform, "开 始 游 戏");
-            startBtn.GetComponent<LayoutElement>().minHeight = 60;
-            startBtn.GetComponent<LayoutElement>().minWidth = 300;
-            SetField(ui, "startGameButton", startBtn);
+            // 主菜单三行（用户定稿：1 进入世界 2 编辑器 3 设置——大战略惯例）
+            var enterBtn = CreateButton("StartGameBtn", menu.transform, "进入世界");
+            enterBtn.GetComponent<LayoutElement>().minHeight = 58;
+            enterBtn.GetComponent<LayoutElement>().minWidth = 320;
+            SetField(ui, "startGameButton", enterBtn);
+
+            var editBtn = CreateButton("EditorBtn", menu.transform, "编 辑 器");
+            editBtn.GetComponent<LayoutElement>().minHeight = 48;
+            editBtn.GetComponent<LayoutElement>().minWidth = 320;
+            SetField(ui, "editorButton", editBtn);
+
+            var setBtn = CreateButton("SettingsBtn", menu.transform, "设 置");
+            setBtn.GetComponent<LayoutElement>().minHeight = 48;
+            setBtn.GetComponent<LayoutElement>().minWidth = 320;
+            SetField(ui, "settingsButton", setBtn);
 
             SetField(ui, "startMenuPanel", menu);
+            BuildSettingsPanel(canvas, ui);
+        }
+
+        /// <summary>设置面板（分辨率/窗口模式——主菜单第 3 行入口）</summary>
+        private static void BuildSettingsPanel(Transform canvas, UIManager ui)
+        {
+            var panel = CreatePanel("SettingsPanel", canvas).gameObject;
+            SetAnchor(panel.GetComponent<RectTransform>(),
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-220, -160), new Vector2(220, 160));
+            var cv = panel.AddComponent<VerticalLayoutGroup>();
+            cv.spacing = 12; cv.padding = new RectOffset(18, 18, 16, 16);
+            cv.childAlignment = TextAnchor.UpperCenter;
+            cv.childForceExpandWidth = true;
+
+            var title = CreateText("SettingsTitle", panel.transform, "设置", 20);
+            title.color = UITheme.Accent;
+            title.fontStyle = FontStyles.Bold;
+            title.alignment = TextAlignmentOptions.Center;
+            title.GetComponent<LayoutElement>().minHeight = 30;
+
+            // 分辨率（循环按钮——点击切换——应用时生效）
+            var resBtn = CreateButton("ResCycleBtn", panel.transform, "分辨率：1920×1080");
+            resBtn.GetComponent<LayoutElement>().minHeight = 32;
+            SetField(ui, "resolutionButton", resBtn);
+            var resText = resBtn.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            SetField(ui, "resolutionButtonText", resText);
+
+            // 窗口模式（循环按钮——全屏/窗口/最大化）
+            var modeBtn = CreateButton("ModeCycleBtn", panel.transform, "窗口模式：全屏（无边框）");
+            modeBtn.GetComponent<LayoutElement>().minHeight = 32;
+            SetField(ui, "windowModeButton", modeBtn);
+            var modeText = modeBtn.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            SetField(ui, "windowModeButtonText", modeText);
+
+            // 按钮行（应用/关闭）
+            var btnRow = new GameObject("SettingsBtnRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            btnRow.transform.SetParent(panel.transform, false);
+            var hl = btnRow.GetComponent<HorizontalLayoutGroup>();
+            hl.spacing = 10; hl.childAlignment = TextAnchor.MiddleCenter;
+            hl.childForceExpandWidth = false;
+            SetField(ui, "settingsApplyButton", CreateButton("SettingsApplyBtn", btnRow.transform, "应用"));
+            SetField(ui, "settingsCloseButton", CreateButton("SettingsCloseBtn", btnRow.transform, "关闭"));
+
+            SetField(ui, "settingsPanel", panel);
+            panel.SetActive(false);
         }
 
         [MenuItem(MenuRoot + "11. 就地添加宗教面板", false, 11)]

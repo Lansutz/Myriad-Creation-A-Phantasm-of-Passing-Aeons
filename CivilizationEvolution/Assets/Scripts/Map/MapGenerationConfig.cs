@@ -66,10 +66,7 @@ namespace CivilizationEvolution.Map
         /// <summary>地图尺寸预设</summary>
         public enum MapSizePreset
         {
-            [Tooltip("微型：256×128=32768地块。快速测试用。")]
-            Tiny,
-            [Tooltip("小型：512×256=131072地块。平衡性能与细节。")]
-            Small,
+            // 小尺寸已删除（2026-09-04 用户定稿——与运行时 Bootstrap 对齐）
             [Tooltip("中型：1024×512=524288地块。默认推荐，细节丰富。")]
             Medium,
             [Tooltip("大型：2048×1024=2097152地块。大战略地图，生成较慢。")]
@@ -96,8 +93,6 @@ namespace CivilizationEvolution.Map
         {
             return MapSize switch
             {
-                MapSizePreset.Tiny => (256, 128),
-                MapSizePreset.Small => (512, 256),
                 MapSizePreset.Medium => (1024, 512),
                 MapSizePreset.Large => (2048, 1024),
                 MapSizePreset.Huge => (4096, 2048),

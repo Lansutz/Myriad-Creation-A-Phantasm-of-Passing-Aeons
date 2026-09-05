@@ -19,6 +19,8 @@ namespace CivilizationEvolution.Render
         [SerializeField] private int mapWidth = 128;
         [SerializeField] private int mapHeight = 64;
         [SerializeField] private float hexSize = 1f;
+        private float _cameraFitSize = 50f;   // 看全图基准（SetupMapDisplay 校准）
+        private float _maxZoom = 150f;        // 最大缩出（看全图——动态）
         [SerializeField] private MapDisplayMode displayMode = MapDisplayMode.Terrain;
 
         [Header("引用")]
@@ -94,10 +96,25 @@ namespace CivilizationEvolution.Render
             _mainCamera = Camera.main;
             _mapEditor = new MapEditor(world, this);
             _forceMapRefresh = true; // 尺寸同步后强制重绘
+            // 地图显示全链路（查漏补缺：Plane 缩放至地图世界尺寸+相机对准——
+            // 否则 10×10 默认 Plane+固定相机坐标=地图不可见）
+            SetupMapDisplay();
         }
 
                 void Update()
         {
+            // 尺寸漂移检测（查漏补缺：Awake 时 GameWorld 可能未初始化
+            // [mapWidth=0]——生成后 world.mapWidth>0——重新同步+显示就位）
+            if (world != null && world.mapWidth > 0 && world.mapWidth != mapWidth)
+            {
+                mapWidth = world.mapWidth;
+                mapHeight = world.mapHeight;
+                InitializeRenderer();
+                _forceMapRefresh = true;
+                SetupMapDisplay();
+                Debug.Log($"[MapRenderer] 尺寸重同步：{mapWidth}×{mapHeight}——显示就位");
+            }
+
             // 相机输入需要实时响应，不节流
             HandleCameraInput();
             // 地图编辑器鼠标处理（编辑模式下左键绘制）
@@ -159,6 +176,41 @@ namespace CivilizationEvolution.Render
             }
         }
         /// <summary>初始化渲染器</summary>
+        /// <summary>
+        /// 地图显示适配（全链路关键——学 FMS 场景搭建思路）：
+        /// ① MapPlane 缩放至地图世界尺寸（hexSize=1：世界宽=mapWidth——
+        ///    高=mapHeight×0.75——Plane 基元 10×10 需放大）并移到世界中心
+        /// ② 相机对准地图中心（俯视 60°——orthoSize 看全图）
+        /// ③ 缩放范围按地图尺寸动态（大图能看全——小图能拉近）
+        /// </summary>
+        private void SetupMapDisplay()
+        {
+            if (_mainCamera == null || transform == null) return;
+            float worldW = Mathf.Max(1f, mapWidth * hexSize);
+            float worldH = Mathf.Max(1f, mapHeight * hexSize * 0.75f);
+
+            // ① Plane 缩放（基元默认 10×10——UV 跟随拉伸）+ 中心对齐
+            transform.localScale = new Vector3(worldW / 10f, 1f, worldH / 10f);
+            transform.localPosition = new Vector3(worldW * 0.5f, 0f, worldH * 0.5f);
+
+            // ② 相机对准地图中心（俯视——地图满屏占位：
+            // fit=取宽/高适配较小者——地图充满视野不留白——CK3 式开局满屏）
+            float aspect = _mainCamera.aspect > 0f ? _mainCamera.aspect : 1.777f;
+            float fitSize = Mathf.Min(worldW / aspect, worldH) * 0.52f;
+            _cameraFitSize = fitSize;
+            _mainCamera.transform.position = new Vector3(worldW * 0.5f,
+                Mathf.Max(80f, worldH * 0.9f), worldH * 0.5f + fitSize * 0.4f);
+            _mainCamera.transform.rotation = Quaternion.Euler(60f, 0f, 0f);
+            _mainCamera.orthographic = true;
+            _mainCamera.orthographicSize = fitSize;
+            // 视野后移补偿（60° 俯视——看全图边缘不裁）
+            _mainCamera.transform.position = new Vector3(worldW * 0.5f,
+                Mathf.Max(80f, worldH * 0.9f), worldH * 0.5f);
+            _zoomLevel = fitSize;
+            _maxZoom = fitSize * 1.2f;
+            Debug.Log($"[MapRenderer] 地图显示就位：世界 {worldW:F0}×{worldH:F0}——相机居中 size={fitSize:F0}");
+        }
+
         private void InitializeRenderer()
         {
             // 先取现有组件（MapPlane 基元自带 MeshFilter/MeshRenderer），没有再添加；
@@ -591,7 +643,10 @@ namespace CivilizationEvolution.Render
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (scroll != 0f)
             {
-                _zoomLevel = Mathf.Clamp(_zoomLevel - scroll * 20f, 10f, 150f);
+                // 动态范围（SetupMapDisplay 校准——看全图↔贴近地块）
+                float minZoom = 3f;
+                float maxZoom = _maxZoom > 0f ? _maxZoom : 150f;
+                _zoomLevel = Mathf.Clamp(_zoomLevel - scroll * 20f, minZoom, maxZoom);
                 _mainCamera.orthographicSize = _zoomLevel;
             }
 
@@ -661,7 +716,14 @@ namespace CivilizationEvolution.Render
         public Texture2D GetMapTexture() => mapTexture;
 
         /// <summary>获取地图编辑器实例</summary>
-        public MapEditor GetMapEditor() => _mapEditor;
+        public MapEditor GetMapEditor()
+        {
+            // 懒初始化（时序安全：UIManager 可能早于 _mapEditor 创建访问——
+            // NRE 修复 2026-09-04）
+            if (_mapEditor == null && world != null)
+                _mapEditor = new MapEditor(world, this);
+            return _mapEditor;
+        }
 
         /// <summary>当前鼠标悬停地块（画笔预览用）</summary>
         public int HoverTile => _hoverTile;

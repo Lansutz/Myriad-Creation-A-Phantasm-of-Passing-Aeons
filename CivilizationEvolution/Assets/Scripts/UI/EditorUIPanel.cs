@@ -61,6 +61,15 @@ namespace CivilizationEvolution.UI
         {
             _renderer = renderer;
             _editor = editor;
+            // 双保险（查漏补缺：场景重建/时序——editor 引用可能为空——
+            // 从 renderer 懒取——仍空则跳过面板创建[编辑器模式才需]）
+            if (_editor == null && renderer != null)
+                _editor = renderer.GetMapEditor();
+            if (_editor == null)
+            {
+                Debug.LogWarning("[EditorUIPanel] 编辑器未就绪——跳过面板创建（非编辑器场景安全）");
+                return;
+            }
             CreatePanel();
             RegisterEvents();
             _saveSystem = new MapSaveSystem(_renderer != null ? _renderer.World : null, _renderer);
