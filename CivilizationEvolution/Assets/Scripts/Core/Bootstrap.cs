@@ -29,7 +29,7 @@ namespace CivilizationEvolution.Core
     public class Bootstrap : MonoBehaviour
     {
         [Header("地图配置")]
-        [SerializeField] private MapSizePreset mapSizePreset = MapSizePreset.Huge;
+        [SerializeField] private MapSizePreset mapSizePreset = MapSizePreset.Large; // 默认 Large——生成 30-60s 可等
         // 运行时从预设解析的实际尺寸
         private int _mapWidth;
         private int _mapHeight;

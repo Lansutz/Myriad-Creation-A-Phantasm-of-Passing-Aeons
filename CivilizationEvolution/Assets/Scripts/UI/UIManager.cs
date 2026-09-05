@@ -80,6 +80,8 @@ namespace CivilizationEvolution.UI
         [SerializeField] private Button editorButton;        // 主菜单第 2 行：编辑器
         [SerializeField] private Button settingsButton;      // 主菜单第 3 行：设置
         [SerializeField] private GameObject settingsPanel;   // 设置面板
+        [SerializeField] private GameObject loadingPanel;    // 世界生成中覆盖层
+        [SerializeField] private TMP_Text loadingText;
         [SerializeField] private TMPro.TMP_Text resolutionButtonText;  // 分辨率循环按钮标签
         [SerializeField] private Button resolutionButton;
         [SerializeField] private TMPro.TMP_Text windowModeButtonText;  // 窗口模式循环按钮标签
@@ -674,10 +676,24 @@ namespace CivilizationEvolution.UI
 
         private void StartGameFromMenu()
         {
+            // 链路（用户核心诉求：主菜单按钮→真实进入世界——带生成反馈）：
+            // 隐藏主菜单 → 显示"世界生成中"覆盖 → 同步生成（阻塞——画面冻结
+            // 在提示上——完成后覆盖层隐藏→地图可见）
+            if (startMenuPanel != null) startMenuPanel.SetActive(false);
+            if (loadingPanel != null)
+            {
+                loadingPanel.SetActive(true);
+                if (loadingText != null)
+                    loadingText.text = "世界生成中…\n（首图较慢——请稍候）";
+            }
             var bootstrap = FindAnyObjectByType<Bootstrap>();
             if (bootstrap != null && (world == null || world.tiles.Length == 0))
-                bootstrap.StartNewGame(); // 建世界（GameManager 初始化）
-            if (startMenuPanel != null) startMenuPanel.SetActive(false);
+            {
+                float t0 = Time.realtimeSinceStartup;
+                bootstrap.StartNewGame(); // 同步生成（建世界）
+                UnityEngine.Debug.Log($"[进入世界] 世界生成完成——耗时 {Time.realtimeSinceStartup - t0:F1}s");
+            }
+            if (loadingPanel != null) loadingPanel.SetActive(false);
         }
 
         /// <summary>查看政权总览（打开聚合面板——人口/国库/官职/宗教——

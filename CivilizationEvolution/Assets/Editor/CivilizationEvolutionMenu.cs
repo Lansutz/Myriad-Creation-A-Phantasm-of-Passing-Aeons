@@ -346,6 +346,22 @@ namespace CivilizationEvolution.EditorTools
 
             SetField(ui, "startMenuPanel", menu);
             BuildSettingsPanel(canvas, ui);
+
+            // 世界生成中覆盖层（全屏深色+提示文字——进入世界的进度反馈）
+            var loadingGo = CreatePanel("LoadingPanel", canvas).gameObject;
+            var lrt = loadingGo.GetComponent<RectTransform>();
+            lrt.anchorMin = Vector2.zero; lrt.anchorMax = Vector2.one;
+            lrt.offsetMin = Vector2.zero; lrt.offsetMax = Vector2.zero;
+            loadingGo.GetComponent<UnityEngine.UI.Image>().color = new Color32(20, 26, 33, 235);
+            var loadingText = CreateText("LoadingText", loadingGo.transform,
+                "世界生成中…", 28);
+            loadingText.color = new Color32(232, 213, 163, 255);
+            loadingText.alignment = TextAlignmentOptions.Center;
+            loadingText.rectTransform.anchorMin = new Vector2(0.3f, 0.4f);
+            loadingText.rectTransform.anchorMax = new Vector2(0.7f, 0.6f);
+            SetField(ui, "loadingPanel", loadingGo);
+            SetField(ui, "loadingText", loadingText);
+            loadingGo.SetActive(false);
         }
 
         /// <summary>设置面板（分辨率/窗口模式——主菜单第 3 行入口）</summary>
