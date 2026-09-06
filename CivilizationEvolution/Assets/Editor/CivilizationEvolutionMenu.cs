@@ -372,9 +372,9 @@ namespace CivilizationEvolution.EditorTools
         private static void BuildNewGamePanel(Transform canvas, UIManager ui)
         {
             var panel = CreatePanel("NewGamePanel", canvas).gameObject;
-            // 菜单子界面（竖长 460×640——分组层级：标题/区块标签/选项/操作）
+            // 菜单子界面（竖长 460×760——标题/规模/种子/参数滚动/操作）
             SetAnchor(panel.GetComponent<RectTransform>(),
-                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-230, -320), new Vector2(230, 320));
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-230, -380), new Vector2(230, 380));
             var cv = panel.AddComponent<VerticalLayoutGroup>();
             cv.spacing = 6; cv.padding = new RectOffset(28, 28, 20, 20);
             cv.childForceExpandWidth = true;
@@ -429,11 +429,41 @@ namespace CivilizationEvolution.EditorTools
             seedBox.GetComponent<LayoutElement>().minHeight = 36;
             SetField(ui, "seedRandomButton", CreateButton("SeedRandomBtn", seedRow.transform, "随机"));
 
+            // ── 世界参数（滚动区——对接 WorldConfig——运行时动态建行）──
+            var paramTitle = CreateText("ParamSectionTitle", panel.transform, "世界参数（海陆/大陆/气候）", 15);
+            paramTitle.color = UITheme.Accent;
+            paramTitle.fontStyle = FontStyles.Bold;
+            paramTitle.GetComponent<LayoutElement>().minHeight = 24;
+            var paramScrollGo = new GameObject("ParamScroll", typeof(RectTransform),
+                typeof(ScrollRect), typeof(UnityEngine.UI.Image));
+            paramScrollGo.transform.SetParent(panel.transform, false);
+            var paramImg = paramScrollGo.GetComponent<UnityEngine.UI.Image>();
+            paramImg.color = new Color32(16, 20, 30, 160);
+            paramImg.sprite = UITheme.RoundedPanelSprite;
+            paramImg.type = Image.Type.Sliced;
+            var paramLe = paramScrollGo.AddComponent<LayoutElement>();
+            paramLe.minHeight = 200; paramLe.flexibleHeight = 1f;
+            var paramScroll = paramScrollGo.GetComponent<ScrollRect>();
+            var paramContent = new GameObject("ParamContent", typeof(RectTransform));
+            paramContent.transform.SetParent(paramScrollGo.transform, false);
+            var pc = (RectTransform)paramContent.transform;
+            pc.anchorMin = Vector2.zero; pc.anchorMax = Vector2.one;
+            pc.offsetMin = new Vector2(10, 10); pc.offsetMax = new Vector2(-10, -10);
+            var pv = paramContent.AddComponent<VerticalLayoutGroup>();
+            pv.spacing = 4; pv.childForceExpandWidth = true;
+            pv.childControlHeight = true;
+            paramScroll.content = pc;
+            paramScroll.vertical = true; paramScroll.horizontal = false;
+            paramScroll.viewport = (RectTransform)paramScrollGo.transform;
+            SetField(ui, "paramContentRoot", pc);
+            SetField(ui, "paramResetButton",
+                CreateButton("ParamResetBtn", panel.transform, "重置参数"));
+
             // 弹性占位（操作按钮沉底）
             var flex = new GameObject("Flex", typeof(RectTransform));
             flex.transform.SetParent(panel.transform, false);
             var flexLe = flex.AddComponent<LayoutElement>();
-            flexLe.minHeight = 18; flexLe.flexibleHeight = 1f;
+            flexLe.minHeight = 10; flexLe.flexibleHeight = 0.5f;
 
             // ── 操作 ──
             var actRow = new GameObject("NewGameActRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));

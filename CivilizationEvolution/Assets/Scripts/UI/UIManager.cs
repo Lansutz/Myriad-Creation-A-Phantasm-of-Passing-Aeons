@@ -91,6 +91,23 @@ namespace CivilizationEvolution.UI
         [SerializeField] private Button sizeEnormousButton;
         private int _presetIndex = 0;    // 0 Large/1 Huge/2 Enormous（默认 Large）
         private int _genSeed = 42;
+        [SerializeField] private RectTransform paramContentRoot; // 世界参数滚动区（动态行）
+        [SerializeField] private Button paramResetButton;       // 参数重置
+        private WorldConfig _panelConfig;                        // 面板持有的配置副本（防污染资产）
+
+        /// <summary>世界参数（对接 WorldConfig 字段——生成参数面板——
+        /// label/字段/滑条范围/显示格式）</summary>
+        private static readonly (string label, string field, float min, float max, string fmt)[] WorldParams =
+        {
+            ("陆地占比", "landAmount", 0.1f, 0.8f, "F2"),
+            ("大陆破碎度", "landFragment", 0f, 1f, "F2"),
+            ("海岸破碎度", "coastFragment", 0f, 1f, "F2"),
+            ("海洋缓冲", "oceanBuffer", 0f, 1f, "F2"),
+            ("大陆尺度", "continentScale", 0.5f, 3f, "F2"),
+            ("山脉强度", "mountainStrength", 0f, 1f, "F2"),
+            ("热赤道纬度", "thermalEquatorLat", -30f, 30f, "F1"),
+            ("季节强度", "seasonIntensity", 0f, 1f, "F2"),
+        };
         [SerializeField] private GameObject loadingPanel;    // 世界生成中覆盖层
         [SerializeField] private TMP_Text loadingText;
         [SerializeField] private TMPro.TMP_Text resolutionButtonText;  // 分辨率循环按钮标签
@@ -263,6 +280,7 @@ namespace CivilizationEvolution.UI
             if (sizeLargeButton != null) sizeLargeButton.onClick.AddListener(() => SelectSize(0));
             if (sizeHugeButton != null) sizeHugeButton.onClick.AddListener(() => SelectSize(1));
             if (sizeEnormousButton != null) sizeEnormousButton.onClick.AddListener(() => SelectSize(2));
+            if (paramResetButton != null) paramResetButton.onClick.AddListener(ResetWorldParams);
             if (editorButton != null) editorButton.onClick.AddListener(EnterEditorFromMenu);
             if (settingsButton != null) settingsButton.onClick.AddListener(OpenSettingsPanel);
             if (resolutionButton != null) resolutionButton.onClick.AddListener(CycleResolution);
@@ -704,8 +722,151 @@ namespace CivilizationEvolution.UI
             startMenuPanel?.SetActive(false);
             _presetIndex = 0;
             _genSeed = new System.Random().Next(1, 100000);
+            // 世界参数配置副本（防污染 DefaultWorldConfig 资产——改副本——
+            // InitializeWorld 再 Instantiate 保参——生成链用）
+            if (world != null && world.config != null)
+            {
+                _panelConfig = Object.Instantiate(world.config);
+                _panelConfig.name = "PanelWorldConfig";
+                world.config = _panelConfig;
+            }
+            BuildWorldParameterRows();
             RefreshNewGamePanel();
             newGamePanel.SetActive(true);
+        }
+
+        /// <summary>世界参数行（动态构建——每参数：名+滑条+值——对接 WorldConfig 字段）</summary>
+        private void BuildWorldParameterRows()
+        {
+            if (paramContentRoot == null) return;
+            // 清旧行
+            foreach (Transform child in paramContentRoot)
+                Destroy(child.gameObject);
+            if (_panelConfig == null) return;
+
+            foreach (var (label, field, min, max, fmt) in WorldParams)
+            {
+                var row = new GameObject("Param_" + field, typeof(RectTransform),
+                    typeof(HorizontalLayoutGroup));
+                row.transform.SetParent(paramContentRoot, false);
+                var hl = row.GetComponent<HorizontalLayoutGroup>();
+                hl.spacing = 8; hl.childAlignment = TextAnchor.MiddleLeft;
+                hl.childForceExpandWidth = true;
+                var le = row.AddComponent<LayoutElement>();
+                le.minHeight = 30;
+
+                var nameTxt = MakeParamText(label);
+                nameTxt.transform.SetParent(row.transform, false);
+                nameTxt.GetComponent<LayoutElement>().minWidth = 86;
+
+                var sliderGo = new GameObject("Slider", typeof(RectTransform));
+                sliderGo.transform.SetParent(row.transform, false);
+                var slider = sliderGo.AddComponent<Slider>();
+                slider.minValue = min; slider.maxValue = max;
+                var bg = sliderGo.AddComponent<UnityEngine.UI.Image>();
+                bg.sprite = UITheme.RoundedPanelSprite;
+                bg.type = Image.Type.Sliced;
+                bg.color = new Color32(30, 38, 52, 255);
+                // fill
+                var fillGo = new GameObject("Fill", typeof(RectTransform));
+                fillGo.transform.SetParent(sliderGo.transform, false);
+                var fill = fillGo.AddComponent<UnityEngine.UI.Image>();
+                fill.color = UITheme.Accent;
+                slider.fillRect = (RectTransform)fillGo.transform;
+                slider.targetGraphic = bg;
+                // handle
+                var handleGo = new GameObject("Handle", typeof(RectTransform));
+                handleGo.transform.SetParent(sliderGo.transform, false);
+                var handleImg = handleGo.AddComponent<UnityEngine.UI.Image>();
+                handleImg.sprite = UITheme.RoundedButtonSprite;
+                handleImg.type = Image.Type.Sliced;
+                handleImg.color = new Color32(210, 220, 235, 255);
+                slider.handleRect = (RectTransform)handleGo.transform;
+                slider.direction = Slider.Direction.LeftToRight;
+                var sle = sliderGo.AddComponent<LayoutElement>();
+                sle.minWidth = 160; sle.flexibleWidth = 1f;
+
+                // 值文本
+                var valueTxt = MakeParamText("");
+                valueTxt.transform.SetParent(row.transform, false);
+                valueTxt.alignment = TextAlignmentOptions.MiddleRight;
+                valueTxt.GetComponent<LayoutElement>().minWidth = 48;
+
+                // 初始值（从 config 读——反射）
+                float cur = ReadParam(field);
+                slider.value = Mathf.Clamp(cur, min, max);
+                valueTxt.text = cur.ToString(fmt);
+
+                // 联动（滑条→config 字段）
+                float fMin = min, fMax = max; string fFmt = fmt; string fField = field;
+                slider.onValueChanged.AddListener(v =>
+                {
+                    float val = Mathf.Clamp(v, fMin, fMax);
+                    WriteParam(fField, val);
+                    valueTxt.text = val.ToString(fFmt);
+                });
+            }
+        }
+
+        private TMPro.TextMeshProUGUI MakeParamText(string content)
+        {
+            var go = new GameObject("T", typeof(RectTransform));
+            var txt = go.AddComponent<TMPro.TextMeshProUGUI>();
+            txt.text = content;
+            txt.fontSize = 13;
+            txt.color = UITheme.TextMain;
+            txt.font = TMPro.TMPFontUtility.GetChineseFont();
+            return txt;
+        }
+
+        /// <summary>读 WorldConfig 字段（switch——明确映射）</summary>
+        private float ReadParam(string field)
+        {
+            if (_panelConfig == null) return 0f;
+            switch (field)
+            {
+                case "landAmount": return _panelConfig.landAmount;
+                case "landFragment": return _panelConfig.landFragment;
+                case "coastFragment": return _panelConfig.coastFragment;
+                case "oceanBuffer": return _panelConfig.oceanBuffer;
+                case "continentScale": return _panelConfig.continentScale;
+                case "mountainStrength": return _panelConfig.mountainStrength;
+                case "thermalEquatorLat": return _panelConfig.thermalEquatorLat;
+                case "seasonIntensity": return _panelConfig.seasonIntensity;
+                default: return 0f;
+            }
+        }
+
+        private void WriteParam(string field, float v)
+        {
+            if (_panelConfig == null) return;
+            switch (field)
+            {
+                case "landAmount": _panelConfig.landAmount = v; break;
+                case "landFragment": _panelConfig.landFragment = v; break;
+                case "coastFragment": _panelConfig.coastFragment = v; break;
+                case "oceanBuffer": _panelConfig.oceanBuffer = v; break;
+                case "continentScale": _panelConfig.continentScale = v; break;
+                case "mountainStrength": _panelConfig.mountainStrength = v; break;
+                case "thermalEquatorLat": _panelConfig.thermalEquatorLat = v; break;
+                case "seasonIntensity": _panelConfig.seasonIntensity = v; break;
+            }
+        }
+
+        /// <summary>参数重置（默认值）</summary>
+        private void ResetWorldParams()
+        {
+            if (_panelConfig == null) return;
+            var def = WorldConfig.CreateRuntimeInstance();
+            _panelConfig.landAmount = def.landAmount;
+            _panelConfig.landFragment = def.landFragment;
+            _panelConfig.coastFragment = def.coastFragment;
+            _panelConfig.oceanBuffer = def.oceanBuffer;
+            _panelConfig.continentScale = def.continentScale;
+            _panelConfig.mountainStrength = def.mountainStrength;
+            _panelConfig.thermalEquatorLat = def.thermalEquatorLat;
+            _panelConfig.seasonIntensity = def.seasonIntensity;
+            BuildWorldParameterRows(); // 重建（滑条回默认）
         }
 
         private void CloseNewGamePanel()
