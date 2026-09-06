@@ -781,6 +781,26 @@ namespace CivilizationEvolution.EditorTools
             SetField(ui, "speed2Button", CreateButton("Speed2Btn", speedGroup, "x2"));
             SetField(ui, "speed3Button", CreateButton("Speed3Btn", speedGroup, "x5"));
             // ---- 地图模式栏（可折叠：折叠按钮 + 类别 Dropdown + 子项 Dropdown）----
+            // CK3 式地图模式面板（地图▾按钮展开——类别+子项 radio 列表）
+            var modePanel = CreatePanel("MapModePanel", canvas).gameObject;
+            SetAnchor(modePanel.GetComponent<RectTransform>(),
+                new Vector2(1, 1), new Vector2(1, 1), new Vector2(-300, -90), new Vector2(180, 420));
+            var mv = modePanel.AddComponent<VerticalLayoutGroup>();
+            mv.spacing = 3; mv.padding = new RectOffset(8, 8, 8, 8);
+            mv.childForceExpandWidth = true;
+            mv.childControlHeight = true;
+            var modeList = new GameObject("MapModeList", typeof(RectTransform));
+            modeList.transform.SetParent(modePanel.transform, false);
+            var mlrt = (RectTransform)modeList.transform;
+            mlrt.anchorMin = Vector2.zero; mlrt.anchorMax = Vector2.one;
+            mlrt.offsetMin = Vector2.zero; mlrt.offsetMax = Vector2.zero;
+            var mlv = modeList.AddComponent<VerticalLayoutGroup>();
+            mlv.spacing = 3; mlv.childForceExpandWidth = true;
+            mlv.childControlHeight = true;
+            SetField(ui, "mapModePanel", modePanel);
+            SetField(ui, "mapModeListRoot", mlrt);
+            modePanel.SetActive(false);
+
             var mapModeBar = CreatePanel("MapModeBar", speedGroup).gameObject;
             var mmLayout = mapModeBar.AddComponent<HorizontalLayoutGroup>();
             mmLayout.spacing = 6; mmLayout.childAlignment = TextAnchor.MiddleCenter;
