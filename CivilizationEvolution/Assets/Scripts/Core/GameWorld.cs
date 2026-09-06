@@ -130,12 +130,17 @@ namespace CivilizationEvolution.Core
 
         void Awake()
         {
-            InitializeWorld();
+            // 惰性初始化（2026-09 根因修复：主菜单模式——场景加载即自动
+            // InitializeWorld 会用默认 128×64 建空 tile 结构——玩家点"进入
+            // 世界"时 tiles 已存在[未生成地形]→条件跳过→黑屏空世界！
+            // 全部初始化延迟到 GameManager.StartNewGame（设尺寸后）显式
+            // Initialize+Generate——Awake 零初始化[注册表由 Bootstrap 管]）
         }
 
-        /// <summary>初始化世界</summary>
+        /// <summary>初始化世界（StartNewGame 设好尺寸后显式调用）</summary>
         public void InitializeWorld()
         {
+            // 幂等（重复 StartNewGame 安全——重新建 tiles）
             if (startYear < 0) { startYear = currentYear; startDay = currentDay; }
             // 内容注册表幂等初始化（与 Bootstrap.Awake 无执行顺序依赖）
             if (!ContentRegistry.IsInitialized)
