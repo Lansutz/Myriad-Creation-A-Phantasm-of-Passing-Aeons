@@ -406,58 +406,10 @@ namespace CivilizationEvolution.Disaster
     }
 
     /// <summary>活跃灾害实例</summary>
-    [System.Serializable]
-    public class ActiveDisaster
-    {
-        public DisasterDef def;
-        public int centerTile;
-        public List<int> affectedTiles = new List<int>();
-        public int startDay;
-        public int startYear;
-        public int remainingDays;
-        public float severity;
-    }
+
 
     /// <summary>灾害定义</summary>
-    [System.Serializable]
-    public struct DisasterDef
-    {
-        public DisasterType type;
-        public string name;
-        public DisasterCategory category;
-        public float baseFrequency;
-        public int minDuration;
-        public int maxDuration;
-        public float baseSeverity;
-    }
 
-    public enum DisasterType
-    {
-        // 气象灾害
-        Drought,
-        Flood,
-        ColdWave,
-        HeatWave,
-        Storm,
-        // 地质灾害
-        Earthquake,
-        VolcanicEruption,
-        Landslide,
-        // 生物灾害
-        LocustPlague,
-        CropFailure,
-        // 人为灾害
-        Fire,
-        Famine
-    }
-
-    public enum DisasterCategory
-    {
-        Meteorological,
-        Geological,
-        Biological,
-        Anthropogenic
-    }
 
     /// <summary>
     /// 疾病系统
@@ -863,45 +815,9 @@ namespace CivilizationEvolution.Disaster
     }
 
     /// <summary>活跃疾病实例</summary>
-    [System.Serializable]
-    public class ActiveDisease
-    {
-        public DiseaseDef def;
-        public int centerTile;
-        public List<int> affectedTiles = new List<int>();
-        public int startDay;
-        public int startYear;
-        public int elapsedDays;
-        public float activeInfections;
-        public float totalInfected;
-        public float totalDeaths;
-        public float totalRecovered;
-        public float currentR0;
-    }
+
 
     /// <summary>疾病定义</summary>
-    [System.Serializable]
-    public struct DiseaseDef
-    {
-        public DiseaseType type;
-        public string name;
-        public float baseInfectionRate;
-        public float baseMortalityRate;
-        public float baseRecoveryRate;
-        public int incubationDays;
-        public int durationDays;
-        public float baseR0;
-        public bool isEndemic;
-    }
 
-    public enum DiseaseType
-    {
-        Plague,
-        Smallpox,
-        Cholera,
-        Typhus,
-        Malaria,
-        Tuberculosis,
-        Dysentery
-    }
+
 }
