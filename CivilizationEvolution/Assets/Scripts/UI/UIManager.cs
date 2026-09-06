@@ -726,7 +726,7 @@ namespace CivilizationEvolution.UI
             // InitializeWorld 再 Instantiate 保参——生成链用）
             if (world != null && world.config != null)
             {
-                _panelConfig = Object.Instantiate(world.config);
+                _panelConfig = UnityEngine.Object.Instantiate(world.config);
                 _panelConfig.name = "PanelWorldConfig";
                 world.config = _panelConfig;
             }
@@ -789,7 +789,7 @@ namespace CivilizationEvolution.UI
                 // 值文本
                 var valueTxt = MakeParamText("");
                 valueTxt.transform.SetParent(row.transform, false);
-                valueTxt.alignment = TextAlignmentOptions.MiddleRight;
+                valueTxt.alignment = TMPro.TextAlignmentOptions.Right;
                 valueTxt.GetComponent<LayoutElement>().minWidth = 48;
 
                 // 初始值（从 config 读——反射）
@@ -815,7 +815,7 @@ namespace CivilizationEvolution.UI
             txt.text = content;
             txt.fontSize = 13;
             txt.color = UITheme.TextMain;
-            txt.font = TMPro.TMPFontUtility.GetChineseFont();
+            txt.font = TMPFontUtility.GetChineseFont();
             return txt;
         }
 

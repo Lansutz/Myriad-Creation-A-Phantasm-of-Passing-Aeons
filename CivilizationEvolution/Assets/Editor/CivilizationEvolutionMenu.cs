@@ -425,7 +425,7 @@ namespace CivilizationEvolution.EditorTools
             hr.childForceExpandWidth = true;
             var seedBox = CreateText("SeedText", seedRow.transform, "种子：42", 16);
             seedBox.color = UITheme.TextMain;
-            seedBox.alignment = TextAlignmentOptions.MiddleCenter;
+            seedBox.alignment = TextAlignmentOptions.Center;
             seedBox.GetComponent<LayoutElement>().minHeight = 36;
             SetField(ui, "seedRandomButton", CreateButton("SeedRandomBtn", seedRow.transform, "随机"));
 
