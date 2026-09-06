@@ -8,9 +8,6 @@ namespace CivilizationEvolution.Core
     /// event_id/tick/participants/major——世界大事的时序记录）
     /// 供 UI 历史视图/存档回溯使用
     /// </summary>
-    [Serializable]
-
-
     /// <summary>编年史（世界大事日志，上限保留）</summary>
     [Serializable]
     public class Chronicle

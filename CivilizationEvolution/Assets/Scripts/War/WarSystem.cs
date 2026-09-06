@@ -233,6 +233,4 @@ namespace CivilizationEvolution.War
     /// 分数按 WarRules score 体系：野战胜利=scoreBattle、歼灭敌军=按规模、
     /// 占城=scoreCity 等（当前实现：战斗胜利+占领加分）
     /// </summary>
-    [System.Serializable]
-
-}
+    }

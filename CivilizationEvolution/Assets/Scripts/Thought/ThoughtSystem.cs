@@ -187,10 +187,6 @@ namespace CivilizationEvolution.Thought
         }
     }
 
-    /// <summary>教阶头衔（教区/主教区/大主教区/枢机——叙任权：俗人/灵性任命）</summary>
-    [System.Serializable]
-
-
     /// <summary>神灵</summary>
     [System.Serializable]
     public struct Deity

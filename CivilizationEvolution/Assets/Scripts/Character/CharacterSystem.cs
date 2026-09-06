@@ -38,7 +38,6 @@ namespace CivilizationEvolution.Role
     /// 角色核心数值
     /// 普通人口块不存储个体数值，仅有名角色存储完整角色数值
     /// </summary>
-    [System.Serializable]
 
 
     /// <summary>角色身份</summary>
@@ -51,7 +50,6 @@ namespace CivilizationEvolution.Role
     /// 人格特质
     /// 三层架构：基础特质 → 复合特质 → 文化特质
     /// </summary>
-    [System.Serializable]
 
 
     /// <summary>
@@ -87,7 +85,6 @@ namespace CivilizationEvolution.Role
     /// 人物羁绊系统
     /// 角色间的特殊关系纽带，提供机制加成
     /// </summary>
-    [System.Serializable]
 
 
     /// <summary>
@@ -96,13 +93,6 @@ namespace CivilizationEvolution.Role
     /// 动态好感程度由 CharacterRelation.opinion 表达，Bond 只承载结下的"纽带"及其加成。
     /// Rivalry（宿怨）与 Nemesis（死敌）为程度不同的敌对纽带，故并存。
     /// </summary>
-
-
-    /// <summary>
-    /// 递归家族系统
-    /// 支持无限层级的家族树结构，每一代都有独立的分支
-    /// </summary>
-    [System.Serializable]
 
 
     /// <summary>

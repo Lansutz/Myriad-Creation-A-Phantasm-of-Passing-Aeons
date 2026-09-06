@@ -5,21 +5,15 @@ using CivilizationEvolution.Core;
 namespace CivilizationEvolution.Economy
 {
     /// <summary>物资定义</summary>
-    [System.Serializable]
 
 
     /// <summary>贸易中心（每个大地区一个）</summary>
-    [System.Serializable]
 
 
     /// <summary>贸易路线</summary>
-    [System.Serializable]
 
 
     /// <summary>商队</summary>
-    [System.Serializable]
-
-
     /// <summary>货币系统</summary>
     [System.Serializable]
     public class CurrencySystem

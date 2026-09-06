@@ -1831,11 +1831,4 @@ namespace CivilizationEvolution.Core
         public PoliticalManager GetPoliticalManager() => _politicalManager;
     }
 
-    /// <summary>游戏事件类型</summary>
-
-
-    /// <summary>游戏事件</summary>
-    [System.Serializable]
-
-
-}
+    }

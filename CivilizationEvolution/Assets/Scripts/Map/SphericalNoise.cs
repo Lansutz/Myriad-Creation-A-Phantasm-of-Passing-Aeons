@@ -1,3 +1,4 @@
+using UnityEngine;
 using System;
 
 namespace CivilizationEvolution.Map
@@ -29,7 +30,7 @@ namespace CivilizationEvolution.Map
         public SphericalNoise(int seed = 1337)
         {
             // 基于种子的确定性洗牌（Fisher-Yates）
-            var rng = new Random(seed);
+            var rng = new System.Random(seed);
             var p = new byte[256];
             for (int i = 0; i < 256; i++) p[i] = (byte)i;
             for (int i = 255; i > 0; i--)
