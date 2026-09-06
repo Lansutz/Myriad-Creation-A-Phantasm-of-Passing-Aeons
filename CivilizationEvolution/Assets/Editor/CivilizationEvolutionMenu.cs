@@ -372,68 +372,84 @@ namespace CivilizationEvolution.EditorTools
         private static void BuildNewGamePanel(Transform canvas, UIManager ui)
         {
             var panel = CreatePanel("NewGamePanel", canvas).gameObject;
-            // 面板布局（宽 560 高 420——选项上/按钮下——非正方块）
+            // 菜单子界面（竖长 460×640——分组层级：标题/区块标签/选项/操作）
             SetAnchor(panel.GetComponent<RectTransform>(),
-                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-280, -210), new Vector2(280, 210));
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-230, -320), new Vector2(230, 320));
             var cv = panel.AddComponent<VerticalLayoutGroup>();
-            cv.spacing = 8; cv.padding = new RectOffset(24, 24, 18, 18);
+            cv.spacing = 6; cv.padding = new RectOffset(28, 28, 20, 20);
             cv.childForceExpandWidth = true;
 
-            var title = CreateText("NewGameTitle", panel.transform, "世界生成", 22);
+            // 标题行（游戏菜单惯例：标题+副题）
+            var title = CreateText("NewGameTitle", panel.transform, "世界生成", 24);
             title.color = UITheme.Accent;
             title.fontStyle = FontStyles.Bold;
             title.alignment = TextAlignmentOptions.Center;
-            title.GetComponent<LayoutElement>().minHeight = 34;
-
+            title.GetComponent<LayoutElement>().minHeight = 40;
             var sub = CreateText("NewGameSub", panel.transform,
                 "选择世界规模与种子——生成新世界", 13);
-            sub.color = new Color32(200, 190, 160, 255);
+            sub.color = UITheme.TextDim;
             sub.alignment = TextAlignmentOptions.Center;
             sub.GetComponent<LayoutElement>().minHeight = 22;
 
-            // 尺寸三档（横向三按钮）
+            // ── 世界规模（分区）──
+            var sizeTitle = CreateText("SizeSectionTitle", panel.transform, "世界规模", 15);
+            sizeTitle.color = UITheme.Accent;
+            sizeTitle.fontStyle = FontStyles.Bold;
+            sizeTitle.GetComponent<LayoutElement>().minHeight = 24;
+
             var sizeRow = new GameObject("SizeRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
             sizeRow.transform.SetParent(panel.transform, false);
             var sl = sizeRow.GetComponent<HorizontalLayoutGroup>();
             sl.spacing = 10; sl.childAlignment = TextAnchor.MiddleCenter;
             sl.childForceExpandWidth = true;
-            var sizeLabel = CreateText("SizeLabel", panel.transform, "世界规模", 14);
-            sizeLabel.GetComponent<LayoutElement>().minHeight = 18;
-            SetField(ui, "sizeLargeButton", CreateButton("SizeLargeBtn", sizeRow.transform, "标准\n1024×512"));
-            SetField(ui, "sizeHugeButton", CreateButton("SizeHugeBtn", sizeRow.transform, "广阔\n2048×1024"));
-            SetField(ui, "sizeEnormousButton", CreateButton("SizeEnormousBtn", sizeRow.transform, "浩瀚\n3072×1536"));
+            SetField(ui, "sizeLargeButton", CreateButton("SizeLargeBtn", sizeRow.transform, "标准\n1024×512\n约 1 分钟"));
+            SetField(ui, "sizeHugeButton", CreateButton("SizeHugeBtn", sizeRow.transform, "广阔\n2048×1024\n约 3 分钟"));
+            SetField(ui, "sizeEnormousButton", CreateButton("SizeEnormousBtn", sizeRow.transform, "浩瀚\n3072×1536\n约 8 分钟"));
             foreach (Transform b in sizeRow.transform)
             {
                 var lt = b.GetComponent<LayoutElement>() ?? b.gameObject.AddComponent<LayoutElement>();
-                lt.minHeight = 52;
+                lt.minHeight = 68;
                 var t = b.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-                if (t != null) t.fontSize = 13;
+                if (t != null) { t.fontSize = 12; t.lineSpacing = 6; }
             }
 
-            // 种子行（显示+随机）
+            // ── 种子（分区）──
+            var seedTitle = CreateText("SeedSectionTitle", panel.transform, "种子", 15);
+            seedTitle.color = UITheme.Accent;
+            seedTitle.fontStyle = FontStyles.Bold;
+            seedTitle.GetComponent<LayoutElement>().minHeight = 24;
             var seedRow = new GameObject("SeedRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
             seedRow.transform.SetParent(panel.transform, false);
             var hr = seedRow.GetComponent<HorizontalLayoutGroup>();
-            hr.spacing = 10; hr.childAlignment = TextAnchor.MiddleCenter;
-            hr.childForceExpandWidth = false;
-            SetField(ui, "seedText", CreateText("SeedText", seedRow.transform, "种子：42", 15));
-            SetField(ui, "seedRandomButton", CreateButton("SeedRandomBtn", seedRow.transform, "随机种子"));
+            hr.spacing = 12; hr.childAlignment = TextAnchor.MiddleCenter;
+            hr.childForceExpandWidth = true;
+            var seedBox = CreateText("SeedText", seedRow.transform, "种子：42", 16);
+            seedBox.color = UITheme.TextMain;
+            seedBox.alignment = TextAlignmentOptions.MiddleCenter;
+            seedBox.GetComponent<LayoutElement>().minHeight = 36;
+            SetField(ui, "seedRandomButton", CreateButton("SeedRandomBtn", seedRow.transform, "随机"));
 
-            // 提示（内存/耗时——不同尺寸差异）
-            var hint = CreateText("NewGameHint", panel.transform,
-                "提示：Large 适合快速体验——Huge/Enormous 生成较慢且吃内存", 12);
-            hint.color = new Color32(150, 150, 140, 255);
-            hint.alignment = TextAlignmentOptions.Center;
-            hint.GetComponent<LayoutElement>().minHeight = 20;
+            // 弹性占位（操作按钮沉底）
+            var flex = new GameObject("Flex", typeof(RectTransform));
+            flex.transform.SetParent(panel.transform, false);
+            var flexLe = flex.AddComponent<LayoutElement>();
+            flexLe.minHeight = 18; flexLe.flexibleHeight = 1f;
 
-            // 按钮行（生成/返回）
+            // ── 操作 ──
             var actRow = new GameObject("NewGameActRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
             actRow.transform.SetParent(panel.transform, false);
             var al = actRow.GetComponent<HorizontalLayoutGroup>();
             al.spacing = 16; al.childAlignment = TextAnchor.MiddleCenter;
-            al.childForceExpandWidth = false;
-            SetField(ui, "newGameStartButton", CreateButton("NewGameStartBtn", actRow.transform, "生 成 世 界"));
-            SetField(ui, "newGameBackButton", CreateButton("NewGameBackBtn", actRow.transform, "返 回"));
+            al.childForceExpandWidth = true;
+            SetField(ui, "newGameBackButton", CreateButton("NewGameBackBtn", actRow.transform, "返回"));
+            SetField(ui, "newGameStartButton", CreateButton("NewGameStartBtn", actRow.transform, "生成世界"));
+            foreach (Transform b in actRow.transform)
+            {
+                var lt = b.GetComponent<LayoutElement>() ?? b.gameObject.AddComponent<LayoutElement>();
+                lt.minHeight = 44;
+                var t = b.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                if (t != null) t.fontSize = 16;
+            }
 
             SetField(ui, "newGamePanel", panel);
             panel.SetActive(false);
@@ -443,18 +459,23 @@ namespace CivilizationEvolution.EditorTools
         private static void BuildSettingsPanel(Transform canvas, UIManager ui)
         {
             var panel = CreatePanel("SettingsPanel", canvas).gameObject;
+            // 竖长分区（显示设置区块——游戏菜单式）
             SetAnchor(panel.GetComponent<RectTransform>(),
-                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-220, -160), new Vector2(220, 160));
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-200, -230), new Vector2(200, 230));
             var cv = panel.AddComponent<VerticalLayoutGroup>();
-            cv.spacing = 12; cv.padding = new RectOffset(18, 18, 16, 16);
-            cv.childAlignment = TextAnchor.UpperCenter;
+            cv.spacing = 6; cv.padding = new RectOffset(24, 24, 20, 20);
             cv.childForceExpandWidth = true;
 
-            var title = CreateText("SettingsTitle", panel.transform, "设置", 20);
+            var title = CreateText("SettingsTitle", panel.transform, "设置", 22);
             title.color = UITheme.Accent;
             title.fontStyle = FontStyles.Bold;
             title.alignment = TextAlignmentOptions.Center;
-            title.GetComponent<LayoutElement>().minHeight = 30;
+            title.GetComponent<LayoutElement>().minHeight = 36;
+
+            var sub = CreateText("SettingsSub", panel.transform, "显示设置", 13);
+            sub.color = UITheme.TextDim;
+            sub.alignment = TextAlignmentOptions.Center;
+            sub.GetComponent<LayoutElement>().minHeight = 20;
 
             // 分辨率（循环按钮——点击切换——应用时生效）
             var resBtn = CreateButton("ResCycleBtn", panel.transform, "分辨率：1920×1080");

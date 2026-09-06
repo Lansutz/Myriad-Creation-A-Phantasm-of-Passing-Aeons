@@ -29,9 +29,11 @@ namespace CivilizationEvolution.UI
         public static readonly Color LogWarning = new Color(0.98f, 0.80f, 0.35f, 1f);  // 警示黄
 
         // ===== 程序化圆角 Sprite =====
-        private const int RoundedSize = 24;
-        private const int RoundedRadius = 8;
-        private const int RoundedBorder = 8;
+        // 圆角九宫格尺寸（2026-09 升级：24/8→48/18——8px 圆角观感近方角——
+        // CK3/文明级面板圆角 16-20px——sliced 拉伸不影响圆角观感）
+        private const int RoundedSize = 48;
+        private const int RoundedRadius = 18;
+        private const int RoundedBorder = 18; // 与 RoundedRadius 同步（九宫格 border=圆角）
 
         private static Sprite _panelSprite;
         private static Sprite _buttonSprite;
