@@ -8,26 +8,13 @@ namespace CivilizationEvolution.Map
     /// 子地块类型（对齐 CK3 男爵领 / FantasyMapSimulator Burg）
     /// 一个 Province 包含多个 Burg，Burg 是城镇/港口/首都的载体
     /// </summary>
-    public enum BurgType
-    {
-        Village,   // 村庄（最低级，多数 Burg）
-        Town,      // 集镇（有一定发展度）
-        City,      // 城市（高发展度，省中心）
-        Port,      // 港口（沿海/沿河，贸易节点）
-        Capital,   // 首都（政权首都，特殊 Burg）
-        Fortress   // 要塞（军事据点）
-    }
+
 
     /// <summary>
     /// 聚落形态（宏观分类，区别于 BurgType 功能类型）
     /// 村镇/城/堡 是可缓慢演化的属性，不是永久固化标签
     /// </summary>
-    public enum SettlementType
-    {
-        Village,  // 村镇：村落、集镇，生产功能为主，防御薄弱，辐射范围小
-        City,     // 城：城邑、都会、大都会，区域综合型中心，功能复合
-        Fort      // 堡：堡垒、要塞、堡寨，军事防御为核心，等级跨度完整
-    }
+
 
     /// <summary>
     /// 子地块（Burg / 男爵领）

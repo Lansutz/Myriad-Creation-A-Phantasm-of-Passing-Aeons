@@ -9,16 +9,7 @@ namespace CivilizationEvolution.Core
     /// 供 UI 历史视图/存档回溯使用
     /// </summary>
     [Serializable]
-    public class ChronicleEntry
-    {
-        public int entryId;
-        public int tick;          // 游戏日
-        public int year;          // 游戏年
-        public string eventType;  // 事件类型键（war/peace/alliance/innovation/...）
-        public string description;
-        public bool major;        // 重大事件（篡位/废立/称王/大战）
-        public List<int> participants = new List<int>(); // 参与政权/角色
-    }
+
 
     /// <summary>编年史（世界大事日志，上限保留）</summary>
     [Serializable]

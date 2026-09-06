@@ -1832,28 +1832,11 @@ namespace CivilizationEvolution.Core
     }
 
     /// <summary>游戏事件类型</summary>
-    public enum GameEventType
-    {
-        Famine,
-        Rebellion,
-        SeasonChange,
-        WarDeclaration,
-        PeaceTreaty,
-        Plague,
-        NaturalDisaster,
-        EconomicCrisis
-    }
+
 
     /// <summary>游戏事件</summary>
     [System.Serializable]
-    public struct GameEvent
-    {
-        public GameEventType eventType;
-        public int tileIndex;
-        public int realmId;
-        public float severity;
-        public string description;
-    }
+
 
     /// <summary>游戏事件监听器接口</summary>
     public interface IGameEventListener
