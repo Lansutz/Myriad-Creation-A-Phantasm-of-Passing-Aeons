@@ -492,6 +492,14 @@ namespace CivilizationEvolution.Render
             {
                 int x = tileIndex % mapWidth;
                 int y = tileIndex / mapWidth;
+                // 山体阴影+坡度笔触（地形类模式统一——系统性：Terrain/Biome/
+                // Climate 都过——纸张与地形有机结合——算法见下）
+                if (displayMode == MapDisplayMode.Terrain
+                    || displayMode == MapDisplayMode.Biome
+                    || displayMode == MapDisplayMode.Climate)
+                {
+                    ApplyTerrainShading(ref c, tileIndex);
+                }
                 float h1 = HashNoise(x, y, 0);         // 高频颗粒（笔触）
                 float h2 = HashNoise(x / 4, y / 4, 1); // 低频斑驳（色带）
                 float grain = (h1 - 0.5f) * 0.05f + (h2 - 0.5f) * 0.08f;
@@ -500,6 +508,55 @@ namespace CivilizationEvolution.Render
                 c.b = Mathf.Clamp01(c.b + grain * 0.7f);
             }
             return c;
+        }
+
+        /// <summary>
+        /// 山体阴影+坡度笔触（NPR 风格化——纸与地形结合）：
+        /// ① Hillshade：邻域高程梯度 × 固定光源（西北 45°）——朝光面提亮/
+        /// 背光面压暗——山脉立体隆起
+        /// ② 坡度笔触：slopeDegree 越高越暗（陡坡=浓重笔触——手绘阴影感——
+        /// 缓坡留白纸面呼吸）
+        /// </summary>
+        private void ApplyTerrainShading(ref Color c, int tileIndex)
+        {
+            int x = tileIndex % mapWidth;
+            int y = tileIndex / mapWidth;
+            bool wrapX = world != null && world.config.wrapX;
+            bool wrapY = world != null && world.config.wrapY;
+
+            // 邻域高程（边界 clamp/wrap）
+            float Get(int tx, int ty)
+            {
+                if (wrapX) tx = (tx + mapWidth) % mapWidth;
+                else tx = Mathf.Clamp(tx, 0, mapWidth - 1);
+                if (wrapY) ty = (ty + mapHeight) % mapHeight;
+                else ty = Mathf.Clamp(ty, 0, mapHeight - 1);
+                int idx = ty * mapWidth + tx;
+                var ts = world.tiles;
+                return idx >= 0 && idx < ts.Length && ts[idx].exists
+                    ? ts[idx].elevation01 : 0f;
+            }
+            float eW = Get(x - 1, y), eE = Get(x + 1, y);
+            float eN = Get(x, y - 1), eS = Get(x, y + 1);
+            float dx = eE - eW;   // 东升为正
+            float dy = eS - eN;   // 南升为正
+
+            // 光源西北 45°（光照方向向量——东南面受光）
+            float shade = (dx + dy) * 0.5f; // dot 简化（光 -1,-1 归一后的等效）
+            // 海陆交接（低海拔近海）不平——只调陆地幅度
+            float light = 1f + Mathf.Clamp(shade * 0.9f, -0.16f, 0.14f);
+
+            // 坡度笔触（陡坡加重——slopeDegree 在手绘地图≈笔触密度）
+            float slope = 0f;
+            var ts = world.tiles;
+            if (tileIndex >= 0 && tileIndex < ts.Length)
+                slope = ts[tileIndex].slopeDegree;
+            float ink = 1f - Mathf.Clamp01((slope - 12f) / 55f) * 0.22f; // 缓坡 1.0→陡坡 0.78
+
+            float mul = light * ink;
+            c.r = Mathf.Clamp01(c.r * mul);
+            c.g = Mathf.Clamp01(c.g * mul);
+            c.b = Mathf.Clamp01(c.b * mul);
         }
 
         /// <summary>确定性噪声（整数坐标 hash——纸纹颗粒——同 seed 复现）</summary>
