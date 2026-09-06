@@ -80,6 +80,17 @@ namespace CivilizationEvolution.UI
         [SerializeField] private Button editorButton;        // 主菜单第 2 行：编辑器
         [SerializeField] private Button settingsButton;      // 主菜单第 3 行：设置
         [SerializeField] private GameObject settingsPanel;   // 设置面板
+        [SerializeField] private GameObject newGamePanel;    // 世界生成面板（进入世界→选项）
+        [SerializeField] private TMPro.TMP_Text seedText;    // 种子显示
+        [SerializeField] private Button seedRandomButton;    // 随机种子
+        [SerializeField] private Button newGameStartButton;  // 生成世界
+        [SerializeField] private Button newGameBackButton;   // 返回主菜单
+        // 尺寸选择（三档按钮——选中高亮）
+        [SerializeField] private Button sizeLargeButton;
+        [SerializeField] private Button sizeHugeButton;
+        [SerializeField] private Button sizeEnormousButton;
+        private int _presetIndex = 0;    // 0 Large/1 Huge/2 Enormous（默认 Large）
+        private int _genSeed = 42;
         [SerializeField] private GameObject loadingPanel;    // 世界生成中覆盖层
         [SerializeField] private TMP_Text loadingText;
         [SerializeField] private TMPro.TMP_Text resolutionButtonText;  // 分辨率循环按钮标签
@@ -245,7 +256,13 @@ namespace CivilizationEvolution.UI
             // 社会政治面板按钮
             if (societyOpenButton != null) societyOpenButton.onClick.AddListener(OpenSocietyPanel);
             if (religionOpenButton != null) religionOpenButton.onClick.AddListener(OpenReligionPanel);
-            if (startGameButton != null) startGameButton.onClick.AddListener(StartGameFromMenu);
+            if (startGameButton != null) startGameButton.onClick.AddListener(OpenNewGamePanel);
+            if (newGameStartButton != null) newGameStartButton.onClick.AddListener(StartGameWithOptions);
+            if (newGameBackButton != null) newGameBackButton.onClick.AddListener(CloseNewGamePanel);
+            if (seedRandomButton != null) seedRandomButton.onClick.AddListener(RandomizeSeed);
+            if (sizeLargeButton != null) sizeLargeButton.onClick.AddListener(() => SelectSize(0));
+            if (sizeHugeButton != null) sizeHugeButton.onClick.AddListener(() => SelectSize(1));
+            if (sizeEnormousButton != null) sizeEnormousButton.onClick.AddListener(() => SelectSize(2));
             if (editorButton != null) editorButton.onClick.AddListener(EnterEditorFromMenu);
             if (settingsButton != null) settingsButton.onClick.AddListener(OpenSettingsPanel);
             if (resolutionButton != null) resolutionButton.onClick.AddListener(CycleResolution);
@@ -672,6 +689,90 @@ namespace CivilizationEvolution.UI
                 };
                 Screen.SetResolution(w, h, fm);
             }
+        }
+
+        /// <summary>世界生成面板（第 1 行"进入世界"→生成选项——FMG 式：
+        /// 尺寸/种子→生成——玩家可配置而非无脑默认）</summary>
+        private void OpenNewGamePanel()
+        {
+            if (newGamePanel == null)
+            {
+                // 无面板（旧场景）——直接生成（兼容）
+                StartGameWithOptions();
+                return;
+            }
+            startMenuPanel?.SetActive(false);
+            _presetIndex = 0;
+            _genSeed = new System.Random().Next(1, 100000);
+            RefreshNewGamePanel();
+            newGamePanel.SetActive(true);
+        }
+
+        private void CloseNewGamePanel()
+        {
+            newGamePanel?.SetActive(false);
+            if (startMenuPanel != null) startMenuPanel.SetActive(true);
+        }
+
+        private void SelectSize(int idx)
+        {
+            _presetIndex = idx;
+            RefreshNewGamePanel();
+        }
+
+        private void RandomizeSeed()
+        {
+            _genSeed = new System.Random().Next(1, 100000);
+            RefreshNewGamePanel();
+        }
+
+        private void RefreshNewGamePanel()
+        {
+            if (seedText != null) seedText.text = $"种子：{_genSeed}";
+            // 尺寸按钮高亮（选中色——非选中正常）
+            Highlight(sizeLargeButton, _presetIndex == 0);
+            Highlight(sizeHugeButton, _presetIndex == 1);
+            Highlight(sizeEnormousButton, _presetIndex == 2);
+        }
+
+        private static void Highlight(Button btn, bool on)
+        {
+            if (btn == null) return;
+            var img = btn.GetComponent<UnityEngine.UI.Image>();
+            if (img != null)
+                img.color = on ? new Color32(88, 120, 92, 255) : new Color32(52, 62, 78, 255);
+        }
+
+        /// <summary>生成世界（面板参数——loading 反馈——链路）</summary>
+        private void StartGameWithOptions()
+        {
+            if (newGamePanel != null) newGamePanel.SetActive(false);
+            if (loadingPanel != null)
+            {
+                loadingPanel.SetActive(true);
+                if (loadingText != null)
+                {
+                    string sizeHint = _presetIndex switch
+                    {
+                        1 => "（Huge 2048×1024——约 1-3 分钟）",
+                        2 => "（Enormous 3072×1536——约 5-10 分钟）",
+                        _ => "（Large 1024×512——约 30-60 秒）"
+                    };
+                    loadingText.text = $"世界生成中…\n{sizeHint}";
+                }
+            }
+            var bootstrap = FindAnyObjectByType<Bootstrap>();
+            if (bootstrap != null && (world == null || world.tiles == null || world.tiles.Length == 0))
+            {
+                float t0 = Time.realtimeSinceStartup;
+                bootstrap.ConfigureAndStartNewGame(_presetIndex, _genSeed);
+                UnityEngine.Debug.Log($"[进入世界] 生成完成——耗时 {Time.realtimeSinceStartup - t0:F1}s——种子 {_genSeed}");
+            }
+            else
+            {
+                UnityEngine.Debug.LogWarning("[进入世界] 世界已存在——直接进入");
+            }
+            if (loadingPanel != null) loadingPanel.SetActive(false);
         }
 
         private void StartGameFromMenu()

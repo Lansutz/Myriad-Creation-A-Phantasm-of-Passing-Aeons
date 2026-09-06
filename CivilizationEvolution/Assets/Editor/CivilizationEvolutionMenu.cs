@@ -346,6 +346,7 @@ namespace CivilizationEvolution.EditorTools
 
             SetField(ui, "startMenuPanel", menu);
             BuildSettingsPanel(canvas, ui);
+            BuildNewGamePanel(canvas, ui);
 
             // 世界生成中覆盖层（全屏深色+提示文字——进入世界的进度反馈）
             var loadingGo = CreatePanel("LoadingPanel", canvas).gameObject;
@@ -362,6 +363,80 @@ namespace CivilizationEvolution.EditorTools
             SetField(ui, "loadingPanel", loadingGo);
             SetField(ui, "loadingText", loadingText);
             loadingGo.SetActive(false);
+        }
+
+        /// <summary>
+        /// 世界生成面板（主菜单第 1 行"进入世界"→生成选项——
+        /// FMG 地图生成设置同构：尺寸三档+种子+生成/返回）
+        /// </summary>
+        private static void BuildNewGamePanel(Transform canvas, UIManager ui)
+        {
+            var panel = CreatePanel("NewGamePanel", canvas).gameObject;
+            // 面板布局（宽 560 高 420——选项上/按钮下——非正方块）
+            SetAnchor(panel.GetComponent<RectTransform>(),
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-280, -210), new Vector2(280, 210));
+            var cv = panel.AddComponent<VerticalLayoutGroup>();
+            cv.spacing = 8; cv.padding = new RectOffset(24, 24, 18, 18);
+            cv.childForceExpandWidth = true;
+
+            var title = CreateText("NewGameTitle", panel.transform, "世界生成", 22);
+            title.color = UITheme.Accent;
+            title.fontStyle = FontStyles.Bold;
+            title.alignment = TextAlignmentOptions.Center;
+            title.GetComponent<LayoutElement>().minHeight = 34;
+
+            var sub = CreateText("NewGameSub", panel.transform,
+                "选择世界规模与种子——生成新世界", 13);
+            sub.color = new Color32(200, 190, 160, 255);
+            sub.alignment = TextAlignmentOptions.Center;
+            sub.GetComponent<LayoutElement>().minHeight = 22;
+
+            // 尺寸三档（横向三按钮）
+            var sizeRow = new GameObject("SizeRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            sizeRow.transform.SetParent(panel.transform, false);
+            var sl = sizeRow.GetComponent<HorizontalLayoutGroup>();
+            sl.spacing = 10; sl.childAlignment = TextAnchor.MiddleCenter;
+            sl.childForceExpandWidth = true;
+            var sizeLabel = CreateText("SizeLabel", panel.transform, "世界规模", 14);
+            sizeLabel.GetComponent<LayoutElement>().minHeight = 18;
+            SetField(ui, "sizeLargeButton", CreateButton("SizeLargeBtn", sizeRow.transform, "标准\n1024×512"));
+            SetField(ui, "sizeHugeButton", CreateButton("SizeHugeBtn", sizeRow.transform, "广阔\n2048×1024"));
+            SetField(ui, "sizeEnormousButton", CreateButton("SizeEnormousBtn", sizeRow.transform, "浩瀚\n3072×1536"));
+            foreach (Transform b in sizeRow.transform)
+            {
+                var lt = b.GetComponent<LayoutElement>() ?? b.gameObject.AddComponent<LayoutElement>();
+                lt.minHeight = 52;
+                var t = b.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                if (t != null) t.fontSize = 13;
+            }
+
+            // 种子行（显示+随机）
+            var seedRow = new GameObject("SeedRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            seedRow.transform.SetParent(panel.transform, false);
+            var hr = seedRow.GetComponent<HorizontalLayoutGroup>();
+            hr.spacing = 10; hr.childAlignment = TextAnchor.MiddleCenter;
+            hr.childForceExpandWidth = false;
+            SetField(ui, "seedText", CreateText("SeedText", seedRow.transform, "种子：42", 15));
+            SetField(ui, "seedRandomButton", CreateButton("SeedRandomBtn", seedRow.transform, "随机种子"));
+
+            // 提示（内存/耗时——不同尺寸差异）
+            var hint = CreateText("NewGameHint", panel.transform,
+                "提示：Large 适合快速体验——Huge/Enormous 生成较慢且吃内存", 12);
+            hint.color = new Color32(150, 150, 140, 255);
+            hint.alignment = TextAlignmentOptions.Center;
+            hint.GetComponent<LayoutElement>().minHeight = 20;
+
+            // 按钮行（生成/返回）
+            var actRow = new GameObject("NewGameActRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+            actRow.transform.SetParent(panel.transform, false);
+            var al = actRow.GetComponent<HorizontalLayoutGroup>();
+            al.spacing = 16; al.childAlignment = TextAnchor.MiddleCenter;
+            al.childForceExpandWidth = false;
+            SetField(ui, "newGameStartButton", CreateButton("NewGameStartBtn", actRow.transform, "生 成 世 界"));
+            SetField(ui, "newGameBackButton", CreateButton("NewGameBackBtn", actRow.transform, "返 回"));
+
+            SetField(ui, "newGamePanel", panel);
+            panel.SetActive(false);
         }
 
         /// <summary>设置面板（分辨率/窗口模式——主菜单第 3 行入口）</summary>

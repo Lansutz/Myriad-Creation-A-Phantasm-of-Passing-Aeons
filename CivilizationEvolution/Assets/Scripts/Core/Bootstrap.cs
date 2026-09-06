@@ -109,11 +109,32 @@ namespace CivilizationEvolution.Core
             }
         }
 
-        /// <summary>开始新游戏</summary>
+        /// <summary>开始新游戏（世界生成面板——尺寸预设+种子参数化）</summary>
         public void StartNewGame()
         {
             GameManager.Instance.StartNewGame(_mapWidth, _mapHeight, randomSeed, wrapMode);
             Debug.Log($"[Bootstrap] 新游戏已启动：{_mapWidth}x{_mapHeight}（{mapSizePreset}），种子={randomSeed}，总地块={_mapWidth * _mapHeight}");
+        }
+
+        /// <summary>按生成面板参数配置并开始（尺寸预设索引——0 Large/1 Huge/2 Enormous）</summary>
+        public void ConfigureAndStartNewGame(int presetIndex, int seed)
+        {
+            mapSizePreset = presetIndex switch
+            {
+                0 => MapSizePreset.Large,
+                1 => MapSizePreset.Huge,
+                _ => MapSizePreset.Enormous
+            };
+            randomSeed = seed;
+            (_mapWidth, _mapHeight) = mapSizePreset switch
+            {
+                MapSizePreset.Large => (1024, 512),
+                MapSizePreset.Huge => (2048, 1024),
+                MapSizePreset.Reference => (1920, 1080),
+                MapSizePreset.Enormous => (3072, 1536),
+                _ => (1024, 512)
+            };
+            StartNewGame();
         }
 
         /// <summary>保存游戏</summary>
