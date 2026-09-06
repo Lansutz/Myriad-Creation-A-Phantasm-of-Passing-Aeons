@@ -463,6 +463,20 @@ namespace CivilizationEvolution.Render
         }
 
         /// <summary>
+        /// 政权色（动态扩展：0-15 用原色板——>15 黄金角 HSL 哈希——
+        /// 政权数任意增长不撞色——确定性）
+        /// </summary>
+        private Color GetRealmColor(int realmId)
+        {
+            if (realmId >= 0 && realmId < 16)
+                return _politicalColors[realmId];
+            float hue = (realmId * 0.6180339887f) % 1f;
+            float sat = 0.55f + ((realmId >> 3) % 3) * 0.1f;
+            float val = 0.62f + ((realmId >> 5) % 3) * 0.08f;
+            return Color.HSVToRGB(hue, sat, val);
+        }
+
+        /// <summary>
         /// 地块颜色（大陆底图渲染——2026-09 用户定稿方向：大陆有纸纹/笔触
         /// 质感[参照《地图上发生的事》terrain 分色+纸感]）：
         /// 基色 + 确定性纸纹调制——低频斑驳[地形性色带]+高频颗粒[笔触感]——
