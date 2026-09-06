@@ -10,341 +10,40 @@ namespace CivilizationEvolution.Diplomacy
     /// 外交关系数据
     /// 核心三数值模型：关系值 / 信任度 / 威胁感知
     /// </summary>
-    [System.Serializable]
-    public class DiplomaticRelation
-    {
-        public int realmAId;
-        public int realmBId;
 
-        // 核心三数值
-        [Range(-100f, 100f)] public float relation = 0f;      // 关系值：-100死敌 ~ 100亲密盟友
-        [Range(0f, 100f)] public float trust = 50f;            // 信任度：0完全不信任 ~ 100完全信任
-        [Range(0f, 100f)] public float threat = 50f;           // 威胁感知：0无威胁 ~ 100致命威胁
-
-        // 状态
-        public bool isAtWar = false;
-        public bool hasTradeEmbargo = false;
-        public bool hasDiplomaticRelations = true;
-        public int warDeclaredDay = -1;
-        /// <summary>停战到期日（WarRules.truceYears 决定；-1=无停战）</summary>
-        public int truceUntilDay = -1;
-
-        // ===== 敌对状态（不宣而战机制）=====
-        /// <summary>敌对程度（0-100），≥50进入敌对状态，可直接攻击无惩罚</summary>
-        [Range(0f, 100f)] public float hostilityLevel = 0f;
-
-        /// <summary>敌对状态开始日（-1=无敌对状态）</summary>
-        public int hostileSinceDay = -1;
-
-        /// <summary>是否处于敌对状态（敌对程度≥50或处于战争）</summary>
-        public bool IsHostile => hostilityLevel >= 50f || isAtWar;
-
-        /// <summary>最近一次不宣而战的发起者（-1=无），用于惩罚计算</summary>
-        public int lastSurpriseAttackerId = -1;
-
-        /// <summary>最近一次不宣而战的日期（-1=无）</summary>
-        public int lastSurpriseAttackDay = -1;
-
-        /// <summary>冲突等级（区分敌对状态和战争状态）</summary>
-        public GameEnums.ConflictLevel conflictLevel = GameEnums.ConflictLevel.Peace;
-
-        /// <summary>最近一次劫掠的发起者（-1=无）</summary>
-        public int lastRaidAttackerId = -1;
-
-        /// <summary>最近一次劫掠日期（-1=无）</summary>
-        public int lastRaidDay = -1;
-
-        /// <summary>劫掠累计次数（用于判断是否升级为战争）</summary>
-        public int raidCount = 0;
-
-        /// <summary>双方的战争借口列表（holderRealmId区分持有方）</summary>
-        public List<CasusBelli> casusBelliList = new List<CasusBelli>();
-
-        /// <summary>当前战争的战争目标列表（仅在战争中有效）</summary>
-        public List<WarGoal> activeWarGoals = new List<WarGoal>();
-
-        // 历史事件记录
-        public List<DiplomaticEvent> eventHistory = new List<DiplomaticEvent>();
-
-        // 活跃盟约
-        public List<Alliance> activeAlliances = new List<Alliance>();
-        public List<Treaty> activeTreaties = new List<Treaty>();
-
-        // ===== 外交三槽位（用户定稿：主权状态/条约义务/特殊纽带 彻底解耦） =====
-
-        /// <summary>槽位1·主权状态（null=独立国；由 DiplomacyManager 同步挂载）</summary>
-        public Subordination subordination;
-
-        /// <summary>槽位3·特殊纽带（无/君合国/共主邦联；独立于从属与盟约）</summary>
-        public SpecialBondType specialBond = SpecialBondType.None;
-
-        /// <summary>设置特殊纽带（同一对政权同时仅一个活跃纽带）</summary>
-        public void SetSpecialBond(SpecialBondType bond)
-        {
-            specialBond = bond;
-        }
-
-        /// <summary>解除特殊纽带</summary>
-        public void ClearSpecialBond()
-        {
-            specialBond = SpecialBondType.None;
-        }
-
-        /// <summary>槽位1查询：以 selfId 视角返回主权状态（独立=null）</summary>
-        public SubordinationType? GetSovereigntyStatus(int selfId)
-        {
-            if (subordination == null || !subordination.isActive) return null;
-            return subordination.suzerainId == selfId
-                ? null // 宗主视角：自身是宗主，非从属
-                : subordination.type;
-        }
-
-        /// <summary>槽位2查询：条约义务（平级盟约列表）</summary>
-        public List<Alliance> GetTreatyObligations() => activeAlliances;
-
-        /// <summary>槽位2查询：是否承担某类盟约义务</summary>
-        public bool HasTreatyObligation(AllianceType type)
-        {
-            foreach (var a in activeAlliances)
-                if (a.type == type && a.isActive) return true;
-            return false;
-        }
-
-        /// <summary>计算综合外交态度</summary>
-        public float CalculateOverallAttitude()
-        {
-            // 关系值权重0.5，信任度权重0.3，威胁感知负权重0.2
-            return relation * 0.5f + (trust - 50f) * 0.6f - (threat - 50f) * 0.4f;
-        }
-
-        /// <summary>判断是否愿意谈判</summary>
-        public bool IsWillingToNegotiate()
-        {
-            return hasDiplomaticRelations && CalculateOverallAttitude() > -60f;
-        }
-
-        /// <summary>添加外交事件</summary>
-        public void AddEvent(DiplomaticEvent evt)
-        {
-            eventHistory.Add(evt);
-            if (eventHistory.Count > 100)
-                eventHistory.RemoveAt(0);
-        }
-
-        /// <summary>每日关系自然衰减</summary>
-        public void DailyDecay()
-        {
-            // 关系值向0回归
-            relation = Mathf.Lerp(relation, 0f, 0.001f);
-            // 信任度向50回归
-            trust = Mathf.Lerp(trust, 50f, 0.0005f);
-            // 威胁感知向50回归
-            threat = Mathf.Lerp(threat, 50f, 0.001f);
-        }
-    }
 
     /// <summary>外交事件记录</summary>
-    [System.Serializable]
-    public struct DiplomaticEvent
-    {
-        public int day;
-        public int year;
-        public DiplomaticEventType type;
-        public string description;
-        public float relationChange;
-        public float trustChange;
-        public float threatChange;
-    }
 
-    public enum DiplomaticEventType
-    {
-        WarDeclaration,
-        PeaceTreaty,
-        AllianceFormed,
-        AllianceBroken,
-        TreatySigned,
-        TreatyBroken,
-        TradeAgreement,
-        TradeEmbargo,
-        RoyalMarriage,
-        DiplomaticInsult,
-        BorderIncident,
-        MilitaryAccessGranted,
-        MilitaryAccessRevoked,
-        Vassalage,
-        Independence,
-        GiftSent,
-        DemandRejected,
-        EmbassyEstablished,
-        EmbassyClosed
-    }
 
     /// <summary>
     /// 盟约类型（平等盟约——谱系一：各类型独立平行，无递进关系）
     /// </summary>
-    public enum AllianceType
-    {
-        NonAggressionPact,    // 互不侵犯：承诺不开战，可单方撕毁（信誉惩罚）
-        DefensiveAlliance,     // 防御同盟：仅被第三方攻击时共同作战
-        OffensiveAlliance,     // 进攻同盟：主动宣战时共同作战，防御时不强制
-        TotalAlliance,         // 全面同盟：任何情况共同作战，共享军事情报
-        Faction                // 阵营：多边军事政治集团，常设协调机构+集体安全
-    }
+
 
     /// <summary>盟约</summary>
-    [System.Serializable]
-    public class Alliance
-    {
-        public AllianceType type;
-        public int realmAId;
-        public int realmBId;
-        public int signedDay;
-        public int durationDays; // -1表示永久
-        public bool isActive = true;
 
-        // 盟约条款
-        public float tradeEfficiencyBonus = 0f;
-        public float tariffReduction = 0f;
-        public bool mutualDefense = false;
-        public bool jointOffensive = false;
-        public bool militaryAccess = false;
-        public float relationRequirement = 0f;
-
-        /// <summary>检查盟约是否到期</summary>
-        public bool IsExpired(int currentDay)
-        {
-            return durationDays > 0 && currentDay - signedDay > durationDays;
-        }
-
-        /// <summary>检查盟约条件是否满足</summary>
-        public bool CheckConditions(DiplomaticRelation relation)
-        {
-            return relation.relation >= relationRequirement && !relation.isAtWar;
-        }
-    }
 
     /// <summary>
     /// 不平等从属关系类型——主权状态槽位（用户定稿谱系二：内政自主度从高到低）
     /// 朝贡国(0.9) → 保护国(0.7) → 附属国(0.5) → 附庸国(0.35) → 傀儡国(0.1)
     /// 各类型独立平行，无递进关系
     /// </summary>
-    public enum SubordinationType
-    {
-        Tributary,          // 朝贡国：内政完全自主，象征性臣服+进贡（自治度0.9）
-        Vassal,             // 附庸国：外交权受限，军事义务，内政基本自主（自治度0.65）
-        Associate,          // 附属国：内政受法定监督（顾问/否决法律），外交国防代理（自治度0.45）
-        Protectorate,       // 保护国：内政自主，外交与宣战权完全转让（自治度0.3）
-        Puppet              // 傀儡国：首脑由宗主指定，一切重大决策需批准（自治度0.1）
-    }
+
 
     /// <summary>
     /// 特殊纽带槽位（用户定稿谱系三：横向人身/王朝联合）
     /// 独立于主权状态与条约义务；同一对政权可有且仅有一个活跃纽带
     /// </summary>
-    public enum SpecialBondType
-    {
-        None,               // 无特殊纽带
-        PersonalUnion,      // 君合国（联统）：同一位君主，独立政府/议会/法律（英-汉诺威、奥匈）
-        CompositeMonarchy   // 共主邦联：多个君主国共主，各自保留完整主权机构
-    }
+
 
     /// <summary>从属关系</summary>
-    [System.Serializable]
-    public class Subordination
-    {
-        public SubordinationType type;
-        public int suzerainId;  // 宗主国
-        public int vassalId;     // 附庸国
-        public int establishedDay;
-        public bool isActive = true;
 
-        // 从属条款
-        public float tributeAmount = 0f;      // 贡赋金额/年
-        public float tributeRatio = 0f;       // 贡赋比例（收入的百分比）
-        public bool militaryObligation = false; // 军事义务
-        public bool foreignPolicyControl = false; // 外交权控制
-        public bool successionControl = false;    // 继承权控制
-        public float autonomy = 1f;               // 自治度 0~1
-
-        /// <summary>计算年度贡赋</summary>
-        public float CalculateAnnualTribute(float vassalIncome)
-        {
-            return tributeAmount + vassalIncome * tributeRatio;
-        }
-    }
 
     /// <summary>条约</summary>
-    [System.Serializable]
-    public class Treaty
-    {
-        public int treatyId;
-        public string treatyName;
-        public int signerAId;
-        public int signerBId;
-        public int signedDay;
-        public int expiryDay = -1;
 
-        public List<TreatyClause> clauses = new List<TreatyClause>();
-        public bool isActive = true;
-
-        // ===== 和平条约扩展字段（战争三层分离体系）=====
-        public float warScoreAtSigning;  // 签订时的战争分数
-        public List<GameEnums.WarGoalType> originalWarGoals = new List<GameEnums.WarGoalType>(); // 原战争目标
-        public bool goalsFullyAchieved;   // 战争目标是否完全达成
-        public int truceUntilDay;          // 停战到期日
-        public bool isPeaceTreaty;         // 是否为和平条约（区别于普通外交条约）
-
-        /// <summary>检查条约是否到期</summary>
-        public bool IsExpired(int currentDay)
-        {
-            return expiryDay > 0 && currentDay > expiryDay;
-        }
-    }
 
     /// <summary>条约条款</summary>
-    [System.Serializable]
-    public struct TreatyClause
-    {
-        public TreatyClauseType type;
-        public string description;
-        public float value;
-        public int targetRealmId;
-        public int fromRealmId;         // 条款执行方（付出代价的一方）
-        public int toRealmId;           // 条款受益方
-        public int tileIndex;            // 相关地块（-1=无）
-        public int regionId;             // 相关地区（-1=无）
-        public int durationDays;         // 条款持续时间（-1=永久）
-    }
 
-    public enum TreatyClauseType
-    {
-        TerritoryCession,     // 领土割让
-        WarReparations,       // 战争赔款
-        PrisonerExchange,     // 战俘交换
-        TradeRights,          // 贸易权
-        NavigationRights,     // 航行权
-        DemilitarizedZone,    // 非军事区
-        ArmsLimitation,       // 军备限制
-        ReligiousFreedom,     // 宗教自由
-        MinorityProtection,   // 少数民族保护
-        AllianceCommitment,   // 同盟承诺
-        NonInterference,      // 不干涉内政
-        ArbitrationAgreement, // 仲裁协定
-        Vassalage,            // 附庸关系
-        PersonalUnion,        // 共主邦联
-        ReleasePrisoners,     // 释放囚犯
-        TradePrivileges,      // 贸易特权
-        Disarmament,          // 裁军条款
-        Humiliation,          // 羞辱条款
-        Annexation,           // 吞并（整个政权）
-        Independence,         // 承认独立
-        BorderDemilitarization, // 边境非军事化
-        RoyalMarriage,        // 强制联姻
-        CulturalAssimilation, // 文化同化
-        WarCrimesTrial,       // 战争罪审判
-        ResourceConcession,   // 资源特许权
-        Truce                  // 停战协定
-    }
 
     /// <summary>
     /// 外交管理器

@@ -21,71 +21,17 @@ namespace CivilizationEvolution.Politics
     /// 是选举范围（EligibilityRules.scope）；禅让=推举（ElectiveDirect）；
     /// 储君预立=世袭内部预案（非独立制度）；选举君主=选举+个人全能（A2=Absolute））
     /// </summary>
-    public enum SupremeSuccession
-    {
-        Hereditary,                 // 世袭：子选项=继承法（四轴+头衔+领地）；预立太子=内部预案
-        ElectiveDirect,             // 选举·直接：公民大会/忽里台/红衣主教团/部落议事会推举（禅让在此）
-        ElectiveRepresentative,     // 选举·代议：议会/选举人团（神罗选帝侯/英国议会）
-        Usurpation,                 // 僭夺：武力夺权（兵强者上）
-        Rotation,                   // 轮座：部落长老轮值
-        Divine                      // 神命：祭司/神谕认定
-    }
+
 
     /// <summary>
     /// 层级1 推导（用户定稿：君主/共和不是独立枚举——由交接方式×权力分配推导）
     /// 个人传承系（世袭/僭夺/神命）→ 君主
     /// 选举系（选举/轮座）→ A2=全能=选举君主（教宗/大汗/选帝侯皇帝）；A2=共议=共和
     /// </summary>
-    public static class SupremeSuccessionLevel
-    {
-        public static bool IsMonarchy(SupremeSuccession s)
-        {
-            return s == SupremeSuccession.Hereditary
-                || s == SupremeSuccession.Usurpation
-                || s == SupremeSuccession.Divine;
-        }
 
-        /// <summary>选举系判定（君主/共和由 A2 权力分配决定）</summary>
-        public static bool IsElective(SupremeSuccession s)
-        {
-            return s == SupremeSuccession.ElectiveDirect
-                || s == SupremeSuccession.ElectiveRepresentative
-                || s == SupremeSuccession.Rotation;
-        }
-
-        /// <summary>
-        /// 完整推导：君主制=个人传承系 或（选举系且 A2=全能——当选者个人终身专权）
-        /// 共和制=选举系且非全能（共议/受限——多人共治）
-        /// </summary>
-        public static bool IsMonarchy(SupremeSuccession s, SupremeScope scope)
-        {
-            if (IsMonarchy(s)) return true;
-            if (IsElective(s)) return scope == SupremeScope.Absolute;
-            return false;
-        }
-
-        public static bool IsRepublic(SupremeSuccession s, SupremeScope scope) => !IsMonarchy(s, scope);
-
-        /// <summary>按政体组合推导（主导成分）</summary>
-        public static bool IsMonarchy(GovernmentComposition comp)
-        {
-            return IsMonarchy((SupremeSuccession)comp.supremeSuccession.primary,
-                (SupremeScope)comp.supremeScope.primary);
-        }
-
-        /// <summary>按政体组合推导是否共和制</summary>
-        public static bool IsRepublic(GovernmentComposition comp) => !IsMonarchy(comp);
-    }
 
     /// <summary>A2·最高权力·分配：最高权力掌握什么/受何约束</summary>
-    public enum SupremeScope
-    {
-        Absolute,       // 全能：立法/司法/军事/财政全揽
-        LegallyBound,   // 法理受限：受成文法/宪法约束
-        CustomBound,    // 惯例约束：受习惯法/礼制约束（封建契约、礼制）
-        Consensual,     // 共议制约：受贵族/公民会议制约
-        DivinelyBound   // 神意约束：受祭司/神谕约束
-    }
+
 
     // ==================== B. 中央权力 ====================
 
@@ -93,52 +39,22 @@ namespace CivilizationEvolution.Politics
     /// B1·中央权力·交接：选人依据（怎么选官——用户定稿：产生机制 4 种；
     /// 考课晋升=管理非产生（移除）；恩庇推举=集体选择的范围（并入 Elected））
     /// </summary>
-    public enum CentralSuccession
-    {
-        Appointed,      // 上级决断：君主/中枢任免
-        Elected,        // 集体选择：选举/推举（范围=资格要素：大众/贵族/权贵）
-        Examination,    // 客观标准：考试/竞争选任（科举/文官考试）
-        Hereditary      // 血缘：官位世袭（世卿世禄）
-    }
+
 
     /// <summary>
     /// B2·中央权力·分配：机构性质（谁掌权的机构类型；
     /// 一院/两院/等级=议会的构成要素 AssemblyComposition，非独立机构）
     /// </summary>
-    public enum CentralInstitution
-    {
-        None,                   // 无常设：部落临时集会
-        Court,                  // 王庭：王室+近臣（宫廷决策）
-        Assembly,               // 议会/元老院：代表审议（构成=AssemblyComposition）
-        EldersCouncil,          // 长老议事会：长老资格制（部落/贵族传统——非共和）
-        BureaucraticCore,       // 官僚中枢：宰相府/尚书台（文书行政）
-        ReligiousCouncil,       // 宗教会议：教廷/教阶
-        MilitaryCouncil         // 军事委员会：将领共议
-    }
+
 
     /// <summary>议会构成要素（B2=Assembly 时生效——谁来开会：一院/两院/按等级分庭）</summary>
-    public enum AssemblyComposition
-    {
-        Unicameral,     // 一院制：单一代表院（雅典公民大会/罗马元老院）
-        Bicameral,      // 两院制：贵族院+平民院（英国上下院）
-        Estate          // 等级会议：按等级分庭（法国三级会议/神罗帝国议会）
-    }
+
 
     /// <summary>任命主体要素（C1=Appointed 时生效——谁任命地方官）</summary>
-    public enum LocalAppointAuthority
-    {
-        Central,        // 中央派任（流官/总督——郡县/行省）
-        Religious,      // 教区委任（教区体系）
-        Military        // 军事上级任免（军管区）
-    }
+
 
     /// <summary>领有身份要素（C1=Hereditary 时生效——世袭领有者身份）</summary>
-    public enum LocalLordship
-    {
-        Vassal,         // 世袭封臣（封建契约——异姓功臣）
-        Appanage,       // 宗室采邑（分封宗亲——西周/阿拔斯）
-        MeritLord       // 军功领邑（战功封赏）
-    }
+
 
     // ==================== C. 地方权力 ====================
 
@@ -146,44 +62,18 @@ namespace CivilizationEvolution.Politics
     /// C1·地方权力·交接：产生方式（怎么产生地方权力者——
     /// 任命[主体要素]/选举[范围要素]/世袭[身份要素]；城市特许=自治权契约来源，独立保留）
     /// </summary>
-    public enum LocalSuccession
-    {
-        Appointed,      // 任命（主体=LocalAppointAuthority：中央/教会/军事）——举荐/派任
-        Elected,        // 选举/推举（范围=资格要素：本地公民/部落/自治市）
-        Examination,    // 考试选拔（科举/文官考试——官僚体系精英选拔）
-        Hereditary,     // 世袭领有（身份=LocalLordship：封臣/宗室/军功）——君主制专属
-        CityCharter     // 城市特许自治：自治权来源=特许状契约（中世纪自由城市——内部选举+特许保障）
-    }
+
 
     /// <summary>C2·地方权力·分配：地方治理管什么（职能范围）</summary>
-    public enum LocalScope
-    {
-        FullAutonomy,       // 全权自治：内政全揽（联邦/邦联单元）
-        FiscalJudicial,     // 征税+司法：中央控军权与外交
-        MilitaryOnly,       // 仅军事驻防：军管区
-        None                // 完全直辖：无地方层级（城邦直治）
-    }
+
 
     // ==================== D. 央地结构（第七维） ====================
 
     /// <summary>D1·央地结构·空间（中央与地方法定主权划分/自治度/法律统一/分裂风险）</summary>
-    public enum SpatialStructure
-    {
-        Unitary,        // 单一制：中央集权、法律统一、分裂风险低
-        Federal,        // 联邦制：中央地方分权、自治度中
-        Confederal      // 邦联制：地方主导、自治度高、分裂风险高
-    }
+
 
     /// <summary>资格范围（候选人/参与者范围——横切所有交接方式）</summary>
-    public enum EligibilityScope
-    {
-        ClanOnly,       // 本族/宗族内
-        Citizens,       // 本城邦公民
-        Nobility,       // 贵族/长老阶层
-        Clergy,         // 教阶（宗教体系）
-        FreePeople,     // 全体自由民
-        All             // 全体（含非自由民）
-    }
+
 
     /// <summary>
     /// 通用资格规则（横切属性——用户定稿：性别等要素不只存在于世袭继承法，
