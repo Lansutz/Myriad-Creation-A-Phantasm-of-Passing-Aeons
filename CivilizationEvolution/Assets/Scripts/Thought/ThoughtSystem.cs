@@ -189,35 +189,7 @@ namespace CivilizationEvolution.Thought
 
     /// <summary>教阶头衔（教区/主教区/大主教区/枢机——叙任权：俗人/灵性任命）</summary>
     [System.Serializable]
-    public class EcclesiasticalTitle
-    {
-        public string titleName;
-        public int level;
-        /// <summary>true=俗人任命（世俗君主任命——叙任权之争教义基础——
-        /// doctrine_clerical_appointment_temporal）；false=灵性任命（教会自任）</summary>
-        public bool temporalAppointment;
-    }
 
-    public enum FaithType
-    {
-        Animistic,       // 泛灵论
-        Polytheistic,    // 多神教
-        Henotheistic,    // 单一主神教
-        Monotheistic,    // 一神教
-        Pantheistic,     // 泛神论
-        Atheistic,       // 无神论
-        Cosmic           // 宇宙论宗教
-    }
-
-    public enum FaithOrganizationType
-    {
-        Decentralized,   // 去中心化
-        Congregational,  // 公理制
-        Episcopal,       // 主教制
-        Papal,           // 教皇制
-        Theocratic,      // 神权制
-        StateChurch      // 国教会
-    }
 
     /// <summary>神灵</summary>
     [System.Serializable]
@@ -240,16 +212,6 @@ namespace CivilizationEvolution.Thought
         public float strictness; // 严格程度 0~1
     }
 
-    public enum DoctrineCategory
-    {
-        Cosmology,       // 宇宙论
-        Soteriology,     // 救赎论
-        Ethics,          // 伦理学
-        Ritual,          // 仪式
-        Ecclesiology,    // 教会论
-        Eschatology,     // 末世论
-        Political        // 政治神学
-    }
 
     /// <summary>
     /// 法律与罪行系统（简化版）
@@ -389,55 +351,6 @@ namespace CivilizationEvolution.Thought
         }
     }
 
-    public enum LawSource
-    {
-        Customary,      // 习惯法
-        Statutory,       // 成文法
-        Religious,       // 宗教法
-        Common,          // 普通法
-        Civil,           // 大陆法系
-        Mixed            // 混合法
-    }
-
-    public enum CrimeType
-    {
-        Murder,
-        Treason,
-        Theft,
-        Assault,
-        Blasphemy,
-        Heresy,
-        TaxEvasion,
-        Desertion,
-        Fraud,
-        Arson,
-        Rape,
-        Kidnapping,
-        Smuggling,
-        Piracy,
-        Rebellion
-    }
-
-    public enum PunishmentType
-    {
-        Death,
-        Corporal,
-        Fine,
-        Imprisonment,
-        Exile,
-        Slavery,
-        PublicHumiliation,
-        Forfeiture,
-        Pardon
-    }
-
-    public enum VerdictType
-    {
-        Guilty,
-        NotGuilty,
-        HungJury,
-        Dismissed
-    }
 
     [System.Serializable]
     public struct CrimeDefinition
@@ -459,16 +372,6 @@ namespace CivilizationEvolution.Thought
         public bool isActive;
     }
 
-    public enum LawCategory
-    {
-        Criminal,
-        Civil,
-        Constitutional,
-        Religious,
-        Military,
-        Economic,
-        Administrative
-    }
 
     [System.Serializable]
     public struct TrialResult
@@ -485,80 +388,7 @@ namespace CivilizationEvolution.Thought
     /// 大规模思想运动，有起源、传播、高潮、衰退周期
     /// </summary>
     [System.Serializable]
-    public class IdeologyMovement
-    {
-        public int movementId;
-        public string movementName;
-        public string description;
-        public int originRegionId;
-        public int startYear;
-        public int peakYear = -1;
-        public int endYear = -1;
 
-        public MovementPhase phase = MovementPhase.Emerging;
-
-        // 核心主张
-        public List<string> coreTenets = new List<string>();
-        [NonSerialized] public Dictionary<string, float> policyPositions = new Dictionary<string, float>();
-
-
-        // 传播
-        public float momentum = 0f;       // 势头 0~100
-        public float radicalism = 0.5f;   // 激进程度
-        public float appeal = 0.5f;        // 吸引力
-
-        // 参与者
-        public List<int> supporterCharacterIds = new List<int>();
-        [NonSerialized] public Dictionary<int, float> regionSupport = new Dictionary<int, float>();
-
-
-        // 关联学派/信仰
-        public List<int> associatedSchoolIds = new List<int>();
-        public List<int> associatedFaithIds = new List<int>();
-
-        /// <summary>每日思潮Tick</summary>
-        public void DailyTick(int currentYear)
-        {
-            // 思潮生命周期
-            int age = currentYear - startYear;
-
-            if (phase == MovementPhase.Emerging && age > 5)
-                phase = MovementPhase.Growing;
-            if (phase == MovementPhase.Growing && momentum > 70f)
-            {
-                phase = MovementPhase.Peak;
-                peakYear = currentYear;
-            }
-            if (phase == MovementPhase.Peak && age > 20)
-                phase = MovementPhase.Declining;
-            if (phase == MovementPhase.Declining && momentum < 10f)
-            {
-                phase = MovementPhase.Extinct;
-                endYear = currentYear;
-            }
-
-            // 势头变化
-            float momentumChange = phase switch
-            {
-                MovementPhase.Emerging => 0.5f,
-                MovementPhase.Growing => 2f,
-                MovementPhase.Peak => 0f,
-                MovementPhase.Declining => -1.5f,
-                MovementPhase.Extinct => -0.5f,
-                _ => 0f
-            };
-            momentum = Mathf.Clamp(momentum + momentumChange + UnityEngine.Random.Range(-1f, 1f), 0f, 100f);
-        }
-    }
-
-    public enum MovementPhase
-    {
-        Emerging,     // 萌芽
-        Growing,      // 成长
-        Peak,         // 高潮
-        Declining,    // 衰退
-        Extinct       // 消亡
-    }
 
     /// <summary>
     /// 思想与规范管理器
