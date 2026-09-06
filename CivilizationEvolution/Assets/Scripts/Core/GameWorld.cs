@@ -1838,9 +1838,4 @@ namespace CivilizationEvolution.Core
     [System.Serializable]
 
 
-    /// <summary>游戏事件监听器接口</summary>
-    public interface IGameEventListener
-    {
-        void OnGameEvent(GameEvent evt);
-    }
 }
