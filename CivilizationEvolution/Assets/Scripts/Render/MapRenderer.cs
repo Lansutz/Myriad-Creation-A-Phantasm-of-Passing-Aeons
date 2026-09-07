@@ -13,7 +13,7 @@ namespace CivilizationEvolution.Render
     /// 用Mesh/Texture渲染六边形地块地图
     /// 支持多种显示模式：地形、气候、群系、政治、人口、经济
     /// </summary>
-    public class MapRenderer : MonoBehaviour
+    public partial class MapRenderer : MonoBehaviour
     {
         [Header("渲染设置")]
         [SerializeField] private int mapWidth = 128;
@@ -386,181 +386,6 @@ namespace CivilizationEvolution.Render
             }
         }
 
-        /// <summary>更新地图纹理</summary>
-                private void UpdateMapTexture()
-        {
-            if (world == null || world.tiles == null) return;
-            if (world.tiles.Length != mapWidth * mapHeight) return;
-
-            // 复用像素缓冲区，仅在尺寸变化时重新分配
-            int pixelCount = mapWidth * mapHeight;
-            if (_pixelBuffer == null || _pixelBuffer.Length != pixelCount)
-                _pixelBuffer = new Color[pixelCount];
-
-            for (int i = 0; i < world.tiles.Length; i++)
-            {
-                if (!world.tiles[i].exists)
-                {
-                    _pixelBuffer[i] = VoidColor; // 虚空/地图外：深色
-                    continue;
-                }
-                _pixelBuffer[i] = GetTileColor(i);
-            }
-
-            // ===== 子地块/Burg 标记绘制（在地形纹理上叠加彩色像素点）=====
-            if (world.burgs != null && world.burgs.Count > 0)
-            {
-                foreach (var burg in world.burgs.Values)
-                {
-                    // 村庄太小不显示，只显示主要定居点
-                    if (!burg.IsMajorSettlement) continue;
-                    if (burg.tileIndex < 0 || burg.tileIndex >= pixelCount) continue;
-
-                    Color burgColor = burg.type switch
-                    {
-                        BurgType.Capital => new Color(1f, 0.85f, 0.2f, 1f),   // 金色：首都
-                        BurgType.City => new Color(1f, 1f, 1f, 1f),              // 白色：城市
-                        BurgType.Port => new Color(0.3f, 0.6f, 1f, 1f),          // 蓝色：港口
-                        BurgType.Fortress => new Color(0.9f, 0.3f, 0.2f, 1f),    // 红色：要塞
-                        BurgType.Town => new Color(0.9f, 0.8f, 0.4f, 1f),        // 黄色：集镇
-                        _ => new Color(0.6f, 0.6f, 0.6f, 1f)                      // 灰色
-                    };
-
-                    // 在Burg所在地块画 2x2 像素标记（大地图画3x3）
-                    int bx = burg.tileIndex % mapWidth;
-                    int by = burg.tileIndex / mapWidth;
-                    int markSize = mapWidth > 512 ? 2 : 1;
-                    for (int dy = 0; dy < markSize; dy++)
-                    {
-                        for (int dx = 0; dx < markSize; dx++)
-                        {
-                            int px = bx + dx;
-                            int py = by + dy;
-                            if (px >= 0 && px < mapWidth && py >= 0 && py < mapHeight)
-                            {
-                                int pi = py * mapWidth + px;
-                                _pixelBuffer[pi] = burgColor;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // 编辑器画笔预览（编辑模式下高亮鼠标悬停的画笔范围）
-            if (_mapEditor != null && _mapEditor.IsEditMode && _hoverTile >= 0 && _mapEditor.CurrentTool != EditorTool.None)
-            {
-                var brushTiles = _mapEditor.GetBrushTileIndices(_hoverTile);
-                Color previewColor = new Color(1f, 1f, 1f, 0.4f); // 半透明白色预览
-                foreach (int bt in brushTiles)
-                {
-                    if (bt >= 0 && bt < pixelCount)
-                    {
-                        _pixelBuffer[bt] = Color.Lerp(_pixelBuffer[bt], previewColor, 0.5f);
-                    }
-                }
-            }
-            mapTexture.SetPixels(_pixelBuffer);
-
-            mapTexture.Apply();
-        }
-
-        /// <summary>
-        /// 政权色（动态扩展：0-15 用原色板——>15 黄金角 HSL 哈希——
-        /// 政权数任意增长不撞色——确定性）
-        /// </summary>
-        private Color GetRealmColor(int realmId)
-        {
-            if (realmId >= 0 && realmId < 16)
-                return _politicalColors[realmId];
-            float hue = (realmId * 0.6180339887f) % 1f;
-            float sat = 0.55f + ((realmId >> 3) % 3) * 0.1f;
-            float val = 0.62f + ((realmId >> 5) % 3) * 0.08f;
-            return Color.HSVToRGB(hue, sat, val);
-        }
-
-        /// <summary>
-        /// 地块颜色（大陆底图渲染——2026-09 用户定稿方向：大陆有纸纹/笔触
-        /// 质感[参照《地图上发生的事》terrain 分色+纸感]）：
-        /// 基色 + 确定性纸纹调制——低频斑驳[地形性色带]+高频颗粒[笔触感]——
-        /// 海洋保持平滑（水无纸纹）——modes 也带纸感[政权色如彩绘]
-        /// </summary>
-        private Color GetTileColor(int tileIndex)
-        {
-            ref TileData tile = ref world.tiles[tileIndex];
-            Color c = GetTileColorRaw(tileIndex);
-
-            // 纸纹调制（确定性——同 seed 同画面——hash 高频颗粒 + 低频斑驳）
-            if (tile.exists && tile.isLand)
-            {
-                int x = tileIndex % mapWidth;
-                int y = tileIndex / mapWidth;
-                // 山体阴影+坡度笔触（地形类模式统一——系统性：Terrain/Biome/
-                // Climate 都过——纸张与地形有机结合——算法见下）
-                if (displayMode == MapDisplayMode.Terrain
-                    || displayMode == MapDisplayMode.Biome
-                    || displayMode == MapDisplayMode.Climate)
-                {
-                    ApplyTerrainShading(ref c, tileIndex);
-                }
-                float h1 = HashNoise(x, y, 0);         // 高频颗粒（笔触）
-                float h2 = HashNoise(x / 4, y / 4, 1); // 低频斑驳（色带）
-                float grain = (h1 - 0.5f) * 0.05f + (h2 - 0.5f) * 0.08f;
-                c.r = Mathf.Clamp01(c.r + grain);
-                c.g = Mathf.Clamp01(c.g + grain);
-                c.b = Mathf.Clamp01(c.b + grain * 0.7f);
-            }
-            return c;
-        }
-
-        /// <summary>
-        /// 山体阴影+坡度笔触（NPR 风格化——纸与地形结合）：
-        /// ① Hillshade：邻域高程梯度 × 固定光源（西北 45°）——朝光面提亮/
-        /// 背光面压暗——山脉立体隆起
-        /// ② 坡度笔触：slopeDegree 越高越暗（陡坡=浓重笔触——手绘阴影感——
-        /// 缓坡留白纸面呼吸）
-        /// </summary>
-        private void ApplyTerrainShading(ref Color c, int tileIndex)
-        {
-            int x = tileIndex % mapWidth;
-            int y = tileIndex / mapWidth;
-            bool wrapX = world != null && world.config.wrapX;
-            bool wrapY = world != null && world.config.wrapY;
-
-            // 邻域高程（边界 clamp/wrap）
-            float Get(int tx, int ty)
-            {
-                if (wrapX) tx = (tx + mapWidth) % mapWidth;
-                else tx = Mathf.Clamp(tx, 0, mapWidth - 1);
-                if (wrapY) ty = (ty + mapHeight) % mapHeight;
-                else ty = Mathf.Clamp(ty, 0, mapHeight - 1);
-                int idx = ty * mapWidth + tx;
-                var ts = world.tiles;
-                return idx >= 0 && idx < ts.Length && ts[idx].exists
-                    ? ts[idx].elevation01 : 0f;
-            }
-            float eW = Get(x - 1, y), eE = Get(x + 1, y);
-            float eN = Get(x, y - 1), eS = Get(x, y + 1);
-            float dx = eE - eW;   // 东升为正
-            float dy = eS - eN;   // 南升为正
-
-            // 光源西北 45°（光照方向向量——东南面受光）
-            float shade = (dx + dy) * 0.5f; // dot 简化（光 -1,-1 归一后的等效）
-            // 海陆交接（低海拔近海）不平——只调陆地幅度
-            float light = 1f + Mathf.Clamp(shade * 0.9f, -0.16f, 0.14f);
-
-            // 坡度笔触（陡坡加重——slopeDegree 在手绘地图≈笔触密度）
-            float slope = 0f;
-            var ts = world.tiles;
-            if (tileIndex >= 0 && tileIndex < ts.Length)
-                slope = ts[tileIndex].slopeDegree;
-            float ink = 1f - Mathf.Clamp01((slope - 12f) / 55f) * 0.22f; // 缓坡 1.0→陡坡 0.78
-
-            float mul = light * ink;
-            c.r = Mathf.Clamp01(c.r * mul);
-            c.g = Mathf.Clamp01(c.g * mul);
-            c.b = Mathf.Clamp01(c.b * mul);
-        }
-
         /// <summary>确定性噪声（整数坐标 hash——纸纹颗粒——同 seed 复现）</summary>
         private static float HashNoise(int x, int y, int salt)
         {
@@ -573,75 +398,6 @@ namespace CivilizationEvolution.Render
             }
         }
 
-        /// <summary>地块基色（模式分派——biome/政权/人口/宗教……）</summary>
-        private Color GetTileColorRaw(int tileIndex)
-        {
-            ref TileData tile = ref world.tiles[tileIndex];
-
-            switch (displayMode)
-            {
-                case MapDisplayMode.Terrain:
-                    // 河流优先着色（水系蓝）
-                    if (tile.isRiver) return new Color(0.25f, 0.45f, 0.85f, 1f);
-                    // 省界描边（与任一邻域省份不同 → 边界色）
-                    if (IsProvinceBorder(tileIndex))
-                        return provinceBorderColor;
-                    int terrainIndex = Mathf.Clamp(Mathf.RoundToInt((tile.elevation01 + 1f) / 2f * 255f), 0, 255);
-                    return _terrainColors[terrainIndex];
-
-                case MapDisplayMode.Climate:
-                    int climateIndex = Mathf.Clamp(Mathf.RoundToInt((tile.annualTemp + 55f) / 90f * 255f), 0, 255);
-                    return _climateColors[climateIndex];
-
-                case MapDisplayMode.Biome:
-                    int biomeIndex = (int)tile.biome;
-                    if (biomeIndex >= 0 && biomeIndex < _biomeColors.Length)
-                        return _biomeColors[biomeIndex];
-                    return Color.gray;
-
-                case MapDisplayMode.Political:
-                    if (tile.ownerRealmId >= 0 && tile.ownerRealmId < 16)
-                        return _politicalColors[tile.ownerRealmId];
-                    return new Color(0.3f, 0.3f, 0.3f);
-
-                case MapDisplayMode.Population:
-                    float pop = 0f;
-                    if (tile.populationBlocks != null)
-                        foreach (var pb in tile.populationBlocks)
-                            pop += pb.count;
-                    float popT = Mathf.Clamp(pop / 100f, 0f, 1f);
-                    return Color.Lerp(new Color(0.9f, 0.9f, 0.9f), new Color(0.8f, 0.2f, 0.2f), popT);
-
-                case MapDisplayMode.Economy:
-                    float devT = Mathf.Clamp(tile.development, 0f, 1f);
-                    return Color.Lerp(new Color(0.5f, 0.5f, 0.5f), new Color(1f, 0.9f, 0.3f), devT);
-
-                case MapDisplayMode.Diplomacy:
-                    return GetDiplomacyColor(tile);
-
-                case MapDisplayMode.Alliance:
-                    return GetAllianceColor(tile);
-
-                case MapDisplayMode.Culture:
-                    return GetCultureColor(tile, false);
-
-                case MapDisplayMode.CultureBranch:
-                    return GetCultureColor(tile, true);
-
-                case MapDisplayMode.Religion:
-                    return GetReligionColor(tile, ReligionMapLevel.Religion);
-
-                case MapDisplayMode.ReligionSuccession:
-                    return GetReligionColor(tile, ReligionMapLevel.Succession);
-
-                case MapDisplayMode.ReligionTradition:
-                    return GetReligionColor(tile, ReligionMapLevel.Tradition);
-
-                default:
-                    return Color.gray;
-            }
-        }
-
         // ===== 地图模式着色辅助（外交/联盟/文化/宗教） =====
 
         private static readonly Color WarColor = new Color(0.85f, 0.2f, 0.2f, 1f);
@@ -650,78 +406,6 @@ namespace CivilizationEvolution.Render
         private static readonly Color FriendlyColor = new Color(0.35f, 0.7f, 0.35f, 1f);
         private static readonly Color AllyColor = new Color(0.3f, 0.5f, 0.9f, 1f);
         private static readonly Color FactionColor = new Color(0.6f, 0.35f, 0.85f, 1f);
-
-        /// <summary>外交关系色（玩家视角：战争/敌对/盟约/友好/中立）</summary>
-        private Color GetDiplomacyColor(TileData tile)
-        {
-            int owner = tile.ownerRealmId;
-            if (owner < 0) return new Color(0.25f, 0.25f, 0.25f);
-            int player = world != null ? world.PlayerRealmId : -1;
-            if (player < 0) return _politicalColors[owner % _politicalColors.Length];
-
-            var dm = world.GetDiplomacyManager();
-            if (dm == null) return _politicalColors[owner % _politicalColors.Length];
-            if (owner == player) return FriendlyColor;
-
-            var rel = dm.GetRelation(player, owner);
-            if (rel == null) return NeutralColor;
-            if (rel.isAtWar) return WarColor;
-            if (rel.IsHostile) return HostileColor;
-            if (rel.activeAlliances.Exists(a => a.isActive)) return AllyColor;
-            return rel.relation >= 20f ? FriendlyColor : NeutralColor;
-        }
-
-        /// <summary>联盟阵营色（玩家盟友/阵营成员）</summary>
-        private Color GetAllianceColor(TileData tile)
-        {
-            int owner = tile.ownerRealmId;
-            if (owner < 0) return new Color(0.25f, 0.25f, 0.25f);
-            int player = world != null ? world.PlayerRealmId : -1;
-            if (player < 0) return _politicalColors[owner % _politicalColors.Length];
-            if (owner == player) return FriendlyColor;
-
-            var dm = world.GetDiplomacyManager();
-            if (dm == null) return NeutralColor;
-            var rel = dm.GetRelation(player, owner);
-            if (rel == null) return NeutralColor;
-            if (rel.activeAlliances.Exists(a => a.isActive && a.type == AllianceType.Faction))
-                return FactionColor;
-            if (rel.activeAlliances.Exists(a => a.isActive))
-                return AllyColor;
-            return NeutralColor;
-        }
-
-        /// <summary>文化色（branch=true 时允许分支的文化显示子文化色）</summary>
-        private Color GetCultureColor(TileData tile, bool branch)
-        {
-            int cultureId = GetDominantBlockCulture(tile);
-            if (cultureId < 0 || world == null) return NeutralColor;
-            if (!world.cultures.TryGetValue(cultureId, out var culture)) return NeutralColor;
-
-            if (branch)
-            {
-                // 分支文化：子文化（parentCultureId>=0）且父文化允许分支 → 子文化色
-                if (culture.parentCultureId >= 0
-                    && world.cultures.TryGetValue(culture.parentCultureId, out var parent)
-                    && parent.allowsBranching)
-                    return culture.color;
-                return NeutralColor;
-            }
-
-            // 主文化：分支文化显示根文化色（同一谱系同色）
-            if (culture.parentCultureId >= 0
-                && world.cultures.TryGetValue(culture.parentCultureId, out var root))
-                return root.color;
-            return culture.color;
-        }
-
-        /// <summary>宗教色（三级谱系：宗教/宗派/传统）</summary>
-        private Color GetReligionColor(TileData tile, ReligionMapLevel level)
-        {
-            int faithId = GetDominantBlockFaith(tile);
-            if (faithId < 0) return NeutralColor;
-            return ReligionCatalog.GetColor(faithId, level);
-        }
 
         /// <summary>主人口块的文化（count 最大块——地块主文化）</summary>
         private static int GetDominantBlockCulture(TileData tile)
@@ -818,13 +502,6 @@ namespace CivilizationEvolution.Render
             Planar,    // 平面地图（柱状投影，左右连通）
             Spherical  // 球形地图（3D球面投影）
         }
-
-        public void ForceRefresh()
-        {
-            _forceMapRefresh = true;
-        }
-        /// <summary>获取当前地图纹理（用于导出PNG）</summary>
-        public Texture2D GetMapTexture() => mapTexture;
 
         /// <summary>获取地图编辑器实例</summary>
         public MapEditor GetMapEditor()
