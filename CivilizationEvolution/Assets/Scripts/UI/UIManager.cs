@@ -167,6 +167,13 @@ namespace CivilizationEvolution.UI
         public int ViewRealmId => _viewRealmId >= 0 ? _viewRealmId : (world != null ? world.PlayerRealmId : 0);
         /// <summary>场景是否有主菜单 UI（Bootstrap 兜底判定——无菜单则自动开局防卡死）</summary>
         public bool HasStartMenu => startMenuPanel != null;
+
+        // ===== 主菜单公开入口（供 MainMenuUI 调用）=====
+        public void OpenNewGamePanelFromMainMenu() => OpenNewGamePanel();
+        public void EnterEditorFromMainMenu() => EnterEditorFromMenu();
+        public void OpenSettingsFromMainMenu() => OpenSettingsPanel();
+        /// <summary>隐藏场景中的旧主菜单（代码动态主菜单接管时调用）</summary>
+        public void HideLegacyStartMenu() { if (startMenuPanel != null) startMenuPanel.SetActive(false); }
         private readonly List<string> _eventLog = new List<string>();
         private const int MaxLogEntries = 100;
 

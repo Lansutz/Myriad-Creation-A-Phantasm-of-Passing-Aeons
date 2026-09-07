@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using CivilizationEvolution.Core;
 
 namespace CivilizationEvolution.Core
@@ -93,6 +93,13 @@ namespace CivilizationEvolution.Core
             }
 
             Debug.Log("[Bootstrap] 游戏初始化完成");
+
+            // 初始化场景链路控制器（主菜单→生成→游戏→返回主菜单）
+            if (CivilizationEvolution.UI.SceneFlowController.Instance == null)
+            {
+                var flowObj = new GameObject("SceneFlowController");
+                flowObj.AddComponent<CivilizationEvolution.UI.SceneFlowController>();
+            }
         }
 
         private void Start()
