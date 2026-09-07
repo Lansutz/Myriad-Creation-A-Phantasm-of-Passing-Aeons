@@ -408,5 +408,18 @@ namespace CivilizationEvolution.Core
             Fortress,
             Amphibious
         }
+
+        /// <summary>
+        /// 主权状态（双色空间地图渲染用）
+        /// core：本国法理领土，走A色系效忠树深度色阶
+        /// vassal_tribute：附庸/朝贡国，走B色相（与A色系彻底隔离）
+        /// foreign：外国，走外国色
+        /// </summary>
+        public enum SovereigntyStatus
+        {
+            Core,
+            VassalTribute,
+            Foreign
+        }
     }
 }

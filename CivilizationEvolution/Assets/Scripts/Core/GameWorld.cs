@@ -239,6 +239,7 @@ namespace CivilizationEvolution.Core
         public SocietyManager Society => _societyManager;
         public FactionManager Factions => _factionManager;
         public RegimeChangeDynamics RegimeDynamics => _regimeDynamics;
+        public DiplomacyManager Diplomacy => _diplomacyManager;
 
         /// <summary>
         /// 革新完成→阶层出现事件（查漏补缺接线：ClassEmergenceEvents 原为

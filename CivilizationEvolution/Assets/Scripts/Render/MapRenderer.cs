@@ -75,6 +75,24 @@ namespace CivilizationEvolution.Render
         private Color[] _biomeColors;
         private Color[] _politicalColors;
 
+        // ===== 双色空间政治地图（效忠树层级 vs 附庸朝贡，色相完全隔离）=====
+        [Header("双色空间政治地图")]
+        [Tooltip("查看政权ID（-1=玩家政权）；政治模式下以此为基准区分本土/附庸/外国")]
+        [SerializeField] private int _dualSpaceViewRealmId = -1;
+        [Tooltip("A色系：本国效忠树深度色阶（由深→浅，同色相蓝色系）")]
+        [SerializeField] private Color[] _allegiancePalette = new Color[]
+        {
+            new Color(0.12f, 0.22f, 0.55f, 1f),  // 深度0：主圈（君主直辖）——最深
+            new Color(0.22f, 0.40f, 0.75f, 1f),  // 深度1：直属大领主/一级行政
+            new Color(0.40f, 0.60f, 0.88f, 1f),  // 深度2：次级封臣/二级行政区
+            new Color(0.60f, 0.78f, 0.95f, 1f),  // 深度3：下层封臣/三级行政区
+        };
+        [Tooltip("B色：附庸/朝贡国专用色（灰青色——色相与A色系彻底隔离，哪怕亮度接近也一眼可辨）")]
+        [SerializeField] private Color _vassalTributeColor = new Color(0.50f, 0.62f, 0.65f, 1f);
+        [Tooltip("占领/争议条纹：45°斜线叠加层（不修改底色）")]
+        [SerializeField] private Color _occupationStripeColor = new Color(0f, 0f, 0f, 0.35f);
+        [SerializeField] private int _occupationStripeSpacing = 4;  // 条纹间距（像素）
+
         // 相机控制
         private Camera _mainCamera;
         private Vector3 _cameraTarget;

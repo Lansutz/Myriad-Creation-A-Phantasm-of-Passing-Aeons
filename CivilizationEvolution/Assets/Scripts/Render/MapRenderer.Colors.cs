@@ -142,9 +142,7 @@ namespace CivilizationEvolution.Render
                     return Color.gray;
 
                 case MapDisplayMode.Political:
-                    if (tile.ownerRealmId >= 0 && tile.ownerRealmId < 16)
-                        return _politicalColors[tile.ownerRealmId];
-                    return new Color(0.3f, 0.3f, 0.3f);
+                    return GetPoliticalDualSpaceColor(tileIndex);
 
                 case MapDisplayMode.Population:
                     float pop = 0f;
@@ -258,6 +256,85 @@ namespace CivilizationEvolution.Render
             int faithId = GetDominantBlockFaith(tile);
             if (faithId < 0) return NeutralColor;
             return ReligionCatalog.GetColor(faithId, level);
+        }
+
+        // ===== 双色空间政治地图渲染（效忠树层级 vs 附庸朝贡，色相完全隔离）=====
+
+        /// <summary>
+        /// 双色空间政治地图颜色：
+        /// core（本国本土）→ A色系按效忠树深度选色（深蓝→浅蓝）
+        /// vassal_tribute（附庸/朝贡）→ B色（灰青色，色相与A色系隔离）
+        /// foreign（外国）→ 外国政权色
+        /// 占领/争议条纹在 UpdateMapTexture 像素层叠加（不修改底色）
+        /// </summary>
+        private Color GetPoliticalDualSpaceColor(int tileIndex)
+        {
+            ref TileData tile = ref world.tiles[tileIndex];
+            if (!tile.exists || !tile.isLand) return _politicalColors[0];
+
+            GameEnums.SovereigntyStatus status = GetSovereigntyStatus(tile);
+            switch (status)
+            {
+                case GameEnums.SovereigntyStatus.Core:
+                    int depth = GetAllegianceDepth(tile);
+                    int idx = Mathf.Clamp(depth, 0, _allegiancePalette.Length - 1);
+                    return _allegiancePalette[idx];
+                case GameEnums.SovereigntyStatus.VassalTribute:
+                    return _vassalTributeColor;
+                default:
+                    int owner = tile.ownerRealmId;
+                    if (owner >= 0 && owner < _politicalColors.Length)
+                        return _politicalColors[owner];
+                    return GetRealmColor(owner);
+            }
+        }
+
+        /// <summary>
+        /// 判断地块主权状态（相对于查看政权）：
+        /// owner == 查看政权 → Core（本国本土）
+        /// owner 是查看政权的附庸/朝贡 → VassalTribute
+        /// 其他 → Foreign
+        /// </summary>
+        private GameEnums.SovereigntyStatus GetSovereigntyStatus(TileData tile)
+        {
+            int viewer = _dualSpaceViewRealmId >= 0 ? _dualSpaceViewRealmId
+                : (world != null ? world.PlayerRealmId : -1);
+            int owner = tile.ownerRealmId;
+            if (viewer < 0 || owner < 0) return GameEnums.SovereigntyStatus.Foreign;
+            if (owner == viewer) return GameEnums.SovereigntyStatus.Core;
+
+            var dm = world != null ? world.Diplomacy : null;
+            if (dm != null)
+            {
+                var sub = dm.GetSubordination(viewer, owner);
+                if (sub != null) return GameEnums.SovereigntyStatus.VassalTribute;
+            }
+            return GameEnums.SovereigntyStatus.Foreign;
+        }
+
+        /// <summary>
+        /// 效忠树深度（仅 Core 地块有效）。
+        /// 暂时返回0（全部主圈色）——后续政治系统完善效忠树后，
+        /// 在此处根据领地的封臣层级计算深度0/1/2/3。
+        /// </summary>
+        private int GetAllegianceDepth(TileData tile)
+        {
+            // TODO: 对接政治效忠树系统，根据封臣层级返回深度0-3
+            return 0;
+        }
+
+        /// <summary>是否占领/争议（占领方≠所有者）</summary>
+        private bool IsOccupiedDisputed(TileData tile)
+        {
+            return tile.occupyingRealmId >= 0
+                && tile.occupyingRealmId != tile.ownerRealmId;
+        }
+
+        /// <summary>设置双色空间查看政权（外部调用，如点选地块时跟随）</summary>
+        public void SetDualSpaceViewRealm(int realmId)
+        {
+            _dualSpaceViewRealmId = realmId;
+            _forceMapRefresh = true;
         }
 
     }

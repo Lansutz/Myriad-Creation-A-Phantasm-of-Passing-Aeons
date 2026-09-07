@@ -36,6 +36,22 @@ namespace CivilizationEvolution.Render
                 _pixelBuffer[i] = GetTileColor(i);
             }
 
+            // ===== 占领/争议条纹叠加（45°斜线，不修改底色，仅叠加）=====
+            for (int i = 0; i < world.tiles.Length; i++)
+            {
+                if (!world.tiles[i].exists) continue;
+                if (!IsOccupiedDisputed(world.tiles[i])) continue;
+                int sx = i % mapWidth;
+                int sy = i / mapWidth;
+                // 45°斜线：(x + y) % spacing < spacing/2 时叠加条纹色
+                int spacing = Mathf.Max(2, _occupationStripeSpacing);
+                if ((sx + sy) % spacing < spacing / 2)
+                {
+                    _pixelBuffer[i] = Color.Lerp(_pixelBuffer[i],
+                        _occupationStripeColor, _occupationStripeColor.a);
+                }
+            }
+
             // ===== 子地块/Burg 标记绘制（在地形纹理上叠加彩色像素点）=====
             if (world.burgs != null && world.burgs.Count > 0)
             {
