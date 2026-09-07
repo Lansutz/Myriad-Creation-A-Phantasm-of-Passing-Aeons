@@ -23,82 +23,15 @@ namespace CivilizationEvolution.Politics
     // =====================================================================================
 
     /// <summary>派系对现政体的立场</summary>
-    public enum FactionStance
-    {
-        Conservative,   // 保守派：维护现政体（既得利益）
-        Reformist,      // 改革派：体制内渐进调整政体成分
-        Radical,        // 激进派：要求根本变革现政体
-        Reactionary     // 复辟派：回到更早已被取代的制度
-    }
+
 
     /// <summary>
     /// 派系政纲：四维方向性诉求（-1~1）。关键节点时据此推导具体目标政体成分。
     /// </summary>
-    [Serializable]
-    public struct FactionPlatform
-    {
-        [Range(-1f, 1f)] public float openness;        // 开放度：负=世袭排他，正=选举包容（政治通道）
-        [Range(-1f, 1f)] public float centralization;  // 集权度：负=地方分权/封建，正=中央集权/官僚
-        [Range(-1f, 1f)] public float commerce;        // 经济取向：负=重农抑商/管制，正=重商/市场
-        [Range(-1f, 1f)] public float taxRelief;       // 税负诉求：正=要求减税，负=可接受增税（如备战/福利）
 
-        public static FactionPlatform operator +(FactionPlatform a, FactionPlatform b) => new FactionPlatform
-        {
-            openness = a.openness + b.openness,
-            centralization = a.centralization + b.centralization,
-            commerce = a.commerce + b.commerce,
-            taxRelief = a.taxRelief + b.taxRelief
-        };
-        public FactionPlatform Scaled(float k) => new FactionPlatform
-        {
-            openness = openness * k, centralization = centralization * k,
-            commerce = commerce * k, taxRelief = taxRelief * k
-        };
-        public void Clamp()
-        {
-            openness = Mathf.Clamp(openness, -1f, 1f);
-            centralization = Mathf.Clamp(centralization, -1f, 1f);
-            commerce = Mathf.Clamp(commerce, -1f, 1f);
-            taxRelief = Mathf.Clamp(taxRelief, -1f, 1f);
-        }
-    }
 
     /// <summary>派系</summary>
-    [Serializable]
-    public class Faction
-    {
-        public int factionId;
-        public int realmId;
-        public string factionName = "";
-        public FactionStance stance;
 
-        /// <summary>阶层基础：各社会阶层对本派系的支持权重（0~1，可跨阶层结盟）</summary>
-        [System.NonSerialized]
-        public Dictionary<GameEnums.SocialClass, float> classBacking = new Dictionary<GameEnums.SocialClass, float>();
-        /// <summary>主要代表阶层（backing 最高者）</summary>
-        public GameEnums.SocialClass primaryClass = GameEnums.SocialClass.Peasant;
-
-        /// <summary>领袖角色ID（-1=暂无有名领袖的底层运动）</summary>
-        public int leaderCharacterId = -1;
-        /// <summary>派系成员（廷臣/贵族/官员等有名角色）</summary>
-        public List<int> memberCharacterIds = new List<int>();
-
-        public FactionPlatform platform;
-
-        [Range(0f, 100f)] public float power;       // 政治力量（由阶层能量+领袖+成员聚合）
-        [Range(0f, 100f)] public float cohesion = 60f; // 凝聚力（低则分裂）
-        public bool isInGovernment;                 // 是否当前执政/参与执政（保守派通常是）
-
-        public Faction() { }
-        public Faction(int id, int realmId, FactionStance stance)
-        {
-            factionId = id; this.realmId = realmId; this.stance = stance;
-        }
-
-        /// <summary>派系是否拥有某阶层的显著支持（&gt;阈值）</summary>
-        public bool BackedBy(GameEnums.SocialClass cls, float threshold = 0.2f)
-            => classBacking.GetValueOrDefault(cls, 0f) >= threshold;
-    }
 
     /// <summary>
     /// 派系管理器：从社会画像孕育/更新派系、匹配角色领袖、计算力量、提供博弈查询。

@@ -138,7 +138,7 @@ namespace CivilizationEvolution.Culture
         /// 行为评估并授予绰号（返回授予的绰号——空=未达任何条件）：
         /// 普通绰号=单项行为阈值；伟大者=评价≥优秀（350）；传奇=评价≥传奇（900）+领域
         /// </summary>
-        public static string EvaluateAndGrant(CharacterData c, EvaluationSystem.AchievementRecord rec)
+        public static string EvaluateAndGrant(CharacterData c, AchievementRecord rec)
         {
             if (c == null) return "";
             float score = EvaluationSystem.CalculateScore(rec);

@@ -5,31 +5,13 @@ using CivilizationEvolution.Role;
 namespace CivilizationEvolution.Culture
 {
     /// <summary>绰号语义色彩（正/中/贬/双向——诗人=可褒可贬）</summary>
-    public enum EpithetConnotation
-    {
-        Positive,  // 褒（狮子/智者）
-        Neutral,   // 中性事实（征服者——时代语境）
-        Negative,  // 贬（儿皇帝）
-        Dual       // 双向语境（诗人——真才=褒/文人误国=贬）
-    }
+
 
     /// <summary>绰号档位（普通/王级/传奇——王级=特质统治者化的历史形象）</summary>
-    public enum EpithetTier
-    {
-        Common,    // 普通（任何身份——行为/性格/特征/外貌）
-        Kingly,    // 王级（统治者专属——X王——苛刻——诗人王/疯王/征服王/冒险王）
-        Great      // 伟大者（区域影响力——②高评价档）
-    }
+
 
     /// <summary>绰号定义（数据驱动——id/名/语义/档位/判定源）</summary>
-    public class EpithetDef
-    {
-        public string id;
-        public string name;
-        public EpithetConnotation connotation = EpithetConnotation.Neutral;
-        public EpithetTier tier = EpithetTier.Common;
-        public string note = ""; // 历史参照/说明
-    }
+
 
     /// <summary>
     /// 绰号表（数据驱动——判定逻辑在 EpithetSystem——本表供显示/查询）

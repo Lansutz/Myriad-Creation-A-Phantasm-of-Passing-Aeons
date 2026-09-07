@@ -17,46 +17,10 @@ namespace CivilizationEvolution.Role
     /// </summary>
 
     /// <summary>原版内置精神疾病 id 常量（字符串键，模组可新增任意 id）</summary>
-    public static class MentalDisorderIds
-    {
-        public const string None = "";
-        public const string Depression = "depression";   // 抑郁
-        public const string Anxiety = "anxiety";         // 焦虑
-        public const string Paranoia = "paranoia";       // 偏执
-        public const string Delirium = "delirium";       // 谵妄
-        public const string Dementia = "dementia";       // 失智（不可逆）
-    }
+
 
     /// <summary>精神疾病定义（数据驱动：定义文件只存键，显示走本地化表）</summary>
-    [Serializable]
-    public class MentalDisorderDef
-    {
-        public string id;
-        /// <summary>内置回退名（未加载本地化表时用）</summary>
-        public string name;
-        /// <summary>内置回退描述</summary>
-        public string description;
-        public bool reversible = true;   // 失智不可逆
 
-        // 属性修正
-        public float martialMod;
-        public float diplomacyMod;
-        public float warfareMod;
-        public float stewardshipMod;
-        public float intrigueMod;
-        public float learningMod;
-        public float charmMod;
-
-        /// <summary>压力恢复倍率（&lt;1 恢复慢：抑郁/焦虑使压力缠绵不去）</summary>
-        public float stressDecayMult = 1f;
-        /// <summary>好感自然衰减倍率（&gt;1 关系恶化快：偏执）</summary>
-        public float opinionDecayMult = 1f;
-
-        /// <summary>显示名：本地化表优先（&lt;id&gt;_name），回退内置字段</summary>
-        public string GetName() => Localization.Has(id + "_name") ? Localization.Get(id + "_name") : name;
-        /// <summary>写实描述：本地化表优先（&lt;id&gt;_desc），回退内置字段</summary>
-        public string GetDescription() => Localization.Has(id + "_desc") ? Localization.Get(id + "_desc") : description;
-    }
 
     /// <summary>精神疾病系统核心（注册表优先 + 内置回退 + 判定辅助）</summary>
     public static class MentalHealthSystem
