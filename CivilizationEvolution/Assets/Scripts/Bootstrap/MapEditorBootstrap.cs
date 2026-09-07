@@ -1,4 +1,4 @@
-using CivilizationEvolution.Core;
+﻿using CivilizationEvolution.Core;
 using CivilizationEvolution.Map;
 using CivilizationEvolution.Render;
 using CivilizationEvolution.UI;
@@ -25,6 +25,10 @@ namespace CivilizationEvolution.Bootstrap
         public float cameraSize = 60f;
         public Color backgroundColor = new Color(0.05f, 0.07f, 0.10f, 1f);
 
+        [Header("启动模式")]
+        [Tooltip("true=启动时全海空白地图（不自动生成地形）；false=自动生成默认地形")]
+        public bool startWithEmptyOcean = false;
+
         // 运行时创建的引用
         private GameWorld _world;
         private MapRenderer _renderer;
@@ -49,14 +53,53 @@ namespace CivilizationEvolution.Bootstrap
 
         void Start()
         {
-            // 启动时自动生成一张默认地图
-            if (_world != null)
+            if (_world == null) return;
+
+            if (startWithEmptyOcean)
             {
+                // 全海空白地图模式：初始化 tiles 为全海，不生成地形
+                InitializeEmptyOcean();
+                Debug.Log("[MapEditorBootstrap] 全海空白地图已初始化（等待玩家编辑/生成）");
+            }
+            else
+            {
+                // 正常模式：自动生成默认地图
                 _world.GenerateTerrainWithConfig();
                 _world.CalculateClimate();
                 _renderer?.ForceRefresh();
                 Debug.Log("[MapEditorBootstrap] 默认地图已生成");
             }
+        }
+
+        /// <summary>初始化全海空白地图（所有地块为海洋，等待玩家编辑）</summary>
+        private void InitializeEmptyOcean()
+        {
+            int total = mapWidth * mapHeight;
+            _world.tiles = new TileData[total];
+            for (int i = 0; i < total; i++)
+            {
+                _world.tiles[i] = new TileData
+                {
+                    tileIndex = i,
+                    exists = true,
+                    isLand = false,
+                    isCoast = false,
+                    elevation01 = 0f,
+                    slopeDegree = 0f,
+                    ownerRealmId = -1,
+                    occupyingRealmId = -1,
+                    provinceId = -1,
+                    regionId = -1,
+                    passable = true,
+                    movementCost = 1f,
+                    oceanTier = GameEnums.OceanTier.FarSea,
+                    oceanDepth01 = 0.5f,
+                    biome = GameEnums.BiomeType.AbyssalPlain,
+                    populationBlocks = new System.Collections.Generic.List<PopulationBlock>(),
+                    buildingLevels = new int[0],
+                };
+            }
+            _renderer?.ForceRefresh();
         }
 
         // ===== 创建相机 =====
@@ -166,6 +209,61 @@ namespace CivilizationEvolution.Bootstrap
                 }
             );
             _genPanel.Show();
+
+            // 右下角速度控制面板
+            CreateSpeedControl(canvasGo.transform);
+        }
+
+        /// <summary>右下角速度控制UI（暂停/1x/2x/3x）</summary>
+        private void CreateSpeedControl(Transform canvasParent)
+        {
+            var panelObj = new GameObject("SpeedControl", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            var prt = panelObj.GetComponent<RectTransform>();
+            prt.anchorMin = new Vector2(1f, 0f);
+            prt.anchorMax = new Vector2(1f, 0f);
+            prt.pivot = new Vector2(1f, 0f);
+            prt.anchoredPosition = new Vector2(-20, 20);
+            prt.sizeDelta = new Vector2(220, 44);
+            panelObj.GetComponent<Image>().color = new Color(0.08f, 0.09f, 0.12f, 0.92f);
+            panelObj.transform.SetParent(canvasParent, false);
+
+            string[] speeds = { "暂停", "1x", "2x", "3x" };
+            float[] speedValues = { 0f, 1f, 2f, 3f };
+            float btnW = 50f, gap = 4f;
+            float startX = -(speeds.Length * btnW + (speeds.Length - 1) * gap) * 0.5f + btnW * 0.5f;
+
+            for (int i = 0; i < speeds.Length; i++)
+            {
+                var btnObj = new GameObject(speeds[i], typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+                var brt = btnObj.GetComponent<RectTransform>();
+                brt.anchorMin = new Vector2(0.5f, 0.5f);
+                brt.anchorMax = new Vector2(0.5f, 0.5f);
+                brt.pivot = new Vector2(0.5f, 0.5f);
+                brt.anchoredPosition = new Vector2(startX + i * (btnW + gap), 0);
+                brt.sizeDelta = new Vector2(btnW, 32);
+                btnObj.GetComponent<Image>().color = new Color(0.18f, 0.19f, 0.23f, 1f);
+                var btn = btnObj.GetComponent<Button>();
+                int idx = i;
+                btn.onClick.AddListener(() =>
+                {
+                    var gm = CivilizationEvolution.Core.GameManager.Instance;
+                    if (gm != null) gm.SetGameSpeed(speedValues[idx]);
+                });
+
+                var textObj = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(TMPro.TextMeshProUGUI));
+                var trt = textObj.GetComponent<RectTransform>();
+                trt.anchorMin = Vector2.zero; trt.anchorMax = Vector2.one;
+                trt.offsetMin = Vector2.zero; trt.offsetMax = Vector2.zero;
+                var tmp = textObj.GetComponent<TMPro.TextMeshProUGUI>();
+                tmp.text = speeds[i];
+                tmp.fontSize = 16;
+                tmp.color = new Color(0.85f, 0.85f, 0.88f, 1f);
+                tmp.alignment = TMPro.TextAlignmentOptions.Center;
+                tmp.raycastTarget = false;
+                textObj.transform.SetParent(btnObj.transform, false);
+
+                btnObj.transform.SetParent(panelObj.transform, false);
+            }
         }
 
         // ===== 连接面板回调 =====

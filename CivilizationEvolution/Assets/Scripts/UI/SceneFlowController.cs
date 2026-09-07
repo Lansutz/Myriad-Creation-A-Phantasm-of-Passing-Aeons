@@ -71,12 +71,26 @@ namespace CivilizationEvolution.UI
             Debug.Log("[SceneFlow] 进入游戏");
         }
 
-        /// <summary>进入地图编辑器</summary>
-        public void EnterEditor()
+        /// <summary>进入地图编辑器（从主菜单点开始游戏——全海空白地图+右侧编辑器UI+右下速度控制）</summary>
+        public void EnterMapEditor()
         {
             CurrentState = FlowState.Editor;
             if (mainMenu != null && mainMenu.IsVisible) mainMenu.Hide();
+
+            if (FindAnyObjectByType<CivilizationEvolution.Bootstrap.MapEditorBootstrap>() == null)
+            {
+                var editorObj = new GameObject("MapEditorBootstrap");
+                var bootstrap = editorObj.AddComponent<CivilizationEvolution.Bootstrap.MapEditorBootstrap>();
+                bootstrap.startWithEmptyOcean = true;
+                Debug.Log("[SceneFlow] MapEditorBootstrap 已启动（全海空白地图模式）");
+            }
             Debug.Log("[SceneFlow] 进入地图编辑器");
+        }
+
+        /// <summary>进入地图编辑器（旧入口，保留兼容）</summary>
+        public void EnterEditor()
+        {
+            EnterMapEditor();
         }
 
         /// <summary>返回主菜单（游戏中按 Esc 或点返回按钮）</summary>
