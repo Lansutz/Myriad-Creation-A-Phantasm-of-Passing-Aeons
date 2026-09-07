@@ -15,107 +15,10 @@ namespace CivilizationEvolution.Economy
 
     /// <summary>商队</summary>
     /// <summary>货币系统</summary>
-    [System.Serializable]
-    public class CurrencySystem
-    {
-        public GameEnums.CurrencyStage currentStage = GameEnums.CurrencyStage.Barter;
-        public string currencyName = "";
-        public float goldReserve = 0f;
-        public float silverReserve = 0f;
-        public float coinPurity = 1.0f;
-        public float paperMoneyInCirculation = 0f;
-        public float inflationRate = 0f;
 
-        /// <summary>计算货币价值</summary>
-        public float GetCurrencyValue()
-        {
-            return currentStage switch
-            {
-                GameEnums.CurrencyStage.Barter => 1f,
-                GameEnums.CurrencyStage.Bullion => 1f,
-                GameEnums.CurrencyStage.MintedCoin => coinPurity,
-                GameEnums.CurrencyStage.PaperMoney => Mathf.Clamp(
-                    (goldReserve + silverReserve * 0.1f) / Mathf.Max(1f, paperMoneyInCirculation),
-                    0.01f, 2f),
-                _ => 1f
-            };
-        }
-
-        /// <summary>铸造劣币</summary>
-        public void DebaseCoin(float purityReduction, float amountMinted)
-        {
-            coinPurity = Mathf.Max(0.1f, coinPurity - purityReduction);
-            inflationRate += purityReduction * 0.5f;
-        }
-
-        /// <summary>发行纸币</summary>
-        public bool IssuePaperMoney(float amount)
-        {
-            float reserveValue = goldReserve + silverReserve * 0.1f;
-            float maxIssue = reserveValue * 3f;
-            if (paperMoneyInCirculation + amount > maxIssue) return false;
-
-            paperMoneyInCirculation += amount;
-            if (paperMoneyInCirculation > reserveValue * 1.5f)
-                inflationRate += (paperMoneyInCirculation / reserveValue - 1.5f) * 0.1f;
-            return true;
-        }
-
-        /// <summary>每日通胀衰减</summary>
-        public void DailyTick()
-        {
-            inflationRate = Mathf.Max(0f, inflationRate - 0.001f);
-        }
-    }
 
     /// <summary>税收系统</summary>
-    [System.Serializable]
-    public class TaxSystem
-    {
-        public float agriculturalTax = 0.1f;
-        public float headTax = 0.05f;
-        public float tradeTax = 0.1f;
-        public float miningTax = 0.15f;
-        public float craftTax = 0.1f;
-        public float livestockTax = 0.08f;
-        public float luxuryTax = 0.3f;
-        public float saltMonopolyTax = 0.5f;
-        public float wartimeSpecialTax = 0f;
 
-        [System.NonSerialized]
-        public Dictionary<GameEnums.SocialClass, bool> taxExemptions = new Dictionary<GameEnums.SocialClass, bool>();
-
-        /// <summary>计算地块实际税收</summary>
-        public float CalculateTileTax(TileData tile, float baseOutput, GameEnums.SocialClass dominantClass)
-        {
-            if (taxExemptions.GetValueOrDefault(dominantClass, false)) return 0f;
-
-            float controlEfficiency = 0.3f + tile.stability / 100f * 0.7f;
-            float combinedRate = agriculturalTax * 0.4f + headTax * 0.2f + tradeTax * 0.2f + craftTax * 0.1f + wartimeSpecialTax * 0.1f;
-
-            // 最优税率区间：超过30%后边际收益递减
-            float effectiveRate = combinedRate < 0.3f
-                ? combinedRate
-                : 0.3f + (combinedRate - 0.3f) * 0.5f;
-
-            return baseOutput * effectiveRate * controlEfficiency;
-        }
-
-        /// <summary>计算税率对阶层好感的影响</summary>
-        public float GetTaxSatisfactionImpact(GameEnums.SocialClass socialClass)
-        {
-            float impact = socialClass switch
-            {
-                GameEnums.SocialClass.Peasant => -(agriculturalTax + headTax) * 50f,
-                GameEnums.SocialClass.MerchantFreeman => -(tradeTax + craftTax) * 40f,
-                GameEnums.SocialClass.NobilityClergy => -(luxuryTax + livestockTax) * 30f,
-                GameEnums.SocialClass.Slave => -headTax * 20f,
-                _ => 0f
-            };
-            impact -= wartimeSpecialTax * 60f;
-            return Mathf.Clamp(impact, -50f, 10f);
-        }
-    }
 
     /// <summary>
     /// 经济管理器
