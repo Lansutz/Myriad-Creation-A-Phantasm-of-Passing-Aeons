@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text;
 using System.Collections.Generic;
 using CivilizationEvolution.Core;
@@ -29,19 +29,8 @@ namespace CivilizationEvolution.UI
                 sb.AppendLine();
             }
 
-            // ===== 阶层区 =====
-            sb.AppendLine("── 阶层画像 ──");
-            if (society != null && society.classes != null)
-            {
-                foreach (var kv in society.classes)
-                {
-                    var p = kv.Value;
-                    sb.AppendLine($"{ClassNames.Get(kv.Key)}：人口 {p.populationShare * 100f:F1}% | 满足 {p.satisfaction:F0} | " +
-                                  $"不满 {p.unrest:F0} | 支持 {p.support:F0} | 影响 {p.influence:F0}");
-                }
-            }
-            else sb.AppendLine("（无社会画像数据）");
-            sb.AppendLine();
+            // ===== 阶层区（调用 ClassPanelText 构建完整详情）=====
+            sb.Append(ClassPanelText.BuildFull(society));
 
             // ===== 派系区 =====
             sb.AppendLine("── 派系 ──");
