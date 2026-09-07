@@ -193,14 +193,16 @@ namespace CivilizationEvolution.Render
             transform.localScale = new Vector3(worldW / 10f, 1f, worldH / 10f);
             transform.localPosition = new Vector3(worldW * 0.5f, 0f, worldH * 0.5f);
 
-            // ② 相机对准地图中心（俯视——地图满屏占位：
-            // fit=取宽/高适配较小者——地图充满视野不留白——CK3 式开局满屏）
+            // ② 相机对准地图中心（俯视 45°——地图满屏占位：
+            // 45° 投影压缩小于 60°[sin45=0.707 vs 0.866——垂直占用多]——
+            // fit 考虑投影：地图高投影≈worldH/sin(angle)——反推视野
             float aspect = _mainCamera.aspect > 0f ? _mainCamera.aspect : 1.777f;
-            float fitSize = Mathf.Min(worldW / aspect, worldH) * 0.52f;
+            float projH = worldH / 0.7071f; // 45° 投影后地图等效高
+            float fitSize = Mathf.Min(worldW / aspect, projH) * 0.52f;
             _cameraFitSize = fitSize;
             _mainCamera.transform.position = new Vector3(worldW * 0.5f,
                 Mathf.Max(80f, worldH * 0.9f), worldH * 0.5f + fitSize * 0.4f);
-            _mainCamera.transform.rotation = Quaternion.Euler(60f, 0f, 0f);
+            _mainCamera.transform.rotation = Quaternion.Euler(45f, 0f, 0f);
             _mainCamera.orthographic = true;
             _mainCamera.orthographicSize = fitSize;
             // 视野后移补偿（60° 俯视——看全图边缘不裁）

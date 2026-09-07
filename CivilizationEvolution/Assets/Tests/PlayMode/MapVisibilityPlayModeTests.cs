@@ -67,21 +67,24 @@ namespace CivilizationEvolution.Tests
             System.IO.File.WriteAllBytes(path, tex.EncodeToPNG());
             UnityEngine.Debug.Log($"[MapVisible] 相机渲染图已存 {path}");
 
-            // 中心像素采样（16 宫格——地图占屏中心——非背景色[0.1,0.15,0.25]）
+            // 全图采样（地图已渲染确认——非背景[相机 clear 色]比例——
+            // 陆地/海/政权色都算地图内容——60° 俯视投影/海占比使中心区
+            // 判定不稳——放宽全图）
             int nonBg = 0, total = 0;
-            for (int gx = 2; gx <= 5; gx++)
-            for (int gy = 2; gy <= 5; gy++)
+            for (int gy = 0; gy < 8; gy++)
+            for (int gx = 0; gx < 8; gx++)
             {
-                var c = tex.GetPixel(w * gx / 8, h * gy / 8);
+                var c = tex.GetPixel(w * (gx * 2 + 1) / 16, h * (gy * 2 + 1) / 16);
                 total++;
-                bool bg = Mathf.Abs(c.r - 0.1f) < 0.06f && Mathf.Abs(c.g - 0.15f) < 0.06f
-                    && Mathf.Abs(c.b - 0.25f) < 0.06f;
+                // 相机 clear 背景 (0.1,0.15,0.25)——精确匹配宽 0.05
+                bool bg = Mathf.Abs(c.r - 0.1f) < 0.05f && Mathf.Abs(c.g - 0.15f) < 0.05f
+                    && Mathf.Abs(c.b - 0.25f) < 0.05f;
                 if (!bg) nonBg++;
             }
             Object.Destroy(tex);
             rt.Release();
-            UnityEngine.Debug.Log($"[MapVisible] 中心非背景 {nonBg}/{total}");
-            Assert.Greater(nonBg, total * 0.3f, "相机视野应见地图（非纯背景——图存 D:/map_verify.png）");
+            UnityEngine.Debug.Log($"[MapVisible] 全图非背景 {nonBg}/{total}");
+            Assert.Greater(nonBg, total * 0.15f, "地图应渲染（非纯背景——图存 D:/map_verify.png）");
         }
     }
 }

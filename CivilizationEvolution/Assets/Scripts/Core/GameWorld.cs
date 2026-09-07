@@ -1744,9 +1744,10 @@ namespace CivilizationEvolution.Core
             return total;
         }
 
-        public int GetLandTileCount() => _seaLandGenerator.GetTotalLandTiles();
-        public int GetSeaTileCount() => _seaLandGenerator.GetTotalSeaTiles();
-        public int GetConnectedSeaCount() => _seaLandGenerator.GetConnectedSeaCount();
+        // 防御（惰性化后：未 StartNewGame 时生成器 null——查询安全返回 0）
+        public int GetLandTileCount() => _seaLandGenerator != null ? _seaLandGenerator.GetTotalLandTiles() : 0;
+        public int GetSeaTileCount() => _seaLandGenerator != null ? _seaLandGenerator.GetTotalSeaTiles() : 0;
+        public int GetConnectedSeaCount() => _seaLandGenerator != null ? _seaLandGenerator.GetConnectedSeaCount() : 0;
         public TileData GetTile(int x, int y) => tiles[y * mapWidth + x];
         public TileData GetTile(int index) => tiles[index];
         public EconomyManager GetEconomyManager() => _economyManager;
