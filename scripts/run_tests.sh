@@ -20,6 +20,9 @@ LOG="$REVERSE/canonical_tests.log"
 UNITY="/d/Unity Hub/6000.6.0f1/Editor/Unity.exe"
 
 mkdir -p "$REVERSE"
+# 跑前清空 log（2026-09 教训：canonical_tests.log 曾累积 22G——
+# Unity -logFile 追加写入——每次跑全新日志）
+rm -f "$LOG"
 echo "[run_tests] Unity EditMode 测试启动: $(date '+%H:%M:%S')"
 "$UNITY" -batchmode -projectPath "$PROJECT" -runTests -testPlatform EditMode \
     -testResults "$RESULTS" -logFile "$LOG" > /dev/null 2>&1 || true
