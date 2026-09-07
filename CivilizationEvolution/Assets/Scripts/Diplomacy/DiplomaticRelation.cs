@@ -11,9 +11,9 @@ namespace CivilizationEvolution.Diplomacy
         public int realmBId;
 
         // 核心三数值
-        [Range(-100f, 100f)] public float relation = 0f;      // 关系值：-100死敌 ~ 100亲密盟友
-        [Range(0f, 100f)] public float trust = 50f;            // 信任度：0完全不信任 ~ 100完全信任
-        [Range(0f, 100f)] public float threat = 50f;           // 威胁感知：0无威胁 ~ 100致命威胁
+        [UnityEngine.Range(-100f, 100f)] public float relation = 0f;      // 关系值：-100死敌 ~ 100亲密盟友
+        [UnityEngine.Range(0f, 100f)] public float trust = 50f;            // 信任度：0完全不信任 ~ 100完全信任
+        [UnityEngine.Range(0f, 100f)] public float threat = 50f;           // 威胁感知：0无威胁 ~ 100致命威胁
 
         // 状态
         public bool isAtWar = false;
@@ -25,7 +25,7 @@ namespace CivilizationEvolution.Diplomacy
 
         // ===== 敌对状态（不宣而战机制）=====
         /// <summary>敌对程度（0-100），≥50进入敌对状态，可直接攻击无惩罚</summary>
-        [Range(0f, 100f)] public float hostilityLevel = 0f;
+        [UnityEngine.Range(0f, 100f)] public float hostilityLevel = 0f;
 
         /// <summary>敌对状态开始日（-1=无敌对状态）</summary>
         public int hostileSinceDay = -1;

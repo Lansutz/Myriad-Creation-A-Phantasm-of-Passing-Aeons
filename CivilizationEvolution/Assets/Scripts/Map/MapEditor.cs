@@ -21,8 +21,8 @@ namespace CivilizationEvolution.Map
         [Header("画笔设置")]
         [SerializeField] private BrushMode brushMode = BrushMode.RaiseTerrain;
         [SerializeField] private BrushShape brushShape = BrushShape.Circle;
-        [Range(0, 20)] [SerializeField] private int brushRadius = 3;
-        [Range(0.01f, 0.5f)] [SerializeField] private float brushStrength = 0.1f;
+        [UnityEngine.Range(0, 20)] [SerializeField] private int brushRadius = 3;
+        [UnityEngine.Range(0.01f, 0.5f)] [SerializeField] private float brushStrength = 0.1f;
         [SerializeField] private bool continuousPaint = true; // 拖拽时连续绘制
 
         [Header("编辑器状态")]

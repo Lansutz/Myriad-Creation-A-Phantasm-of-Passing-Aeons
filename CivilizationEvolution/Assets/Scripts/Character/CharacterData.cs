@@ -139,12 +139,12 @@ namespace CivilizationEvolution.Role
         public float individualResistance = 50f;
 
         // 核心六维属性（0-100，企划书第九篇：武力/外交-社交/军事经略/学识/阴谋/管理）
-        [Range(0f, 100f)] public float martial = 50f;      // 武力
-        [Range(0f, 100f)] public float diplomacy = 50f;     // 外交-社交
-        [Range(0f, 100f)] public float warfare = 50f;       // 军事经略（原 piety 位，2026-08-29 定稿）
-        [Range(0f, 100f)] public float stewardship = 50f;   // 管理
-        [Range(0f, 100f)] public float intrigue = 50f;       // 谋略
-        [Range(0f, 100f)] public float learning = 50f;       // 学识
+        [UnityEngine.Range(0f, 100f)] public float martial = 50f;      // 武力
+        [UnityEngine.Range(0f, 100f)] public float diplomacy = 50f;     // 外交-社交
+        [UnityEngine.Range(0f, 100f)] public float warfare = 50f;       // 军事经略（原 piety 位，2026-08-29 定稿）
+        [UnityEngine.Range(0f, 100f)] public float stewardship = 50f;   // 管理
+        [UnityEngine.Range(0f, 100f)] public float intrigue = 50f;       // 谋略
+        [UnityEngine.Range(0f, 100f)] public float learning = 50f;       // 学识
 
         // ===== 容量型数值（企划书：当前值 + 容量等级 + 容量上限） =====
         /// <summary>威望当前值（0~当前容量上限）</summary>
@@ -155,21 +155,21 @@ namespace CivilizationEvolution.Role
         public float notoriety = 0f;
 
         // ===== 上限型数值（0-100 固定上限） =====
-        [Range(0f, 100f)] public float health = 100f;        // 健康
-        [Range(0f, 100f)] public float fertility = 50f;       // 生育力
-        [Range(0f, 100f)] public float stress = 0f;           // 压力（>60 人格漂移翻倍，>80 精神疾病风险）
-        [Range(0f, 100f)] public float dread = 0f;            // 恐惧
-        [Range(0f, 100f)] public float obesity = 20f;         // 肥胖（饮食/活动驱动，影响健康/魅力）
-        [Range(0f, 100f)] public float charm = 50f;           // 魅力
+        [UnityEngine.Range(0f, 100f)] public float health = 100f;        // 健康
+        [UnityEngine.Range(0f, 100f)] public float fertility = 50f;       // 生育力
+        [UnityEngine.Range(0f, 100f)] public float stress = 0f;           // 压力（>60 人格漂移翻倍，>80 精神疾病风险）
+        [UnityEngine.Range(0f, 100f)] public float dread = 0f;            // 恐惧
+        [UnityEngine.Range(0f, 100f)] public float obesity = 20f;         // 肥胖（饮食/活动驱动，影响健康/魅力）
+        [UnityEngine.Range(0f, 100f)] public float charm = 50f;           // 魅力
 
         // ===== 人格七维（企划书 9.3：-100~100，家族遗传基线，压力>60 漂移翻倍） =====
-        [Range(-100f, 100f)] public float boldness;      // 大胆
-        [Range(-100f, 100f)] public float compassion;    // 悲悯
-        [Range(-100f, 100f)] public float greed;         // 贪婪
-        [Range(-100f, 100f)] public float honor;         // 荣誉
-        [Range(-100f, 100f)] public float rationality;   // 理性
-        [Range(-100f, 100f)] public float vengefulness;  // 报复
-        [Range(-100f, 100f)] public float piety;         // 虔信（人格维度，非六维属性）
+        [UnityEngine.Range(-100f, 100f)] public float boldness;      // 大胆
+        [UnityEngine.Range(-100f, 100f)] public float compassion;    // 悲悯
+        [UnityEngine.Range(-100f, 100f)] public float greed;         // 贪婪
+        [UnityEngine.Range(-100f, 100f)] public float honor;         // 荣誉
+        [UnityEngine.Range(-100f, 100f)] public float rationality;   // 理性
+        [UnityEngine.Range(-100f, 100f)] public float vengefulness;  // 报复
+        [UnityEngine.Range(-100f, 100f)] public float piety;         // 虔信（人格维度，非六维属性）
 
         // ===== 精神疾病（简单版：单一活跃状态，由高压/恐惧/高龄/重病触发；id 见 MentalDisorderIds/注册表） =====
         public string mentalDisorderId = "";

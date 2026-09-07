@@ -17,18 +17,18 @@ namespace CivilizationEvolution.Race
         public string description;
 
         [Header("生理参数")]
-        [Range(0.5f, 2.5f)] public float baseLifespan = 1.0f;
-        [Range(0.5f, 2.0f)] public float growthRate = 1.0f;
-        [Range(0.5f, 2.0f)] public float reproductionRate = 1.0f;
-        [Range(0.5f, 2.0f)] public float physicalStrength = 1.0f;
-        [Range(0.5f, 2.0f)] public float diseaseResistance = 1.0f;
-        [Range(0.5f, 2.0f)] public float environmentalTolerance = 1.0f;
+        [UnityEngine.Range(0.5f, 2.5f)] public float baseLifespan = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float growthRate = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float reproductionRate = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float physicalStrength = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float diseaseResistance = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float environmentalTolerance = 1.0f;
 
         [Header("感官认知")]
-        [Range(0.5f, 2.0f)] public float visualAcuity = 1.0f;
-        [Range(0.5f, 2.0f)] public float auditoryRange = 1.0f;
-        [Range(0.5f, 2.0f)] public float olfactorySensitivity = 1.0f;
-        [Range(0.5f, 2.0f)] public float cognitiveCapacity = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float visualAcuity = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float auditoryRange = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float olfactorySensitivity = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float cognitiveCapacity = 1.0f;
 
         /// <summary>
         /// 变革性 0-100（唯一社会维度）
@@ -42,7 +42,7 @@ namespace CivilizationEvolution.Race
         /// - 文化演化偏向（高→创新分支多，低→正统传承强）
         /// </summary>
         [Header("变革性（唯一社会维度）")]
-        [Range(0f, 100f)] public float transformativity = 50f;
+        [UnityEngine.Range(0f, 100f)] public float transformativity = 50f;
 
         // ===== 变革性派生计算 =====
         public float CultureMaturityRate => 0.5f + transformativity / 100f;
@@ -68,17 +68,17 @@ namespace CivilizationEvolution.Race
 
 
         [Header("军事偏好")]
-        [Range(0.5f, 2.0f)] public float infantryBonus = 1.0f;
-        [Range(0.5f, 2.0f)] public float cavalryBonus = 1.0f;
-        [Range(0.5f, 2.0f)] public float navyBonus = 1.0f;
-        [Range(0.5f, 2.0f)] public float moraleBase = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float infantryBonus = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float cavalryBonus = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float navyBonus = 1.0f;
+        [UnityEngine.Range(0.5f, 2.0f)] public float moraleBase = 1.0f;
 
         [Header("DNA 基准（个体偏移的种族锚点）")]
-        [Tooltip("智慧基准 0-100，DNA 智慧偏移叠加其上")] [Range(0f, 100f)] public float intelligenceBaseline = 50f;
-        [Tooltip("勇武基准 0-100，DNA 勇武偏移叠加其上")] [Range(0f, 100f)] public float martialBaseline = 50f;
-        [Tooltip("寿命区间中心（年），DNA 寿命偏移决定个体预期寿命")] [Range(40f, 120f)] public float lifespanBaseYears = 75f;
-        [Tooltip("寿命区间半宽（年），区间 = 基准±半宽")] [Range(5f, 30f)] public float lifespanRangeYears = 15f;
-        [Tooltip("综合抗性基准 0-100")] [Range(0f, 100f)] public float resistanceBaseline = 50f;
+        [Tooltip("智慧基准 0-100，DNA 智慧偏移叠加其上")] [UnityEngine.Range(0f, 100f)] public float intelligenceBaseline = 50f;
+        [Tooltip("勇武基准 0-100，DNA 勇武偏移叠加其上")] [UnityEngine.Range(0f, 100f)] public float martialBaseline = 50f;
+        [Tooltip("寿命区间中心（年），DNA 寿命偏移决定个体预期寿命")] [UnityEngine.Range(40f, 120f)] public float lifespanBaseYears = 75f;
+        [Tooltip("寿命区间半宽（年），区间 = 基准±半宽")] [UnityEngine.Range(5f, 30f)] public float lifespanRangeYears = 15f;
+        [Tooltip("综合抗性基准 0-100")] [UnityEngine.Range(0f, 100f)] public float resistanceBaseline = 50f;
 
         [Header("DNA 基因频率（各基因座显性等位基因 A 的频率；列表未覆盖的基因座取默认 0.5）")]
         public List<LocusFrequency> locusFrequencies = new List<LocusFrequency>();
@@ -98,11 +98,11 @@ namespace CivilizationEvolution.Race
 
         [Header("环境适配")]
         public List<GameEnums.BiomeType> preferredBiomes = new List<GameEnums.BiomeType>();
-        [Range(0f, 1f)] public float coldTolerance = 0.5f;
-        [Range(0f, 1f)] public float heatTolerance = 0.5f;
-        [Range(0f, 1f)] public float aridityTolerance = 0.5f;
-        [Range(0f, 1f)] public float humidityTolerance = 0.5f;
-        [Range(0f, 1f)] public float altitudeTolerance = 0.5f;
+        [UnityEngine.Range(0f, 1f)] public float coldTolerance = 0.5f;
+        [UnityEngine.Range(0f, 1f)] public float heatTolerance = 0.5f;
+        [UnityEngine.Range(0f, 1f)] public float aridityTolerance = 0.5f;
+        [UnityEngine.Range(0f, 1f)] public float humidityTolerance = 0.5f;
+        [UnityEngine.Range(0f, 1f)] public float altitudeTolerance = 0.5f;
 
         /// <summary>计算在特定地块的环境适配度 0~1</summary>
         public float CalculateEnvironmentFitness(TileData tile)

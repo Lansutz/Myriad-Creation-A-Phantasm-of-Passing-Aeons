@@ -10,15 +10,7 @@ namespace CivilizationEvolution.Politics
     /// </summary>
     public static class SuccessionSystem
     {
-        public class SuccessionResult
-        {
-            public bool triggered;      // 是否有统治者死亡需要处理
-            public bool succeeded;      // 是否完成扶正
-            public bool disputed;       // 争议（绝嗣/幼主）
-            public int newRulerId = -1;
-            public int deadRulerId = -1; // 死亡统治者（绰号/谥号评估用）
-            public string reason = "";
-        }
+
 
         /// <summary>执行继位（统治者死亡时调用；返回结果供编年史/政体变迁注入）</summary>
         public static SuccessionResult ExecuteSuccession(RealmData realm, CharacterManager characters, int day)

@@ -65,7 +65,7 @@ namespace CivilizationEvolution.Role
     public struct CharacterRelation
     {
         public int otherCharacterId;
-        [Range(-200f, 200f)] public float opinion;  // 好感度（企划书：-200~200，双向不对称存储）
+        [UnityEngine.Range(-200f, 200f)] public float opinion;  // 好感度（企划书：-200~200，双向不对称存储）
         public RelationshipType type;
         public List<string> history;
 

@@ -21,39 +21,10 @@ namespace CivilizationEvolution.Politics
     // =====================================================================================
 
     /// <summary>单个阶层在政权内的社会画像</summary>
-    [Serializable]
-    public class ClassProfile
-    {
-        public GameEnums.SocialClass socialClass;
-        public float population;            // 该阶层总人口（跨地块汇总）
-        [Range(0f, 1f)] public float populationShare; // 占政权总人口比例
-        [Range(0f, 100f)] public float satisfaction;   // 需求综合满足度（来自 ClassNeedReport）
-        [Range(0f, 1f)] public float organization;     // 组织化系数
-        [Range(0f, 100f)] public float influence;      // 政治影响力（中性）
-        [Range(0f, 100f)] public float unrest;         // 反对/动荡能量
-        [Range(0f, 100f)] public float support;        // 支持能量
-        [Range(0f, 100f)] public float loyalty;        // 阶层忠诚（=平滑后的 classRelations）
-        public ClassNeedDimension chiefGrievance;      // 主要不满维度
-        public string chiefGrievanceReason = "";       // 主因文本
-        public ClassNeedReport needReport;             // 详细需求报告（UI/AI 用）
-    }
+
 
     /// <summary>政权级社会画像</summary>
-    [Serializable]
-    public class RealmSociety
-    {
-        public int realmId;
-        [System.NonSerialized]
-        public Dictionary<GameEnums.SocialClass, ClassProfile> classes
-            = new Dictionary<GameEnums.SocialClass, ClassProfile>();
-        public float totalPopulation;
-        [Range(0f, 100f)] public float unrestScore;    // 整体社会动荡（影响力加权怨气）
-        public GameEnums.SocialClass dominantClass = GameEnums.SocialClass.Peasant;     // 人口最多
-        public GameEnums.SocialClass mostRestlessClass = GameEnums.SocialClass.Peasant; // 动荡能量最高
 
-        public ClassProfile Get(GameEnums.SocialClass c) =>
-            classes.TryGetValue(c, out var p) ? p : null;
-    }
 
     /// <summary>
     /// 社会管理器：统计阶层人口 → 评估需求 → 计算政治能量 → 驱动阶层好感。

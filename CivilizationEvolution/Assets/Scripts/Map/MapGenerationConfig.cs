@@ -44,10 +44,10 @@ namespace CivilizationEvolution.Map
         public MapSizePreset MapSize = MapSizePreset.Medium;
 
         [Tooltip("陆地划分出的省份总数。数量越高，省界越密。")]
-        [Range(20, 2000)] public int ProvinceCount = 200;
+        [UnityEngine.Range(20, 2000)] public int ProvinceCount = 200;
 
         [Tooltip("平均每个省份的地块数量。地块是省界划分的最小调整单位，不参与模拟。总地块数=省份数×每省地块数。")]
-        [Range(8, 200)] public int TilesPerProvince = 24;
+        [UnityEngine.Range(8, 200)] public int TilesPerProvince = 24;
 
         [Tooltip("大陆布局形态。单陆=一块主大陆；双陆=两块大陆；环形陆地=大陆环绕中央海；成片群岛=无大块陆地。")]
         public ContinentShape Shape = ContinentShape.SingleLandmass;
@@ -122,16 +122,16 @@ namespace CivilizationEvolution.Map
         public bool OuterSeaBuffer = true;
 
         [Tooltip("海平面。设定海陆判定高度；提高会淹没低地、扩大海洋并切断陆桥。")]
-        [Range(0f, 1f)] public float SeaLevel = 0.05f;
+        [UnityEngine.Range(0f, 1f)] public float SeaLevel = 0.05f;
 
         [Tooltip("陆地量。塑造大陆骨架的整体强度；提高会让更多地形露出海面。")]
-        [Range(0f, 1f)] public float LandAmount = 0.85f;
+        [UnityEngine.Range(0f, 1f)] public float LandAmount = 0.85f;
 
         [Tooltip("破碎度。控制大陆与岛群的大尺度破碎程度；提高会形成更多、更小的陆块。")]
-        [Range(0f, 1f)] public float Fragmentation = 0.06f;
+        [UnityEngine.Range(0f, 1f)] public float Fragmentation = 0.06f;
 
         [Tooltip("海岸破碎度。只增加近海的海湾、半岛和小岛细节；不改变大陆的大致尺度。")]
-        [Range(0f, 1f)] public float CoastFragmentation = 0.80f;
+        [UnityEngine.Range(0f, 1f)] public float CoastFragmentation = 0.80f;
 
         // ============================================================
         // 【气候】分组
@@ -142,16 +142,16 @@ namespace CivilizationEvolution.Map
         public CirculationMode Circulation = CirculationMode.ThreeCell;
 
         [Tooltip("热赤道。上下平移热带、干湿带与寒带；0表示热赤道位于地图中央。")]
-        [Range(-1f, 1f)] public float ThermalEquator = 0f;
+        [UnityEngine.Range(-1f, 1f)] public float ThermalEquator = 0f;
 
         [Tooltip("北缘纬度。设置地图上边缘对应的纬度，用于截取全球气候带。")]
-        [Range(-90f, 90f)] public float NorthLatitude = 65f;
+        [UnityEngine.Range(-90f, 90f)] public float NorthLatitude = 65f;
 
         [Tooltip("南缘纬度。设置地图下边缘对应的纬度，用于截取全球气候带。")]
-        [Range(-90f, 90f)] public float SouthLatitude = -10f;
+        [UnityEngine.Range(-90f, 90f)] public float SouthLatitude = -10f;
 
         [Tooltip("全球温度偏移（度C）。负值=冰期（冰川扩张），正值=间冰期（温暖湿润）。本项目特色参数。")]
-        [Range(-8f, 8f)] public float GlobalTemperatureOffset = 0f;
+        [UnityEngine.Range(-8f, 8f)] public float GlobalTemperatureOffset = 0f;
 
         /// <summary>大气环流模式</summary>
         public enum CirculationMode
@@ -172,10 +172,10 @@ namespace CivilizationEvolution.Map
 
         [Header("【水文与地貌】")]
         [Tooltip("河网密度。控制形成河流所需的汇水面积阈值。稀疏=大河少，密集=河网密布。")]
-        [Range(0f, 1f)] public float RiverDensity = 0.5f;
+        [UnityEngine.Range(0f, 1f)] public float RiverDensity = 0.5f;
 
         [Tooltip("水力侵蚀强度。0=无侵蚀（原始地形），1=强侵蚀（深谷峡谷）。粒子基侵蚀模拟。")]
-        [Range(0f, 1f)] public float ErosionIntensity = 0.3f;
+        [UnityEngine.Range(0f, 1f)] public float ErosionIntensity = 0.3f;
 
         // ============================================================
         // 【省份划分】分组
@@ -183,10 +183,10 @@ namespace CivilizationEvolution.Map
 
         [Header("【省份划分】")]
         [Tooltip("省份大小差异。控制省份面积的差距；越高越容易同时出现大省和小省。")]
-        [Range(0f, 1f)] public float ProvinceSizeVariance = 0.90f;
+        [UnityEngine.Range(0f, 1f)] public float ProvinceSizeVariance = 0.90f;
 
         [Tooltip("省份规整度。整理省份种子的位置；越高越均匀规整，越低越自然不规则。")]
-        [Range(0f, 1f)] public float ProvinceRegularity = 1.0f;
+        [UnityEngine.Range(0f, 1f)] public float ProvinceRegularity = 1.0f;
 
         // ============================================================
         // 【高度图】分组
@@ -205,33 +205,33 @@ namespace CivilizationEvolution.Map
 
         [Header("【开局势力】")]
         [Tooltip("初始文明数量。0=无初始文明，玩家从部落开始。")]
-        [Range(0, 50)] public int InitialCivilizations = 10;
+        [UnityEngine.Range(0, 50)] public int InitialCivilizations = 10;
 
         [Tooltip("初始文明发展程度。低=部落起步，高=已有王国。")]
-        [Range(0f, 1f)] public float InitialCivilizationLevel = 0.3f;
+        [UnityEngine.Range(0f, 1f)] public float InitialCivilizationLevel = 0.3f;
 
         // ============================================================
         // 高级参数（折叠面板）
         // ============================================================
 
         [Header("【高级 · 地形细节】")]
-        [Range(0.5f, 4.0f)] public float TerrainFrequency = 1.8f;
-        [Range(3, 10)] public int TerrainOctaves = 6;
-        [Range(0f, 1.5f)] public float WarpStrength = 0.7f;
-        [Range(0.5f, 3.0f)] public float WarpFrequency = 1.3f;
-        [Range(0f, 0.5f)] public float PlateBoundaryBoost = 0.25f;
-        [Range(6, 20)] public int PlateCount = 12;
+        [UnityEngine.Range(0.5f, 4.0f)] public float TerrainFrequency = 1.8f;
+        [UnityEngine.Range(3, 10)] public int TerrainOctaves = 6;
+        [UnityEngine.Range(0f, 1.5f)] public float WarpStrength = 0.7f;
+        [UnityEngine.Range(0.5f, 3.0f)] public float WarpFrequency = 1.3f;
+        [UnityEngine.Range(0f, 0.5f)] public float PlateBoundaryBoost = 0.25f;
+        [UnityEngine.Range(6, 20)] public int PlateCount = 12;
 
         [Header("【高级 · 气候细节】")]
-        [Range(0f, 1f)] public float MonsoonStrength = 0.6f;
-        [Range(200f, 1500f)] public float OrographicPrecipFactor = 800f;
-        [Range(0.1f, 0.8f)] public float RainShadowFactor = 0.3f;
+        [UnityEngine.Range(0f, 1f)] public float MonsoonStrength = 0.6f;
+        [UnityEngine.Range(200f, 1500f)] public float OrographicPrecipFactor = 800f;
+        [UnityEngine.Range(0.1f, 0.8f)] public float RainShadowFactor = 0.3f;
 
         [Header("【高级 · 侵蚀细节】")]
-        [Range(0.1f, 0.8f)] public float ErosionRate = 0.3f;
-        [Range(0.1f, 0.8f)] public float DepositionRate = 0.3f;
-        [Range(0.005f, 0.05f)] public float EvaporationRate = 0.02f;
-        [Range(0f, 0.5f)] public float ErosionInertia = 0.05f;
+        [UnityEngine.Range(0.1f, 0.8f)] public float ErosionRate = 0.3f;
+        [UnityEngine.Range(0.1f, 0.8f)] public float DepositionRate = 0.3f;
+        [UnityEngine.Range(0.005f, 0.05f)] public float EvaporationRate = 0.02f;
+        [UnityEngine.Range(0f, 0.5f)] public float ErosionInertia = 0.05f;
 
         // ============================================================
         // 固定参数（不暴露）

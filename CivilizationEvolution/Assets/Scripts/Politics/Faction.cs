@@ -26,8 +26,8 @@ namespace CivilizationEvolution.Politics
 
         public FactionPlatform platform;
 
-        [Range(0f, 100f)] public float power;       // 政治力量（由阶层能量+领袖+成员聚合）
-        [Range(0f, 100f)] public float cohesion = 60f; // 凝聚力（低则分裂）
+        [UnityEngine.Range(0f, 100f)] public float power;       // 政治力量（由阶层能量+领袖+成员聚合）
+        [UnityEngine.Range(0f, 100f)] public float cohesion = 60f; // 凝聚力（低则分裂）
         public bool isInGovernment;                 // 是否当前执政/参与执政（保守派通常是）
 
         public Faction() { }

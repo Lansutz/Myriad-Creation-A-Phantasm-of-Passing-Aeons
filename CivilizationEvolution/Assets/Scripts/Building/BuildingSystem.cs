@@ -201,39 +201,9 @@ namespace CivilizationEvolution.Building
     }
 
     /// <summary>建筑定义</summary>
-    [System.Serializable]
-    public struct BuildingDef
-    {
-        public int buildingId;
-        public string buildingName;
-        public BuildingCategory category;
-        public int tier;
-        public float buildCost;
-        [System.NonSerialized]
-        public Dictionary<int, float> materialCost;
-        public int buildDays;
-        public float maintenanceCost;
-    }
+
 
     /// <summary>活跃建筑</summary>
-    [System.Serializable]
-    public class ActiveBuilding
-    {
-        public int buildingId;
-        public int tileIndex;
-        public int realmId;
-        public int constructionDays;
-        public int remainingDays;
-        public bool isComplete;
-    }
 
-    public enum BuildingCategory
-    {
-        Agriculture = 0,  // 农业
-        Craft = 1,        // 手工业
-        Road = 2,         // 道路
-        Defense = 3,      // 城防
-        Market = 4,       // 市场
-        Admin = 5         // 行政
-    }
+
 }

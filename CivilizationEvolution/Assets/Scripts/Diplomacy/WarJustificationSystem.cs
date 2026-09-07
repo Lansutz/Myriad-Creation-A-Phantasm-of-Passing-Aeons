@@ -10,77 +10,19 @@ namespace CivilizationEvolution.Diplomacy
     /// 由敌对活动、领土争端、宗教冲突等事件生成
     /// 有战争借口时宣战无惩罚（或惩罚小），无借口宣战有高惩罚
     /// </summary>
-    [Serializable]
-    public class CasusBelli
-    {
-        public int cbId;
-        public GameEnums.CasusBelliType type;
-        public int holderRealmId;      // 借口持有方（可以用这个借口宣战的一方）
-        public int targetRealmId;      // 借口针对方
-        public int generatedDay;       // 生成日期
-        public int expiryDay;           // 过期日期（-1=永不过期）
-        public string description;       // 借口描述
-        public float justificationStrength; // 正当性强度（0-100，影响宣战惩罚和战争目标选择）
-        public int relatedTileIndex;    // 相关地块（领土争端/劫掠地点等，-1=无）
-        public bool isUsed;             // 是否已被使用（宣战后标记为已用）
 
-        /// <summary>是否有效（未过期、未使用）</summary>
-        public bool IsValid(int currentDay)
-        {
-            return !isUsed && (expiryDay < 0 || currentDay < expiryDay);
-        }
-    }
 
     /// <summary>
     /// 战争目标（War Goal）——开战想要达到什么目的
     /// 决定战争分数的计算方式和和平条约的可选条款
     /// 与战争借口关联：不同借口支持不同的战争目标
     /// </summary>
-    [Serializable]
-    public class WarGoal
-    {
-        public int goalId;
-        public GameEnums.WarGoalType type;
-        public int attackerRealmId;
-        public int defenderRealmId;
-        public int targetTileIndex;     // 目标地块（夺取领土/边境调整等，-1=无）
-        public int targetRegionId;      // 目标地区（-1=无）
-        public float targetWarScore;    // 达成目标所需战争分数（0-100）
-        public string description;
-        public bool isPrimaryGoal;      // 是否为主要战争目标（一场战争可有多个目标）
 
-        /// <summary>获取该战争目标支持的条约条款类型</summary>
-        public List<TreatyClauseType> GetSupportedClauses()
-        {
-            return type switch
-            {
-                GameEnums.WarGoalType.ConquerTerritory => new List<TreatyClauseType>
-                    { TreatyClauseType.TerritoryCession, TreatyClauseType.WarReparations, TreatyClauseType.Truce },
-                GameEnums.WarGoalType.ConquerRegion => new List<TreatyClauseType>
-                    { TreatyClauseType.TerritoryCession, TreatyClauseType.WarReparations, TreatyClauseType.Humiliation, TreatyClauseType.Truce },
-                GameEnums.WarGoalType.Vassalization => new List<TreatyClauseType>
-                    { TreatyClauseType.Vassalage, TreatyClauseType.WarReparations, TreatyClauseType.Truce },
-                GameEnums.WarGoalType.Indemnity => new List<TreatyClauseType>
-                    { TreatyClauseType.WarReparations, TreatyClauseType.TradePrivileges, TreatyClauseType.Truce },
-                GameEnums.WarGoalType.Humiliation => new List<TreatyClauseType>
-                    { TreatyClauseType.Humiliation, TreatyClauseType.WarReparations, TreatyClauseType.Truce },
-                GameEnums.WarGoalType.Annihilation => new List<TreatyClauseType>
-                    { TreatyClauseType.Annexation, TreatyClauseType.TerritoryCession, TreatyClauseType.WarCrimesTrial },
-                GameEnums.WarGoalType.BorderAdjustment => new List<TreatyClauseType>
-                    { TreatyClauseType.TerritoryCession, TreatyClauseType.BorderDemilitarization, TreatyClauseType.Truce },
-                GameEnums.WarGoalType.ConvertReligion => new List<TreatyClauseType>
-                    { TreatyClauseType.ReligiousFreedom, TreatyClauseType.WarReparations, TreatyClauseType.Truce },
-                _ => new List<TreatyClauseType> { TreatyClauseType.WarReparations, TreatyClauseType.Truce }
-            };
-        }
-    }
 
     /// <summary>
     /// 和平条约条款——实际得到什么
     /// 战争结束后根据战争分数和战争目标生成具体条款
     /// </summary>
-
-
 
 
     /// <summary>

@@ -43,13 +43,13 @@ namespace CivilizationEvolution.Politics
         public int realmId;
 
         // —— 生存 ——
-        [Range(0f, 1.5f)] public float foodSecurity = 1f;   // 食品库存/需求比，1=刚好满足，&gt;1有余，&lt;1短缺
+        [UnityEngine.Range(0f, 1.5f)] public float foodSecurity = 1f;   // 食品库存/需求比，1=刚好满足，&gt;1有余，&lt;1短缺
 
         // —— 安全 ——
-        [Range(0f, 100f)] public float publicOrder = 60f;   // 政权地块平均治安/秩序
+        [UnityEngine.Range(0f, 100f)] public float publicOrder = 60f;   // 政权地块平均治安/秩序
         public bool atWar;                                  // 是否处于战争状态
         public bool warOnHomeSoil;                          // 本土是否有交战/占领（比 atWar 更伤）
-        [Range(0f, 100f)] public float disasterSeverity;    // 近期灾害/饥荒/瘟疫严重度
+        [UnityEngine.Range(0f, 100f)] public float disasterSeverity;    // 近期灾害/饥荒/瘟疫严重度
 
         // —— 税负：各阶层税负痛感 0~100（越高越痛；由 TaxSystem.GetTaxSatisfactionImpact 换算）——
         [System.NonSerialized]
@@ -60,19 +60,19 @@ namespace CivilizationEvolution.Politics
         public Dictionary<GameEnums.SocialClass, float> politicalAccess = new Dictionary<GameEnums.SocialClass, float>();
 
         // —— 经济 ——
-        [Range(0f, 1f)] public float tradeFlow = 1f;        // 贸易路线畅通度（被劫/封锁则下降）
-        [Range(0f, 1f)] public float monetaryStability = 1f;// 货币稳定度（1-通胀归一）
+        [UnityEngine.Range(0f, 1f)] public float tradeFlow = 1f;        // 贸易路线畅通度（被劫/封锁则下降）
+        [UnityEngine.Range(0f, 1f)] public float monetaryStability = 1f;// 货币稳定度（1-通胀归一）
 
         // —— 制度承认：各阶层是否被制度/革新承认为合法存在（SocialClassAvailability 预计算）——
         [System.NonSerialized]
         public Dictionary<GameEnums.SocialClass, bool> classRecognized = new Dictionary<GameEnums.SocialClass, bool>();
 
         // —— 合法性 ——
-        [Range(0f, 100f)] public float stability = 50f;     // 政权稳定度（RealmData.stability）
-        [Range(0f, 100f)] public float legitimacy = 50f;    // 统治合法性（威望/正统/信仰，外部综合）
+        [UnityEngine.Range(0f, 100f)] public float stability = 50f;     // 政权稳定度（RealmData.stability）
+        [UnityEngine.Range(0f, 100f)] public float legitimacy = 50f;    // 统治合法性（威望/正统/信仰，外部综合）
 
         // —— 特权保障：贵族世袭/免税/土地特权被政体保障的程度 0~1 ——
-        [Range(0f, 1f)] public float privilegeSecurity = 1f;
+        [UnityEngine.Range(0f, 1f)] public float privilegeSecurity = 1f;
 
         public float GetTaxPain(GameEnums.SocialClass cls) => taxPain != null ? taxPain.GetValueOrDefault(cls, 20f) : 20f;
         public float GetPoliticalAccess(GameEnums.SocialClass cls) => politicalAccess != null ? politicalAccess.GetValueOrDefault(cls, 0.2f) : 0.2f;
@@ -84,7 +84,7 @@ namespace CivilizationEvolution.Politics
     public struct NeedDimensionScore
     {
         public ClassNeedDimension dimension;
-        [Range(0f, 100f)] public float score;   // 满足度 0~100
+        [UnityEngine.Range(0f, 100f)] public float score;   // 满足度 0~100
         public string reason;                   // 低于阈值时的主因（UI/AI 用，如"饥荒"、"商税过重"）
     }
 
@@ -95,9 +95,9 @@ namespace CivilizationEvolution.Politics
         public GameEnums.SocialClass socialClass;
         [System.NonSerialized]
         public Dictionary<ClassNeedDimension, NeedDimensionScore> dimensions = new Dictionary<ClassNeedDimension, NeedDimensionScore>();
-        [Range(0f, 100f)] public float overallSatisfaction = 50f;  // 加权综合满足度
+        [UnityEngine.Range(0f, 100f)] public float overallSatisfaction = 50f;  // 加权综合满足度
         public ClassNeedDimension worstDimension;                  // 最差维度（主要矛盾）
-        [Range(0f, 100f)] public float worstScore = 100f;
+        [UnityEngine.Range(0f, 100f)] public float worstScore = 100f;
         public float population;                                   // 该阶层在政权内的总人口（外部统计填入）
 
         public NeedDimensionScore Get(ClassNeedDimension d) =>

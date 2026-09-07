@@ -21,94 +21,19 @@ namespace CivilizationEvolution.Politics
     // =====================================================================================
 
     /// <summary>关键节点类型（打开制度流动窗口的偶然事件）</summary>
-    public enum CriticalJunctureType
-    {
-        SuccessionCrisis,   // 继承危机：绝嗣/幼主/继位争议
-        WarDefeat,          // 战争失败：主力被歼/兵临首都，暴露国家无能（斯考切波/蒂利）
-        FiscalCollapse,     // 财政破产：国库枯竭、国家停摆
-        EliteSplit,         // 精英分裂：统治集团内斗、保守阵营凝聚力崩溃
-        PopularUprising,    // 民众起义：最受压迫阶层组织化起事
-        ForeignConquest,    // 外部征服：大片领土被占，强加或倒逼制度
-        StrongReformer      // 强势改革者：高能力统治者借改革派上位
-    }
+
 
     /// <summary>节点博弈结果</summary>
-    public enum JunctureOutcomeType
-    {
-        None,           // 未发生
-        Reform,         // 改革：胜派推动一个或多个政体成分改变
-        Compromise,     // 妥协：力量接近，仅改最容易的一维
-        Reaction,       // 反扑/复辟：保守派胜出，甚至强化旧制
-        Stalemate,      // 停滞：窗口关闭，什么都没变（超稳定结构）
-        Collapse        // 崩溃：各方失控，稳定度暴跌、内战风险（交由战争/叛乱系统）
-    }
+
 
     /// <summary>结构性张力（中时段缓慢积累，不直接触发变革）</summary>
-    [Serializable]
-    public class StructuralTension
-    {
-        [Range(0f, 100f)] public float classMismatch;       // 阶级错配：壮大的阶层被政体排除
-        [Range(0f, 100f)] public float fiscalMilitary;      // 财政-军事压力
-        [Range(0f, 100f)] public float legitimacyErosion;   // 合法性侵蚀
-        [Range(0f, 100f)] public float total;               // 综合张力
 
-        public void Recalculate(RealmSociety society, RealmSituation sit, RealmData realm)
-        {
-            // 阶级错配：各阶层影响力 × 被政治通道排除程度（新兴自由民权重最高）
-            float mismatch = 0f, wsum = 0f;
-            foreach (var kv in society.classes)
-            {
-                var p = kv.Value;
-                float access = sit.GetPoliticalAccess(kv.Key);
-                float excluded = 1f - Mathf.Clamp01(access);
-                float w = p.influence;
-                mismatch += p.influence * excluded * (1f + (100f - p.satisfaction) / 200f);
-                wsum += w;
-            }
-            classMismatch = wsum > 0f ? Mathf.Clamp(mismatch / wsum * 100f, 0f, 100f) : 0f;
-
-            // 财政-军事压力：战争（尤其本土）+ 国库空虚 + 高税负痛苦
-            float fiscal = 0f;
-            if (sit.atWar) fiscal += 25f;
-            if (sit.warOnHomeSoil) fiscal += 30f;
-            fiscal += Mathf.Clamp(-realm.treasury / 20f, 0f, 30f); // 国库越负压力越大
-            float avgTaxPain = 0f; int tc = 0;
-            foreach (var v in sit.taxPain.Values) { avgTaxPain += v; tc++; }
-            if (tc > 0) fiscal += (avgTaxPain / tc) * 0.15f;
-            fiscalMilitary = Mathf.Clamp(fiscal, 0f, 100f);
-
-            // 合法性侵蚀
-            legitimacyErosion = Mathf.Clamp((100f - sit.legitimacy) * 0.6f + (100f - sit.stability) * 0.4f, 0f, 100f);
-
-            total = Mathf.Clamp(classMismatch * 0.4f + fiscalMilitary * 0.3f + legitimacyErosion * 0.3f, 0f, 100f);
-        }
-    }
 
     /// <summary>进行中的关键节点（窗口）</summary>
-    [Serializable]
-    public class ActiveJuncture
-    {
-        public CriticalJunctureType type;
-        public int startDay;
-        public int remainingDays;      // 窗口剩余（窗口短暂）
-        [Range(0f, 100f)] public float severity;
-        public bool resolved;
-        public JunctureOutcomeType outcome = JunctureOutcomeType.None;
-        public string note = "";
-    }
+
 
     /// <summary>单政权的政体变迁运行时状态</summary>
-    [Serializable]
-    public class RegimeChangeState
-    {
-        public int realmId;
-        public StructuralTension tension = new StructuralTension();
-        public ActiveJuncture activeJuncture;           // null=路径依赖期
-        public int compositionEstablishedDay;           // 现政体确立日（路径依赖黏性）
-        [Range(0f, 100f)] public float institutionalInertia; // 制度黏性（存续越久越难撼动）
-        public List<string> history = new List<string>();// 变迁摘要（调试/编年史）
-        public bool IsWindowOpen => activeJuncture != null && !activeJuncture.resolved;
-    }
+
 
     /// <summary>
     /// 政体变迁动力学主体。每政权一份 RegimeChangeState；

@@ -485,13 +485,13 @@ namespace CivilizationEvolution.AI
     {
         public string personalityName;
 
-        [Range(0f, 1f)] public float expansionBias;      // 扩张偏好
-        [Range(0f, 1f)] public float economicBias;        // 经济偏好
-        [Range(0f, 1f)] public float diplomaticBias;      // 外交偏好
-        [Range(0f, 1f)] public float militaryBias;        // 军事偏好
-        [Range(0f, 1f)] public float aggression;           // 侵略性
-        [Range(0f, 1f)] public float riskTolerance;       // 风险承受
-        [Range(0f, 2f)] public float researchMultiplier;  // 研究倍率
+        [UnityEngine.Range(0f, 1f)] public float expansionBias;      // 扩张偏好
+        [UnityEngine.Range(0f, 1f)] public float economicBias;        // 经济偏好
+        [UnityEngine.Range(0f, 1f)] public float diplomaticBias;      // 外交偏好
+        [UnityEngine.Range(0f, 1f)] public float militaryBias;        // 军事偏好
+        [UnityEngine.Range(0f, 1f)] public float aggression;           // 侵略性
+        [UnityEngine.Range(0f, 1f)] public float riskTolerance;       // 风险承受
+        [UnityEngine.Range(0f, 2f)] public float researchMultiplier;  // 研究倍率
 
         public List<InnovationDomain> preferredDomains;
         /// <summary>固定原型（true=原型预设固定——SyncPersonality 跳过性格覆盖——

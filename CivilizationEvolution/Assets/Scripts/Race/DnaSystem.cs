@@ -15,103 +15,33 @@ namespace CivilizationEvolution.Race
     /// </summary>
 
     /// <summary>等位基因（显性 A / 隐性 a）</summary>
-    public enum Allele
-    {
-        Dominant,   // 显性 A
-        Recessive   // 隐性 a
-    }
+
 
     /// <summary>基因座（原版 6 基因座，模组可扩展但建议 ≤15）
     /// 注：变革性为种族设定（RaceData.transformativity），社会维度归文化传统，不做个体级基因座</summary>
-    public enum DnaLocus
-    {
-        Longevity,      // 寿命基因座：基础寿命偏移
-        Intelligence,   // 智慧基因座：智慧值偏移
-        Martial,        // 勇武基因座：勇武值偏移
-        Resistance,     // 抗性基因座：综合抗性偏移
-        Appearance,     // 外观基因座：肤色/体型/面部（纯外观）
-        TalentDefect    // 天赋/缺陷基因座：特殊天赋或隐性遗传病
-    }
+
 
     /// <summary>一对等位基因（父源 + 母源）</summary>
-    [Serializable]
-    public struct LocusPair
-    {
-        public Allele paternal;   // 来自父亲的等位基因
-        public Allele maternal;   // 来自母亲的等位基因
 
-        public LocusPair(Allele p, Allele m) { paternal = p; maternal = m; }
-
-        /// <summary>AA 纯合显性</summary>
-        public bool IsHomozygousDominant => paternal == Allele.Dominant && maternal == Allele.Dominant;
-        /// <summary>Aa 杂合</summary>
-        public bool IsHeterozygous => paternal != maternal;
-        /// <summary>aa 纯合隐性</summary>
-        public bool IsHomozygousRecessive => paternal == Allele.Recessive && maternal == Allele.Recessive;
-    }
 
     /// <summary>
     /// 个体 DNA：7 基因座 + 突变计数 + 近亲系数
     /// 仅有名角色存储；人口块不存个体 DNA（属性分布由种族基因频率+统计决定）
     /// </summary>
-    [Serializable]
-    public class DnaData
-    {
-        [System.NonSerialized]
-        public Dictionary<DnaLocus, LocusPair> loci = new Dictionary<DnaLocus, LocusPair>();
-        public int mutationCount;              // 该个体 DNA 发生突变的基因座数量
-        public float inbreedingCoefficient;    // 近亲系数 0~1
 
-        public LocusPair GetLocus(DnaLocus locus)
-        {
-            return loci.TryGetValue(locus, out var pair) ? pair : new LocusPair(Allele.Dominant, Allele.Dominant);
-        }
-
-        public void SetLocus(DnaLocus locus, LocusPair pair) => loci[locus] = pair;
-    }
 
     /// <summary>DNA 表达结果（角色初始属性偏移与先天特征）</summary>
-    [Serializable]
-    public struct DnaExpression
-    {
-        public float longevityOffsetYears;   // 寿命偏移（年）
-        public float intelligenceOffset;     // 智慧偏移（±15 量级）
-        public float martialOffset;          // 勇武偏移（±15 量级）
-        public float resistanceOffset;       // 综合抗性偏移（±15 量级）
-        public string appearanceTag;         // 外观标签（肤色/体型/面部）
-        public string talentId;              // 触发的天赋（空=无）
-        public string defectId;              // 触发的遗传病（空=无）
-        public bool carriesDefect;           // 隐性携带者（Aa，不发病但可遗传）
-    }
+
 
     /// <summary>
     /// 天赋/缺陷定义
     /// 数据驱动：定义文件（Dna/DnaDefs.json，Base/Mods 可覆盖）只存键；
     /// name/description 为内置回退（未加载本地化表时用），显示优先走 GetName()/GetDescription()
     /// </summary>
-    [Serializable]
-    public class TalentDefectDef
-    {
-        public string id;
-        public string name;
-        public bool isTalent;     // true=特殊天赋，false=隐性遗传病
-        public string stat;       // 影响属性键：learning / martial / lifespan / appearance
-        public float amount;      // 修正量
-        public string description;
 
-        /// <summary>显示名：本地化表优先（&lt;id&gt;_name），回退内置字段</summary>
-        public string GetName() => Localization.Has(id + "_name") ? Localization.Get(id + "_name") : name;
-        /// <summary>写实描述：本地化表优先（&lt;id&gt;_desc），回退内置字段</summary>
-        public string GetDescription() => Localization.Has(id + "_desc") ? Localization.Get(id + "_desc") : description;
-    }
 
     /// <summary>种族基因座频率（各基因座显性等位基因 A 的频率，0-1）</summary>
-    [Serializable]
-    public class LocusFrequency
-    {
-        public DnaLocus locus;
-        [Range(0f, 1f)] public float dominantFrequency = 0.5f;
-    }
+
 
     /// <summary>
     /// DNA 系统核心：生成 / 遗传 / 突变 / 近亲 / 表达

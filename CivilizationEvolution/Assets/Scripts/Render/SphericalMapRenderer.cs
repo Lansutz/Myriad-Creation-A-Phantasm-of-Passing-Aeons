@@ -15,10 +15,10 @@ namespace CivilizationEvolution.Render
         public float radius = 10f;
 
         [Tooltip("经度分段数（越高越平滑）")]
-        [Range(16, 256)] public int longitudeSegments = 128;
+        [UnityEngine.Range(16, 256)] public int longitudeSegments = 128;
 
         [Tooltip("纬度分段数（越高越平滑）")]
-        [Range(8, 128)] public int latitudeSegments = 64;
+        [UnityEngine.Range(8, 128)] public int latitudeSegments = 64;
 
         [Header("引用")]
         [Tooltip("平面地图渲染器（获取其输出纹理）")]

@@ -14,40 +14,6 @@ namespace CivilizationEvolution.Diplomacy
     {
         // ===== 谈判条款 =====
 
-        [Serializable]
-        public class NegotiationClause
-        {
-            public TreatyClauseType type;
-            public string description;
-            public int cost;
-            public float value = 0f;
-            public int durationDays = 365 * 5;
-            public bool isDemanded = true;
-        }
-
-        [Serializable]
-        public class NegotiationState
-        {
-            public int attackerId;
-            public int defenderId;
-            public float attackerWarScore;
-            public float defenderWarScore;
-            public List<NegotiationClause> attackerDemands = new List<NegotiationClause>();
-            public List<NegotiationClause> attackerConcessions = new List<NegotiationClause>();
-
-            public int AttackerTotalCost
-            {
-                get
-                {
-                    int total = 0;
-                    foreach (var c in attackerDemands) total += c.cost;
-                    foreach (var c in attackerConcessions) total -= c.cost;
-                    return total;
-                }
-            }
-
-            public bool IsAttackerWithinLimit => AttackerTotalCost <= Mathf.CeilToInt(attackerWarScore);
-        }
 
         // ===== 可用条款生成 =====
 

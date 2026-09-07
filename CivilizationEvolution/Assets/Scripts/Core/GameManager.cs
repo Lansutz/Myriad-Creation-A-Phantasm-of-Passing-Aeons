@@ -24,7 +24,7 @@ namespace CivilizationEvolution.Core
         }
 
         [Header("游戏速度")]
-        [Range(0f, 5f)]
+        [UnityEngine.Range(0f, 5f)]
         [SerializeField] private float gameSpeed = 1f;
 
         [Header("世界引用")]
