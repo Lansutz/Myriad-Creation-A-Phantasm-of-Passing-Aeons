@@ -89,18 +89,18 @@ namespace CivilizationEvolution.Tests
         {
             // 普通绰号（征服者——行为阈值）
             var conqueror = _cm.CreateCharacter("征", "者", 60, true, 0, 0, 0, CharacterRole.Ruler);
-            var rec = new EvaluationSystem.AchievementRecord { warsWon = 4, conquests = 6 };
+            var rec = new AchievementRecord { warsWon = 4, conquests = 6 };
             Assert.AreEqual("征服者", EpithetSystem.EvaluateAndGrant(conqueror, rec), "征服 6 块→征服者");
 
             // 狐狸（诈术——不覆盖已有）
             var fox = _cm.CreateCharacter("狡", "狐", 60, true, 0, 0, 0, CharacterRole.Ruler);
-            var recFox = new EvaluationSystem.AchievementRecord { schemesSucceeded = 6 };
+            var recFox = new AchievementRecord { schemesSucceeded = 6 };
             Assert.AreEqual("狐狸", EpithetSystem.EvaluateAndGrant(fox, recFox), "诈术 6 次→狐狸");
 
             // 伟大者（区域影响力≥0.6——独立于成就分——阿尔弗雷德式：
             // 未控全英格兰但区域内影响力大——发放较多——不是严苛评价）
             var great = _cm.CreateCharacter("中", "兴", 60, true, 0, 0, 0, CharacterRole.Ruler);
-            var recGreat = new EvaluationSystem.AchievementRecord
+            var recGreat = new AchievementRecord
             {
                 warsWon = 2, conquests = 1, reignYears = 25f, // 成就一般——评价不高
                 regionalInfluence = 0.7f                       // 但区域内影响力前列
@@ -109,7 +109,7 @@ namespace CivilizationEvolution.Tests
 
             // 区域影响力不足（0.4）→ 不给伟大者（普通绰号照常）
             var minor = _cm.CreateCharacter("小", "邦", 60, true, 0, 0, 0, CharacterRole.Ruler);
-            var recMinor = new EvaluationSystem.AchievementRecord
+            var recMinor = new AchievementRecord
             {
                 warsWon = 4, conquests = 6, regionalInfluence = 0.3f
             };
@@ -117,7 +117,7 @@ namespace CivilizationEvolution.Tests
 
             // 传奇升格（征服王——传奇线 900+ 跨文化大征服——覆盖普通绰号）
             var alexander = _cm.CreateCharacter("亚", "历山大", 60, true, 0, 0, 0, CharacterRole.Ruler);
-            var recLeg = new EvaluationSystem.AchievementRecord
+            var recLeg = new AchievementRecord
             {
                 warsWon = 20, conquests = 15, expeditions = 5, cultureActs = 3, religionActs = 1,
                 reignYears = 13f
@@ -126,7 +126,7 @@ namespace CivilizationEvolution.Tests
 
             // 无地者（反讽中性）
             var landless = _cm.CreateCharacter("无", "地", 60, true, 0, 0, 0, CharacterRole.Ruler);
-            var recLand = new EvaluationSystem.AchievementRecord { lostAllLands = 1 };
+            var recLand = new AchievementRecord { lostAllLands = 1 };
             Assert.AreEqual("无地者", EpithetSystem.EvaluateAndGrant(landless, recLand), "失地→无地者");
         }
 
@@ -181,13 +181,13 @@ namespace CivilizationEvolution.Tests
             };
             caligula.boldness = 60f; caligula.rationality = -40f;
             caligula.vengefulness = 60f; caligula.honor = -30f; caligula.compassion = -50f;
-            var rec = new EvaluationSystem.AchievementRecord { reignYears = 15f };
+            var rec = new AchievementRecord { reignYears = 15f };
             Assert.AreEqual("疯王", EpithetSystem.EvaluateAndGrant(caligula, rec), "NPD 组合+在位→疯王");
 
             // 有精神疾病≠疯王（疯子=临床——查理六世式）
             var madman = _cm2.CreateCharacter("查", "理", 40, true, 0, 0, 0, CharacterRole.Commoner);
             madman.mentalDisorderId = "delirium";
-            var rec2 = new EvaluationSystem.AchievementRecord();
+            var rec2 = new AchievementRecord();
             Assert.AreEqual("疯子", EpithetSystem.EvaluateAndGrant(madman, rec2), "精神疾病→疯子（非疯王）");
         }
 
@@ -200,7 +200,7 @@ namespace CivilizationEvolution.Tests
             harald.boldness = 0f; harald.greed = 0f; harald.honor = 40f;
             harald.rationality = 0f; harald.vengefulness = 0f; harald.piety = 0f;
             harald.compassion = 40f;
-            var rec = new EvaluationSystem.AchievementRecord
+            var rec = new AchievementRecord
             {
                 expeditions = 7, poetryActs = 5, warsWon = 8, conquests = 4,
                 religionActs = 2, threatsResolved = 3, reignYears = 20f
@@ -209,7 +209,7 @@ namespace CivilizationEvolution.Tests
 
             // 诗人（普通——双向）——诗作多但非统治者/未达贤君
             var poet = _cm3.CreateCharacter("游", "吟", 40, true, 0, 0, 0, CharacterRole.Commoner);
-            var rec2 = new EvaluationSystem.AchievementRecord { poetryActs = 5, expeditions = 2 };
+            var rec2 = new AchievementRecord { poetryActs = 5, expeditions = 2 };
             Assert.AreEqual("诗人", EpithetSystem.EvaluateAndGrant(poet, rec2), "诗作→诗人（普通双向）");
         }
 
@@ -220,7 +220,7 @@ namespace CivilizationEvolution.Tests
             var _cm4 = new CharacterManager();
             var bald = _cm4.CreateCharacter("秃", "头", 50, true, 0, 0, 0, CharacterRole.Ruler);
             bald.bodyMarks.Add("秃顶");
-            var rec = new EvaluationSystem.AchievementRecord { reignYears = 5f };
+            var rec = new AchievementRecord { reignYears = 5f };
             Assert.AreEqual("秃头", EpithetSystem.EvaluateAndGrant(bald, rec), "秃顶标记→秃头");
 
             // 成对体系：黑王子（继承人）/黑王（在位君主）
@@ -256,12 +256,12 @@ namespace CivilizationEvolution.Tests
         public void Epithet_SecondBatch_Judgments()
         {
             var cm2 = new CharacterManager();
-            var rec = new EvaluationSystem.AchievementRecord { reignYears = 10f };
+            var rec = new AchievementRecord { reignYears = 10f };
 
             // 屠夫（屠城）
             var butcher = cm2.CreateCharacter("屠", "夫", 50, true, 0, 0, 0, CharacterRole.Ruler);
             butcher.compassion = -80f;
-            var recB = new EvaluationSystem.AchievementRecord { massacres = 2 };
+            var recB = new AchievementRecord { massacres = 2 };
             Assert.AreEqual("屠夫", EpithetSystem.EvaluateAndGrant(butcher, recB), "屠城→屠夫");
 
             // 胖子（肥胖系统）
@@ -271,37 +271,37 @@ namespace CivilizationEvolution.Tests
 
             // 篡位者
             var usurper = cm2.CreateCharacter("篡", "位", 50, true, 0, 0, 0, CharacterRole.Ruler);
-            var recU = new EvaluationSystem.AchievementRecord { usurpedThrone = true };
+            var recU = new AchievementRecord { usurpedThrone = true };
             Assert.AreEqual("篡位者", EpithetSystem.EvaluateAndGrant(usurper, recU), "篡位→篡位者");
 
             // 和平者（在位久无战）
             var pacifist = cm2.CreateCharacter("和", "平", 50, true, 0, 0, 0, CharacterRole.Ruler);
             pacifist.boldness = -40f; pacifist.compassion = 30f;
-            var recP = new EvaluationSystem.AchievementRecord { reignYears = 25f, rebellions = 2 };
+            var recP = new AchievementRecord { reignYears = 25f, rebellions = 2 };
             // 有内乱但对外无战→和平者（公正者需无叛乱——区分）
             Assert.AreEqual("和平者", EpithetSystem.EvaluateAndGrant(pacifist, recP), "对外无战在位久→和平者");
 
             // 铁锤（防御大捷）
             var hammer = cm2.CreateCharacter("铁", "锤", 50, true, 0, 0, 0, CharacterRole.Ruler);
             hammer.compassion = 0f;
-            var recH = new EvaluationSystem.AchievementRecord { defensiveWins = 4, reignYears = 8f };
+            var recH = new AchievementRecord { defensiveWins = 4, reignYears = 8f };
             Assert.AreEqual("铁锤", EpithetSystem.EvaluateAndGrant(hammer, recH), "防御大捷 4→铁锤");
 
             // 圣者（死后封圣——与圣君区分）
             var saint = cm2.CreateCharacter("圣", "者", 70, true, 0, 0, 0, CharacterRole.Commoner);
             saint.deathDay = 1; // 已死
-            var recS = new EvaluationSystem.AchievementRecord { canonized = true };
+            var recS = new AchievementRecord { canonized = true };
             Assert.AreEqual("圣者", EpithetSystem.EvaluateAndGrant(saint, recS), "死后封圣→圣者");
 
             // 受爱戴者 vs 被憎恨者
             var beloved = cm2.CreateCharacter("爱", "民", 50, true, 0, 0, 0, CharacterRole.Ruler);
             beloved.compassion = 60f; beloved.greed = -20f; beloved.honor = 40f;
-            var recL = new EvaluationSystem.AchievementRecord { reignYears = 20f, rebellions = 0 };
+            var recL = new AchievementRecord { reignYears = 20f, rebellions = 0 };
             Assert.AreEqual("受爱戴者", EpithetSystem.EvaluateAndGrant(beloved, recL), "无叛乱宽仁→受爱戴者");
 
             var hated = cm2.CreateCharacter("苛", "政", 50, true, 0, 0, 0, CharacterRole.Ruler);
             hated.compassion = -50f;
-            var recT = new EvaluationSystem.AchievementRecord { reignYears = 12f, rebellions = 4 };
+            var recT = new AchievementRecord { reignYears = 12f, rebellions = 4 };
             Assert.AreEqual("被憎恨者", EpithetSystem.EvaluateAndGrant(hated, recT), "叛乱多苛政→被憎恨者");
         }
 
@@ -314,7 +314,7 @@ namespace CivilizationEvolution.Tests
             mayor.boldness = 0f; mayor.greed = 0f; mayor.honor = 20f;
             mayor.rationality = 0f; mayor.vengefulness = 0f; mayor.piety = 0f;
             mayor.compassion = 0f;
-            var rec = new EvaluationSystem.AchievementRecord
+            var rec = new AchievementRecord
             {
                 warsWon = 8, defensiveWins = 4, reignYears = 15f, expeditions = 2, cultureActs = 1
             }; // 50+240+100+15=405——不足 550？——warsWon 8*30=240+defensive 4*25=100+reign?
@@ -327,7 +327,7 @@ namespace CivilizationEvolution.Tests
             var king = cm2.CreateCharacter("王", "者", 60, true, 0, 0, 0, CharacterRole.Ruler);
             king.boldness = 0f; king.greed = 0f; king.honor = 0f;
             king.rationality = 0f; king.vengefulness = 0f; king.piety = 0f; king.compassion = 0f;
-            var rec2 = new EvaluationSystem.AchievementRecord { warsWon = 12, conquests = 3, reignYears = 15f };
+            var rec2 = new AchievementRecord { warsWon = 12, conquests = 3, reignYears = 15f };
             Assert.AreNotEqual("无冠者", EpithetSystem.EvaluateAndGrant(king, rec2), "在位君主非无冠者");
         }
 
@@ -338,7 +338,7 @@ namespace CivilizationEvolution.Tests
             var cm2 = new CharacterManager();
             var youngLouis = cm2.CreateCharacter("路", "易", 40, true, 0, 0, 0, CharacterRole.Ruler);
             youngLouis.rationality = -40f; // 决策反复——不够老练
-            var rec = new EvaluationSystem.AchievementRecord
+            var rec = new AchievementRecord
             {
                 youngAccession = true, ruledUnderRegency = true, reignYears = 20f
             };
@@ -347,7 +347,7 @@ namespace CivilizationEvolution.Tests
             // 幼年即位但后来英明（无被架空无低理性）→ 不给年轻者（无讽刺语境）
             var capable = cm2.CreateCharacter("贤", "主", 60, true, 0, 0, 0, CharacterRole.Ruler);
             capable.rationality = 60f; capable.boldness = 50f;
-            var rec2 = new EvaluationSystem.AchievementRecord
+            var rec2 = new AchievementRecord
             {
                 youngAccession = true, ruledUnderRegency = false, reignYears = 40f,
                 warsWon = 8, conquests = 4, cultureActs = 3
@@ -363,13 +363,13 @@ namespace CivilizationEvolution.Tests
             // 童贞女王（女性统治者+终身未婚）
             var elizabeth = cm2.CreateCharacter("伊", "丽莎白", 60, false, 0, 0, 0, CharacterRole.Ruler);
             elizabeth.compassion = 30f; elizabeth.rationality = 40f;
-            var rec = new EvaluationSystem.AchievementRecord { reignYears = 30f, warsWon = 3 };
+            var rec = new AchievementRecord { reignYears = 30f, warsWon = 3 };
             Assert.AreEqual("童贞女王", EpithetSystem.EvaluateAndGrant(elizabeth, rec), "未婚女王→童贞女王");
 
             // 疯女（女性+精神疾病——胡安娜式——男性则疯子）
             var joan = cm2.CreateCharacter("胡", "安娜", 50, false, 0, 0, 0, CharacterRole.Ruler);
             joan.mentalDisorderId = "melancholy";
-            var rec2 = new EvaluationSystem.AchievementRecord { reignYears = 10f };
+            var rec2 = new AchievementRecord { reignYears = 10f };
             Assert.AreEqual("疯女", EpithetSystem.EvaluateAndGrant(joan, rec2), "女性精神疾病→疯女");
 
             // 血腥玛丽（女性统治者+镇压）
@@ -377,19 +377,19 @@ namespace CivilizationEvolution.Tests
             var mary = cm2.CreateCharacter("玛", "丽", 40, false, 0, 0, 0, CharacterRole.Ruler);
             mary.compassion = -70f;
             mary.spouseId = 1;
-            var rec3 = new EvaluationSystem.AchievementRecord { massacres = 2, reignYears = 12f };
+            var rec3 = new AchievementRecord { massacres = 2, reignYears = 12f };
             Assert.AreEqual("屠夫", EpithetSystem.EvaluateAndGrant(mary, rec3), "女性屠城者→屠夫[通用]");
 
             // 圣女（女性封圣）
             var joanArc = cm2.CreateCharacter("贞", "德", 30, false, 0, 0, 0, CharacterRole.Commoner);
             joanArc.deathDay = 1;
-            var rec4 = new EvaluationSystem.AchievementRecord { canonized = true };
+            var rec4 = new AchievementRecord { canonized = true };
             Assert.AreEqual("圣女", EpithetSystem.EvaluateAndGrant(joanArc, rec4), "女性封圣→圣女");
 
             // 美人（女性俊美——空成就 rec——不误触圣女）
             var belle = cm2.CreateCharacter("美", "人", 30, false, 0, 0, 0, CharacterRole.Noble);
             belle.bodyMarks.Add("俊美");
-            var recBelle = new EvaluationSystem.AchievementRecord();
+            var recBelle = new AchievementRecord();
             Assert.AreEqual("美人", EpithetSystem.EvaluateAndGrant(belle, recBelle), "女性俊美→美人");
 
             // 女性行为绰号通用（已婚女性征服者→征服者——不分性别——
@@ -399,7 +399,7 @@ namespace CivilizationEvolution.Tests
             conqueress.boldness = 0f; conqueress.greed = 0f; conqueress.honor = 0f;
             conqueress.rationality = 0f; conqueress.vengefulness = 0f; conqueress.piety = 0f;
             conqueress.compassion = 0f;
-            var rec5 = new EvaluationSystem.AchievementRecord { conquests = 6, warsWon = 3, reignYears = 10f };
+            var rec5 = new AchievementRecord { conquests = 6, warsWon = 3, reignYears = 10f };
             Assert.AreEqual("征服者", EpithetSystem.EvaluateAndGrant(conqueress, rec5), "已婚女性征服者→征服者通用");
         }
     }

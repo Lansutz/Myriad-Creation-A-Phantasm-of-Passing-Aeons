@@ -1,3 +1,4 @@
+using CivilizationEvolution.Core;
 using System;
 
 namespace CivilizationEvolution.Role
