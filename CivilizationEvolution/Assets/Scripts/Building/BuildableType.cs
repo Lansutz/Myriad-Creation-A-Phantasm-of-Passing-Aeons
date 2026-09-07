@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Building
 {
     public enum BuildableType
     {

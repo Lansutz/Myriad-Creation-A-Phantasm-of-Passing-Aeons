@@ -7,7 +7,7 @@ using CivilizationEvolution.Race;
 using CivilizationEvolution.Tech;
 using CivilizationEvolution.Thought;
 
-namespace CivilizationEvolution.Role
+namespace CivilizationEvolution.Character
 {
     public enum PersonalityDimension
     {

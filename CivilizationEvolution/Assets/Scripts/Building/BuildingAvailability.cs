@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Building
 {
     public struct BuildingAvailability
     {

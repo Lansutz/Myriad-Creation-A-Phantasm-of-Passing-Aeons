@@ -2,7 +2,7 @@ using System;
 using CivilizationEvolution.Core;
 using UnityEngine;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Climate
 {
     /// <summary>
     /// Holdridge 生命地带分类系统（Holdridge 1967, 1987）

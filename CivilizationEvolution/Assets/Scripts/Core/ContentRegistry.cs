@@ -4,7 +4,7 @@ using System.IO;
 using UnityEngine;
 using CivilizationEvolution.Culture;
 using CivilizationEvolution.Race;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 using CivilizationEvolution.Tech;
 
 namespace CivilizationEvolution.Core

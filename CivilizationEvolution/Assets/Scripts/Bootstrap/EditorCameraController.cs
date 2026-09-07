@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CivilizationEvolution.Setup
+namespace CivilizationEvolution.Bootstrap
 {
     public class EditorCameraController : MonoBehaviour
     {

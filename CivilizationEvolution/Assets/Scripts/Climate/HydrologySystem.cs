@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using CivilizationEvolution.Core;
 using UnityEngine;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Climate
 {
     /// <summary>
     /// Priority-Flood 水文模拟系统

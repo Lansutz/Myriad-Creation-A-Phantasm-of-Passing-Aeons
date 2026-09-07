@@ -87,7 +87,7 @@ namespace CivilizationEvolution.Thought
         public bool CanDeclareGreatHolyWar() => fervor >= GreatHolyWarThreshold && highPriestCharacterId >= 0;
 
         /// <summary>美德/罪行得分（宗教对性格的判定——traitId 匹配基 id 前缀）</summary>
-        public int GetVirtueScore(CivilizationEvolution.Role.CharacterData character)
+        public int GetVirtueScore(CivilizationEvolution.Character.CharacterData character)
         {
             if (character == null || character.traits == null) return 0;
             int score = 0;
@@ -98,7 +98,7 @@ namespace CivilizationEvolution.Thought
             return score;
         }
 
-        public int GetSinScore(CivilizationEvolution.Role.CharacterData character)
+        public int GetSinScore(CivilizationEvolution.Character.CharacterData character)
         {
             if (character == null || character.traits == null) return 0;
             int score = 0;

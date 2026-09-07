@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 
-namespace CivilizationEvolution.Role
+namespace CivilizationEvolution.Character
 {
     /// <summary>
     /// 精神疾病（简单版）

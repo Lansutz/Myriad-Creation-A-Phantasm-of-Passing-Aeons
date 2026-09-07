@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace CivilizationEvolution.Role
+namespace CivilizationEvolution.Character
 {
     [Serializable]
     public struct CharacterRelation

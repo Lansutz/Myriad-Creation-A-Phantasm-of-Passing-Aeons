@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Culture
+namespace CivilizationEvolution.Character
 {
         [System.Serializable]
         public struct AchievementRecord

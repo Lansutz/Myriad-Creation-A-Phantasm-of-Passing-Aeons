@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Text;
 using System;
 using UnityEngine;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 
-namespace CivilizationEvolution.Culture
+namespace CivilizationEvolution.Character
 {
     /// <summary>
     /// 评价分级（一生成就标尺——从高到低）：

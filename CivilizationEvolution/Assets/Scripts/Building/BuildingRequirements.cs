@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using CivilizationEvolution.Core;
 using UnityEngine;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Building
 {
     // ============================================================
     // 建筑可用性条件系统

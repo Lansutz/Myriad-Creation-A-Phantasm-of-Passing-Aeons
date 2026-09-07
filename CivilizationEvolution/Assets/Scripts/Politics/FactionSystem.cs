@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Politics
 {

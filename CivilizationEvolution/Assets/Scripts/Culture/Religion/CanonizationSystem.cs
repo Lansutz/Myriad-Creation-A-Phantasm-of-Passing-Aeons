@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 using CivilizationEvolution.Thought;
 
 namespace CivilizationEvolution.Culture

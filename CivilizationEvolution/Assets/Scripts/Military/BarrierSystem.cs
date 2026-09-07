@@ -1,8 +1,9 @@
+using CivilizationEvolution.Map;
 using System.Collections.Generic;
 using CivilizationEvolution.Core;
 using UnityEngine;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Military
 {
     /// <summary>
     /// 关隘与通行地理系统

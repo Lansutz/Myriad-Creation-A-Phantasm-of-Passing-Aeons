@@ -3,7 +3,7 @@ using System.Linq;
 using CivilizationEvolution.Core;
 using UnityEngine;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Climate
 {
     /// <summary>
     /// 洋流模拟（Ocean Current Simulation）

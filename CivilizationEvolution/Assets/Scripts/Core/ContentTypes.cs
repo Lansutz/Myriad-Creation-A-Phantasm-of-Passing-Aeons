@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Core
 {

@@ -1,7 +1,7 @@
 using CivilizationEvolution.Core;
 using System;
 
-namespace CivilizationEvolution.Role
+namespace CivilizationEvolution.Character
 {
     [Serializable]
     public class MentalDisorderDef

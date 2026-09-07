@@ -243,7 +243,7 @@ namespace CivilizationEvolution.Military
         }
 
         /// <summary>地形成本倍率</summary>
-        private float GetTerrainCostMultiplier(TileData tile)
+        private float GetTerrainCostMultiplier(PathTile tile)
         {
             if (tile.isMountain) return 3f;
             if (tile.isHills) return 1.8f;
@@ -304,7 +304,7 @@ namespace CivilizationEvolution.Military
 
         // ===== 辅助方法（需要根据实际GameWorld结构调整） =====
 
-        private TileData GetTileData(int tileIndex)
+        private PathTile GetTileData(int tileIndex)
         {
             // 简化实现，实际需要从GameWorld获取
             return null;
@@ -337,7 +337,7 @@ namespace CivilizationEvolution.Military
     }
 
     /// <summary>地块数据（简化版，实际应从GameWorld获取）</summary>
-    public class TileData
+    public class PathTile
     {
         public bool isOcean;
         public bool isCoastal;

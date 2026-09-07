@@ -2,7 +2,7 @@ using System;
 using CivilizationEvolution.Core;
 using UnityEngine;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Climate
 {
     /// <summary>
     /// 水力侵蚀模拟（Hydraulic Erosion）

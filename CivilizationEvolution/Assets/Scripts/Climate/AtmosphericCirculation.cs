@@ -3,7 +3,7 @@ using System.Linq;
 using CivilizationEvolution.Core;
 using UnityEngine;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Climate
 {
     /// <summary>
     /// 大气环流 GCM（General Circulation Model，简化版）

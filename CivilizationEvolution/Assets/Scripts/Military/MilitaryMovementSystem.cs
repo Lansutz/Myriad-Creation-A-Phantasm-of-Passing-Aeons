@@ -3,7 +3,7 @@ using CivilizationEvolution.Core;
 using CivilizationEvolution.Politics;
 using UnityEngine;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Military
 {
     /// <summary>
     /// 军事通行系统

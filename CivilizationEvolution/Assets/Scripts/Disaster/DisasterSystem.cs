@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Disaster
 {

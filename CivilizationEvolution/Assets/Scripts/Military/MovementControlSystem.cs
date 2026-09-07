@@ -4,7 +4,7 @@ using CivilizationEvolution.Politics;
 using System;
 using UnityEngine;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Military
 {
     /// <summary>
     /// 通行管制系统（外交联动）

@@ -1,4 +1,4 @@
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 using System.Collections.Generic;
 using System;
 using CivilizationEvolution.Core;

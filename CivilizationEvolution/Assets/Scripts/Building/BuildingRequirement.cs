@@ -1,7 +1,8 @@
+using CivilizationEvolution.Map;
 using System;
 using CivilizationEvolution.Core;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Building
 {
     [Serializable]
     public struct BuildingRequirement

@@ -1,4 +1,6 @@
-namespace CivilizationEvolution.Map
+using CivilizationEvolution.Map;
+
+namespace CivilizationEvolution.AI
 {
     public struct AIBuildDecision
     {

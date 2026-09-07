@@ -1,4 +1,4 @@
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 using CivilizationEvolution.Diplomacy;
 using CivilizationEvolution.Tech;
 using CivilizationEvolution.Economy;
@@ -28,7 +28,7 @@ namespace CivilizationEvolution.AI
             DiplomacyManager diplomacy,
             EconomyManager economy,
             InnovationTree innovations,
-            CivilizationEvolution.Role.CharacterManager characters = null)
+            CivilizationEvolution.Character.CharacterManager characters = null)
         {
             foreach (var controller in _controllers.Values)
             {

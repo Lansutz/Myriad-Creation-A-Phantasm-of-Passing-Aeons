@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Culture
+namespace CivilizationEvolution.Character
 {
     public enum EvaluationLevel
     {

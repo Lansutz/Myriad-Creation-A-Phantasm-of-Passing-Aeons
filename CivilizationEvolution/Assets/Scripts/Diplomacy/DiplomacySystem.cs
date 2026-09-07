@@ -177,9 +177,9 @@ namespace CivilizationEvolution.Diplomacy
 
             // 战争爆发：自动撤销双方的军事通行权
             if (_realms.TryGetValue(attackerId, out var atkRealm))
-                CivilizationEvolution.Map.MovementControlSystem.OnWarDeclared(atkRealm, defenderId);
+                CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(atkRealm, defenderId);
             if (_realms.TryGetValue(defenderId, out var defRealm))
-                CivilizationEvolution.Map.MovementControlSystem.OnWarDeclared(defRealm, attackerId);
+                CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(defRealm, attackerId);
             rel.trust = Mathf.Min(rel.trust, 10f);
             rel.threat = Mathf.Max(rel.threat, 90f);
 
@@ -257,10 +257,10 @@ namespace CivilizationEvolution.Diplomacy
             {
                 atkRealm.prestige = Mathf.Max(0f, atkRealm.prestige - penalties.prestigePenalty);
                 atkRealm.stability = Mathf.Max(0f, atkRealm.stability - penalties.stabilityPenalty);
-                CivilizationEvolution.Map.MovementControlSystem.OnWarDeclared(atkRealm, defenderId);
+                CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(atkRealm, defenderId);
             }
             if (_realms.TryGetValue(defenderId, out var defRealm))
-                CivilizationEvolution.Map.MovementControlSystem.OnWarDeclared(defRealm, attackerId);
+                CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(defRealm, attackerId);
 
             rel.AddEvent(new DiplomaticEvent
             {
@@ -359,9 +359,9 @@ namespace CivilizationEvolution.Diplomacy
 
             // 战争爆发：自动撤销双方的军事通行权
             if (_realms.TryGetValue(attackerId, out var atkRealm2))
-                CivilizationEvolution.Map.MovementControlSystem.OnWarDeclared(atkRealm2, defenderId);
+                CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(atkRealm2, defenderId);
             if (_realms.TryGetValue(defenderId, out var defRealm2))
-                CivilizationEvolution.Map.MovementControlSystem.OnWarDeclared(defRealm2, attackerId);
+                CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(defRealm2, attackerId);
             if (!isHostile) ApplySurpriseAttackPenalties(attackerId, defenderId, rel);
             rel.AddEvent(new DiplomaticEvent { type = DiplomaticEventType.WarDeclaration, description = $"{_realms[attackerId].realmName} 对 {_realms[defenderId].realmName} {attackType}" + (attackTileIndex >= 0 ? $"（地块 #{attackTileIndex}）" : ""), relationChange = -60f, trustChange = -45f, threatChange = 45f });
             Chronicle?.Add("war", $"{_realms[attackerId].realmName} 对 {_realms[defenderId].realmName} {attackType}", major: true, attackerId, defenderId);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using CivilizationEvolution.Character;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Economy;
 using CivilizationEvolution.Politics;
@@ -8,7 +9,7 @@ using CivilizationEvolution.Race;
 using CivilizationEvolution.Tech;
 using CivilizationEvolution.Thought;
 
-namespace CivilizationEvolution.Role
+namespace CivilizationEvolution.Character
 {
     public class CharacterData
     {
@@ -87,7 +88,7 @@ namespace CivilizationEvolution.Role
         public List<string> bodyMarks = new List<string>();
         /// <summary>一生成就计数（行为计数器——GameWorld 各系统事件写入——
         /// 死亡时 EvaluateAndGrant 评估绰号/谥号——评价分级的数据源）</summary>
-        public Culture.AchievementRecord achievements;
+        public AchievementRecord achievements;
         /// <summary>即位日（在位年数 reignYears 计算——继位时写入）</summary>
         public int accessionDay = -1;
         /// <summary>绰号已评估标记（死亡评估一次）</summary>

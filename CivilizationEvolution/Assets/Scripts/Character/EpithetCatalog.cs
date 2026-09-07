@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 
-namespace CivilizationEvolution.Culture
+namespace CivilizationEvolution.Character
 {
     /// <summary>绰号语义色彩（正/中/贬/双向——诗人=可褒可贬）</summary>
 

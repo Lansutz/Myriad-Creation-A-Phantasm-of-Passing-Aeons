@@ -8,7 +8,7 @@ using CivilizationEvolution.Race;
 using CivilizationEvolution.Tech;
 using CivilizationEvolution.Thought;
 
-namespace CivilizationEvolution.Role
+namespace CivilizationEvolution.Character
 {
     /// <summary>
     /// 人格七维（企划书 9.3：-100~100，家族遗传基线，压力&gt;60 漂移翻倍）。

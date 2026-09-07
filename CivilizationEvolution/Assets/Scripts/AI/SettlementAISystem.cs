@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using CivilizationEvolution.Map;
+using System.Collections.Generic;
 using CivilizationEvolution.Core;
 using UnityEngine;
+using CivilizationEvolution.Building;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.AI
 {
     /// <summary>
     /// 聚落AI建造决策系统

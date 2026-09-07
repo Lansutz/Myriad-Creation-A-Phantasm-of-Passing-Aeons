@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using MapEditor = CivilizationEvolution.Render.MapEditor;
 
-namespace CivilizationEvolution.Setup
+namespace CivilizationEvolution.Bootstrap
 {
     /// <summary>
     /// 地图编辑器场景引导脚本

@@ -1,9 +1,10 @@
+using CivilizationEvolution.Map;
 using System.Collections.Generic;
 using System.Linq;
 using CivilizationEvolution.Core;
 using UnityEngine;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Building
 {
     /// <summary>
     /// 建筑可用性检查系统

@@ -7,7 +7,7 @@ using CivilizationEvolution.Diplomacy;
 using CivilizationEvolution.War;
 using CivilizationEvolution.Economy;
 using CivilizationEvolution.Tech;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.AI
 {
@@ -45,7 +45,7 @@ namespace CivilizationEvolution.AI
             DiplomacyManager diplomacy,
             EconomyManager economy,
             InnovationTree innovations,
-            CivilizationEvolution.Role.CharacterManager characters = null)
+            CivilizationEvolution.Character.CharacterManager characters = null)
         {
             _decisionTimer++;
 
@@ -72,7 +72,7 @@ namespace CivilizationEvolution.AI
         /// [高侵略+随机]——成功屠城→执行政权统治者 massacres++（绰号判定数据）
         /// </summary>
         private void TryRaid(Dictionary<int, RealmData> realms, TileData[] tiles,
-            DiplomacyManager diplomacy, CivilizationEvolution.Role.CharacterManager characters)
+            DiplomacyManager diplomacy, CivilizationEvolution.Character.CharacterManager characters)
         {
             _raidCooldown++;
             if (_raidCooldown < RaidInterval) return;

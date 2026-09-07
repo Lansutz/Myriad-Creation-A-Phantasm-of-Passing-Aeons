@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Render;
 using CivilizationEvolution.Race;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 using CivilizationEvolution.Politics;
 
 namespace CivilizationEvolution.UI
@@ -715,7 +715,7 @@ namespace CivilizationEvolution.UI
         /// <summary>主菜单第 2 行：编辑器（生成世界并进入编辑模式——Tab 编辑器面板）</summary>
         private void EnterEditorFromMenu()
         {
-            var bootstrap = FindAnyObjectByType<Bootstrap>();
+            var bootstrap = FindAnyObjectByType<CivilizationEvolution.Core.Bootstrap>();
             if (bootstrap != null && (world == null || world.tiles.Length == 0))
                 bootstrap.StartNewGame();
             if (startMenuPanel != null) startMenuPanel.SetActive(false);
@@ -1042,7 +1042,7 @@ namespace CivilizationEvolution.UI
                     loadingText.text = $"世界生成中…\n{sizeHint}";
                 }
             }
-            var bootstrap = FindAnyObjectByType<Bootstrap>();
+            var bootstrap = FindAnyObjectByType<CivilizationEvolution.Core.Bootstrap>();
             if (bootstrap != null && (world == null || world.tiles == null || world.tiles.Length == 0))
             {
                 float t0 = Time.realtimeSinceStartup;
@@ -1068,7 +1068,7 @@ namespace CivilizationEvolution.UI
                 if (loadingText != null)
                     loadingText.text = "世界生成中…\n（首图较慢——请稍候）";
             }
-            var bootstrap = FindAnyObjectByType<Bootstrap>();
+            var bootstrap = FindAnyObjectByType<CivilizationEvolution.Core.Bootstrap>();
             if (bootstrap != null && (world == null || world.tiles.Length == 0))
             {
                 float t0 = Time.realtimeSinceStartup;

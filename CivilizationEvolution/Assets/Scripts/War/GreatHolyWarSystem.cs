@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 using CivilizationEvolution.Politics;
 
 namespace CivilizationEvolution.War

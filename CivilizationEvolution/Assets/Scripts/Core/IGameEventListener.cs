@@ -8,7 +8,7 @@ using CivilizationEvolution.Economy;
 using CivilizationEvolution.Politics;
 using CivilizationEvolution.War;
 using CivilizationEvolution.Diplomacy;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 using CivilizationEvolution.Thought;
 using CivilizationEvolution.Disaster;
 using CivilizationEvolution.Building;
