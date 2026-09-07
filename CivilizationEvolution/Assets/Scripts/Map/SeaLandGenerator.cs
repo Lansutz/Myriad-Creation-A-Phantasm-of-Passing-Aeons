@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using CivilizationEvolution.Core;
 
@@ -163,7 +164,7 @@ namespace CivilizationEvolution.Map
                 float noise = _fragmentNoise[i];
                 float erosionChance = _config.landFragment * 0.6f * noise * _tiles[i].waterAdjacentWeight;
 
-                if (Random.value < erosionChance)
+                if (UnityEngine.Random.value < erosionChance)
                 {
                     _tiles[i].isLand = false;
                     _tiles[i].elevation01 = -Mathf.Abs(_tiles[i].elevation01) * 0.5f;
@@ -185,14 +186,14 @@ namespace CivilizationEvolution.Map
                 float noise = _fragmentNoise[i];
                 float fragmentChance = _config.coastFragment * 0.4f * noise;
 
-                if (_tiles[i].isLand && Random.value < fragmentChance)
+                if (_tiles[i].isLand && UnityEngine.Random.value < fragmentChance)
                 {
                     _tiles[i].isLand = false;
                     _tiles[i].elevation01 = -0.03f;
                     _tiles[i].oceanDepth01 = 0.05f;
                     _tiles[i].oceanTier = GameEnums.OceanTier.NearSea;
                 }
-                else if (!_tiles[i].isLand && Random.value < fragmentChance * 0.5f)
+                else if (!_tiles[i].isLand && UnityEngine.Random.value < fragmentChance * 0.5f)
                 {
                     _tiles[i].isLand = true;
                     _tiles[i].elevation01 = 0.02f;

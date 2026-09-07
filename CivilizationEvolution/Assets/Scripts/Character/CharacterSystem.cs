@@ -61,18 +61,7 @@ namespace CivilizationEvolution.Role
 
 
     /// <summary>角色间关系</summary>
-    [Serializable]
-    public struct CharacterRelation
-    {
-        public int otherCharacterId;
-        [UnityEngine.Range(-200f, 200f)] public float opinion;  // 好感度（企划书：-200~200，双向不对称存储）
-        public RelationshipType type;
-        public List<string> history;
 
-        public float trust;
-        public float fear;
-        public float romanticAttraction;
-    }
 
     /// <summary>
     /// 角色间结构性关系（客观身份：血缘/婚姻/师承/上下级——由家族、婚姻、任职派生或显式设定）。

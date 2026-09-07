@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Politics;
+using System;
 using UnityEngine;
 
 namespace CivilizationEvolution.Map
@@ -307,7 +308,7 @@ namespace CivilizationEvolution.Map
 
             // 关系>=30且威胁<0.5：可能授予（50%概率）
             if (relation >= 30f && threatLevel < 0.5f)
-                return Random.value > 0.5f;
+                return UnityEngine.Random.value > 0.5f;
 
             // 关系<0或威胁>0.7：拒绝
             if (relation < 0f || threatLevel > 0.7f) return false;

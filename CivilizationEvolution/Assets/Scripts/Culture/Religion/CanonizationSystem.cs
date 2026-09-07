@@ -8,20 +8,7 @@ namespace CivilizationEvolution.Culture
     /// 圣人定义（崇拜对象·历史出身——一神教崇拜对象的核心形态：
     /// 与多神教神祇[神话出身]并列——圣人=角色升格[封圣事件]）
     /// </summary>
-    [System.Serializable]
-    public class SaintDef
-    {
-        public int saintId;
-        /// <summary>原型角色（已故美德角色——linkedCharacterId）</summary>
-        public int linkedCharacterId = -1;
-        public string saintName;
-        /// <summary>庇护领域（战争/航海/病患/丰收——主保选择依据）</summary>
-        public string domain = "";
-        /// <summary>所属教统</summary>
-        public int faithId;
-        /// <summary>封圣时灵性满足（角色生前虔诚）</summary>
-        public float canonizationPiety = 80f;
-    }
+
 
     /// <summary>
     /// 封圣机制（圣人=角色升格——美德/罪行系统对接）：

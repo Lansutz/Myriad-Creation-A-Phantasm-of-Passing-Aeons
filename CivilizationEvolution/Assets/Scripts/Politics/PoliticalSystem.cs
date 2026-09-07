@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Economy;
@@ -91,7 +92,7 @@ namespace CivilizationEvolution.Politics
                 // ClassNeedsSystem 评估多维需求 → ApplyClassRelations 平滑趋近满足度（见 GameWorld 政治Tick）。
 
                 // 叛乱风险检测
-                if (realm.CalculateRebellionRisk() > 70f && Random.value < 0.01f)
+                if (realm.CalculateRebellionRisk() > 70f && UnityEngine.Random.value < 0.01f)
                 {
                     // 触发叛乱事件
                     Debug.Log($"[Politics] {realm.realmName} 爆发叛乱！");

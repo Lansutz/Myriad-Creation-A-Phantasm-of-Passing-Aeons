@@ -5,24 +5,10 @@ using CivilizationEvolution.Culture;
 namespace CivilizationEvolution.Politics
 {
     /// <summary>官职（中央/地方治理的职位槽位）</summary>
-    public enum OfficialOffice
-    {
-        Governor,           // 地方长官（省/行省首脑）
-        DistrictGovernor,   // 区级长官（下辖分区）
-        Chancellor,         // 大法官/首席文官
-        Steward,            // 司库/财政官
-        Marshal,            // 统军官（军事行政）
-        WarCommander        // 元帅（野战指挥）
-    }
+
 
     /// <summary>官职称号条目（文化定制：某文化某政体语境下某官职的称号键）</summary>
-    [System.Serializable]
-    public class OfficeTitleEntry
-    {
-        public string office;      // OfficialOffice 枚举名
-        public string polityKey;   // 政体语境键：Kingdom/Empire/Federation/Republic/Tribal/Theocracy
-        public string titleKey;    // 本地化键（缺键回退默认称号）
-    }
+
 
     /// <summary>
     /// 官职称号目录：文化定制优先 → 默认表回退

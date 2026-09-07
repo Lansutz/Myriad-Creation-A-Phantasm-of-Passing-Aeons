@@ -1,6 +1,7 @@
 using CivilizationEvolution.Diplomacy;
 using CivilizationEvolution.Map;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using CivilizationEvolution.Core;
 
@@ -31,8 +32,8 @@ namespace CivilizationEvolution.War
             defenderPower *= 1.2f;
 
             // 将领加成（简化）
-            attackerPower *= 1f + Random.Range(-0.1f, 0.2f);
-            defenderPower *= 1f + Random.Range(-0.1f, 0.2f);
+            attackerPower *= 1f + UnityEngine.Random.Range(-0.1f, 0.2f);
+            defenderPower *= 1f + UnityEngine.Random.Range(-0.1f, 0.2f);
 
             float powerRatio = attackerPower / Mathf.Max(1f, defenderPower);
             result.attackerWins = powerRatio > 1.1f;

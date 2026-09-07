@@ -99,55 +99,11 @@ namespace CivilizationEvolution.UI
     }
 
     /// <summary>阶层中文名</summary>
-    public static class ClassNames
-    {
-        public static string Get(GameEnums.SocialClass c) => c switch
-        {
-            GameEnums.SocialClass.Royalty => "王室",
-            GameEnums.SocialClass.NobilityClergy => "贵族教士",
-            GameEnums.SocialClass.MerchantFreeman => "市民商人",
-            GameEnums.SocialClass.Peasant => "农民",
-            GameEnums.SocialClass.Slave => "奴隶",
-            _ => c.ToString()
-        };
-    }
+
 
     /// <summary>派系中文名</summary>
-    public static class FactionNames
-    {
-        public static string Get(FactionStance s) => s switch
-        {
-            FactionStance.Conservative => "保守派",
-            FactionStance.Reformist => "改革派",
-            FactionStance.Radical => "激进派",
-            FactionStance.Reactionary => "复辟派",
-            _ => s.ToString()
-        };
-    }
+
 
     /// <summary>关键节点中文名</summary>
-    public static class JunctureNames
-    {
-        public static string Get(CriticalJunctureType t) => t switch
-        {
-            CriticalJunctureType.SuccessionCrisis => "继承危机",
-            CriticalJunctureType.WarDefeat => "战败",
-            CriticalJunctureType.FiscalCollapse => "财政破产",
-            CriticalJunctureType.EliteSplit => "精英分裂",
-            CriticalJunctureType.PopularUprising => "民众起义",
-            CriticalJunctureType.ForeignConquest => "外敌征服",
-            CriticalJunctureType.StrongReformer => "强势改革者",
-            _ => t.ToString()
-        };
 
-        public static string GetOutcome(JunctureOutcomeType o) => o switch
-        {
-            JunctureOutcomeType.Reform => "改革",
-            JunctureOutcomeType.Compromise => "妥协",
-            JunctureOutcomeType.Reaction => "复辟",
-            JunctureOutcomeType.Stalemate => "僵持",
-            JunctureOutcomeType.Collapse => "崩溃",
-            _ => "未决"
-        };
-    }
 }

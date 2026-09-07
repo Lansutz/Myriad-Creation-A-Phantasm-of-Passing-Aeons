@@ -92,18 +92,7 @@ namespace CivilizationEvolution.Core
     /// <summary>
     /// 人口块：50自然人为一个块，浮点精细存储
     /// </summary>
-    [System.Serializable]
-    public struct PopulationBlock
-    {
-        public float count;
-        public int raceId;
-        public int cultureId;
-        public int faithId;
-        public GameEnums.SocialClass socialClass;
-        public int profession;
-        public float satisfaction;
-        public float culturePenetration;
-    }
+
 
     /// <summary>
     /// 地块网格坐标辅助

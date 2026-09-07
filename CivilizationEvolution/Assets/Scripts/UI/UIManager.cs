@@ -13,14 +13,7 @@ using CivilizationEvolution.Politics;
 namespace CivilizationEvolution.UI
 {
     /// <summary>事件日志分类（决定富文本着色）</summary>
-    public enum EventLogKind
-    {
-        System,   // 系统：蓝灰
-        Info,     // 常规：白
-        War,      // 战争：红
-        Economy,  // 经济：绿
-        Warning   // 警示：黄
-    }
+
 
     /// <summary>
     /// UI管理器
