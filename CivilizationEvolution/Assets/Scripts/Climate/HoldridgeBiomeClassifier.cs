@@ -61,31 +61,12 @@ namespace CivilizationEvolution.Map
         /// <summary>
         /// Holdridge 湿度等级（基于PER）
         /// </summary>
-        public enum HumidityProvince
-        {
-            SuperArid,      // 超干旱 PER > 16
-            PerArid,        // 极干旱 PER 8-16
-            Arid,           // 干旱 PER 4-8
-            SemiArid,       // 半干旱 PER 2-4
-            SubHumid,       // 半湿润 PER 1-2
-            Humid,          // 湿润 PER 0.5-1
-            PerHumid,       // 极湿润 PER 0.25-0.5
-            SuperHumid      // 超湿润 PER < 0.25
-        }
+
 
         /// <summary>
         /// Holdridge 温度带（基于ABT）
         /// </summary>
-        public enum ThermalBelt
-        {
-            Nival,          // 冰雪带 ABT < 1.5°C（冰盖/冰川）
-            Tundra,         // 冻原带 ABT 1.5-3°C
-            Boreal,         // 北方带 ABT 3-6°C（寒温带/泰加林）
-            CoolTemperate,  // 凉温带 ABT 6-12°C
-            WarmTemperate,  // 暖温带 ABT 12-18°C
-            Subtropical,    // 亚热带 ABT 18-24°C
-            Tropical        // 热带 ABT >24°C
-        }
+
 
         /// <summary>获取湿度等级</summary>
         public static HumidityProvince GetHumidityProvince(float per)

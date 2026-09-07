@@ -13,15 +13,6 @@ namespace CivilizationEvolution.Core
     {
         public static GameManager Instance { get; private set; }
 
-        public enum GameState
-        {
-            MainMenu,
-            MapEditor,
-            Loading,
-            Playing,
-            Paused,
-            GameOver
-        }
 
         [Header("游戏速度")]
         [UnityEngine.Range(0f, 5f)]

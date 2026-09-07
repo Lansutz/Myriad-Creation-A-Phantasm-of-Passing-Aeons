@@ -18,12 +18,7 @@ namespace CivilizationEvolution.Map
     public class SphericalVoronoi
     {
         /// <summary>Voronoi 种子点（单位球面 3D 坐标）</summary>
-        public struct Seed
-        {
-            public float x, y, z;
-            public int id;
-            public Seed(float x, float y, float z, int id) { this.x = x; this.y = y; this.z = z; this.id = id; }
-        }
+
 
         public Seed[] Seeds { get; private set; }
         public int SeedCount => Seeds?.Length ?? 0;
