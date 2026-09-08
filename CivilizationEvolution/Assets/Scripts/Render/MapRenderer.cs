@@ -23,6 +23,10 @@ namespace CivilizationEvolution.Render
         private float _maxZoom = 150f;        // 最大缩出（看全图——动态）
         [SerializeField] private MapDisplayMode displayMode = MapDisplayMode.Terrain;
 
+        [Header("图层配置")]
+        [Tooltip("地图图层配置：基础图层始终叠加，地图模式互斥单选，可选叠加层少量可开关")]
+        [SerializeField] private MapLayerConfig _layerConfig = new MapLayerConfig();
+
         [Header("引用")]
         [SerializeField] private GameWorld world;
         [SerializeField] private MeshFilter meshFilter;
@@ -500,6 +504,20 @@ namespace CivilizationEvolution.Render
             _forceMapRefresh = true; // 切换显示模式立即重绘
             Debug.Log($"[MapRenderer] 切换显示模式：{mode}");
         }
+
+        /// <summary>图层配置（公开访问，UI可直接修改开关后调用ForceRefresh）</summary>
+        public MapLayerConfig LayerConfig => _layerConfig;
+
+        /// <summary>切换可选叠加层</summary>
+        public void ToggleOverlay(MapOverlayLayer layer, bool enabled)
+        {
+            _layerConfig.ToggleOverlay(layer, enabled);
+            _forceMapRefresh = true;
+        }
+
+        /// <summary>检查可选叠加层是否启用</summary>
+        public bool IsOverlayEnabled(MapOverlayLayer layer) =>
+            _layerConfig.IsOverlayEnabled(layer);
 
         /// <summary>强制刷新地图纹理（编辑器绘制后调用）</summary>
         /// <summary>当前投影模式</summary>

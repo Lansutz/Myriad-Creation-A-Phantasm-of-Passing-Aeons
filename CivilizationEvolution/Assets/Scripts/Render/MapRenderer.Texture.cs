@@ -52,8 +52,8 @@ namespace CivilizationEvolution.Render
                 }
             }
 
-            // ===== 子地块/Burg 标记绘制（在地形纹理上叠加彩色像素点）=====
-            if (world.burgs != null && world.burgs.Count > 0)
+            // ===== 子地块/Burg 标记绘制（可选叠加层，根据开关）=====
+            if (_layerConfig.showBurgMarkers && world.burgs != null && world.burgs.Count > 0)
             {
                 foreach (var burg in world.burgs.Values)
                 {
@@ -87,6 +87,33 @@ namespace CivilizationEvolution.Render
                                 _pixelBuffer[pi] = burgColor;
                             }
                         }
+                    }
+                }
+            }
+
+            // ===== 省份边界线（可选叠加层）=====
+            if (_layerConfig.showProvinceBorders && world.provinces != null && world.provinces.Count > 0)
+            {
+                for (int i = 0; i < pixelCount; i++)
+                {
+                    if (!world.tiles[i].exists) continue;
+                    if (!IsProvinceBorder(i)) continue;
+                    _pixelBuffer[i] = Color.Lerp(_pixelBuffer[i], provinceBorderColor, 0.7f);
+                }
+            }
+
+            // ===== 网格线（可选叠加层）=====
+            if (_layerConfig.showGrid)
+            {
+                int gridSpacing = Mathf.Max(8, mapWidth / 32); // 网格间距随地图尺寸调整
+                for (int i = 0; i < pixelCount; i++)
+                {
+                    if (!world.tiles[i].exists) continue;
+                    int x = i % mapWidth;
+                    int y = i / mapWidth;
+                    if (x % gridSpacing == 0 || y % gridSpacing == 0)
+                    {
+                        _pixelBuffer[i] = Color.Lerp(_pixelBuffer[i], new Color(0.5f, 0.5f, 0.5f, 0.3f), 0.3f);
                     }
                 }
             }
