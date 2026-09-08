@@ -90,6 +90,9 @@ namespace CivilizationEvolution.Core
         private AtmosphericCirculation _atmosphericCirculation;
         private HydraulicErosion _hydraulicErosion;
         public MapGenerationConfig GenConfig = new MapGenerationConfig();
+
+        /// <summary>生成管线管理器（阶段顺序/依赖/进度回调/下游重算）</summary>
+        public GenerationPipeline Pipeline { get; private set; }
         private EconomyManager _economyManager;
         private CurrencySystem _currencySystem;
         private TaxSystem _taxSystem;
@@ -240,6 +243,26 @@ namespace CivilizationEvolution.Core
         public FactionManager Factions => _factionManager;
         public RegimeChangeDynamics RegimeDynamics => _regimeDynamics;
         public DiplomacyManager Diplomacy => _diplomacyManager;
+
+        /// <summary>
+        /// 通过生成管线全量生成（带进度回调）。
+        /// 统一走 GenerationPipeline 的阶段管理，替代直接调用各生成方法。
+        /// </summary>
+        public void GenerateAllWithPipeline()
+        {
+            Pipeline ??= new GenerationPipeline(this);
+            Pipeline.GenerateAll();
+        }
+
+        /// <summary>
+        /// 从指定阶段开始重算下游（管线增量重算）。
+        /// 例如修改地形后：world.RegenerateFromPipeline(GenerationStage.Terrain)
+        /// </summary>
+        public void RegenerateFromPipeline(GenerationStage fromStage)
+        {
+            Pipeline ??= new GenerationPipeline(this);
+            Pipeline.RegenerateFrom(fromStage);
+        }
 
         /// <summary>
         /// 革新完成→阶层出现事件（查漏补缺接线：ClassEmergenceEvents 原为

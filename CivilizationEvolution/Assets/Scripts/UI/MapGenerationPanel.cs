@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using CivilizationEvolution.Map;
 using UnityEngine;
@@ -37,6 +37,8 @@ namespace CivilizationEvolution.UI
         private Dropdown _mapSizeDropdown;
         private InputField _seedInput;
         private Button _randomSeedBtn;
+        private Toggle _useStringSeedToggle;
+        private InputField _stringSeedInput;
         private Dropdown _genModeDropdown;
         private Dropdown _projectionDropdown;
         private MapProjectionMode _currentProjection = MapProjectionMode.Planar;
@@ -125,6 +127,8 @@ namespace CivilizationEvolution.UI
 
             _mapSizeDropdown.value = (int)_config.MapSize;
             _seedInput.text = _config.Seed < 0 ? "随机" : _config.Seed.ToString();
+            if (_useStringSeedToggle != null) _useStringSeedToggle.isOn = _config.UseStringSeed;
+            if (_stringSeedInput != null) _stringSeedInput.text = _config.SeedString;
             _genModeDropdown.value = (int)_config.Basemap;
 
             _outerSeaBufferToggle.isOn = _config.OuterSeaBuffer;
@@ -243,7 +247,7 @@ namespace CivilizationEvolution.UI
             _mapSizeDropdown.onValueChanged.AddListener(v => { _config.MapSize = (MapGenerationConfig.MapSizePreset)v; UpdateStatus("地图尺寸已更新"); });
             y -= 32f;
 
-            // 种子
+            // 种子（整数 + 字符串双模式）
             CreateLabel("随机种子", y);
             _seedInput = CreateInputField(_panelRoot.transform, "随机",
                 new Vector2(12f, y - 20f), new Vector2(ContentWidth - 60f, 24f));
@@ -256,10 +260,46 @@ namespace CivilizationEvolution.UI
                 new Vector2(ContentWidth - 42f, y - 20f), new Vector2(54f, 24f));
             _randomSeedBtn.onClick.AddListener(() =>
             {
-                _config.Seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
-                _seedInput.text = _config.Seed.ToString();
-                UpdateStatus("已生成随机种子");
+                if (_config.UseStringSeed)
+                {
+                    _config.SeedString = MapGenerationConfig.RandomizeSeedString();
+                    _stringSeedInput.text = _config.SeedString;
+                    UpdateStatus($"已生成随机字符串种子: {_config.SeedString}");
+                }
+                else
+                {
+                    _config.Seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+                    _seedInput.text = _config.Seed.ToString();
+                    UpdateStatus("已生成随机种子");
+                }
             });
+            y -= 32f;
+
+            // 字符串种子开关
+            CreateLabel("使用字符串种子", y);
+            _useStringSeedToggle = CreateToggle(_panelRoot.transform,
+                new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f));
+            _useStringSeedToggle.onValueChanged.AddListener(v =>
+            {
+                _config.UseStringSeed = v;
+                _seedInput.interactable = !v;
+                if (_stringSeedInput != null) _stringSeedInput.interactable = v;
+                UpdateStatus(v ? "已切换为字符串种子模式" : "已切换为整数种子模式");
+            });
+            y -= 28f;
+
+            // 字符串种子输入框
+            CreateLabel("字符串种子（任意文字）", y);
+            _stringSeedInput = CreateInputField(_panelRoot.transform, "",
+                new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f));
+            _stringSeedInput.interactable = _config.UseStringSeed;
+            _stringSeedInput.onEndEdit.AddListener(v =>
+            {
+                _config.SeedString = v;
+                if (!string.IsNullOrWhiteSpace(v))
+                    UpdateStatus($"字符串种子: {v} (哈希: {MapGenerationConfig.HashStringToSeed(v)})");
+            });
+            _seedInput.interactable = !_config.UseStringSeed;
             y -= 32f;
 
             // 生成模式

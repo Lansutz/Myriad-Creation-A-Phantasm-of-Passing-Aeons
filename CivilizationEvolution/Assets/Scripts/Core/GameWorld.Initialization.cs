@@ -27,6 +27,8 @@ namespace CivilizationEvolution.Core
         /// <summary>初始化世界（StartNewGame 设好尺寸后显式调用）</summary>
         public void InitializeWorld()
         {
+            // 初始化生成管线（在所有子系统之前，幂等）
+            Pipeline ??= new GenerationPipeline(this);
             // 幂等（重复 StartNewGame 安全——重新建 tiles）
             if (startYear < 0) { startYear = currentYear; startDay = currentDay; }
             // 内容注册表幂等初始化（与 Bootstrap.Awake 无执行顺序依赖）

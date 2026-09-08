@@ -38,8 +38,14 @@ namespace CivilizationEvolution.Map
         [Tooltip("地图底图来源。程序生成=噪声自动生成；内置底图=预设模板；导入高度图=以灰度图亮度为高程。")]
         public MapBasemap Basemap = MapBasemap.Procedural;
 
-        [Tooltip("随机种子。相同种子+相同设置=相同地图。-1=随机生成。")]
+        [Tooltip("随机种子（整数）。相同种子+相同设置=相同地图。-1=随机生成。")]
         public int Seed = -1;
+
+        [Tooltip("使用字符串种子。开启后 SeedString 的哈希值作为种子，支持输入任意文字复现地图。")]
+        public bool UseStringSeed = false;
+
+        [Tooltip("字符串种子。任意文字如 我的世界、Atlantis，哈希为 int 种子。相同字符串=相同地图。")]
+        public string SeedString = "";
 
         [Tooltip("地图内部像素尺寸。更大更细致但生成和运行更耗时。")]
         public MapSizePreset MapSize = MapSizePreset.Medium;
@@ -108,10 +114,36 @@ namespace CivilizationEvolution.Map
             return w * h;
         }
 
-        /// <summary>获取实际种子（-1时随机）</summary>
+        /// <summary>获取实际种子。字符串种子优先，其次整数种子，-1时随机。</summary>
         public int GetActualSeed()
         {
+            if (UseStringSeed && !string.IsNullOrWhiteSpace(SeedString))
+            {
+                return HashStringToSeed(SeedString);
+            }
             return Seed < 0 ? new System.Random().Next() : Seed;
+        }
+
+        /// <summary>字符串哈希为 int 种子（FNV-1a 32位，稳定跨平台）</summary>
+        public static int HashStringToSeed(string str)
+        {
+            if (string.IsNullOrEmpty(str)) return 0;
+            uint hash = 2166136261u; // FNV offset basis
+            foreach (char ch in str)
+            {
+                hash ^= ch;
+                hash *= 16777619u; // FNV prime
+            }
+            return (int)(hash & 0x7FFFFFFF); // 保证正数
+        }
+
+        /// <summary>生成随机字符串种子（可读的随机词组）</summary>
+        public static string RandomizeSeedString()
+        {
+            string[] adjectives = { "Ancient", "Silent", "Golden", "Frozen", "Crimson", "Emerald", "Storm", "Ash", "Moon", "Sun", "Iron", "Bronze", "Mystic", "Sacred", "Lost", "Hidden" };
+            string[] nouns = { "Ocean", "Mountain", "Empire", "Kingdom", "Realm", "Isle", "Continent", "Desert", "Forest", "River", "Valley", "Plains", "Tundra", "Archipelago", "Peninsula", "Highland" };
+            var rng = new System.Random();
+            return $"{adjectives[rng.Next(adjectives.Length)]}{nouns[rng.Next(nouns.Length)]}{rng.Next(100, 999)}";
         }
 
         // ============================================================
