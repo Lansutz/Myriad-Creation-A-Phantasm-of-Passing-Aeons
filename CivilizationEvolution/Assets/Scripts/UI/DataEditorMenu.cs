@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -100,6 +100,7 @@ namespace CivilizationEvolution.UI
             line.GetComponent<Image>().color = new Color(0.25f, 0.25f, 0.30f, 1f);
             line.transform.SetParent(btnObj.transform, false);
 
+            btnObj.AddComponent<UIButtonHover>();
             btnObj.transform.SetParent(parent, false);
         }
 
@@ -115,6 +116,7 @@ namespace CivilizationEvolution.UI
             btn.onClick.AddListener(() => onClick?.Invoke());
             CreateText(btnObj.transform, "Label", label, 18, primary ? new Color(0.88f, 0.75f, 0.45f, 1f) : Color.white,
                 primary ? FontStyles.Bold : FontStyles.Normal, Vector2.zero, TextAlignmentOptions.Center, size);
+            btnObj.AddComponent<UIButtonHover>();
             btnObj.transform.SetParent(parent, false);
         }
 

@@ -152,6 +152,7 @@ namespace CivilizationEvolution.UI
             btn.onClick.AddListener(() => onClick?.Invoke());
             CreateText(btnObj.transform, "Label", label, 18, primary ? new Color(0.88f, 0.75f, 0.45f, 1f) : Color.white,
                 primary ? FontStyles.Bold : FontStyles.Normal, Vector2.zero, TextAlignmentOptions.Center, size);
+            btnObj.AddComponent<UIButtonHover>();
             btnObj.transform.SetParent(parent, false);
         }
 

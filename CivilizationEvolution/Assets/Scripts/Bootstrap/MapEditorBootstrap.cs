@@ -262,6 +262,7 @@ namespace CivilizationEvolution.Bootstrap
                 tmp.raycastTarget = false;
                 textObj.transform.SetParent(btnObj.transform, false);
 
+                btnObj.AddComponent<UIButtonHover>();
                 btnObj.transform.SetParent(panelObj.transform, false);
             }
         }

@@ -155,6 +155,7 @@ namespace CivilizationEvolution.UI
             colors.pressedColor = new Color(0.8f, 0.8f, 0.85f, 1f);
             colors.fadeDuration = 0.1f;
             btn.colors = colors;
+            btnObj.AddComponent<UIButtonHover>();
             return btnObj;
         }
 
