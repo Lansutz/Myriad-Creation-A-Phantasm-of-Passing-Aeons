@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
 using CivilizationEvolution.Core;
@@ -108,6 +108,22 @@ namespace CivilizationEvolution.Map
 
         /// <summary>母城ID（从哪个聚落发展/分化而来，-1表示无）</summary>
         public int parentBurgId = -1;
+
+        // ===== 聚落控制/影响力范围系统 =====
+        /// <summary>控制本聚落的高等级聚落ID（-1=独立，未被控制）</summary>
+        public int controllerBurgId = -1;
+        /// <summary>本聚落控制的低等级聚落ID列表</summary>
+        [System.NonSerialized] public List<int> controlledBurgIds = new List<int>();
+        /// <summary>对各下属聚落的控制进度（burgId -> 0~100）</summary>
+        [System.NonSerialized] public Dictionary<int, float> controlProgress = new Dictionary<int, float>();
+        /// <summary>影响力半径（地块数，按等级：Ⅰ=1~Ⅴ=5）</summary>
+        public int influenceRadius = 1;
+        /// <summary>驻扎部队平均质量（训练度0~100）</summary>
+        [System.NonSerialized] public float garrisonQuality = 0f;
+        /// <summary>驻扎部队数量</summary>
+        [System.NonSerialized] public int garrisonQuantity = 0;
+        /// <summary>控制是否稳固（进度到100后变为稳固，流失更慢）</summary>
+        public bool isControlStable = false;
 
         /// <summary>关联瓶颈地块ID（关口堡/渡口城的控制节点，-1表示无）</summary>
         public int bottleneckTileIndex = -1;
