@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Disaster;
 
 namespace CivilizationEvolution.War
 {
@@ -128,7 +129,16 @@ namespace CivilizationEvolution.War
                 // 败方逃跑判定（取决于指挥官）
                 result.defenderRetreated = defender.ShouldRetreat();
                 if (result.defenderRetreated)
+                {
                     defender.state = GameEnums.CombatState.Retreating;
+                    // 逃跑时检查溃败踩踏事件
+                    var stampede = StampedeSystem.CheckMilitaryStampede(defender, _tiles, _unitDefs, 50f, 0);
+                    if (stampede != null)
+                    {
+                        result.defenderStampede = stampede;
+                        result.defenderLosses += stampede.casualties;
+                    }
+                }
                 else
                     defender.state = GameEnums.CombatState.Dead; // 不逃跑则被歼灭
             }
@@ -141,7 +151,16 @@ namespace CivilizationEvolution.War
 
                 result.attackerRetreated = attacker.ShouldRetreat();
                 if (result.attackerRetreated)
+                {
                     attacker.state = GameEnums.CombatState.Retreating;
+                    // 逃跑时检查溃败踩踏事件
+                    var stampede = StampedeSystem.CheckMilitaryStampede(attacker, _tiles, _unitDefs, 50f, 0);
+                    if (stampede != null)
+                    {
+                        result.attackerStampede = stampede;
+                        result.attackerLosses += stampede.casualties;
+                    }
+                }
                 else
                     attacker.state = GameEnums.CombatState.Dead;
             }

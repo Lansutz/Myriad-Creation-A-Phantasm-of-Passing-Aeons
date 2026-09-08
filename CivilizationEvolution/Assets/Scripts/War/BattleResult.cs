@@ -13,5 +13,10 @@ namespace CivilizationEvolution.War
         public bool attackerRetreated;
         /// <summary>守方是否逃跑</summary>
         public bool defenderRetreated;
+
+        /// <summary>攻方溃败踩踏事件（null=未触发）</summary>
+        public CivilizationEvolution.Disaster.StampedeEvent attackerStampede;
+        /// <summary>守方溃败踩踏事件（null=未触发）</summary>
+        public CivilizationEvolution.Disaster.StampedeEvent defenderStampede;
     }
 }
