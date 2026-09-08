@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -101,6 +101,19 @@ namespace CivilizationEvolution.Map
         public int PlateCount = 12;
         public float PlateBoundaryMountainBoost = 0.25f;
 
+        // 大陆数量与大小范围（完整世界模板用；局部模板可忽略）
+        // 模板是"以N块主大陆为主"，并非绝对只有N块——还会局部生成零散岛屿/半岛
+        [Tooltip("主大陆最小数量")]
+        public int MinContinentCount = 1;
+        [Tooltip("主大陆最大数量")]
+        public int MaxContinentCount = 1;
+        [Tooltip("单块主大陆最小占比（占总陆地面积比例，0~1）")]
+        public float MinContinentSize = 0.15f;
+        [Tooltip("单块主大陆最大占比（占总陆地面积比例，0~1）")]
+        public float MaxContinentSize = 0.60f;
+        [Tooltip("零散岛屿/半岛密度（0=无，1=大量）。模板以主大陆为主，辅以零散小东西。")]
+        public float IslandDensity = 0.3f;
+
         // 特殊形状标记（用于生成逻辑中应用特殊算法）
         public bool HasSpecialShape = false;
         public string SpecialShapeType = "";
@@ -117,71 +130,92 @@ namespace CivilizationEvolution.Map
         {
             {
                 WorldTemplate.Pangaea, new TerrainTemplatePreset {
-                    Name = "盘古大陆", Description = "一块超级大陆，周围环绕海洋",
+                    Name = "盘古大陆", Description = "以一块超级主大陆为主，周围环绕海洋，辅以零散岛屿和半岛",
                     Scale = TerrainScale.World,
                     TargetLandFraction = 0.35f, TerrainFrequency = 1.2f, TerrainOctaves = 5,
                     WarpStrength = 0.5f, WarpFrequency = 1.0f, MountainHeight = 0.40f,
                     PlateCount = 8, PlateBoundaryMountainBoost = 0.30f,
+                    MinContinentCount = 1, MaxContinentCount = 1,
+                    MinContinentSize = 0.50f, MaxContinentSize = 0.80f,
+                    IslandDensity = 0.20f,
                     HasSpecialShape = true, SpecialShapeType = "SingleContinent"
                 }
             },
             {
                 WorldTemplate.DualContinents, new TerrainTemplatePreset {
-                    Name = "双大陆", Description = "两块大陆隔海相望",
+                    Name = "双大陆", Description = "以两块主大陆为主隔海相望（大小随机，各有范围），辅以零散岛屿",
                     Scale = TerrainScale.World,
                     TargetLandFraction = 0.32f, TerrainFrequency = 1.5f, TerrainOctaves = 6,
                     WarpStrength = 0.6f, WarpFrequency = 1.2f, MountainHeight = 0.38f,
                     PlateCount = 10, PlateBoundaryMountainBoost = 0.28f,
+                    MinContinentCount = 2, MaxContinentCount = 2,
+                    MinContinentSize = 0.20f, MaxContinentSize = 0.45f,
+                    IslandDensity = 0.30f,
                     HasSpecialShape = true, SpecialShapeType = "DualContinent"
                 }
             },
             {
                 WorldTemplate.MultiContinents, new TerrainTemplatePreset {
-                    Name = "多大陆", Description = "3-5块大陆散布全球",
+                    Name = "多大陆", Description = "以3-5块主大陆为主散布全球（大小随机，各有范围），辅以零散岛屿",
                     Scale = TerrainScale.World,
                     TargetLandFraction = 0.30f, TerrainFrequency = 2.0f, TerrainOctaves = 6,
                     WarpStrength = 0.8f, WarpFrequency = 1.5f, MountainHeight = 0.35f,
                     PlateCount = 14, PlateBoundaryMountainBoost = 0.25f,
+                    MinContinentCount = 3, MaxContinentCount = 5,
+                    MinContinentSize = 0.10f, MaxContinentSize = 0.35f,
+                    IslandDensity = 0.40f,
                     HasSpecialShape = true, SpecialShapeType = "MultiContinent"
                 }
             },
             {
                 WorldTemplate.ArchipelagoWorld, new TerrainTemplatePreset {
-                    Name = "群岛世界", Description = "大量岛屿，无大块陆地",
+                    Name = "群岛世界", Description = "以大量岛屿为主，无大块主陆地，岛屿大小随机",
                     Scale = TerrainScale.World,
                     TargetLandFraction = 0.15f, TerrainFrequency = 3.5f, TerrainOctaves = 7,
                     WarpStrength = 1.0f, WarpFrequency = 2.0f, MountainHeight = 0.20f,
                     PlateCount = 20, PlateBoundaryMountainBoost = 0.15f,
+                    MinContinentCount = 0, MaxContinentCount = 0,
+                    MinContinentSize = 0f, MaxContinentSize = 0.10f,
+                    IslandDensity = 0.90f,
                     HasSpecialShape = false
                 }
             },
             {
                 WorldTemplate.RingContinent, new TerrainTemplatePreset {
-                    Name = "环形大陆", Description = "大陆环绕中央内海",
+                    Name = "环形大陆", Description = "以环形主大陆为主环绕中央内海，辅以零散岛屿和半岛",
                     Scale = TerrainScale.World,
                     TargetLandFraction = 0.40f, TerrainFrequency = 1.0f, TerrainOctaves = 5,
                     WarpStrength = 0.4f, WarpFrequency = 0.8f, MountainHeight = 0.45f,
                     PlateCount = 6, PlateBoundaryMountainBoost = 0.35f,
+                    MinContinentCount = 1, MaxContinentCount = 1,
+                    MinContinentSize = 0.40f, MaxContinentSize = 0.60f,
+                    IslandDensity = 0.25f,
                     HasSpecialShape = true, SpecialShapeType = "RingContinent"
                 }
             },
             {
                 WorldTemplate.Mediterranean, new TerrainTemplatePreset {
-                    Name = "地中海世界", Description = "中央海+周围多块陆地",
+                    Name = "地中海世界", Description = "以中央海为核心，周围多块主陆地环绕（大小随机），辅以零散岛屿",
                     Scale = TerrainScale.World,
                     TargetLandFraction = 0.38f, TerrainFrequency = 1.8f, TerrainOctaves = 6,
                     WarpStrength = 0.7f, WarpFrequency = 1.3f, MountainHeight = 0.38f,
                     PlateCount = 12, PlateBoundaryMountainBoost = 0.28f,
+                    MinContinentCount = 3, MaxContinentCount = 6,
+                    MinContinentSize = 0.08f, MaxContinentSize = 0.30f,
+                    IslandDensity = 0.45f,
                     HasSpecialShape = true, SpecialShapeType = "Mediterranean"
                 }
             },
             {
                 WorldTemplate.EarthLike, new TerrainTemplatePreset {
-                    Name = "类地球", Description = "类似地球的海陆分布",
+                    Name = "类地球", Description = "以几块主大陆为主类似地球海陆分布（大小随机），辅以零散岛屿",
                     Scale = TerrainScale.World,
                     TargetLandFraction = 0.29f, TerrainFrequency = 1.8f, TerrainOctaves = 6,
                     WarpStrength = 0.7f, WarpFrequency = 1.3f, MountainHeight = 0.35f,
                     PlateCount = 12, PlateBoundaryMountainBoost = 0.25f,
+                    MinContinentCount = 4, MaxContinentCount = 7,
+                    MinContinentSize = 0.05f, MaxContinentSize = 0.30f,
+                    IslandDensity = 0.35f,
                     HasSpecialShape = false
                 }
             },
