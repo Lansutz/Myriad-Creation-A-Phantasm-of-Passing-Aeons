@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace CivilizationEvolution.Render
@@ -70,6 +70,10 @@ namespace CivilizationEvolution.Render
         public bool showArmyMarkers = false;
         [Tooltip("贸易路线")]
         public bool showTradeRoutes = false;
+        [Tooltip("虚控制范围（三角影响力，政治地图模式下显示）")]
+        public bool showVirtualControl = true;
+        [Tooltip("聚落辐射范围（政治地图模式下显示）")]
+        public bool showInfluenceRadius = false;
 
         /// <summary>当前启用的可选叠加层位掩码</summary>
         public MapOverlayLayer ActiveOverlays
@@ -114,6 +118,8 @@ namespace CivilizationEvolution.Render
             showGrid = false;
             showArmyMarkers = false;
             showTradeRoutes = false;
+            showVirtualControl = true;
+            showInfluenceRadius = false;
         }
     }
 }
