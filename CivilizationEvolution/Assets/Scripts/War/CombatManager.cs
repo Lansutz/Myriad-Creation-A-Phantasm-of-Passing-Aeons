@@ -1,4 +1,4 @@
-using CivilizationEvolution.Diplomacy;
+﻿using CivilizationEvolution.Diplomacy;
 using CivilizationEvolution.Map;
 using System.Collections.Generic;
 using System;
@@ -20,51 +20,130 @@ namespace CivilizationEvolution.War
             _seaLand = seaLand;
         }
 
-        /// <summary>解决一场战斗</summary>
+        /// <summary>
+        /// 解决一场战斗（分阶段推进 + 战斗结束机制）。
+        /// 设计原则（用户定稿）：
+        /// 1. 组织度过低 OR 总伤亡率过高 → 部队暂时失去战斗力
+        /// 2. 组织度过低 → 增加对方追击效率
+        /// 3. 瞬时伤亡率高 → 瞬间使组织度下降
+        /// 4. 总人数不足原有的30% → 战斗结束
+        /// 5. 逃不逃跑取决于指挥官（能力、士气、训练度）
+        /// </summary>
         public BattleResult ResolveBattle(Army attacker, Army defender)
         {
             var result = new BattleResult();
 
+            // 战斗开始：记录原始兵力
+            attacker.RecordBattleStartManpower(_unitDefs);
+            defender.RecordBattleStartManpower(_unitDefs);
+
             float attackerPower = attacker.CalculateCombatPower(_unitDefs, _tiles[attacker.currentTileIndex]);
             float defenderPower = defender.CalculateCombatPower(_unitDefs, _tiles[defender.currentTileIndex]);
-
-            // 防守方地形加成
-            defenderPower *= 1.2f;
-
-            // 将领加成（简化）
+            defenderPower *= 1.2f; // 防守方地形加成
             attackerPower *= 1f + UnityEngine.Random.Range(-0.1f, 0.2f);
             defenderPower *= 1f + UnityEngine.Random.Range(-0.1f, 0.2f);
 
             float powerRatio = attackerPower / Mathf.Max(1f, defenderPower);
             result.attackerWins = powerRatio > 1.1f;
 
-            // 伤亡计算
-            float attackerLossRate = result.attackerWins
-                ? Mathf.Clamp(0.1f / powerRatio, 0.05f, 0.3f)
-                : Mathf.Clamp(0.2f * powerRatio, 0.1f, 0.5f);
-            float defenderLossRate = result.attackerWins
-                ? Mathf.Clamp(0.2f * powerRatio, 0.1f, 0.5f)
-                : Mathf.Clamp(0.1f / powerRatio, 0.05f, 0.3f);
+            // ===== 分阶段战斗推进（最多5个阶段，每阶段检查战斗结束）=====
+            const int MaxPhases = 5;
+            bool battleEnded = false;
+            Army loser = result.attackerWins ? defender : attacker;
+            Army winner = result.attackerWins ? attacker : defender;
 
-            result.attackerLosses = ApplyLosses(attacker, attackerLossRate);
-            result.defenderLosses = ApplyLosses(defender, defenderLossRate);
+            for (int phase = 0; phase < MaxPhases && !battleEnded; phase++)
+            {
+                // 每阶段伤亡率（总伤亡率分摊到各阶段）
+                float phaseFactor = 1f / (MaxPhases - phase); // 后期阶段伤亡更大
 
-            // 组织度和士气变化
+                float attackerLossRate = result.attackerWins
+                    ? Mathf.Clamp(0.1f / powerRatio, 0.05f, 0.3f) * phaseFactor
+                    : Mathf.Clamp(0.2f * powerRatio, 0.1f, 0.5f) * phaseFactor;
+                float defenderLossRate = result.attackerWins
+                    ? Mathf.Clamp(0.2f * powerRatio, 0.1f, 0.5f) * phaseFactor
+                    : Mathf.Clamp(0.1f / powerRatio, 0.05f, 0.3f) * phaseFactor;
+
+                float atkLosses = ApplyLosses(attacker, attackerLossRate);
+                float defLosses = ApplyLosses(defender, defenderLossRate);
+                result.attackerLosses += atkLosses;
+                result.defenderLosses += defLosses;
+
+                // 更新伤亡率
+                attacker.UpdateCasualtyRates(_unitDefs, atkLosses);
+                defender.UpdateCasualtyRates(_unitDefs, defLosses);
+
+                // 瞬时伤亡率冲击：瞬间使组织度下降
+                attacker.ApplyInstantCasualtyOrgShock();
+                defender.ApplyInstantCasualtyOrgShock();
+
+                // 组织度自然损耗（训练度越高掉得越慢）
+                float atkTrainingReduction = 1f - (attacker.training / 100f) * Army.TrainingOrgLossReductionMax;
+                float defTrainingReduction = 1f - (defender.training / 100f) * Army.TrainingOrgLossReductionMax;
+                attacker.organization = Mathf.Max(0f, attacker.organization - 8f * atkTrainingReduction);
+                defender.organization = Mathf.Max(0f, defender.organization - 8f * defTrainingReduction);
+
+                // 检查是否暂时失去战斗力
+                attacker.CheckCombatIneffective();
+                defender.CheckCombatIneffective();
+
+                // 追击效率：如果对方失去战斗力，造成额外伤亡
+                if (defender.isCombatIneffective)
+                {
+                    float pursuit = attacker.CalculatePursuitEfficiency(defender);
+                    float extraLoss = ApplyLosses(defender, 0.1f * pursuit);
+                    result.defenderLosses += extraLoss;
+                    defender.UpdateCasualtyRates(_unitDefs, extraLoss);
+                }
+                if (attacker.isCombatIneffective)
+                {
+                    float pursuit = defender.CalculatePursuitEfficiency(attacker);
+                    float extraLoss = ApplyLosses(attacker, 0.1f * pursuit);
+                    result.attackerLosses += extraLoss;
+                    attacker.UpdateCasualtyRates(_unitDefs, extraLoss);
+                }
+
+                // 检查战斗是否结束（任一方人数不足原有的30%）
+                if (attacker.CheckBattleEnd(_unitDefs) || defender.CheckBattleEnd(_unitDefs))
+                {
+                    battleEnded = true;
+                    result.battleEndedByManpower = true;
+                }
+
+                // 如果败方已失去战斗力且人数不足，战斗结束
+                if (loser.isCombatIneffective && loser.CheckBattleEnd(_unitDefs))
+                {
+                    battleEnded = true;
+                }
+            }
+
+            // ===== 战斗结束：组织度士气变化 + 逃跑判定 =====
             if (result.attackerWins)
             {
-                attacker.organization = Mathf.Max(0f, attacker.organization - 10f);
+                attacker.organization = Mathf.Max(0f, attacker.organization - 5f);
                 attacker.morale = Mathf.Min(100f, attacker.morale + 5f);
-                defender.organization = Mathf.Max(0f, defender.organization - 30f);
+                defender.organization = Mathf.Max(0f, defender.organization - 20f);
                 defender.morale = Mathf.Max(0f, defender.morale - 20f);
-                defender.state = GameEnums.CombatState.Retreating;
+
+                // 败方逃跑判定（取决于指挥官）
+                result.defenderRetreated = defender.ShouldRetreat();
+                if (result.defenderRetreated)
+                    defender.state = GameEnums.CombatState.Retreating;
+                else
+                    defender.state = GameEnums.CombatState.Dead; // 不逃跑则被歼灭
             }
             else
             {
-                attacker.organization = Mathf.Max(0f, attacker.organization - 30f);
+                attacker.organization = Mathf.Max(0f, attacker.organization - 20f);
                 attacker.morale = Mathf.Max(0f, attacker.morale - 20f);
-                attacker.state = GameEnums.CombatState.Retreating;
-                defender.organization = Mathf.Max(0f, defender.organization - 10f);
+                defender.organization = Mathf.Max(0f, defender.organization - 5f);
                 defender.morale = Mathf.Min(100f, defender.morale + 5f);
+
+                result.attackerRetreated = attacker.ShouldRetreat();
+                if (result.attackerRetreated)
+                    attacker.state = GameEnums.CombatState.Retreating;
+                else
+                    attacker.state = GameEnums.CombatState.Dead;
             }
 
             return result;
