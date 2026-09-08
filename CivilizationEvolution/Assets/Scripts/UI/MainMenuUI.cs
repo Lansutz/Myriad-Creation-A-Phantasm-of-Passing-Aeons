@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -96,7 +96,8 @@ namespace CivilizationEvolution.UI
             // 按钮：开始游戏（主）、编辑器、设置、退出
             var buttons = new (string label, bool primary, Action onClick)[]
             {
-                ("开始游戏", true, OnStartGame),
+                ("创建世界", true, OnStartGame),
+                ("加载世界", false, OnLoadWorld),
                 ("编辑器", false, OnDataEditor),
                 ("设置", false, OnSettings),
                 ("退出游戏", false, OnExit),
@@ -179,13 +180,20 @@ namespace CivilizationEvolution.UI
 
         // ===== 按钮事件 =====
 
-        /// <summary>开始游戏 → 进入地图编辑器（全海空白地图 + 右侧编辑器UI + 右下速度控制）</summary>
+        /// <summary>创建世界 → 进入地图编辑器（全海空白地图 + 右侧编辑器UI + 右下速度控制）</summary>
         private void OnStartGame()
         {
             Hide();
             var flow = SceneFlowController.Instance;
             if (flow != null) flow.EnterMapEditor();
             else Debug.LogWarning("[MainMenuUI] SceneFlowController 不存在，无法进入地图编辑器");
+        }
+
+        /// <summary>加载世界 → 打开存档选择面板（待实现存档系统）</summary>
+        private void OnLoadWorld()
+        {
+            Debug.Log("[MainMenuUI] 加载世界——存档系统待实现");
+            // TODO: 打开存档选择面板，加载已保存的世界
         }
 
         /// <summary>编辑器 → 数据编辑器（种族/文化/宗教等内容编辑选择）</summary>
