@@ -76,6 +76,13 @@ namespace CivilizationEvolution.Core
 
             // 创建并配置地形生成器
             _planetTerrainGenerator = new PlanetTerrainGenerator(seed);
+
+            // 先应用地形模板预设（基础参数），再应用 GenConfig 滑块（玩家微调）
+            var templatePreset = GenConfig.TerrainScale == TerrainScale.World
+                ? TerrainTemplateSystem.GetWorldPreset(GenConfig.WorldTemplate)
+                : TerrainTemplateSystem.GetRegionalPreset(GenConfig.RegionalTemplate);
+            TerrainTemplateSystem.ApplyPreset(templatePreset, _planetTerrainGenerator);
+
             GenConfig.ApplyToGenerator(_planetTerrainGenerator);
             _planetTerrainGenerator.Generate(tiles, mapWidth, mapHeight);
 

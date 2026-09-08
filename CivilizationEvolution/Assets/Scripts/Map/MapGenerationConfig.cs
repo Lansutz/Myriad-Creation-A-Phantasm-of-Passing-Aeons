@@ -38,6 +38,16 @@ namespace CivilizationEvolution.Map
         [Tooltip("地图底图来源。程序生成=噪声自动生成；内置底图=预设模板；导入高度图=以灰度图亮度为高程。")]
         public MapBasemap Basemap = MapBasemap.Procedural;
 
+        [Header("【地形模板】")]
+        [Tooltip("地形规模分类。完整世界=全球海陆格局；局部=区域地理特征（含边界条件）。两者生成逻辑和参数体系不同。")]
+        public TerrainScale TerrainScale = TerrainScale.World;
+
+        [Tooltip("完整世界地形模板。选择后自动应用参数预设，仍可用滑块微调。")]
+        public WorldTemplate WorldTemplate = WorldTemplate.EarthLike;
+
+        [Tooltip("局部地形模板。选择后自动应用参数预设，仍可用滑块微调。")]
+        public RegionalTemplate RegionalTemplate = RegionalTemplate.CoastalPlain;
+
         [Tooltip("随机种子（整数）。相同种子+相同设置=相同地图。-1=随机生成。")]
         public int Seed = -1;
 

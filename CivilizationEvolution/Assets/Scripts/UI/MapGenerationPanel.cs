@@ -40,6 +40,10 @@ namespace CivilizationEvolution.UI
         private Toggle _useStringSeedToggle;
         private InputField _stringSeedInput;
         private Dropdown _genModeDropdown;
+        private Dropdown _terrainScaleDropdown;
+        private Dropdown _worldTemplateDropdown;
+        private Dropdown _regionalTemplateDropdown;
+        private Text _templateDescText;
         private Dropdown _projectionDropdown;
         private MapProjectionMode _currentProjection = MapProjectionMode.Planar;
         private Action<MapProjectionMode> _onProjectionChanged;
@@ -315,6 +319,57 @@ namespace CivilizationEvolution.UI
             });
             y -= 32f;
 
+            // 地形模板（完整世界/局部两大分类）
+            CreateLabel("地形规模", y);
+            _terrainScaleDropdown = CreateDropdown(_panelRoot.transform,
+                new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f),
+                new List<string> { "完整世界", "局部" });
+            _terrainScaleDropdown.value = (int)_config.TerrainScale;
+            _terrainScaleDropdown.onValueChanged.AddListener(v =>
+            {
+                _config.TerrainScale = (TerrainScale)v;
+                UpdateTemplateVisibility();
+                UpdateTemplateDesc();
+                UpdateStatus($"地形规模: {(v == 0 ? "完整世界" : "局部")}");
+            });
+            y -= 32f;
+
+            // 完整世界模板
+            CreateLabel("完整世界模板", y);
+            _worldTemplateDropdown = CreateDropdown(_panelRoot.transform,
+                new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f),
+                new List<string>(TerrainTemplateSystem.GetWorldTemplateNames()));
+            _worldTemplateDropdown.value = (int)_config.WorldTemplate;
+            _worldTemplateDropdown.onValueChanged.AddListener(v =>
+            {
+                _config.WorldTemplate = (WorldTemplate)v;
+                UpdateTemplateDesc();
+                UpdateStatus($"模板: {TerrainTemplateSystem.GetWorldPreset((WorldTemplate)v).Name}");
+            });
+            y -= 32f;
+
+            // 局部模板
+            CreateLabel("局部模板", y);
+            _regionalTemplateDropdown = CreateDropdown(_panelRoot.transform,
+                new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f),
+                new List<string>(TerrainTemplateSystem.GetRegionalTemplateNames()));
+            _regionalTemplateDropdown.value = (int)_config.RegionalTemplate;
+            _regionalTemplateDropdown.onValueChanged.AddListener(v =>
+            {
+                _config.RegionalTemplate = (RegionalTemplate)v;
+                UpdateTemplateDesc();
+                UpdateStatus($"模板: {TerrainTemplateSystem.GetRegionalPreset((RegionalTemplate)v).Name}");
+            });
+            y -= 32f;
+
+            // 模板描述
+            _templateDescText = CreateText(_panelRoot.transform, "", 11, TextAnchor.MiddleLeft,
+                new Vector2(12f, y), new Vector2(ContentWidth, 18f));
+            _templateDescText.color = TextDim;
+            UpdateTemplateVisibility();
+            UpdateTemplateDesc();
+            y -= 24f;
+
             // 投影模式（平面/球形）
             CreateLabel("地图投影", y);
             _projectionDropdown = CreateDropdown(_panelRoot.transform,
@@ -544,6 +599,24 @@ namespace CivilizationEvolution.UI
         private void UpdateStatus(string msg)
         {
             if (_statusText != null) _statusText.text = msg;
+        }
+
+        /// <summary>根据地形规模显示/隐藏对应模板下拉</summary>
+        private void UpdateTemplateVisibility()
+        {
+            bool isWorld = _config.TerrainScale == TerrainScale.World;
+            if (_worldTemplateDropdown != null) _worldTemplateDropdown.gameObject.SetActive(isWorld);
+            if (_regionalTemplateDropdown != null) _regionalTemplateDropdown.gameObject.SetActive(!isWorld);
+        }
+
+        /// <summary>更新模板描述文本</summary>
+        private void UpdateTemplateDesc()
+        {
+            if (_templateDescText == null) return;
+            var preset = _config.TerrainScale == TerrainScale.World
+                ? TerrainTemplateSystem.GetWorldPreset(_config.WorldTemplate)
+                : TerrainTemplateSystem.GetRegionalPreset(_config.RegionalTemplate);
+            _templateDescText.text = preset.Description;
         }
 
         // ===== 标准 UI 创建方法（复用 EditorUIPanel 的风格） =====
