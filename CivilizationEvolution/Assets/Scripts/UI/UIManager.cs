@@ -174,6 +174,48 @@ namespace CivilizationEvolution.UI
         public void OpenSettingsFromMainMenu() => OpenSettingsPanel();
         /// <summary>隐藏场景中的旧主菜单（代码动态主菜单接管时调用）</summary>
         public void HideLegacyStartMenu() { if (startMenuPanel != null) startMenuPanel.SetActive(false); }
+
+        /// <summary>显示所有游戏内UI（进入游戏/地图编辑器时调用）</summary>
+        public void ShowGameUI()
+        {
+            SetGameUIVisible(true);
+        }
+
+        /// <summary>隐藏所有游戏内UI（主菜单时调用）</summary>
+        public void HideGameUI()
+        {
+            SetGameUIVisible(false);
+        }
+
+        /// <summary>统一设置游戏内UI可见性</summary>
+        private void SetGameUIVisible(bool visible)
+        {
+            // 顶部信息栏（通过文本组件的gameObject控制）
+            if (dateText != null) dateText.gameObject.SetActive(visible);
+            if (realmNameText != null) realmNameText.gameObject.SetActive(visible);
+            // 地块详情面板
+            if (tileInfoPanel != null) tileInfoPanel.SetActive(visible);
+            // 地图模式栏
+            if (mapModeBar != null) mapModeBar.SetActive(visible);
+            if (mapModePanel != null) mapModePanel.SetActive(visible);
+            // 角色面板
+            if (characterPanel != null) characterPanel.SetActive(false); // 面板默认关闭，由按钮控制
+            // 社会/宗教面板
+            if (societyPanel != null) societyPanel.SetActive(false);
+            if (religionPanel != null) religionPanel.SetActive(false);
+            // 事件日志
+            if (eventLogPanel != null) eventLogPanel.SetActive(visible);
+            // 速度控制按钮
+            if (pauseButton != null) pauseButton.gameObject.SetActive(visible);
+            if (speed1Button != null) speed1Button.gameObject.SetActive(visible);
+            if (speed2Button != null) speed2Button.gameObject.SetActive(visible);
+            if (speed3Button != null) speed3Button.gameObject.SetActive(visible);
+            // 旧主菜单和新游戏面板始终隐藏（由MainMenuUI接管）
+            if (startMenuPanel != null) startMenuPanel.SetActive(false);
+            if (newGamePanel != null) newGamePanel.SetActive(false);
+            if (settingsPanel != null) settingsPanel.SetActive(false);
+            if (loadingPanel != null) loadingPanel.SetActive(false);
+        }
         private readonly List<string> _eventLog = new List<string>();
         private const int MaxLogEntries = 100;
 
