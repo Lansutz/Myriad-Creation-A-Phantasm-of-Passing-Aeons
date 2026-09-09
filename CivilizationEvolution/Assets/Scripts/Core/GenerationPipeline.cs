@@ -216,7 +216,8 @@ namespace CivilizationEvolution.Core
                     break;
 
                 case GenerationStage.Features:
- // 地理特征在地形生成时已标记（海洋/海岸/湖泊），这里确认                    Debug.Log("[GenerationPipeline] 地理特征已在地形阶段标记");
+                    // 海洋距离场分区（近海/中海/远海/深海，参考 Azgaar FMG 距离场）
+                    OceanZoning.ApplyToTiles(_world.tiles, _world.mapWidth, _world.mapHeight, _world.config.wrapX);
                     break;
 
                 case GenerationStage.Climate:
