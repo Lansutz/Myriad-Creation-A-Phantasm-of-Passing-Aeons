@@ -232,15 +232,15 @@ namespace CivilizationEvolution.Core
                     break;
 
                 case GenerationStage.Provinces:
- // 省份生成在 InitializeWorld 中处理，编辑器场景暂不自动生成                    Debug.Log("[GenerationPipeline] 省份划分（待对接）");
+                    _world.GenerateProvinces();
                     break;
 
                 case GenerationStage.Burgs:
- // 聚落生成在 InitializeWorld 中处理                    Debug.Log("[GenerationPipeline] 聚落生成（待对接）");
+                    _world.GenerateBurgs();
                     break;
 
                 case GenerationStage.Society:
- // 社会生成在 InitializeWorld 中处理                    Debug.Log("[GenerationPipeline] 社会生成（待对接）");
+                    _world.InitializeDefaultRealms();
                     break;
             }
         }

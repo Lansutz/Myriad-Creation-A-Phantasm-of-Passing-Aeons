@@ -255,5 +255,35 @@ namespace CivilizationEvolution.Core
                 _terrainDirtyTiles.Add(n);
         }
 
+
+        /// <summary>生成省份划分（Lloyd松弛算法，参考 Azgaar FMG provinces-generator）</summary>
+        public void GenerateProvinces()
+        {
+            int seed = GenConfig.GetActualSeed();
+            int cellsPerProvince = Math.Max(8, GenConfig.TilesPerProvince);
+
+            var generator = new ProvinceGenerator(tiles, mapWidth, mapHeight, config.wrapX);
+            provinces = generator.Generate(seed, cellsPerProvince);
+
+            Debug.Log($"[GameWorld] 省份划分完成：{provinces.Count} 个省份（每省约 {cellsPerProvince} 地块）");
+        }
+
+
+        /// <summary>生成聚落（城市/港口/要塞/村庄，参考 Azgaar FMG burgs-generator）</summary>
+        public void GenerateBurgs()
+        {
+            if (provinces.Count == 0)
+            {
+                Debug.LogWarning("[GameWorld] 聚落生成跳过：省份尚未生成");
+                return;
+            }
+
+            int seed = GenConfig.GetActualSeed();
+            var generator = new BurgGenerator(tiles, mapWidth, mapHeight, provinces, seed);
+            burgs = generator.Generate();
+
+            Debug.Log($"[GameWorld] 聚落生成完成：{burgs.Count} 个聚落");
+        }
+
     }
 }
