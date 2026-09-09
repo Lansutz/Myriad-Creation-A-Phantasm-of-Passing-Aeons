@@ -112,16 +112,15 @@ namespace CivilizationEvolution.Core
                 _climateDirtyTiles.Add(i);
             }
 
- // 用Holdridge分类器更新生物群系（静态类，直接调用）            for (int i = 0; i < tiles.Length; i++)
+ // 用Holdridge分类器更新生物群系，并应用群系基础属性（参考Azgaar FMG biomesData.cost）            for (int i = 0; i < tiles.Length; i++)
             {
-                if (tiles[i].isLand)
-                {
-                    float latAbs = Mathf.Abs((float)(TileGrid.ToY(i, mapWidth) - mapHeight * 0.5) / mapHeight * 180f);
-                    tiles[i].biome = HoldridgeBiomeClassifier.Classify(
-                        tiles[i].annualTemp, tiles[i].annualPrecipMm, tiles[i].elevation01,
-                        tiles[i].isLand, tiles[i].isCoast, tiles[i].isRiver,
-                        tiles[i].slopeDegree, latAbs);
-                }
+                float latAbs = Mathf.Abs((float)(TileGrid.ToY(i, mapWidth) - mapHeight * 0.5) / mapHeight * 180f);
+                tiles[i].biome = HoldridgeBiomeClassifier.Classify(
+                    tiles[i].annualTemp, tiles[i].annualPrecipMm, tiles[i].elevation01,
+                    tiles[i].isLand, tiles[i].isCoast, tiles[i].isRiver,
+                    tiles[i].slopeDegree, latAbs);
+                // 应用群系基础移动成本（BarrierSystem后续会根据坡度/道路再修正）
+                tiles[i].movementCost = BiomeAttributes.GetMovementCost(tiles[i].biome);
             }
 
             Debug.Log($"[GameWorld] 气候计算完成：GCM已运行，降水/湿度/生物群系已更新");
