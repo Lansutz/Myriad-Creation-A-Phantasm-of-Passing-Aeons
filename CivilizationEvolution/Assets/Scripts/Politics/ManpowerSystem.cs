@@ -1,6 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.War;
 using CivilizationEvolution.Economy;
 
 namespace CivilizationEvolution.Politics
@@ -43,7 +44,7 @@ namespace CivilizationEvolution.Politics
                 {
                     float rate = GetClassRecruitRate(pb.socialClass);
                     if (rate <= 0f) continue;
-                    float manpower = pb.count * 50f * rate * terrainMod; // count×50人×征募率×地形
+                    float manpower = pb.count * Army.ManpowerPerBlock * rate * terrainMod; // count×100人(Army.ManpowerPerBlock)×征募率×地形
                     pool[pb.socialClass] = pool.GetValueOrDefault(pb.socialClass) + manpower;
                 }
             }

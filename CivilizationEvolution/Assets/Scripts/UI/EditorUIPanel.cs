@@ -31,6 +31,13 @@ namespace CivilizationEvolution.UI
         private InputField _renameProvinceInput;
         private Button _undoBtn;
         private Button _redoBtn;
+
+        // ===== 图层开关 =====
+        private Button _layerProvinceBordersBtn;
+        private Button _layerBurgMarkersBtn;
+        private Button _layerGridBtn;
+        private Button _layerVirtualControlBtn;
+        private Button _layerInfluenceRadiusBtn;
         private readonly List<Button> _toolButtons = new List<Button>();
         private readonly List<EditorTool> _toolList = new List<EditorTool>
         {
@@ -321,9 +328,79 @@ namespace CivilizationEvolution.UI
                 new Vector2(10f, y), new Vector2(contentWidth, 22f));
             openDirBtn.onClick.AddListener(() => MapSaveSystem.OpenSaveDirectory());
             y -= 28f;
+
+            // ===== 图层开关区域 =====
+            y -= 8f;
+            var layerLabel = CreateText(_panelRoot.transform, "图层开关", 12, TextAnchor.MiddleLeft, new Vector2(10f, y), new Vector2(contentWidth, 20f));
+            y -= 24f;
+
+            _layerProvinceBordersBtn = CreateButton(_panelRoot.transform, "省份边界: 开",
+                new Vector2(10f, y), new Vector2(contentWidth, 22f));
+            _layerProvinceBordersBtn.onClick.AddListener(() => ToggleLayer(CivilizationEvolution.Render.MapOverlayLayer.ProvinceBorders, _layerProvinceBordersBtn, "省份边界"));
+            y -= 26f;
+
+            _layerBurgMarkersBtn = CreateButton(_panelRoot.transform, "聚落标记: 开",
+                new Vector2(10f, y), new Vector2(contentWidth, 22f));
+            _layerBurgMarkersBtn.onClick.AddListener(() => ToggleLayer(CivilizationEvolution.Render.MapOverlayLayer.BurgMarkers, _layerBurgMarkersBtn, "聚落标记"));
+            y -= 26f;
+
+            _layerGridBtn = CreateButton(_panelRoot.transform, "网格: 关",
+                new Vector2(10f, y), new Vector2(contentWidth, 22f));
+            _layerGridBtn.onClick.AddListener(() => ToggleLayer(CivilizationEvolution.Render.MapOverlayLayer.Grid, _layerGridBtn, "网格"));
+            y -= 26f;
+
+            _layerVirtualControlBtn = CreateButton(_panelRoot.transform, "虚控制范围: 开",
+                new Vector2(10f, y), new Vector2(contentWidth, 22f));
+            _layerVirtualControlBtn.onClick.AddListener(() => ToggleVirtualControl());
+            y -= 26f;
+
+            _layerInfluenceRadiusBtn = CreateButton(_panelRoot.transform, "辐射范围: 关",
+                new Vector2(10f, y), new Vector2(contentWidth, 22f));
+            _layerInfluenceRadiusBtn.onClick.AddListener(() => ToggleInfluenceRadius());
+            y -= 28f;
+
             // 调整面板高度
             panelRt.sizeDelta = new Vector2(210f, Mathf.Abs(y) + 20f);
         }
+
+        #region 图层开关
+
+        private void ToggleLayer(CivilizationEvolution.Render.MapOverlayLayer layer, Button btn, string label)
+        {
+            if (_renderer == null) return;
+            bool current = _renderer.IsOverlayEnabled(layer);
+            _renderer.ToggleOverlay(layer, !current);
+            var img = btn.GetComponent<Image>();
+            if (img != null) img.color = !current ? ButtonActiveColor : ButtonNormalColor;
+            var txt = btn.GetComponentInChildren<Text>();
+            if (txt != null) txt.text = $"{label}: {(!current ? "开" : "关")}";
+        }
+
+        private void ToggleVirtualControl()
+        {
+            if (_renderer == null) return;
+            var cfg = _renderer.LayerConfig;
+            cfg.showVirtualControl = !cfg.showVirtualControl;
+            _renderer.ForceRefresh();
+            var img = _layerVirtualControlBtn.GetComponent<Image>();
+            if (img != null) img.color = cfg.showVirtualControl ? ButtonActiveColor : ButtonNormalColor;
+            var txt = _layerVirtualControlBtn.GetComponentInChildren<Text>();
+            if (txt != null) txt.text = $"虚控制范围: {(cfg.showVirtualControl ? "开" : "关")}";
+        }
+
+        private void ToggleInfluenceRadius()
+        {
+            if (_renderer == null) return;
+            var cfg = _renderer.LayerConfig;
+            cfg.showInfluenceRadius = !cfg.showInfluenceRadius;
+            _renderer.ForceRefresh();
+            var img = _layerInfluenceRadiusBtn.GetComponent<Image>();
+            if (img != null) img.color = cfg.showInfluenceRadius ? ButtonActiveColor : ButtonNormalColor;
+            var txt = _layerInfluenceRadiusBtn.GetComponentInChildren<Text>();
+            if (txt != null) txt.text = $"辐射范围: {(cfg.showInfluenceRadius ? "开" : "关")}";
+        }
+
+        #endregion
 
         private void RegisterEvents()
         {

@@ -173,6 +173,10 @@ namespace CivilizationEvolution.Core
             _politicalManager.DailyTick();
             PoliticsTick();
 
+            // 6.5 聚落控制/影响力范围（高等级聚落控制低等级，驻扎部队影响控制速度，虹吸效应通过税收贸易自然表现）
+            CivilizationEvolution.Map.SettlementControlSystem.DailyTick(
+                burgs, tiles, mapWidth, mapHeight, armies);
+
             // 7. 外交（先同步世界时钟，供盟约/条约/事件时间戳使用）
             _diplomacyManager.CurrentDay = currentDay;
             _diplomacyManager.DailyTick();
