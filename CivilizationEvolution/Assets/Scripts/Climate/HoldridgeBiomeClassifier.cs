@@ -4,46 +4,22 @@ using UnityEngine;
 
 namespace CivilizationEvolution.Climate
 {
- /// Holdridge 生命地带分类系统（Holdridge 1967, 1987）
- /// 三个核心变量（对数刻度三角形坐标系）：
- /// 1. 年生物温度 ABT（Annual Biotemperature）：0~30°C，低于0°C的月份按0计（植物休眠），高于30°C的月份排除
- /// 2. 年降水 AP（Annual Precipitation）：mm，对数刻度 62.5~4000+
- /// 3. 潜在蒸散比 PER（Potential Evapotranspiration Ratio）= PET / P，<0.5 极湿润 / 0.5-1 湿润 / 1-2 半湿润 / 2-4 半干旱 / >4 干旱
- /// 分类结果映射到游戏的 BiomeType 枚举（55+生态区）
- /// 参考：Holdridge, L.R. (1967) Life Zone Ecology; Watson et al. (1971) Holdridge Life Zones of the World
-    public static class HoldridgeBiomeClassifier
+ /// Holdridge 生命地带分类系统（Holdridge 1967, 1987） /// 三个核心变量（对数刻度三角形坐标系）： /// 1. 年生物温度 ABT（Annual Biotemperature）：0~30°C，低于0°C的月份按0计（植物休眠），高于30°C的月份排除 /// 2. 年降水 AP（Annual Precipitation）：mm，对数刻度 62.5~4000+ /// 3. 潜在蒸散比 PER（Potential Evapotranspiration Ratio）= PET / P，<0.5 极湿润 / 0.5-1 湿润 / 1-2 半湿润 / 2-4 半干旱 / >4 干旱 /// 分类结果映射到游戏的 BiomeType 枚举（55+生态区） /// 参考：Holdridge, L.R. (1967) Life Zone Ecology; Watson et al. (1971) Holdridge Life Zones of the World    public static class HoldridgeBiomeClassifier
     {
- /// 计算年生物温度（ABT）
- /// 简化版：基于年均温，低于0°C按0计，高于30°C按30°C计
- /// 精确版需要月均温数据，这里用年均温近似
-        public static float CalculateBiotemperature(float meanAnnualTemp)
+ /// 计算年生物温度（ABT） /// 简化版：基于年均温，低于0°C按0计，高于30°C按30°C计 /// 精确版需要月均温数据，这里用年均温近似        public static float CalculateBiotemperature(float meanAnnualTemp)
         {
- // 生物温度：植物生长季的有效温度
- // 简化：年均温低于0°C时生物温度趋近0，高于30°C时饱和
-            float bt = Mathf.Clamp(meanAnnualTemp, 0f, 30f);
- // 冬季休眠修正：寒冷地区实际生物温度低于年均温
-            if (meanAnnualTemp < 10f)
+ // 生物温度：植物生长季的有效温度 // 简化：年均温低于0°C时生物温度趋近0，高于30°C时饱和            float bt = Mathf.Clamp(meanAnnualTemp, 0f, 30f);
+ // 冬季休眠修正：寒冷地区实际生物温度低于年均温            if (meanAnnualTemp < 10f)
                 bt *= 0.6f + 0.4f * (meanAnnualTemp / 10f);
             return bt;
         }
 
- /// 计算潜在蒸散量（PET），mm/年
- /// 基于Thornthwaite方程简化：PET ≈ 1.6 * (10 * ABT / I)^a
- /// 简化版用经验公式：PET ≈ 50 * ABT（粗略近似，ABT=10时PET≈500mm）
-        public static float CalculatePET(float biotemperature)
+ /// 计算潜在蒸散量（PET），mm/年 /// 基于Thornthwaite方程简化：PET ≈ 1.6 * (10 * ABT / I)^a /// 简化版用经验公式：PET ≈ 50 * ABT（粗略近似，ABT=10时PET≈500mm）        public static float CalculatePET(float biotemperature)
         {
- // Thornthwaite简化：PET = 1.6 * (10 * T / I)^a
- // 这里用更简单的线性近似，ABT=0→PET=0, ABT=30→PET≈1500mm
-            return Mathf.Max(0f, biotemperature * 50f);
+ // Thornthwaite简化：PET = 1.6 * (10 * T / I)^a // 这里用更简单的线性近似，ABT=0→PET=0, ABT=30→PET≈1500mm            return Mathf.Max(0f, biotemperature * 50f);
         }
 
- /// 计算潜在蒸散比 PER = PET / P
- /// PER < 0.5: 极湿润（rain forest）
- /// PER 0.5-1: 湿润（wet forest）
- /// PER 1-2: 半湿润（moist forest）
- /// PER 2-4: 半干旱（thorn steppe）
- /// PER >4: 干旱（desert）
-        public static float CalculatePER(float pet, float precipitation)
+ /// 计算潜在蒸散比 PER = PET / P /// PER < 0.5: 极湿润（rain forest） /// PER 0.5-1: 湿润（wet forest） /// PER 1-2: 半湿润（moist forest） /// PER 2-4: 半干旱（thorn steppe） /// PER >4: 干旱（desert）        public static float CalculatePER(float pet, float precipitation)
         {
             if (precipitation < 1f) return 100f; // 几乎无降水→极端干旱
             return pet / precipitation;
@@ -51,12 +27,9 @@ namespace CivilizationEvolution.Climate
 
  /// Holdridge 湿度等级（基于PER）
 
-
  /// Holdridge 温度带（基于ABT）
 
-
- /// <summary>获取湿度等级</summary>
-        public static HumidityProvince GetHumidityProvince(float per)
+ /// <summary>获取湿度等级</summary>        public static HumidityProvince GetHumidityProvince(float per)
         {
             if (per > 16f) return HumidityProvince.SuperArid;
             if (per > 8f) return HumidityProvince.PerArid;
@@ -68,8 +41,7 @@ namespace CivilizationEvolution.Climate
             return HumidityProvince.SuperHumid;
         }
 
- /// <summary>获取温度带</summary>
-        public static ThermalBelt GetThermalBelt(float abt)
+ /// <summary>获取温度带</summary>        public static ThermalBelt GetThermalBelt(float abt)
         {
             if (abt < 1.5f) return ThermalBelt.Nival;
             if (abt < 3f) return ThermalBelt.Tundra;
@@ -80,37 +52,24 @@ namespace CivilizationEvolution.Climate
             return ThermalBelt.Tropical;
         }
 
- /// 核心分类：Holdridge 三变量 → BiomeType
- /// 综合温度带、湿度等级、高程、海陆、水文特征，映射到55+生态区
- /// <param name="meanAnnualTemp">年均温（°C）</param>
- /// <param name="precipitation">年降水（mm）</param>
- /// <param name="elevation01">归一化高程（0-1）</param>
- /// <param name="isLand">是否陆地</param>
- /// <param name="isCoast">是否海岸</param>
- /// <param name="isRiver">是否河流</param>
- /// <param name="slopeDegree">坡度（度）</param>
- /// <param name="latAbs">绝对纬度（0-90）</param>
-        public static GameEnums.BiomeType Classify(
+ /// 核心分类：Holdridge 三变量 → BiomeType /// 综合温度带、湿度等级、高程、海陆、水文特征，映射到55+生态区 /// <param name="meanAnnualTemp">年均温（°C）</param> /// <param name="precipitation">年降水（mm）</param> /// <param name="elevation01">归一化高程（0-1）</param> /// <param name="isLand">是否陆地</param> /// <param name="isCoast">是否海岸</param> /// <param name="isRiver">是否河流</param> /// <param name="slopeDegree">坡度（度）</param> /// <param name="latAbs">绝对纬度（0-90）</param>        public static GameEnums.BiomeType Classify(
             float meanAnnualTemp, float precipitation, float elevation01,
             bool isLand, bool isCoast, bool isRiver, float slopeDegree, float latAbs)
         {
             if (!isLand)
             {
- // 海洋群系（简化）
-                if (isCoast) return GameEnums.BiomeType.Mangrove; // 沿海红树林
+ // 海洋群系（简化）                if (isCoast) return GameEnums.BiomeType.Mangrove; // 沿海红树林
                 return GameEnums.BiomeType.EndorheicLake; // 占位
             }
 
- // 计算Holdridge三变量
-            float abt = CalculateBiotemperature(meanAnnualTemp);
+ // 计算Holdridge三变量            float abt = CalculateBiotemperature(meanAnnualTemp);
             float pet = CalculatePET(abt);
             float per = CalculatePER(pet, precipitation);
 
             var thermal = GetThermalBelt(abt);
             var humidity = GetHumidityProvince(per);
 
- // ===== 高海拔特化（优先于气候带分类）=====
-            if (elevation01 > 0.9f)
+ // ===== 高海拔特化（优先于气候带分类）=====            if (elevation01 > 0.9f)
             {
                 if (meanAnnualTemp < -5f) return GameEnums.BiomeType.MountainGlacier;
                 return GameEnums.BiomeType.HighMountains;
@@ -121,16 +80,14 @@ namespace CivilizationEvolution.Climate
                 return GameEnums.BiomeType.FoldMountains;
             }
 
- // ===== 水文特化 =====
-            if (isRiver && elevation01 < 0.4f && humidity >= HumidityProvince.Humid)
+ // ===== 水文特化 =====            if (isRiver && elevation01 < 0.4f && humidity >= HumidityProvince.Humid)
                 return GameEnums.BiomeType.Swamp;
             if (isCoast && precipitation > 1500f && thermal >= ThermalBelt.Subtropical)
                 return GameEnums.BiomeType.Mangrove;
             if (isCoast && elevation01 < 0.3f)
                 return GameEnums.BiomeType.CoastalLowland;
 
- // ===== Holdridge 温度带 × 湿度等级 主分类 =====
-            switch (thermal)
+ // ===== Holdridge 温度带 × 湿度等级 主分类 =====            switch (thermal)
             {
                 case ThermalBelt.Nival:
                     return GameEnums.BiomeType.IceSheet;
@@ -156,8 +113,7 @@ namespace CivilizationEvolution.Climate
                         return GameEnums.BiomeType.SemiAridShrubland;
                     if (humidity <= HumidityProvince.SubHumid)
                         return elevation01 > 0.55f ? GameEnums.BiomeType.LowHills : GameEnums.BiomeType.DeciduousForest;
- // 暖温带湿润区：地中海气候（夏干冬雨）→ 常绿硬叶林，否则落叶阔叶
-                    if (latAbs > 30f && latAbs < 45f && per > 0.8f)
+ // 暖温带湿润区：地中海气候（夏干冬雨）→ 常绿硬叶林，否则落叶阔叶                    if (latAbs > 30f && latAbs < 45f && per > 0.8f)
                         return GameEnums.BiomeType.EvergreenForest; // 地中海型常绿硬叶林
                     return GameEnums.BiomeType.DeciduousForest;
 
@@ -186,9 +142,7 @@ namespace CivilizationEvolution.Climate
             }
         }
 
- /// 计算肥力（Holdridge体系下的农业潜力）
- /// 基于温度带×湿度等级×地形修正
-        public static float CalculateFertility(
+ /// 计算肥力（Holdridge体系下的农业潜力） /// 基于温度带×湿度等级×地形修正        public static float CalculateFertility(
             float meanAnnualTemp, float precipitation, float elevation01,
             float slopeDegree, GameEnums.BiomeType biome)
         {
@@ -196,13 +150,11 @@ namespace CivilizationEvolution.Climate
             float pet = CalculatePET(abt);
             float per = CalculatePER(pet, precipitation);
 
- // 基础肥力：温度适中+降水适中最高
-            float tempFactor = Mathf.Exp(-Mathf.Pow((abt - 15f) / 12f, 2)); // ABT=15°C最优
+ // 基础肥力：温度适中+降水适中最高            float tempFactor = Mathf.Exp(-Mathf.Pow((abt - 15f) / 12f, 2)); // ABT=15°C最优
             float moistureFactor = Mathf.Exp(-Mathf.Pow((per - 0.75f) / 1.5f, 2)); // PER=0.75最优（湿润）
             float baseFert = tempFactor * moistureFactor * 0.8f + 0.1f;
 
- // 群系修正
-            switch (biome)
+ // 群系修正            switch (biome)
             {
                 case GameEnums.BiomeType.AlluvialPlain:
                 case GameEnums.BiomeType.VolcanicAshPlain:
@@ -230,10 +182,8 @@ namespace CivilizationEvolution.Climate
                     baseFert *= 0.15f; break;
             }
 
- // 坡度惩罚（>15°显著降低）
-            baseFert *= Mathf.Clamp01(1f - Mathf.Max(0, slopeDegree - 10f) / 50f);
- // 高程惩罚（>0.6显著降低）
-            baseFert *= Mathf.Clamp01(1f - Mathf.Max(0, elevation01 - 0.5f) * 1.2f);
+ // 坡度惩罚（>15°显著降低）            baseFert *= Mathf.Clamp01(1f - Mathf.Max(0, slopeDegree - 10f) / 50f);
+ // 高程惩罚（>0.6显著降低）            baseFert *= Mathf.Clamp01(1f - Mathf.Max(0, elevation01 - 0.5f) * 1.2f);
 
             return Mathf.Clamp01(baseFert);
         }

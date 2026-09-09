@@ -6,9 +6,7 @@ using UnityEngine.Networking;
 
 namespace CivilizationEvolution.UI
 {
- /// 音乐播放器：加载 StreamingAssets/Music/ 下音频（mp3/ogg/wav）循环播放
- /// 支持播放/暂停/上一首/下一首/音量——用户可自行放入音乐文件
-    public class MusicPlayer : MonoBehaviour
+ /// 音乐播放器：加载 StreamingAssets/Music/ 下音频（mp3/ogg/wav）循环播放 /// 支持播放/暂停/上一首/下一首/音量——用户可自行放入音乐文件    public class MusicPlayer : MonoBehaviour
     {
         private AudioSource _source;
         private readonly List<string> _trackNames = new List<string>();
@@ -28,8 +26,7 @@ namespace CivilizationEvolution.UI
             RefreshTracks();
         }
 
- /// <summary>扫描 Music 目录（mp3/ogg/wav）</summary>
-        public void RefreshTracks()
+ /// <summary>扫描 Music 目录（mp3/ogg/wav）</summary>        public void RefreshTracks()
         {
             _trackNames.Clear();
             string dir = Path.Combine(Application.streamingAssetsPath, "Music");
@@ -51,8 +48,7 @@ namespace CivilizationEvolution.UI
         public string CurrentTrack => _currentIndex >= 0 && _currentIndex < _trackNames.Count
             ? _trackNames[_currentIndex] : "";
 
- /// <summary>播放/暂停切换</summary>
-        public void TogglePlay()
+ /// <summary>播放/暂停切换</summary>        public void TogglePlay()
         {
             if (_source.isPlaying) { Pause(); return; }
             if (_currentIndex < 0) { Next(); return; }
@@ -68,24 +64,21 @@ namespace CivilizationEvolution.UI
 
         public void Stop() => _source.Stop();
 
- /// <summary>下一首（自动循环列表）</summary>
-        public void Next()
+ /// <summary>下一首（自动循环列表）</summary>        public void Next()
         {
             if (_trackNames.Count == 0) return;
             _currentIndex = (_currentIndex + 1) % _trackNames.Count;
             StartCoroutine(LoadTrack(_currentIndex));
         }
 
- /// <summary>上一首</summary>
-        public void Previous()
+ /// <summary>上一首</summary>        public void Previous()
         {
             if (_trackNames.Count == 0) return;
             _currentIndex = (_currentIndex - 1 + _trackNames.Count) % _trackNames.Count;
             StartCoroutine(LoadTrack(_currentIndex));
         }
 
- /// <summary>设置音量 0~1</summary>
-        public void SetVolume(float v) => _source.volume = Mathf.Clamp01(v);
+ /// <summary>设置音量 0~1</summary>        public void SetVolume(float v) => _source.volume = Mathf.Clamp01(v);
 
         public float GetVolume() => _source.volume;
 
@@ -118,8 +111,7 @@ namespace CivilizationEvolution.UI
 
         private void Update()
         {
- // 单曲播完自动下一首
-            if (_source != null && !_source.isPlaying && !_loading && _source.clip != null
+ // 单曲播完自动下一首            if (_source != null && !_source.isPlaying && !_loading && _source.clip != null
                 && _source.time <= 0f && _trackNames.Count > 1)
             {
                 Next();

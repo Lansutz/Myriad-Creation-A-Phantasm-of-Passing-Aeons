@@ -28,8 +28,7 @@ namespace CivilizationEvolution.Economy
             return weight;
         }
 
- /// <summary>商队移动Tick</summary>
-        public bool MoveTick(TradeRoute route, TileData[] tiles)
+ /// <summary>商队移动Tick</summary>        public bool MoveTick(TradeRoute route, TileData[] tiles)
         {
             if (!isMoving || route.isBlocked) return false;
 

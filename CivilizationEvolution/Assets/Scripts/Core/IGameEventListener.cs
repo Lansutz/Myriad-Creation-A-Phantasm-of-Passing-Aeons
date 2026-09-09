@@ -17,8 +17,7 @@ using CivilizationEvolution.AI;
 
 namespace CivilizationEvolution.Core
 {
- /// <summary>游戏事件监听器接口</summary>
-    public interface IGameEventListener
+ /// <summary>游戏事件监听器接口</summary>    public interface IGameEventListener
     {
         void OnGameEvent(GameEvent evt);
     }

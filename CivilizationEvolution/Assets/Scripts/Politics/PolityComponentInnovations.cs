@@ -3,94 +3,49 @@ using CivilizationEvolution.Tech;
 
 namespace CivilizationEvolution.Politics
 {
- /// 政体成分 ↔ 支撑革新（政体学的每个部分都有相应的革新）
- /// 每个政体成分（A1 交接/B1 选人/B2 机构/C1 地方产生/C2 职能/央地结构）
- /// 需要对应革新支撑——未持有则该成分不可用（或研究后解锁）
- /// 数据表式（成分 int → 革新 id 列表）；空表=基础可用
-    public static class PolityComponentInnovations
+ /// 政体成分 ↔ 支撑革新（政体学的每个部分都有相应的革新） /// 每个政体成分（A1 交接/B1 选人/B2 机构/C1 地方产生/C2 职能/央地结构） /// 需要对应革新支撑——未持有则该成分不可用（或研究后解锁） /// 数据表式（成分 int → 革新 id 列表）；空表=基础可用    public static class PolityComponentInnovations
     {
- // ===== A1 最高权力·交接 =====
- /// <summary>世袭：部落联盟（王权产生）</summary>
-        private static readonly List<int> A1Hereditary = new List<int> { 500 };
- /// <summary>选举·直接：雅典议事（公民大会）</summary>
-        private static readonly List<int> A1ElectiveDirect = new List<int> { 980 };
- /// <summary>选举·代议：等级会议/议会传统</summary>
-        private static readonly List<int> A1ElectiveRepresentative = new List<int> { 603, 980 };
- /// <summary>僭夺：无需革新（武力）</summary>
-        private static readonly List<int> A1Usurpation = new List<int> { };
- /// <summary>轮座：部落联盟（长老轮值）</summary>
-        private static readonly List<int> A1Rotation = new List<int> { 500 };
- /// <summary>神命：一神教/神权体系</summary>
-        private static readonly List<int> A1Divine = new List<int> { 601 };
+ // ===== A1 最高权力·交接 ===== /// <summary>世袭：部落联盟（王权产生）</summary>        private static readonly List<int> A1Hereditary = new List<int> { 500 };
+ /// <summary>选举·直接：雅典议事（公民大会）</summary>        private static readonly List<int> A1ElectiveDirect = new List<int> { 980 };
+ /// <summary>选举·代议：等级会议/议会传统</summary>        private static readonly List<int> A1ElectiveRepresentative = new List<int> { 603, 980 };
+ /// <summary>僭夺：无需革新（武力）</summary>        private static readonly List<int> A1Usurpation = new List<int> { };
+ /// <summary>轮座：部落联盟（长老轮值）</summary>        private static readonly List<int> A1Rotation = new List<int> { 500 };
+ /// <summary>神命：一神教/神权体系</summary>        private static readonly List<int> A1Divine = new List<int> { 601 };
 
- // ===== A2 最高权力·分配 =====
- /// <summary>全能：无需（基础君权）</summary>
-        private static readonly List<int> A2Absolute = new List<int> { };
- /// <summary>法理受限：成文法</summary>
-        private static readonly List<int> A2LegallyBound = new List<int> { 505 };
- /// <summary>惯例约束：成文法（习惯法传统）</summary>
-        private static readonly List<int> A2CustomBound = new List<int> { 505 };
- /// <summary>共议制约：雅典议事/等级会议</summary>
-        private static readonly List<int> A2Consensual = new List<int> { 980 };
- /// <summary>神意约束：一神教</summary>
-        private static readonly List<int> A2DivinelyBound = new List<int> { 601 };
+ // ===== A2 最高权力·分配 ===== /// <summary>全能：无需（基础君权）</summary>        private static readonly List<int> A2Absolute = new List<int> { };
+ /// <summary>法理受限：成文法</summary>        private static readonly List<int> A2LegallyBound = new List<int> { 505 };
+ /// <summary>惯例约束：成文法（习惯法传统）</summary>        private static readonly List<int> A2CustomBound = new List<int> { 505 };
+ /// <summary>共议制约：雅典议事/等级会议</summary>        private static readonly List<int> A2Consensual = new List<int> { 980 };
+ /// <summary>神意约束：一神教</summary>        private static readonly List<int> A2DivinelyBound = new List<int> { 601 };
 
- // ===== B1 中央权力·交接（选人依据） =====
- /// <summary>上级决断：官僚制度</summary>
-        private static readonly List<int> B1Appointed = new List<int> { 503 };
- /// <summary>集体选择：雅典议事/部落联盟</summary>
-        private static readonly List<int> B1Elected = new List<int> { 980, 500 };
- /// <summary>客观标准：科举制度</summary>
-        private static readonly List<int> B1Examination = new List<int> { 504 };
- /// <summary>血缘世袭：封建制度</summary>
-        private static readonly List<int> B1Hereditary = new List<int> { 501 };
+ // ===== B1 中央权力·交接（选人依据） ===== /// <summary>上级决断：官僚制度</summary>        private static readonly List<int> B1Appointed = new List<int> { 503 };
+ /// <summary>集体选择：雅典议事/部落联盟</summary>        private static readonly List<int> B1Elected = new List<int> { 980, 500 };
+ /// <summary>客观标准：科举制度</summary>        private static readonly List<int> B1Examination = new List<int> { 504 };
+ /// <summary>血缘世袭：封建制度</summary>        private static readonly List<int> B1Hereditary = new List<int> { 501 };
 
- // ===== B2 中央机构 =====
- /// <summary>无常设：部落联盟（部落议事）</summary>
-        private static readonly List<int> B2None = new List<int> { 500 };
- /// <summary>王庭：无需（宫廷天然）</summary>
-        private static readonly List<int> B2Court = new List<int> { };
- /// <summary>议会/元老院：雅典议事</summary>
-        private static readonly List<int> B2Assembly = new List<int> { 980 };
- /// <summary>长老议事会：部落联盟</summary>
-        private static readonly List<int> B2EldersCouncil = new List<int> { 500 };
- /// <summary>官僚中枢：官僚制度</summary>
-        private static readonly List<int> B2BureaucraticCore = new List<int> { 503 };
- /// <summary>宗教会议：一神教</summary>
-        private static readonly List<int> B2ReligiousCouncil = new List<int> { 601 };
- /// <summary>军事委员会：军事传统（重装骑兵/骑兵战术）</summary>
-        private static readonly List<int> B2MilitaryCouncil = new List<int> { 302 };
+ // ===== B2 中央机构 ===== /// <summary>无常设：部落联盟（部落议事）</summary>        private static readonly List<int> B2None = new List<int> { 500 };
+ /// <summary>王庭：无需（宫廷天然）</summary>        private static readonly List<int> B2Court = new List<int> { };
+ /// <summary>议会/元老院：雅典议事</summary>        private static readonly List<int> B2Assembly = new List<int> { 980 };
+ /// <summary>长老议事会：部落联盟</summary>        private static readonly List<int> B2EldersCouncil = new List<int> { 500 };
+ /// <summary>官僚中枢：官僚制度</summary>        private static readonly List<int> B2BureaucraticCore = new List<int> { 503 };
+ /// <summary>宗教会议：一神教</summary>        private static readonly List<int> B2ReligiousCouncil = new List<int> { 601 };
+ /// <summary>军事委员会：军事传统（重装骑兵/骑兵战术）</summary>        private static readonly List<int> B2MilitaryCouncil = new List<int> { 302 };
 
- // ===== C1 地方权力·交接 =====
- /// <summary>任命：郡县制/行省制（中央任官）</summary>
-        private static readonly List<int> C1Appointed = new List<int> { 959, 960 };
- /// <summary>选举推举：雅典议事/部落联盟</summary>
-        private static readonly List<int> C1Elected = new List<int> { 980, 500 };
- /// <summary>世袭领有：封建制度/庄园</summary>
-        private static readonly List<int> C1Hereditary = new List<int> { 501, 952 };
- /// <summary>城市特许：城市特许状（994——自由城市制度革新）</summary>
-        private static readonly List<int> C1CityCharter = new List<int> { 994 };
+ // ===== C1 地方权力·交接 ===== /// <summary>任命：郡县制/行省制（中央任官）</summary>        private static readonly List<int> C1Appointed = new List<int> { 959, 960 };
+ /// <summary>选举推举：雅典议事/部落联盟</summary>        private static readonly List<int> C1Elected = new List<int> { 980, 500 };
+ /// <summary>世袭领有：封建制度/庄园</summary>        private static readonly List<int> C1Hereditary = new List<int> { 501, 952 };
+ /// <summary>城市特许：城市特许状（994——自由城市制度革新）</summary>        private static readonly List<int> C1CityCharter = new List<int> { 994 };
 
- // ===== C2 地方权力·分配 =====
- /// <summary>全权自治：部落联盟/邦联（自治传统）</summary>
-        private static readonly List<int> C2FullAutonomy = new List<int> { 500 };
- /// <summary>征税司法：中央集权（中央控军权）</summary>
-        private static readonly List<int> C2FiscalJudicial = new List<int> { 502 };
- /// <summary>仅军事驻防：军事传统</summary>
-        private static readonly List<int> C2MilitaryOnly = new List<int> { 302 };
- /// <summary>完全直辖：中央集权+郡县</summary>
-        private static readonly List<int> C2None = new List<int> { 502, 959 };
+ // ===== C2 地方权力·分配 ===== /// <summary>全权自治：部落联盟/邦联（自治传统）</summary>        private static readonly List<int> C2FullAutonomy = new List<int> { 500 };
+ /// <summary>征税司法：中央集权（中央控军权）</summary>        private static readonly List<int> C2FiscalJudicial = new List<int> { 502 };
+ /// <summary>仅军事驻防：军事传统</summary>        private static readonly List<int> C2MilitaryOnly = new List<int> { 302 };
+ /// <summary>完全直辖：中央集权+郡县</summary>        private static readonly List<int> C2None = new List<int> { 502, 959 };
 
- // ===== D 央地结构 =====
- /// <summary>单一制：中央集权</summary>
-        private static readonly List<int> DUnitary = new List<int> { 502 };
- /// <summary>联邦制：封建/契约传统</summary>
-        private static readonly List<int> DFederal = new List<int> { 501 };
- /// <summary>邦联制：部落联盟</summary>
-        private static readonly List<int> DConfederal = new List<int> { 500 };
+ // ===== D 央地结构 ===== /// <summary>单一制：中央集权</summary>        private static readonly List<int> DUnitary = new List<int> { 502 };
+ /// <summary>联邦制：封建/契约传统</summary>        private static readonly List<int> DFederal = new List<int> { 501 };
+ /// <summary>邦联制：部落联盟</summary>        private static readonly List<int> DConfederal = new List<int> { 500 };
 
- /// <summary>维度枚举（政体七维——跨枚举 int 值重叠，必须按维度分表）</summary>
-        public enum PolityDimension
+ /// <summary>维度枚举（政体七维——跨枚举 int 值重叠，必须按维度分表）</summary>        public enum PolityDimension
         {
             SupremeSuccession,  // A1 最高权力·交接
             SupremeScope,       // A2 最高权力·分配
@@ -160,8 +115,7 @@ namespace CivilizationEvolution.Politics
             }
         };
 
- /// <summary>成分所需支撑革新（按维度查；空=基础可用）</summary>
-        public static List<int> GetRequiredInnovations(PolityDimension dimension, int component)
+ /// <summary>成分所需支撑革新（按维度查；空=基础可用）</summary>        public static List<int> GetRequiredInnovations(PolityDimension dimension, int component)
         {
             if (Table.TryGetValue(dimension, out var dimTable)
                 && dimTable.TryGetValue(component, out var list))
@@ -169,9 +123,7 @@ namespace CivilizationEvolution.Politics
             return new List<int>();
         }
 
- /// 成分是否可用（按维度查；支撑革新**任一持有**即可——郡县或行省都能支撑
- /// "中央任命"；innovations 为 null 或空表=基础可用）
-        public static bool IsComponentAvailable(PolityDimension dimension, int component,
+ /// 成分是否可用（按维度查；支撑革新**任一持有**即可——郡县或行省都能支撑 /// "中央任命"；innovations 为 null 或空表=基础可用）        public static bool IsComponentAvailable(PolityDimension dimension, int component,
             InnovationTree innovations, int realmId)
         {
             if (innovations == null) return true;

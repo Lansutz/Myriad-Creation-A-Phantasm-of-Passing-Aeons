@@ -6,54 +6,36 @@ using CivilizationEvolution.Politics;
 
 namespace CivilizationEvolution.Diplomacy
 {
- /// 外交关系数据
- /// 核心三数值模型：关系值 / 信任度 / 威胁感知
-
+ /// 外交关系数据 /// 核心三数值模型：关系值 / 信任度 / 威胁感知
 
  /// <summary>外交事件记录</summary>
 
-
  /// 盟约类型（平等盟约——谱系一：各类型独立平行，无递进关系）
-
 
  /// <summary>盟约</summary>
 
+ /// 不平等从属关系类型——主权状态槽位（谱系二：内政自主度从高到低） /// 朝贡国(0.9) → 保护国(0.7) → 附属国(0.5) → 附庸国(0.35) → 傀儡国(0.1) /// 各类型独立平行，无递进关系
 
- /// 不平等从属关系类型——主权状态槽位（谱系二：内政自主度从高到低）
- /// 朝贡国(0.9) → 保护国(0.7) → 附属国(0.5) → 附庸国(0.35) → 傀儡国(0.1)
- /// 各类型独立平行，无递进关系
-
-
- /// 特殊纽带槽位（谱系三：横向人身/王朝联合）
- /// 独立于主权状态与条约义务；同一对政权可有且仅有一个活跃纽带
-
+ /// 特殊纽带槽位（谱系三：横向人身/王朝联合） /// 独立于主权状态与条约义务；同一对政权可有且仅有一个活跃纽带
 
  /// <summary>从属关系</summary>
 
-
  /// <summary>条约</summary>
-
 
  /// <summary>条约条款</summary>
 
-
- /// 外交管理器
- /// 处理所有政权间的外交关系、盟约、条约、外交动作
-    public partial class DiplomacyManager
+ /// 外交管理器 /// 处理所有政权间的外交关系、盟约、条约、外交动作    public partial class DiplomacyManager
     {
         private readonly Dictionary<int, RealmData> _realms;
         private readonly Dictionary<string, DiplomaticRelation> _relations = new Dictionary<string, DiplomaticRelation>();
         private readonly List<Subordination> _subordinations = new List<Subordination>();
         private int _nextTreatyId = 1;
 
- /// <summary>当前游戏日（由 GameWorld 每 Tick 同步，用于盟约/条约/事件的时间戳）</summary>
-        public int CurrentDay { get; set; } = 0;
+ /// <summary>当前游戏日（由 GameWorld 每 Tick 同步，用于盟约/条约/事件的时间戳）</summary>        public int CurrentDay { get; set; } = 0;
 
- /// <summary>战争规则（由 GameWorld 注入——truce/白和/联盟介入/分数参数）</summary>
-        public WarRules WarRules { get; set; } = WarRules.Default();
+ /// <summary>战争规则（由 GameWorld 注入——truce/白和/联盟介入/分数参数）</summary>        public WarRules WarRules { get; set; } = WarRules.Default();
 
- /// <summary>编年史（由 GameWorld 注入，null 跳过记录）</summary>
-        public Chronicle Chronicle { get; set; }
+ /// <summary>编年史（由 GameWorld 注入，null 跳过记录）</summary>        public Chronicle Chronicle { get; set; }
 
         public DiplomacyManager(Dictionary<int, RealmData> realms)
         {
@@ -66,8 +48,7 @@ namespace CivilizationEvolution.Diplomacy
             return a < b ? $"{a}_{b}" : $"{b}_{a}";
         }
 
- /// <summary>初始化所有政权间的外交关系</summary>
-        private void InitializeAllRelations()
+ /// <summary>初始化所有政权间的外交关系</summary>        private void InitializeAllRelations()
         {
             var realmIds = new List<int>(_realms.Keys);
             for (int i = 0; i < realmIds.Count; i++)
@@ -90,8 +71,7 @@ namespace CivilizationEvolution.Diplomacy
             }
         }
 
- /// <summary>获取两国外交关系（不存在则创建——外交动作自动建立关系）</summary>
-        public DiplomaticRelation GetOrCreateRelation(int realmA, int realmB)
+ /// <summary>获取两国外交关系（不存在则创建——外交动作自动建立关系）</summary>        public DiplomaticRelation GetOrCreateRelation(int realmA, int realmB)
         {
             var existing = GetRelation(realmA, realmB);
             if (existing != null) return existing;
@@ -105,8 +85,7 @@ namespace CivilizationEvolution.Diplomacy
             return rel;
         }
 
- /// <summary>获取两国外交关系</summary>
-        public DiplomaticRelation GetRelation(int realmA, int realmB)
+ /// <summary>获取两国外交关系</summary>        public DiplomaticRelation GetRelation(int realmA, int realmB)
         {
             var key = GetRelationKey(realmA, realmB);
             if (_relations.TryGetValue(key, out var rel))
@@ -114,8 +93,7 @@ namespace CivilizationEvolution.Diplomacy
             return null;
         }
 
- /// <summary>修改关系值</summary>
-        public void ModifyRelation(int realmA, int realmB, float delta, string reason)
+ /// <summary>修改关系值</summary>        public void ModifyRelation(int realmA, int realmB, float delta, string reason)
         {
             var rel = GetOrCreateRelation(realmA, realmB);
 
@@ -128,16 +106,14 @@ namespace CivilizationEvolution.Diplomacy
             });
         }
 
- /// <summary>修改信任度</summary>
-        public void ModifyTrust(int realmA, int realmB, float delta)
+ /// <summary>修改信任度</summary>        public void ModifyTrust(int realmA, int realmB, float delta)
         {
             var rel = GetRelation(realmA, realmB);
             if (rel == null) return;
             rel.trust = Mathf.Clamp(rel.trust + delta, 0f, 100f);
         }
 
- /// <summary>修改威胁感知</summary>
-        public void ModifyThreat(int realmA, int realmB, float delta)
+ /// <summary>修改威胁感知</summary>        public void ModifyThreat(int realmA, int realmB, float delta)
         {
             var rel = GetRelation(realmA, realmB);
             if (rel == null) return;
@@ -146,9 +122,7 @@ namespace CivilizationEvolution.Diplomacy
 
 
  // ===== 低烈度冲突（敌对状态下的劫掠/边境摩擦）=====
-
- /// <summary>劫掠聚落（敌对状态下的低烈度行动，不触发全面战争）</summary>
-        public (bool success, bool warDeclared, float lootValue) RaidSettlement(
+ /// <summary>劫掠聚落（敌对状态下的低烈度行动，不触发全面战争）</summary>        public (bool success, bool warDeclared, float lootValue) RaidSettlement(
             int raiderId, int targetId, int tileIndex, GameEnums.RaidType raidType, TileData[] tiles = null)
         {
             var rel = GetRelation(raiderId, targetId);
@@ -158,8 +132,7 @@ namespace CivilizationEvolution.Diplomacy
             rel.lastRaidDay = CurrentDay;
             rel.raidCount++;
 
- // 屠城：大规模屠杀——削减地块人口 30%（恐怖威慑）
-            if (raidType == GameEnums.RaidType.Massacre && tiles != null
+ // 屠城：大规模屠杀——削减地块人口 30%（恐怖威慑）            if (raidType == GameEnums.RaidType.Massacre && tiles != null
                 && tileIndex >= 0 && tileIndex < tiles.Length)
             {
                 var tile = tiles[tileIndex];
@@ -174,8 +147,7 @@ namespace CivilizationEvolution.Diplomacy
                 }
             }
 
- // 被劫掠方获得战争借口（劫掠报复）
-            var raidCB = WarJustificationSystem.GenerateRaidReprisalCB(
+ // 被劫掠方获得战争借口（劫掠报复）            var raidCB = WarJustificationSystem.GenerateRaidReprisalCB(
                 targetId, raiderId, tileIndex, CurrentDay, raidType);
             rel.casusBelliList.Add(raidCB);
             float lootValue = raidType switch
@@ -226,15 +198,13 @@ namespace CivilizationEvolution.Diplomacy
             });
         }
 
- /// <summary>每日外交Tick</summary>
-        public void DailyTick()
+ /// <summary>每日外交Tick</summary>        public void DailyTick()
         {
             foreach (var rel in _relations.Values)
             {
                 rel.DailyDecay();
 
- // 检查盟约条件
-                for (int i = rel.activeAlliances.Count - 1; i >= 0; i--)
+ // 检查盟约条件                for (int i = rel.activeAlliances.Count - 1; i >= 0; i--)
                 {
                     if (!rel.activeAlliances[i].CheckConditions(rel))
                     {
@@ -244,12 +214,10 @@ namespace CivilizationEvolution.Diplomacy
                 }
             }
 
- // 贡赋结算（简化：每年结算）
-            foreach (var sub in _subordinations)
+ // 贡赋结算（简化：每年结算）            foreach (var sub in _subordinations)
             {
                 if (!sub.isActive) continue;
- // 每日累积贡赋
-                if (_realms.TryGetValue(sub.vassalId, out var vassal) &&
+ // 每日累积贡赋                if (_realms.TryGetValue(sub.vassalId, out var vassal) &&
                     _realms.TryGetValue(sub.suzerainId, out var suzerain))
                 {
                     float dailyTribute = vassal.treasury * sub.tributeRatio / 365f;
@@ -259,7 +227,6 @@ namespace CivilizationEvolution.Diplomacy
             }
         }
 
- // ===== 查询接口 =====
-        public IReadOnlyDictionary<string, DiplomaticRelation> GetAllRelations() => _relations;
+ // ===== 查询接口 =====        public IReadOnlyDictionary<string, DiplomaticRelation> GetAllRelations() => _relations;
     }
 }

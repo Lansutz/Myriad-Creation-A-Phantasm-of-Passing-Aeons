@@ -8,10 +8,7 @@ using CivilizationEvolution.Map;
 
 namespace CivilizationEvolution.Render
 {
- /// 地图渲染器
- /// 用Mesh/Texture渲染六边形地块地图
- /// 支持多种显示模式：地形、气候、群系、政治、人口、经济
-    public partial class MapRenderer : MonoBehaviour
+ /// 地图渲染器 /// 用Mesh/Texture渲染六边形地块地图 /// 支持多种显示模式：地形、气候、群系、政治、人口、经济    public partial class MapRenderer : MonoBehaviour
     {
         [Header("渲染设置")]
         [SerializeField] private int mapWidth = 128;
@@ -31,37 +28,27 @@ namespace CivilizationEvolution.Render
         [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private Texture2D mapTexture;
 
- /// <summary>省界描边颜色（Terrain 模式下省区边界）</summary>
-        [SerializeField] private Color provinceBorderColor = new Color(0.9f, 0.9f, 0.9f, 1f);
+ /// <summary>省界描边颜色（Terrain 模式下省区边界）</summary>        [SerializeField] private Color provinceBorderColor = new Color(0.9f, 0.9f, 0.9f, 1f);
 
- // 地图纹理更新节流：世界数据每 1 秒才 Tick 一次，无需每帧（60fps）全量重绘 8192 像素
-        private float _mapTextureTimer;
- // 纹理重绘间隔（优化 2026-09-04：世界 1 秒 1 Tick——运行 1s 足够；
- // 编辑模式涂色用 0.2s 实时——模式切换/涂色走 force 即时）
-        private const float MapTextureInterval = 1f;
+ // 地图纹理更新节流：世界数据每 1 秒才 Tick 一次，无需每帧（60fps）全量重绘 8192 像素        private float _mapTextureTimer;
+ // 纹理重绘间隔（优化1 秒 1 Tick——运行 1s 足够； // 编辑模式涂色用 0.2s 实时——模式切换/涂色走 force 即时）        private const float MapTextureInterval = 1f;
         private const float MapTextureIntervalEdit = 0.2f;
         private bool _forceMapRefresh = true; // 首次/切换模式时立即重绘
- // 地图编辑器
-        private MapEditor _mapEditor;
+ // 地图编辑器        private MapEditor _mapEditor;
         private int _hoverTile = -1; // 鼠标悬停地块（画笔预览）
 
- // 像素数组缓存：避免每次重绘都 new Color[8192] 产生 GC
-        private Color[] _pixelBuffer;
+ // 像素数组缓存：避免每次重绘都 new Color[8192] 产生 GC        private Color[] _pixelBuffer;
         private static readonly Color VoidColor = new Color(0.05f, 0.05f, 0.08f, 1f);
 
- /// <summary>省界判定：与任一邻域省份归属不同即为边界地块</summary>
-        public bool IsProvinceBorder(int tileIndex)
+ /// <summary>省界判定：与任一邻域省份归属不同即为边界地块</summary>        public bool IsProvinceBorder(int tileIndex)
         {
             return Province.IsBorder(world.tiles, mapWidth, mapHeight, tileIndex);
         }
 
- /// <summary>当前显示模式（只读）</summary>
-        public MapDisplayMode DisplayMode => displayMode;
- /// <summary>当前世界引用（只读）</summary>
-        public GameWorld World => world;
+ /// <summary>当前显示模式（只读）</summary>        public MapDisplayMode DisplayMode => displayMode;
+ /// <summary>当前世界引用（只读）</summary>        public GameWorld World => world;
 
- /// <summary>绑定世界并同步地图尺寸</summary>
-        public void BindWorld(GameWorld target)
+ /// <summary>绑定世界并同步地图尺寸</summary>        public void BindWorld(GameWorld target)
         {
             world = target;
             if (target != null)
@@ -71,14 +58,12 @@ namespace CivilizationEvolution.Render
             }
         }
 
- // 颜色缓存
-        private Color[] _terrainColors;
+ // 颜色缓存        private Color[] _terrainColors;
         private Color[] _climateColors;
         private Color[] _biomeColors;
         private Color[] _politicalColors;
 
- // ===== 双色空间政治地图（效忠树层级 vs 附庸朝贡，色相完全隔离）=====
-        [Header("双色空间政治地图")]
+ // ===== 双色空间政治地图（效忠树层级 vs 附庸朝贡，色相完全隔离）=====        [Header("双色空间政治地图")]
         [Tooltip("查看政权ID（-1=玩家政权）；政治模式下以此为基准区分本土/附庸/外国")]
         [SerializeField] private int _dualSpaceViewRealmId = -1;
         [Tooltip("A色系：本国效忠树深度色阶（由深→浅，同色相蓝色系）")]
@@ -95,8 +80,7 @@ namespace CivilizationEvolution.Render
         [SerializeField] private Color _occupationStripeColor = new Color(0f, 0f, 0f, 0.35f);
         [SerializeField] private int _occupationStripeSpacing = 4;  // 条纹间距（像素）
 
- // 相机控制
-        private Camera _mainCamera;
+ // 相机控制        private Camera _mainCamera;
         private Vector3 _cameraTarget;
         private float _zoomLevel = 50f;
         private bool _isDragging = false;
@@ -104,8 +88,7 @@ namespace CivilizationEvolution.Render
 
                 void Start()
         {
- // 先从绑定的世界同步地图尺寸，避免纹理用默认 128×64 创建导致大地图不渲染
-            if (world != null)
+ // 先从绑定的世界同步地图尺寸，避免纹理用默认 128×64 创建导致大地图不渲染            if (world != null)
             {
                 mapWidth = world.mapWidth;
                 mapHeight = world.mapHeight;
@@ -116,16 +99,12 @@ namespace CivilizationEvolution.Render
             _mainCamera = Camera.main;
             _mapEditor = new MapEditor(world, this);
             _forceMapRefresh = true; // 尺寸同步后强制重绘
- // 地图显示全链路（查漏补缺：Plane 缩放至地图世界尺寸+相机对准——
- // 否则 10×10 默认 Plane+固定相机坐标=地图不可见）
-            SetupMapDisplay();
+ // 地图显示全链路（查漏补缺：Plane 缩放至地图世界尺寸+相机对准—— // 否则 10×10 默认 Plane+固定相机坐标=地图不可见）            SetupMapDisplay();
         }
 
                 void Update()
         {
- // 尺寸漂移检测（查漏补缺：Awake 时 GameWorld 可能未初始化
- // [mapWidth=0]——生成后 world.mapWidth>0——重新同步+显示就位）
-            if (world != null && world.mapWidth > 0 && world.mapWidth != mapWidth)
+ // 尺寸漂移检测（查漏补缺：Awake 时 GameWorld 可能未初始化 // [mapWidth=0]——生成后 world.mapWidth>0——重新同步+显示就位）            if (world != null && world.mapWidth > 0 && world.mapWidth != mapWidth)
             {
                 mapWidth = world.mapWidth;
                 mapHeight = world.mapHeight;
@@ -135,13 +114,10 @@ namespace CivilizationEvolution.Render
                 Debug.Log($"[MapRenderer] 尺寸重同步：{mapWidth}×{mapHeight}——显示就位");
             }
 
- // 相机输入需要实时响应，不节流
-            HandleCameraInput();
- // 地图编辑器鼠标处理（编辑模式下左键绘制）
-            HandleEditorInput();
+ // 相机输入需要实时响应，不节流            HandleCameraInput();
+ // 地图编辑器鼠标处理（编辑模式下左键绘制）            HandleEditorInput();
 
- // 重绘节流：运行 1s[数据每秒才变]/编辑 0.2s[涂色实时]——force 即时
-            _mapTextureTimer += Time.unscaledDeltaTime;
+ // 重绘节流：运行 1s[数据每秒才变]/编辑 0.2s[涂色实时]——force 即时            _mapTextureTimer += Time.unscaledDeltaTime;
             bool editing = _mapEditor != null && _mapEditor.IsEditMode;
             float interval = editing ? MapTextureIntervalEdit : MapTextureInterval;
             if (_forceMapRefresh || _mapTextureTimer >= interval)
@@ -153,9 +129,7 @@ namespace CivilizationEvolution.Render
         }
 
 
- /// 相机位置边界限制（地图世界范围——wrap 轴不限制）：
- /// 世界宽=mapWidth×hexSize——高=mapHeight×hexSize×0.75（y 轴密度系数）
-        private void ClampCameraToMap()
+ /// 相机位置边界限制（地图世界范围——wrap 轴不限制）： /// 世界宽=mapWidth×hexSize——高=mapHeight×hexSize×0.75（y 轴密度系数）        private void ClampCameraToMap()
         {
             if (_mainCamera == null) return;
             bool wrapX = world != null && world.config.wrapX;
@@ -172,8 +146,7 @@ namespace CivilizationEvolution.Render
             _mainCamera.transform.position = pos;
         }
 
- /// <summary>编辑器鼠标输入处理（左键按下拖动绘制，悬停更新画笔预览）</summary>
-        private void HandleEditorInput()
+ /// <summary>编辑器鼠标输入处理（左键按下拖动绘制，悬停更新画笔预览）</summary>        private void HandleEditorInput()
         {
             if (_mapEditor == null || !_mapEditor.IsEditMode) return;
 
@@ -193,26 +166,16 @@ namespace CivilizationEvolution.Render
                 _mapEditor.OnPaintEnd();
             }
         }
- /// <summary>初始化渲染器</summary>
- /// 地图显示适配（全链路关键——学 FMS 场景搭建思路）：
- /// ① MapPlane 缩放至地图世界尺寸（hexSize=1：世界宽=mapWidth——
- /// 高=mapHeight×0.75——Plane 基元 10×10 需放大）并移到世界中心
- /// ② 相机对准地图中心（俯视 60°——orthoSize 看全图）
- /// ③ 缩放范围按地图尺寸动态（大图能看全——小图能拉近）
-        private void SetupMapDisplay()
+ /// <summary>初始化渲染器</summary> /// 地图显示适配（全链路关键——学 FMS 场景搭建思路）： /// ① MapPlane 缩放至地图世界尺寸（hexSize=1：世界宽=mapWidth—— /// 高=mapHeight×0.75——Plane 基元 10×10 需放大）并移到世界中心 /// ② 相机对准地图中心（俯视 60°——orthoSize 看全图） /// ③ 缩放范围按地图尺寸动态（大图能看全——小图能拉近）        private void SetupMapDisplay()
         {
             if (_mainCamera == null || transform == null) return;
             float worldW = Mathf.Max(1f, mapWidth * hexSize);
             float worldH = Mathf.Max(1f, mapHeight * hexSize * 0.75f);
 
- // ① Plane 缩放（基元默认 10×10——UV 跟随拉伸）+ 中心对齐
-            transform.localScale = new Vector3(worldW / 10f, 1f, worldH / 10f);
+ // ① Plane 缩放（基元默认 10×10——UV 跟随拉伸）+ 中心对齐            transform.localScale = new Vector3(worldW / 10f, 1f, worldH / 10f);
             transform.localPosition = new Vector3(worldW * 0.5f, 0f, worldH * 0.5f);
 
- // ② 相机对准地图中心（俯视 45°——地图满屏占位：
- // 45° 投影压缩小于 60°[sin45=0.707 vs 0.866——垂直占用多]——
- // fit 考虑投影：地图高投影≈worldH/sin(angle)——反推视野
-            float aspect = _mainCamera.aspect > 0f ? _mainCamera.aspect : 1.777f;
+ // ② 相机对准地图中心（俯视 45°——地图满屏占位： // 45° 投影压缩小于 60°[sin45=0.707 vs 0.866——垂直占用多]—— // fit 考虑投影：地图高投影≈worldH/sin(angle)——反推视野            float aspect = _mainCamera.aspect > 0f ? _mainCamera.aspect : 1.777f;
             float projH = worldH / 0.7071f; // 45° 投影后地图等效高
             float fitSize = Mathf.Min(worldW / aspect, projH) * 0.52f;
             _cameraFitSize = fitSize;
@@ -221,8 +184,7 @@ namespace CivilizationEvolution.Render
             _mainCamera.transform.rotation = Quaternion.Euler(45f, 0f, 0f);
             _mainCamera.orthographic = true;
             _mainCamera.orthographicSize = fitSize;
- // 视野后移补偿（60° 俯视——看全图边缘不裁）
-            _mainCamera.transform.position = new Vector3(worldW * 0.5f,
+ // 视野后移补偿（60° 俯视——看全图边缘不裁）            _mainCamera.transform.position = new Vector3(worldW * 0.5f,
                 Mathf.Max(80f, worldH * 0.9f), worldH * 0.5f);
             _zoomLevel = fitSize;
             _maxZoom = fitSize * 1.2f;
@@ -231,9 +193,7 @@ namespace CivilizationEvolution.Render
 
         private void InitializeRenderer()
         {
- // 先取现有组件（MapPlane 基元自带 MeshFilter/MeshRenderer），没有再添加；
- // 对已存在组件重复 AddComponent 在 Unity6 会返回 null，导致后续空引用
-            if (meshFilter == null)
+ // 先取现有组件（MapPlane 基元自带 MeshFilter/MeshRenderer），没有再添加； // 对已存在组件重复 AddComponent 在 Unity6 会返回 null，导致后续空引用            if (meshFilter == null)
                 meshFilter = GetComponent<MeshFilter>();
             if (meshFilter == null)
                 meshFilter = gameObject.AddComponent<MeshFilter>();
@@ -242,16 +202,13 @@ namespace CivilizationEvolution.Render
             if (meshRenderer == null)
                 meshRenderer = gameObject.AddComponent<MeshRenderer>();
 
- // 创建地图纹理
-            mapTexture = new Texture2D(mapWidth, mapHeight, TextureFormat.RGBA32, false);
+ // 创建地图纹理            mapTexture = new Texture2D(mapWidth, mapHeight, TextureFormat.RGBA32, false);
             mapTexture.filterMode = FilterMode.Point;
- // 根据地图环绕模式设置纹理环绕：柱面/环面用Repeat实现左右连通视觉
-            mapTexture.wrapMode = (world != null && world.wrapMode != MapWrapMode.Flat)
+ // 根据地图环绕模式设置纹理环绕：柱面/环面用Repeat实现左右连通视觉            mapTexture.wrapMode = (world != null && world.wrapMode != MapWrapMode.Flat)
                 ? TextureWrapMode.Repeat
                 : TextureWrapMode.Clamp;
 
- // 创建简单的平面Mesh
-            var mesh = new Mesh();
+ // 创建简单的平面Mesh            var mesh = new Mesh();
             float width = mapWidth * hexSize;
             float height = mapHeight * hexSize * 0.75f;
 
@@ -278,19 +235,16 @@ namespace CivilizationEvolution.Render
             mesh.RecalculateNormals();
             meshFilter.mesh = mesh;
 
- // 设置材质
-            var material = new Material(Shader.Find("Standard"));
+ // 设置材质            var material = new Material(Shader.Find("Standard"));
             material.mainTexture = mapTexture;
             meshRenderer.material = material;
 
             Debug.Log("[MapRenderer] 渲染器初始化完成");
         }
 
- /// <summary>初始化颜色映射</summary>
-        private void InitializeColors()
+ /// <summary>初始化颜色映射</summary>        private void InitializeColors()
         {
- // 地形颜色（按高程）
-            _terrainColors = new Color[256];
+ // 地形颜色（按高程）            _terrainColors = new Color[256];
             for (int i = 0; i < 256; i++)
             {
                 float t = i / 255f;
@@ -310,8 +264,7 @@ namespace CivilizationEvolution.Render
                     _terrainColors[i] = Color.Lerp(new Color(0.6f, 0.55f, 0.5f), Color.white, (t - 0.85f) / 0.15f);
             }
 
- // 气候颜色（按温度）
-            _climateColors = new Color[256];
+ // 气候颜色（按温度）            _climateColors = new Color[256];
             for (int i = 0; i < 256; i++)
             {
                 float t = i / 255f;
@@ -327,10 +280,8 @@ namespace CivilizationEvolution.Render
                     _climateColors[i] = Color.Lerp(new Color(1f, 0.6f, 0.2f), new Color(0.8f, 0.2f, 0.1f), (t - 0.8f) / 0.2f);
             }
 
- // 群系颜色
-            _biomeColors = new Color[Enum.GetValues(typeof(GameEnums.BiomeType)).Length];
- // ===== A系：低水沃野（农耕定居基座）=====
-            _biomeColors[(int)GameEnums.BiomeType.AlluvialPlain] = new Color(0.55f, 0.7f, 0.35f);
+ // 群系颜色            _biomeColors = new Color[Enum.GetValues(typeof(GameEnums.BiomeType)).Length];
+ // ===== A系：低水沃野（农耕定居基座）=====            _biomeColors[(int)GameEnums.BiomeType.AlluvialPlain] = new Color(0.55f, 0.7f, 0.35f);
             _biomeColors[(int)GameEnums.BiomeType.GreatRiverPlain] = new Color(0.5f, 0.68f, 0.32f);
             _biomeColors[(int)GameEnums.BiomeType.Delta] = new Color(0.45f, 0.65f, 0.4f);
             _biomeColors[(int)GameEnums.BiomeType.Interfluvial] = new Color(0.6f, 0.72f, 0.38f);
@@ -343,8 +294,7 @@ namespace CivilizationEvolution.Render
             _biomeColors[(int)GameEnums.BiomeType.VolcanicAshPlain] = new Color(0.5f, 0.55f, 0.4f);
             _biomeColors[(int)GameEnums.BiomeType.PluvialFan] = new Color(0.6f, 0.68f, 0.45f);
 
- // ===== B系：高地硬骨（屏障、割据与海洋陆地）=====
-            _biomeColors[(int)GameEnums.BiomeType.LoessPlateau] = new Color(0.65f, 0.58f, 0.4f);
+ // ===== B系：高地硬骨（屏障、割据与海洋陆地）=====            _biomeColors[(int)GameEnums.BiomeType.LoessPlateau] = new Color(0.65f, 0.58f, 0.4f);
             _biomeColors[(int)GameEnums.BiomeType.LoessKarst] = new Color(0.6f, 0.55f, 0.42f);
             _biomeColors[(int)GameEnums.BiomeType.FoldMountains] = new Color(0.5f, 0.45f, 0.4f);
             _biomeColors[(int)GameEnums.BiomeType.LowHills] = new Color(0.45f, 0.55f, 0.38f);
@@ -363,8 +313,7 @@ namespace CivilizationEvolution.Render
             _biomeColors[(int)GameEnums.BiomeType.ImpactCraterAtoll] = new Color(0.45f, 0.4f, 0.45f);
             _biomeColors[(int)GameEnums.BiomeType.VolcanicIslandArc] = new Color(0.42f, 0.38f, 0.35f);
 
- // ===== C系：极端覆盖与过渡（减速、通道与资源边界）=====
-            _biomeColors[(int)GameEnums.BiomeType.IceSheet] = new Color(0.95f, 0.97f, 1f);
+ // ===== C系：极端覆盖与过渡（减速、通道与资源边界）=====            _biomeColors[(int)GameEnums.BiomeType.IceSheet] = new Color(0.95f, 0.97f, 1f);
             _biomeColors[(int)GameEnums.BiomeType.MountainGlacier] = new Color(0.85f, 0.9f, 0.95f);
             _biomeColors[(int)GameEnums.BiomeType.Tundra] = new Color(0.7f, 0.75f, 0.7f);
             _biomeColors[(int)GameEnums.BiomeType.BorealForest] = new Color(0.3f, 0.45f, 0.3f);
@@ -390,8 +339,7 @@ namespace CivilizationEvolution.Render
             _biomeColors[(int)GameEnums.BiomeType.Yardang] = new Color(0.68f, 0.6f, 0.5f);
             _biomeColors[(int)GameEnums.BiomeType.LandBridgeIsthmus] = new Color(0.55f, 0.62f, 0.45f);
 
- // 政治颜色（随机生成）
-            _politicalColors = new Color[16];
+ // 政治颜色（随机生成）            _politicalColors = new Color[16];
             for (int i = 0; i < 16; i++)
             {
                 UnityEngine.Random.InitState(i * 1000);
@@ -402,8 +350,7 @@ namespace CivilizationEvolution.Render
             }
         }
 
- /// <summary>确定性噪声（整数坐标 hash——纸纹颗粒——同 seed 复现）</summary>
-        private static float HashNoise(int x, int y, int salt)
+ /// <summary>确定性噪声（整数坐标 hash——纸纹颗粒——同 seed 复现）</summary>        private static float HashNoise(int x, int y, int salt)
         {
             unchecked
             {
@@ -415,7 +362,6 @@ namespace CivilizationEvolution.Render
         }
 
  // ===== 地图模式着色辅助（外交/联盟/文化/宗教） =====
-
         private static readonly Color WarColor = new Color(0.85f, 0.2f, 0.2f, 1f);
         private static readonly Color HostileColor = new Color(0.9f, 0.55f, 0.2f, 1f);
         private static readonly Color NeutralColor = new Color(0.55f, 0.55f, 0.55f, 1f);
@@ -423,8 +369,7 @@ namespace CivilizationEvolution.Render
         private static readonly Color AllyColor = new Color(0.3f, 0.5f, 0.9f, 1f);
         private static readonly Color FactionColor = new Color(0.6f, 0.35f, 0.85f, 1f);
 
- /// <summary>主人口块的文化（count 最大块——地块主文化）</summary>
-        private static int GetDominantBlockCulture(TileData tile)
+ /// <summary>主人口块的文化（count 最大块——地块主文化）</summary>        private static int GetDominantBlockCulture(TileData tile)
         {
             if (tile.populationBlocks == null || tile.populationBlocks.Count == 0) return -1;
             var best = tile.populationBlocks[0];
@@ -433,8 +378,7 @@ namespace CivilizationEvolution.Render
             return best.cultureId;
         }
 
- /// <summary>主人口块的信仰（count 最大块——地块主信仰）</summary>
-        private static int GetDominantBlockFaith(TileData tile)
+ /// <summary>主人口块的信仰（count 最大块——地块主信仰）</summary>        private static int GetDominantBlockFaith(TileData tile)
         {
             if (tile.populationBlocks == null || tile.populationBlocks.Count == 0) return -1;
             var best = tile.populationBlocks[0];
@@ -445,24 +389,20 @@ namespace CivilizationEvolution.Render
 
 
 
- /// <summary>相机输入处理</summary>
-        private void HandleCameraInput()
+ /// <summary>相机输入处理</summary>        private void HandleCameraInput()
         {
             if (_mainCamera == null) return;
 
- // 缩放
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
+ // 缩放            float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (scroll != 0f)
             {
- // 动态范围（SetupMapDisplay 校准——看全图↔贴近地块）
-                float minZoom = 3f;
+ // 动态范围（SetupMapDisplay 校准——看全图↔贴近地块）                float minZoom = 3f;
                 float maxZoom = _maxZoom > 0f ? _maxZoom : 150f;
                 _zoomLevel = Mathf.Clamp(_zoomLevel - scroll * 20f, minZoom, maxZoom);
                 _mainCamera.orthographicSize = _zoomLevel;
             }
 
- // 拖拽平移
-            if (Input.GetMouseButtonDown(2) || Input.GetMouseButtonDown(1))
+ // 拖拽平移            if (Input.GetMouseButtonDown(2) || Input.GetMouseButtonDown(1))
             {
                 _isDragging = true;
                 _lastMousePosition = Input.mousePosition;
@@ -481,72 +421,55 @@ namespace CivilizationEvolution.Render
                 _mainCamera.transform.position -= new Vector3(delta.x * moveSpeed * 0.01f, 0f, delta.y * moveSpeed * 0.01f);
             }
 
- // WASD移动
-            float moveX = Input.GetAxis("Horizontal") * _zoomLevel * 0.02f;
+ // WASD移动            float moveX = Input.GetAxis("Horizontal") * _zoomLevel * 0.02f;
             float moveZ = Input.GetAxis("Vertical") * _zoomLevel * 0.02f;
             _mainCamera.transform.position += new Vector3(moveX, 0f, moveZ);
 
- // 相机边界（查漏补缺：拖出地图范围=黑屏——clamp 到地图世界范围——
- // wrapX/Y 环绕地图不限制对应轴[环行视觉连续]）
-            ClampCameraToMap();
+ // 相机边界（查漏补缺：拖出地图范围=黑屏——clamp 到地图世界范围—— // wrapX/Y 环绕地图不限制对应轴[环行视觉连续]）            ClampCameraToMap();
         }
 
- /// <summary>切换显示模式</summary>
-                public void SetDisplayMode(MapDisplayMode mode)
+ /// <summary>切换显示模式</summary>                public void SetDisplayMode(MapDisplayMode mode)
         {
             displayMode = mode;
             _forceMapRefresh = true; // 切换显示模式立即重绘
             Debug.Log($"[MapRenderer] 切换显示模式：{mode}");
         }
 
- /// <summary>图层配置（公开访问，UI可直接修改开关后调用ForceRefresh）</summary>
-        public MapLayerConfig LayerConfig => _layerConfig;
+ /// <summary>图层配置（公开访问，UI可直接修改开关后调用ForceRefresh）</summary>        public MapLayerConfig LayerConfig => _layerConfig;
 
- /// <summary>切换可选叠加层</summary>
-        public void ToggleOverlay(MapOverlayLayer layer, bool enabled)
+ /// <summary>切换可选叠加层</summary>        public void ToggleOverlay(MapOverlayLayer layer, bool enabled)
         {
             _layerConfig.ToggleOverlay(layer, enabled);
             _forceMapRefresh = true;
         }
 
- /// <summary>检查可选叠加层是否启用</summary>
-        public bool IsOverlayEnabled(MapOverlayLayer layer) =>
+ /// <summary>检查可选叠加层是否启用</summary>        public bool IsOverlayEnabled(MapOverlayLayer layer) =>
             _layerConfig.IsOverlayEnabled(layer);
 
- /// <summary>强制刷新地图纹理（编辑器绘制后调用）</summary>
- /// <summary>当前投影模式</summary>
-        private MapProjectionMode _projection = MapProjectionMode.Planar;
+ /// <summary>强制刷新地图纹理（编辑器绘制后调用）</summary> /// <summary>当前投影模式</summary>        private MapProjectionMode _projection = MapProjectionMode.Planar;
 
- /// <summary>设置地图投影模式（平面/球形）</summary>
-        public void SetProjectionMode(MapProjectionMode mode)
+ /// <summary>设置地图投影模式（平面/球形）</summary>        public void SetProjectionMode(MapProjectionMode mode)
         {
             _projection = mode;
             Debug.Log($"[MapRenderer] 投影模式切换为: {mode}");
- // 球形投影的具体渲染实现待完善（球面UV映射+经纬度坐标转换）
-            ForceRefresh();
+ // 球形投影的具体渲染实现待完善（球面UV映射+经纬度坐标转换）            ForceRefresh();
         }
 
- /// <summary>地图投影模式</summary>
-        public enum MapProjectionMode
+ /// <summary>地图投影模式</summary>        public enum MapProjectionMode
         {
             Planar,    // 平面地图（柱状投影，左右连通）
             Spherical  // 球形地图（3D球面投影）
         }
 
- /// <summary>获取地图编辑器实例</summary>
-        public MapEditor GetMapEditor()
+ /// <summary>获取地图编辑器实例</summary>        public MapEditor GetMapEditor()
         {
- // 懒初始化（时序安全：UIManager 可能早于 _mapEditor 创建访问——
- // NRE 修复 2026-09-04）
-            if (_mapEditor == null && world != null)
+ // 懒初始化（时序安全：UIManager 可能早于 _mapEditor 创建访问）            if (_mapEditor == null && world != null)
                 _mapEditor = new MapEditor(world, this);
             return _mapEditor;
         }
 
- /// <summary>当前鼠标悬停地块（画笔预览用）</summary>
-        public int HoverTile => _hoverTile;
- /// <summary>屏幕坐标转地块索引（支持左右连通环绕）</summary>
-        public int ScreenToTile(Vector3 screenPos)
+ /// <summary>当前鼠标悬停地块（画笔预览用）</summary>        public int HoverTile => _hoverTile;
+ /// <summary>屏幕坐标转地块索引（支持左右连通环绕）</summary>        public int ScreenToTile(Vector3 screenPos)
         {
             if (_mainCamera == null) return -1;
 
@@ -558,8 +481,7 @@ namespace CivilizationEvolution.Render
                 int x = Mathf.FloorToInt(hitPoint.x / hexSize);
                 int y = Mathf.FloorToInt(hitPoint.z / (hexSize * 0.75f));
 
- // 左右连通环绕
-                bool wrapX = world != null && world.config.wrapX;
+ // 左右连通环绕                bool wrapX = world != null && world.config.wrapX;
                 if (wrapX) x = TileGrid.WrapX(x, mapWidth);
                 else if (x < 0 || x >= mapWidth) return -1;
 

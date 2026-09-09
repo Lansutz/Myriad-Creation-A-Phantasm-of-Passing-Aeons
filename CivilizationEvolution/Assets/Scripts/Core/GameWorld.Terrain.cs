@@ -18,32 +18,25 @@ using CivilizationEvolution.AI;
 
 namespace CivilizationEvolution.Core
 {
- /// GameWorld.Terrain —— 地形生成与气候水文计算（含脏标记重算）（partial class，与 GameWorld.cs 共享字段与子系统）
-    public partial class GameWorld
+ /// GameWorld.Terrain —— 地形生成与气候水文计算（含脏标记重算）（partial class，与 GameWorld.cs 共享字段与子系统）    public partial class GameWorld
     {
 
- /// <summary>生成随机地形（球形行星生成器：3D球面Simplex噪声+域扭曲+温度降水模拟+55群系）</summary>
-        public void GenerateTerrain(int seed = 42)
+ /// <summary>生成随机地形（球形行星生成器：3D球面Simplex噪声+域扭曲+温度降水模拟+55群系）</summary>        public void GenerateTerrain(int seed = 42)
         {
             randomSeed = seed;
 
- // 球形行星地形生成器：3D球面Simplex噪声+域扭曲+山脊叠加+温度降水+55群系+肥力
-            var planetGen = new PlanetTerrainGenerator(seed);
+ // 球形行星地形生成器：3D球面Simplex噪声+域扭曲+山脊叠加+温度降水+55群系+肥力            var planetGen = new PlanetTerrainGenerator(seed);
             planetGen.Generate(tiles, mapWidth, mapHeight);
 
- // 标记所有地块为脏，触发渲染刷新
-            for (int i = 0; i < tiles.Length; i++)
+ // 标记所有地块为脏，触发渲染刷新            for (int i = 0; i < tiles.Length; i++)
                 _terrainDirtyTiles.Add(i);
 
- // 河流追踪（须在 isLand 判定完成后，复用旧TerrainGenerator的河流算法）
-            var terrainGen = new TerrainGenerator(seed);
+ // 河流追踪（须在 isLand 判定完成后，复用旧TerrainGenerator的河流算法）            var terrainGen = new TerrainGenerator(seed);
             terrainGen.TrackRivers(tiles);
 
- // 地形生成后再初始化政权（修复：地形生成前isLand全为false）
-            InitializeDefaultRealms();
+ // 地形生成后再初始化政权（修复：地形生成前isLand全为false）            InitializeDefaultRealms();
 
- // 省份生成（沃罗诺伊+Lloyd 松弛——地图结构层）
-            GenerateProvinces(seed);
+ // 省份生成（沃罗诺伊+Lloyd 松弛——地图结构层）            GenerateProvinces(seed);
             GenerateBurgs(seed);
 
             Debug.Log($"[GameWorld] 球形地形生成完成，陆地{GetLandTileCount()}地块，海洋{GetSeaTileCount()}地块，省份{provinces.Count}个");
@@ -51,16 +44,14 @@ namespace CivilizationEvolution.Core
 
 
         
- /// <summary>使用GenConfig生成地形（编辑器面板调用）</summary>
-        public void GenerateTerrainWithConfig()
+ /// <summary>使用GenConfig生成地形（编辑器面板调用）</summary>        public void GenerateTerrainWithConfig()
         {
             if (GenConfig == null) GenConfig = new MapGenerationConfig();
 
             int seed = GenConfig.GetActualSeed();
             randomSeed = seed;
 
- // 应用地图尺寸
-            var (w, h) = GenConfig.GetMapDimensions();
+ // 应用地图尺寸            var (w, h) = GenConfig.GetMapDimensions();
             if (w != mapWidth || h != mapHeight)
             {
                 mapWidth = w; mapHeight = h;
@@ -72,11 +63,9 @@ namespace CivilizationEvolution.Core
                 InitializeSubsystems();
             }
 
- // 创建并配置地形生成器
-            _planetTerrainGenerator = new PlanetTerrainGenerator(seed);
+ // 创建并配置地形生成器            _planetTerrainGenerator = new PlanetTerrainGenerator(seed);
 
- // 先应用地形模板预设（基础参数），再应用 GenConfig 滑块（玩家微调）
-            var templatePreset = GenConfig.TerrainScale == TerrainScale.World
+ // 先应用地形模板预设（基础参数），再应用 GenConfig 滑块（玩家微调）            var templatePreset = GenConfig.TerrainScale == TerrainScale.World
                 ? TerrainTemplateSystem.GetWorldPreset(GenConfig.WorldTemplate)
                 : TerrainTemplateSystem.GetRegionalPreset(GenConfig.RegionalTemplate);
             TerrainTemplateSystem.ApplyPreset(templatePreset, _planetTerrainGenerator);
@@ -84,15 +73,12 @@ namespace CivilizationEvolution.Core
             GenConfig.ApplyToGenerator(_planetTerrainGenerator);
             _planetTerrainGenerator.Generate(tiles, mapWidth, mapHeight);
 
- // 河流追踪
-            var terrainGen = new TerrainGenerator(seed);
+ // 河流追踪            var terrainGen = new TerrainGenerator(seed);
             terrainGen.TrackRivers(tiles);
 
- // 标记脏
-            for (int i = 0; i < tiles.Length; i++) _terrainDirtyTiles.Add(i);
+ // 标记脏            for (int i = 0; i < tiles.Length; i++) _terrainDirtyTiles.Add(i);
 
- // 生成省份和Burg
-            GenerateProvinces(seed);
+ // 生成省份和Burg            GenerateProvinces(seed);
             GenerateBurgs(seed);
             InitializeDefaultRealms();
 
@@ -100,14 +86,12 @@ namespace CivilizationEvolution.Core
         }
 
 
- /// <summary>计算气候（大气环流GCM：温度/降水/风/气压）</summary>
-        public void CalculateClimate()
+ /// <summary>计算气候（大气环流GCM：温度/降水/风/气压）</summary>        public void CalculateClimate()
         {
             if (_atmosphericCirculation == null)
                 _atmosphericCirculation = new AtmosphericCirculation(mapWidth, mapHeight);
 
- // 从tiles提取高程、海陆、温度数组
-            float[] elevation = new float[tiles.Length];
+ // 从tiles提取高程、海陆、温度数组            float[] elevation = new float[tiles.Length];
             bool[] isLand = new bool[tiles.Length];
             float[] temperature = new float[tiles.Length];
             for (int i = 0; i < tiles.Length; i++)
@@ -117,22 +101,18 @@ namespace CivilizationEvolution.Core
                 temperature[i] = tiles[i].annualTemp;
             }
 
- // 应用GenConfig气候参数
-            GenConfig.ApplyToGCM(_atmosphericCirculation);
+ // 应用GenConfig气候参数            GenConfig.ApplyToGCM(_atmosphericCirculation);
 
- // 运行大气环流模拟
-            _atmosphericCirculation.Run(elevation, isLand, temperature);
+ // 运行大气环流模拟            _atmosphericCirculation.Run(elevation, isLand, temperature);
 
- // 写回tiles
-            for (int i = 0; i < tiles.Length; i++)
+ // 写回tiles            for (int i = 0; i < tiles.Length; i++)
             {
                 tiles[i].annualPrecipMm = _atmosphericCirculation.Precipitation[i];
                 tiles[i].airHumidityPct = Mathf.Clamp(_atmosphericCirculation.SpecificHumidity[i] * 10000f, 0f, 100f);
                 _climateDirtyTiles.Add(i);
             }
 
- // 用Holdridge分类器更新生物群系（静态类，直接调用）
-            for (int i = 0; i < tiles.Length; i++)
+ // 用Holdridge分类器更新生物群系（静态类，直接调用）            for (int i = 0; i < tiles.Length; i++)
             {
                 if (tiles[i].isLand)
                 {
@@ -148,14 +128,12 @@ namespace CivilizationEvolution.Core
         }
 
 
- /// <summary>重算水文（水力侵蚀+河网）</summary>
-        public void RecalculateHydrology()
+ /// <summary>重算水文（水力侵蚀+河网）</summary>        public void RecalculateHydrology()
         {
             if (_hydraulicErosion == null)
                 _hydraulicErosion = new HydraulicErosion(mapWidth, mapHeight, randomSeed);
 
- // 从tiles提取高程和海陆
-            float[] elevation = new float[tiles.Length];
+ // 从tiles提取高程和海陆            float[] elevation = new float[tiles.Length];
             bool[] isLand = new bool[tiles.Length];
             for (int i = 0; i < tiles.Length; i++)
             {
@@ -163,27 +141,22 @@ namespace CivilizationEvolution.Core
                 isLand[i] = tiles[i].isLand;
             }
 
- // 应用GenConfig水文参数
-            GenConfig.ApplyToErosion(_hydraulicErosion, tiles.Length);
+ // 应用GenConfig水文参数            GenConfig.ApplyToErosion(_hydraulicErosion, tiles.Length);
             _hydraulicErosion.WrapX = config.wrapX;
 
- // 运行水力侵蚀
-            _hydraulicErosion.Run(elevation, isLand);
+ // 运行水力侵蚀            _hydraulicErosion.Run(elevation, isLand);
             _hydraulicErosion.ApplyToTiles(tiles, elevation);
 
- // 重新追踪河流
-            var terrainGen = new TerrainGenerator(randomSeed);
+ // 重新追踪河流            var terrainGen = new TerrainGenerator(randomSeed);
             terrainGen.TrackRivers(tiles);
 
- // 标记脏
-            for (int i = 0; i < tiles.Length; i++) _terrainDirtyTiles.Add(i);
+ // 标记脏            for (int i = 0; i < tiles.Length; i++) _terrainDirtyTiles.Add(i);
 
             Debug.Log($"[GameWorld] 水文重算完成：水力侵蚀+河网追踪已执行");
         }
 
 
- /// <summary>全部生成（地形+气候+水文，编辑器一键生成）</summary>
-        public void GenerateAll()
+ /// <summary>全部生成（地形+气候+水文，编辑器一键生成）</summary>        public void GenerateAll()
         {
             GenerateTerrainWithConfig();
             CalculateClimate();
@@ -193,10 +166,7 @@ namespace CivilizationEvolution.Core
 
         private void GenerateProvinces(int seed)
         {
- // 省份密度随地图尺寸动态调整：大地图每省地块更多，避免省份数量爆炸
- // 公式：Max(48, sqrt(总地块) * 0.3)
- // 128×64(8192)→48地块/省≈170省；512×256(131072)→109≈1200省；1920×1080(2073600)→432≈4800省（对齐参考项目5226省）
-            int totalTiles = mapWidth * mapHeight;
+ // 省份密度随地图尺寸动态调整：大地图每省地块更多，避免省份数量爆炸 // 公式：Max(48, sqrt(总地块) * 0.3) // 128×64(8192)→48地块/省≈170省；512×256(131072)→109≈1200省；1920×1080(2073600)→432≈4800省（对齐参考项目5226省）            int totalTiles = mapWidth * mapHeight;
             int cellsPerProvince = Mathf.Max(48, (int)(Mathf.Sqrt(totalTiles) * 0.3));
 
             var generator = new ProvinceGenerator(tiles, mapWidth, mapHeight, config.wrapX);
@@ -207,8 +177,7 @@ namespace CivilizationEvolution.Core
 
 
 
- /// <summary>生成子地块/Burg（省份内定居点：城市/港口/要塞/村庄）</summary>
-        private void GenerateBurgs(int seed)
+ /// <summary>生成子地块/Burg（省份内定居点：城市/港口/要塞/村庄）</summary>        private void GenerateBurgs(int seed)
         {
             var generator = new BurgGenerator(tiles, mapWidth, mapHeight, provinces, seed);
             burgs = generator.Generate();
@@ -219,8 +188,7 @@ namespace CivilizationEvolution.Core
             Debug.Log($"[GameWorld] 子地块生成：{burgs.Count}个（城{cityCount}/港{portCount}/寨{fortCount}/村{villageCount}）");
         }
 
- /// <summary>计算地块基础肥力</summary>
-        private float CalculateBaseFertility(int index)
+ /// <summary>计算地块基础肥力</summary>        private float CalculateBaseFertility(int index)
         {
             ref TileData tile = ref tiles[index];
             float climateScore = Mathf.Clamp(tile.annualPrecipMm / 1000f, 0f, 1f) * 0.5f
@@ -231,8 +199,7 @@ namespace CivilizationEvolution.Core
         }
 
 
- /// <summary>全量重算</summary>
-        public void RecalculateAll()
+ /// <summary>全量重算</summary>        public void RecalculateAll()
         {
             _seaLandGenerator.RecalculateAll();
             _climateSimulator.RecalculateAll();
@@ -242,8 +209,7 @@ namespace CivilizationEvolution.Core
         }
 
 
- /// <summary>脏区增量重算</summary>
-        public void RecalculateDirty()
+ /// <summary>脏区增量重算</summary>        public void RecalculateDirty()
         {
             if (_configDirty)
             {
@@ -267,8 +233,7 @@ namespace CivilizationEvolution.Core
         }
 
 
- /// <summary>画笔修改地形</summary>
-        public void PaintTerrain(int tileIndex, float newElevation)
+ /// <summary>画笔修改地形</summary>        public void PaintTerrain(int tileIndex, float newElevation)
         {
             if (tileIndex < 0 || tileIndex >= tiles.Length) return;
             tiles[tileIndex].elevation01 = newElevation;
@@ -277,8 +242,7 @@ namespace CivilizationEvolution.Core
         }
 
 
- /// <summary>修改世界配置参数</summary>
-        public void UpdateConfig(System.Action<WorldConfig> configUpdater)
+ /// <summary>修改世界配置参数</summary>        public void UpdateConfig(System.Action<WorldConfig> configUpdater)
         {
             configUpdater?.Invoke(config);
             _configDirty = true;

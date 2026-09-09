@@ -4,22 +4,16 @@ using CivilizationEvolution.Tech;
 
 namespace CivilizationEvolution.Politics
 {
- /// 政体改革（研究新革新后可以改革政体成分）
- /// 改革条件=目标成分的支撑革新已持有（PolityComponentInnovations）；
- /// 改革引发短暂动荡（稳定性下降）并记录编年史
-    public static class GovernmentReform
+ /// 政体改革（研究新革新后可以改革政体成分） /// 改革条件=目标成分的支撑革新已持有（PolityComponentInnovations）； /// 改革引发短暂动荡（稳定性下降）并记录编年史    public static class GovernmentReform
     {
- /// <summary>目标成分是否可改革（支撑革新已持有——未持有不可改革）</summary>
-        public static bool CanReform(RealmData realm, PolityComponentInnovations.PolityDimension dimension,
+ /// <summary>目标成分是否可改革（支撑革新已持有——未持有不可改革）</summary>        public static bool CanReform(RealmData realm, PolityComponentInnovations.PolityDimension dimension,
             int newComponent, InnovationTree innovations)
         {
             if (realm == null || innovations == null) return false;
             return PolityComponentInnovations.IsComponentAvailable(dimension, newComponent, innovations, realm.realmId);
         }
 
- /// 执行政体改革：检查支撑革新 → 应用新成分 → 稳定性下降 → 编年史记录
- /// 返回是否成功
-        public static bool Reform(RealmData realm, PolityComponentInnovations.PolityDimension dimension,
+ /// 执行政体改革：检查支撑革新 → 应用新成分 → 稳定性下降 → 编年史记录 /// 返回是否成功        public static bool Reform(RealmData realm, PolityComponentInnovations.PolityDimension dimension,
             int newComponent, InnovationTree innovations, Chronicle chronicle = null)
         {
             if (!CanReform(realm, dimension, newComponent, innovations)) return false;
@@ -27,14 +21,11 @@ namespace CivilizationEvolution.Politics
             string oldName = GetComponentName(dimension, GetCurrent(realm, dimension));
             string newName = GetComponentName(dimension, newComponent);
 
- // 应用新成分
-            Apply(realm, dimension, newComponent);
+ // 应用新成分            Apply(realm, dimension, newComponent);
 
- // 改革动荡：稳定性下降
-            realm.stability = UnityEngine.Mathf.Max(0f, realm.stability - 5f);
+ // 改革动荡：稳定性下降            realm.stability = UnityEngine.Mathf.Max(0f, realm.stability - 5f);
 
- // 编年史（重大）
-            chronicle?.Add("reform",
+ // 编年史（重大）            chronicle?.Add("reform",
                 $"{realm.realmName} 政体改革：{oldName} → {newName}（稳定性下降）",
                 major: true, realm.realmId);
 

@@ -4,11 +4,7 @@ using CivilizationEvolution.Core;
 
 namespace CivilizationEvolution.Render
 {
- /// Cyowari 历史地图风格桥接组件
- /// 从 GameWorld 生成高程图/国家色块图/噪点图，传入 CyowariHistoricalMap Shader，
- /// 一键切换 MapRenderer 的渲染材质。挂在 MapRenderer 同一物体上。
- /// 风格特征：西北向地形浮雕晕渲 + 半透明国土色 + 黑色边界 + 争议斜纹 + 海洋色 + 纸张色调
-    [RequireComponent(typeof(MapRenderer))]
+ /// Cyowari 历史地图风格桥接组件 /// 从 GameWorld 生成高程图/国家色块图/噪点图，传入 CyowariHistoricalMap Shader， /// 一键切换 MapRenderer 的渲染材质。挂在 MapRenderer 同一物体上。 /// 风格特征：西北向地形浮雕晕渲 + 半透明国土色 + 黑色边界 + 争议斜纹 + 海洋色 + 纸张色调    [RequireComponent(typeof(MapRenderer))]
     public class CyowariMapStyle : MonoBehaviour
     {
         [Header("引用")]
@@ -27,16 +23,14 @@ namespace CivilizationEvolution.Render
         [Range(16, 256)] public int noiseResolution = 128;
         [Range(0f, 1f)] public float noiseStrength = 0.35f;
 
- // —— 运行时资源 ——
-        private Texture2D _heightMap;
+ // —— 运行时资源 ——        private Texture2D _heightMap;
         private Texture2D _countryColorMap;
         private Texture2D _noiseTex;
         private Material _cyowariMaterial;
         private Material _originalMaterial;
         private bool _applied;
 
- // —— 政权色板（与 MapRenderer.GetRealmColor 逻辑一致）——
-        private static readonly Color[] _politicalColors = new Color[16];
+ // —— 政权色板（与 MapRenderer.GetRealmColor 逻辑一致）——        private static readonly Color[] _politicalColors = new Color[16];
         static CyowariMapStyle()
         {
             for (int i = 0; i < 16; i++)
@@ -63,8 +57,7 @@ namespace CivilizationEvolution.Render
             if (mapRenderer == null) mapRenderer = GetComponent<MapRenderer>();
         }
 
- /// <summary>应用 Cyowari 风格（生成纹理+切换材质）</summary>
-        public void Apply()
+ /// <summary>应用 Cyowari 风格（生成纹理+切换材质）</summary>        public void Apply()
         {
             if (mapRenderer == null || world == null)
             {
@@ -77,8 +70,7 @@ namespace CivilizationEvolution.Render
             EnsureMaterial();
             RefreshTextures();
 
- // 保存原材质并切换
-            var mr = mapRenderer.GetComponent<MeshRenderer>();
+ // 保存原材质并切换            var mr = mapRenderer.GetComponent<MeshRenderer>();
             if (mr != null)
             {
                 _originalMaterial = mr.material;
@@ -88,8 +80,7 @@ namespace CivilizationEvolution.Render
             Debug.Log("[CyowariMapStyle] 已应用 Cyowari 历史地图风格");
         }
 
- /// <summary>恢复原材质</summary>
-        public void Revert()
+ /// <summary>恢复原材质</summary>        public void Revert()
         {
             if (!_applied) return;
             var mr = mapRenderer.GetComponent<MeshRenderer>();
@@ -101,8 +92,7 @@ namespace CivilizationEvolution.Render
             Debug.Log("[CyowariMapStyle] 已恢复原渲染风格");
         }
 
- /// <summary>重新生成输入纹理（地形/政权变化后调用）</summary>
-        public void RefreshTextures()
+ /// <summary>重新生成输入纹理（地形/政权变化后调用）</summary>        public void RefreshTextures()
         {
             if (world == null) return;
             GenerateHeightMap();
@@ -111,7 +101,6 @@ namespace CivilizationEvolution.Render
         }
 
  // ===== 纹理生成 =====
-
         private void EnsureTextures()
         {
             int w = world.mapWidth;
@@ -137,8 +126,7 @@ namespace CivilizationEvolution.Render
             }
         }
 
- /// <summary>高程图：灰度，白色高山，黑色海洋</summary>
-        private void GenerateHeightMap()
+ /// <summary>高程图：灰度，白色高山，黑色海洋</summary>        private void GenerateHeightMap()
         {
             int w = world.mapWidth;
             int h = world.mapHeight;
@@ -150,8 +138,7 @@ namespace CivilizationEvolution.Render
                     int idx = y * w + x;
                     var tile = world.tiles[idx];
                     float elev = tile.exists ? Mathf.Clamp01(tile.elevation01) : 0f;
- // 海洋压低高程（浮雕只在陆地显现）
-                    if (tile.exists && !tile.isLand) elev *= 0.15f;
+ // 海洋压低高程（浮雕只在陆地显现）                    if (tile.exists && !tile.isLand) elev *= 0.15f;
                     pixels[idx] = new Color(elev, elev, elev, 1f);
                 }
             }
@@ -159,8 +146,7 @@ namespace CivilizationEvolution.Render
             _heightMap.Apply();
         }
 
- /// <summary>国家色块图：RGB=政权色，A=0海洋 / 1普通国土 / >1争议区</summary>
-        private void GenerateCountryColorMap()
+ /// <summary>国家色块图：RGB=政权色，A=0海洋 / 1普通国土 / >1争议区</summary>        private void GenerateCountryColorMap()
         {
             int w = world.mapWidth;
             int h = world.mapHeight;
@@ -177,8 +163,7 @@ namespace CivilizationEvolution.Render
                         continue;
                     }
                     Color c = GetRealmColor(tile.ownerRealmId);
- // 占领中≠所有者时标记为争议区（alpha > 1 触发斜纹）
-                    float alpha = (tile.occupyingRealmId >= 0 && tile.occupyingRealmId != tile.ownerRealmId)
+ // 占领中≠所有者时标记为争议区（alpha > 1 触发斜纹）                    float alpha = (tile.occupyingRealmId >= 0 && tile.occupyingRealmId != tile.ownerRealmId)
                         ? 1.5f : 1f;
                     pixels[idx] = new Color(c.r, c.g, c.b, alpha);
                 }
@@ -187,8 +172,7 @@ namespace CivilizationEvolution.Render
             _countryColorMap.Apply();
         }
 
- /// <summary>程序化纸张噪点（确定性 hash——同参数同纹理）</summary>
-        private void GenerateNoiseTexture()
+ /// <summary>程序化纸张噪点（确定性 hash——同参数同纹理）</summary>        private void GenerateNoiseTexture()
         {
             int n = noiseResolution;
             var pixels = new Color[n * n];
@@ -212,7 +196,6 @@ namespace CivilizationEvolution.Render
         }
 
  // ===== 材质 =====
-
         private void EnsureMaterial()
         {
             if (_cyowariMaterial != null) return;

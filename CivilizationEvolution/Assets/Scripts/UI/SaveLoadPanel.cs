@@ -7,10 +7,7 @@ using TMPro;
 
 namespace CivilizationEvolution.UI
 {
- /// 存档选择面板——列出 MapSaves 目录下的所有 .json 存档，
- /// 选择后通过回调通知调用方加载指定存档。
- /// 代码动态生成，不依赖场景预制体。
-    public class SaveLoadPanel : MonoBehaviour
+ /// 存档选择面板——列出 MapSaves 目录下的所有 .json 存档， /// 选择后通过回调通知调用方加载指定存档。 /// 代码动态生成，不依赖场景预制体。    public class SaveLoadPanel : MonoBehaviour
     {
         [SerializeField] private Color panelBg = new Color(0.08f, 0.09f, 0.12f, 0.98f);
         [SerializeField] private Color titleColor = new Color(0.88f, 0.75f, 0.45f, 1f);
@@ -25,14 +22,12 @@ namespace CivilizationEvolution.UI
         private Action<string> _onSelectSave;
         private Action _onClose;
 
- /// <summary>构建存档选择面板</summary>
-        public void Build(Transform parent, Action<string> onSelectSave, Action onClose)
+ /// <summary>构建存档选择面板</summary>        public void Build(Transform parent, Action<string> onSelectSave, Action onClose)
         {
             _onSelectSave = onSelectSave;
             _onClose = onClose;
 
- // 半透明遮罩
-            var overlayObj = new GameObject("SaveLoadOverlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+ // 半透明遮罩            var overlayObj = new GameObject("SaveLoadOverlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             overlayObj.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.6f);
             var ort = overlayObj.GetComponent<RectTransform>();
             ort.anchorMin = Vector2.zero; ort.anchorMax = Vector2.one;
@@ -40,8 +35,7 @@ namespace CivilizationEvolution.UI
             overlayObj.transform.SetParent(parent, false);
             _root = overlayObj;
 
- // 主面板
-            var panelObj = new GameObject("Panel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+ // 主面板            var panelObj = new GameObject("Panel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             panelObj.GetComponent<Image>().color = panelBg;
             var prt = panelObj.GetComponent<RectTransform>();
             prt.anchorMin = new Vector2(0.5f, 0.5f); prt.anchorMax = new Vector2(0.5f, 0.5f);
@@ -49,16 +43,14 @@ namespace CivilizationEvolution.UI
             prt.sizeDelta = new Vector2(560, 520);
             panelObj.transform.SetParent(overlayObj.transform, false);
 
- // 标题
-            var titleObj = CreateText("Title", "加载世界", 28, titleColor, FontStyles.Bold);
+ // 标题            var titleObj = CreateText("Title", "加载世界", 28, titleColor, FontStyles.Bold);
             var trt = titleObj.GetComponent<RectTransform>();
             trt.anchorMin = new Vector2(0f, 1f); trt.anchorMax = new Vector2(1f, 1f);
             trt.pivot = new Vector2(0.5f, 1f); trt.anchoredPosition = new Vector2(0, -20);
             trt.sizeDelta = new Vector2(0, 40);
             titleObj.transform.SetParent(panelObj.transform, false);
 
- // 标题下划线
-            var lineObj = new GameObject("TitleLine", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+ // 标题下划线            var lineObj = new GameObject("TitleLine", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             lineObj.GetComponent<Image>().color = lineColor;
             var lrt = lineObj.GetComponent<RectTransform>();
             lrt.anchorMin = new Vector2(0.5f, 1f); lrt.anchorMax = new Vector2(0.5f, 1f);
@@ -66,8 +58,7 @@ namespace CivilizationEvolution.UI
             lrt.sizeDelta = new Vector2(480, 1);
             lineObj.transform.SetParent(panelObj.transform, false);
 
- // 滚动列表视口
-            var viewportObj = new GameObject("Viewport", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask));
+ // 滚动列表视口            var viewportObj = new GameObject("Viewport", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask));
             viewportObj.GetComponent<Image>().color = new Color(0.10f, 0.11f, 0.14f, 0.6f);
             var vrt = viewportObj.GetComponent<RectTransform>();
             vrt.anchorMin = new Vector2(0f, 0f); vrt.anchorMax = new Vector2(1f, 1f);
@@ -75,8 +66,7 @@ namespace CivilizationEvolution.UI
             vrt.offsetMin = new Vector2(30, 80); vrt.offsetMax = new Vector2(-30, -80);
             viewportObj.transform.SetParent(panelObj.transform, false);
 
- // 列表内容
-            var contentObj = new GameObject("Content", typeof(RectTransform));
+ // 列表内容            var contentObj = new GameObject("Content", typeof(RectTransform));
             _listContent = contentObj.transform;
             var crt = contentObj.GetComponent<RectTransform>();
             crt.anchorMin = new Vector2(0f, 1f); crt.anchorMax = new Vector2(1f, 1f);
@@ -85,19 +75,16 @@ namespace CivilizationEvolution.UI
             crt.sizeDelta = new Vector2(0, 0);
             contentObj.transform.SetParent(viewportObj.transform, false);
 
- // 关闭按钮
-            var closeBtn = CreateButton("关闭", new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
+ // 关闭按钮            var closeBtn = CreateButton("关闭", new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
                 new Vector2(0, 20), new Vector2(160, 44), () => { _onClose?.Invoke(); Hide(); });
             closeBtn.transform.SetParent(panelObj.transform, false);
 
             RefreshList();
         }
 
- /// <summary>刷新存档列表</summary>
-        public void RefreshList()
+ /// <summary>刷新存档列表</summary>        public void RefreshList()
         {
- // 清空旧列表
-            for (int i = _listContent.childCount - 1; i >= 0; i--)
+ // 清空旧列表            for (int i = _listContent.childCount - 1; i >= 0; i--)
                 Destroy(_listContent.GetChild(i).gameObject);
 
             string saveDir = Path.Combine(Application.persistentDataPath, "MapSaves");
@@ -114,8 +101,7 @@ namespace CivilizationEvolution.UI
                 return;
             }
 
- // 按修改时间倒序
-            Array.Sort(files, (a, b) => File.GetLastWriteTime(b).CompareTo(File.GetLastWriteTime(a)));
+ // 按修改时间倒序            Array.Sort(files, (a, b) => File.GetLastWriteTime(b).CompareTo(File.GetLastWriteTime(a)));
 
             float itemHeight = 72f;
             float spacing = 8f;
@@ -166,8 +152,7 @@ namespace CivilizationEvolution.UI
                 Hide();
             });
 
- // 存档名
-            var nameObj = CreateText("Name", fileName, 20, itemText, FontStyles.Bold);
+ // 存档名            var nameObj = CreateText("Name", fileName, 20, itemText, FontStyles.Bold);
             var nrt = nameObj.GetComponent<RectTransform>();
             nrt.anchorMin = new Vector2(0f, 1f); nrt.anchorMax = new Vector2(1f, 1f);
             nrt.pivot = new Vector2(0f, 1f); nrt.anchoredPosition = new Vector2(16, -10);
@@ -175,8 +160,7 @@ namespace CivilizationEvolution.UI
             nameObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.TopLeft;
             nameObj.transform.SetParent(itemObj.transform, false);
 
- // 时间和大小
-            string sizeStr = sizeBytes < 1024 ? $"{sizeBytes} B" :
+ // 时间和大小            string sizeStr = sizeBytes < 1024 ? $"{sizeBytes} B" :
                               sizeBytes < 1048576 ? $"{sizeBytes / 1024} KB" :
                               $"{sizeBytes / 1048576}.{(sizeBytes % 1048576) / 104858} MB";
             string info = $"{modTime:yyyy-MM-dd HH:mm}  |  {sizeStr}";
@@ -188,8 +172,7 @@ namespace CivilizationEvolution.UI
             infoObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.BottomLeft;
             infoObj.transform.SetParent(itemObj.transform, false);
 
- // 底部细线
-            var lineObj = new GameObject("Line", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+ // 底部细线            var lineObj = new GameObject("Line", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             lineObj.GetComponent<Image>().color = new Color(0.25f, 0.25f, 0.30f, 0.5f);
             var lrt = lineObj.GetComponent<RectTransform>();
             lrt.anchorMin = new Vector2(0f, 0f); lrt.anchorMax = new Vector2(1f, 0f);

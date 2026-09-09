@@ -4,91 +4,62 @@ using UnityEngine;
 
 namespace CivilizationEvolution.Map
 {
- /// 地形模板两大分类：完整世界 vs 局部。
- /// 两者的生成逻辑和参数体系不同：
- /// - 完整世界：面向全球海陆格局，核心参数是大陆数量、海陆比例、海洋连通性
- /// - 局部：面向区域地理特征，核心参数是边界条件、中心特征
-    public enum TerrainScale
+ /// 地形模板两大分类：完整世界 vs 局部。 /// 两者的生成逻辑和参数体系不同： /// - 完整世界：面向全球海陆格局，核心参数是大陆数量、海陆比例、海洋连通性 /// - 局部：面向区域地理特征，核心参数是边界条件、中心特征    public enum TerrainScale
     {
- /// <summary>完整世界：全球海陆格局（大陆/海洋/群岛整体分布）</summary>
-        World,
- /// <summary>局部：区域地理特征（流域/半岛/盆地/山脉等，含边界条件）</summary>
-        Regional
+ /// <summary>完整世界：全球海陆格局（大陆/海洋/群岛整体分布）</summary>        World,
+ /// <summary>局部：区域地理特征（流域/半岛/盆地/山脉等，含边界条件）</summary>        Regional
     }
 
- /// <summary>完整世界地形模板</summary>
-    public enum WorldTemplate
+ /// <summary>完整世界地形模板</summary>    public enum WorldTemplate
     {
- /// <summary>盘古大陆：一块超级大陆，周围环绕海洋</summary>
-        [Tooltip("一块超级大陆，周围环绕海洋。陆地集中，海洋连通。")]
+ /// <summary>盘古大陆：一块超级大陆，周围环绕海洋</summary>        [Tooltip("一块超级大陆，周围环绕海洋。陆地集中，海洋连通。")]
         Pangaea,
- /// <summary>双大陆：两块大陆隔海相望</summary>
-        [Tooltip("两块大陆隔海相望，中间为海洋通道。")]
+ /// <summary>双大陆：两块大陆隔海相望</summary>        [Tooltip("两块大陆隔海相望，中间为海洋通道。")]
         DualContinents,
- /// <summary>多大陆：3-5块大陆散布全球</summary>
-        [Tooltip("3-5块大陆散布，海洋分割各大陆。")]
+ /// <summary>多大陆：3-5块大陆散布全球</summary>        [Tooltip("3-5块大陆散布，海洋分割各大陆。")]
         MultiContinents,
- /// <summary>群岛世界：大量岛屿，无大块陆地</summary>
-        [Tooltip("无大块陆地，大量岛屿散布，陆地比例低。")]
+ /// <summary>群岛世界：大量岛屿，无大块陆地</summary>        [Tooltip("无大块陆地，大量岛屿散布，陆地比例低。")]
         ArchipelagoWorld,
- /// <summary>环形大陆：大陆环绕中央内海</summary>
-        [Tooltip("大陆环绕中央内海，类似地中海但规模更大。")]
+ /// <summary>环形大陆：大陆环绕中央内海</summary>        [Tooltip("大陆环绕中央内海，类似地中海但规模更大。")]
         RingContinent,
- /// <summary>地中海世界：中央海+周围多块陆地</summary>
-        [Tooltip("中央海为核心，周围多块陆地环绕，海陆交错。")]
+ /// <summary>地中海世界：中央海+周围多块陆地</summary>        [Tooltip("中央海为核心，周围多块陆地环绕，海陆交错。")]
         Mediterranean,
- /// <summary>类地球：类似地球的海陆分布</summary>
-        [Tooltip("类似地球的海陆分布：几块大陆+大片海洋。")]
+ /// <summary>类地球：类似地球的海陆分布</summary>        [Tooltip("类似地球的海陆分布：几块大陆+大片海洋。")]
         EarthLike,
- /// <summary>自定义：纯参数，无模板预设</summary>
-        [Tooltip("不使用模板预设，完全由参数滑块控制。")]
+ /// <summary>自定义：纯参数，无模板预设</summary>        [Tooltip("不使用模板预设，完全由参数滑块控制。")]
         Custom
     }
 
- /// <summary>局部地形模板</summary>
-    public enum RegionalTemplate
+ /// <summary>局部地形模板</summary>    public enum RegionalTemplate
     {
- /// <summary>河流流域：一条大河+流域平原</summary>
-        [Tooltip("一条大河贯穿，周围为流域平原，两侧缓升。")]
+ /// <summary>河流流域：一条大河+流域平原</summary>        [Tooltip("一条大河贯穿，周围为流域平原，两侧缓升。")]
         RiverValley,
- /// <summary>半岛：伸入海洋的半岛</summary>
-        [Tooltip("陆地从一侧伸入海洋，三面环海。")]
+ /// <summary>半岛：伸入海洋的半岛</summary>        [Tooltip("陆地从一侧伸入海洋，三面环海。")]
         Peninsula,
- /// <summary>群岛：一片群岛散布</summary>
-        [Tooltip("一片群岛散布在海洋中，无大块陆地。")]
+ /// <summary>群岛：一片群岛散布</summary>        [Tooltip("一片群岛散布在海洋中，无大块陆地。")]
         Archipelago,
- /// <summary>内陆海：中央海+周围陆地</summary>
-        [Tooltip("中央为海，周围被陆地环绕，仅一侧可能通外海。")]
+ /// <summary>内陆海：中央海+周围陆地</summary>        [Tooltip("中央为海，周围被陆地环绕，仅一侧可能通外海。")]
         InlandSea,
- /// <summary>山脉屏障：一条大山脉+两侧低地</summary>
-        [Tooltip("一条大山脉横贯，两侧为低地/平原。")]
+ /// <summary>山脉屏障：一条大山脉+两侧低地</summary>        [Tooltip("一条大山脉横贯，两侧为低地/平原。")]
         MountainRange,
- /// <summary>盆地：四周高中央低</summary>
-        [Tooltip("四周高山环绕，中央为低地/平原，可能有内流湖。")]
+ /// <summary>盆地：四周高中央低</summary>        [Tooltip("四周高山环绕，中央为低地/平原，可能有内流湖。")]
         Basin,
- /// <summary>沿海平原：一侧海一侧缓升陆地</summary>
-        [Tooltip("一侧为海洋，陆地向另一侧缓慢升高，海岸线平直。")]
+ /// <summary>沿海平原：一侧海一侧缓升陆地</summary>        [Tooltip("一侧为海洋，陆地向另一侧缓慢升高，海岸线平直。")]
         CoastalPlain,
- /// <summary>峡湾：冰川侵蚀的锯齿海岸</summary>
-        [Tooltip("冰川侵蚀形成的锯齿状海岸，多峡湾和岛屿。")]
+ /// <summary>峡湾：冰川侵蚀的锯齿海岸</summary>        [Tooltip("冰川侵蚀形成的锯齿状海岸，多峡湾和岛屿。")]
         Fjord,
- /// <summary>自定义：纯参数，无模板预设</summary>
-        [Tooltip("不使用模板预设，完全由参数滑块控制。")]
+ /// <summary>自定义：纯参数，无模板预设</summary>        [Tooltip("不使用模板预设，完全由参数滑块控制。")]
         Custom
     }
 
- /// 地形模板参数预设。
- /// 每个模板对应一组 PlanetTerrainGenerator 参数，
- /// 应用后玩家仍可用滑块微调。
-    [Serializable]
+ /// 地形模板参数预设。 /// 每个模板对应一组 PlanetTerrainGenerator 参数， /// 应用后玩家仍可用滑块微调。    [Serializable]
     public class TerrainTemplatePreset
     {
         public string Name;
         public string Description;
         public TerrainScale Scale;
 
- // PlanetTerrainGenerator 参数
-        public float TargetLandFraction = 0.30f;
+ // PlanetTerrainGenerator 参数        public float TargetLandFraction = 0.30f;
         public float TerrainFrequency = 1.8f;
         public int TerrainOctaves = 6;
         public float WarpStrength = 0.7f;
@@ -97,9 +68,7 @@ namespace CivilizationEvolution.Map
         public int PlateCount = 12;
         public float PlateBoundaryMountainBoost = 0.25f;
 
- // 大陆数量与大小范围（完整世界模板用；局部模板可忽略）
- // 模板是"以N块主大陆为主"，并非绝对只有N块——还会局部生成零散岛屿/半岛
-        [Tooltip("主大陆最小数量")]
+ // 大陆数量与大小范围（完整世界模板用；局部模板可忽略） // 模板是"以N块主大陆为主"，并非绝对只有N块——还会局部生成零散岛屿/半岛        [Tooltip("主大陆最小数量")]
         public int MinContinentCount = 1;
         [Tooltip("主大陆最大数量")]
         public int MaxContinentCount = 1;
@@ -110,17 +79,13 @@ namespace CivilizationEvolution.Map
         [Tooltip("零散岛屿/半岛密度（0=无，1=大量）。模板以主大陆为主，辅以零散小东西。")]
         public float IslandDensity = 0.3f;
 
- // 特殊形状标记（用于生成逻辑中应用特殊算法）
-        public bool HasSpecialShape = false;
+ // 特殊形状标记（用于生成逻辑中应用特殊算法）        public bool HasSpecialShape = false;
         public string SpecialShapeType = "";
     }
 
- /// 地形模板系统：管理完整世界/局部两大分类的模板定义和参数预设。
- /// 参考 Azgaar FMG 的模板系统，但按规模分类，避免功能混乱。
-    public static class TerrainTemplateSystem
+ /// 地形模板系统：管理完整世界/局部两大分类的模板定义和参数预设。 /// 参考 Azgaar FMG 的模板系统，但按规模分类，避免功能混乱。    public static class TerrainTemplateSystem
     {
- /// <summary>完整世界模板预设表</summary>
-        private static readonly Dictionary<WorldTemplate, TerrainTemplatePreset> _worldPresets = new()
+ /// <summary>完整世界模板预设表</summary>        private static readonly Dictionary<WorldTemplate, TerrainTemplatePreset> _worldPresets = new()
         {
             {
                 WorldTemplate.Pangaea, new TerrainTemplatePreset {
@@ -222,8 +187,7 @@ namespace CivilizationEvolution.Map
             }
         };
 
- /// <summary>局部模板预设表</summary>
-        private static readonly Dictionary<RegionalTemplate, TerrainTemplatePreset> _regionalPresets = new()
+ /// <summary>局部模板预设表</summary>        private static readonly Dictionary<RegionalTemplate, TerrainTemplatePreset> _regionalPresets = new()
         {
             {
                 RegionalTemplate.RiverValley, new TerrainTemplatePreset {
@@ -314,16 +278,13 @@ namespace CivilizationEvolution.Map
             }
         };
 
- /// <summary>获取完整世界模板预设</summary>
-        public static TerrainTemplatePreset GetWorldPreset(WorldTemplate template) =>
+ /// <summary>获取完整世界模板预设</summary>        public static TerrainTemplatePreset GetWorldPreset(WorldTemplate template) =>
             _worldPresets.TryGetValue(template, out var preset) ? preset : _worldPresets[WorldTemplate.Custom];
 
- /// <summary>获取局部模板预设</summary>
-        public static TerrainTemplatePreset GetRegionalPreset(RegionalTemplate template) =>
+ /// <summary>获取局部模板预设</summary>        public static TerrainTemplatePreset GetRegionalPreset(RegionalTemplate template) =>
             _regionalPresets.TryGetValue(template, out var preset) ? preset : _regionalPresets[RegionalTemplate.Custom];
 
- /// <summary>获取所有完整世界模板名称（用于UI下拉）</summary>
-        public static string[] GetWorldTemplateNames()
+ /// <summary>获取所有完整世界模板名称（用于UI下拉）</summary>        public static string[] GetWorldTemplateNames()
         {
             var names = new string[_worldPresets.Count];
             int i = 0;
@@ -331,8 +292,7 @@ namespace CivilizationEvolution.Map
             return names;
         }
 
- /// <summary>获取所有局部模板名称（用于UI下拉）</summary>
-        public static string[] GetRegionalTemplateNames()
+ /// <summary>获取所有局部模板名称（用于UI下拉）</summary>        public static string[] GetRegionalTemplateNames()
         {
             var names = new string[_regionalPresets.Count];
             int i = 0;
@@ -340,9 +300,7 @@ namespace CivilizationEvolution.Map
             return names;
         }
 
- /// 应用模板预设到 PlanetTerrainGenerator。
- /// Custom 模板不应用（保留当前参数）。
-        public static void ApplyPreset(TerrainTemplatePreset preset, PlanetTerrainGenerator generator)
+ /// 应用模板预设到 PlanetTerrainGenerator。 /// Custom 模板不应用（保留当前参数）。        public static void ApplyPreset(TerrainTemplatePreset preset, PlanetTerrainGenerator generator)
         {
             if (preset == null || generator == null) return;
             if (preset.Name == "自定义") return; // Custom 不覆盖参数

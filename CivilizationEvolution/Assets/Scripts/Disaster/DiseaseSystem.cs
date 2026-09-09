@@ -107,44 +107,34 @@ namespace CivilizationEvolution.Disaster
             };
         }
 
- /// <summary>每日疾病Tick</summary>
-        public void DailyTick(int currentDay, int currentYear)
+ /// <summary>每日疾病Tick</summary>        public void DailyTick(int currentDay, int currentYear)
         {
- // 更新活跃疾病
-            for (int i = _activeDiseases.Count - 1; i >= 0; i--)
+ // 更新活跃疾病            for (int i = _activeDiseases.Count - 1; i >= 0; i--)
             {
                 var disease = _activeDiseases[i];
                 disease.elapsedDays++;
 
- // 传播
-                SpreadDisease(disease);
+ // 传播                SpreadDisease(disease);
 
- // 角色感染（DNA 抗性对接：个体抗性修正感染概率与死亡率）
-                InfectCharacters(disease, currentDay, currentYear);
+ // 角色感染（DNA 抗性对接：个体抗性修正感染概率与死亡率）                InfectCharacters(disease, currentDay, currentYear);
 
- // 感染者状态更新
-                UpdateInfections(disease, currentDay, currentYear);
+ // 感染者状态更新                UpdateInfections(disease, currentDay, currentYear);
 
- // 检查是否消退
-                if (disease.activeInfections == 0 && disease.elapsedDays > disease.def.durationDays * 2)
+ // 检查是否消退                if (disease.activeInfections == 0 && disease.elapsedDays > disease.def.durationDays * 2)
                 {
                     Debug.Log($"[Disease] {disease.def.name} 已消退，总感染 {disease.totalInfected}，死亡 {disease.totalDeaths}");
                     _activeDiseases.RemoveAt(i);
                 }
             }
 
- // 地方病持续存在
-            MaintainEndemicDiseases();
+ // 地方病持续存在            MaintainEndemicDiseases();
 
- // 随机爆发新疾病
-            TryOutbreakDiseases(currentDay, currentYear);
+ // 随机爆发新疾病            TryOutbreakDiseases(currentDay, currentYear);
         }
 
- /// <summary>疾病传播</summary>
-        private void SpreadDisease(ActiveDisease disease)
+ /// <summary>疾病传播</summary>        private void SpreadDisease(ActiveDisease disease)
         {
- // 简化：在受影响地块中随机感染新人口
-            foreach (int tileIdx in disease.affectedTiles)
+ // 简化：在受影响地块中随机感染新人口            foreach (int tileIdx in disease.affectedTiles)
             {
                 if (_tiles[tileIdx].populationBlocks == null) continue;
 
@@ -154,8 +144,7 @@ namespace CivilizationEvolution.Disaster
 
                 if (population <= 0) continue;
 
- // 感染概率
-                float infectionChance = disease.def.baseInfectionRate * disease.currentR0 / 10f;
+ // 感染概率                float infectionChance = disease.def.baseInfectionRate * disease.currentR0 / 10f;
                 infectionChance *= GetDiseaseEnvironmentMod(disease.def.type, tileIdx);
 
                 float newInfections = population * infectionChance * 0.01f;
@@ -164,8 +153,7 @@ namespace CivilizationEvolution.Disaster
                     disease.activeInfections += newInfections;
                     disease.totalInfected += newInfections;
 
- // 从人口块中扣除（简化：直接减少人口）
-                    float remaining = newInfections;
+ // 从人口块中扣除（简化：直接减少人口）                    float remaining = newInfections;
                     for (int j = 0; j < _tiles[tileIdx].populationBlocks.Count && remaining > 0; j++)
                     {
                         var pb = _tiles[tileIdx].populationBlocks[j];
@@ -178,18 +166,12 @@ namespace CivilizationEvolution.Disaster
             }
         }
 
- /// 角色感染（DNA 抗性对接）
- /// 活跃疾病每日对影响地块政权的存活角色，按个体抗性修正概率感染：
- /// - 个体抗性 100 → 感染概率 ×0.2；抗性 0 → ×1.6（individualResistance = 种族基准 + DNA 偏移）
- /// - 感染扣健康（按疾病死亡率），健康归零角色死亡
- /// - 感染概率远低于人口块感染（角色是珍稀个体，避免快速灭绝）
-        private void InfectCharacters(ActiveDisease disease, int currentDay, int currentYear)
+ /// 角色感染（DNA 抗性对接） /// 活跃疾病每日对影响地块政权的存活角色，按个体抗性修正概率感染： /// - 个体抗性 100 → 感染概率 ×0.2；抗性 0 → ×1.6（individualResistance = 种族基准 + DNA 偏移） /// - 感染扣健康（按疾病死亡率），健康归零角色死亡 /// - 感染概率远低于人口块感染（角色是珍稀个体，避免快速灭绝）        private void InfectCharacters(ActiveDisease disease, int currentDay, int currentYear)
         {
             if (_characterManager == null || disease.affectedTiles == null || disease.affectedTiles.Count == 0)
                 return;
 
- // 疾病影响地块的政权集合（去重）
-            var affectedRealms = new HashSet<int>();
+ // 疾病影响地块的政权集合（去重）            var affectedRealms = new HashSet<int>();
             foreach (int idx in disease.affectedTiles)
             {
                 if (idx >= 0 && idx < _tiles.Length && _tiles[idx].ownerRealmId >= 0)
@@ -221,38 +203,31 @@ namespace CivilizationEvolution.Disaster
             }
         }
 
- /// <summary>更新感染者状态</summary>
-        private void UpdateInfections(ActiveDisease disease, int currentDay, int currentYear)
+ /// <summary>更新感染者状态</summary>        private void UpdateInfections(ActiveDisease disease, int currentDay, int currentYear)
         {
             if (disease.activeInfections <= 0) return;
 
- // 死亡
-            float deaths = disease.activeInfections * disease.def.baseMortalityRate * 0.01f;
+ // 死亡            float deaths = disease.activeInfections * disease.def.baseMortalityRate * 0.01f;
             disease.activeInfections -= deaths;
             disease.totalDeaths += deaths;
 
- // 恢复
-            float recoveries = disease.activeInfections * disease.def.baseRecoveryRate;
+ // 恢复            float recoveries = disease.activeInfections * disease.def.baseRecoveryRate;
             disease.activeInfections -= recoveries;
             disease.totalRecovered += recoveries;
 
- // R0自然衰减
-            disease.currentR0 = Mathf.Lerp(disease.currentR0, disease.def.baseR0 * 0.5f, 0.01f);
+ // R0自然衰减            disease.currentR0 = Mathf.Lerp(disease.currentR0, disease.def.baseR0 * 0.5f, 0.01f);
         }
 
- /// <summary>维持地方病</summary>
-        private void MaintainEndemicDiseases()
+ /// <summary>维持地方病</summary>        private void MaintainEndemicDiseases()
         {
             foreach (var def in _diseaseDefs.Values)
             {
                 if (!def.isEndemic) continue;
 
- // 检查是否已有活跃的地方病
-                bool exists = _activeDiseases.Exists(d => d.def.type == def.type);
+ // 检查是否已有活跃的地方病                bool exists = _activeDiseases.Exists(d => d.def.type == def.type);
                 if (!exists)
                 {
- // 在适合的地区维持低水平流行
-                    for (int i = 0; i < _tiles.Length; i++)
+ // 在适合的地区维持低水平流行                    for (int i = 0; i < _tiles.Length; i++)
                     {
                         if (!_tiles[i].exists || !_tiles[i].isLand) continue;
                         if (GetDiseaseEnvironmentMod(def.type, i) > 0.8f)
@@ -273,23 +248,20 @@ namespace CivilizationEvolution.Disaster
             }
         }
 
- /// <summary>尝试爆发疾病</summary>
-        private void TryOutbreakDiseases(int currentDay, int currentYear)
+ /// <summary>尝试爆发疾病</summary>        private void TryOutbreakDiseases(int currentDay, int currentYear)
         {
             foreach (var def in _diseaseDefs.Values)
             {
                 if (def.isEndemic) continue;
 
- // 低概率爆发
-                if (UnityEngine.Random.value < 0.0005f)
+ // 低概率爆发                if (UnityEngine.Random.value < 0.0005f)
                 {
                     OutbreakDisease(def.type, currentDay, currentYear);
                 }
             }
         }
 
- /// <summary>爆发疾病</summary>
-        public ActiveDisease OutbreakDisease(DiseaseType type, int currentDay, int currentYear, int centerTile = -1)
+ /// <summary>爆发疾病</summary>        public ActiveDisease OutbreakDisease(DiseaseType type, int currentDay, int currentYear, int centerTile = -1)
         {
             if (!_diseaseDefs.TryGetValue(type, out var def)) return null;
 
@@ -323,8 +295,7 @@ namespace CivilizationEvolution.Disaster
             return disease;
         }
 
- /// <summary>计算疾病传播区域</summary>
-        private List<int> CalculateDiseaseSpreadArea(DiseaseType type, int centerTile)
+ /// <summary>计算疾病传播区域</summary>        private List<int> CalculateDiseaseSpreadArea(DiseaseType type, int centerTile)
         {
             var affected = new List<int>();
             int radius = type switch
@@ -354,8 +325,7 @@ namespace CivilizationEvolution.Disaster
             return affected;
         }
 
- /// <summary>疾病环境修正</summary>
-        private float GetDiseaseEnvironmentMod(DiseaseType type, int tileIndex)
+ /// <summary>疾病环境修正</summary>        private float GetDiseaseEnvironmentMod(DiseaseType type, int tileIndex)
         {
             ref TileData tile = ref _tiles[tileIndex];
             return type switch
@@ -371,8 +341,7 @@ namespace CivilizationEvolution.Disaster
             };
         }
 
- // ===== 查询接口 =====
-        public IReadOnlyList<ActiveDisease> GetActiveDiseases() => _activeDiseases;
+ // ===== 查询接口 =====        public IReadOnlyList<ActiveDisease> GetActiveDiseases() => _activeDiseases;
 
         public List<ActiveDisease> GetDiseasesAtTile(int tileIndex)
         {

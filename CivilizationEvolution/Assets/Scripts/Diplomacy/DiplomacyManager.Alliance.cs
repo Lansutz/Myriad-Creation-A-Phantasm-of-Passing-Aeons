@@ -8,20 +8,16 @@ using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Diplomacy
 {
- /// DiplomacyManager.Alliance —— 同盟（提议/解除/查询）（partial class，与 DiplomacySystem.cs 共享字段）
-    public partial class DiplomacyManager
+ /// DiplomacyManager.Alliance —— 同盟（提议/解除/查询）（partial class，与 DiplomacySystem.cs 共享字段）    public partial class DiplomacyManager
     {
 
  // ===== 盟约系统 =====
-
- /// <summary>提议盟约</summary>
-        public Alliance ProposeAlliance(int realmA, int realmB, AllianceType type)
+ /// <summary>提议盟约</summary>        public Alliance ProposeAlliance(int realmA, int realmB, AllianceType type)
         {
             var rel = GetRelation(realmA, realmB);
             if (rel == null || rel.isAtWar) return null;
 
- // 检查关系要求
-            float requiredRelation = type switch
+ // 检查关系要求            float requiredRelation = type switch
             {
                 AllianceType.NonAggressionPact => -20f,
                 AllianceType.DefensiveAlliance => 30f,
@@ -33,8 +29,7 @@ namespace CivilizationEvolution.Diplomacy
 
             if (rel.relation < requiredRelation) return null;
 
- // 去重：同类型活跃盟约已存在则不重复缔结（修复：原实现可被 AI 每30天重复叠加）
-            if (rel.activeAlliances.Exists(a => a.type == type && a.isActive)) return null;
+ // 去重：同类型活跃盟约已存在则不重复缔结（修复：原实现可被 AI 每30天重复叠加）            if (rel.activeAlliances.Exists(a => a.type == type && a.isActive)) return null;
 
             var alliance = new Alliance
             {
@@ -46,12 +41,10 @@ namespace CivilizationEvolution.Diplomacy
                 relationRequirement = requiredRelation
             };
 
- // 设置盟约效果（5种平等盟约）
-            switch (type)
+ // 设置盟约效果（5种平等盟约）            switch (type)
             {
                 case AllianceType.NonAggressionPact:
- // 互不侵犯：无军事效果，仅承诺不开战
-                    break;
+ // 互不侵犯：无军事效果，仅承诺不开战                    break;
                 case AllianceType.DefensiveAlliance:
                     alliance.mutualDefense = true;
                     break;
@@ -67,8 +60,7 @@ namespace CivilizationEvolution.Diplomacy
                     alliance.mutualDefense = true;
                     alliance.jointOffensive = true;
                     alliance.militaryAccess = true;
- // 阵营：额外的集体安全效果（由阵营系统处理）
-                    break;
+ // 阵营：额外的集体安全效果（由阵营系统处理）                    break;
             }
 
             rel.activeAlliances.Add(alliance);
@@ -79,8 +71,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>解除盟约</summary>
-        public bool BreakAlliance(int realmA, int realmB, AllianceType type)
+ /// <summary>解除盟约</summary>        public bool BreakAlliance(int realmA, int realmB, AllianceType type)
         {
             var rel = GetRelation(realmA, realmB);
             if (rel == null) return false;

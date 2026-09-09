@@ -5,35 +5,18 @@ using UnityEngine;
 
 namespace CivilizationEvolution.Climate
 {
- /// Priority-Flood 水文模拟系统
- /// 基于 Priority-Flood 算法（Barnes et al. 2014, "Priority-Flood: An Optimal Depression-Filling and Watershed-Labeling Algorithm"）
- /// 功能：
- /// 1. 洼地填充（Depression Filling）：消除地形中的封闭洼地
- /// 2. 排水方向（Flow Direction）：每个点的水流去向（D8 8方向）
- /// 3. 汇水面积（Flow Accumulation）：每个点上游汇水区域大小
- /// 4. 河流提取（River Extraction）：汇水面积超过阈值的点形成河流
- /// 5. 流域划分（Watershed）：按出海口/河流终点划分集水区
- /// 性能：O(N log N)，使用最小堆（优先队列），支持百万级地块
-    public class HydrologySystem
+ /// Priority-Flood 水文模拟系统 /// 基于 Priority-Flood 算法（Barnes et al. 2014, "Priority-Flood: An Optimal Depression-Filling and Watershed-Labeling Algorithm"） /// 功能： /// 1. 洼地填充（Depression Filling）：消除地形中的封闭洼地 /// 2. 排水方向（Flow Direction）：每个点的水流去向（D8 8方向） /// 3. 汇水面积（Flow Accumulation）：每个点上游汇水区域大小 /// 4. 河流提取（River Extraction）：汇水面积超过阈值的点形成河流 /// 5. 流域划分（Watershed）：按出海口/河流终点划分集水区 /// 性能：O(N log N)，使用最小堆（优先队列），支持百万级地块    public class HydrologySystem
     {
- // D8 8方向偏移（even-r 六边形网格用简化8邻域）
-        private static readonly int[] DX = { 0, 1, 1, 1, 0, -1, -1, -1 };
+ // D8 8方向偏移（even-r 六边形网格用简化8邻域）        private static readonly int[] DX = { 0, 1, 1, 1, 0, -1, -1, -1 };
         private static readonly int[] DY = { -1, -1, 0, 1, 1, 1, 0, -1 };
 
- /// <summary>填充后的高程（洼地被填平）</summary>
-        public float[] FilledElevation { get; private set; }
- /// <summary>排水方向（0-7，-1=无排水/海洋）</summary>
-        public int[] FlowDirection { get; private set; }
- /// <summary>汇水面积（上游地块数）</summary>
-        public float[] FlowAccumulation { get; private set; }
- /// <summary>是否河流（汇水面积超过阈值）</summary>
-        public bool[] IsRiver { get; private set; }
- /// <summary>河流等级（Strahler stream order）</summary>
-        public int[] StreamOrder { get; private set; }
+ /// <summary>填充后的高程（洼地被填平）</summary>        public float[] FilledElevation { get; private set; }
+ /// <summary>排水方向（0-7，-1=无排水/海洋）</summary>        public int[] FlowDirection { get; private set; }
+ /// <summary>汇水面积（上游地块数）</summary>        public float[] FlowAccumulation { get; private set; }
+ /// <summary>是否河流（汇水面积超过阈值）</summary>        public bool[] IsRiver { get; private set; }
+ /// <summary>河流等级（Strahler stream order）</summary>        public int[] StreamOrder { get; private set; }
 
- /// 最小堆（Min-Heap），用于Priority-Flood算法的优先队列
- /// 替代.NET 6+的PriorityQueue（兼容Unity的.NET版本）
-    private class MinHeap
+ /// 最小堆（Min-Heap），用于Priority-Flood算法的优先队列 /// 替代.NET 6+的PriorityQueue（兼容Unity的.NET版本）    private class MinHeap
     {
         private struct HeapNode { public int item; public float priority; }
         private readonly List<HeapNode> _nodes = new List<HeapNode>();
@@ -87,11 +70,7 @@ namespace CivilizationEvolution.Climate
             _wrapX = wrapX;
         }
 
- /// 运行完整水文模拟
- /// <param name="elevation">原始高程数组（0-1）</param>
- /// <param name="isLand">是否陆地</param>
- /// <param name="riverThreshold">河流阈值（汇水面积超过此值为河流，默认100）</param>
-        public void Run(float[] elevation, bool[] isLand, float riverThreshold = 100f)
+ /// 运行完整水文模拟 /// <param name="elevation">原始高程数组（0-1）</param> /// <param name="isLand">是否陆地</param> /// <param name="riverThreshold">河流阈值（汇水面积超过此值为河流，默认100）</param>        public void Run(float[] elevation, bool[] isLand, float riverThreshold = 100f)
         {
             int n = _width * _height;
             FilledElevation = new float[n];
@@ -100,33 +79,25 @@ namespace CivilizationEvolution.Climate
             IsRiver = new bool[n];
             StreamOrder = new int[n];
 
- // 1. 洼地填充 + 排水方向（Priority-Flood）
-            PriorityFlood(elevation, isLand);
+ // 1. 洼地填充 + 排水方向（Priority-Flood）            PriorityFlood(elevation, isLand);
 
- // 2. 汇水面积计算
-            CalculateFlowAccumulation();
+ // 2. 汇水面积计算            CalculateFlowAccumulation();
 
- // 3. 河流提取
-            ExtractRivers(riverThreshold);
+ // 3. 河流提取            ExtractRivers(riverThreshold);
 
- // 4. 河流等级（Strahler）
-            CalculateStreamOrder();
+ // 4. 河流等级（Strahler）            CalculateStreamOrder();
         }
 
- /// Priority-Flood 核心算法：洼地填充 + 排水方向
- /// 使用最小堆（优先队列），从海洋/边界点开始逐步淹没
-        private void PriorityFlood(float[] elevation, bool[] isLand)
+ /// Priority-Flood 核心算法：洼地填充 + 排水方向 /// 使用最小堆（优先队列），从海洋/边界点开始逐步淹没        private void PriorityFlood(float[] elevation, bool[] isLand)
         {
             int n = _width * _height;
             Array.Copy(elevation, FilledElevation, n);
             Array.Fill(FlowDirection, -1);
 
- // 优先队列：最小堆（按填充高程排序）
-            var pq = new MinHeap();
+ // 优先队列：最小堆（按填充高程排序）            var pq = new MinHeap();
             var processed = new bool[n];
 
- // 初始化：所有海洋点和边界点加入队列
-            for (int y = 0; y < _height; y++)
+ // 初始化：所有海洋点和边界点加入队列            for (int y = 0; y < _height; y++)
             {
                 for (int x = 0; x < _width; x++)
                 {
@@ -140,22 +111,19 @@ namespace CivilizationEvolution.Climate
                 }
             }
 
- // Priority-Flood 主循环
-            while (pq.Count > 0)
+ // Priority-Flood 主循环            while (pq.Count > 0)
             {
                 int current = pq.Dequeue();
                 int cx = current % _width;
                 int cy = current / _width;
                 float currentElev = FilledElevation[current];
 
- // 处理8邻域
-                for (int d = 0; d < 8; d++)
+ // 处理8邻域                for (int d = 0; d < 8; d++)
                 {
                     int nx = cx + DX[d];
                     int ny = cy + DY[d];
 
- // 左右环绕
-                    if (_wrapX)
+ // 左右环绕                    if (_wrapX)
                     {
                         if (nx < 0) nx = _width - 1;
                         if (nx >= _width) nx = 0;
@@ -169,34 +137,27 @@ namespace CivilizationEvolution.Climate
 
                     processed[nidx] = true;
 
- // 洼地填充：如果邻域高程低于当前点，填平到当前点高程
-                    if (FilledElevation[nidx] < currentElev)
+ // 洼地填充：如果邻域高程低于当前点，填平到当前点高程                    if (FilledElevation[nidx] < currentElev)
                     {
                         FilledElevation[nidx] = currentElev;
                     }
 
- // 排水方向：邻域水流向当前点（反方向）
-                    FlowDirection[nidx] = (d + 4) % 8; // 反方向
+ // 排水方向：邻域水流向当前点（反方向）                    FlowDirection[nidx] = (d + 4) % 8; // 反方向
                     pq.Enqueue(nidx, FilledElevation[nidx]);
                 }
             }
         }
 
- /// 汇水面积计算
- /// 从每个点沿排水方向追溯，累加汇水量
- /// 优化：按高程降序处理，高海拔点先处理，其流量累加到下游
-        private void CalculateFlowAccumulation()
+ /// 汇水面积计算 /// 从每个点沿排水方向追溯，累加汇水量 /// 优化：按高程降序处理，高海拔点先处理，其流量累加到下游        private void CalculateFlowAccumulation()
         {
             int n = _width * _height;
             Array.Fill(FlowAccumulation, 1f); // 每个点初始贡献1
 
- // 按填充高程降序排列索引（高海拔先处理）
-            var indices = new int[n];
+ // 按填充高程降序排列索引（高海拔先处理）            var indices = new int[n];
             for (int i = 0; i < n; i++) indices[i] = i;
             Array.Sort(indices, (a, b) => FilledElevation[b].CompareTo(FilledElevation[a]));
 
- // 从高到低处理，每个点的流量累加到其排水目标
-            foreach (int idx in indices)
+ // 从高到低处理，每个点的流量累加到其排水目标            foreach (int idx in indices)
             {
                 int dir = FlowDirection[idx];
                 if (dir < 0) continue; // 无排水（海洋/边界）
@@ -218,8 +179,7 @@ namespace CivilizationEvolution.Climate
             }
         }
 
- /// 河流提取：汇水面积超过阈值的点为河流
-        private void ExtractRivers(float threshold)
+ /// 河流提取：汇水面积超过阈值的点为河流        private void ExtractRivers(float threshold)
         {
             int n = _width * _height;
             for (int i = 0; i < n; i++)
@@ -228,15 +188,12 @@ namespace CivilizationEvolution.Climate
             }
         }
 
- /// Strahler 河流等级计算
- /// 源头=1，同级汇合+1，不同级取最大
-        private void CalculateStreamOrder()
+ /// Strahler 河流等级计算 /// 源头=1，同级汇合+1，不同级取最大        private void CalculateStreamOrder()
         {
             int n = _width * _height;
             Array.Fill(StreamOrder, 0);
 
- // 按汇水面积升序处理（源头先处理）
-            var indices = new int[n];
+ // 按汇水面积升序处理（源头先处理）            var indices = new int[n];
             for (int i = 0; i < n; i++) indices[i] = i;
             Array.Sort(indices, (a, b) => FlowAccumulation[a].CompareTo(FlowAccumulation[b]));
 
@@ -263,34 +220,29 @@ namespace CivilizationEvolution.Climate
                 int nidx = ny * _width + nx;
                 if (!IsRiver[nidx]) continue;
 
- // Strahler规则：同级汇合+1，不同级取最大
-                if (StreamOrder[nidx] == 0) StreamOrder[nidx] = StreamOrder[idx];
+ // Strahler规则：同级汇合+1，不同级取最大                if (StreamOrder[nidx] == 0) StreamOrder[nidx] = StreamOrder[idx];
                 else if (StreamOrder[nidx] == StreamOrder[idx]) StreamOrder[nidx]++;
                 else StreamOrder[nidx] = Mathf.Max(StreamOrder[nidx], StreamOrder[idx]);
             }
         }
 
- /// 将水文结果写入 TileData 数组
-        public void ApplyToTiles(TileData[] tiles)
+ /// 将水文结果写入 TileData 数组        public void ApplyToTiles(TileData[] tiles)
         {
             int n = Math.Min(tiles.Length, IsRiver.Length);
             for (int i = 0; i < n; i++)
             {
                 tiles[i].isRiver = IsRiver[i];
- // 河流等级可以存入扩展字段（当前TileData没有，可后续添加）
-            }
+ // 河流等级可以存入扩展字段（当前TileData没有，可后续添加）            }
         }
 
- /// 获取河流总长度（地块数）
-        public int GetRiverTileCount()
+ /// 获取河流总长度（地块数）        public int GetRiverTileCount()
         {
             int count = 0;
             foreach (var r in IsRiver) if (r) count++;
             return count;
         }
 
- /// 获取最大河流等级
-        public int GetMaxStreamOrder()
+ /// 获取最大河流等级        public int GetMaxStreamOrder()
         {
             int max = 0;
             foreach (var o in StreamOrder) if (o > max) max = o;

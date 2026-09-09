@@ -27,11 +27,9 @@ namespace CivilizationEvolution.War
             this.startDay = startDay;
         }
 
- /// <summary>某方当前分数</summary>
-        public float GetScore(int realmId) => realmId == attackerId ? attackerScore : defenderScore;
+ /// <summary>某方当前分数</summary>        public float GetScore(int realmId) => realmId == attackerId ? attackerScore : defenderScore;
 
- /// <summary>己方加成（胜方得分按 WarRules.scoreBattle×规模系数）</summary>
-        public void AddScore(int realmId, float amount)
+ /// <summary>己方加成（胜方得分按 WarRules.scoreBattle×规模系数）</summary>        public void AddScore(int realmId, float amount)
         {
             if (realmId == attackerId) attackerScore += amount;
             else if (realmId == defenderId) defenderScore += amount;

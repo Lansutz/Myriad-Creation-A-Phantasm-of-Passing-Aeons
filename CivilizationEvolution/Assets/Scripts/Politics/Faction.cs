@@ -13,16 +13,12 @@ namespace CivilizationEvolution.Politics
         public string factionName = "";
         public FactionStance stance;
 
- /// <summary>阶层基础：各社会阶层对本派系的支持权重（0~1，可跨阶层结盟）</summary>
-        [System.NonSerialized]
+ /// <summary>阶层基础：各社会阶层对本派系的支持权重（0~1，可跨阶层结盟）</summary>        [System.NonSerialized]
         public Dictionary<GameEnums.SocialClass, float> classBacking = new Dictionary<GameEnums.SocialClass, float>();
- /// <summary>主要代表阶层（backing 最高者）</summary>
-        public GameEnums.SocialClass primaryClass = GameEnums.SocialClass.Peasant;
+ /// <summary>主要代表阶层（backing 最高者）</summary>        public GameEnums.SocialClass primaryClass = GameEnums.SocialClass.Peasant;
 
- /// <summary>领袖角色ID（-1=暂无有名领袖的底层运动）</summary>
-        public int leaderCharacterId = -1;
- /// <summary>派系成员（廷臣/贵族/官员等有名角色）</summary>
-        public List<int> memberCharacterIds = new List<int>();
+ /// <summary>领袖角色ID（-1=暂无有名领袖的底层运动）</summary>        public int leaderCharacterId = -1;
+ /// <summary>派系成员（廷臣/贵族/官员等有名角色）</summary>        public List<int> memberCharacterIds = new List<int>();
 
         public FactionPlatform platform;
 
@@ -36,8 +32,7 @@ namespace CivilizationEvolution.Politics
             factionId = id; this.realmId = realmId; this.stance = stance;
         }
 
- /// <summary>派系是否拥有某阶层的显著支持（&gt;阈值）</summary>
-        public bool BackedBy(GameEnums.SocialClass cls, float threshold = 0.2f)
+ /// <summary>派系是否拥有某阶层的显著支持（&gt;阈值）</summary>        public bool BackedBy(GameEnums.SocialClass cls, float threshold = 0.2f)
             => classBacking.GetValueOrDefault(cls, 0f) >= threshold;
     }
 }

@@ -3,9 +3,7 @@ using CivilizationEvolution.Core;
 
 namespace CivilizationEvolution.Map
 {
- /// 大陆形态生成器：多倍频值噪声（fBm）高度场 + 山脉脊线 + 河流追踪
- /// 替代单一正弦波叠加，产生大陆轮廓/山脉链/水系
-    public class TerrainGenerator
+ /// 大陆形态生成器：多倍频值噪声（fBm）高度场 + 山脉脊线 + 河流追踪 /// 替代单一正弦波叠加，产生大陆轮廓/山脉链/水系    public class TerrainGenerator
     {
         private readonly int _seed;
         private int _width;
@@ -17,7 +15,6 @@ namespace CivilizationEvolution.Map
         }
 
  // ===== 值噪声（value noise：网格随机 + 双线性插值） =====
-
         private float Hash(int x, int y)
         {
             uint h = (uint)(x * 73856093 ^ y * 19349663 ^ _seed * 83492791);
@@ -44,8 +41,7 @@ namespace CivilizationEvolution.Map
             return Mathf.Lerp(Mathf.Lerp(v00, v10, fx), Mathf.Lerp(v01, v11, fx), fy);
         }
 
- /// <summary>分形叠加（fBm）：低频大陆轮廓 + 中频起伏 + 高频细节</summary>
-        private float Fbm(float x, float y, int octaves = 5, float lacunarity = 2f, float gain = 0.5f)
+ /// <summary>分形叠加（fBm）：低频大陆轮廓 + 中频起伏 + 高频细节</summary>        private float Fbm(float x, float y, int octaves = 5, float lacunarity = 2f, float gain = 0.5f)
         {
             float total = 0f;
             float amplitude = 1f;
@@ -61,8 +57,7 @@ namespace CivilizationEvolution.Map
             return total / max;
         }
 
- /// <summary>脊线变换（ridge noise）：在噪声中段产生线性山脊，用于山脉链</summary>
-        private float Ridge(float x, float y, int octaves = 4, float lacunarity = 2.2f, float gain = 0.5f)
+ /// <summary>脊线变换（ridge noise）：在噪声中段产生线性山脊，用于山脉链</summary>        private float Ridge(float x, float y, int octaves = 4, float lacunarity = 2.2f, float gain = 0.5f)
         {
             float total = 0f;
             float amplitude = 1f;
@@ -80,10 +75,7 @@ namespace CivilizationEvolution.Map
         }
 
  // ===== 主流程 =====
-
- /// 生成大陆形态：高度场（fBm 大陆轮廓 + 脊线山脉）
- /// 河流追踪须在 isLand 判定完成后单独调用（TrackRivers）
-        public void Generate(TileData[] tiles, int width, int height,
+ /// 生成大陆形态：高度场（fBm 大陆轮廓 + 脊线山脉） /// 河流追踪须在 isLand 判定完成后单独调用（TrackRivers）        public void Generate(TileData[] tiles, int width, int height,
             float continentScale, float mountainStrength)
         {
             _width = width;
@@ -91,8 +83,7 @@ namespace CivilizationEvolution.Map
 
             float baseFreq = 1.2f / Mathf.Max(8f, Mathf.Min(width, height) / 16f);
 
- // 1. 高度场：大陆轮廓（低频）+ 起伏（中频）+ 山脉脊线叠加
-            for (int i = 0; i < tiles.Length; i++)
+ // 1. 高度场：大陆轮廓（低频）+ 起伏（中频）+ 山脉脊线叠加            for (int i = 0; i < tiles.Length; i++)
             {
                 int x = i % width;
                 int y = i / width;
@@ -111,23 +102,19 @@ namespace CivilizationEvolution.Map
             }
         }
 
- /// <summary>D8 河流追踪：山脊起始点沿最低邻域流向海/洼地（须在 isLand 判定后调用）</summary>
-        public void TrackRivers(TileData[] tiles)
+ /// <summary>D8 河流追踪：山脊起始点沿最低邻域流向海/洼地（须在 isLand 判定后调用）</summary>        public void TrackRivers(TileData[] tiles)
         {
- // 清除旧标记
-            for (int i = 0; i < tiles.Length; i++)
+ // 清除旧标记            for (int i = 0; i < tiles.Length; i++)
                 tiles[i].isRiver = false;
 
- // 起始点：高地（elevation > 0.65）且坡度大——每隔几步采样一个
-            for (int y = 0; y < _height; y += 4)
+ // 起始点：高地（elevation > 0.65）且坡度大——每隔几步采样一个            for (int y = 0; y < _height; y += 4)
             {
                 for (int x = 0; x < _width; x += 4)
                 {
                     int i = y * _width + x;
                     if (tiles[i].elevation01 < 0.65f) continue;
 
- // 沿最低邻域下降，直到海或回到已标记河道
-                    int current = i;
+ // 沿最低邻域下降，直到海或回到已标记河道                    int current = i;
                     int guard = 0;
                     while (guard++ < 500)
                     {

@@ -7,14 +7,11 @@ using CivilizationEvolution.Diplomacy;
 
 namespace CivilizationEvolution.UI
 {
- /// 外交面板
- /// 管理与其他政权的外交关系：关系概览、盟约、从属、战争借口、宣战、和平条约
-    public class DiplomacyPanel : MonoBehaviour
+ /// 外交面板 /// 管理与其他政权的外交关系：关系概览、盟约、从属、战争借口、宣战、和平条约    public class DiplomacyPanel : MonoBehaviour
     {
         [Header("引用")]
         [SerializeField] private GameWorld world;
- // 运行时注入（Initialize——非场景序列化——[SerializeField] 会触发 UAC1010）
-        private DiplomacyManager diplomacy;
+ // 运行时注入（Initialize——非场景序列化——[SerializeField] 会触发 UAC1010）        private DiplomacyManager diplomacy;
 
         [Header("面板")]
         [SerializeField] private GameObject panelRoot;
@@ -66,20 +63,16 @@ namespace CivilizationEvolution.UI
         [SerializeField] private Button acceptPeaceButton;
         [SerializeField] private Button rejectPeaceButton;
 
- // 当前选中的目标政权
-        private int _selectedTargetRealmId = -1;
+ // 当前选中的目标政权        private int _selectedTargetRealmId = -1;
         private List<int> _otherRealmIds = new List<int>();
 
- // 当前选中的战争借口和战争目标
-        private int _selectedCasusBelliIndex = -1;
+ // 当前选中的战争借口和战争目标        private int _selectedCasusBelliIndex = -1;
         private int _selectedWarGoalIndex = -1;
 
- // 缓存的有效战争借口列表
-        private List<CasusBelli> _validCasusBelli = new List<CasusBelli>();
+ // 缓存的有效战争借口列表        private List<CasusBelli> _validCasusBelli = new List<CasusBelli>();
         private List<GameEnums.WarGoalType> _availableWarGoals = new List<GameEnums.WarGoalType>();
 
- /// <summary>初始化外交面板</summary>
-        public void Initialize(GameWorld gameWorld, DiplomacyManager diplomacyManager)
+ /// <summary>初始化外交面板</summary>        public void Initialize(GameWorld gameWorld, DiplomacyManager diplomacyManager)
         {
             world = gameWorld;
             diplomacy = diplomacyManager;
@@ -96,8 +89,7 @@ namespace CivilizationEvolution.UI
             acceptPeaceButton.onClick.AddListener(OnAcceptPeace);
             rejectPeaceButton.onClick.AddListener(OnRejectPeace);
 
- // 初始化盟约类型下拉框（5种平等盟约）
-            allianceTypeDropdown.ClearOptions();
+ // 初始化盟约类型下拉框（5种平等盟约）            allianceTypeDropdown.ClearOptions();
             allianceTypeDropdown.AddOptions(new List<string>
             {
                 "互不侵犯条约",
@@ -107,8 +99,7 @@ namespace CivilizationEvolution.UI
                 "阵营"
             });
 
- // 初始化从属类型下拉框（5种不平等从属）
-            subordinationTypeDropdown.ClearOptions();
+ // 初始化从属类型下拉框（5种不平等从属）            subordinationTypeDropdown.ClearOptions();
             subordinationTypeDropdown.AddOptions(new List<string>
             {
                 "朝贡国",
@@ -121,30 +112,26 @@ namespace CivilizationEvolution.UI
             HidePanels();
         }
 
- /// <summary>打开外交面板</summary>
-        public void OpenPanel()
+ /// <summary>打开外交面板</summary>        public void OpenPanel()
         {
             panelRoot.SetActive(true);
             RefreshTargetRealmList();
             RefreshAll();
         }
 
- /// <summary>关闭外交面板</summary>
-        public void ClosePanel()
+ /// <summary>关闭外交面板</summary>        public void ClosePanel()
         {
             panelRoot.SetActive(false);
             HidePanels();
         }
 
- /// <summary>隐藏子面板</summary>
-        private void HidePanels()
+ /// <summary>隐藏子面板</summary>        private void HidePanels()
         {
             declareWarPanel.SetActive(false);
             peaceTreatyPanel.SetActive(false);
         }
 
- /// <summary>刷新目标政权列表</summary>
-        private void RefreshTargetRealmList()
+ /// <summary>刷新目标政权列表</summary>        private void RefreshTargetRealmList()
         {
             _otherRealmIds.Clear();
             var options = new List<string>();
@@ -169,8 +156,7 @@ namespace CivilizationEvolution.UI
             }
         }
 
- /// <summary>目标政权改变</summary>
-        private void OnTargetRealmChanged(int index)
+ /// <summary>目标政权改变</summary>        private void OnTargetRealmChanged(int index)
         {
             if (index >= 0 && index < _otherRealmIds.Count)
             {
@@ -179,8 +165,7 @@ namespace CivilizationEvolution.UI
             }
         }
 
- /// <summary>刷新所有内容</summary>
-        private void RefreshAll()
+ /// <summary>刷新所有内容</summary>        private void RefreshAll()
         {
             if (_selectedTargetRealmId < 0) return;
 
@@ -191,8 +176,7 @@ namespace CivilizationEvolution.UI
             RefreshWarGoalDropdown();
         }
 
- /// <summary>刷新关系概览</summary>
-        private void RefreshRelationOverview()
+ /// <summary>刷新关系概览</summary>        private void RefreshRelationOverview()
         {
             int playerId = world.PlayerRealmId;
             var rel = diplomacy.GetRelation(playerId, _selectedTargetRealmId);
@@ -211,29 +195,22 @@ namespace CivilizationEvolution.UI
                 return;
             }
 
- // 关系值（带颜色）
-            string relationColor = rel.relation >= 50 ? "#7FFF7F" : rel.relation >= 0 ? "#FFFFFF" : rel.relation >= -50 ? "#FFB366" : "#FF6666";
+ // 关系值（带颜色）            string relationColor = rel.relation >= 50 ? "#7FFF7F" : rel.relation >= 0 ? "#FFFFFF" : rel.relation >= -50 ? "#FFB366" : "#FF6666";
             relationValueText.text = $"<color={relationColor}>{rel.relation:F0}</color>";
 
- // 敌对程度
-            hostilityLevelText.text = diplomacy.GetHostilityDescription(playerId, _selectedTargetRealmId);
+ // 敌对程度            hostilityLevelText.text = diplomacy.GetHostilityDescription(playerId, _selectedTargetRealmId);
 
- // 冲突等级
-            conflictLevelText.text = diplomacy.GetConflictLevelDescription(playerId, _selectedTargetRealmId);
+ // 冲突等级            conflictLevelText.text = diplomacy.GetConflictLevelDescription(playerId, _selectedTargetRealmId);
 
- // 战争状态
-            warStatusText.text = rel.isAtWar ? "<color=#FF6666>战争中</color>" : "<color=#7FFF7F>和平</color>";
+ // 战争状态            warStatusText.text = rel.isAtWar ? "<color=#FF6666>战争中</color>" : "<color=#7FFF7F>和平</color>";
 
- // 信任和威胁
-            trustText.text = $"信任: {rel.trust:F0}";
+ // 信任和威胁            trustText.text = $"信任: {rel.trust:F0}";
             threatText.text = $"威胁: {rel.threat:F0}";
         }
 
- /// <summary>刷新盟约列表</summary>
-        private void RefreshAllianceList()
+ /// <summary>刷新盟约列表</summary>        private void RefreshAllianceList()
         {
- // 清除旧条目
-            foreach (Transform child in allianceListContainer)
+ // 清除旧条目            foreach (Transform child in allianceListContainer)
             {
                 Destroy(child.gameObject);
             }
@@ -264,8 +241,7 @@ namespace CivilizationEvolution.UI
             }
         }
 
- /// <summary>提议盟约</summary>
-        private void OnProposeAlliance()
+ /// <summary>提议盟约</summary>        private void OnProposeAlliance()
         {
             if (_selectedTargetRealmId < 0) return;
 
@@ -285,8 +261,7 @@ namespace CivilizationEvolution.UI
             RefreshAll();
         }
 
- /// <summary>解除盟约</summary>
-        private void OnBreakAlliance()
+ /// <summary>解除盟约</summary>        private void OnBreakAlliance()
         {
             if (_selectedTargetRealmId < 0) return;
 
@@ -299,8 +274,7 @@ namespace CivilizationEvolution.UI
             RefreshAll();
         }
 
- /// <summary>刷新从属关系状态</summary>
-        private void RefreshSubordinationStatus()
+ /// <summary>刷新从属关系状态</summary>        private void RefreshSubordinationStatus()
         {
             int playerId = world.PlayerRealmId;
             var sub = diplomacy.GetSubordination(playerId, _selectedTargetRealmId);
@@ -321,8 +295,7 @@ namespace CivilizationEvolution.UI
             }
         }
 
- /// <summary>建立从属关系</summary>
-        private void OnEstablishSubordination()
+ /// <summary>建立从属关系</summary>        private void OnEstablishSubordination()
         {
             if (_selectedTargetRealmId < 0) return;
 
@@ -342,8 +315,7 @@ namespace CivilizationEvolution.UI
             RefreshAll();
         }
 
- /// <summary>解除从属关系</summary>
-        private void OnReleaseSubordination()
+ /// <summary>解除从属关系</summary>        private void OnReleaseSubordination()
         {
             if (_selectedTargetRealmId < 0) return;
 
@@ -354,11 +326,9 @@ namespace CivilizationEvolution.UI
             RefreshAll();
         }
 
- /// <summary>刷新战争借口列表</summary>
-        private void RefreshCasusBelliList()
+ /// <summary>刷新战争借口列表</summary>        private void RefreshCasusBelliList()
         {
- // 清除旧条目
-            foreach (Transform child in casusBelliListContainer)
+ // 清除旧条目            foreach (Transform child in casusBelliListContainer)
             {
                 Destroy(child.gameObject);
             }
@@ -366,8 +336,7 @@ namespace CivilizationEvolution.UI
             int playerId = world.PlayerRealmId;
             _validCasusBelli = diplomacy.GetValidCasusBelli(playerId, _selectedTargetRealmId);
 
- // 填充战争借口下拉框
-            selectedCasusBelliDropdown.ClearOptions();
+ // 填充战争借口下拉框            selectedCasusBelliDropdown.ClearOptions();
             var cbOptions = new List<string> { "无借口（不宣而战）" };
             foreach (var cb in _validCasusBelli)
             {
@@ -376,8 +345,7 @@ namespace CivilizationEvolution.UI
             selectedCasusBelliDropdown.AddOptions(cbOptions);
             _selectedCasusBelliIndex = -1;
 
- // 显示战争借口列表
-            foreach (var cb in _validCasusBelli)
+ // 显示战争借口列表            foreach (var cb in _validCasusBelli)
             {
                 var entry = Instantiate(casusBelliEntryPrefab, casusBelliListContainer);
                 var text = entry.GetComponentInChildren<Text>();
@@ -388,24 +356,21 @@ namespace CivilizationEvolution.UI
             }
         }
 
- /// <summary>刷新战争目标下拉框</summary>
-        private void RefreshWarGoalDropdown()
+ /// <summary>刷新战争目标下拉框</summary>        private void RefreshWarGoalDropdown()
         {
             warGoalDropdown.ClearOptions();
             _availableWarGoals.Clear();
 
             int playerId = world.PlayerRealmId;
 
- // 如果选中了战争借口，获取该借口支持的战争目标
-            if (_selectedCasusBelliIndex >= 0 && _selectedCasusBelliIndex < _validCasusBelli.Count)
+ // 如果选中了战争借口，获取该借口支持的战争目标            if (_selectedCasusBelliIndex >= 0 && _selectedCasusBelliIndex < _validCasusBelli.Count)
             {
                 var cb = _validCasusBelli[_selectedCasusBelliIndex];
                 _availableWarGoals = WarJustificationSystem.GetSupportedWarGoals(cb.type);
             }
             else
             {
- // 无借口时只有有限的战争目标
-                _availableWarGoals = new List<GameEnums.WarGoalType>
+ // 无借口时只有有限的战争目标                _availableWarGoals = new List<GameEnums.WarGoalType>
                 {
                     GameEnums.WarGoalType.Indemnity,
                     GameEnums.WarGoalType.Humiliation,
@@ -424,8 +389,7 @@ namespace CivilizationEvolution.UI
             UpdateDeclarationPenalty();
         }
 
- /// <summary>更新宣战惩罚显示</summary>
-        private void UpdateDeclarationPenalty()
+ /// <summary>更新宣战惩罚显示</summary>        private void UpdateDeclarationPenalty()
         {
             if (_selectedCasusBelliIndex < 0)
             {
@@ -440,8 +404,7 @@ namespace CivilizationEvolution.UI
             }
         }
 
- /// <summary>打开宣战面板</summary>
-        public void OpenDeclareWarPanel()
+ /// <summary>打开宣战面板</summary>        public void OpenDeclareWarPanel()
         {
             if (_selectedTargetRealmId < 0) return;
 
@@ -458,8 +421,7 @@ namespace CivilizationEvolution.UI
             RefreshWarGoalDropdown();
         }
 
- /// <summary>确认宣战</summary>
-        private void OnConfirmDeclareWar()
+ /// <summary>确认宣战</summary>        private void OnConfirmDeclareWar()
         {
             if (_selectedTargetRealmId < 0) return;
 
@@ -467,28 +429,24 @@ namespace CivilizationEvolution.UI
             CasusBelli selectedCB = null;
             GameEnums.WarGoalType selectedGoal = GameEnums.WarGoalType.None;
 
- // 获取选中的战争借口
-            if (_selectedCasusBelliIndex >= 0 && _selectedCasusBelliIndex < _validCasusBelli.Count)
+ // 获取选中的战争借口            if (_selectedCasusBelliIndex >= 0 && _selectedCasusBelliIndex < _validCasusBelli.Count)
             {
                 selectedCB = _validCasusBelli[_selectedCasusBelliIndex];
             }
 
- // 获取选中的战争目标
-            int goalIndex = warGoalDropdown.value;
+ // 获取选中的战争目标            int goalIndex = warGoalDropdown.value;
             if (goalIndex >= 0 && goalIndex < _availableWarGoals.Count)
             {
                 selectedGoal = _availableWarGoals[goalIndex];
             }
 
- // 创建战争目标对象
-            WarGoal warGoalObj = null;
+ // 创建战争目标对象            WarGoal warGoalObj = null;
             if (selectedGoal != GameEnums.WarGoalType.None)
             {
                 warGoalObj = WarJustificationSystem.CreateWarGoal(selectedGoal, playerId, _selectedTargetRealmId, -1, -1);
             }
 
- // 宣战
-            bool success = diplomacy.DeclareWarWithJustification(playerId, _selectedTargetRealmId, selectedCB, warGoalObj, "玩家宣战");
+ // 宣战            bool success = diplomacy.DeclareWarWithJustification(playerId, _selectedTargetRealmId, selectedCB, warGoalObj, "玩家宣战");
 
             if (success)
             {
@@ -502,14 +460,12 @@ namespace CivilizationEvolution.UI
             }
         }
 
- /// <summary>取消宣战</summary>
-        private void OnCancelDeclareWar()
+ /// <summary>取消宣战</summary>        private void OnCancelDeclareWar()
         {
             declareWarPanel.SetActive(false);
         }
 
- /// <summary>打开和平条约面板</summary>
-        public void OpenPeaceTreatyPanel()
+ /// <summary>打开和平条约面板</summary>        public void OpenPeaceTreatyPanel()
         {
             if (_selectedTargetRealmId < 0) return;
 
@@ -525,31 +481,26 @@ namespace CivilizationEvolution.UI
             RefreshPeaceTreatyInfo();
         }
 
- /// <summary>刷新和平条约信息</summary>
-        private void RefreshPeaceTreatyInfo()
+ /// <summary>刷新和平条约信息</summary>        private void RefreshPeaceTreatyInfo()
         {
             int playerId = world.PlayerRealmId;
             var rel = diplomacy.GetRelation(playerId, _selectedTargetRealmId);
             if (rel == null) return;
 
- // 显示战争信息
-            int warDays = diplomacy.CurrentDay - rel.warDeclaredDay;
+ // 显示战争信息            int warDays = diplomacy.CurrentDay - rel.warDeclaredDay;
             peaceTreatyInfoText.text = $"战争已持续 {warDays} 天\n敌对程度: {rel.hostilityLevel:F0}\n关系: {rel.relation:F0}";
 
- // 清除旧条款条目
-            foreach (Transform child in peaceClauseListContainer)
+ // 清除旧条款条目            foreach (Transform child in peaceClauseListContainer)
             {
                 Destroy(child.gameObject);
             }
 
- // 生成预设和平条约（基于战争分数）
-            float warScore = CalculateWarScore(playerId, _selectedTargetRealmId);
+ // 生成预设和平条约（基于战争分数）            float warScore = CalculateWarScore(playerId, _selectedTargetRealmId);
             var treaty = WarJustificationSystem.GeneratePeaceTreaty(
                 playerId, _selectedTargetRealmId, warScore,
                 rel.activeWarGoals, diplomacy.CurrentDay);
 
- // 显示条约条款
-            foreach (var clause in treaty.clauses)
+ // 显示条约条款            foreach (var clause in treaty.clauses)
             {
                 var entry = Instantiate(peaceClauseEntryPrefab, peaceClauseListContainer);
                 var text = entry.GetComponentInChildren<Text>();
@@ -558,33 +509,28 @@ namespace CivilizationEvolution.UI
             }
         }
 
- /// <summary>计算战争分数（简化版）</summary>
-        private float CalculateWarScore(int realmA, int realmB)
+ /// <summary>计算战争分数（简化版）</summary>        private float CalculateWarScore(int realmA, int realmB)
         {
- // 简化：基于敌对程度和关系值计算战争分数
-            var rel = diplomacy.GetRelation(realmA, realmB);
+ // 简化：基于敌对程度和关系值计算战争分数            var rel = diplomacy.GetRelation(realmA, realmB);
             if (rel == null) return 0f;
 
             float score = 50f + (rel.hostilityLevel - 50f) * 0.5f;
             return Mathf.Clamp(score, 0f, 100f);
         }
 
- /// <summary>提出和平</summary>
-        private void OnOfferPeace()
+ /// <summary>提出和平</summary>        private void OnOfferPeace()
         {
             if (_selectedTargetRealmId < 0) return;
 
             int playerId = world.PlayerRealmId;
             float warScore = CalculateWarScore(playerId, _selectedTargetRealmId);
 
- // 生成和平条约
-            var rel = diplomacy.GetRelation(playerId, _selectedTargetRealmId);
+ // 生成和平条约            var rel = diplomacy.GetRelation(playerId, _selectedTargetRealmId);
             var treaty = WarJustificationSystem.GeneratePeaceTreaty(
                 playerId, _selectedTargetRealmId, warScore,
                 rel?.activeWarGoals, diplomacy.CurrentDay);
 
- // 执行和平条约
-            if (rel != null)
+ // 执行和平条约            if (rel != null)
             {
                 rel.activeTreaties.Add(treaty);
                 WarJustificationSystem.ExecutePeaceTreaty(treaty, rel, diplomacy.CurrentDay);
@@ -597,21 +543,18 @@ namespace CivilizationEvolution.UI
             RefreshAll();
         }
 
- /// <summary>接受和平</summary>
-        private void OnAcceptPeace()
+ /// <summary>接受和平</summary>        private void OnAcceptPeace()
         {
             OnOfferPeace(); // 简化：接受和平等同于签订条约
         }
 
- /// <summary>拒绝和平</summary>
-        private void OnRejectPeace()
+ /// <summary>拒绝和平</summary>        private void OnRejectPeace()
         {
             peaceTreatyPanel.SetActive(false);
             UIManager.Instance?.AddEventLog("拒绝和平提议，战争继续", EventLogKind.Warning);
         }
 
  // ===== 辅助方法 =====
-
         private string GetAllianceTypeName(AllianceType type)
         {
             return type switch

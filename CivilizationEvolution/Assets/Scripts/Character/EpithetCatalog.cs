@@ -6,16 +6,11 @@ namespace CivilizationEvolution.Character
 {
  /// <summary>绰号语义色彩（正/中/贬/双向——诗人=可褒可贬）</summary>
 
-
  /// <summary>绰号档位（普通/王级/传奇——王级=特质统治者化的历史形象）</summary>
-
 
  /// <summary>绰号定义（数据驱动——id/名/语义/档位/判定源）</summary>
 
-
- /// 绰号表（数据驱动——判定逻辑在 EpithetSystem——本表供显示/查询）
- /// 分类：性格型/行为型/宗教型/动物型/外貌型/贬讽型 + 王级 + 传奇
-    public static class EpithetCatalog
+ /// 绰号表（数据驱动——判定逻辑在 EpithetSystem——本表供显示/查询） /// 分类：性格型/行为型/宗教型/动物型/外貌型/贬讽型 + 王级 + 传奇    public static class EpithetCatalog
     {
         private static Dictionary<string, EpithetDef> _defs;
 
@@ -38,8 +33,7 @@ namespace CivilizationEvolution.Character
         {
             _defs = new Dictionary<string, EpithetDef>();
 
- // ===== 性格型 =====
-            Add("epithet_brave", "勇敢者", EpithetConnotation.Positive, EpithetTier.Common, "大胆高+胜仗——勇武之士");
+ // ===== 性格型 =====            Add("epithet_brave", "勇敢者", EpithetConnotation.Positive, EpithetTier.Common, "大胆高+胜仗——勇武之士");
             Add("epithet_patient", "忍耐者", EpithetConnotation.Positive, EpithetTier.Common, "长期逆境坚持——低报复+在位久+多解危");
             Add("epithet_merciful", "仁慈者", EpithetConnotation.Positive, EpithetTier.Common, "悲悯极高+少征战——宽政");
             Add("epithet_just", "公正者", EpithetConnotation.Positive, EpithetTier.Common, "无饥荒+少叛乱+在位久——司法稳定");
@@ -47,8 +41,7 @@ namespace CivilizationEvolution.Character
             Add("epithet_merciless", "无情者", EpithetConnotation.Negative, EpithetTier.Common,
                 "悲悯极低+铁腕成就——冷酷高效两面（与仁慈者成对）——无情者哈康");
 
- // ===== 行为型 =====
-            Add("epithet_conqueror", "征服者", EpithetConnotation.Neutral, EpithetTier.Common, "征服 5 块——征服者威廉");
+ // ===== 行为型 =====            Add("epithet_conqueror", "征服者", EpithetConnotation.Neutral, EpithetTier.Common, "征服 5 块——征服者威廉");
             Add("epithet_victorious", "常胜者", EpithetConnotation.Positive, EpithetTier.Common, "胜仗多+败仗少");
             Add("epithet_liberator", "解放者", EpithetConnotation.Positive, EpithetTier.Common, "解放被占领地/拯救");
             Add("epithet_unifier", "统一者", EpithetConnotation.Positive, EpithetTier.Common, "统一法理区");
@@ -59,19 +52,16 @@ namespace CivilizationEvolution.Character
             Add("epithet_poet", "诗人", EpithetConnotation.Dual, EpithetTier.Common, "诗作/文艺行为——褒=诗才传世/贬=文人误国");
             Add("epithet_traveler", "远行者", EpithetConnotation.Neutral, EpithetTier.Common, "远征远行多——见过世面");
 
- // ===== 宗教型 =====
-            Add("epithet_apostate", "叛教者", EpithetConnotation.Negative, EpithetTier.Common, "公开改宗背弃原信仰——叛教者尤利安");
+ // ===== 宗教型 =====            Add("epithet_apostate", "叛教者", EpithetConnotation.Negative, EpithetTier.Common, "公开改宗背弃原信仰——叛教者尤利安");
             Add("epithet_confessor", "忏悔者", EpithetConnotation.Positive, EpithetTier.Common, "虔诚+宽仁——爱德华忏悔者");
             Add("epithet_martyr", "殉道者", EpithetConnotation.Positive, EpithetTier.Common, "因信仰而死");
             Add("epithet_pious", "虔诚者", EpithetConnotation.Positive, EpithetTier.Common, "宗教行为多——虔诚者路易");
 
- // ===== 动物型（中性观察） =====
-            Add("epithet_fox", "狐狸", EpithetConnotation.Neutral, EpithetTier.Common, "诈术/外交欺诈——机敏与不可信两面");
+ // ===== 动物型（中性观察） =====            Add("epithet_fox", "狐狸", EpithetConnotation.Neutral, EpithetTier.Common, "诈术/外交欺诈——机敏与不可信两面");
             Add("epithet_lion", "狮子", EpithetConnotation.Positive, EpithetTier.Common, "正面战功卓著——狮心王");
             Add("epithet_wolf", "狼", EpithetConnotation.Negative, EpithetTier.Common, "征服残暴——枭掠");
 
- // ===== 外貌/身体型（bodyMarks 判定——成对体系） =====
-            Add("epithet_bald", "秃头", EpithetConnotation.Neutral, EpithetTier.Common,
+ // ===== 外貌/身体型（bodyMarks 判定——成对体系） =====            Add("epithet_bald", "秃头", EpithetConnotation.Neutral, EpithetTier.Common,
                 "双语义（the Bald）：①生理秃顶[bodyMarks判定] ②秃头查理式=头无王冠装饰[查理二世有王冠无皇帝冠——非生理秃——独立语义——与无冠者不同]");
             Add("epithet_lame", "瘸子", EpithetConnotation.Neutral, EpithetTier.Common, "跛足——提摩太·瘸子");
             Add("epithet_blind", "瞎子", EpithetConnotation.Neutral, EpithetTier.Common, "失明——瞎子约翰[波希米亚]");
@@ -94,13 +84,11 @@ namespace CivilizationEvolution.Character
             Add("epithet_white_king", "白王", EpithetConnotation.Neutral, EpithetTier.Kingly,
                 "白甲/白发+在位君主——白王（形象）");
 
- // ===== 贬讽型 =====
-            Add("epithet_landless", "无地者", EpithetConnotation.Negative, EpithetTier.Common, "失地——无地王约翰（调侃）");
+ // ===== 贬讽型 =====            Add("epithet_landless", "无地者", EpithetConnotation.Negative, EpithetTier.Common, "失地——无地王约翰（调侃）");
             Add("epithet_vassal_king", "儿皇帝", EpithetConnotation.Negative, EpithetTier.Common, "傀儡附庸君主——石敬瑭");
             Add("epithet_madman", "疯子", EpithetConnotation.Neutral, EpithetTier.Common, "精神疾病（临床——mentalDisorderId）——查理六世");
 
- // ===== 第二批（行为/特征扩充——与既有系统接） =====
-            Add("epithet_butcher", "屠夫", EpithetConnotation.Negative, EpithetTier.Common,
+ // ===== 第二批（行为/特征扩充——与既有系统接） =====            Add("epithet_butcher", "屠夫", EpithetConnotation.Negative, EpithetTier.Common,
                 "发动屠城/大屠杀（接 Massacre 系统）——残酷镇压者");
             Add("epithet_fat", "胖子", EpithetConnotation.Neutral, EpithetTier.Common,
                 "肥胖值高（接肥胖系统——obesity>70）——胖子查理");
@@ -135,8 +123,7 @@ namespace CivilizationEvolution.Character
             Add("epithet_saint", "圣者", EpithetConnotation.Positive, EpithetTier.Common,
                 "死后封圣（联动封圣系统——canonized）——与圣君[在位]区分");
 
- // ===== 第三批（评价/语境/病绰号——命名通则：特征直接词不加"者"） =====
-            Add("epithet_younger", "年轻者", EpithetConnotation.Negative, EpithetTier.Common,
+ // ===== 第三批（评价/语境/病绰号——命名通则：特征直接词不加"者"） =====            Add("epithet_younger", "年轻者", EpithetConnotation.Negative, EpithetTier.Common,
                 "青年路易二世[洛泰尔一世之子]式：年龄小是事实——核心语义=幼稚不够老练[讽刺——幼年即位+被架空/决策反复——非年龄标注非同名区分]");
             Add("epithet_leper", "癞病人", EpithetConnotation.Neutral, EpithetTier.Common,
                 "the Leper——癞病[麻风]（病绰号——非头衔式'麻风王'——鲍德温四世）");
@@ -159,8 +146,7 @@ namespace CivilizationEvolution.Character
             Add("epithet_eagle", "鹰", EpithetConnotation.Positive, EpithetTier.Common,
                 "the Eagle——威仪+大捷+高荣誉（帝国形象——动物系补全）");
 
- // ===== 女性专属绰号（史实——女性特有境遇：未婚/疯囚/太后/圣洁/美貌/残酷贬称） =====
-            Add("epithet_virgin_queen", "童贞女王", EpithetConnotation.Positive, EpithetTier.Common,
+ // ===== 女性专属绰号（史实——女性特有境遇：未婚/疯囚/太后/圣洁/美貌/残酷贬称） =====            Add("epithet_virgin_queen", "童贞女王", EpithetConnotation.Positive, EpithetTier.Common,
                 "the Virgin Queen——终身未婚的女王——伊丽莎白一世");
             Add("epithet_mad_woman", "疯女", EpithetConnotation.Neutral, EpithetTier.Common,
                 "la Loca——女性+精神疾病[真疯或被污名]——疯女胡安娜——女性版'疯子'");
@@ -175,8 +161,7 @@ namespace CivilizationEvolution.Character
             Add("epithet_belle", "美人", EpithetConnotation.Positive, EpithetTier.Common,
                 "la Belle——女性俊美——美男子女性版");
 
- // ===== 王级（统治者化历史形象——苛刻） =====
-            Add("epithet_mad_king", "疯王", EpithetConnotation.Negative, EpithetTier.Kingly,
+ // ===== 王级（统治者化历史形象——苛刻） =====            Add("epithet_mad_king", "疯王", EpithetConnotation.Negative, EpithetTier.Kingly,
                 "NPD 式统治风格（未必有病）：自恋傲慢[arrogant]+偏执[paranoid]+喜怒无常[高报复+低理性]+任性妄为[高大胆+低荣誉]——卡利古拉/尼禄");
             Add("epithet_poet_king", "诗人王", EpithetConnotation.Positive, EpithetTier.Kingly,
                 "经历型传奇：行吟诗人出身[远行多]+贤君[评价杰出]——哈拉尔德·哈德拉达/苏格兰詹姆斯一世");
@@ -185,8 +170,7 @@ namespace CivilizationEvolution.Character
             Add("epithet_adventurer_king", "冒险王", EpithetConnotation.Positive, EpithetTier.Kingly,
                 "一场史诗大冒险 或 大量冒险事迹累积——马可波罗只是冒险者非冒险王");
 
- // ===== 高评价档 =====
-            Add("epithet_great", "伟大者", EpithetConnotation.Positive, EpithetTier.Great,
+ // ===== 高评价档 =====            Add("epithet_great", "伟大者", EpithetConnotation.Positive, EpithetTier.Great,
                 "区域影响力≥0.6[区域内前列·中等偏上]——阿尔弗雷德式——发放较多非严苛");
             Add("epithet_holy_king", "圣君", EpithetConnotation.Positive, EpithetTier.Kingly,
                 "在位圣明[尧舜式]——德行×治理双极致：评价≥卓越+悲悯荣誉双高+无饥荒少叛乱——王级苛刻——与圣者[死后封圣]区分");

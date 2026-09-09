@@ -17,8 +17,7 @@ namespace CivilizationEvolution.Diplomacy
         public int relatedTileIndex;    // 相关地块（领土争端/劫掠地点等，-1=无）
         public bool isUsed;             // 是否已被使用（宣战后标记为已用）
 
- /// <summary>是否有效（未过期、未使用）</summary>
-        public bool IsValid(int currentDay)
+ /// <summary>是否有效（未过期、未使用）</summary>        public bool IsValid(int currentDay)
         {
             return !isUsed && (expiryDay < 0 || currentDay < expiryDay);
         }

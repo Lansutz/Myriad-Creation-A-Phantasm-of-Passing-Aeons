@@ -5,10 +5,7 @@ using CivilizationEvolution.Core;
 
 namespace CivilizationEvolution.Map
 {
- /// 海陆生成与重算系统
- /// 画笔修改地形后增量重算海洋地块属性与连通性
- /// 海洋三级划分：海岸带 / 近海大陆架 / 远洋深海
-    public class SeaLandGenerator
+ /// 海陆生成与重算系统 /// 画笔修改地形后增量重算海洋地块属性与连通性 /// 海洋三级划分：海岸带 / 近海大陆架 / 远洋深海    public class SeaLandGenerator
     {
         private readonly WorldConfig _config;
         private readonly TileData[] _tiles;
@@ -34,8 +31,7 @@ namespace CivilizationEvolution.Map
                 _fragmentNoise = noise;
         }
 
- /// <summary>全量重算海陆属性</summary>
-        public void RecalculateAll()
+ /// <summary>全量重算海陆属性</summary>        public void RecalculateAll()
         {
             float seaThreshold = CalculateSeaLevelThresholdFromDistribution();
 
@@ -49,8 +45,7 @@ namespace CivilizationEvolution.Map
             Debug.Log($"[SeaLand] 全量重算：陆地{GetTotalLandTiles()}/海洋{GetTotalSeaTiles()}/连通海域{_seaConnectGroups.Count}");
         }
 
- /// <summary>脏区局部重算</summary>
-        public void RecalculateDirty(HashSet<int> dirtyIndices)
+ /// <summary>脏区局部重算</summary>        public void RecalculateDirty(HashSet<int> dirtyIndices)
         {
             if (dirtyIndices == null || dirtyIndices.Count == 0) return;
 
@@ -77,13 +72,9 @@ namespace CivilizationEvolution.Map
                 RecalculateSeaConnectivity();
         }
 
- /// <summary>缓存的海平面阈值（增量重算复用；全量重算时按高度场分布刷新）</summary>
-        private float _cachedSeaThreshold;
+ /// <summary>缓存的海平面阈值（增量重算复用；全量重算时按高度场分布刷新）</summary>        private float _cachedSeaThreshold;
 
- /// 基于当前实际高度场分布计算海平面阈值，使 landAmount 滑块真正对应陆地占比。
- /// 固定阈值会因高度场分布不均而使陆地比例严重失真；改为取高度分位数：高于分位线为陆地。
- /// seaLevel 以 0.5 为中性，升高淹没低地、降低露出海床。
-        private float CalculateSeaLevelThresholdFromDistribution()
+ /// 基于当前实际高度场分布计算海平面阈值，使 landAmount 滑块真正对应陆地占比。 /// 固定阈值会因高度场分布不均而使陆地比例严重失真；改为取高度分位数：高于分位线为陆地。 /// seaLevel 以 0.5 为中性，升高淹没低地、降低露出海床。        private float CalculateSeaLevelThresholdFromDistribution()
         {
             var heights = new List<float>(_tiles.Length);
             for (int i = 0; i < _tiles.Length; i++)
@@ -99,13 +90,11 @@ namespace CivilizationEvolution.Map
             return _cachedSeaThreshold;
         }
 
- /// <summary>单地块海陆属性重算，输出5字段</summary>
-        private void RecalculateSingleTile(int index, float seaThreshold)
+ /// <summary>单地块海陆属性重算，输出5字段</summary>        private void RecalculateSingleTile(int index, float seaThreshold)
         {
             ref TileData tile = ref _tiles[index];
 
- // 不存在的地块（虚空/地图外）重置海陆属性
-            if (!tile.exists)
+ // 不存在的地块（虚空/地图外）重置海陆属性            if (!tile.exists)
             {
                 tile.isLand = false;
                 tile.isCoast = false;
@@ -148,8 +137,7 @@ namespace CivilizationEvolution.Map
             }
         }
 
- /// <summary>陆地破碎度：边缘低海拔陆地按概率侵蚀为海</summary>
-        private void ApplyLandFragmentation(float seaThreshold)
+ /// <summary>陆地破碎度：边缘低海拔陆地按概率侵蚀为海</summary>        private void ApplyLandFragmentation(float seaThreshold)
         {
             if (_config.landFragment <= 0.01f) return;
 
@@ -171,8 +159,7 @@ namespace CivilizationEvolution.Map
             RecalculateAdjacencyForAll();
         }
 
- /// <summary>海岸破碎度：细化海岸线形成河口、海湾、岬角</summary>
-        private void ApplyCoastFragmentation()
+ /// <summary>海岸破碎度：细化海岸线形成河口、海湾、岬角</summary>        private void ApplyCoastFragmentation()
         {
             if (_config.coastFragment <= 0.01f) return;
 
@@ -238,8 +225,7 @@ namespace CivilizationEvolution.Map
             }
         }
 
- /// <summary>海洋连通性全量重算（洪水填充）</summary>
-        private void RecalculateSeaConnectivity()
+ /// <summary>海洋连通性全量重算（洪水填充）</summary>        private void RecalculateSeaConnectivity()
         {
             _seaConnectGroups.Clear();
             _nextSeaConnectId = 0;
@@ -274,10 +260,7 @@ namespace CivilizationEvolution.Map
             }
         }
 
- /// 六边形网格6邻格（even-r偏移坐标）
- /// 偶数行：左上(-1,-1) 右上(0,-1) 左(-1,0) 右(1,0) 左下(-1,1) 右下(0,1)
- /// 奇数行：左上(0,-1) 右上(1,-1) 左(-1,0) 右(1,0) 左下(0,1) 右下(1,1)
-        public IEnumerable<int> GetNeighbourIndices(int index)
+ /// 六边形网格6邻格（even-r偏移坐标） /// 偶数行：左上(-1,-1) 右上(0,-1) 左(-1,0) 右(1,0) 左下(-1,1) 右下(0,1) /// 奇数行：左上(0,-1) 右上(1,-1) 左(-1,0) 右(1,0) 左下(0,1) 右下(1,1)        public IEnumerable<int> GetNeighbourIndices(int index)
         {
             int x = index % _width;
             int y = index / _width;
@@ -300,8 +283,7 @@ namespace CivilizationEvolution.Map
                 int nx = x + dx[i];
                 int ny = y + dy[i];
 
- // 环绕支持（修复：原实现忽略 wrapX/wrapY，与 WorldConfig 默认 wrapX=true 矛盾）
-                if (_config.wrapX) nx = ((nx % _width) + _width) % _width;
+ // 环绕支持（修复：原实现忽略 wrapX/wrapY，与 WorldConfig 默认 wrapX=true 矛盾）                if (_config.wrapX) nx = ((nx % _width) + _width) % _width;
                 else if (nx < 0 || nx >= _width) continue;
                 if (_config.wrapY) ny = ((ny % _height) + _height) % _height;
                 else if (ny < 0 || ny >= _height) continue;
@@ -310,8 +292,7 @@ namespace CivilizationEvolution.Map
             }
         }
 
- /// <summary>六边形距离计算</summary>
-        public int GetHexDistance(int a, int b)
+ /// <summary>六边形距离计算</summary>        public int GetHexDistance(int a, int b)
         {
             int ax = a % _width, ay = a / _width;
             int bx = b % _width, by = b / _width;
@@ -327,8 +308,7 @@ namespace CivilizationEvolution.Map
             return (Mathf.Abs(acx - bcx) + Mathf.Abs(acy - bcy) + Mathf.Abs(acz - bcz)) / 2;
         }
 
- // ===== 统计查询 =====
-        public int GetTotalLandTiles()
+ // ===== 统计查询 =====        public int GetTotalLandTiles()
         {
             int count = 0;
             for (int i = 0; i < _tiles.Length; i++)

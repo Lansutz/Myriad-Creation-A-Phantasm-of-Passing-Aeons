@@ -8,20 +8,16 @@ using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Diplomacy
 {
- /// DiplomacyManager.War —— 战争与敌对（宣战/战争借口/敌对度/突袭/边境摩擦/和平条约）（partial class，与 DiplomacySystem.cs 共享字段）
-    public partial class DiplomacyManager
+ /// DiplomacyManager.War —— 战争与敌对（宣战/战争借口/敌对度/突袭/边境摩擦/和平条约）（partial class，与 DiplomacySystem.cs 共享字段）    public partial class DiplomacyManager
     {
 
  // ===== 战争与和平 =====
-
- /// <summary>宣战</summary>
-        public bool DeclareWar(int attackerId, int defenderId, string reason)
+ /// <summary>宣战</summary>        public bool DeclareWar(int attackerId, int defenderId, string reason)
         {
             var rel = GetRelation(attackerId, defenderId);
             if (rel == null || rel.isAtWar) return false;
 
- // 停战检查（WarRules.truceYears——借鉴《地图上发生的事》truce_until_tick）
-            if (rel.truceUntilDay >= 0 && CurrentDay < rel.truceUntilDay)
+ // 停战检查（WarRules.truceYears——借鉴《地图上发生的事》truce_until_tick）            if (rel.truceUntilDay >= 0 && CurrentDay < rel.truceUntilDay)
             {
                 AddEventTo(rel, DiplomaticEventType.DemandRejected,
                     $"{_realms[attackerId].realmName} 欲开战，但停战期未满（至第 {rel.truceUntilDay} 日）");
@@ -33,16 +29,14 @@ namespace CivilizationEvolution.Diplomacy
             rel.hostilityLevel = 100f;
             rel.relation = Mathf.Min(rel.relation, -50f);
 
- // 战争爆发：自动撤销双方的军事通行权
-            if (_realms.TryGetValue(attackerId, out var atkRealm))
+ // 战争爆发：自动撤销双方的军事通行权            if (_realms.TryGetValue(attackerId, out var atkRealm))
                 CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(atkRealm, defenderId);
             if (_realms.TryGetValue(defenderId, out var defRealm))
                 CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(defRealm, attackerId);
             rel.trust = Mathf.Min(rel.trust, 10f);
             rel.threat = Mathf.Max(rel.threat, 90f);
 
- // 解除所有盟约
-            rel.activeAlliances.Clear();
+ // 解除所有盟约            rel.activeAlliances.Clear();
 
             rel.AddEvent(new DiplomaticEvent
             {
@@ -53,36 +47,29 @@ namespace CivilizationEvolution.Diplomacy
                 threatChange = 40f
             });
 
- // 编年史（重大）
-            Chronicle?.Add("war", $"{_realms[attackerId].realmName} 对 {_realms[defenderId].realmName} 宣战：{reason}",
+ // 编年史（重大）            Chronicle?.Add("war", $"{_realms[attackerId].realmName} 对 {_realms[defenderId].realmName} 宣战：{reason}",
                 major: true, attackerId, defenderId);
 
- // 通知同盟国（WarRules.allowAllianceIntervention 控制）
-            if (WarRules == null || WarRules.allowAllianceIntervention)
+ // 通知同盟国（WarRules.allowAllianceIntervention 控制）            if (WarRules == null || WarRules.allowAllianceIntervention)
                 NotifyAlliesOfWar(attackerId, defenderId);
             return true;
         }
 
 
- /// <summary>带战争借口和战争目标的宣战（三层分离：借口→目标→条约）</summary>
-        public bool DeclareWarWithJustification(int attackerId, int defenderId,
+ /// <summary>带战争借口和战争目标的宣战（三层分离：借口→目标→条约）</summary>        public bool DeclareWarWithJustification(int attackerId, int defenderId,
             CasusBelli casusBelli, WarGoal warGoal, string reason = "")
         {
             var rel = GetRelation(attackerId, defenderId);
             if (rel == null || rel.isAtWar) return false;
 
- // 停战检查
-            if (rel.truceUntilDay >= 0 && CurrentDay < rel.truceUntilDay) return false;
+ // 停战检查            if (rel.truceUntilDay >= 0 && CurrentDay < rel.truceUntilDay) return false;
 
- // 验证战争借口有效性
-            if (casusBelli != null && !casusBelli.IsValid(CurrentDay))
+ // 验证战争借口有效性            if (casusBelli != null && !casusBelli.IsValid(CurrentDay))
                 casusBelli = null; // 借口无效，按无借口处理
 
- // 计算宣战惩罚（有借口惩罚小，无借口惩罚大）
-            var penalties = WarJustificationSystem.CalculateDeclarationPenalties(casusBelli, false);
+ // 计算宣战惩罚（有借口惩罚小，无借口惩罚大）            var penalties = WarJustificationSystem.CalculateDeclarationPenalties(casusBelli, false);
 
- // 标记战争借口已使用
-            if (casusBelli != null)
+ // 标记战争借口已使用            if (casusBelli != null)
             {
                 casusBelli.isUsed = true;
                 reason = string.IsNullOrEmpty(reason) ?
@@ -93,8 +80,7 @@ namespace CivilizationEvolution.Diplomacy
                 reason = string.IsNullOrEmpty(reason) ? "无借口宣战" : reason;
             }
 
- // 触发战争
-            rel.isAtWar = true;
+ // 触发战争            rel.isAtWar = true;
             rel.warDeclaredDay = CurrentDay;
             rel.hostilityLevel = 100f;
             rel.relation = Mathf.Min(rel.relation, -50f);
@@ -102,8 +88,7 @@ namespace CivilizationEvolution.Diplomacy
             rel.threat = Mathf.Max(rel.threat, 90f);
             rel.activeAlliances.Clear();
 
- // 设置战争目标
-            rel.activeWarGoals.Clear();
+ // 设置战争目标            rel.activeWarGoals.Clear();
             if (warGoal != null)
             {
                 warGoal.attackerRealmId = attackerId;
@@ -111,8 +96,7 @@ namespace CivilizationEvolution.Diplomacy
                 rel.activeWarGoals.Add(warGoal);
             }
 
- // 应用宣战惩罚
-            if (_realms.TryGetValue(attackerId, out var atkRealm))
+ // 应用宣战惩罚            if (_realms.TryGetValue(attackerId, out var atkRealm))
             {
                 atkRealm.prestige = Mathf.Max(0f, atkRealm.prestige - penalties.prestigePenalty);
                 atkRealm.stability = Mathf.Max(0f, atkRealm.stability - penalties.stabilityPenalty);
@@ -141,8 +125,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>获取某政权对另一政权的有效战争借口列表</summary>
-        public List<CasusBelli> GetValidCasusBelli(int holderRealmId, int targetRealmId)
+ /// <summary>获取某政权对另一政权的有效战争借口列表</summary>        public List<CasusBelli> GetValidCasusBelli(int holderRealmId, int targetRealmId)
         {
             var rel = GetRelation(holderRealmId, targetRealmId);
             if (rel == null) return new List<CasusBelli>();
@@ -151,8 +134,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>根据战争借口获取可选战争目标类型</summary>
-        public List<GameEnums.WarGoalType> GetSupportedWarGoals(int holderRealmId, int targetRealmId)
+ /// <summary>根据战争借口获取可选战争目标类型</summary>        public List<GameEnums.WarGoalType> GetSupportedWarGoals(int holderRealmId, int targetRealmId)
         {
             var cbs = GetValidCasusBelli(holderRealmId, targetRealmId);
             var result = new HashSet<GameEnums.WarGoalType>();
@@ -164,9 +146,7 @@ namespace CivilizationEvolution.Diplomacy
 
 
  // ===== 敌对状态管理（不宣而战机制）=====
-
- /// <summary>增加敌对程度（边境摩擦、外交抗议、间谍事件等）</summary>
-        public void IncreaseHostility(int realmA, int realmB, float amount, string reason = "")
+ /// <summary>增加敌对程度（边境摩擦、外交抗议、间谍事件等）</summary>        public void IncreaseHostility(int realmA, int realmB, float amount, string reason = "")
         {
             var rel = GetRelation(realmA, realmB);
             if (rel == null) return;
@@ -181,8 +161,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>降低敌对程度（外交缓和、和亲、贸易协定等）</summary>
-        public void DecreaseHostility(int realmA, int realmB, float amount, string reason = "")
+ /// <summary>降低敌对程度（外交缓和、和亲、贸易协定等）</summary>        public void DecreaseHostility(int realmA, int realmB, float amount, string reason = "")
         {
             var rel = GetRelation(realmA, realmB);
             if (rel == null) return;
@@ -196,16 +175,14 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>直接设置敌对状态（用于事件/剧情）</summary>
-        public void SetHostile(int realmA, int realmB, bool hostile, string reason = "")
+ /// <summary>直接设置敌对状态（用于事件/剧情）</summary>        public void SetHostile(int realmA, int realmB, bool hostile, string reason = "")
         {
             if (hostile) IncreaseHostility(realmA, realmB, 100f, reason);
             else DecreaseHostility(realmA, realmB, 100f, reason);
         }
 
 
- /// <summary>不宣而战（军队直接攻击/入侵触发战争）。敌对状态下无惩罚，非敌对状态下有惩罚</summary>
-        public bool SurpriseAttack(int attackerId, int defenderId, int attackTileIndex = -1)
+ /// <summary>不宣而战（军队直接攻击/入侵触发战争）。敌对状态下无惩罚，非敌对状态下有惩罚</summary>        public bool SurpriseAttack(int attackerId, int defenderId, int attackTileIndex = -1)
         {
             var rel = GetRelation(attackerId, defenderId);
             if (rel == null || rel.isAtWar) return false;
@@ -222,8 +199,7 @@ namespace CivilizationEvolution.Diplomacy
             rel.hostilityLevel = 100f;
             rel.activeAlliances.Clear();
 
- // 战争爆发：自动撤销双方的军事通行权
-            if (_realms.TryGetValue(attackerId, out var atkRealm2))
+ // 战争爆发：自动撤销双方的军事通行权            if (_realms.TryGetValue(attackerId, out var atkRealm2))
                 CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(atkRealm2, defenderId);
             if (_realms.TryGetValue(defenderId, out var defRealm2))
                 CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(defRealm2, attackerId);
@@ -235,8 +211,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>不宣而战的惩罚（非敌对状态下率先发动战争）</summary>
-        private void ApplySurpriseAttackPenalties(int attackerId, int defenderId, DiplomaticRelation rel)
+ /// <summary>不宣而战的惩罚（非敌对状态下率先发动战争）</summary>        private void ApplySurpriseAttackPenalties(int attackerId, int defenderId, DiplomaticRelation rel)
         {
             var attacker = _realms.ContainsKey(attackerId) ? _realms[attackerId] : null;
             if (attacker == null) return;
@@ -263,8 +238,7 @@ namespace CivilizationEvolution.Diplomacy
 
 
 
- /// <summary>获取敌对程度描述（用于UI显示）</summary>
-        public string GetHostilityDescription(int realmA, int realmB)
+ /// <summary>获取敌对程度描述（用于UI显示）</summary>        public string GetHostilityDescription(int realmA, int realmB)
         {
             var rel = GetRelation(realmA, realmB);
             if (rel == null) return "未知";
@@ -277,8 +251,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>边境摩擦（最小规模低烈度冲突，不触发战争）</summary>
-        public bool BorderSkirmish(int realmA, int realmB)
+ /// <summary>边境摩擦（最小规模低烈度冲突，不触发战争）</summary>        public bool BorderSkirmish(int realmA, int realmB)
         {
             var rel = GetRelation(realmA, realmB);
             if (rel == null || rel.isAtWar) return false;
@@ -291,8 +264,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>更新冲突等级（根据敌对程度和战争状态）</summary>
-        private void UpdateConflictLevel(DiplomaticRelation rel)
+ /// <summary>更新冲突等级（根据敌对程度和战争状态）</summary>        private void UpdateConflictLevel(DiplomaticRelation rel)
         {
             if (rel.isAtWar)
                 rel.conflictLevel = rel.hostilityLevel >= 90f ? GameEnums.ConflictLevel.TotalWar : GameEnums.ConflictLevel.LimitedWar;
@@ -305,8 +277,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>军队入侵检查（敌对状态下不自动触发全面战争，而是增加敌对程度）</summary>
-        public bool CheckInvasionTriggerWar(int armyOwnerRealmId, int tileOwnerRealmId, int tileIndex)
+ /// <summary>军队入侵检查（敌对状态下不自动触发全面战争，而是增加敌对程度）</summary>        public bool CheckInvasionTriggerWar(int armyOwnerRealmId, int tileOwnerRealmId, int tileIndex)
         {
             if (armyOwnerRealmId == tileOwnerRealmId) return false;
             if (tileOwnerRealmId < 0) return false;
@@ -328,8 +299,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>获取冲突等级描述（用于UI显示）</summary>
-        public string GetConflictLevelDescription(int realmA, int realmB)
+ /// <summary>获取冲突等级描述（用于UI显示）</summary>        public string GetConflictLevelDescription(int realmA, int realmB)
         {
             var rel = GetRelation(realmA, realmB);
             if (rel == null) return "未知";
@@ -345,8 +315,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>求和/签订和平条约</summary>
-        public Treaty OfferPeace(int realmA, int realmB, float warReparations, int territoryCessionCount)
+ /// <summary>求和/签订和平条约</summary>        public Treaty OfferPeace(int realmA, int realmB, float warReparations, int territoryCessionCount)
         {
             var rel = GetRelation(realmA, realmB);
             if (rel == null || !rel.isAtWar) return null;
@@ -375,8 +344,7 @@ namespace CivilizationEvolution.Diplomacy
             rel.isAtWar = false;
             rel.relation = Mathf.Max(rel.relation, -30f);
 
- // 停战期（WarRules.truceYears——和平后强制休战）
-            rel.truceUntilDay = WarRules != null
+ // 停战期（WarRules.truceYears——和平后强制休战）            rel.truceUntilDay = WarRules != null
                 ? WarRules.GetTruceUntilDay(CurrentDay, WarRules.truceYears)
                 : CurrentDay + 5 * 365;
 
@@ -387,8 +355,7 @@ namespace CivilizationEvolution.Diplomacy
                 relationChange = 30f
             });
 
- // 编年史（重大）
-            Chronicle?.Add("peace",
+ // 编年史（重大）            Chronicle?.Add("peace",
                 $"{_realms[realmA].realmName} 与 {_realms[realmB].realmName} 签订和平条约" +
                 (warReparations > 0 ? $"（赔款 {warReparations}）" : ""),
                 major: true, realmA, realmB);
@@ -397,9 +364,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// 强制和平（战争闭环——战争胜利/白和后的自动停战）
- /// 结束战争状态 + 按 WarRules.truceYears 设置停战期
-        public void ForcePeace(int realmA, int realmB, int day, int truceYears, string reason = "战争结束")
+ /// 强制和平（战争闭环——战争胜利/白和后的自动停战） /// 结束战争状态 + 按 WarRules.truceYears 设置停战期        public void ForcePeace(int realmA, int realmB, int day, int truceYears, string reason = "战争结束")
         {
             var rel = GetRelation(realmA, realmB);
             if (rel == null) return;
@@ -420,12 +385,9 @@ namespace CivilizationEvolution.Diplomacy
 
 
  // ===== 内部辅助 =====
-
         private void NotifyAlliesOfWar(int attackerId, int defenderId)
         {
- // 遍历全部外交关系：与防御方有 mutualDefense 盟约的第三方加入对攻击方宣战
- // （修复：原实现要求 rel.isAtWar 才处理，导致防御同盟义务永不触发）
-            foreach (var rel in _relations.Values)
+ // 遍历全部外交关系：与防御方有 mutualDefense 盟约的第三方加入对攻击方宣战 // （修复：原实现要求 rel.isAtWar 才处理，导致防御同盟义务永不触发）            foreach (var rel in _relations.Values)
             {
                 foreach (var alliance in rel.activeAlliances)
                 {

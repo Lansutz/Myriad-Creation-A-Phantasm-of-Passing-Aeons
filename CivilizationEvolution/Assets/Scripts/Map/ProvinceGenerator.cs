@@ -19,24 +19,19 @@ namespace CivilizationEvolution.Map
             _wrapX = wrapX;
         }
 
- /// <summary>每省目标地块数（cells_per_province——默认 64 地块≈省份规模）</summary>
-        public const int DefaultCellsPerProvince = 64;
+ /// <summary>每省目标地块数（cells_per_province——默认 64 地块≈省份规模）</summary>        public const int DefaultCellsPerProvince = 64;
 
- /// <summary>Lloyd 松弛迭代次数（形状优化）</summary>
-        public const int DefaultLloydIterations = 3;
+ /// <summary>Lloyd 松弛迭代次数（形状优化）</summary>        public const int DefaultLloydIterations = 3;
 
- /// 生成省份
-        public Dictionary<int, Province> Generate(int seed, int cellsPerProvince = DefaultCellsPerProvince,
+ /// 生成省份        public Dictionary<int, Province> Generate(int seed, int cellsPerProvince = DefaultCellsPerProvince,
             int lloydIterations = DefaultLloydIterations)
         {
             var rng = new System.Random(seed);
 
- // 0. 重置全部地块归属（-1=未归属；struct 默认 0，必须显式重置）
-            for (int i = 0; i < _tiles.Length; i++)
+ // 0. 重置全部地块归属（-1=未归属；struct 默认 0，必须显式重置）            for (int i = 0; i < _tiles.Length; i++)
                 _tiles[i].provinceId = -1;
 
- // 1. 收集陆地 tile 并采样种子点
-            var landTiles = new List<int>();
+ // 1. 收集陆地 tile 并采样种子点            var landTiles = new List<int>();
             for (int i = 0; i < _tiles.Length; i++)
                 if (_tiles[i].isLand) landTiles.Add(i);
 
@@ -49,20 +44,17 @@ namespace CivilizationEvolution.Map
                 if (seedSet.Add(candidate)) seeds.Add(candidate);
             }
 
- // 2. Lloyd 松弛迭代
-            int[] assignment = new int[_tiles.Length];
+ // 2. Lloyd 松弛迭代            int[] assignment = new int[_tiles.Length];
             Array.Fill(assignment, -1);
             for (int iter = 0; iter < lloydIterations; iter++)
             {
- // 每 tile 归最近种子
-                for (int i = 0; i < _tiles.Length; i++)
+ // 每 tile 归最近种子                for (int i = 0; i < _tiles.Length; i++)
                 {
                     if (!_tiles[i].isLand) continue;
                     assignment[i] = NearestSeed(i, seeds);
                 }
 
- // 种子移到所属集合质心
-                var centroidX = new float[seeds.Count];
+ // 种子移到所属集合质心                var centroidX = new float[seeds.Count];
                 var centroidY = new float[seeds.Count];
                 var counts = new int[seeds.Count];
                 for (int i = 0; i < _tiles.Length; i++)
@@ -86,15 +78,13 @@ namespace CivilizationEvolution.Map
                 }
             }
 
- // 3. 最终归属
-            for (int i = 0; i < _tiles.Length; i++)
+ // 3. 最终归属            for (int i = 0; i < _tiles.Length; i++)
             {
                 if (!_tiles[i].isLand) continue;
                 assignment[i] = NearestSeed(i, seeds);
             }
 
- // 4. 组装省份
-            var provinces = new Dictionary<int, Province>();
+ // 4. 组装省份            var provinces = new Dictionary<int, Province>();
             for (int s = 0; s < seeds.Count; s++)
             {
                 provinces[s] = new Province
@@ -114,8 +104,7 @@ namespace CivilizationEvolution.Map
             return provinces;
         }
 
- /// <summary>最近种子（欧氏距离，wrapX 感知环绕）</summary>
-        private int NearestSeed(int tileIndex, List<int> seeds)
+ /// <summary>最近种子（欧氏距离，wrapX 感知环绕）</summary>        private int NearestSeed(int tileIndex, List<int> seeds)
         {
             int x = tileIndex % _width;
             int y = tileIndex / _width;
@@ -139,8 +128,7 @@ namespace CivilizationEvolution.Map
         }
 
 
- /// <summary>省名生成（地形特征词组合——中文地名池；世界构建词干体系可后续接入）</summary>
-        private static string GenerateProvinceName(TileData center)
+ /// <summary>省名生成（地形特征词组合——中文地名池；世界构建词干体系可后续接入）</summary>        private static string GenerateProvinceName(TileData center)
         {
             string terrainWord = center.elevation01 > 0.55f ? "山地" : "平原";
             if (center.isCoast) terrainWord = "滨海" + terrainWord;

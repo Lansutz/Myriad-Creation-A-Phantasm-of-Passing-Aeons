@@ -4,30 +4,10 @@ using UnityEngine;
 
 namespace CivilizationEvolution.Map
 {
- /// 地图生成参数配置（对齐FantasyMapSimulator编辑器内一体化模式）
- /// 工作流（参考FantasyMapSimulator，Unity引擎，编辑器内一体化）：
- /// 主菜单 → 地图编辑器 → 直接进入编辑器界面
- /// → 右侧参数面板调整海陆/气候/水文参数
- /// → 点击"生成地形"（程序化）或用画笔手动编辑
- /// → 点击"计算气候"（温度/降水/洋流/群系）
- /// → 点击"重算水文"（河网/侵蚀）
- /// 不学"地图上发生的事"的独立生成面板流程（Go引擎，开始菜单→生成面板→生成→进入编辑器），
- /// 因为其工作流不适合Unity的编辑器内一体化优化。
- /// 参数面板结构：
- /// 顶部全局：种子、地图尺寸、省份数量、地块数量、形态
- /// 【海陆】：外海缓冲、海平面、陆地量、破碎度、海岸破碎度（对齐FantasyMapSimulator）
- /// 【气候】：环流、热赤道、北缘纬度、南缘纬度、全球温度（本项目特色）
- /// 【水文与地貌】：河网密度、侵蚀强度（本项目特色）
- /// 【省份划分】：省份大小差异、省份规整度
- /// 【高度图】：导入灰度图/内置地形/清除（编辑器功能，非参数）
- /// 导入灰度图后：形态、陆地量、破碎度不再影响海陆骨架（禁用对应参数）
-    [Serializable]
+ /// 地图生成参数配置（对齐FantasyMapSimulator编辑器内一体化模式） /// 工作流（参考FantasyMapSimulator，Unity引擎，编辑器内一体化）： /// 主菜单 → 地图编辑器 → 直接进入编辑器界面 /// → 右侧参数面板调整海陆/气候/水文参数 /// → 点击"生成地形"（程序化）或用画笔手动编辑 /// → 点击"计算气候"（温度/降水/洋流/群系） /// → 点击"重算水文"（河网/侵蚀） /// 不学"地图上发生的事"的独立生成面板流程（Go引擎，开始菜单→生成面板→生成→进入编辑器）， /// 因为其工作流不适合Unity的编辑器内一体化优化。 /// 参数面板结构： /// 顶部全局：种子、地图尺寸、省份数量、地块数量、形态 /// 【海陆】：外海缓冲、海平面、陆地量、破碎度、海岸破碎度（对齐FantasyMapSimulator） /// 【气候】：环流、热赤道、北缘纬度、南缘纬度、全球温度（本项目特色） /// 【水文与地貌】：河网密度、侵蚀强度（本项目特色） /// 【省份划分】：省份大小差异、省份规整度 /// 【高度图】：导入灰度图/内置地形/清除（编辑器功能，非参数） /// 导入灰度图后：形态、陆地量、破碎度不再影响海陆骨架（禁用对应参数）    [Serializable]
     public class MapGenerationConfig
     {
- // ============================================================
- // 顶部全局参数
- // ============================================================
-
+ // ============================================================ // 顶部全局参数 // ============================================================
         [Header("【全局】")]
         [Tooltip("地图底图来源。程序生成=噪声自动生成；内置底图=预设模板；导入高度图=以灰度图亮度为高程。")]
         public MapBasemap Basemap = MapBasemap.Procedural;
@@ -63,8 +43,7 @@ namespace CivilizationEvolution.Map
         [Tooltip("大陆布局形态。单陆=一块主大陆；双陆=两块大陆；环形陆地=大陆环绕中央海；成片群岛=无大块陆地。")]
         public ContinentShape Shape = ContinentShape.SingleLandmass;
 
- /// <summary>地图底图来源</summary>
-        public enum MapBasemap
+ /// <summary>地图底图来源</summary>        public enum MapBasemap
         {
             [Tooltip("程序生成：使用球面噪声+板块构造自动生成地形。显示全部海陆参数。")]
             Procedural,
@@ -74,11 +53,9 @@ namespace CivilizationEvolution.Map
             ImportHeightmap
         }
 
- /// <summary>地图尺寸预设</summary>
-        public enum MapSizePreset
+ /// <summary>地图尺寸预设</summary>        public enum MapSizePreset
         {
- // 小尺寸已删除（——与运行时 Bootstrap 对齐）
-            [Tooltip("中型：1024×512=524288地块。默认推荐，细节丰富。")]
+ // 小尺寸已删除（——与运行时 Bootstrap 对齐）            [Tooltip("中型：1024×512=524288地块。默认推荐，细节丰富。")]
             Medium,
             [Tooltip("大型：2048×1024=2097152地块。大战略地图，生成较慢。")]
             Large,
@@ -86,8 +63,7 @@ namespace CivilizationEvolution.Map
             Huge
         }
 
- /// <summary>大陆布局形态</summary>
-        public enum ContinentShape
+ /// <summary>大陆布局形态</summary>        public enum ContinentShape
         {
             [Tooltip("单陆：一块主大陆，周围海洋。")]
             SingleLandmass,
@@ -99,8 +75,7 @@ namespace CivilizationEvolution.Map
             Archipelago
         }
 
- /// <summary>获取地图尺寸（宽, 高）</summary>
-        public (int width, int height) GetMapDimensions()
+ /// <summary>获取地图尺寸（宽, 高）</summary>        public (int width, int height) GetMapDimensions()
         {
             return MapSize switch
             {
@@ -111,15 +86,13 @@ namespace CivilizationEvolution.Map
             };
         }
 
- /// <summary>获取总地块数</summary>
-        public int GetTotalTiles()
+ /// <summary>获取总地块数</summary>        public int GetTotalTiles()
         {
             var (w, h) = GetMapDimensions();
             return w * h;
         }
 
- /// <summary>获取实际种子。字符串种子优先，其次整数种子，-1时随机。</summary>
-        public int GetActualSeed()
+ /// <summary>获取实际种子。字符串种子优先，其次整数种子，-1时随机。</summary>        public int GetActualSeed()
         {
             if (UseStringSeed && !string.IsNullOrWhiteSpace(SeedString))
             {
@@ -128,8 +101,7 @@ namespace CivilizationEvolution.Map
             return Seed < 0 ? new System.Random().Next() : Seed;
         }
 
- /// <summary>字符串哈希为 int 种子（FNV-1a 32位，稳定跨平台）</summary>
-        public static int HashStringToSeed(string str)
+ /// <summary>字符串哈希为 int 种子（FNV-1a 32位，稳定跨平台）</summary>        public static int HashStringToSeed(string str)
         {
             if (string.IsNullOrEmpty(str)) return 0;
             uint hash = 2166136261u; // FNV offset basis
@@ -141,8 +113,7 @@ namespace CivilizationEvolution.Map
             return (int)(hash & 0x7FFFFFFF); // 保证正数
         }
 
- /// <summary>生成随机字符串种子（可读的随机词组）</summary>
-        public static string RandomizeSeedString()
+ /// <summary>生成随机字符串种子（可读的随机词组）</summary>        public static string RandomizeSeedString()
         {
             string[] adjectives = { "Ancient", "Silent", "Golden", "Frozen", "Crimson", "Emerald", "Storm", "Ash", "Moon", "Sun", "Iron", "Bronze", "Mystic", "Sacred", "Lost", "Hidden" };
             string[] nouns = { "Ocean", "Mountain", "Empire", "Kingdom", "Realm", "Isle", "Continent", "Desert", "Forest", "River", "Valley", "Plains", "Tundra", "Archipelago", "Peninsula", "Highland" };
@@ -150,10 +121,7 @@ namespace CivilizationEvolution.Map
             return $"{adjectives[rng.Next(adjectives.Length)]}{nouns[rng.Next(nouns.Length)]}{rng.Next(100, 999)}";
         }
 
- // ============================================================
- // 【海陆】分组
- // ============================================================
-
+ // ============================================================ // 【海陆】分组 // ============================================================
         [Header("【海陆】")]
         [Tooltip("外海缓冲。默认开启；在地图四周渐进压低地势，避免大陆贴住画面边缘。")]
         public bool OuterSeaBuffer = true;
@@ -170,10 +138,7 @@ namespace CivilizationEvolution.Map
         [Tooltip("海岸破碎度。只增加近海的海湾、半岛和小岛细节；不改变大陆的大致尺度。")]
         [UnityEngine.Range(0f, 1f)] public float CoastFragmentation = 0.80f;
 
- // ============================================================
- // 【气候】分组
- // ============================================================
-
+ // ============================================================ // 【气候】分组 // ============================================================
         [Header("【气候】")]
         [Tooltip("环流模式。决定纬向气候带和海岸冷暖湿干差异；三环流的气候对比最强。")]
         public CirculationMode Circulation = CirculationMode.ThreeCell;
@@ -190,8 +155,7 @@ namespace CivilizationEvolution.Map
         [Tooltip("全球温度偏移（度C）。负值=冰期（冰川扩张），正值=间冰期（温暖湿润）。本项目特色参数。")]
         [UnityEngine.Range(-8f, 8f)] public float GlobalTemperatureOffset = 0f;
 
- /// <summary>大气环流模式</summary>
-        public enum CirculationMode
+ /// <summary>大气环流模式</summary>        public enum CirculationMode
         {
             [Tooltip("单环流：赤道-极地直接环流。极端气候，赤道极热极地极冷。")]
             SingleCell,
@@ -203,10 +167,7 @@ namespace CivilizationEvolution.Map
             EnhancedMonsoon
         }
 
- // ============================================================
- // 【水文与地貌】分组（本项目特色）
- // ============================================================
-
+ // ============================================================ // 【水文与地貌】分组（本项目特色） // ============================================================
         [Header("【水文与地貌】")]
         [Tooltip("河网密度。控制形成河流所需的汇水面积阈值。稀疏=大河少，密集=河网密布。")]
         [UnityEngine.Range(0f, 1f)] public float RiverDensity = 0.5f;
@@ -214,10 +175,7 @@ namespace CivilizationEvolution.Map
         [Tooltip("水力侵蚀强度。0=无侵蚀（原始地形），1=强侵蚀（深谷峡谷）。粒子基侵蚀模拟。")]
         [UnityEngine.Range(0f, 1f)] public float ErosionIntensity = 0.3f;
 
- // ============================================================
- // 【省份划分】分组
- // ============================================================
-
+ // ============================================================ // 【省份划分】分组 // ============================================================
         [Header("【省份划分】")]
         [Tooltip("省份大小差异。控制省份面积的差距；越高越容易同时出现大省和小省。")]
         [UnityEngine.Range(0f, 1f)] public float ProvinceSizeVariance = 0.90f;
@@ -225,10 +183,7 @@ namespace CivilizationEvolution.Map
         [Tooltip("省份规整度。整理省份种子的位置；越高越均匀规整，越低越自然不规则。")]
         [UnityEngine.Range(0f, 1f)] public float ProvinceRegularity = 1.0f;
 
- // ============================================================
- // 【高度图】分组
- // ============================================================
-
+ // ============================================================ // 【高度图】分组 // ============================================================
         [Header("【高度图】")]
         [Tooltip("导入的灰度图高度文件路径。为空则按上方旋钮程序生成地形。")]
         public string HeightmapPath = "";
@@ -236,10 +191,7 @@ namespace CivilizationEvolution.Map
         [Tooltip("是否已导入高度图。导入后形态、陆地量与破碎度不再影响海陆骨架。")]
         public bool HasImportedHeightmap = false;
 
- // ============================================================
- // 【开局势力】分组（后续实现）
- // ============================================================
-
+ // ============================================================ // 【开局势力】分组（后续实现） // ============================================================
         [Header("【开局势力】")]
         [Tooltip("初始文明数量。0=无初始文明，玩家从部落开始。")]
         [UnityEngine.Range(0, 50)] public int InitialCivilizations = 10;
@@ -247,10 +199,7 @@ namespace CivilizationEvolution.Map
         [Tooltip("初始文明发展程度。低=部落起步，高=已有王国。")]
         [UnityEngine.Range(0f, 1f)] public float InitialCivilizationLevel = 0.3f;
 
- // ============================================================
- // 高级参数（折叠面板）
- // ============================================================
-
+ // ============================================================ // 高级参数（折叠面板） // ============================================================
         [Header("【高级 · 地形细节】")]
         [UnityEngine.Range(0.5f, 4.0f)] public float TerrainFrequency = 1.8f;
         [UnityEngine.Range(3, 10)] public int TerrainOctaves = 6;
@@ -270,71 +219,49 @@ namespace CivilizationEvolution.Map
         [UnityEngine.Range(0.005f, 0.05f)] public float EvaporationRate = 0.02f;
         [UnityEngine.Range(0f, 0.5f)] public float ErosionInertia = 0.05f;
 
- // ============================================================
- // 固定参数（不暴露）
- // ============================================================
-        public const float PlanetOmega = 7.292e-5f;
+ // ============================================================ // 固定参数（不暴露） // ============================================================        public const float PlanetOmega = 7.292e-5f;
         public const float PlanetRadius = 6371000f;
         public const float SolarConstant = 1361f;
         public const bool UseMultithreading = true;
         public const int OceanIterations = 20;
         public const int ErosionMaxLifetime = 64;
 
- // ============================================================
- // 参数可见性判断
- // ============================================================
+ // ============================================================ // 参数可见性判断 // ============================================================
+ /// <summary>海陆骨架参数是否可用（形态、陆地量、破碎度）。导入高度图后不可用。</summary>        public bool IsLandSkeletonParamsEnabled => !HasImportedHeightmap && Basemap != MapBasemap.ImportHeightmap;
 
- /// <summary>海陆骨架参数是否可用（形态、陆地量、破碎度）。导入高度图后不可用。</summary>
-        public bool IsLandSkeletonParamsEnabled => !HasImportedHeightmap && Basemap != MapBasemap.ImportHeightmap;
+ /// <summary>程序化地形参数是否可见（仅程序生成模式）</summary>        public bool IsProceduralParamsVisible => Basemap == MapBasemap.Procedural && !HasImportedHeightmap;
 
- /// <summary>程序化地形参数是否可见（仅程序生成模式）</summary>
-        public bool IsProceduralParamsVisible => Basemap == MapBasemap.Procedural && !HasImportedHeightmap;
+ /// <summary>高级地形细节是否可见</summary>        public bool IsAdvancedTerrainVisible => Basemap == MapBasemap.Procedural && !HasImportedHeightmap;
 
- /// <summary>高级地形细节是否可见</summary>
-        public bool IsAdvancedTerrainVisible => Basemap == MapBasemap.Procedural && !HasImportedHeightmap;
-
- // ============================================================
- // 方法：将配置应用到各个生成器
- // ============================================================
-
- /// <summary>将配置应用到PlanetTerrainGenerator</summary>
-        public void ApplyToGenerator(PlanetTerrainGenerator gen)
+ // ============================================================ // 方法：将配置应用到各个生成器 // ============================================================
+ /// <summary>将配置应用到PlanetTerrainGenerator</summary>        public void ApplyToGenerator(PlanetTerrainGenerator gen)
         {
             if (IsProceduralParamsVisible)
             {
- // 陆地量→目标陆地比例
-                gen.TargetLandFraction = Mathf.Lerp(0.15f, 0.60f, LandAmount);
- // 破碎度→域扭曲频率
-                gen.WarpFrequency = WarpFrequency * (0.5f + Fragmentation * 2f);
- // 海岸破碎度→高频噪声
-                gen.TerrainFrequency = TerrainFrequency * (0.8f + CoastFragmentation * 0.4f);
- // 板块数量
-                gen.PlateCount = PlateCount;
+ // 陆地量→目标陆地比例                gen.TargetLandFraction = Mathf.Lerp(0.15f, 0.60f, LandAmount);
+ // 破碎度→域扭曲频率                gen.WarpFrequency = WarpFrequency * (0.5f + Fragmentation * 2f);
+ // 海岸破碎度→高频噪声                gen.TerrainFrequency = TerrainFrequency * (0.8f + CoastFragmentation * 0.4f);
+ // 板块数量                gen.PlateCount = PlateCount;
                 gen.PlateBoundaryMountainBoost = PlateBoundaryBoost;
                 gen.WarpStrength = WarpStrength;
                 gen.TerrainOctaves = TerrainOctaves;
             }
 
  // 海平面：通过分位数归一化自动计算，SeaLevel参数用于导入高度图模式的海陆分界
-
- // 气候参数
-            gen.AxialTilt = 23.44f * Mathf.Deg2Rad; // 固定轴倾角，纬度范围由北缘/南缘控制
+ // 气候参数            gen.AxialTilt = 23.44f * Mathf.Deg2Rad; // 固定轴倾角，纬度范围由北缘/南缘控制
             gen.GlobalTempOffset = GlobalTemperatureOffset;
             gen.RiverThreshold = Mathf.Lerp(200f, 20f, RiverDensity);
         }
 
- /// <summary>将配置应用到AtmosphericCirculation</summary>
-        public void ApplyToGCM(AtmosphericCirculation gcm)
+ /// <summary>将配置应用到AtmosphericCirculation</summary>        public void ApplyToGCM(AtmosphericCirculation gcm)
         {
             gcm.MonsoonStrength = MonsoonStrength * (Circulation == CirculationMode.EnhancedMonsoon ? 1.5f : 1f);
             gcm.OrographicPrecipFactor = OrographicPrecipFactor;
             gcm.RainShadowFactor = RainShadowFactor;
- // 热赤道偏移→纬度偏移
-            gcm.Season = ThermalEquator * 0.25f;
+ // 热赤道偏移→纬度偏移            gcm.Season = ThermalEquator * 0.25f;
         }
 
- /// <summary>将配置应用到HydraulicErosion</summary>
-        public void ApplyToErosion(HydraulicErosion erosion, int totalTiles)
+ /// <summary>将配置应用到HydraulicErosion</summary>        public void ApplyToErosion(HydraulicErosion erosion, int totalTiles)
         {
             erosion.ParticleCount = (int)(ErosionIntensity * Mathf.Min(150000, totalTiles / 3));
             erosion.ErosionRate = ErosionRate * (0.5f + ErosionIntensity);
@@ -343,16 +270,12 @@ namespace CivilizationEvolution.Map
             erosion.Inertia = ErosionInertia;
         }
 
- /// <summary>获取纬度范围（北缘, 南缘）</summary>
-        public (float north, float south) GetLatitudeRange()
+ /// <summary>获取纬度范围（北缘, 南缘）</summary>        public (float north, float south) GetLatitudeRange()
         {
             return (NorthLatitude, SouthLatitude);
         }
 
- // ============================================================
- // 预设模板
- // ============================================================
-
+ // ============================================================ // 预设模板 // ============================================================
         public static MapGenerationConfig Default() => new MapGenerationConfig();
 
         public static MapGenerationConfig EarthLike()

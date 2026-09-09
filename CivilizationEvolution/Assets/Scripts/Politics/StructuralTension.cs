@@ -13,8 +13,7 @@ namespace CivilizationEvolution.Politics
 
         public void Recalculate(RealmSociety society, RealmSituation sit, RealmData realm)
         {
- // 阶级错配：各阶层影响力 × 被政治通道排除程度（新兴自由民权重最高）
-            float mismatch = 0f, wsum = 0f;
+ // 阶级错配：各阶层影响力 × 被政治通道排除程度（新兴自由民权重最高）            float mismatch = 0f, wsum = 0f;
             foreach (var kv in society.classes)
             {
                 var p = kv.Value;
@@ -26,8 +25,7 @@ namespace CivilizationEvolution.Politics
             }
             classMismatch = wsum > 0f ? Mathf.Clamp(mismatch / wsum * 100f, 0f, 100f) : 0f;
 
- // 财政-军事压力：战争（尤其本土）+ 国库空虚 + 高税负痛苦
-            float fiscal = 0f;
+ // 财政-军事压力：战争（尤其本土）+ 国库空虚 + 高税负痛苦            float fiscal = 0f;
             if (sit.atWar) fiscal += 25f;
             if (sit.warOnHomeSoil) fiscal += 30f;
             fiscal += Mathf.Clamp(-realm.treasury / 20f, 0f, 30f); // 国库越负压力越大
@@ -36,8 +34,7 @@ namespace CivilizationEvolution.Politics
             if (tc > 0) fiscal += (avgTaxPain / tc) * 0.15f;
             fiscalMilitary = Mathf.Clamp(fiscal, 0f, 100f);
 
- // 合法性侵蚀
-            legitimacyErosion = Mathf.Clamp((100f - sit.legitimacy) * 0.6f + (100f - sit.stability) * 0.4f, 0f, 100f);
+ // 合法性侵蚀            legitimacyErosion = Mathf.Clamp((100f - sit.legitimacy) * 0.6f + (100f - sit.stability) * 0.4f, 0f, 100f);
 
             total = Mathf.Clamp(classMismatch * 0.4f + fiscalMilitary * 0.3f + legitimacyErosion * 0.3f, 0f, 100f);
         }

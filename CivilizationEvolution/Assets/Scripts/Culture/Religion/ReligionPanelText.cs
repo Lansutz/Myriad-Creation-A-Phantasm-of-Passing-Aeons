@@ -5,13 +5,9 @@ using CivilizationEvolution.Thought;
 
 namespace CivilizationEvolution.Culture
 {
- /// 宗教面板文本生成（纯静态可测——封圣/教义池改革/教统信息）：
- /// 教统信息（领袖/仪典语言/热忱/教阶）→ 支柱选择（可改革——
- /// 偏离度提示）→ 圣人列表（封圣产物）→ 教义池候选
-    public static class ReligionPanelText
+ /// 宗教面板文本生成（纯静态可测——封圣/教义池改革/教统信息）： /// 教统信息（领袖/仪典语言/热忱/教阶）→ 支柱选择（可改革—— /// 偏离度提示）→ 圣人列表（封圣产物）→ 教义池候选    public static class ReligionPanelText
     {
- /// <summary>构建面板文本（国教教统 + 支柱 + 圣人）</summary>
-        public static string Build(ReligionDef succession, FaithSystem faith, int statePatronSaintId)
+ /// <summary>构建面板文本（国教教统 + 支柱 + 圣人）</summary>        public static string Build(ReligionDef succession, FaithSystem faith, int statePatronSaintId)
         {
             var sb = new StringBuilder();
             if (succession == null)
@@ -37,16 +33,14 @@ namespace CivilizationEvolution.Culture
             if (statePatronSaintId > 0)
                 sb.AppendLine($"政权主保圣人：{GetSaintName(faith, statePatronSaintId)}");
 
- // 热忱（大圣战可用性）
-            if (faith != null)
+ // 热忱（大圣战可用性）            if (faith != null)
             {
                 sb.AppendLine($"信仰热忱：{faith.fervor:F0}/100" +
                     (faith.CanDeclareGreatHolyWar() ? "（大圣战可用！）" : "（热忱≥60 或需领袖方可大圣战）"));
                 sb.AppendLine($"教阶：{GetHierarchyName(faith.hierarchyLevel)}");
             }
 
- // 支柱选择（教义池——可改革——偏离度来源）
-            sb.AppendLine();
+ // 支柱选择（教义池——可改革——偏离度来源）            sb.AppendLine();
             sb.AppendLine("--- 支柱选择 ---");
             if (succession.selectedDoctrines == null || succession.selectedDoctrines.Count == 0)
                 sb.AppendLine("（未确立教义——改革可选项见下方候选池）");
@@ -58,8 +52,7 @@ namespace CivilizationEvolution.Culture
                         sb.AppendLine($"[{PillarName(def.pillar)}] {def.optionName}");
                 }
 
- // 圣人列表（封圣产物——主保候选池）
-            if (faith != null)
+ // 圣人列表（封圣产物——主保候选池）            if (faith != null)
             {
                 var saints = CanonizationSystem.GetSaints(faith.faithId);
                 if (saints.Count > 0)
@@ -73,8 +66,7 @@ namespace CivilizationEvolution.Culture
             return sb.ToString();
         }
 
- /// <summary>教义池改革候选文本（某支柱的可替换选项——中性+专属过滤）</summary>
-        public static string BuildReformCandidates(ReligionDef succession, string pillar)
+ /// <summary>教义池改革候选文本（某支柱的可替换选项——中性+专属过滤）</summary>        public static string BuildReformCandidates(ReligionDef succession, string pillar)
         {
             if (succession == null) return "";
             var sb = new StringBuilder();

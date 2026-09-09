@@ -6,17 +6,12 @@ using UnityEngine;
 
 namespace CivilizationEvolution.Building
 {
- /// 建筑可用性检查系统
- /// 负责：为每种建筑定义具体修建条件、检查地块可用性、UI过滤接口
- /// 特定建筑受地形/水文/群系限制，不符合条件的不在UI显示
-    public static class BuildingAvailabilitySystem
+ /// 建筑可用性检查系统 /// 负责：为每种建筑定义具体修建条件、检查地块可用性、UI过滤接口 /// 特定建筑受地形/水文/群系限制，不符合条件的不在UI显示    public static class BuildingAvailabilitySystem
     {
- // ===== 建筑条件注册表 =====
-        private static Dictionary<BuildableType, BuildingRequirement> _requirements;
+ // ===== 建筑条件注册表 =====        private static Dictionary<BuildableType, BuildingRequirement> _requirements;
         private static bool _initialized;
 
- /// <summary>初始化建筑条件注册表</summary>
-        public static void Initialize()
+ /// <summary>初始化建筑条件注册表</summary>        public static void Initialize()
         {
             if (_initialized) return;
             _requirements = new Dictionary<BuildableType, BuildingRequirement>();
@@ -24,11 +19,9 @@ namespace CivilizationEvolution.Building
             _initialized = true;
         }
 
- /// <summary>注册所有建筑的修建条件</summary>
-        private static void RegisterAllRequirements()
+ /// <summary>注册所有建筑的修建条件</summary>        private static void RegisterAllRequirements()
         {
- // ===== 堡垒亚型 =====
-            Register(BuildableType.Barrier, new BuildingRequirement
+ // ===== 堡垒亚型 =====            Register(BuildableType.Barrier, new BuildingRequirement
             {
                 name = "关隘",
                 requireBottleneck = true,
@@ -184,8 +177,7 @@ namespace CivilizationEvolution.Building
                 description = "贸易据点+防御（东印度公司式），沿海或沿河"
             });
 
- // ===== 特殊城形态 =====
-            Register(BuildableType.MountainCity, new BuildingRequirement
+ // ===== 特殊城形态 =====            Register(BuildableType.MountainCity, new BuildingRequirement
             {
                 name = "山城",
                 requireMountain = true,
@@ -233,8 +225,7 @@ namespace CivilizationEvolution.Building
                 description = "完全人工规划的新城（迁都/殖民），需平坦地形"
             });
 
- // ===== 港口设施 =====
-            Register(BuildableType.DeepWaterPort, new BuildingRequirement
+ // ===== 港口设施 =====            Register(BuildableType.DeepWaterPort, new BuildingRequirement
             {
                 name = "深水港",
                 requireCoast = true,
@@ -264,8 +255,7 @@ namespace CivilizationEvolution.Building
                 description = "全球贸易中心+主力舰队母港，需Ⅳ级以上都会+深水海岸"
             });
 
- // ===== 特殊设施 =====
-            Register(BuildableType.Ferry, new BuildingRequirement
+ // ===== 特殊设施 =====            Register(BuildableType.Ferry, new BuildingRequirement
             {
                 name = "渡口",
                 requireRiver = true,
@@ -446,9 +436,7 @@ namespace CivilizationEvolution.Building
         }
 
  // ===== 可用性检查 =====
-
- /// 检查地块是否满足某建筑的修建条件
-        public static BuildingAvailability CheckAvailability(BuildableType type, TileData tile,
+ /// 检查地块是否满足某建筑的修建条件        public static BuildingAvailability CheckAvailability(BuildableType type, TileData tile,
             BurgData existingBurg = null, int techLevel = 0)
         {
             Initialize();
@@ -458,8 +446,7 @@ namespace CivilizationEvolution.Building
 
             var failed = new List<string>();
 
- // 地形检查
-            if (req.requireLand && !tile.isLand) failed.Add("需要陆地");
+ // 地形检查            if (req.requireLand && !tile.isLand) failed.Add("需要陆地");
             if (req.requireCoast && !tile.isCoast && tile.oceanTier != GameEnums.OceanTier.Coast) failed.Add("需要沿海");
             if (req.requireRiver && !tile.isRiver) failed.Add("需要河流");
             if (req.requireRiverMouth && (!tile.isCoast || !tile.isRiver)) failed.Add("需要河口（河流+海岸）");
@@ -468,44 +455,37 @@ namespace CivilizationEvolution.Building
             if (req.requirePlain && (tile.elevation01 > 0.5f || tile.slopeDegree > 10f)) failed.Add("需要平原");
             if (req.requireDesert && tile.annualPrecipMm > 400f) failed.Add("需要沙漠/干旱区");
 
- // 海拔/坡度检查
-            if (tile.elevation01 < req.minElevation) failed.Add($"海拔不足（需≥{req.minElevation:0.00}）");
+ // 海拔/坡度检查            if (tile.elevation01 < req.minElevation) failed.Add($"海拔不足（需≥{req.minElevation:0.00}）");
             if (tile.elevation01 > req.maxElevation) failed.Add($"海拔过高（需≤{req.maxElevation:0.00}）");
             if (tile.slopeDegree < req.minSlope) failed.Add($"坡度不足（需≥{req.minSlope:0}°）");
             if (tile.slopeDegree > req.maxSlope) failed.Add($"坡度过大（需≤{req.maxSlope:0}°）");
 
- // 气候检查
-            if (tile.annualPrecipMm < req.minPrecipitation) failed.Add($"降水不足（需≥{req.minPrecipitation:0}mm）");
+ // 气候检查            if (tile.annualPrecipMm < req.minPrecipitation) failed.Add($"降水不足（需≥{req.minPrecipitation:0}mm）");
             if (tile.annualPrecipMm > req.maxPrecipitation) failed.Add($"降水过多（需≤{req.maxPrecipitation:0}mm）");
             if (tile.annualTemp < req.minTemperature) failed.Add($"温度过低（需≥{req.minTemperature:0}°C）");
             if (tile.annualTemp > req.maxTemperature) failed.Add($"温度过高（需≤{req.maxTemperature:0}°C）");
 
- // 群系检查
-            if (req.allowedBiomes != null && req.allowedBiomes.Length > 0 &&
+ // 群系检查            if (req.allowedBiomes != null && req.allowedBiomes.Length > 0 &&
                 !req.allowedBiomes.Contains(tile.biome))
                 failed.Add($"群系不允许（当前{tile.biome}）");
             if (req.forbiddenBiomes != null && req.forbiddenBiomes.Contains(tile.biome))
                 failed.Add($"群系被禁止（{tile.biome}）");
 
- // 海洋等级检查
-            if (req.allowedOceanTiers != null && req.allowedOceanTiers.Length > 0 &&
+ // 海洋等级检查            if (req.allowedOceanTiers != null && req.allowedOceanTiers.Length > 0 &&
                 !req.allowedOceanTiers.Contains(tile.oceanTier))
                 failed.Add($"海洋等级不允许（当前{tile.oceanTier}）");
 
- // 瓶颈检查
-            if (req.requireBottleneck)
+ // 瓶颈检查            if (req.requireBottleneck)
             {
                 bool isBottleneck = tile.slopeDegree > 15f || tile.isCoast ||
                     (tile.isRiver && tile.slopeDegree > 10f);
                 if (!isBottleneck) failed.Add("需要瓶颈节点（山口/峡谷/海峡）");
             }
 
- // 岛屿检查（简化：沿海且周围3格内全是海洋）
-            if (req.requireIsland && !tile.isCoast)
+ // 岛屿检查（简化：沿海且周围3格内全是海洋）            if (req.requireIsland && !tile.isCoast)
                 failed.Add("需要岛屿");
 
- // 已有聚落检查
-            if (req.requireExistingSettlement && existingBurg == null)
+ // 已有聚落检查            if (req.requireExistingSettlement && existingBurg == null)
                 failed.Add("需要已有聚落");
             if (existingBurg != null && req.minSettlementLevel > existingBurg.settlementLevel)
                 failed.Add($"聚落等级不足（需≥{req.minSettlementLevel}）");
@@ -514,8 +494,7 @@ namespace CivilizationEvolution.Building
             if (existingBurg != null && existingBurg.development < req.minDevelopment)
                 failed.Add($"发展度不足（需≥{req.minDevelopment:0}）");
 
- // 科技检查
-            if (techLevel < req.minTechLevel)
+ // 科技检查            if (techLevel < req.minTechLevel)
                 failed.Add($"科技等级不足（需≥{req.minTechLevel}）");
 
             return failed.Count == 0
@@ -523,9 +502,7 @@ namespace CivilizationEvolution.Building
                 : BuildingAvailability.Unavailable(failed);
         }
 
- /// 获取某地块可修建的所有建筑列表（UI过滤接口）
- /// 不符合条件的建筑不在列表中显示
-        public static List<BuildableType> GetAvailableBuildings(TileData tile,
+ /// 获取某地块可修建的所有建筑列表（UI过滤接口） /// 不符合条件的建筑不在列表中显示        public static List<BuildableType> GetAvailableBuildings(TileData tile,
             BurgData existingBurg = null, int techLevel = 0)
         {
             Initialize();
@@ -540,8 +517,7 @@ namespace CivilizationEvolution.Building
             return available;
         }
 
- /// 获取某建筑的修建条件描述（用于UI tooltip）
-        public static string GetRequirementDescription(BuildableType type)
+ /// 获取某建筑的修建条件描述（用于UI tooltip）        public static string GetRequirementDescription(BuildableType type)
         {
             Initialize();
             if (_requirements.TryGetValue(type, out var req))
@@ -549,8 +525,7 @@ namespace CivilizationEvolution.Building
             return "无特殊条件";
         }
 
- /// 获取所有已注册的建筑类型
-        public static IEnumerable<BuildableType> GetAllBuildableTypes()
+ /// 获取所有已注册的建筑类型        public static IEnumerable<BuildableType> GetAllBuildableTypes()
         {
             Initialize();
             return _requirements.Keys;
