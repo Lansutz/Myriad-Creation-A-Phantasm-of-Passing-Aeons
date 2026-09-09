@@ -68,6 +68,8 @@ namespace CivilizationEvolution.Core
         private int _nextArmyId = 1;
 
  // ===== 子系统 =====        private SeaLandGenerator _seaLandGenerator;
+        private FeatureManager _featureManager;
+        public FeatureManager Features => _featureManager;
         private PlanetClimateSimulator _climateSimulator;
         private PlanetTerrainGenerator _planetTerrainGenerator;
         private AtmosphericCirculation _atmosphericCirculation;

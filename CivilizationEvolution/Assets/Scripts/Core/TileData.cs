@@ -17,6 +17,8 @@ namespace CivilizationEvolution.Core
 
  /// <summary>地块是否存在（支持任意形状地图，false=虚空/地图外）</summary>        public bool exists;
 
+ /// <summary>地形锁定（参考Azgaar FMG特征锁定机制：锁定后程序化生成不覆盖此地块的高程/海陆）</summary>        public bool locked;
+
  // ===== 地形 =====        public float elevation01;
         public float slopeDegree;
         public float terrainShade;

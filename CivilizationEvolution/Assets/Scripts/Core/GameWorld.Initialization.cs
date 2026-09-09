@@ -75,6 +75,7 @@ namespace CivilizationEvolution.Core
  /// <summary>初始化所有子系统</summary>        private void InitializeSubsystems()
         {
             _seaLandGenerator = new SeaLandGenerator(config, tiles, mapWidth, mapHeight);
+            _featureManager = new FeatureManager(tiles, mapWidth, mapHeight);
             _climateSimulator = new PlanetClimateSimulator(config, tiles, mapWidth, mapHeight, _seaLandGenerator);
             _currencySystem = new CurrencySystem();
             _taxSystem = new TaxSystem();

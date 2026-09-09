@@ -79,11 +79,12 @@ namespace CivilizationEvolution.Map
                 }
             });
 
- // ===== 第4步：海陆分离 + 基础属性 =====            ParallelLoop(0, n, i =>
+ // ===== 第4步：海陆分离 + 基础属性（锁定地块不覆盖高程/海陆，参考Azgaar FMG特征锁定）=====            ParallelLoop(0, n, i =>
             {
                 ref TileData tile = ref tiles[i];
                 tile.tileIndex = i;
                 tile.exists = true;
+                if (tile.locked) return; // 特征锁定：保持玩家手绘的高程/海陆
                 tile.elevation01 = rawElevation[i];
                 tile.isLand = rawElevation[i] > seaLevel;
 
