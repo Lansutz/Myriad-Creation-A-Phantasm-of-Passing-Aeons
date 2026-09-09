@@ -73,49 +73,6 @@ namespace CivilizationEvolution.UI
 
         [Header("社会政治面板")]
         [SerializeField] private GameObject societyPanel;
-        [SerializeField] private GameObject startMenuPanel;
-        [SerializeField] private Button startGameButton;
-        [SerializeField] private Button editorButton;        // 主菜单第 2 行：编辑器
-        [SerializeField] private Button settingsButton;      // 主菜单第 3 行：设置
-        [SerializeField] private GameObject settingsPanel;   // 设置面板
-        [SerializeField] private GameObject newGamePanel;    // 世界生成面板（进入世界→选项）
-        [SerializeField] private TMPro.TMP_Text seedText;    // 种子显示
-        [SerializeField] private Button seedRandomButton;    // 随机种子
-        [SerializeField] private Button newGameStartButton;  // 生成世界
-        [SerializeField] private Button newGameBackButton;   // 返回主菜单
-        // 尺寸选择（三档按钮——选中高亮）
-        [SerializeField] private Button sizeLargeButton;
-        [SerializeField] private Button sizeHugeButton;
-        [SerializeField] private Button sizeEnormousButton;
-        private int _presetIndex = 0;    // 0 Large/1 Huge/2 Enormous（默认 Large）
-        private int _genSeed = 42;
-        [SerializeField] private RectTransform paramContentRoot; // 世界参数滚动区（动态行）
-        [SerializeField] private Button paramResetButton;       // 参数重置
-        private WorldConfig _panelConfig;                        // 面板持有的配置副本（防污染资产）
-
-        /// <summary>世界参数（对接 WorldConfig 字段——生成参数面板——
-        /// label/字段/滑条范围/显示格式）</summary>
-        private static readonly (string label, string field, float min, float max, string fmt)[] WorldParams =
-        {
-            ("陆地占比", "landAmount", 0.1f, 0.8f, "F2"),
-            ("大陆破碎度", "landFragment", 0f, 1f, "F2"),
-            ("海岸破碎度", "coastFragment", 0f, 1f, "F2"),
-            ("海洋缓冲", "oceanBuffer", 0f, 1f, "F2"),
-            ("大陆尺度", "continentScale", 0.5f, 3f, "F2"),
-            ("山脉强度", "mountainStrength", 0f, 1f, "F2"),
-            ("热赤道纬度", "thermalEquatorLat", -30f, 30f, "F1"),
-            ("季节强度", "seasonIntensity", 0f, 1f, "F2"),
-        };
-        [SerializeField] private GameObject loadingPanel;    // 世界生成中覆盖层
-        [SerializeField] private TMP_Text loadingText;
-        [SerializeField] private TMPro.TMP_Text resolutionButtonText;  // 分辨率循环按钮标签
-        [SerializeField] private Button resolutionButton;
-        [SerializeField] private TMPro.TMP_Text windowModeButtonText;  // 窗口模式循环按钮标签
-        [SerializeField] private Button windowModeButton;
-        private int _resIndex = 0;          // 当前分辨率索引（设置面板循环）
-        private int _windowModeIndex = 0;   // 0 全屏/1 窗口/2 最大化
-        [SerializeField] private Button settingsApplyButton;
-        [SerializeField] private Button settingsCloseButton;
         [SerializeField] private GameObject religionPanel;
         [SerializeField] private GameObject overviewPanel;
         [SerializeField] private TMP_Text overviewText;
@@ -165,16 +122,6 @@ namespace CivilizationEvolution.UI
         private int _viewRealmId = -1;
         /// <summary>查看政权（公开——面板刷新用）</summary>
         public int ViewRealmId => _viewRealmId >= 0 ? _viewRealmId : (world != null ? world.PlayerRealmId : 0);
-        /// <summary>场景是否有主菜单 UI（Bootstrap 兜底判定——无菜单则自动开局防卡死）</summary>
-        public bool HasStartMenu => startMenuPanel != null;
-
-        // ===== 主菜单公开入口（供 MainMenuUI 调用）=====
-        public void OpenNewGamePanelFromMainMenu() => OpenNewGamePanel();
-        public void EnterEditorFromMainMenu() => EnterEditorFromMenu();
-        public void OpenSettingsFromMainMenu() => OpenSettingsPanel();
-        /// <summary>隐藏场景中的旧主菜单（代码动态主菜单接管时调用）</summary>
-        public void HideLegacyStartMenu() { if (startMenuPanel != null) startMenuPanel.SetActive(false); }
-
         /// <summary>显示所有游戏内UI（进入游戏/地图编辑器时调用）</summary>
         public void ShowGameUI()
         {
@@ -210,11 +157,6 @@ namespace CivilizationEvolution.UI
             if (speed1Button != null) speed1Button.gameObject.SetActive(visible);
             if (speed2Button != null) speed2Button.gameObject.SetActive(visible);
             if (speed3Button != null) speed3Button.gameObject.SetActive(visible);
-            // 旧主菜单和新游戏面板始终隐藏（由MainMenuUI接管）
-            if (startMenuPanel != null) startMenuPanel.SetActive(false);
-            if (newGamePanel != null) newGamePanel.SetActive(false);
-            if (settingsPanel != null) settingsPanel.SetActive(false);
-            if (loadingPanel != null) loadingPanel.SetActive(false);
         }
         private readonly List<string> _eventLog = new List<string>();
         private const int MaxLogEntries = 100;
@@ -320,20 +262,6 @@ namespace CivilizationEvolution.UI
             // 社会政治面板按钮
             if (societyOpenButton != null) societyOpenButton.onClick.AddListener(OpenSocietyPanel);
             if (religionOpenButton != null) religionOpenButton.onClick.AddListener(OpenReligionPanel);
-            if (startGameButton != null) startGameButton.onClick.AddListener(OpenNewGamePanel);
-            if (newGameStartButton != null) newGameStartButton.onClick.AddListener(StartGameWithOptions);
-            if (newGameBackButton != null) newGameBackButton.onClick.AddListener(CloseNewGamePanel);
-            if (seedRandomButton != null) seedRandomButton.onClick.AddListener(RandomizeSeed);
-            if (sizeLargeButton != null) sizeLargeButton.onClick.AddListener(() => SelectSize(0));
-            if (sizeHugeButton != null) sizeHugeButton.onClick.AddListener(() => SelectSize(1));
-            if (sizeEnormousButton != null) sizeEnormousButton.onClick.AddListener(() => SelectSize(2));
-            if (paramResetButton != null) paramResetButton.onClick.AddListener(ResetWorldParams);
-            if (editorButton != null) editorButton.onClick.AddListener(EnterEditorFromMenu);
-            if (settingsButton != null) settingsButton.onClick.AddListener(OpenSettingsPanel);
-            if (resolutionButton != null) resolutionButton.onClick.AddListener(CycleResolution);
-            if (windowModeButton != null) windowModeButton.onClick.AddListener(CycleWindowMode);
-            if (settingsApplyButton != null) settingsApplyButton.onClick.AddListener(ApplySettings);
-            if (settingsCloseButton != null) settingsCloseButton.onClick.AddListener(CloseSettingsPanel);
             if (viewRealmButton != null) viewRealmButton.onClick.AddListener(OpenViewRealmPanel);
             if (overviewCloseButton != null) overviewCloseButton.onClick.AddListener(CloseOverviewPanel);
             if (overviewBackButton != null) overviewBackButton.onClick.AddListener(OnOverviewBack);

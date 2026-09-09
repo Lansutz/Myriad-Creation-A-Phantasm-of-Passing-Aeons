@@ -49,13 +49,9 @@ namespace CivilizationEvolution.UI
                 }
                 mainMenu.Build();
                 mainMenu.Show();
-                // 隐藏场景中的旧主菜单和游戏内UI（主菜单状态下不显示游戏内UI）
-                if (uiManager != null)
-                {
-                    uiManager.HideLegacyStartMenu();
-                    uiManager.HideGameUI();
-                }
-                Debug.Log("[SceneFlow] 代码动态主菜单已接管，旧主菜单和游戏内UI已隐藏");
+                // 主菜单状态下隐藏游戏内UI
+                if (uiManager != null) uiManager.HideGameUI();
+                Debug.Log("[SceneFlow] 代码动态主菜单已接管，游戏内UI已隐藏");
             }
             CurrentState = FlowState.MainMenu;
         }
