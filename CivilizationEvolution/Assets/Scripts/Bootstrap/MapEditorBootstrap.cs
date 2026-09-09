@@ -1,4 +1,5 @@
-﻿using CivilizationEvolution.Core;
+﻿using System;
+using CivilizationEvolution.Core;
 using CivilizationEvolution.Map;
 using CivilizationEvolution.Render;
 using CivilizationEvolution.UI;
@@ -29,6 +30,10 @@ namespace CivilizationEvolution.Bootstrap
         [Tooltip("true=启动时全海空白地图（不自动生成地形）；false=自动生成默认地形")]
         public bool startWithEmptyOcean = false;
 
+        [Header("加载存档")]
+        [Tooltip("不为空时，启动后自动加载指定存档文件名（不含.json后缀）")]
+        public string loadSaveFileName = null;
+
         // 运行时创建的引用
         private GameWorld _world;
         private MapRenderer _renderer;
@@ -55,6 +60,13 @@ namespace CivilizationEvolution.Bootstrap
         {
             if (_world == null) return;
 
+            // 加载存档模式：优先于其他启动模式
+            if (!string.IsNullOrEmpty(loadSaveFileName))
+            {
+                LoadSavedMap(loadSaveFileName);
+                return;
+            }
+
             if (startWithEmptyOcean)
             {
                 // 全海空白地图模式：初始化 tiles 为全海，不生成地形
@@ -68,6 +80,31 @@ namespace CivilizationEvolution.Bootstrap
                 _world.CalculateClimate();
                 _renderer?.ForceRefresh();
                 Debug.Log("[MapEditorBootstrap] 默认地图已生成");
+            }
+        }
+
+        /// <summary>加载已保存的地图（地形+省份+聚落）</summary>
+        private void LoadSavedMap(string fileName)
+        {
+            try
+            {
+                var saveSystem = new MapSaveSystem(_world, _renderer);
+                bool ok = saveSystem.LoadMap(fileName);
+                if (ok)
+                {
+                    _renderer?.ForceRefresh();
+                    Debug.Log($"[MapEditorBootstrap] 存档已加载: {fileName}");
+                }
+                else
+                {
+                    Debug.LogError($"[MapEditorBootstrap] 存档加载失败: {fileName}，回退到全海空白地图");
+                    InitializeEmptyOcean();
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[MapEditorBootstrap] 存档加载异常: {e.Message}，回退到全海空白地图");
+                InitializeEmptyOcean();
             }
         }
 

@@ -28,6 +28,7 @@ namespace CivilizationEvolution.UI
         private GameObject _root;
         private SettingsPanel _settingsPanel;
         private DataEditorMenu _dataEditorMenu;
+        private SaveLoadPanel _saveLoadPanel;
         private bool _initialized;
 
         void Awake()
@@ -190,11 +191,24 @@ namespace CivilizationEvolution.UI
             else Debug.LogWarning("[MainMenuUI] SceneFlowController 不存在，无法进入地图编辑器");
         }
 
-        /// <summary>加载世界 → 打开存档选择面板（待实现存档系统）</summary>
+        /// <summary>加载世界 → 打开存档选择面板，选择后进入地图编辑器并加载存档</summary>
         private void OnLoadWorld()
         {
-            Debug.Log("[MainMenuUI] 加载世界——存档系统待实现");
-            // TODO: 打开存档选择面板，加载已保存的世界
+            if (_saveLoadPanel == null)
+            {
+                var obj = new GameObject("SaveLoadPanel", typeof(RectTransform));
+                obj.transform.SetParent(_root.transform, false);
+                _saveLoadPanel = obj.AddComponent<SaveLoadPanel>();
+                _saveLoadPanel.Build(_root.transform, (fileName) =>
+                {
+                    // 选择存档后，进入地图编辑器并加载
+                    var flow = SceneFlowController.Instance;
+                    if (flow != null) flow.EnterMapEditorWithSave(fileName);
+                    else Debug.LogWarning("[MainMenuUI] SceneFlowController 不存在，无法加载存档");
+                }, () => { _saveLoadPanel.Hide(); });
+            }
+            _saveLoadPanel.RefreshList();
+            _saveLoadPanel.Show();
         }
 
         /// <summary>编辑器 → 数据编辑器（种族/文化/宗教等内容编辑选择）</summary>

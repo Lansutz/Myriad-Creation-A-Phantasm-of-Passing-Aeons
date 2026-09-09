@@ -89,6 +89,23 @@ namespace CivilizationEvolution.UI
             Debug.Log("[SceneFlow] 进入地图编辑器");
         }
 
+        /// <summary>进入地图编辑器并加载指定存档</summary>
+        public void EnterMapEditorWithSave(string saveFileName)
+        {
+            CurrentState = FlowState.Editor;
+            if (mainMenu != null && mainMenu.IsVisible) mainMenu.Hide();
+            if (uiManager != null) uiManager.ShowGameUI();
+
+            if (FindAnyObjectByType<CivilizationEvolution.Bootstrap.MapEditorBootstrap>() == null)
+            {
+                var editorObj = new GameObject("MapEditorBootstrap");
+                var bootstrap = editorObj.AddComponent<CivilizationEvolution.Bootstrap.MapEditorBootstrap>();
+                bootstrap.loadSaveFileName = saveFileName;
+                Debug.Log($"[SceneFlow] MapEditorBootstrap 已启动（加载存档模式: {saveFileName}）");
+            }
+            Debug.Log($"[SceneFlow] 进入地图编辑器（加载存档: {saveFileName}）");
+        }
+
         /// <summary>进入地图编辑器（旧入口，保留兼容）</summary>
         public void EnterEditor()
         {
