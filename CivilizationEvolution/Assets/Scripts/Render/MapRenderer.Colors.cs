@@ -9,16 +9,12 @@ using CivilizationEvolution.Diplomacy;
 
 namespace CivilizationEvolution.Render
 {
-    /// <summary>
-    /// MapRenderer.Colors —— 颜色计算（政权/地形/外交/同盟/文化/宗教颜色 + 地形着色）（partial class，与 MapRenderer.cs 共享字段）
-    /// </summary>
+ /// MapRenderer.Colors —— 颜色计算（政权/地形/外交/同盟/文化/宗教颜色 + 地形着色）（partial class，与 MapRenderer.cs 共享字段）
     public partial class MapRenderer
     {
 
-        /// <summary>
-        /// 政权色（动态扩展：0-15 用原色板——>15 黄金角 HSL 哈希——
-        /// 政权数任意增长不撞色——确定性）
-        /// </summary>
+ /// 政权色（动态扩展：0-15 用原色板——>15 黄金角 HSL 哈希——
+ /// 政权数任意增长不撞色——确定性）
         private Color GetRealmColor(int realmId)
         {
             if (realmId >= 0 && realmId < 16)
@@ -30,24 +26,22 @@ namespace CivilizationEvolution.Render
         }
 
 
-        /// <summary>
-        /// 地块颜色（大陆底图渲染——2026-09 用户定稿方向：大陆有纸纹/笔触
-        /// 质感[参照《地图上发生的事》terrain 分色+纸感]）：
-        /// 基色 + 确定性纸纹调制——低频斑驳[地形性色带]+高频颗粒[笔触感]——
-        /// 海洋保持平滑（水无纸纹）——modes 也带纸感[政权色如彩绘]
-        /// </summary>
+ /// 地块颜色（大陆底图渲染——2026-09 方向：大陆有纸纹/笔触
+ /// 质感[参照《地图上发生的事》terrain 分色+纸感]）：
+ /// 基色 + 确定性纸纹调制——低频斑驳[地形性色带]+高频颗粒[笔触感]——
+ /// 海洋保持平滑（水无纸纹）——modes 也带纸感[政权色如彩绘]
         private Color GetTileColor(int tileIndex)
         {
             ref TileData tile = ref world.tiles[tileIndex];
             Color c = GetTileColorRaw(tileIndex);
 
-            // 纸纹调制（确定性——同 seed 同画面——hash 高频颗粒 + 低频斑驳）
+ // 纸纹调制（确定性——同 seed 同画面——hash 高频颗粒 + 低频斑驳）
             if (tile.exists && tile.isLand)
             {
                 int x = tileIndex % mapWidth;
                 int y = tileIndex / mapWidth;
-                // 山体阴影+坡度笔触（地形类模式统一——系统性：Terrain/Biome/
-                // Climate 都过——纸张与地形有机结合——算法见下）
+ // 山体阴影+坡度笔触（地形类模式统一——系统性：Terrain/Biome/
+ // Climate 都过——纸张与地形有机结合——算法见下）
                 if (displayMode == MapDisplayMode.Terrain
                     || displayMode == MapDisplayMode.Biome
                     || displayMode == MapDisplayMode.Climate)
@@ -65,13 +59,11 @@ namespace CivilizationEvolution.Render
         }
 
 
-        /// <summary>
-        /// 山体阴影+坡度笔触（NPR 风格化——纸与地形结合）：
-        /// ① Hillshade：邻域高程梯度 × 固定光源（西北 45°）——朝光面提亮/
-        /// 背光面压暗——山脉立体隆起
-        /// ② 坡度笔触：slopeDegree 越高越暗（陡坡=浓重笔触——手绘阴影感——
-        /// 缓坡留白纸面呼吸）
-        /// </summary>
+ /// 山体阴影+坡度笔触（NPR 风格化——纸与地形结合）：
+ /// ① Hillshade：邻域高程梯度 × 固定光源（西北 45°）——朝光面提亮/
+ /// 背光面压暗——山脉立体隆起
+ /// ② 坡度笔触：slopeDegree 越高越暗（陡坡=浓重笔触——手绘阴影感——
+ /// 缓坡留白纸面呼吸）
         private void ApplyTerrainShading(ref Color c, int tileIndex)
         {
             int x = tileIndex % mapWidth;
@@ -79,7 +71,7 @@ namespace CivilizationEvolution.Render
             bool wrapX = world != null && world.config.wrapX;
             bool wrapY = world != null && world.config.wrapY;
 
-            // 邻域高程（边界 clamp/wrap）
+ // 邻域高程（边界 clamp/wrap）
             float Get(int tx, int ty)
             {
                 if (wrapX) tx = (tx + mapWidth) % mapWidth;
@@ -96,12 +88,12 @@ namespace CivilizationEvolution.Render
             float dx = eE - eW;   // 东升为正
             float dy = eS - eN;   // 南升为正
 
-            // 光源西北 45°（光照方向向量——东南面受光）
+ // 光源西北 45°（光照方向向量——东南面受光）
             float shade = (dx + dy) * 0.5f; // dot 简化（光 -1,-1 归一后的等效）
-            // 海陆交接（低海拔近海）不平——只调陆地幅度
+ // 海陆交接（低海拔近海）不平——只调陆地幅度
             float light = 1f + Mathf.Clamp(shade * 0.9f, -0.16f, 0.14f);
 
-            // 坡度笔触（陡坡加重——slopeDegree 在手绘地图≈笔触密度）
+ // 坡度笔触（陡坡加重——slopeDegree 在手绘地图≈笔触密度）
             float slope = 0f;
             var ts = world.tiles;
             if (tileIndex >= 0 && tileIndex < ts.Length)
@@ -115,7 +107,7 @@ namespace CivilizationEvolution.Render
         }
 
 
-        /// <summary>地块基色（模式分派——biome/政权/人口/宗教……）</summary>
+ /// <summary>地块基色（模式分派——biome/政权/人口/宗教……）</summary>
         private Color GetTileColorRaw(int tileIndex)
         {
             ref TileData tile = ref world.tiles[tileIndex];
@@ -123,9 +115,9 @@ namespace CivilizationEvolution.Render
             switch (displayMode)
             {
                 case MapDisplayMode.Terrain:
-                    // 河流优先着色（水系蓝）
+ // 河流优先着色（水系蓝）
                     if (tile.isRiver) return new Color(0.25f, 0.45f, 0.85f, 1f);
-                    // 省界描边（与任一邻域省份不同 → 边界色）
+ // 省界描边（与任一邻域省份不同 → 边界色）
                     if (IsProvinceBorder(tileIndex))
                         return provinceBorderColor;
                     int terrainIndex = Mathf.Clamp(Mathf.RoundToInt((tile.elevation01 + 1f) / 2f * 255f), 0, 255);
@@ -183,7 +175,7 @@ namespace CivilizationEvolution.Render
         }
 
 
-        /// <summary>外交关系色（玩家视角：战争/敌对/盟约/友好/中立）</summary>
+ /// <summary>外交关系色（玩家视角：战争/敌对/盟约/友好/中立）</summary>
         private Color GetDiplomacyColor(TileData tile)
         {
             int owner = tile.ownerRealmId;
@@ -204,7 +196,7 @@ namespace CivilizationEvolution.Render
         }
 
 
-        /// <summary>联盟阵营色（玩家盟友/阵营成员）</summary>
+ /// <summary>联盟阵营色（玩家盟友/阵营成员）</summary>
         private Color GetAllianceColor(TileData tile)
         {
             int owner = tile.ownerRealmId;
@@ -225,7 +217,7 @@ namespace CivilizationEvolution.Render
         }
 
 
-        /// <summary>文化色（branch=true 时允许分支的文化显示子文化色）</summary>
+ /// <summary>文化色（branch=true 时允许分支的文化显示子文化色）</summary>
         private Color GetCultureColor(TileData tile, bool branch)
         {
             int cultureId = GetDominantBlockCulture(tile);
@@ -234,7 +226,7 @@ namespace CivilizationEvolution.Render
 
             if (branch)
             {
-                // 分支文化：子文化（parentCultureId>=0）且父文化允许分支 → 子文化色
+ // 分支文化：子文化（parentCultureId>=0）且父文化允许分支 → 子文化色
                 if (culture.parentCultureId >= 0
                     && world.cultures.TryGetValue(culture.parentCultureId, out var parent)
                     && parent.allowsBranching)
@@ -242,7 +234,7 @@ namespace CivilizationEvolution.Render
                 return NeutralColor;
             }
 
-            // 主文化：分支文化显示根文化色（同一谱系同色）
+ // 主文化：分支文化显示根文化色（同一谱系同色）
             if (culture.parentCultureId >= 0
                 && world.cultures.TryGetValue(culture.parentCultureId, out var root))
                 return root.color;
@@ -250,7 +242,7 @@ namespace CivilizationEvolution.Render
         }
 
 
-        /// <summary>宗教色（三级谱系：宗教/宗派/传统）</summary>
+ /// <summary>宗教色（三级谱系：宗教/宗派/传统）</summary>
         private Color GetReligionColor(TileData tile, ReligionMapLevel level)
         {
             int faithId = GetDominantBlockFaith(tile);
@@ -258,15 +250,13 @@ namespace CivilizationEvolution.Render
             return ReligionCatalog.GetColor(faithId, level);
         }
 
-        // ===== 双色空间政治地图渲染（效忠树层级 vs 附庸朝贡，色相完全隔离）=====
+ // ===== 双色空间政治地图渲染（效忠树层级 vs 附庸朝贡，色相完全隔离）=====
 
-        /// <summary>
-        /// 双色空间政治地图颜色：
-        /// core（本国本土）→ A色系按效忠树深度选色（深蓝→浅蓝）
-        /// vassal_tribute（附庸/朝贡）→ B色（灰青色，色相与A色系隔离）
-        /// foreign（外国）→ 外国政权色
-        /// 占领/争议条纹在 UpdateMapTexture 像素层叠加（不修改底色）
-        /// </summary>
+ /// 双色空间政治地图颜色：
+ /// core（本国本土）→ A色系按效忠树深度选色（深蓝→浅蓝）
+ /// vassal_tribute（附庸/朝贡）→ B色（灰青色，色相与A色系隔离）
+ /// foreign（外国）→ 外国政权色
+ /// 占领/争议条纹在 UpdateMapTexture 像素层叠加（不修改底色）
         private Color GetPoliticalDualSpaceColor(int tileIndex)
         {
             ref TileData tile = ref world.tiles[tileIndex];
@@ -289,12 +279,10 @@ namespace CivilizationEvolution.Render
             }
         }
 
-        /// <summary>
-        /// 判断地块主权状态（相对于查看政权）：
-        /// owner == 查看政权 → Core（本国本土）
-        /// owner 是查看政权的附庸/朝贡 → VassalTribute
-        /// 其他 → Foreign
-        /// </summary>
+ /// 判断地块主权状态（相对于查看政权）：
+ /// owner == 查看政权 → Core（本国本土）
+ /// owner 是查看政权的附庸/朝贡 → VassalTribute
+ /// 其他 → Foreign
         private GameEnums.SovereigntyStatus GetSovereigntyStatus(TileData tile)
         {
             int viewer = _dualSpaceViewRealmId >= 0 ? _dualSpaceViewRealmId
@@ -312,25 +300,23 @@ namespace CivilizationEvolution.Render
             return GameEnums.SovereigntyStatus.Foreign;
         }
 
-        /// <summary>
-        /// 效忠树深度（仅 Core 地块有效）。
-        /// 暂时返回0（全部主圈色）——后续政治系统完善效忠树后，
-        /// 在此处根据领地的封臣层级计算深度0/1/2/3。
-        /// </summary>
+ /// 效忠树深度（仅 Core 地块有效）。
+ /// 暂时返回0（全部主圈色）——后续政治系统完善效忠树后，
+ /// 在此处根据领地的封臣层级计算深度0/1/2/3。
         private int GetAllegianceDepth(TileData tile)
         {
-            // TODO: 对接政治效忠树系统，根据封臣层级返回深度0-3
+ // TODO: 对接政治效忠树系统，根据封臣层级返回深度0-3
             return 0;
         }
 
-        /// <summary>是否占领/争议（占领方≠所有者）</summary>
+ /// <summary>是否占领/争议（占领方≠所有者）</summary>
         private bool IsOccupiedDisputed(TileData tile)
         {
             return tile.occupyingRealmId >= 0
                 && tile.occupyingRealmId != tile.ownerRealmId;
         }
 
-        /// <summary>设置双色空间查看政权（外部调用，如点选地块时跟随）</summary>
+ /// <summary>设置双色空间查看政权（外部调用，如点选地块时跟随）</summary>
         public void SetDualSpaceViewRealm(int realmId)
         {
             _dualSpaceViewRealmId = realmId;

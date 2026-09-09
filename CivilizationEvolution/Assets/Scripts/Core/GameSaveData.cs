@@ -1,41 +1,39 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using CivilizationEvolution.UI;
 
 namespace CivilizationEvolution.Core
 {
-    /// <summary>
-    /// 完整游戏存档数据——包含地图、游戏时间、政权、编年史等核心游戏状态。
-    /// 地图数据复用 MapSaveData，额外保存游戏运行时状态。
-    /// </summary>
+ /// 完整游戏存档数据——包含地图、游戏时间、政权、编年史等核心游戏状态。
+ /// 地图数据复用 MapSaveData，额外保存游戏运行时状态。
     [Serializable]
     public class GameSaveData
     {
-        // ===== 元数据 =====
+ // ===== 元数据 =====
         public int version = 2;
         public string gameVersion = "0.1.0";
         public long saveTimestamp;
         public string saveName;
 
-        // ===== 游戏时间 =====
+ // ===== 游戏时间 =====
         public int currentYear;
         public int currentDay;
 
-        // ===== 地图基础 =====
+ // ===== 地图基础 =====
         public int mapWidth;
         public int mapHeight;
         public int randomSeed;
         public int playerRealmId = -1;
 
-        // ===== 地图数据（复用 MapSaveData 的结构）=====
+ // ===== 地图数据（复用 MapSaveData 的结构）=====
         public TileSaveData[] tiles;
         public ProvinceSaveData[] provinces;
         public BurgSaveData[] burgs;
 
-        // ===== 政权数据（基本信息）=====
+ // ===== 政权数据（基本信息）=====
         public RealmBasicSaveData[] realms;
 
-        // ===== 编年史/历史记录 =====
+ // ===== 编年史/历史记录 =====
         public ChronicleEntrySaveData[] chronicleEntries;
     }
 

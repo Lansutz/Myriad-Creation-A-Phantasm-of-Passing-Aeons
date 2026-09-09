@@ -1,14 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace CivilizationEvolution.Core
 {
-    /// <summary>
-    /// 编年史（借鉴《地图上发生的事》Chronicle/Chronicle.Entry：
-    /// event_id/tick/participants/major——世界大事的时序记录）
-    /// 供 UI 历史视图/存档回溯使用
-    /// </summary>
-    /// <summary>编年史（世界大事日志，上限保留）</summary>
+ /// 编年史（借鉴《地图上发生的事》Chronicle/Chronicle.Entry：
+ /// event_id/tick/participants/major——世界大事的时序记录）
+ /// 供 UI 历史视图/存档回溯使用
+ /// <summary>编年史（世界大事日志，上限保留）</summary>
     [Serializable]
     public class Chronicle
     {
@@ -19,7 +17,7 @@ namespace CivilizationEvolution.Core
         public int CurrentTick { get; set; } = 0;
         public int CurrentYear { get; set; } = 1;
 
-        /// <summary>记录一条编年史</summary>
+ /// <summary>记录一条编年史</summary>
         public ChronicleEntry Add(string eventType, string description, bool major = false, params int[] participants)
         {
             var entry = new ChronicleEntry
@@ -41,10 +39,10 @@ namespace CivilizationEvolution.Core
             return entry;
         }
 
-        /// <summary>全部条目（新→旧）</summary>
+ /// <summary>全部条目（新→旧）</summary>
         public List<ChronicleEntry> GetEntries() => _entries;
 
-        /// <summary>重大事件（新→旧）</summary>
+ /// <summary>重大事件（新→旧）</summary>
         public List<ChronicleEntry> GetMajorEntries()
         {
             var result = new List<ChronicleEntry>();
@@ -53,7 +51,7 @@ namespace CivilizationEvolution.Core
             return result;
         }
 
-        /// <summary>按类型过滤</summary>
+ /// <summary>按类型过滤</summary>
         public List<ChronicleEntry> GetEntriesByType(string eventType)
         {
             var result = new List<ChronicleEntry>();

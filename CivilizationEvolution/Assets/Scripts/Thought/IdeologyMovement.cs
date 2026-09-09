@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
@@ -18,29 +18,29 @@ namespace CivilizationEvolution.Thought
 
         public MovementPhase phase = MovementPhase.Emerging;
 
-        // 核心主张
+ // 核心主张
         public List<string> coreTenets = new List<string>();
         [NonSerialized] public Dictionary<string, float> policyPositions = new Dictionary<string, float>();
 
 
-        // 传播
+ // 传播
         public float momentum = 0f;       // 势头 0~100
         public float radicalism = 0.5f;   // 激进程度
         public float appeal = 0.5f;        // 吸引力
 
-        // 参与者
+ // 参与者
         public List<int> supporterCharacterIds = new List<int>();
         [NonSerialized] public Dictionary<int, float> regionSupport = new Dictionary<int, float>();
 
 
-        // 关联学派/信仰
+ // 关联学派/信仰
         public List<int> associatedSchoolIds = new List<int>();
         public List<int> associatedFaithIds = new List<int>();
 
-        /// <summary>每日思潮Tick</summary>
+ /// <summary>每日思潮Tick</summary>
         public void DailyTick(int currentYear)
         {
-            // 思潮生命周期
+ // 思潮生命周期
             int age = currentYear - startYear;
 
             if (phase == MovementPhase.Emerging && age > 5)
@@ -58,7 +58,7 @@ namespace CivilizationEvolution.Thought
                 endYear = currentYear;
             }
 
-            // 势头变化
+ // 势头变化
             float momentumChange = phase switch
             {
                 MovementPhase.Emerging => 0.5f,

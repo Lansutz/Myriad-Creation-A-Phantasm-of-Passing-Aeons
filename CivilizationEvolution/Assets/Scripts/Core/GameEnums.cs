@@ -4,12 +4,10 @@ using UnityEngine;
 
 namespace CivilizationEvolution.Core
 {
-    /// <summary>
-    /// 全局枚举定义
-    /// </summary>
+ /// 全局枚举定义
     public static class GameEnums
     {
-        /// <summary>大气环流模式</summary>
+ /// <summary>大气环流模式</summary>
         public enum CirculationMode
         {
             SingleCell,
@@ -17,7 +15,7 @@ namespace CivilizationEvolution.Core
             TripleCell
         }
 
-        /// <summary>九大温度带</summary>
+ /// <summary>九大温度带</summary>
         public enum ClimateZone
         {
             PolarFrigid,
@@ -31,16 +29,14 @@ namespace CivilizationEvolution.Core
             InlandAridTemperate
         }
 
-        /// <summary>生物群系</summary>
-        /// <summary>
-        /// 生物群系（55个，按 civilization-engine-v45 三系分类）
-        /// A系：低水沃野（农耕定居基座）12个
-        /// B系：高地硬骨（屏障割据与海陆）18个
-        /// C系：极端覆盖与过渡（减速通道与资源边界）25个
-        /// </summary>
+ /// <summary>生物群系</summary>
+ /// 生物群系（55个，按 civilization-engine-v45 三系分类）
+ /// A系：低水沃野（农耕定居基座）12个
+ /// B系：高地硬骨（屏障割据与海陆）18个
+ /// C系：极端覆盖与过渡（减速通道与资源边界）25个
         public enum BiomeType
         {
-            // ===== A系：低水沃野（农耕与定居基座）=====
+ // ===== A系：低水沃野（农耕与定居基座）=====
             AlluvialPlain,      // 冲积平原
             GreatRiverPlain,    // 大河平原
             Delta,              // 三角洲
@@ -54,7 +50,7 @@ namespace CivilizationEvolution.Core
             VolcanicAshPlain,   // 火山灰平原
             PluvialFan,         // 洪积扇
 
-            // ===== B系：高地硬骨（屏障、割据与海洋陆地）=====
+ // ===== B系：高地硬骨（屏障、割据与海洋陆地）=====
             LoessPlateau,       // 黄土高原
             LoessKarst,         // 黄土溶蚀
             FoldMountains,      // 褶皱山地
@@ -74,7 +70,7 @@ namespace CivilizationEvolution.Core
             ImpactCraterAtoll,   // 陨坑环岛
             VolcanicIslandArc,   // 火山岛弧
 
-            // ===== C系：极端覆盖与过渡（减速、通道与资源边界）=====
+ // ===== C系：极端覆盖与过渡（减速、通道与资源边界）=====
             IceSheet,            // 冰盖
             MountainGlacier,     // 山岳冰川
             Tundra,              // 冻原
@@ -101,7 +97,7 @@ namespace CivilizationEvolution.Core
             Yardang,             // 风蚀城堡
             LandBridgeIsthmus,    // 陆桥地峡
 
-            // ===== D系：海洋群系与特殊生境 =====
+ // ===== D系：海洋群系与特殊生境 =====
             CoralReef,            // 珊瑚礁
             KelpForest,           // 海带森林
             SeagrassMeadow,       // 海草床
@@ -141,7 +137,7 @@ namespace CivilizationEvolution.Core
             CustomBiome5            // 自定义群系5
         }
 
-        /// <summary>海洋分级</summary>
+ /// <summary>海洋分级</summary>
         public enum OceanTier
         {
             None,
@@ -153,7 +149,7 @@ namespace CivilizationEvolution.Core
             DeepSea
         }
 
-        /// <summary>道路等级</summary>
+ /// <summary>道路等级</summary>
         public enum RoadLevel
         {
             None,
@@ -162,7 +158,7 @@ namespace CivilizationEvolution.Core
             ImperialHighway
         }
 
-        /// <summary>通行管制等级（外交联动，严格管制需军事通行权）</summary>
+ /// <summary>通行管制等级（外交联动，严格管制需军事通行权）</summary>
         public enum MovementControlLevel
         {
             None,           // 无管制：军队可自由通过
@@ -172,7 +168,7 @@ namespace CivilizationEvolution.Core
         }
 
 
-        /// <summary>冲突等级（区分敌对状态和战争状态）</summary>
+ /// <summary>冲突等级（区分敌对状态和战争状态）</summary>
         public enum ConflictLevel
         {
             Peace,          // 和平：正常外交
@@ -182,7 +178,7 @@ namespace CivilizationEvolution.Core
             TotalWar        // 全面战争：正式宣战，全面战争
         }
 
-        /// <summary>劫掠类型（敌对状态下的低烈度行动）</summary>
+ /// <summary>劫掠类型（敌对状态下的低烈度行动）</summary>
         public enum RaidType
         {
             BorderSkirmish, // 边境摩擦：小规模冲突，人员伤亡小
@@ -193,7 +189,7 @@ namespace CivilizationEvolution.Core
             Massacre        // 屠城：大规模屠杀与焚毁（人口大损+恐怖威慑+重外交惩罚）
         }
 
-        /// <summary>战争借口类型（Casus Belli——为什么开战）</summary>
+ /// <summary>战争借口类型（Casus Belli——为什么开战）</summary>
         public enum CasusBelliType
         {
             None,                   // 无借口（不宣而战，高惩罚）
@@ -213,7 +209,7 @@ namespace CivilizationEvolution.Core
             Intervention              // 武装干涉（支持一方势力）
         }
 
-        /// <summary>战争目标类型（War Goal——开战想要达到什么目的）</summary>
+ /// <summary>战争目标类型（War Goal——开战想要达到什么目的）</summary>
         public enum WarGoalType
         {
             None,                     // 无明确目标（纯粹破坏/劫掠）
@@ -233,7 +229,7 @@ namespace CivilizationEvolution.Core
             InstallRuler               // 扶植统治者（更换对方统治者）
         }
 
-        /// <summary>和平条约条款类型（Peace Treaty Clause——实际得到什么）</summary>
+ /// <summary>和平条约条款类型（Peace Treaty Clause——实际得到什么）</summary>
         public enum TreatyClauseType
         {
             TerritoryCession,         // 领土割让
@@ -255,7 +251,7 @@ namespace CivilizationEvolution.Core
             ResourceConcession,       // 资源特许权（矿山/港口）
             Truce                      // 停战协定（强制休战N年）
         }
-        /// <summary>社会阶层</summary>
+ /// <summary>社会阶层</summary>
         public enum SocialClass
         {
             Royalty,
@@ -265,35 +261,33 @@ namespace CivilizationEvolution.Core
             Slave
         }
 
-        /// <summary>
-        /// 社会亚阶层（用户定稿：农民/自由民/奴隶三阶层细分——主枚举不动保存档兼容）
-        /// 农民四层：自耕农（有地）/佃农（租地）/农奴（人身束缚）/雇农（无地）
-        /// 自由民四民：市民（公民权）/商人/工匠/士人（士农工商）
-        /// 奴隶四源：家奴/官奴（国有劳役）/债务奴（抵债）/战俘奴
-        /// </summary>
+ /// 社会亚阶层（农民/自由民/奴隶三阶层细分——主枚举不动保存档兼容）
+ /// 农民四层：自耕农（有地）/佃农（租地）/农奴（人身束缚）/雇农（无地）
+ /// 自由民四民：市民（公民权）/商人/工匠/士人（士农工商）
+ /// 奴隶四源：家奴/官奴（国有劳役）/债务奴（抵债）/战俘奴
         public enum SocialSubclass
         {
-            // ===== 农民 Peasant =====
+ // ===== 农民 Peasant =====
             Freeholder,     // 自耕农：拥有土地的独立农民
             Tenant,         // 佃农：租地耕种（交租）
             Serf,           // 农奴：人身束缚于土地（中世纪欧洲）
             HiredLaborer,   // 雇农：无地雇工（长工/短工）
-            // ===== 自由民 MerchantFreeman =====
+ // ===== 自由民 MerchantFreeman =====
             Citizen,        // 市民：城邦公民（公民权）
             Merchant,       // 商人：行商坐贾
             Artisan,        // 工匠：手艺人（行会）
             Scholar,        // 士人/文士（士农工商）
-            // ===== 奴隶 Slave =====
+ // ===== 奴隶 Slave =====
             DomesticSlave,  // 家奴：家庭侍从
             StateSlave,     // 官奴：国有劳役
             DebtSlave,      // 债务奴：抵债为奴（自卖）
             WarCaptiveSlave // 战俘奴：战败俘虏
         }
 
-        /// <summary>亚阶层 ↔ 主阶层 映射与查询</summary>
+ /// <summary>亚阶层 ↔ 主阶层 映射与查询</summary>
         public static class SocialClassHierarchy
         {
-            /// <summary>亚阶层所属主阶层</summary>
+ /// <summary>亚阶层所属主阶层</summary>
             public static SocialClass GetClass(SocialSubclass subclass)
             {
                 switch (subclass)
@@ -313,7 +307,7 @@ namespace CivilizationEvolution.Core
                 }
             }
 
-            /// <summary>主阶层全部亚阶层</summary>
+ /// <summary>主阶层全部亚阶层</summary>
             public static List<SocialSubclass> GetSubclasses(SocialClass socialClass)
             {
                 var result = new List<SocialSubclass>();
@@ -325,7 +319,7 @@ namespace CivilizationEvolution.Core
                 return result;
             }
 
-            /// <summary>主阶层默认亚阶层（细分前的默认值；未细分阶层返回 null）</summary>
+ /// <summary>主阶层默认亚阶层（细分前的默认值；未细分阶层返回 null）</summary>
             public static SocialSubclass? GetDefaultSubclass(SocialClass socialClass)
             {
                 switch (socialClass)
@@ -338,10 +332,10 @@ namespace CivilizationEvolution.Core
             }
         }
 
-        /// <summary>政体类型已废弃：政体由 GovernmentComposition 七维成分组合表达，
-        /// 粗分类（君主/共和）由 SupremeSuccessionLevel 推导，不再使用单标签枚举。</summary>
+ /// <summary>政体类型已废弃：政体由 GovernmentComposition 七维成分组合表达，
+ /// 粗分类（君主/共和）由 SupremeSuccessionLevel 推导，不再使用单标签枚举。</summary>
 
-        /// <summary>文化阶段</summary>
+ /// <summary>文化阶段</summary>
         public enum CultureStage
         {
             Band,
@@ -351,7 +345,7 @@ namespace CivilizationEvolution.Core
             HighCivilization
         }
 
-        /// <summary>兵种大类</summary>
+ /// <summary>兵种大类</summary>
         public enum UnitCategory
         {
             Infantry,
@@ -359,7 +353,7 @@ namespace CivilizationEvolution.Core
             Navy
         }
 
-        /// <summary>物资类别</summary>
+ /// <summary>物资类别</summary>
         public enum GoodsCategory
         {
             Food,
@@ -375,7 +369,7 @@ namespace CivilizationEvolution.Core
             Slave
         }
 
-        /// <summary>货币阶段</summary>
+ /// <summary>货币阶段</summary>
         public enum CurrencyStage
         {
             Barter,
@@ -384,7 +378,7 @@ namespace CivilizationEvolution.Core
             PaperMoney
         }
 
-        /// <summary>战斗状态</summary>
+ /// <summary>战斗状态</summary>
         public enum CombatState
         {
             Idle,
@@ -396,7 +390,7 @@ namespace CivilizationEvolution.Core
             Dead // 追加于末尾（枚举序安全：旧存档值 0-5 不变）
         }
 
-        /// <summary>地形战术类型</summary>
+ /// <summary>地形战术类型</summary>
         public enum TerrainTacticType
         {
             Plain,
@@ -409,12 +403,10 @@ namespace CivilizationEvolution.Core
             Amphibious
         }
 
-        /// <summary>
-        /// 主权状态（双色空间地图渲染用）
-        /// core：本国法理领土，走A色系效忠树深度色阶
-        /// vassal_tribute：附庸/朝贡国，走B色相（与A色系彻底隔离）
-        /// foreign：外国，走外国色
-        /// </summary>
+ /// 主权状态（双色空间地图渲染用）
+ /// core：本国法理领土，走A色系效忠树深度色阶
+ /// vassal_tribute：附庸/朝贡国，走B色相（与A色系彻底隔离）
+ /// foreign：外国，走外国色
         public enum SovereigntyStatus
         {
             Core,

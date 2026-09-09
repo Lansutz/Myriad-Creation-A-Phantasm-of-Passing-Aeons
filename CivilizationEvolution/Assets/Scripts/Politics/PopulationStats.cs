@@ -1,17 +1,15 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Economy;
 
 namespace CivilizationEvolution.Politics
 {
-    /// <summary>
-    /// 人口三维占比统计（阶层/文化/信仰——count 加权——传播机制数据基础）
-    /// 主流=count 最大块——文化/宗教地图按主流着色——面板显示占比明细
-    /// </summary>
+ /// 人口三维占比统计（阶层/文化/信仰——count 加权——传播机制数据基础）
+ /// 主流=count 最大块——文化/宗教地图按主流着色——面板显示占比明细
     public static class PopulationStats
     {
-        /// <summary>该文化占比（0-1——count 加权）</summary>
+ /// <summary>该文化占比（0-1——count 加权）</summary>
         public static float GetCultureShare(TileData tile, int cultureId)
         {
             float total = 0f, match = 0f;
@@ -24,7 +22,7 @@ namespace CivilizationEvolution.Politics
             return total > 0f ? match / total : 0f;
         }
 
-        /// <summary>该信仰占比（0-1）</summary>
+ /// <summary>该信仰占比（0-1）</summary>
         public static float GetFaithShare(TileData tile, int faithId)
         {
             float total = 0f, match = 0f;
@@ -37,7 +35,7 @@ namespace CivilizationEvolution.Politics
             return total > 0f ? match / total : 0f;
         }
 
-        /// <summary>该阶层占比（0-1）</summary>
+ /// <summary>该阶层占比（0-1）</summary>
         public static float GetClassShare(TileData tile, GameEnums.SocialClass socialClass)
         {
             float total = 0f, match = 0f;
@@ -50,7 +48,7 @@ namespace CivilizationEvolution.Politics
             return total > 0f ? match / total : 0f;
         }
 
-        /// <summary>主流文化（count 最大块——-1 无）</summary>
+ /// <summary>主流文化（count 最大块——-1 无）</summary>
         public static int GetDominantCulture(TileData tile)
         {
             if (tile.populationBlocks == null || tile.populationBlocks.Count == 0) return -1;
@@ -60,7 +58,7 @@ namespace CivilizationEvolution.Politics
             return best.cultureId;
         }
 
-        /// <summary>主流信仰（count 最大块——-1 无）</summary>
+ /// <summary>主流信仰（count 最大块——-1 无）</summary>
         public static int GetDominantFaith(TileData tile)
         {
             if (tile.populationBlocks == null || tile.populationBlocks.Count == 0) return -1;
@@ -70,7 +68,7 @@ namespace CivilizationEvolution.Politics
             return best.faithId;
         }
 
-        /// <summary>占比明细文本（地块信息面板——"佛教 70% · 原始崇拜 30%"）</summary>
+ /// <summary>占比明细文本（地块信息面板——"佛教 70% · 原始崇拜 30%"）</summary>
         public static string BuildShareText(TileData tile, System.Func<int, string> cultureName, System.Func<int, string> faithName)
         {
             if (tile.populationBlocks == null || tile.populationBlocks.Count == 0) return "";

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CivilizationEvolution.Core;
 using System.Collections.Generic;
 
@@ -12,15 +12,15 @@ namespace CivilizationEvolution.Map
         private readonly Dictionary<int, Province> _provinces;
         private readonly System.Random _rng;
 
-        /// <summary>每省最少 Burg 数</summary>
+ /// <summary>每省最少 Burg 数</summary>
         public const int MinBurgsPerProvince = 1;
-        /// <summary>每省最多 Burg 数</summary>
+ /// <summary>每省最多 Burg 数</summary>
         public const int MaxBurgsPerProvince = 6;
-        /// <summary>港口判定：沿海且地块为海岸</summary>
+ /// <summary>港口判定：沿海且地块为海岸</summary>
         public const float PortSpawnChance = 0.6f;
-        /// <summary>城市判定：省中心且发展度高</summary>
+ /// <summary>城市判定：省中心且发展度高</summary>
         public const float CitySpawnChance = 0.35f;
-        /// <summary>要塞判定：边境省份</summary>
+ /// <summary>要塞判定：边境省份</summary>
         public const float FortressSpawnChance = 0.25f;
 
         public BurgGenerator(TileData[] tiles, int width, int height,
@@ -33,9 +33,7 @@ namespace CivilizationEvolution.Map
             _rng = new System.Random(seed + 999);
         }
 
-        /// <summary>
-        /// 为所有省份生成 Burg
-        /// </summary>
+ /// 为所有省份生成 Burg
         public Dictionary<int, BurgData> Generate()
         {
             var burgs = new Dictionary<int, BurgData>();
@@ -47,7 +45,7 @@ namespace CivilizationEvolution.Map
                 Province province = kv.Value;
                 if (province.memberTiles.Count == 0) continue;
 
-                // 1. 省中心 Burg（必有）
+ // 1. 省中心 Burg（必有）
                 int centerTile = province.centerTileIndex;
                 if (centerTile < 0 || centerTile >= _tiles.Length)
                     centerTile = province.memberTiles[0];
@@ -59,7 +57,7 @@ namespace CivilizationEvolution.Map
                 centerBurg.population = 500f + (float)_rng.NextDouble() * 1500f;
                 burgs[centerBurg.burgId] = centerBurg;
 
-                // 2. 沿海省份：港口 Burg
+ // 2. 沿海省份：港口 Burg
                 if (HasCoastalTile(province))
                 {
                     int coastalTile = FindCoastalTile(province);
@@ -76,7 +74,7 @@ namespace CivilizationEvolution.Map
                     }
                 }
 
-                // 3. 边境省份：要塞 Burg
+ // 3. 边境省份：要塞 Burg
                 if (IsBorderProvince(province) && _rng.NextDouble() < FortressSpawnChance)
                 {
                     int borderTile = FindBorderTile(province);
@@ -90,7 +88,7 @@ namespace CivilizationEvolution.Map
                     }
                 }
 
-                // 4. 大省份：额外村庄 Burg
+ // 4. 大省份：额外村庄 Burg
                 int extraVillages = Math.Min(MaxBurgsPerProvince - 3,
                     province.memberTiles.Count / 40);
                 for (int v = 0; v < extraVillages; v++)
@@ -125,10 +123,10 @@ namespace CivilizationEvolution.Map
                 buildLevel = type == BurgType.City ? 2 : type == BurgType.Town ? 1 : 0
             };
 
-            // 初始化聚落类型学（形态/功能/等级/城形/堡型/升级路线）
+ // 初始化聚落类型学（形态/功能/等级/城形/堡型/升级路线）
             SettlementTypologySystem.DeriveInitialType(burg, tile, _width, _height);
 
-            // 覆盖：根据BurgType强制形态
+ // 覆盖：根据BurgType强制形态
             burg.settlementType = SettlementEvolutionSystem.InferFromBurgType(type);
             burg.settlementLevel = type switch
             {
@@ -178,7 +176,7 @@ namespace CivilizationEvolution.Map
             return false;
         }
 
-        /// <summary>Burg 名称生成（地形特征词 + 通名；对齐省名生成风格）</summary>
+ /// <summary>Burg 名称生成（地形特征词 + 通名；对齐省名生成风格）</summary>
         private string GenerateBurgName(TileData tile, BurgType type)
         {
             string prefix = tile.elevation01 > 0.55f ? "山" : tile.isCoast ? "海" : "原";

@@ -10,16 +10,14 @@ using UnityEngine;
 
 namespace CivilizationEvolution.Core
 {
-    /// <summary>
-    /// 完整游戏存档系统——保存/加载核心游戏状态（地图、时间、政权、编年史）。
-    /// 大战略游戏完整存档，不只是地图。
-    /// 角色、军队、战争、外交等复杂数据后续逐步扩展。
-    /// </summary>
+ /// 完整游戏存档系统——保存/加载核心游戏状态（地图、时间、政权、编年史）。
+ /// 大战略游戏完整存档，不只是地图。
+ /// 角色、军队、战争、外交等复杂数据后续逐步扩展。
     public class GameSaveSystem
     {
         private readonly GameWorld _world;
 
-        // 存档目录
+ // 存档目录
         private static string SaveDirectory => Path.Combine(Application.persistentDataPath, "GameSaves");
 
         public GameSaveSystem(GameWorld world)
@@ -29,9 +27,9 @@ namespace CivilizationEvolution.Core
                 Directory.CreateDirectory(SaveDirectory);
         }
 
-        // ===== 保存 =====
+ // ===== 保存 =====
 
-        /// <summary>保存完整游戏状态到指定文件名（JSON格式）</summary>
+ /// <summary>保存完整游戏状态到指定文件名（JSON格式）</summary>
         public string SaveGame(string fileName, string saveName = null)
         {
             if (_world == null)
@@ -54,16 +52,16 @@ namespace CivilizationEvolution.Core
                     playerRealmId = _world.PlayerRealmId,
                 };
 
-                // 1. 保存地图数据
+ // 1. 保存地图数据
                 SaveMapData(saveData);
 
-                // 2. 保存政权基本信息
+ // 2. 保存政权基本信息
                 SaveRealms(saveData);
 
-                // 3. 保存编年史
+ // 3. 保存编年史
                 SaveChronicle(saveData);
 
-                // 序列化到JSON
+ // 序列化到JSON
                 string json = JsonUtility.ToJson(saveData, true);
                 string path = Path.Combine(SaveDirectory, fileName + ".json");
                 File.WriteAllText(path, json);
@@ -112,7 +110,7 @@ namespace CivilizationEvolution.Core
                 };
             }
 
-            // 省份
+ // 省份
             if (_world.provinces != null && _world.provinces.Count > 0)
             {
                 data.provinces = new ProvinceSaveData[_world.provinces.Count];
@@ -129,7 +127,7 @@ namespace CivilizationEvolution.Core
                 }
             }
 
-            // 聚落
+ // 聚落
             if (_world.burgs != null && _world.burgs.Count > 0)
             {
                 data.burgs = new BurgSaveData[_world.burgs.Count];
@@ -185,7 +183,7 @@ namespace CivilizationEvolution.Core
                     stateReligionId = r.stateReligionId,
                 };
 
-                // 控制的地块
+ // 控制的地块
                 var controlled = new List<int>();
                 if (_world.tiles != null)
                 {
@@ -226,9 +224,9 @@ namespace CivilizationEvolution.Core
             data.chronicleEntries = list.ToArray();
         }
 
-        // ===== 加载 =====
+ // ===== 加载 =====
 
-        /// <summary>从指定文件名加载完整游戏状态（JSON格式）</summary>
+ /// <summary>从指定文件名加载完整游戏状态（JSON格式）</summary>
         public bool LoadGame(string fileName)
         {
             string path = Path.Combine(SaveDirectory, fileName + ".json");
@@ -249,7 +247,7 @@ namespace CivilizationEvolution.Core
                     return false;
                 }
 
-                // 1. 恢复基础数据
+ // 1. 恢复基础数据
                 _world.mapWidth = saveData.mapWidth;
                 _world.mapHeight = saveData.mapHeight;
                 _world.randomSeed = saveData.randomSeed;
@@ -257,13 +255,13 @@ namespace CivilizationEvolution.Core
                 _world.currentDay = saveData.currentDay;
                 _world.PlayerRealmId = saveData.playerRealmId;
 
-                // 2. 恢复地图数据
+ // 2. 恢复地图数据
                 LoadMapData(saveData);
 
-                // 3. 恢复政权基本信息
+ // 3. 恢复政权基本信息
                 LoadRealms(saveData);
 
-                // 4. 恢复编年史
+ // 4. 恢复编年史
                 LoadChronicle(saveData);
 
                 Debug.Log($"[GameSaveSystem] 游戏已加载: {fileName} ({saveData.realms?.Length ?? 0}政权, {saveData.chronicleEntries?.Length ?? 0}编年史)");
@@ -280,7 +278,7 @@ namespace CivilizationEvolution.Core
         {
             if (data.tiles == null || data.tiles.Length == 0) return;
 
-            // 验证尺寸
+ // 验证尺寸
             if (data.mapWidth * data.mapHeight != data.tiles.Length)
             {
                 Debug.LogError($"[GameSaveSystem] 地图尺寸不匹配: {data.mapWidth}x{data.mapHeight} != {data.tiles.Length}");
@@ -322,7 +320,7 @@ namespace CivilizationEvolution.Core
                 };
             }
 
-            // 恢复省份
+ // 恢复省份
             _world.provinces = new Dictionary<int, Province>();
             if (data.provinces != null)
             {
@@ -339,7 +337,7 @@ namespace CivilizationEvolution.Core
                 }
             }
 
-            // 恢复聚落
+ // 恢复聚落
             _world.burgs = new Dictionary<int, BurgData>();
             if (data.burgs != null)
             {
@@ -403,7 +401,7 @@ namespace CivilizationEvolution.Core
             var chronicle = _world.GetChronicle();
             if (chronicle == null || data.chronicleEntries == null) return;
 
-            // 编年史恢复（通过 Add 方法重新添加）
+ // 编年史恢复（通过 Add 方法重新添加）
             foreach (var e in data.chronicleEntries)
             {
                 chronicle.CurrentTick = e.tick;
@@ -412,9 +410,9 @@ namespace CivilizationEvolution.Core
             }
         }
 
-        // ===== 工具方法 =====
+ // ===== 工具方法 =====
 
-        /// <summary>获取所有存档文件名</summary>
+ /// <summary>获取所有存档文件名</summary>
         public static string[] GetAllSaves()
         {
             if (!Directory.Exists(SaveDirectory))
@@ -427,7 +425,7 @@ namespace CivilizationEvolution.Core
             return names;
         }
 
-        /// <summary>删除指定存档</summary>
+ /// <summary>删除指定存档</summary>
         public static bool DeleteSave(string fileName)
         {
             string path = Path.Combine(SaveDirectory, fileName + ".json");

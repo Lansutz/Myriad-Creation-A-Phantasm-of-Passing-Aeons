@@ -1,17 +1,15 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Economy;
 
 namespace CivilizationEvolution.Politics
 {
-    /// <summary>
-    /// 人口承载系统：地块人口上限（地理/仓储/贸易修正）——约束人口增长
-    /// 与军事人力（ManpowerSystem）为两个独立概念
-    /// </summary>
+ /// 人口承载系统：地块人口上限（地理/仓储/贸易修正）——约束人口增长
+ /// 与军事人力（ManpowerSystem）为两个独立概念
     public static class CarryingCapacitySystem
     {
-        /// <summary>地形/群系基础承载系数（人口块单位——count；学术群系按承载能力分级）</summary>
+ /// <summary>地形/群系基础承载系数（人口块单位——count；学术群系按承载能力分级）</summary>
         public static float GetTerrainMultiplier(TileData tile)
         {
             if (tile.isCoast && tile.biome != GameEnums.BiomeType.Fjord) return 1.1f;
@@ -19,14 +17,14 @@ namespace CivilizationEvolution.Politics
 
             switch (tile.biome)
             {
-                // 顶级（冲积沃野与绿洲）
+ // 顶级（冲积沃野与绿洲）
                 case GameEnums.BiomeType.AlluvialPlain:
                 case GameEnums.BiomeType.GreatRiverPlain:
                 case GameEnums.BiomeType.Delta:
                 case GameEnums.BiomeType.PluvialFan:
                 case GameEnums.BiomeType.DesertOasis:
                 case GameEnums.BiomeType.EndorheicLake: return 1.2f;
-                // 高（宜耕宜牧）
+ // 高（宜耕宜牧）
                 case GameEnums.BiomeType.Interfluvial:
                 case GameEnums.BiomeType.SedimentaryBasin:
                 case GameEnums.BiomeType.PiedmontBasin:
@@ -38,7 +36,7 @@ namespace CivilizationEvolution.Politics
                 case GameEnums.BiomeType.MonsoonForest:
                 case GameEnums.BiomeType.SemiAridShrubland:
                 case GameEnums.BiomeType.LowHills: return 1f;
-                // 中（盆地/高原/群岛/稀树）
+ // 中（盆地/高原/群岛/稀树）
                 case GameEnums.BiomeType.EnclosedBasin:
                 case GameEnums.BiomeType.LoessPlateau:
                 case GameEnums.BiomeType.BrokenPlateau:
@@ -47,7 +45,7 @@ namespace CivilizationEvolution.Politics
                 case GameEnums.BiomeType.Savanna:
                 case GameEnums.BiomeType.TropicalMonsoon:
                 case GameEnums.BiomeType.PlateauMarsh: return 0.8f;
-                // 低（沼泽/山地/密林）
+ // 低（沼泽/山地/密林）
                 case GameEnums.BiomeType.WetMarshPlain:
                 case GameEnums.BiomeType.Swamp:
                 case GameEnums.BiomeType.RiverSourceMarsh:
@@ -59,7 +57,7 @@ namespace CivilizationEvolution.Politics
                 case GameEnums.BiomeType.BorealForest:
                 case GameEnums.BiomeType.TropicalRainforest:
                 case GameEnums.BiomeType.Mangrove: return 0.6f;
-                // 极低（干旱/高亢/群岛）
+ // 极低（干旱/高亢/群岛）
                 case GameEnums.BiomeType.LoessKarst:
                 case GameEnums.BiomeType.HighMountains:
                 case GameEnums.BiomeType.InlandAridBasin:
@@ -72,7 +70,7 @@ namespace CivilizationEvolution.Politics
                 case GameEnums.BiomeType.VolcanicIslands:
                 case GameEnums.BiomeType.VolcanicIslandArc:
                 case GameEnums.BiomeType.Fjord: return 0.4f;
-                // 近乎无（冰/冻原/离岛）
+ // 近乎无（冰/冻原/离岛）
                 case GameEnums.BiomeType.IceSheet:
                 case GameEnums.BiomeType.MountainGlacier:
                 case GameEnums.BiomeType.Tundra:
@@ -82,27 +80,25 @@ namespace CivilizationEvolution.Politics
             }
         }
 
-        /// <summary>基础承载（人口块 count 上限——50 人/块）</summary>
+ /// <summary>基础承载（人口块 count 上限——50 人/块）</summary>
         public const float BaseCapacity = 100f;
 
-        /// <summary>粮食类物资（仓储支撑人口的主粮：粮食0/肉类1/鱼类2/谷物10）</summary>
+ /// <summary>粮食类物资（仓储支撑人口的主粮：粮食0/肉类1/鱼类2/谷物10）</summary>
         public static readonly int[] FoodGoodsIds = { 0, 1, 2, 10 };
 
-        /// <summary>
-        /// 计算地块承载上限 = 基础 × 地形/群系系数 × 贸易修正 × 粮食支撑修正
-        /// 粮食支撑：地区仓储（TradeCenter.inventory）中粮食类物资总量 ÷ 人口需求——
-        /// 仓储存粮越多承载越高，缺粮压缩承载（仓储=地区物资仓库：本地产出+贸易品）
-        /// </summary>
+ /// 计算地块承载上限 = 基础 × 地形/群系系数 × 贸易修正 × 粮食支撑修正
+ /// 粮食支撑：地区仓储（TradeCenter.inventory）中粮食类物资总量 ÷ 人口需求——
+ /// 仓储存粮越多承载越高，缺粮压缩承载（仓储=地区物资仓库：本地产出+贸易品）
         public static float CalculateCarryingCapacity(TileData tile, IReadOnlyDictionary<int, TradeCenter> tradeCenters)
         {
             float capacity = BaseCapacity * GetTerrainMultiplier(tile);
 
-            // 贸易修正（regionId 有贸易中心——贸易输入物资）
+ // 贸易修正（regionId 有贸易中心——贸易输入物资）
             if (tradeCenters != null && tradeCenters.TryGetValue(tile.regionId, out var tc))
             {
                 capacity *= 1.15f;
 
-                // 粮食支撑修正：仓储粮 ÷（人口 × 日需 0.01 × 30 天安全线）
+ // 粮食支撑修正：仓储粮 ÷（人口 × 日需 0.01 × 30 天安全线）
                 float foodStock = 0f;
                 foreach (int gid in FoodGoodsIds)
                     foodStock += tc.inventory.GetValueOrDefault(gid, 0f);
@@ -115,7 +111,7 @@ namespace CivilizationEvolution.Politics
             return capacity;
         }
 
-        /// <summary>地块当前总人口（count 合计）</summary>
+ /// <summary>地块当前总人口（count 合计）</summary>
         public static float GetTotalPopulation(TileData tile)
         {
             if (tile.populationBlocks == null) return 0f;
@@ -124,7 +120,7 @@ namespace CivilizationEvolution.Politics
             return total;
         }
 
-        /// <summary>超载率（>1 = 超载）</summary>
+ /// <summary>超载率（>1 = 超载）</summary>
         public static float GetOverloadRatio(TileData tile, float capacity)
         {
             float total = GetTotalPopulation(tile);

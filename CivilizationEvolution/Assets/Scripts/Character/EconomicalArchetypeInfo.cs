@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Economy;
@@ -14,7 +14,7 @@ namespace CivilizationEvolution.Character
         public EconomicalArchetype archetype;
         public string displayName;
         public string description;
-        /// <summary>行为偏置：战争/建设/宗教/阴谋/外交 五维倾向（-1~1），供 AI 决策读取</summary>
+ /// <summary>行为偏置：战争/建设/宗教/阴谋/外交 五维倾向（-1~1），供 AI 决策读取</summary>
         public float warBias, buildBias, faithBias, schemeBias, diplomacyBias;
 
         public EconomicalArchetypeInfo(EconomicalArchetype archetype, string displayName, string description,

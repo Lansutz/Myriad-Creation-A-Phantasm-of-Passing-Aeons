@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 using CivilizationEvolution.Core;
 
@@ -17,7 +17,7 @@ namespace CivilizationEvolution.Diplomacy
         public string description;
         public bool isPrimaryGoal;      // 是否为主要战争目标（一场战争可有多个目标）
 
-        /// <summary>获取该战争目标支持的条约条款类型</summary>
+ /// <summary>获取该战争目标支持的条约条款类型</summary>
         public List<TreatyClauseType> GetSupportedClauses()
         {
             return type switch

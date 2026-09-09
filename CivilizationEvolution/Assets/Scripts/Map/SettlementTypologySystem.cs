@@ -1,38 +1,34 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CivilizationEvolution.Core;
 using UnityEngine;
 
 namespace CivilizationEvolution.Map
 {
-    /// <summary>
-    /// 聚落类型学系统
-    /// 负责：类型推导（地形/位置/资源→形态功能）、升级路线管理、形态约束、城形/堡型选择
-    /// 综合：用户设计文档 + 文明引擎IN模块（港口层级/关隘瓶颈/要塞体系/城镇功能类型学）
-    /// </summary>
+ /// 聚落类型学系统
+ /// 负责：类型推导（地形/位置/资源→形态功能）、升级路线管理、形态约束、城形/堡型选择
+ /// 综合：文档 + 文明引擎IN模块（港口层级/关隘瓶颈/要塞体系/城镇功能类型学）
     public static class SettlementTypologySystem
     {
-        // ===== 类型推导：根据地块特征推导聚落初始形态 =====
+ // ===== 类型推导：根据地块特征推导聚落初始形态 =====
 
-        /// <summary>
-        /// 根据地块特征推导聚落初始类型
-        /// </summary>
+ /// 根据地块特征推导聚落初始类型
         public static void DeriveInitialType(BurgData burg, TileData tile, int width, int height)
         {
             if (burg == null) return;
 
-            // 1. 判定是否为瓶颈节点
+ // 1. 判定是否为瓶颈节点
             burg.bottleneckType = DetectBottleneck(tile, width, height);
 
-            // 2. 判定港口层级
+ // 2. 判定港口层级
             burg.portTier = DetectPortTier(tile);
 
-            // 3. 推导主功能
+ // 3. 推导主功能
             burg.primaryFunction = DerivePrimaryFunction(tile, burg);
 
-            // 4. 推导形态（村镇/城/堡）
+ // 4. 推导形态（村镇/城/堡）
             burg.settlementType = DeriveSettlementType(tile, burg);
 
-            // 5. 推导城形/堡型
+ // 5. 推导城形/堡型
             if (burg.settlementType == SettlementType.City)
             {
                 burg.cityForm = DeriveCityForm(tile, burg);
@@ -49,34 +45,34 @@ namespace CivilizationEvolution.Map
                 burg.fortSubtype = FortSubtype.BorderFort;
             }
 
-            // 6. 推导升级路线
+ // 6. 推导升级路线
             burg.upgradePath = DeriveUpgradePath(tile, burg);
 
-            // 7. 初始等级
+ // 7. 初始等级
             burg.settlementLevel = SettlementLevel.LevelI;
             burg.evolutionStage = EvolutionStage.Stable;
             burg.wallLevel = burg.settlementType == SettlementType.Fort ? WallLevel.Palisade : WallLevel.None;
 
-            // 8. 城市重心（低级聚落默认均衡，升级后再确定）
+ // 8. 城市重心（低级聚落默认均衡，升级后再确定）
             burg.cityFocus = CityFocus.Balanced;
         }
 
-        /// <summary>检测瓶颈节点类型</summary>
+ /// <summary>检测瓶颈节点类型</summary>
         private static BottleneckType DetectBottleneck(TileData tile, int width, int height)
         {
             int x = tile.tileIndex % width;
             int y = tile.tileIndex / width;
 
-            // 海峡/渡口：沿海且两侧有陆地
+ // 海峡/渡口：沿海且两侧有陆地
             if (tile.isCoast || tile.oceanTier == GameEnums.OceanTier.Coast)
             {
-                // 检查是否为狭窄水道
+ // 检查是否为狭窄水道
                 bool hasLandLeft = HasLandInDirection(tile, width, height, -1, 0, 3);
                 bool hasLandRight = HasLandInDirection(tile, width, height, 1, 0, 3);
                 if (hasLandLeft && hasLandRight) return BottleneckType.StraitCrossing;
             }
 
-            // 山地隘口：高海拔且周围有低海拔通道
+ // 山地隘口：高海拔且周围有低海拔通道
             if (tile.elevation01 > 0.6f && tile.isLand)
             {
                 for (int dy = -1; dy <= 1; dy++)
@@ -87,21 +83,21 @@ namespace CivilizationEvolution.Map
                         int nx = x + dx, ny = y + dy;
                         if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
                         int ni = ny * width + nx;
-                        // 假设tiles可访问，这里简化
+ // 假设tiles可访问，这里简化
                     }
                 }
                 if (tile.slopeDegree > 20f) return BottleneckType.MountainPass;
             }
 
-            // 峡谷：河流+高坡度
+ // 峡谷：河流+高坡度
             if (tile.isRiver && tile.slopeDegree > 15f)
                 return BottleneckType.CanyonPass;
 
-            // 河流浅滩
+ // 河流浅滩
             if (tile.isRiver && tile.elevation01 < 0.4f)
                 return BottleneckType.RiverFording;
 
-            // 沙漠走廊：干旱+有水源
+ // 沙漠走廊：干旱+有水源
             if (tile.annualPrecipMm < 300f && tile.isRiver)
                 return BottleneckType.DesertCorridor;
 
@@ -110,34 +106,34 @@ namespace CivilizationEvolution.Map
 
         private static bool HasLandInDirection(TileData tile, int width, int height, int dx, int dy, int dist)
         {
-            // 简化：假设周围有陆地
+ // 简化：假设周围有陆地
             return true;
         }
 
-        /// <summary>检测港口层级</summary>
+ /// <summary>检测港口层级</summary>
         private static PortTier DetectPortTier(TileData tile)
         {
             if (!tile.isCoast && !tile.isRiver) return PortTier.None;
 
-            // 沿海+深水（高坡度海岸）= 深水港潜力
+ // 沿海+深水（高坡度海岸）= 深水港潜力
             if (tile.isCoast && tile.slopeDegree > 10f)
                 return PortTier.DeepWaterPort;
 
-            // 沿海+平缓 = 中转港
+ // 沿海+平缓 = 中转港
             if (tile.isCoast)
                 return PortTier.IntermediatePort;
 
-            // 河流+通航 = 内河港
+ // 河流+通航 = 内河港
             if (tile.isRiver)
                 return PortTier.RiverPort;
 
             return PortTier.Anchorage;
         }
 
-        /// <summary>推导主功能</summary>
+ /// <summary>推导主功能</summary>
         private static SettlementFunction DerivePrimaryFunction(TileData tile, BurgData burg)
         {
-            // 瓶颈节点 → 渡口/关税/军事
+ // 瓶颈节点 → 渡口/关税/军事
             if (burg.bottleneckType != BottleneckType.None)
             {
                 if (burg.bottleneckType == BottleneckType.StraitCrossing ||
@@ -146,89 +142,89 @@ namespace CivilizationEvolution.Map
                 return SettlementFunction.Military;
             }
 
-            // 港口 → 商业
+ // 港口 → 商业
             if (burg.portTier >= PortTier.IntermediatePort)
                 return SettlementFunction.Commercial;
 
-            // 高坡度+山地 → 矿业
+ // 高坡度+山地 → 矿业
             if (tile.elevation01 > 0.65f && tile.slopeDegree > 15f)
                 return SettlementFunction.Mining;
 
-            // 干旱+绿洲 → 农业（绿洲农业）
+ // 干旱+绿洲 → 农业（绿洲农业）
             if (tile.annualPrecipMm < 300f && tile.isRiver)
                 return SettlementFunction.Agricultural;
 
-            // 默认 → 农业
+ // 默认 → 农业
             return SettlementFunction.Agricultural;
         }
 
-        /// <summary>推导聚落形态</summary>
+ /// <summary>推导聚落形态</summary>
         private static SettlementType DeriveSettlementType(TileData tile, BurgData burg)
         {
-            // 瓶颈+军事功能 → 堡
+ // 瓶颈+军事功能 → 堡
             if (burg.bottleneckType != BottleneckType.None &&
                 burg.primaryFunction == SettlementFunction.Military)
                 return SettlementType.Fort;
 
-            // 港口+商业 → 城
+ // 港口+商业 → 城
             if (burg.portTier >= PortTier.IntermediatePort &&
                 burg.primaryFunction == SettlementFunction.Commercial)
                 return SettlementType.City;
 
-            // 矿业 → 村镇（矿业村镇，后期可升级为城）
+ // 矿业 → 村镇（矿业村镇，后期可升级为城）
             if (burg.primaryFunction == SettlementFunction.Mining)
                 return SettlementType.Village;
 
-            // 默认 → 村镇
+ // 默认 → 村镇
             return SettlementType.Village;
         }
 
-        /// <summary>推导城的形态</summary>
+ /// <summary>推导城的形态</summary>
         private static CityForm DeriveCityForm(TileData tile, BurgData burg)
         {
-            // 港口城市 → 水城或不规则
+ // 港口城市 → 水城或不规则
             if (burg.portTier >= PortTier.RiverPort)
                 return tile.isRiver ? CityForm.WaterCity : CityForm.Irregular;
 
-            // 山地城市 → 山城
+ // 山地城市 → 山城
             if (tile.elevation01 > 0.6f)
                 return CityForm.MountainCity;
 
-            // 平原+行政 → 方城
+ // 平原+行政 → 方城
             if (burg.primaryFunction == SettlementFunction.Administrative &&
                 tile.elevation01 < 0.4f)
                 return CityForm.Square;
 
-            // 默认 → 圆城
+ // 默认 → 圆城
             return CityForm.Circular;
         }
 
-        /// <summary>推导堡垒亚型</summary>
+ /// <summary>推导堡垒亚型</summary>
         private static FortSubtype DeriveFortSubtype(TileData tile, BurgData burg)
         {
-            // 关口堡
+ // 关口堡
             if (burg.bottleneckType == BottleneckType.MountainPass ||
                 burg.bottleneckType == BottleneckType.CanyonPass)
                 return FortSubtype.PassFort;
 
-            // 河口堡
+ // 河口堡
             if (burg.bottleneckType == BottleneckType.StraitCrossing ||
                 (burg.portTier >= PortTier.RiverPort && tile.isCoast))
                 return FortSubtype.EstuaryFort;
 
-            // 高地堡
+ // 高地堡
             if (tile.elevation01 > 0.6f && tile.isLand)
                 return FortSubtype.HighlandKeep;
 
-            // 平原屯堡
+ // 平原屯堡
             if (tile.elevation01 < 0.4f && burg.primaryFunction == SettlementFunction.Military)
                 return FortSubtype.PlainGarrison;
 
-            // 坞堡庄园（默认内陆）
+ // 坞堡庄园（默认内陆）
             return FortSubtype.ManorFort;
         }
 
-        /// <summary>推导升级路线</summary>
+ /// <summary>推导升级路线</summary>
         private static UpgradePath DeriveUpgradePath(TileData tile, BurgData burg)
         {
             return burg.primaryFunction switch
@@ -245,11 +241,9 @@ namespace CivilizationEvolution.Map
             };
         }
 
-        // ===== 升级路线：等级提升检查 =====
+ // ===== 升级路线：等级提升检查 =====
 
-        /// <summary>
-        /// 检查聚落是否可以升级到下一等级
-        /// </summary>
+ /// 检查聚落是否可以升级到下一等级
         public static bool CanLevelUp(BurgData burg, out string reason)
         {
             reason = "";
@@ -260,7 +254,7 @@ namespace CivilizationEvolution.Map
                 return false;
             }
 
-            // 形态约束：村镇最高到Ⅱ级（集镇），极少数交通要道可到Ⅲ级
+ // 形态约束：村镇最高到Ⅱ级（集镇），极少数交通要道可到Ⅲ级
             if (burg.settlementType == SettlementType.Village && nextLevel >= SettlementLevel.LevelIII)
             {
                 bool isTransportHub = burg.bottleneckType != BottleneckType.None ||
@@ -272,7 +266,7 @@ namespace CivilizationEvolution.Map
                 }
             }
 
-            // 发展度要求
+ // 发展度要求
             float[] devRequirements = { 0f, 15f, 35f, 60f, 85f };
             if (burg.development < devRequirements[(int)nextLevel])
             {
@@ -280,7 +274,7 @@ namespace CivilizationEvolution.Map
                 return false;
             }
 
-            // 人口要求
+ // 人口要求
             float[] popRequirements = { 0f, 500f, 2000f, 8000f, 20000f };
             if (burg.population < popRequirements[(int)nextLevel])
             {
@@ -288,24 +282,24 @@ namespace CivilizationEvolution.Map
                 return false;
             }
 
-            // Ⅲ级以上需要城墙
+ // Ⅲ级以上需要城墙
             if (nextLevel >= SettlementLevel.LevelIII && burg.wallLevel < WallLevel.EarthenRampart)
             {
                 reason = "Ⅲ级以上需要城墙防御";
                 return false;
             }
 
-            // Ⅳ级（都会）需要确定城市重心
+ // Ⅳ级（都会）需要确定城市重心
             if (nextLevel == SettlementLevel.LevelIV && burg.cityFocus == CityFocus.Balanced)
             {
-                // 自动推导重心
+ // 自动推导重心
                 burg.cityFocus = DeriveCityFocus(burg);
             }
 
             return true;
         }
 
-        /// <summary>推导城市重心（根据功能组合）</summary>
+ /// <summary>推导城市重心（根据功能组合）</summary>
         public static CityFocus DeriveCityFocus(BurgData burg)
         {
             if (burg.primaryFunction.HasFlag(SettlementFunction.Military) &&
@@ -335,13 +329,13 @@ namespace CivilizationEvolution.Map
             return CityFocus.Balanced;
         }
 
-        /// <summary>执行升级</summary>
+ /// <summary>执行升级</summary>
         public static void PerformLevelUp(BurgData burg)
         {
             burg.settlementLevel++;
             burg.evolutionStage = EvolutionStage.Transformed;
 
-            // 升级时提升城墙
+ // 升级时提升城墙
             if (burg.settlementLevel >= SettlementLevel.LevelIII &&
                 burg.wallLevel < WallLevel.StoneWall)
             {
@@ -350,7 +344,7 @@ namespace CivilizationEvolution.Map
                     : WallLevel.StoneWall;
             }
 
-            // Ⅳ级以上确定城形
+ // Ⅳ级以上确定城形
             if (burg.settlementLevel >= SettlementLevel.LevelIV &&
                 burg.cityForm == CityForm.WalledTown)
             {
@@ -362,11 +356,9 @@ namespace CivilizationEvolution.Map
             Debug.Log($"[SettlementTypology] {burg.burgName} 升级到 {burg.settlementLevel}");
         }
 
-        // ===== 形态约束检查 =====
+ // ===== 形态约束检查 =====
 
-        /// <summary>
-        /// 检查形态-等级约束（软性规则，AI遵循，玩家可突破）
-        /// </summary>
+ /// 检查形态-等级约束（软性规则，AI遵循，玩家可突破）
         public static bool CheckFormLevelConstraint(BurgData burg)
         {
             return burg.settlementLevel switch
@@ -377,7 +369,7 @@ namespace CivilizationEvolution.Map
             };
         }
 
-        /// <summary>获取形态描述</summary>
+ /// <summary>获取形态描述</summary>
         public static string GetFullDescription(BurgData burg)
         {
             string level = burg.settlementLevel switch

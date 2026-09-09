@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CivilizationEvolution.War
 {
@@ -16,7 +16,7 @@ namespace CivilizationEvolution.War
         public int beneficiaryId = -1; // 受益人（谈判后选定——继承法线外者）
         public List<int> participants = new List<int>(); // 参战政权（号召加入）
         public List<int> contributors = new List<int>(); // 有贡献的政权（分战利品资格）
-        /// <summary>关联的 WarState（战争结算——分数制——圣战方胜→受益人谈判）</summary>
+ /// <summary>关联的 WarState（战争结算——分数制——圣战方胜→受益人谈判）</summary>
         public int linkedWarId = -1;
     }
 }

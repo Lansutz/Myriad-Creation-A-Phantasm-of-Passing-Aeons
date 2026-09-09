@@ -1,17 +1,15 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CivilizationEvolution.Core;
 
 namespace CivilizationEvolution.Culture
 {
-    /// <summary>
-    /// 地名语义组合引擎（2026-09-03 用户设计——学《地图上发生的事》更细）：
-    /// 词干（地形/人名/族群名）× 语义后缀类 → 地名
-    /// 自由组合受规则限制（合法语义对）——输出=语言真实词形（非直译）
-    /// 例：山崖+城=山崖之城（语言内合成）｜建城者名+城=亚历山大城式纪念名
-    /// </summary>
+ /// 地名语义组合引擎（——学《地图上发生的事》更细）：
+ /// 词干（地形/人名/族群名）× 语义后缀类 → 地名
+ /// 自由组合受规则限制（合法语义对）——输出=语言真实词形（非直译）
+ /// 例：山崖+城=山崖之城（语言内合成）｜建城者名+城=亚历山大城式纪念名
     public static class PlaceNameGenerator
     {
-        /// <summary>语义允许矩阵（词干地形类 → 可配后缀类）——规则限制核心</summary>
+ /// <summary>语义允许矩阵（词干地形类 → 可配后缀类）——规则限制核心</summary>
         private static readonly Dictionary<string, HashSet<string>> AllowedSuffixes = new Dictionary<string, HashSet<string>>
         {
             { "mountain", new HashSet<string> { "city", "fort", "region", "home" } },
@@ -26,7 +24,7 @@ namespace CivilizationEvolution.Culture
             { "highland", new HashSet<string> { "fort", "region", "home" } },
         };
 
-        /// <summary>查语言词汇（词干或后缀——按语义类）</summary>
+ /// <summary>查语言词汇（词干或后缀——按语义类）</summary>
         public static string FindWord(List<PlaceSuffixDef> words, string semantic)
         {
             if (words == null) return "";
@@ -35,7 +33,7 @@ namespace CivilizationEvolution.Culture
             return "";
         }
 
-        /// <summary>是否允许组合（地形语义 × 后缀语义——规则限制）</summary>
+ /// <summary>是否允许组合（地形语义 × 后缀语义——规则限制）</summary>
         public static bool CanCombine(string stemSemantic, string suffixSemantic)
         {
             if (suffixSemantic == "region" || suffixSemantic == "home") return true; // 模糊地区通配
@@ -44,10 +42,8 @@ namespace CivilizationEvolution.Culture
             return allowed.Contains(suffixSemantic);
         }
 
-        /// <summary>
-        /// 组合生成地名（词干+后缀——语言真实词形——规则过滤）：
-        /// stemWord 词干词（地形词或人名/族群名）——找不到合法组合返回空
-        /// </summary>
+ /// 组合生成地名（词干+后缀——语言真实词形——规则过滤）：
+ /// stemWord 词干词（地形词或人名/族群名）——找不到合法组合返回空
         public static string Combine(string stemWord, string suffixWord, string stemSemantic, string suffixSemantic)
         {
             if (string.IsNullOrEmpty(stemWord) || string.IsNullOrEmpty(suffixWord)) return "";
@@ -55,10 +51,8 @@ namespace CivilizationEvolution.Culture
             return stemWord + suffixWord; // 语言合成（修饰在前——后缀置后——语序配置待扩展）
         }
 
-        /// <summary>
-        /// 从语言生成地名（地形语义→查词干——后缀语义→查词——组合）：
-        /// 例：Generate("cliff", "city", lang) → 山崖词+城词
-        /// </summary>
+ /// 从语言生成地名（地形语义→查词干——后缀语义→查词——组合）：
+ /// 例：Generate("cliff", "city", lang) → 山崖词+城词
         public static string Generate(string stemSemantic, string suffixSemantic, LanguageDef lang)
         {
             if (lang == null) return "";
@@ -69,7 +63,7 @@ namespace CivilizationEvolution.Culture
             return stem + suffix;
         }
 
-        /// <summary>纪念名（建城者/名人 + 城语义——事件命名——亚历山大式）</summary>
+ /// <summary>纪念名（建城者/名人 + 城语义——事件命名——亚历山大式）</summary>
         public static string FounderCity(string founderName, LanguageDef lang)
         {
             if (string.IsNullOrEmpty(founderName) || lang == null) return "";

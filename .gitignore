@@ -1,14 +1,64 @@
-# 日志与调试输出
+# ===== Unity 标准忽略 =====
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# Unity 自动生成
+sysinfo.txt
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# 碰撞器网格自动生成
+[Aa]ssets/[Aa]rtifacts/
+
+# ===== 日志与调试输出 =====
 debug.log
 *.log
-# 验证工作区（编译日志/测试产物/报告），不入库
-.reverse/
 
-# 编译日志（Unity batchmode 输出）
+# 编译日志（Unity batchmode 输出 / 离线编译）
 compile_log*.txt
 
-# Il2CppDumper 解包工具（临时文件，含第三方密钥）
+# ===== 验证工作区（编译日志/测试产物/报告），不入库 =====
+.reverse/
+
+# ===== 临时编译工程（离线 dotnet build 用）=====
+_fc*/
+_temp*/
+
+# ===== IDE / 编辑器 =====
+.vs/
+.vscode/
+.idea/
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===== Il2CppDumper 解包工具（临时文件，含第三方密钥）=====
 Il2CppDumper/
 *.dll
 !Assets/**/*.dll
 
+# ===== 其他临时 =====
+*.tmp
+*.bak
+*.orig

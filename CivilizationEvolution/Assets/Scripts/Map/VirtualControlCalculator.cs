@@ -1,13 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 
 namespace CivilizationEvolution.Map
 {
-    /// <summary>
-    /// 三角形（三个控制点索引 + 外接圆）
-    /// </summary>
+ /// 三角形（三个控制点索引 + 外接圆）
     public struct ControlTriangle
     {
         public int a, b, c; // 控制点索引
@@ -55,38 +53,33 @@ namespace CivilizationEvolution.Map
         }
     }
 
-    /// <summary>
-    /// 虚控制范围计算结果（渲染用）
-    /// </summary>
+ /// 虚控制范围计算结果（渲染用）
     public class VirtualControlResult
     {
-        /// <summary>有效三角形列表（Delaunay + 角度 + 同政权）</summary>
+ /// <summary>有效三角形列表（Delaunay + 角度 + 同政权）</summary>
         public List<ControlTriangle> triangles = new List<ControlTriangle>();
-        /// <summary>虚控制地块集合（地块索引 → 政权ID）</summary>
+ /// <summary>虚控制地块集合（地块索引 → 政权ID）</summary>
         public Dictionary<int, int> virtualControlTiles = new Dictionary<int, int>();
-        /// <summary>控制点之间的连接边</summary>
+ /// <summary>控制点之间的连接边</summary>
         public List<(int a, int b)> connections = new List<(int, int)>();
     }
 
-    /// <summary>
-    /// 三角虚控制范围计算器（渲染层工具）。
-    /// 设计原则（用户定稿）：
-    /// 1. 控制点 = 有主要聚落(Burg)的地块，且属于同一政权
-    /// 2. 任意三个同政权控制点 → Delaunay 三角剖分
-    /// 3. 三点共线/角度太小(＜15°) → 无效，不形成控制
-    /// 4. 有效三角形内部 = 虚控制范围（影响力，半透明显示，非实际占领）
-    /// 5. 两点之间：中间有该政权占领地 → 连接；没有 → 不连接（飞地）
-    /// 6. 这是政权图层渲染和显示层面的，不是复杂模拟系统
-    ///
-    /// 模拟早期文明的"点-线-面"控制模式：
-    /// 点=聚落，线=聚落间联系，面=三个聚落形成的三角形影响力范围
-    /// </summary>
+ /// 三角虚控制范围计算器（渲染层工具）。
+ /// 设计原则：
+ /// 1. 控制点 = 有主要聚落(Burg)的地块，且属于同一政权
+ /// 2. 任意三个同政权控制点 → Delaunay 三角剖分
+ /// 3. 三点共线/角度太小(＜15°) → 无效，不形成控制
+ /// 4. 有效三角形内部 = 虚控制范围（影响力，半透明显示，非实际占领）
+ /// 5. 两点之间：中间有该政权占领地 → 连接；没有 → 不连接（飞地）
+ /// 6. 这是政权图层渲染和显示层面的，不是复杂模拟系统
+ /// 模拟早期文明的"点-线-面"控制模式：
+ /// 点=聚落，线=聚落间联系，面=三个聚落形成的三角形影响力范围
     public static class VirtualControlCalculator
     {
-        /// <summary>有效三角形最小角度（度数）</summary>
+ /// <summary>有效三角形最小角度（度数）</summary>
         public const float MinTriangleAngleDeg = 15f;
 
-        /// <summary>计算虚控制范围（渲染用）</summary>
+ /// <summary>计算虚控制范围（渲染用）</summary>
         public static VirtualControlResult Calculate(
             Dictionary<int, BurgData> burgs,
             TileData[] tiles,
@@ -96,7 +89,7 @@ namespace CivilizationEvolution.Map
             var result = new VirtualControlResult();
             if (burgs == null || burgs.Count == 0 || tiles == null) return result;
 
-            // 1. 收集有效控制点（同政权分组）
+ // 1. 收集有效控制点（同政权分组）
             var controlPointsByRealm = new Dictionary<int, List<(int burgId, Vector2 pos)>>();
             foreach (var kv in burgs)
             {
@@ -112,7 +105,7 @@ namespace CivilizationEvolution.Map
                 controlPointsByRealm[realmId].Add((kv.Key, new Vector2(x, y)));
             }
 
-            // 2. 对每个政权的控制点进行 Delaunay 三角剖分
+ // 2. 对每个政权的控制点进行 Delaunay 三角剖分
             foreach (var kv in controlPointsByRealm)
             {
                 int realmId = kv.Key;
@@ -124,7 +117,7 @@ namespace CivilizationEvolution.Map
 
                 var triangles = BowyerWatson(pointArray);
 
-                // 3. 有效三角形判定 + 虚控制范围标记
+ // 3. 有效三角形判定 + 虚控制范围标记
                 foreach (var tri in triangles)
                 {
                     if (!tri.isValid) continue;
@@ -137,14 +130,14 @@ namespace CivilizationEvolution.Map
                     MarkTriangleInteriorTiles(triWithOwner, pointArray, mapWidth, mapHeight, realmId, result);
                 }
 
-                // 4. 两点连接判定
+ // 4. 两点连接判定
                 CalculateConnections(points, tiles, mapWidth, mapHeight, realmId, result);
             }
 
             return result;
         }
 
-        /// <summary>Bowyer-Watson Delaunay 三角剖分</summary>
+ /// <summary>Bowyer-Watson Delaunay 三角剖分</summary>
         private static List<ControlTriangle> BowyerWatson(Vector2[] points)
         {
             var triangles = new List<ControlTriangle>();
@@ -201,7 +194,7 @@ namespace CivilizationEvolution.Map
             return triangles;
         }
 
-        /// <summary>标记三角形内部地块为虚控制范围</summary>
+ /// <summary>标记三角形内部地块为虚控制范围</summary>
         private static void MarkTriangleInteriorTiles(
             ControlTriangle tri, Vector2[] points, int mapWidth, int mapHeight,
             int realmId, VirtualControlResult result)
@@ -236,7 +229,7 @@ namespace CivilizationEvolution.Map
         private static float Sign(Vector2 p1, Vector2 p2, Vector2 p3) =>
             (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
 
-        /// <summary>计算两点之间的连接（中间是否有该政权占领地）</summary>
+ /// <summary>计算两点之间的连接（中间是否有该政权占领地）</summary>
         private static void CalculateConnections(
             List<(int burgId, Vector2 pos)> points, TileData[] tiles,
             int mapWidth, int mapHeight, int realmId, VirtualControlResult result)

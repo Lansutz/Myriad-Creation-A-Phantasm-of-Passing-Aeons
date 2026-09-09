@@ -5,18 +5,16 @@ using TMPro;
 
 namespace CivilizationEvolution.UI
 {
-    /// <summary>
-    /// 数据编辑器菜单（代码动态生成）：选择编辑种族/文化/宗教/兵种/建筑/物资。
-    /// 挂在主菜单 Canvas 下，点"编辑器"显示。
-    /// </summary>
+ /// 数据编辑器菜单（代码动态生成）：选择编辑种族/文化/宗教/兵种/建筑/物资。
+ /// 挂在主菜单 Canvas 下，点"编辑器"显示。
     public class DataEditorMenu : MonoBehaviour
     {
         private GameObject _root;
 
-        /// <summary>构建数据编辑器菜单</summary>
+ /// <summary>构建数据编辑器菜单</summary>
         public void Build(Transform parent, Action onClose)
         {
-            // 半透明遮罩
+ // 半透明遮罩
             var overlayObj = new GameObject("DataEditorOverlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             _root = overlayObj;
             var ort = overlayObj.GetComponent<RectTransform>();
@@ -25,7 +23,7 @@ namespace CivilizationEvolution.UI
             overlayObj.GetComponent<Image>().color = new Color(0, 0, 0, 0.7f);
             overlayObj.transform.SetParent(parent, false);
 
-            // 面板
+ // 面板
             var panelObj = new GameObject("Panel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             var prt = panelObj.GetComponent<RectTransform>();
             prt.anchorMin = new Vector2(0.5f, 0.5f); prt.anchorMax = new Vector2(0.5f, 0.5f);
@@ -35,10 +33,10 @@ namespace CivilizationEvolution.UI
             panelObj.transform.SetParent(overlayObj.transform, false);
 
             float y = 220;
-            // 标题
+ // 标题
             CreateText(panelObj.transform, "Title", "编辑器", 32, new Color(0.88f, 0.75f, 0.45f, 1f), FontStyles.Bold, new Vector2(0, y));
             y -= 50;
-            // 分隔线
+ // 分隔线
             var line = new GameObject("Line", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             var lrt = line.GetComponent<RectTransform>();
             lrt.anchorMin = new Vector2(0.5f, 1f); lrt.anchorMax = new Vector2(0.5f, 1f);
@@ -48,7 +46,7 @@ namespace CivilizationEvolution.UI
             line.transform.SetParent(panelObj.transform, false);
             y -= 30;
 
-            // 编辑器选项
+ // 编辑器选项
             var editors = new (string name, string desc, Action action)[]
             {
                 ("种族编辑", "编辑种族属性、天赋、初始科技", () => OpenEditor("种族")),
@@ -66,7 +64,7 @@ namespace CivilizationEvolution.UI
                 y -= btnHeight + spacing;
             }
 
-            // 返回按钮
+ // 返回按钮
             y -= 10;
             CreateButton(panelObj.transform, "返回", new Vector2(0, y), new Vector2(160, 36), false, () => onClose?.Invoke());
 
@@ -84,14 +82,14 @@ namespace CivilizationEvolution.UI
             var btn = btnObj.GetComponent<Button>();
             btn.onClick.AddListener(() => onClick?.Invoke());
 
-            // 名称（左对齐）
+ // 名称（左对齐）
             CreateText(btnObj.transform, "Name", name, 20, new Color(0.88f, 0.75f, 0.45f, 1f), FontStyles.Bold,
                 new Vector2(-180, 0), TextAlignmentOptions.MidlineLeft, new Vector2(200, 28));
-            // 描述（右对齐）
+ // 描述（右对齐）
             CreateText(btnObj.transform, "Desc", desc, 14, new Color(0.55f, 0.55f, 0.60f, 1f), FontStyles.Normal,
                 new Vector2(100, 0), TextAlignmentOptions.MidlineRight, new Vector2(240, 20));
 
-            // 底部装饰线
+ // 底部装饰线
             var line = new GameObject("Line", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             var lrt = line.GetComponent<RectTransform>();
             lrt.anchorMin = Vector2.zero; lrt.anchorMax = new Vector2(1, 0);
@@ -137,7 +135,7 @@ namespace CivilizationEvolution.UI
         private void OpenEditor(string type)
         {
             Debug.Log($"[DataEditorMenu] 打开{type}编辑器（待实现具体编辑面板）");
-            // TODO: 打开对应的数据编辑器面板
+ // TODO: 打开对应的数据编辑器面板
         }
 
         public void Show() => _root?.SetActive(true);

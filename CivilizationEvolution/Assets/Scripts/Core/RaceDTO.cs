@@ -1,4 +1,4 @@
-using CivilizationEvolution.Race;
+﻿using CivilizationEvolution.Race;
 using System.Collections.Generic;
 using System;
 using CivilizationEvolution.Core;
@@ -34,7 +34,7 @@ namespace CivilizationEvolution.Core
         public float aridityTolerance;
         public float humidityTolerance;
         public float altitudeTolerance;
-        // DNA 基准与基因频率（v3 存档新增；旧档缺失字段走默认值）
+ // DNA 基准与基因频率（v3 存档新增；旧档缺失字段走默认值）
         public float intelligenceBaseline;
         public float martialBaseline;
         public float lifespanBaseYears;

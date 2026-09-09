@@ -1,41 +1,39 @@
-using System.Text;
+﻿using System.Text;
 using System;
 using UnityEngine;
 using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Character
 {
-    /// <summary>
-    /// 原型学术画像描述器（性格组合→学术化画像短句——CK3 trait 描述风格）
-    /// 非称号：原型=性格的学术画像（大五人格式维度词汇）——
-    /// 称号/绰号/诨号/尊号是另一系统（行为后验——见 EpithetSystem）
-    /// 108 特质组合全覆盖：任意七维画像总能生成描述（维度高/中/低三分段）
-    /// </summary>
+ /// 原型学术画像描述器（性格组合→学术化画像短句——CK3 trait 描述风格）
+ /// 非称号：原型=性格的学术画像（大五人格式维度词汇）——
+ /// 称号/绰号/诨号/尊号是另一系统（行为后验——见 EpithetSystem）
+ /// 108 特质组合全覆盖：任意七维画像总能生成描述（维度高/中/低三分段）
     public static class PersonalityArchetype
     {
-        // ===== 学术维度（七维 → 大五式人格维度） =====
+ // ===== 学术维度（七维 → 大五式人格维度） =====
 
-        /// <summary>进取性（大胆映射——≈外向性/敢为性）</summary>
+ /// <summary>进取性（大胆映射——≈外向性/敢为性）</summary>
         public static float Assertiveness(CharacterData c)
             => c == null ? 0.5f : (c.boldness + 100f) / 200f;
 
-        /// <summary>仁厚性（悲悯×荣誉——≈宜人性——心性宽厚与信义）</summary>
+ /// <summary>仁厚性（悲悯×荣誉——≈宜人性——心性宽厚与信义）</summary>
         public static float Benevolence(CharacterData c)
             => c == null ? 0.5f : ((c.compassion + 100f) / 200f * 0.6f + (c.honor + 100f) / 200f * 0.4f);
 
-        /// <summary>支配欲（贪婪×报复——≈宜人性负向/支配性）</summary>
+ /// <summary>支配欲（贪婪×报复——≈宜人性负向/支配性）</summary>
         public static float Dominance(CharacterData c)
             => c == null ? 0.5f : ((c.greed + 100f) / 200f * 0.5f + (c.vengefulness + 100f) / 200f * 0.5f);
 
-        /// <summary>审慎性（理性映射——≈尽责性/理智性）</summary>
+ /// <summary>审慎性（理性映射——≈尽责性/理智性）</summary>
         public static float Prudence(CharacterData c)
             => c == null ? 0.5f : (c.rationality + 100f) / 200f;
 
-        /// <summary>信仰度（虔信映射——独立维度）</summary>
+ /// <summary>信仰度（虔信映射——独立维度）</summary>
         public static float Devoutness(CharacterData c)
             => c == null ? 0.5f : (c.piety + 100f) / 200f;
 
-        // ===== 学术短语库（高/中/低三分段——大五人格测试报告式学术语） =====
+ // ===== 学术短语库（高/中/低三分段——大五人格测试报告式学术语） =====
 
         private static string[] AssertiveDesc = { "进取性偏低，性喜守成，不尚开拓", "进取性居中，能守能攻，视势而为", "进取性突出，锐意开拓，敢为天下先" };
         private static string[] BenevolentDesc = { "宜人性偏低，心性峻刻，寡恩薄情", "宜人性适中，恩怨分明，不失仁厚", "宜人性偏高，宽厚温良，待人接物以仁" };
@@ -45,10 +43,8 @@ namespace CivilizationEvolution.Character
 
         private static string Segment(float v) => v >= 0.65f ? "2" : v <= 0.35f ? "0" : "1";
 
-        /// <summary>
-        /// 学术画像短句（CK3 trait 描述风格——散文式学术语）：
-        /// 主句=进取×仁厚交叉画像（人格底色）＋ 修饰句=其余显著维度（±0.15 外）
-        /// </summary>
+ /// 学术画像短句（CK3 trait 描述风格——散文式学术语）：
+ /// 主句=进取×仁厚交叉画像（人格底色）＋ 修饰句=其余显著维度（±0.15 外）
         public static string Describe(CharacterData c)
         {
             if (c == null) return "性情未明";
@@ -66,11 +62,11 @@ namespace CivilizationEvolution.Character
             string pruS = PrudentDesc[int.Parse(Segment(pru))];
             string devS = DevoutDesc[int.Parse(Segment(dev))];
 
-            // 主句：人格底色（进取×仁厚交叉——两种气质大类）
+ // 主句：人格底色（进取×仁厚交叉——两种气质大类）
             bool assertive = asrt >= 0.5f;
             bool benevolent = bene >= 0.5f;
-            // 主句：纯性格底色（中性——不挂钩身份/职业——同一性格可以是
-            // 农人也可以是君王——称号/尊号是另一系统的产出）
+ // 主句：纯性格底色（中性——不挂钩身份/职业——同一性格可以是
+ // 农人也可以是君王——称号/尊号是另一系统的产出）
             if (assertive && benevolent)
                 sb.Append("性进取而心仁厚：");
             else if (assertive && !benevolent)
@@ -82,7 +78,7 @@ namespace CivilizationEvolution.Character
 
             sb.Append(asrtS).Append("；").Append(beneS).Append("；");
 
-            // 修饰句：显著维度（偏离中庸 ±0.15 外——突出特征补充）
+ // 修饰句：显著维度（偏离中庸 ±0.15 外——突出特征补充）
             bool any = false;
             if (Mathf.Abs(dom - 0.5f) > 0.15f) { sb.Append(domS); any = true; }
             if (Mathf.Abs(pru - 0.5f) > 0.15f) { if (any) sb.Append("；"); sb.Append(pruS); any = true; }
@@ -91,7 +87,7 @@ namespace CivilizationEvolution.Character
             return sb.ToString();
         }
 
-        /// <summary>原型类型标签（学术画像简名——非称号——内部归类用）</summary>
+ /// <summary>原型类型标签（学术画像简名——非称号——内部归类用）</summary>
         public static string TypeName(CharacterData c)
         {
             if (c == null) return "未知";
@@ -108,13 +104,11 @@ namespace CivilizationEvolution.Character
         }
     }
 
-    /// <summary>
-    /// 称号/绰号/诨号系统（行为后验荣誉——与原型[性格画像]分离）：
-    /// 三档：普通绰号（中性事实——征服者/狐狸/狮子……）→
-    /// 伟大者 the Great（评价≥优秀线——区域影响力中等偏上——发放较多——
-    /// 历史参照：阿尔弗雷德/卡努特——不是严苛评价）→
-    /// 传奇特殊（征服王/冒险王/诗人王——传奇线+领域——极难——亚历山大级）
-    /// 谥号（死后——华夏式——按一生行为定谥）
-    /// </summary>
+ /// 称号/绰号/诨号系统（行为后验荣誉——与原型[性格画像]分离）：
+ /// 三档：普通绰号（中性事实——征服者/狐狸/狮子……）→
+ /// 伟大者 the Great（评价≥优秀线——区域影响力中等偏上——发放较多——
+ /// 历史参照：阿尔弗雷德/卡努特——不是严苛评价）→
+ /// 传奇特殊（征服王/冒险王/诗人王——传奇线+领域——极难——亚历山大级）
+ /// 谥号（死后——华夏式——按一生行为定谥）
 
 }

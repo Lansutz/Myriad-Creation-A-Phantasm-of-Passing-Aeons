@@ -1,14 +1,12 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using System;
 
 namespace CivilizationEvolution.Race
 {
-    /// <summary>
-    /// 种族数据
-    /// 社会层面差异全部由【变革性】单一数值管控，不设其他社会类细分参数
-    /// </summary>
+ /// 种族数据
+ /// 社会层面差异全部由【变革性】单一数值管控，不设其他社会类细分参数
     [System.Serializable]
     public class RaceData
     {
@@ -30,21 +28,19 @@ namespace CivilizationEvolution.Race
         [UnityEngine.Range(0.5f, 2.0f)] public float olfactorySensitivity = 1.0f;
         [UnityEngine.Range(0.5f, 2.0f)] public float cognitiveCapacity = 1.0f;
 
-        /// <summary>
-        /// 变革性 0-100（唯一社会维度）
-        /// 所有社会层面种族差异由此单一数值管控：
-        /// - 社会结构倾向（高→松散平等，低→森严等级）
-        /// - 阶层容忍度（高→阶层流动大，低→阶层固化）
-        /// - 暴力倾向基线（高→冲突频繁但易和解，低→隐忍但爆发剧烈）
-        /// - 群居度（高→个体主义，低→集体主义）
-        /// - 文明适配性（高→适应新环境快，低→坚守传统）
-        /// - 社会发展速率（高→文化成熟快，低→稳定但缓慢）
-        /// - 文化演化偏向（高→创新分支多，低→正统传承强）
-        /// </summary>
+ /// 变革性 0-100（唯一社会维度）
+ /// 所有社会层面种族差异由此单一数值管控：
+ /// - 社会结构倾向（高→松散平等，低→森严等级）
+ /// - 阶层容忍度（高→阶层流动大，低→阶层固化）
+ /// - 暴力倾向基线（高→冲突频繁但易和解，低→隐忍但爆发剧烈）
+ /// - 群居度（高→个体主义，低→集体主义）
+ /// - 文明适配性（高→适应新环境快，低→坚守传统）
+ /// - 社会发展速率（高→文化成熟快，低→稳定但缓慢）
+ /// - 文化演化偏向（高→创新分支多，低→正统传承强）
         [Header("变革性（唯一社会维度）")]
         [UnityEngine.Range(0f, 100f)] public float transformativity = 50f;
 
-        // ===== 变革性派生计算 =====
+ // ===== 变革性派生计算 =====
         public float CultureMaturityRate => 0.5f + transformativity / 100f;
         public float SeparationResistanceMod => 1f - transformativity / 200f;
         public float FusionResistanceMod => 1f - transformativity / 150f;
@@ -83,7 +79,7 @@ namespace CivilizationEvolution.Race
         [Header("DNA 基因频率（各基因座显性等位基因 A 的频率；列表未覆盖的基因座取默认 0.5）")]
         public List<LocusFrequency> locusFrequencies = new List<LocusFrequency>();
 
-        /// <summary>获取基因座显性等位基因 A 的频率（未配置返回 0.5）</summary>
+ /// <summary>获取基因座显性等位基因 A 的频率（未配置返回 0.5）</summary>
         public float GetLocusAFrequency(DnaLocus locus)
         {
             if (locusFrequencies != null)
@@ -104,7 +100,7 @@ namespace CivilizationEvolution.Race
         [UnityEngine.Range(0f, 1f)] public float humidityTolerance = 0.5f;
         [UnityEngine.Range(0f, 1f)] public float altitudeTolerance = 0.5f;
 
-        /// <summary>计算在特定地块的环境适配度 0~1</summary>
+ /// <summary>计算在特定地块的环境适配度 0~1</summary>
         public float CalculateEnvironmentFitness(TileData tile)
         {
             float tempScore = tile.annualTemp < 10f
@@ -124,7 +120,7 @@ namespace CivilizationEvolution.Race
             return Mathf.Clamp(tempScore * 0.35f + humidScore * 0.35f + altScore * 0.3f, 0.1f, 1f) * biomeScore;
         }
 
-        /// <summary>计算人口自然增长率</summary>
+ /// <summary>计算人口自然增长率</summary>
         public float CalculatePopulationGrowthRate(TileData tile, float satisfaction)
         {
             float envFitness = CalculateEnvironmentFitness(tile);
@@ -134,7 +130,7 @@ namespace CivilizationEvolution.Race
             return baseRate * satisfactionMod * envMod;
         }
 
-        /// <summary>计算疾病感染概率修正</summary>
+ /// <summary>计算疾病感染概率修正</summary>
         public float GetDiseaseInfectionMod()
         {
             return 1f / diseaseResistance;

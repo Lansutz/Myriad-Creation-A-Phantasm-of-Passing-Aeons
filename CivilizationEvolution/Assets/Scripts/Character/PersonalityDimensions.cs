@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
@@ -12,7 +12,7 @@ namespace CivilizationEvolution.Character
 {
     public static class PersonalityDimensions
     {
-        /// <summary>七维固定顺序（遍历、数组下标、模板 bias 对齐均以此为唯一来源）</summary>
+ /// <summary>七维固定顺序（遍历、数组下标、模板 bias 对齐均以此为唯一来源）</summary>
         public static readonly PersonalityDimension[] All =
         {
             PersonalityDimension.Boldness,
@@ -24,7 +24,7 @@ namespace CivilizationEvolution.Character
             PersonalityDimension.Piety
         };
 
-        /// <summary>数据/存档/事件 JSON 使用的字符串键（与历史拼写完全一致，保证旧数据兼容）</summary>
+ /// <summary>数据/存档/事件 JSON 使用的字符串键（与历史拼写完全一致，保证旧数据兼容）</summary>
         public static string Key(this PersonalityDimension dim) => dim switch
         {
             PersonalityDimension.Boldness => "boldness",
@@ -37,7 +37,7 @@ namespace CivilizationEvolution.Character
             _ => ""
         };
 
-        /// <summary>中文显示名</summary>
+ /// <summary>中文显示名</summary>
         public static string DisplayName(this PersonalityDimension dim) => dim switch
         {
             PersonalityDimension.Boldness => "大胆",
@@ -50,7 +50,7 @@ namespace CivilizationEvolution.Character
             _ => "?"
         };
 
-        /// <summary>字符串键解析为枚举（容错：无法识别返回 false，供数据驱动/事件入口使用）</summary>
+ /// <summary>字符串键解析为枚举（容错：无法识别返回 false，供数据驱动/事件入口使用）</summary>
         public static bool TryParse(string key, out PersonalityDimension dim)
         {
             if (!string.IsNullOrEmpty(key))

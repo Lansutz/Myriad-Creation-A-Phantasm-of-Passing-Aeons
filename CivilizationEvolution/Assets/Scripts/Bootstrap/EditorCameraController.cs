@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CivilizationEvolution.Bootstrap
 {
@@ -17,7 +17,7 @@ namespace CivilizationEvolution.Bootstrap
         {
             if (targetCamera == null) return;
 
-            // 右键拖拽平移
+ // 右键拖拽平移
             if (Input.GetMouseButtonDown(1))
             {
                 _isPanning = true;
@@ -35,7 +35,7 @@ namespace CivilizationEvolution.Bootstrap
                 _lastMousePos = Input.mousePosition;
             }
 
-            // 滚轮缩放
+ // 滚轮缩放
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (Mathf.Abs(scroll) > 0.01f)
             {
@@ -44,7 +44,7 @@ namespace CivilizationEvolution.Bootstrap
                     minZoom, maxZoom);
             }
 
-            // WASD平移
+ // WASD平移
             float h = Input.GetAxis("Horizontal");
             float v = Input.GetAxis("Vertical");
             if (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f)

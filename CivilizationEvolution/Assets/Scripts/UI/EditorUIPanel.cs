@@ -7,18 +7,16 @@ using UnityEngine.UI;
 
 namespace CivilizationEvolution.UI
 {
-    /// <summary>
-    /// 地图编辑器 UI 面板
-    /// 代码动态生成浮动工具栏：模式切换、8种工具、画笔大小、省份选择、Burg类型、撤销重做
-    /// 对齐 FantasyMapSimulator: CustomMapImageLayer / MapBrush / cursorPixelPosition
-    /// </summary>
+ /// 地图编辑器 UI 面板
+ /// 代码动态生成浮动工具栏：模式切换、8种工具、画笔大小、省份选择、Burg类型、撤销重做
+ /// 对齐 FantasyMapSimulator: CustomMapImageLayer / MapBrush / cursorPixelPosition
     public class EditorUIPanel : MonoBehaviour
     {
         private MapEditor _editor;
         private MapSaveSystem _saveSystem;
         private MapRenderer _renderer;
 
-        // UI 引用
+ // UI 引用
         private GameObject _panelRoot;
         private Text _titleText;
         private Text _statusText;
@@ -32,7 +30,7 @@ namespace CivilizationEvolution.UI
         private Button _undoBtn;
         private Button _redoBtn;
 
-        // ===== 图层开关 =====
+ // ===== 图层开关 =====
         private Button _layerProvinceBordersBtn;
         private Button _layerBurgMarkersBtn;
         private Button _layerGridBtn;
@@ -63,13 +61,13 @@ namespace CivilizationEvolution.UI
         private static readonly Color TextColor = new Color(0.9f, 0.9f, 0.92f, 1f);
         private static readonly Color TextDimColor = new Color(0.6f, 0.6f, 0.65f, 1f);
 
-        /// <summary>初始化编辑器 UI 面板</summary>
+ /// <summary>初始化编辑器 UI 面板</summary>
         public void Initialize(MapRenderer renderer, MapEditor editor)
         {
             _renderer = renderer;
             _editor = editor;
-            // 双保险（查漏补缺：场景重建/时序——editor 引用可能为空——
-            // 从 renderer 懒取——仍空则跳过面板创建[编辑器模式才需]）
+ // 双保险（查漏补缺：场景重建/时序——editor 引用可能为空——
+ // 从 renderer 懒取——仍空则跳过面板创建[编辑器模式才需]）
             if (_editor == null && renderer != null)
                 _editor = renderer.GetMapEditor();
             if (_editor == null)
@@ -85,7 +83,7 @@ namespace CivilizationEvolution.UI
             Debug.Log("[EditorUIPanel] 编辑器UI面板已创建");
         }
 
-        /// <summary>切换面板显示/隐藏</summary>
+ /// <summary>切换面板显示/隐藏</summary>
         public void TogglePanel()
         {
             if (_panelRoot == null) return;
@@ -98,7 +96,7 @@ namespace CivilizationEvolution.UI
 
         private void Update()
         {
-            // 快捷键：E 切换编辑模式，Tab 切换面板，Ctrl+Z 撤销，Ctrl+Y 重做
+ // 快捷键：E 切换编辑模式，Tab 切换面板，Ctrl+Z 撤销，Ctrl+Y 重做
             if (Input.GetKeyDown(KeyCode.Tab))
                 TogglePanel();
 
@@ -113,7 +111,7 @@ namespace CivilizationEvolution.UI
                 if (Input.GetKeyDown(KeyCode.Y)) _editor.Redo();
             }
 
-            // 数字键 1-8 快速切换工具
+ // 数字键 1-8 快速切换工具
             if (Input.inputString.Length > 0 && char.IsDigit(Input.inputString[0]))
             {
                 int idx = Input.inputString[0] - '1';
@@ -124,7 +122,7 @@ namespace CivilizationEvolution.UI
             UpdateUIState();
         }
 
-        // ===== UI 创建 =====
+ // ===== UI 创建 =====
         private void CreatePanel()
         {
             var canvas = FindAnyObjectByType<Canvas>();
@@ -134,7 +132,7 @@ namespace CivilizationEvolution.UI
                 return;
             }
 
-            // 面板根节点
+ // 面板根节点
             _panelRoot = new GameObject("EditorPanel", typeof(RectTransform), typeof(Image));
             _panelRoot.transform.SetParent(canvas.transform, false);
             var panelRt = (RectTransform)_panelRoot.transform;
@@ -151,28 +149,28 @@ namespace CivilizationEvolution.UI
             float y = -12f;
             float contentWidth = 190f;
 
-            // 标题
+ // 标题
             _titleText = CreateText(_panelRoot.transform, "地图编辑器", 16, TextAnchor.MiddleCenter,
                 new Vector2(10f, y), new Vector2(contentWidth, 28f));
             _titleText.color = TextColor;
             y -= 34f;
 
-            // 编辑模式切换按钮
+ // 编辑模式切换按钮
             _toggleEditBtn = CreateButton(_panelRoot.transform, "编辑模式: 关",
                 new Vector2(10f, y), new Vector2(contentWidth, 32f));
             _toggleEditBtn.onClick.AddListener(() => _editor.ToggleEditMode());
             y -= 40f;
 
-            // 分隔线
+ // 分隔线
             CreateDivider(_panelRoot.transform, new Vector2(10f, y), contentWidth);
             y -= 12f;
 
-            // 工具标题
+ // 工具标题
             CreateText(_panelRoot.transform, "工具 (1-8)", 12, TextAnchor.MiddleLeft,
                 new Vector2(10f, y), new Vector2(contentWidth, 18f)).color = TextDimColor;
             y -= 22f;
 
-            // 工具按钮网格（4列2行）
+ // 工具按钮网格（4列2行）
             float btnW = 44f, btnH = 36f, gap = 4f;
             for (int i = 0; i < _toolList.Count; i++)
             {
@@ -188,11 +186,11 @@ namespace CivilizationEvolution.UI
             }
             y -= 2 * (btnH + gap) + 8f;
 
-            // 分隔线
+ // 分隔线
             CreateDivider(_panelRoot.transform, new Vector2(10f, y), contentWidth);
             y -= 12f;
 
-            // 画笔大小
+ // 画笔大小
             CreateText(_panelRoot.transform, "画笔大小", 12, TextAnchor.MiddleLeft,
                 new Vector2(10f, y), new Vector2(100f, 18f)).color = TextDimColor;
             _brushSizeText = CreateText(_panelRoot.transform, "1", 12, TextAnchor.MiddleRight,
@@ -209,7 +207,7 @@ namespace CivilizationEvolution.UI
             });
             y -= 30f;
 
-            // 省份 ID 输入（省份画笔用）
+ // 省份 ID 输入（省份画笔用）
             CreateText(_panelRoot.transform, "省份ID (绘省用)", 12, TextAnchor.MiddleLeft,
                 new Vector2(10f, y), new Vector2(contentWidth, 18f)).color = TextDimColor;
             y -= 22f;
@@ -222,7 +220,7 @@ namespace CivilizationEvolution.UI
             });
             y -= 34f;
 
-            // Burg 类型下拉（Burg放置用）
+ // Burg 类型下拉（Burg放置用）
             CreateText(_panelRoot.transform, "子地块类型 (放镇用)", 12, TextAnchor.MiddleLeft,
                 new Vector2(10f, y), new Vector2(contentWidth, 18f)).color = TextDimColor;
             y -= 22f;
@@ -236,11 +234,11 @@ namespace CivilizationEvolution.UI
             _burgTypeDropdown.value = 2; // 默认城市
             y -= 34f;
 
-            // 分隔线
+ // 分隔线
             CreateDivider(_panelRoot.transform, new Vector2(10f, y), contentWidth);
             y -= 12f;
 
-            // 撤销/重做按钮
+ // 撤销/重做按钮
             _undoBtn = CreateButton(_panelRoot.transform, "撤销 Ctrl+Z",
                 new Vector2(10f, y), new Vector2(92f, 28f));
             _undoBtn.onClick.AddListener(() => _editor.Undo());
@@ -249,27 +247,27 @@ namespace CivilizationEvolution.UI
             _redoBtn.onClick.AddListener(() => _editor.Redo());
             y -= 36f;
 
-            // 状态文本
+ // 状态文本
             _statusText = CreateText(_panelRoot.transform, "", 11, TextAnchor.UpperLeft,
                 new Vector2(10f, y), new Vector2(contentWidth, 50f));
             _statusText.color = TextDimColor;
             _statusText.horizontalOverflow = HorizontalWrapMode.Wrap;
 
-            // 分隔线
+ // 分隔线
             CreateDivider(_panelRoot.transform, new Vector2(10f, y), contentWidth);
             y -= 12f;
 
-            // 存档与导出标题
+ // 存档与导出标题
             CreateText(_panelRoot.transform, "存档 / 导出", 12, TextAnchor.MiddleLeft,
                 new Vector2(10f, y), new Vector2(contentWidth, 18f)).color = TextDimColor;
             y -= 22f;
 
-            // 存档文件名输入
+ // 存档文件名输入
             _saveNameInput = CreateInputField(_panelRoot.transform, "my_map",
                 new Vector2(10f, y), new Vector2(contentWidth, 24f));
             y -= 30f;
 
-            // 保存/加载按钮
+ // 保存/加载按钮
             var saveBtn = CreateButton(_panelRoot.transform, "保存地图",
                 new Vector2(10f, y), new Vector2(92f, 26f));
             saveBtn.onClick.AddListener(() => {
@@ -284,7 +282,7 @@ namespace CivilizationEvolution.UI
             });
             y -= 34f;
 
-            // 重算海洋按钮（绘制完陆地后重新计算海洋等级）
+ // 重算海洋按钮（绘制完陆地后重新计算海洋等级）
             var recalcOceanBtn = CreateButton(_panelRoot.transform, "重算海洋",
                 new Vector2(10f, y), new Vector2(contentWidth, 26f));
             recalcOceanBtn.onClick.AddListener(() => {
@@ -296,7 +294,7 @@ namespace CivilizationEvolution.UI
             });
             y -= 34f;
 
-            // 省份重命名
+ // 省份重命名
             CreateText(_panelRoot.transform, "省份重命名 (ID,名称)", 11, TextAnchor.MiddleLeft,
                 new Vector2(10f, y), new Vector2(contentWidth, 16f)).color = TextDimColor;
             y -= 18f;
@@ -314,7 +312,7 @@ namespace CivilizationEvolution.UI
             });
             y -= 30f;
 
-            // 导出PNG按钮
+ // 导出PNG按钮
             var exportBtn = CreateButton(_panelRoot.transform, "导出当前视图PNG",
                 new Vector2(10f, y), new Vector2(contentWidth, 26f));
             exportBtn.onClick.AddListener(() => {
@@ -323,13 +321,13 @@ namespace CivilizationEvolution.UI
             });
             y -= 32f;
 
-            // 打开存档目录按钮
+ // 打开存档目录按钮
             var openDirBtn = CreateButton(_panelRoot.transform, "打开存档目录",
                 new Vector2(10f, y), new Vector2(contentWidth, 22f));
             openDirBtn.onClick.AddListener(() => MapSaveSystem.OpenSaveDirectory());
             y -= 28f;
 
-            // ===== 图层开关区域 =====
+ // ===== 图层开关区域 =====
             y -= 8f;
             var layerLabel = CreateText(_panelRoot.transform, "图层开关", 12, TextAnchor.MiddleLeft, new Vector2(10f, y), new Vector2(contentWidth, 20f));
             y -= 24f;
@@ -359,7 +357,7 @@ namespace CivilizationEvolution.UI
             _layerInfluenceRadiusBtn.onClick.AddListener(() => ToggleInfluenceRadius());
             y -= 28f;
 
-            // 调整面板高度
+ // 调整面板高度
             panelRt.sizeDelta = new Vector2(210f, Mathf.Abs(y) + 20f);
         }
 
@@ -414,7 +412,7 @@ namespace CivilizationEvolution.UI
         {
             if (_editor == null) return;
 
-            // 编辑模式按钮
+ // 编辑模式按钮
             if (_toggleEditBtn != null)
             {
                 var btnText = _toggleEditBtn.GetComponentInChildren<Text>();
@@ -425,7 +423,7 @@ namespace CivilizationEvolution.UI
                     img.color = _editor.IsEditMode ? ButtonActiveColor : ButtonNormalColor;
             }
 
-            // 工具按钮高亮
+ // 工具按钮高亮
             for (int i = 0; i < _toolButtons.Count && i < _toolList.Count; i++)
             {
                 var img = _toolButtons[i].GetComponent<Image>();
@@ -433,17 +431,17 @@ namespace CivilizationEvolution.UI
                     img.color = _editor.CurrentTool == _toolList[i] ? ButtonActiveColor : ButtonNormalColor;
             }
 
-            // 画笔大小
+ // 画笔大小
             if (_brushSizeSlider != null && Mathf.Abs(_brushSizeSlider.value - _editor.BrushSize) > 0.01f)
                 _brushSizeSlider.value = _editor.BrushSize;
             if (_brushSizeText != null)
                 _brushSizeText.text = _editor.BrushSize.ToString();
 
-            // 撤销/重做按钮状态
+ // 撤销/重做按钮状态
             if (_undoBtn != null) _undoBtn.interactable = _editor.UndoCount > 0;
             if (_redoBtn != null) _redoBtn.interactable = _editor.RedoCount > 0;
 
-            // 状态文本
+ // 状态文本
             if (_statusText != null)
             {
                 string toolName = _editor.CurrentTool.ToString();
@@ -456,7 +454,7 @@ namespace CivilizationEvolution.UI
             }
         }
 
-        // ===== UI 辅助创建方法 =====
+ // ===== UI 辅助创建方法 =====
         private Text CreateText(Transform parent, string content, int fontSize, TextAnchor anchor,
             Vector2 pos, Vector2 size)
         {

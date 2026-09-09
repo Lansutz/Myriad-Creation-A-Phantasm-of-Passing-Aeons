@@ -1,14 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace CivilizationEvolution.UI
 {
-    /// <summary>
-    /// 按钮悬停动效组件：鼠标移入放大+高亮，移出平滑恢复，按下轻微收缩。
-    /// 挂在任意 Button 上即可，无需额外配置。
-    /// 用 Update 插值实现平滑过渡，不依赖 DOTween。
-    /// </summary>
+ /// 按钮悬停动效组件：鼠标移入放大+高亮，移出平滑恢复，按下轻微收缩。
+ /// 挂在任意 Button 上即可，无需额外配置。
+ /// 用 Update 插值实现平滑过渡，不依赖 DOTween。
     [RequireComponent(typeof(RectTransform))]
     public class UIButtonHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
@@ -91,11 +89,11 @@ namespace CivilizationEvolution.UI
 
         void Update()
         {
-            // 缩放插值
+ // 缩放插值
             _currentScale = Mathf.Lerp(_currentScale, _targetScale, Time.unscaledDeltaTime * smoothSpeed);
             _rt.localScale = _baseScale * _currentScale;
 
-            // 颜色亮度插值
+ // 颜色亮度插值
             if (_image != null)
             {
                 _currentBrightness = Mathf.Lerp(_currentBrightness, _targetBrightness, Time.unscaledDeltaTime * colorSmoothSpeed);
@@ -105,7 +103,7 @@ namespace CivilizationEvolution.UI
 
         void OnDisable()
         {
-            // 禁用时重置，避免停在放大状态
+ // 禁用时重置，避免停在放大状态
             _isHovering = false;
             _isPressed = false;
             _targetScale = 1f;

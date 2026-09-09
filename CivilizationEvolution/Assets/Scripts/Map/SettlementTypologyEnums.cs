@@ -1,17 +1,15 @@
-using System;
+﻿using System;
 
 namespace CivilizationEvolution.Map
 {
-    // ============================================================
-    // 聚落类型学核心枚举
-    // 综合：用户设计文档（村镇/城/堡形态系统）+ 文明引擎IN模块
-    // （港口层级/关隘瓶颈/要塞体系/城镇功能类型学）
-    // ============================================================
+ // ============================================================
+ // 聚落类型学核心枚举
+ // 综合：文档（村镇/城/堡形态系统）+ 文明引擎IN模块
+ // （港口层级/关隘瓶颈/要塞体系/城镇功能类型学）
+ // ============================================================
 
-    /// <summary>
-    /// 聚落等级（Ⅰ-Ⅴ级）
-    /// 对应：村落→集镇→城邑→都会→大都会
-    /// </summary>
+ /// 聚落等级（Ⅰ-Ⅴ级）
+ /// 对应：村落→集镇→城邑→都会→大都会
     public enum SettlementLevel
     {
         LevelI = 0,    // Ⅰ级 聚落（村落）
@@ -21,10 +19,8 @@ namespace CivilizationEvolution.Map
         LevelV = 4     // Ⅴ级 大都会
     }
 
-    /// <summary>
-    /// 聚落功能类型（文明引擎IN5城镇功能类型学）
-    /// 一个聚落可同时拥有多种功能，主功能决定发展倾向
-    /// </summary>
+ /// 聚落功能类型（文明引擎IN5城镇功能类型学）
+ /// 一个聚落可同时拥有多种功能，主功能决定发展倾向
     [Flags]
     public enum SettlementFunction
     {
@@ -44,10 +40,8 @@ namespace CivilizationEvolution.Map
         Industrial = 1 << 12       // 工业城镇：作坊、工场、制造业集中
     }
 
-    /// <summary>
-    /// 城市重心（都会级别Ⅳ-Ⅴ级的核心发展方向）
-    /// 决定城市建筑布局、经济结构、军事价值
-    /// </summary>
+ /// 城市重心（都会级别Ⅳ-Ⅴ级的核心发展方向）
+ /// 决定城市建筑布局、经济结构、军事价值
     public enum CityFocus
     {
         Balanced,           // 综合型（各功能均衡发展，通常为首都）
@@ -61,10 +55,8 @@ namespace CivilizationEvolution.Map
         Mining              // 矿业重心（矿产资源型城市）
     }
 
-    /// <summary>
-    /// 城的形态（平面布局形态）
-    /// 由地形、建城时代、文化传统共同决定
-    /// </summary>
+ /// 城的形态（平面布局形态）
+ /// 由地形、建城时代、文化传统共同决定
     public enum CityForm
     {
         Circular,           // 圆城：平原河流交汇，防御最优，自然生长
@@ -79,21 +71,19 @@ namespace CivilizationEvolution.Map
         PlannedCity         // 规划城：完全人工规划的新城（迁都/殖民）
     }
 
-    /// <summary>
-    /// 堡垒亚型（堡的具体形态，用户设计文档4种区域堡寨+关口堡）
-    /// </summary>
+ /// 堡垒亚型（堡的具体形态，文档4种区域堡寨+关口堡）
     public enum FortSubtype
     {
-        // ===== 关口堡（Pass）：通道控制 =====
+ // ===== 关口堡（Pass）：通道控制 =====
         PassFort,           // 关口堡：峡谷/隘口/狭河谷通道控制
 
-        // ===== 区域堡寨（Regional）4种亚型 =====
+ // ===== 区域堡寨（Regional）4种亚型 =====
         HighlandKeep,       // 高地堡：丘陵高地，区域压制网，堡垒链
         ManorFort,          // 坞堡庄园：内地农耕区，自给自足，基层治理节点
         PlainGarrison,      // 平原屯堡：开阔平原边境，沿边境线防御带
         EstuaryFort,        // 河口堡：大河河口/干流要道，管控内河与近海航线
 
-        // ===== 其他堡垒形态 =====
+ // ===== 其他堡垒形态 =====
         StarFort,           // 棱堡：火炮时代，星形多角度防御
         HillFort,           // 垒寨：临时/半永久军事营地，山丘顶部
         BorderFort,         // 边堡：边境线小型据点，预警+驻扎
@@ -107,9 +97,7 @@ namespace CivilizationEvolution.Map
         TradingFort         // 商站堡垒：贸易据点+防御（东印度公司式）
     }
 
-    /// <summary>
-    /// 港口层级（文明引擎IN1）
-    /// </summary>
+ /// 港口层级（文明引擎IN1）
     public enum PortTier
     {
         None = 0,
@@ -120,9 +108,7 @@ namespace CivilizationEvolution.Map
         ImperialPort        // 帝国港：最高级，全球贸易中心+主力舰队母港
     }
 
-    /// <summary>
-    /// 关隘瓶颈类型（文明引擎IN2）
-    /// </summary>
+ /// 关隘瓶颈类型（文明引擎IN2）
     public enum BottleneckType
     {
         None = 0,
@@ -134,10 +120,8 @@ namespace CivilizationEvolution.Map
         IsthmusPass         // 地峡通道：两块大陆之间的狭窄陆桥
     }
 
-    /// <summary>
-    /// 聚落升级路线（决定聚落从低级向高级演化的路径依赖）
-    /// 不同起点的聚落有不同的升级路径和最终形态
-    /// </summary>
+ /// 聚落升级路线（决定聚落从低级向高级演化的路径依赖）
+ /// 不同起点的聚落有不同的升级路径和最终形态
     public enum UpgradePath
     {
         NaturalGrowth,      // 自然生长：村落→集镇→城邑（最常见，农业基础）
@@ -150,9 +134,7 @@ namespace CivilizationEvolution.Map
         CommercialGrowth    // 商业发展：市集村→商镇→商业城→商贸都会
     }
 
-    /// <summary>
-    /// 聚落演化阶段（用于渐进式演化，不突变）
-    /// </summary>
+ /// 聚落演化阶段（用于渐进式演化，不突变）
     public enum EvolutionStage
     {
         Stable,             // 稳定：当前形态稳定，无明显演化趋势
@@ -162,9 +144,7 @@ namespace CivilizationEvolution.Map
         Declining           // 衰退中：当前形态正在退化（如堡垒废弃→村镇）
     }
 
-    /// <summary>
-    /// 城墙等级（防御工事强度）
-    /// </summary>
+ /// 城墙等级（防御工事强度）
     public enum WallLevel
     {
         None = 0,           // 无城墙（村落/集镇常见）

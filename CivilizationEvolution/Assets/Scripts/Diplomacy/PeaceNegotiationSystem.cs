@@ -1,21 +1,19 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 
 namespace CivilizationEvolution.Diplomacy
 {
-    /// <summary>
-    /// 条约谈判系统（简化版）
-    /// 双方各有"让步"和"索取"两个清单，总价值受战争分数限制
-    /// 领地索取后续完善接壤检查
-    /// </summary>
+ /// 条约谈判系统（简化版）
+ /// 双方各有"让步"和"索取"两个清单，总价值受战争分数限制
+ /// 领地索取后续完善接壤检查
     public static class PeaceNegotiationSystem
     {
-        // ===== 谈判条款 =====
+ // ===== 谈判条款 =====
 
 
-        // ===== 可用条款生成 =====
+ // ===== 可用条款生成 =====
 
         public static List<NegotiationClause> GetAvailableDemands(float warScore)
         {
@@ -67,7 +65,7 @@ namespace CivilizationEvolution.Diplomacy
             };
         }
 
-        // ===== 条约生成 =====
+ // ===== 条约生成 =====
 
         public static Treaty GenerateTreatyFromNegotiation(NegotiationState negotiation, int currentDay)
         {
@@ -126,7 +124,7 @@ namespace CivilizationEvolution.Diplomacy
         private static int _nextTreatyId = 1;
         private static int GetNextTreatyId() => _nextTreatyId++;
 
-        // ===== AI 谈判 =====
+ // ===== AI 谈判 =====
 
         public static NegotiationState GenerateAINegotiation(
             int attackerId, int defenderId, float attackerWarScore, float defenderWarScore)

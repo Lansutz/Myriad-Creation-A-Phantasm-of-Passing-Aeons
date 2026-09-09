@@ -1,18 +1,16 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Culture;
 using CivilizationEvolution.Tech;
 
 namespace CivilizationEvolution.Economy
 {
-    /// <summary>
-    /// 阶层出现事件（用户定稿：研究革新后新阶层出现的事件）
-    /// 标志性革新完成 → 检测该革新解锁的阶层（含前置链检查）→ 事件文本+编年史
-    /// 例：铸币完成→商人阶层出现；庄园制度→农奴出现；文字+官僚→士人出现
-    /// </summary>
+ /// 阶层出现事件（研究革新后新阶层出现的事件）
+ /// 标志性革新完成 → 检测该革新解锁的阶层（含前置链检查）→ 事件文本+编年史
+ /// 例：铸币完成→商人阶层出现；庄园制度→农奴出现；文字+官僚→士人出现
     public static class ClassEmergenceEvents
     {
-        /// <summary>标志性革新 → 该革新解锁的亚阶层</summary>
+ /// <summary>标志性革新 → 该革新解锁的亚阶层</summary>
         private static readonly Dictionary<int, List<GameEnums.SocialSubclass>> EmergenceMap =
             new Dictionary<int, List<GameEnums.SocialSubclass>>
             {
@@ -28,10 +26,8 @@ namespace CivilizationEvolution.Economy
                 [100] = new List<GameEnums.SocialSubclass> { GameEnums.SocialSubclass.Freeholder }      // 刀耕火种→自耕农
             };
 
-        /// <summary>
-        /// 检测革新完成后新出现的阶层（完整可用性判定——排除尚未满足的次级条件）
-        /// 返回新出现的亚阶层列表（空=无新阶层）
-        /// </summary>
+ /// 检测革新完成后新出现的阶层（完整可用性判定——排除尚未满足的次级条件）
+ /// 返回新出现的亚阶层列表（空=无新阶层）
         public static List<GameEnums.SocialSubclass> GetEmergingClasses(int completedInnovationId,
             CultureData culture, InnovationTree innovations, int realmId)
         {
@@ -46,7 +42,7 @@ namespace CivilizationEvolution.Economy
             return result;
         }
 
-        /// <summary>阶层出现事件文本（中文——供通知/弹窗）</summary>
+ /// <summary>阶层出现事件文本（中文——供通知/弹窗）</summary>
         public static string GetEventText(GameEnums.SocialSubclass subclass)
         {
             return subclass switch
@@ -64,7 +60,7 @@ namespace CivilizationEvolution.Economy
             };
         }
 
-        /// <summary>记录阶层出现编年史（返回出现的阶层数）</summary>
+ /// <summary>记录阶层出现编年史（返回出现的阶层数）</summary>
         public static int RecordEmergence(int completedInnovationId, string realmName,
             CultureData culture, InnovationTree innovations, int realmId, Chronicle chronicle)
         {

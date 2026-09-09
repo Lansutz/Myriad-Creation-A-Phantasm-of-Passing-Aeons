@@ -1,4 +1,4 @@
-using CivilizationEvolution.Tech;
+﻿using CivilizationEvolution.Tech;
 using System.Collections.Generic;
 
 namespace CivilizationEvolution.AI
@@ -17,12 +17,12 @@ namespace CivilizationEvolution.AI
         [UnityEngine.Range(0f, 2f)] public float researchMultiplier;  // 研究倍率
 
         public List<InnovationDomain> preferredDomains;
-        /// <summary>固定原型（true=原型预设固定——SyncPersonality 跳过性格覆盖——
-        /// 剧本/模组想完全固定某原型时用；默认 false=性格驱动每日漂移——
-        /// struct 无初始化器——默认值 false 由构造/预设显式设置）</summary>
+ /// <summary>固定原型（true=原型预设固定——SyncPersonality 跳过性格覆盖——
+ /// 剧本/模组想完全固定某原型时用；默认 false=性格驱动每日漂移——
+ /// struct 无初始化器——默认值 false 由构造/预设显式设置）</summary>
         public bool fixedArchetype;
 
-        /// <summary>原型命名（按偏好最高维分类——涌现——非标签驱动）</summary>
+ /// <summary>原型命名（按偏好最高维分类——涌现——非标签驱动）</summary>
         private static string ClassifyName(AIPersonality p)
         {
             float[] dims = { p.expansionBias, p.economicBias, p.diplomaticBias, p.militaryBias, p.aggression };
@@ -33,10 +33,8 @@ namespace CivilizationEvolution.AI
             return names[maxIdx];
         }
 
-        /// <summary>
-        /// 命名原型预设（模组/剧本快捷配置——底层仍是性格参数——
-        /// 不是行为标签：预设只是起始参数，行为仍随环境/事件变化）
-        /// </summary>
+ /// 命名原型预设（模组/剧本快捷配置——底层仍是性格参数——
+ /// 不是行为标签：预设只是起始参数，行为仍随环境/事件变化）
         public static AIPersonality Preset(string archetypeId, bool fixedArchetype = false)
         {
             switch (archetypeId)
@@ -78,7 +76,7 @@ namespace CivilizationEvolution.AI
             }
         }
 
-        /// <summary>生成随机人格</summary>
+ /// <summary>生成随机人格</summary>
         public static AIPersonality RandomPersonality()
         {
             var p = new AIPersonality
@@ -94,7 +92,7 @@ namespace CivilizationEvolution.AI
                 preferredDomains = new List<InnovationDomain>()
             };
 
-            // 随机偏好2个革新大类（技术/思维/制度/传统）
+ // 随机偏好2个革新大类（技术/思维/制度/传统）
             var allDomains = System.Enum.GetValues(typeof(InnovationDomain));
             int first = UnityEngine.Random.Range(0, allDomains.Length);
             int second = UnityEngine.Random.Range(0, allDomains.Length);

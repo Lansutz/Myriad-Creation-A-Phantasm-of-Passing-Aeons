@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Economy;
@@ -13,7 +13,7 @@ namespace CivilizationEvolution.Character
     {
                 public static readonly PersonalityTrait[] All =
         {
-            // ===== 勇气 brave（L1勇气/大胆 · L2勇敢 · L3无畏）=====
+ // ===== 勇气 brave（L1勇气/大胆 · L2勇敢 · L3无畏）=====
             new PersonalityTrait { traitId="brave_1", traitName="勇气", description="大胆——当周围大多数人退缩时，却愿意迎难而上的意志",
                 category=TraitCategory.Personality, martialMod=1f, warfareMod=1f,
                 conflictingTraits=new List<string>{"craven_1","craven_2","craven_3"} },
@@ -25,7 +25,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, martialMod=3f, warfareMod=3f,
                 conflictingTraits=new List<string>{"craven_1","craven_2","craven_3"},
                 requiredTraits=new List<string>{"brave_2"} },
-            // ===== 慎重 craven（L1慎重/小心 · L2谨慎 · L3怯懦）=====
+ // ===== 慎重 craven（L1慎重/小心 · L2谨慎 · L3怯懦）=====
             new PersonalityTrait { traitId="craven_1", traitName="慎重", description="小心——对风险、危险与对抗的回避，在压力下呼声愈高",
                 category=TraitCategory.Personality, martialMod=-1f, intrigueMod=1f,
                 conflictingTraits=new List<string>{"brave_1","brave_2","brave_3"} },
@@ -37,7 +37,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, martialMod=-3f, intrigueMod=3f,
                 conflictingTraits=new List<string>{"brave_1","brave_2","brave_3"},
                 requiredTraits=new List<string>{"craven_2"} },
-            // ===== 同情心 compassionate（L1同情心/善良 · L2慈悲 · L3圣母般）=====
+ // ===== 同情心 compassionate（L1同情心/善良 · L2慈悲 · L3圣母般）=====
             new PersonalityTrait { traitId="compassionate_1", traitName="同情心", description="善良——向有需要之人伸出援手，不计回报",
                 category=TraitCategory.Personality, diplomacyMod=1f, charmMod=1f,
                 conflictingTraits=new List<string>{"callous_1","callous_2","callous_3"} },
@@ -49,7 +49,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, diplomacyMod=3f, charmMod=3f,
                 conflictingTraits=new List<string>{"callous_1","callous_2","callous_3"},
                 requiredTraits=new List<string>{"compassionate_2"} },
-            // ===== 冷漠 callous（L1冷漠/疏离 · L2无情 · L3铁石心肠）=====
+ // ===== 冷漠 callous（L1冷漠/疏离 · L2无情 · L3铁石心肠）=====
             new PersonalityTrait { traitId="callous_1", traitName="冷漠", description="疏离——对不直接关系到自己的痛苦十分冷淡",
                 category=TraitCategory.Personality, intrigueMod=1f, martialMod=1f,
                 conflictingTraits=new List<string>{"compassionate_1","compassionate_2","compassionate_3"} },
@@ -61,7 +61,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, intrigueMod=3f, martialMod=3f,
                 conflictingTraits=new List<string>{"compassionate_1","compassionate_2","compassionate_3"},
                 requiredTraits=new List<string>{"callous_2"} },
-            // ===== 贪念 greedy（L1贪念/精打细算 · L2贪婪 · L3贪得无厌）=====
+ // ===== 贪念 greedy（L1贪念/精打细算 · L2贪婪 · L3贪得无厌）=====
             new PersonalityTrait { traitId="greedy_1", traitName="贪念", description="精打细算——对钱币与财物的抓攫，随着每笔交易愈发沉重",
                 category=TraitCategory.Personality, stewardshipMod=1f, diplomacyMod=-1f,
                 conflictingTraits=new List<string>{"generous_1","generous_2","generous_3"} },
@@ -73,7 +73,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, stewardshipMod=3f, diplomacyMod=-3f,
                 conflictingTraits=new List<string>{"generous_1","generous_2","generous_3"},
                 requiredTraits=new List<string>{"greedy_2"} },
-            // ===== 慷慨 generous（L1慷慨/乐善 · L2好施 · L3博施）=====
+ // ===== 慷慨 generous（L1慷慨/乐善 · L2好施 · L3博施）=====
             new PersonalityTrait { traitId="generous_1", traitName="慷慨", description="乐善——对黄金、礼物与恩惠的洒脱之手，以及不求回报施予",
                 category=TraitCategory.Personality, diplomacyMod=1f, stewardshipMod=-1f,
                 conflictingTraits=new List<string>{"greedy_1","greedy_2","greedy_3"} },
@@ -85,7 +85,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, diplomacyMod=3f, stewardshipMod=-3f,
                 conflictingTraits=new List<string>{"greedy_1","greedy_2","greedy_3"},
                 requiredTraits=new List<string>{"generous_2"} },
-            // ===== 诚信 honest（L1诚信/直率 · L2诚实 · L3坦率无隐）=====
+ // ===== 诚信 honest（L1诚信/直率 · L2诚实 · L3坦率无隐）=====
             new PersonalityTrait { traitId="honest_1", traitName="诚信", description="直率——拒绝粉饰真相，即使礼节或自身利益要求如此",
                 category=TraitCategory.Personality, diplomacyMod=1f, intrigueMod=-1f,
                 conflictingTraits=new List<string>{"deceitful_1","deceitful_2","deceitful_3"} },
@@ -97,7 +97,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, diplomacyMod=3f, intrigueMod=-3f,
                 conflictingTraits=new List<string>{"deceitful_1","deceitful_2","deceitful_3"},
                 requiredTraits=new List<string>{"honest_2"} },
-            // ===== 狡诈 deceitful（L1狡诈/机灵 · L2狡猾 · L3背信弃义）=====
+ // ===== 狡诈 deceitful（L1狡诈/机灵 · L2狡猾 · L3背信弃义）=====
             new PersonalityTrait { traitId="deceitful_1", traitName="狡诈", description="机灵——对谎言、半真半假的话和恰到好处的沉默驾轻就熟",
                 category=TraitCategory.Personality, intrigueMod=2f, diplomacyMod=-1f,
                 conflictingTraits=new List<string>{"honest_1","honest_2","honest_3"} },
@@ -109,7 +109,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, intrigueMod=4f, diplomacyMod=-3f,
                 conflictingTraits=new List<string>{"honest_1","honest_2","honest_3"},
                 requiredTraits=new List<string>{"deceitful_2"} },
-            // ===== 平和 calm（L1平和/从容 · L2冷静 · L3心如止水）=====
+ // ===== 平和 calm（L1平和/从容 · L2冷静 · L3心如止水）=====
             new PersonalityTrait { traitId="calm_1", traitName="平和", description="从容——一种沉稳的性情，即使面对挑衅也能保持泰然自若",
                 category=TraitCategory.Personality, learningMod=1f, intrigueMod=1f,
                 conflictingTraits=new List<string>{"wrathful_1","wrathful_2","wrathful_3"} },
@@ -121,7 +121,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, learningMod=3f, intrigueMod=3f,
                 conflictingTraits=new List<string>{"wrathful_1","wrathful_2","wrathful_3"},
                 requiredTraits=new List<string>{"calm_2"} },
-            // ===== 怒火 wrathful（L1怒火/性急 · L2易怒 · L3狂怒）=====
+ // ===== 怒火 wrathful（L1怒火/性急 · L2易怒 · L3狂怒）=====
             new PersonalityTrait { traitId="wrathful_1", traitName="怒火", description="性急——一腔过于易燃又冷却太慢的脾气，在宫廷日常事务上留下焦痕",
                 category=TraitCategory.Personality, martialMod=1f, diplomacyMod=-1f,
                 conflictingTraits=new List<string>{"calm_1","calm_2","calm_3"} },
@@ -133,7 +133,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, martialMod=3f, diplomacyMod=-3f,
                 conflictingTraits=new List<string>{"calm_1","calm_2","calm_3"},
                 requiredTraits=new List<string>{"wrathful_2"} },
-            // ===== 热枕 zealous（L1热枕/虔诚 · L2狂热 · L3盲信）=====
+ // ===== 热枕 zealous（L1热枕/虔诚 · L2狂热 · L3盲信）=====
             new PersonalityTrait { traitId="zealous_1", traitName="热枕", description="虔诚——对信仰怀有炽烈的确信，不容妥协，也几乎不能容忍怀疑",
                 category=TraitCategory.Personality, learningMod=1f, warfareMod=1f,
                 conflictingTraits=new List<string>{"cynical_1","cynical_2","cynical_3"} },
@@ -145,7 +145,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, learningMod=3f, warfareMod=3f,
                 conflictingTraits=new List<string>{"cynical_1","cynical_2","cynical_3"},
                 requiredTraits=new List<string>{"zealous_2"} },
-            // ===== 犬儒主义 cynical（L1犬儒主义/不轻信 · L2愤世嫉俗 · L3虚无）=====
+ // ===== 犬儒主义 cynical（L1犬儒主义/不轻信 · L2愤世嫉俗 · L3虚无）=====
             new PersonalityTrait { traitId="cynical_1", traitName="犬儒主义", description="不轻信——对崇高目的抱有怀疑，并私下把每一种动机都解读为更卑劣的东西",
                 category=TraitCategory.Personality, intrigueMod=1f, learningMod=-1f,
                 conflictingTraits=new List<string>{"zealous_1","zealous_2","zealous_3"} },
@@ -157,7 +157,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, intrigueMod=3f, learningMod=-3f,
                 conflictingTraits=new List<string>{"zealous_1","zealous_2","zealous_3"},
                 requiredTraits=new List<string>{"cynical_2"} },
-            // ===== 野心 ambitious（L1野心/渴望上进 · L2野心勃勃 · L3利欲熏心）=====
+ // ===== 野心 ambitious（L1野心/渴望上进 · L2野心勃勃 · L3利欲熏心）=====
             new PersonalityTrait { traitId="ambitious_1", traitName="野心", description="渴望上进——一种不甘于现状，渴望更高职位、头衔或声望的追求",
                 category=TraitCategory.Personality, warfareMod=1f, diplomacyMod=1f, stewardshipMod=-1f,
                 conflictingTraits=new List<string>{"content_1","content_2","content_3"} },
@@ -169,7 +169,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, warfareMod=3f, diplomacyMod=3f, stewardshipMod=-3f,
                 conflictingTraits=new List<string>{"content_1","content_2","content_3"},
                 requiredTraits=new List<string>{"ambitious_2"} },
-            // ===== 满足感 content（L1满足感/满意 · L2知足 · L3安于现状）=====
+ // ===== 满足感 content（L1满足感/满意 · L2知足 · L3安于现状）=====
             new PersonalityTrait { traitId="content_1", traitName="满足感", description="满意——安然承受自身的命数，不再向门第或命运索取已被赐予之外的东西",
                 category=TraitCategory.Personality, stewardshipMod=1f, diplomacyMod=1f, warfareMod=-1f,
                 conflictingTraits=new List<string>{"ambitious_1","ambitious_2","ambitious_3"} },
@@ -181,7 +181,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, stewardshipMod=3f, diplomacyMod=3f, warfareMod=-3f,
                 conflictingTraits=new List<string>{"ambitious_1","ambitious_2","ambitious_3"},
                 requiredTraits=new List<string>{"content_2"} },
-            // ===== 勤勉 diligent（L1勤勉/尽责 · L2勤恳 · L3宵衣旰食）=====
+ // ===== 勤勉 diligent（L1勤勉/尽责 · L2勤恳 · L3宵衣旰食）=====
             new PersonalityTrait { traitId="diligent_1", traitName="勤勉", description="尽责——不论心境与阴晴，对工作恒久不懈的投入",
                 category=TraitCategory.Personality, stewardshipMod=1f, learningMod=1f,
                 conflictingTraits=new List<string>{"lazy_1","lazy_2","lazy_3"} },
@@ -193,7 +193,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, stewardshipMod=3f, learningMod=3f,
                 conflictingTraits=new List<string>{"lazy_1","lazy_2","lazy_3"},
                 requiredTraits=new List<string>{"diligent_2"} },
-            // ===== 惰性 lazy（L1惰性/闲散 · L2懒惰 · L3怠惰成性）=====
+ // ===== 惰性 lazy（L1惰性/闲散 · L2懒惰 · L3怠惰成性）=====
             new PersonalityTrait { traitId="lazy_1", traitName="惰性", description="闲散——当他人之手可代劳时，自己便不愿起身、决断或劳作",
                 category=TraitCategory.Personality, stewardshipMod=-1f, learningMod=-1f, intrigueMod=1f,
                 conflictingTraits=new List<string>{"diligent_1","diligent_2","diligent_3"} },
@@ -205,7 +205,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, stewardshipMod=-3f, learningMod=-3f, intrigueMod=3f,
                 conflictingTraits=new List<string>{"diligent_1","diligent_2","diligent_3"},
                 requiredTraits=new List<string>{"lazy_2"} },
-            // ===== 耐性 patient（L1耐性/宽忍 · L2耐心 · L3坚忍）=====
+ // ===== 耐性 patient（L1耐性/宽忍 · L2耐心 · L3坚忍）=====
             new PersonalityTrait { traitId="patient_1", traitName="耐性", description="宽忍——情愿等待、忍耐，让事态顺其自身的节奏展开",
                 category=TraitCategory.Personality, learningMod=1f, diplomacyMod=1f, martialMod=-1f,
                 conflictingTraits=new List<string>{"impatient_1","impatient_2","impatient_3"} },
@@ -217,7 +217,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, learningMod=3f, diplomacyMod=3f, martialMod=-3f,
                 conflictingTraits=new List<string>{"impatient_1","impatient_2","impatient_3"},
                 requiredTraits=new List<string>{"patient_2"} },
-            // ===== 不耐烦 impatient（L1不耐烦/毛躁 · L2急躁 · L3草率）=====
+ // ===== 不耐烦 impatient（L1不耐烦/毛躁 · L2急躁 · L3草率）=====
             new PersonalityTrait { traitId="impatient_1", traitName="不耐烦", description="毛躁——一股迫切的去行动、决断，或是在别人还没把话说完前就打断对方的冲动",
                 category=TraitCategory.Personality, martialMod=1f, warfareMod=1f, diplomacyMod=-1f,
                 conflictingTraits=new List<string>{"patient_1","patient_2","patient_3"} },
@@ -229,7 +229,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, martialMod=3f, warfareMod=3f, diplomacyMod=-3f,
                 conflictingTraits=new List<string>{"patient_1","patient_2","patient_3"},
                 requiredTraits=new List<string>{"impatient_2"} },
-            // ===== 傲慢 arrogant（L1傲慢/自负 · L2狂妄 · L3目中无人）=====
+ // ===== 傲慢 arrogant（L1傲慢/自负 · L2狂妄 · L3目中无人）=====
             new PersonalityTrait { traitId="arrogant_1", traitName="傲慢", description="自负——对自身价值的高估，渗入到与各个层级的每一次互动中",
                 category=TraitCategory.Personality, martialMod=1f, diplomacyMod=-1f, charmMod=-1f,
                 conflictingTraits=new List<string>{"humble_1","humble_2","humble_3"} },
@@ -241,7 +241,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, martialMod=3f, diplomacyMod=-3f, charmMod=-3f,
                 conflictingTraits=new List<string>{"humble_1","humble_2","humble_3"},
                 requiredTraits=new List<string>{"arrogant_2"} },
-            // ===== 谦卑 humble（L1谦卑/谦逊 · L2谦卑 · L3深藏若虚）=====
+ // ===== 谦卑 humble（L1谦卑/谦逊 · L2谦卑 · L3深藏若虚）=====
             new PersonalityTrait { traitId="humble_1", traitName="谦卑", description="谦逊——对赞誉与褒奖安之若素地推却，哪怕那是应得的",
                 category=TraitCategory.Personality, diplomacyMod=1f, charmMod=1f, learningMod=1f,
                 conflictingTraits=new List<string>{"arrogant_1","arrogant_2","arrogant_3"} },
@@ -253,7 +253,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, diplomacyMod=3f, charmMod=3f, learningMod=3f,
                 conflictingTraits=new List<string>{"arrogant_1","arrogant_2","arrogant_3"},
                 requiredTraits=new List<string>{"humble_2"} },
-            // ===== 疑心 paranoid（L1疑心/警觉 · L2多疑 · L3疑神疑鬼）=====
+ // ===== 疑心 paranoid（L1疑心/警觉 · L2多疑 · L3疑神疑鬼）=====
             new PersonalityTrait { traitId="paranoid_1", traitName="疑心", description="警觉——将世间视作仇敌环伺，每阵沉默都读作密谋",
                 category=TraitCategory.Personality, intrigueMod=1f, learningMod=1f, diplomacyMod=-1f,
                 conflictingTraits=new List<string>{"trusting_1","trusting_2","trusting_3"} },
@@ -265,7 +265,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, intrigueMod=3f, learningMod=3f, diplomacyMod=-3f,
                 conflictingTraits=new List<string>{"trusting_1","trusting_2","trusting_3"},
                 requiredTraits=new List<string>{"paranoid_2"} },
-            // ===== 相信度 trusting（L1相信度/坦诚 · L2轻信他人 · L3天真）=====
+ // ===== 相信度 trusting（L1相信度/坦诚 · L2轻信他人 · L3天真）=====
             new PersonalityTrait { traitId="trusting_1", traitName="相信度", description="坦诚——相信他人的善言与善意，即使证据本不该如此薄弱",
                 category=TraitCategory.Personality, diplomacyMod=1f, charmMod=1f, intrigueMod=-1f,
                 conflictingTraits=new List<string>{"paranoid_1","paranoid_2","paranoid_3"} },
@@ -277,7 +277,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, diplomacyMod=3f, charmMod=3f, intrigueMod=-3f,
                 conflictingTraits=new List<string>{"paranoid_1","paranoid_2","paranoid_3"},
                 requiredTraits=new List<string>{"trusting_2"} },
-            // ===== 社交能力 gregarious（L1社交能力/善交际 · L2合群 · L3热情洋溢）=====
+ // ===== 社交能力 gregarious（L1社交能力/善交际 · L2合群 · L3热情洋溢）=====
             new PersonalityTrait { traitId="gregarious_1", traitName="社交能力", description="善交际——对陪伴、交谈和热闹大厅里那份温暖的向往",
                 category=TraitCategory.Personality, diplomacyMod=1f, charmMod=1f, stewardshipMod=1f,
                 conflictingTraits=new List<string>{"shy_1","shy_2","shy_3"} },
@@ -289,7 +289,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, diplomacyMod=3f, charmMod=3f, stewardshipMod=3f,
                 conflictingTraits=new List<string>{"shy_1","shy_2","shy_3"},
                 requiredTraits=new List<string>{"gregarious_2"} },
-            // ===== 羞涩 shy（L1羞涩/腼腆 · L2害羞 · L3孤僻）=====
+ // ===== 羞涩 shy（L1羞涩/腼腆 · L2害羞 · L3孤僻）=====
             new PersonalityTrait { traitId="shy_1", traitName="羞涩", description="腼腆——对陌生人的注视和拥挤厅堂的压迫感到的不适",
                 category=TraitCategory.Personality, learningMod=1f, intrigueMod=1f, diplomacyMod=-1f,
                 conflictingTraits=new List<string>{"gregarious_1","gregarious_2","gregarious_3"} },
@@ -301,7 +301,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, learningMod=3f, intrigueMod=3f, diplomacyMod=-3f,
                 conflictingTraits=new List<string>{"gregarious_1","gregarious_2","gregarious_3"},
                 requiredTraits=new List<string>{"shy_2"} },
-            // ===== 报复欲 vengeful（L1报复欲/记仇 · L2有仇必报 · L3睚眦必报）=====
+ // ===== 报复欲 vengeful（L1报复欲/记仇 · L2有仇必报 · L3睚眦必报）=====
             new PersonalityTrait { traitId="vengeful_1", traitName="报复欲", description="记仇——对被冒犯记忆悠长，讨还公道的耐心更持久，不论其间相隔多少年",
                 category=TraitCategory.Personality, intrigueMod=1f, martialMod=1f,
                 conflictingTraits=new List<string>{"forgiving_1","forgiving_2","forgiving_3"} },
@@ -313,7 +313,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, intrigueMod=3f, martialMod=3f,
                 conflictingTraits=new List<string>{"forgiving_1","forgiving_2","forgiving_3"},
                 requiredTraits=new List<string>{"vengeful_2"} },
-            // ===== 宽容心 forgiving（L1宽容心/宽宥 · L2宽恕 · L3宽宏大量）=====
+ // ===== 宽容心 forgiving（L1宽容心/宽宥 · L2宽恕 · L3宽宏大量）=====
             new PersonalityTrait { traitId="forgiving_1", traitName="宽容心", description="宽宥——愿意放下怨怼，让昨日的过错留在昨日",
                 category=TraitCategory.Personality, diplomacyMod=1f, charmMod=1f,
                 conflictingTraits=new List<string>{"vengeful_1","vengeful_2","vengeful_3"} },
@@ -325,7 +325,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, diplomacyMod=3f, charmMod=3f,
                 conflictingTraits=new List<string>{"vengeful_1","vengeful_2","vengeful_3"},
                 requiredTraits=new List<string>{"forgiving_2"} },
-            // ===== 色欲 lustful（L1色欲/轻媚 · L2好色 · L3荒淫）=====
+ // ===== 色欲 lustful（L1色欲/轻媚 · L2好色 · L3荒淫）=====
             new PersonalityTrait { traitId="lustful_1", traitName="色欲", description="轻媚——对肉体欢愉的贪求，渗入每一次凝视与每一句挑逗之中",
                 category=TraitCategory.Personality, diplomacyMod=1f, charmMod=1f,
                 conflictingTraits=new List<string>{"chaste_1","chaste_2","chaste_3"} },
@@ -337,7 +337,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, diplomacyMod=3f, charmMod=3f,
                 conflictingTraits=new List<string>{"chaste_1","chaste_2","chaste_3"},
                 requiredTraits=new List<string>{"lustful_2"} },
-            // ===== 贞洁 chaste（L1贞洁/矜持 · L2守贞 · L3禁欲）=====
+ // ===== 贞洁 chaste（L1贞洁/矜持 · L2守贞 · L3禁欲）=====
             new PersonalityTrait { traitId="chaste_1", traitName="贞洁", description="矜持——对肉体欲望的克制，以及对忠诚与纯洁之德的珍视",
                 category=TraitCategory.Personality, learningMod=1f, diplomacyMod=1f,
                 conflictingTraits=new List<string>{"lustful_1","lustful_2","lustful_3"} },
@@ -349,7 +349,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, learningMod=3f, diplomacyMod=3f,
                 conflictingTraits=new List<string>{"lustful_1","lustful_2","lustful_3"},
                 requiredTraits=new List<string>{"chaste_2"} },
-            // ===== 贪吃 gluttonous（L1贪吃/饕客 · L2暴食 · L3无餍）=====
+ // ===== 贪吃 gluttonous（L1贪吃/饕客 · L2暴食 · L3无餍）=====
             new PersonalityTrait { traitId="gluttonous_1", traitName="贪吃", description="饕客——对美食与佳酿的过度热爱，餐桌成了一天中最重要的场合",
                 category=TraitCategory.Personality, stewardshipMod=-1f, diplomacyMod=1f,
                 conflictingTraits=new List<string>{"temperate_1","temperate_2","temperate_3"} },
@@ -361,7 +361,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, stewardshipMod=-3f, diplomacyMod=3f,
                 conflictingTraits=new List<string>{"temperate_1","temperate_2","temperate_3"},
                 requiredTraits=new List<string>{"gluttonous_2"} },
-            // ===== 节制 temperate（L1节制/有度 · L2克己 · L3绝嗜）=====
+ // ===== 节制 temperate（L1节制/有度 · L2克己 · L3绝嗜）=====
             new PersonalityTrait { traitId="temperate_1", traitName="节制", description="有度——对饮食与享乐的克制，凡事适可而止的生活态度",
                 category=TraitCategory.Personality, stewardshipMod=1f, learningMod=1f,
                 conflictingTraits=new List<string>{"gluttonous_1","gluttonous_2","gluttonous_3"} },
@@ -373,7 +373,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, stewardshipMod=3f, learningMod=3f,
                 conflictingTraits=new List<string>{"gluttonous_1","gluttonous_2","gluttonous_3"},
                 requiredTraits=new List<string>{"temperate_2"} },
-            // ===== 无常 arbitrary（L1无常/随性 · L2专断 · L3独裁专制）=====
+ // ===== 无常 arbitrary（L1无常/随性 · L2专断 · L3独裁专制）=====
             new PersonalityTrait { traitId="arbitrary_1", traitName="无常", description="随性——治事不循法度，唯凭一时喜怒；所下裁断亦随当日心境而屈伸",
                 category=TraitCategory.Personality, intrigueMod=1f, diplomacyMod=-1f, stewardshipMod=-1f,
                 conflictingTraits=new List<string>{"just_1","just_2","just_3"} },
@@ -385,7 +385,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, intrigueMod=3f, diplomacyMod=-3f, stewardshipMod=-3f,
                 conflictingTraits=new List<string>{"just_1","just_2","just_3"},
                 requiredTraits=new List<string>{"arbitrary_2"} },
-            // ===== 公正 just（L1公正/公道 · L2正直 · L3大义凛然）=====
+ // ===== 公正 just（L1公正/公道 · L2正直 · L3大义凛然）=====
             new PersonalityTrait { traitId="just_1", traitName="公正", description="公道——对正义的坚持，无论出于法律还是良知，即使付出代价也不动摇",
                 category=TraitCategory.Personality, diplomacyMod=1f, stewardshipMod=1f, learningMod=1f,
                 conflictingTraits=new List<string>{"arbitrary_1","arbitrary_2","arbitrary_3"} },
@@ -397,7 +397,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, diplomacyMod=3f, stewardshipMod=3f, learningMod=3f,
                 conflictingTraits=new List<string>{"arbitrary_1","arbitrary_2","arbitrary_3"},
                 requiredTraits=new List<string>{"just_2"} },
-            // ===== 施虐 sadistic（L1施虐/残忍 · L2虐待狂 · L3悖逆常伦）=====
+ // ===== 施虐 sadistic（L1施虐/残忍 · L2虐待狂 · L3悖逆常伦）=====
             new PersonalityTrait { traitId="sadistic_1", traitName="施虐", description="残忍——一种从他人的痛苦中获得的快感，只要当天无事打扰便会主动去寻求",
                 category=TraitCategory.Personality, intrigueMod=1f, martialMod=1f, diplomacyMod=-1f,
                 conflictingTraits=new List<string>{"compassionate_1","compassionate_2","compassionate_3"} },
@@ -409,7 +409,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, intrigueMod=3f, martialMod=3f, diplomacyMod=-3f,
                 conflictingTraits=new List<string>{"compassionate_1","compassionate_2","compassionate_3"},
                 requiredTraits=new List<string>{"sadistic_2"} },
-            // ===== 固执 stubborn（L1固执/坚决 · L2顽固 · L3冥顽不化）=====
+ // ===== 固执 stubborn（L1固执/坚决 · L2顽固 · L3冥顽不化）=====
             new PersonalityTrait { traitId="stubborn_1", traitName="固执", description="坚决——一旦采取立场便拒不退让，不论风向如何转变",
                 category=TraitCategory.Personality, martialMod=1f, learningMod=1f, diplomacyMod=-1f,
                 conflictingTraits=new List<string>{"fickle_1","fickle_2","fickle_3"} },
@@ -421,7 +421,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, martialMod=3f, learningMod=3f, diplomacyMod=-3f,
                 conflictingTraits=new List<string>{"fickle_1","fickle_2","fickle_3"},
                 requiredTraits=new List<string>{"stubborn_2"} },
-            // ===== 易变无定 fickle（L1易变无定/优柔寡断 · L2善变 · L3反复无常）=====
+ // ===== 易变无定 fickle（L1易变无定/优柔寡断 · L2善变 · L3反复无常）=====
             new PersonalityTrait { traitId="fickle_1", traitName="易变无定", description="优柔寡断——偏好、忠诚和意图的摇摆不定，鲜少决定能维持过一周",
                 category=TraitCategory.Personality, intrigueMod=1f, diplomacyMod=-1f, stewardshipMod=-1f,
                 conflictingTraits=new List<string>{"stubborn_1","stubborn_2","stubborn_3"} },
@@ -433,7 +433,7 @@ namespace CivilizationEvolution.Character
                 category=TraitCategory.Personality, intrigueMod=3f, diplomacyMod=-3f, stewardshipMod=-3f,
                 conflictingTraits=new List<string>{"stubborn_1","stubborn_2","stubborn_3"},
                 requiredTraits=new List<string>{"fickle_2"} },
-            // ===== 怪癖 eccentric（L1怪癖/奇特 · L2古怪 · L3荒诞不经）=====
+ // ===== 怪癖 eccentric（L1怪癖/奇特 · L2古怪 · L3荒诞不经）=====
             new PersonalityTrait { traitId="eccentric_1", traitName="怪癖", description="奇特——在衣装、习俗和言谈上偏爱异乎寻常，使之有别于常礼",
                 category=TraitCategory.Personality, learningMod=1f, intrigueMod=1f, diplomacyMod=-1f },
             new PersonalityTrait { traitId="eccentric_2", traitName="古怪", description="奇特——怪癖是宫廷中公开的特色；访客事先会得到警告，家宅也早已不再有非议",
@@ -444,7 +444,7 @@ namespace CivilizationEvolution.Character
                 requiredTraits=new List<string>{"eccentric_2"} },
         };
 
-        /// <summary>按 traitId 查找标签定义（无则 null）</summary>
+ /// <summary>按 traitId 查找标签定义（无则 null）</summary>
         public static PersonalityTrait Get(string traitId)
         {
             foreach (var t in All)
@@ -452,7 +452,7 @@ namespace CivilizationEvolution.Character
             return null;
         }
 
-                /// <summary>获取某标签的升级目标（L1→L2，L2→L3；无升级返回 null）</summary>
+ /// <summary>获取某标签的升级目标（L1→L2，L2→L3；无升级返回 null）</summary>
         public static PersonalityTrait GetUpgrade(string traitId)
         {
             if (traitId.EndsWith("_1"))

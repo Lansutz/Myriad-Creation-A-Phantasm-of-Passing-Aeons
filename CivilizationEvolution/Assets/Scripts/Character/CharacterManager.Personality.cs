@@ -10,20 +10,16 @@ using CivilizationEvolution.War;
 
 namespace CivilizationEvolution.Character
 {
-    /// <summary>
-    /// CharacterManager.Personality —— 心理与人格（压力/恐惧/精神障碍/人格漂移/天赋缺陷）（partial class，与 CharacterSystem.cs 共享字段）
-    /// </summary>
+ /// CharacterManager.Personality —— 心理与人格（压力/恐惧/精神障碍/人格漂移/天赋缺陷）（partial class，与 CharacterSystem.cs 共享字段）
     public partial class CharacterManager
     {
 
-        // ===== 角色数值机制（饮食/精神疾病） =====
+ // ===== 角色数值机制（饮食/精神疾病） =====
 
-        /// <summary>
-        /// 饮食联动（肥胖驱动，企划书上限型数值）：
-        /// 每日从角色所属政权核心地块的贸易中心扣 1 单位粮食；
-        /// 吃上 → 肥胖按身份增速（贵族/统治者吃得好，体力身份增长慢）；
-        /// 缺粮 → 肥胖下降 + 压力上升
-        /// </summary>
+ /// 饮食联动（肥胖驱动，企划书上限型数值）：
+ /// 每日从角色所属政权核心地块的贸易中心扣 1 单位粮食；
+ /// 吃上 → 肥胖按身份增速（贵族/统治者吃得好，体力身份增长慢）；
+ /// 缺粮 → 肥胖下降 + 压力上升
         private void DailyDiet()
         {
             if (Economy == null || Tiles == null || Realms == null) return;
@@ -58,11 +54,9 @@ namespace CivilizationEvolution.Character
         }
 
 
-        /// <summary>
-        /// 精神疾病触发与缓解（简单版，角色级状态机）：
-        /// - 触发：压力>80 持续 90 天 → 抑郁/焦虑；恐惧>80 → 偏执；高龄+低学识 → 失智
-        /// - 缓解：压力<30 持续 120 天 → 康复（失智不可逆）
-        /// </summary>
+ /// 精神疾病触发与缓解（简单版，角色级状态机）：
+ /// - 触发：压力>80 持续 90 天 → 抑郁/焦虑；恐惧>80 → 偏执；高龄+低学识 → 失智
+ /// - 缓解：压力<30 持续 120 天 → 康复（失智不可逆）
         private void CheckMentalDisorders()
         {
             foreach (var c in _characters.Values)
@@ -118,13 +112,11 @@ namespace CivilizationEvolution.Character
         }
 
 
-        // ===== 角色数值公共接口（事件/战争/疾病/AI 调用） =====
+ // ===== 角色数值公共接口（事件/战争/疾病/AI 调用） =====
 
-        /// <summary>
-        /// 人格亲和漂移：已有角色对的关系按七维亲和度缓慢调整
-        /// （借鉴 CK3 More Personality Depth 的 same/opposite opinion 机制；
-        /// 仅作用于已建立的关系，不主动创建新关系）
-        /// </summary>
+ /// 人格亲和漂移：已有角色对的关系按七维亲和度缓慢调整
+ /// （借鉴 CK3 More Personality Depth 的 same/opposite opinion 机制；
+ /// 仅作用于已建立的关系，不主动创建新关系）
         private void PersonalityOpinionDrift()
         {
             var chars = GetAliveCharacters();
@@ -146,7 +138,7 @@ namespace CivilizationEvolution.Character
         }
 
 
-        /// <summary>施加压力（战争/缺粮/重大事件）</summary>
+ /// <summary>施加压力（战争/缺粮/重大事件）</summary>
         public void AddStress(int characterId, float amount)
         {
             var c = GetCharacter(characterId);
@@ -154,7 +146,7 @@ namespace CivilizationEvolution.Character
         }
 
 
-        /// <summary>施加恐惧（处决/暴行/恐怖事件）</summary>
+ /// <summary>施加恐惧（处决/暴行/恐怖事件）</summary>
         public void AddDread(int characterId, float amount)
         {
             var c = GetCharacter(characterId);
@@ -162,7 +154,7 @@ namespace CivilizationEvolution.Character
         }
 
 
-        /// <summary>人格维度修正（枚举入口，事件驱动漂移）</summary>
+ /// <summary>人格维度修正（枚举入口，事件驱动漂移）</summary>
         public void ModifyPersonality(int characterId, PersonalityDimension dimension, float delta)
         {
             var c = GetCharacter(characterId);
@@ -170,7 +162,7 @@ namespace CivilizationEvolution.Character
         }
 
 
-        /// <summary>人格维度修正（字符串键重载，事件 JSON 数据驱动用；内部解析到枚举）</summary>
+ /// <summary>人格维度修正（字符串键重载，事件 JSON 数据驱动用；内部解析到枚举）</summary>
         public void ModifyPersonality(int characterId, string dimension, float delta)
         {
             if (PersonalityDimensions.TryParse(dimension, out var d))
@@ -178,7 +170,7 @@ namespace CivilizationEvolution.Character
         }
 
 
-        /// <summary>治愈精神疾病（贤者/事件/医学革新；失智不可逆）</summary>
+ /// <summary>治愈精神疾病（贤者/事件/医学革新；失智不可逆）</summary>
         public bool CureMentalDisorder(int characterId)
         {
             var c = GetCharacter(characterId);
@@ -193,7 +185,7 @@ namespace CivilizationEvolution.Character
         }
 
 
-        // ===== 天赋/缺陷应用 =====
+ // ===== 天赋/缺陷应用 =====
 
         private void ApplyTalentDefectEffect(CharacterData c, DnaExpression expr)
         {

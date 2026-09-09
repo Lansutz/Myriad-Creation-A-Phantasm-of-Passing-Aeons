@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Map;
 using CivilizationEvolution.Climate;
@@ -17,7 +17,7 @@ using CivilizationEvolution.AI;
 
 namespace CivilizationEvolution.Core
 {
-    /// <summary>游戏事件监听器接口</summary>
+ /// <summary>游戏事件监听器接口</summary>
     public interface IGameEventListener
     {
         void OnGameEvent(GameEvent evt);

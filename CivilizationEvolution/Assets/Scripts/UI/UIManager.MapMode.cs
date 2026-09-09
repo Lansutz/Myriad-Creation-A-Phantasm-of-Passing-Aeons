@@ -12,13 +12,11 @@ using CivilizationEvolution.Politics;
 
 namespace CivilizationEvolution.UI
 {
-    /// <summary>
-    /// UIManager.MapMode —— 地图模式切换（分类/子模式/按钮生成/高亮）（partial class，与 UIManager.cs 共享字段与组件引用）
-    /// </summary>
+ /// UIManager.MapMode —— 地图模式切换（分类/子模式/按钮生成/高亮）（partial class，与 UIManager.cs 共享字段与组件引用）
     public partial class UIManager : MonoBehaviour
     {
 
-        /// <summary>类别切换：填充子项选项（无子项隐藏子 Dropdown）</summary>
+ /// <summary>类别切换：填充子项选项（无子项隐藏子 Dropdown）</summary>
         private void OnMapCategoryChanged(int index)
         {
             _mapCategory = index;
@@ -57,10 +55,10 @@ namespace CivilizationEvolution.UI
         }
 
 
-        /// <summary>折叠/展开地图模式栏（顶部按钮——箭头下拉式）</summary>
+ /// <summary>折叠/展开地图模式栏（顶部按钮——箭头下拉式）</summary>
         private void ToggleMapModeBar()
         {
-            // CK3 式模式面板（替代旧 Dropdown——保留旧栏兼容隐藏）
+ // CK3 式模式面板（替代旧 Dropdown——保留旧栏兼容隐藏）
             if (mapModePanel != null)
             {
                 bool open = !mapModePanel.activeSelf;
@@ -72,7 +70,7 @@ namespace CivilizationEvolution.UI
         }
 
 
-        /// <summary>模式面板按钮列表（类别+展开子项——radio 高亮）</summary>
+ /// <summary>模式面板按钮列表（类别+展开子项——radio 高亮）</summary>
         private void RefreshMapModeList()
         {
             if (mapModeListRoot == null) return;
@@ -85,7 +83,7 @@ namespace CivilizationEvolution.UI
                 bool current = cat == _modeCat;
                 bool expanded = current && _modeSubOpen && hasSub;
 
-                // 类别按钮（当前高亮——有子显示 ▸/▾）
+ // 类别按钮（当前高亮——有子显示 ▸/▾）
                 string label = hasSub
                     ? (expanded ? "▾ " : "▸ ") + MapModeCategories[cat]
                     : MapModeCategories[cat];
@@ -93,12 +91,12 @@ namespace CivilizationEvolution.UI
                 HighlightMapMode(btn, current && !hasSub);
                 if (current && hasSub && !_modeSubOpen)
                 {
-                    // 当前类别默认选中其子 0（模式已生效——标签右侧标当前子名）
+ // 当前类别默认选中其子 0（模式已生效——标签右侧标当前子名）
                     if (subs != null && subs.Count > 0)
                         label += " · " + subs[_modeSub];
                 }
 
-                // 子项（展开显示——缩进）
+ // 子项（展开显示——缩进）
                 if (expanded && subs != null)
                 {
                     for (int si = 0; si < subs.Count; si++)
@@ -137,7 +135,7 @@ namespace CivilizationEvolution.UI
 
             if (sub < 0)
             {
-                // 类别点击：切换（有子=展开/折叠——无子=直接切）
+ // 类别点击：切换（有子=展开/折叠——无子=直接切）
                 btn.onClick.AddListener(() =>
                 {
                     bool hasSub = MapModeSubs.ContainsKey(cat);
@@ -178,7 +176,7 @@ namespace CivilizationEvolution.UI
         }
 
 
-        /// <summary>设置地图模式（类别+子项→displayMode——统一入口——Dropdown 兼容）</summary>
+ /// <summary>设置地图模式（类别+子项→displayMode——统一入口——Dropdown 兼容）</summary>
         private void SetMapMode(int cat, int sub)
         {
             if (ModeMap.TryGetValue((cat, sub), out var mode))

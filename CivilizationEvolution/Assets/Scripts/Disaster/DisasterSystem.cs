@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
@@ -6,10 +6,8 @@ using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Disaster
 {
-    /// <summary>
-    /// 灾害系统
-    /// 自然灾害与人为灾害，有触发条件、影响范围、持续时间、后果
-    /// </summary>
+ /// 灾害系统
+ /// 自然灾害与人为灾害，有触发条件、影响范围、持续时间、后果
     [System.Serializable]
     public class DisasterSystem
     {
@@ -29,7 +27,7 @@ namespace CivilizationEvolution.Disaster
 
         private void InitializeDisasterDefs()
         {
-            // 气象灾害
+ // 气象灾害
             _disasterDefs[DisasterType.Drought] = new DisasterDef
             {
                 type = DisasterType.Drought,
@@ -81,7 +79,7 @@ namespace CivilizationEvolution.Disaster
                 baseSeverity = 55f
             };
 
-            // 地质灾害
+ // 地质灾害
             _disasterDefs[DisasterType.Earthquake] = new DisasterDef
             {
                 type = DisasterType.Earthquake,
@@ -113,7 +111,7 @@ namespace CivilizationEvolution.Disaster
                 baseSeverity = 60f
             };
 
-            // 生物灾害
+ // 生物灾害
             _disasterDefs[DisasterType.LocustPlague] = new DisasterDef
             {
                 type = DisasterType.LocustPlague,
@@ -135,7 +133,7 @@ namespace CivilizationEvolution.Disaster
                 baseSeverity = 45f
             };
 
-            // 人为灾害
+ // 人为灾害
             _disasterDefs[DisasterType.Fire] = new DisasterDef
             {
                 type = DisasterType.Fire,
@@ -158,16 +156,16 @@ namespace CivilizationEvolution.Disaster
             };
         }
 
-        /// <summary>每日灾害Tick</summary>
+ /// <summary>每日灾害Tick</summary>
         public void DailyTick(int currentDay, int currentYear)
         {
-            // 更新活跃灾害
+ // 更新活跃灾害
             for (int i = _activeDisasters.Count - 1; i >= 0; i--)
             {
                 var disaster = _activeDisasters[i];
                 disaster.remainingDays--;
 
-                // 应用灾害效果
+ // 应用灾害效果
                 ApplyDisasterEffects(disaster);
 
                 if (disaster.remainingDays <= 0)
@@ -177,21 +175,21 @@ namespace CivilizationEvolution.Disaster
                 }
             }
 
-            // 随机触发新灾害
+ // 随机触发新灾害
             TryTriggerDisasters(currentDay, currentYear);
         }
 
-        /// <summary>尝试触发灾害</summary>
+ /// <summary>尝试触发灾害</summary>
         private void TryTriggerDisasters(int currentDay, int currentYear)
         {
             foreach (var def in _disasterDefs.Values)
             {
                 if (def.baseFrequency <= 0f) continue;
 
-                // 季节修正
+ // 季节修正
                 float seasonMod = GetSeasonDisasterMod(def.type, currentDay);
 
-                // 随机触发
+ // 随机触发
                 if (UnityEngine.Random.value < def.baseFrequency * seasonMod * 0.01f)
                 {
                     TriggerDisaster(def.type, currentDay, currentYear);
@@ -199,16 +197,16 @@ namespace CivilizationEvolution.Disaster
             }
         }
 
-        /// <summary>触发灾害</summary>
+ /// <summary>触发灾害</summary>
         public ActiveDisaster TriggerDisaster(DisasterType type, int currentDay, int currentYear, int centerTile = -1)
         {
             if (!_disasterDefs.TryGetValue(type, out var def)) return null;
 
-            // 选择中心地块
+ // 选择中心地块
             if (centerTile < 0)
                 centerTile = FindDisasterOriginTile(type);
 
-            // 计算影响范围
+ // 计算影响范围
             var affectedTiles = CalculateAffectedTiles(type, centerTile);
             if (affectedTiles.Count == 0) return null;
 
@@ -226,16 +224,16 @@ namespace CivilizationEvolution.Disaster
             _activeDisasters.Add(disaster);
             Debug.Log($"[Disaster] {def.name} 爆发！中心地块 {centerTile}，影响 {affectedTiles.Count} 地块，持续 {disaster.remainingDays} 天");
 
-            // 立即应用一次性效果
+ // 立即应用一次性效果
             ApplyImmediateEffects(disaster);
 
             return disaster;
         }
 
-        /// <summary>寻找灾害起源地块</summary>
+ /// <summary>寻找灾害起源地块</summary>
         private int FindDisasterOriginTile(DisasterType type)
         {
-            // 根据灾害类型选择合适的起源地块
+ // 根据灾害类型选择合适的起源地块
             var candidates = new List<int>();
             for (int i = 0; i < _tiles.Length; i++)
             {
@@ -263,7 +261,7 @@ namespace CivilizationEvolution.Disaster
             return candidates[UnityEngine.Random.Range(0, candidates.Count)];
         }
 
-        /// <summary>计算受影响地块</summary>
+ /// <summary>计算受影响地块</summary>
         private List<int> CalculateAffectedTiles(DisasterType type, int centerTile)
         {
             var affected = new List<int>();
@@ -284,7 +282,7 @@ namespace CivilizationEvolution.Disaster
                 _ => 5
             };
 
-            // 曼哈顿距离筛选
+ // 曼哈顿距离筛选
             int cx = centerTile % _width; // 地图宽度来自构造参数（修复：原硬编码128）
             int cy = centerTile / _width;
 
@@ -301,7 +299,7 @@ namespace CivilizationEvolution.Disaster
             return affected;
         }
 
-        /// <summary>应用一次性效果</summary>
+ /// <summary>应用一次性效果</summary>
         private void ApplyImmediateEffects(ActiveDisaster disaster)
         {
             foreach (int tileIdx in disaster.affectedTiles)
@@ -325,7 +323,7 @@ namespace CivilizationEvolution.Disaster
             }
         }
 
-        /// <summary>应用持续效果</summary>
+ /// <summary>应用持续效果</summary>
         private void ApplyDisasterEffects(ActiveDisaster disaster)
         {
             foreach (int tileIdx in disaster.affectedTiles)
@@ -362,7 +360,7 @@ namespace CivilizationEvolution.Disaster
             }
         }
 
-        /// <summary>季节灾害修正</summary>
+ /// <summary>季节灾害修正</summary>
         private float GetSeasonDisasterMod(DisasterType type, int dayOfYear)
         {
             int season = (dayOfYear - 1) / 91; // 0春 1夏 2秋 3冬
@@ -380,7 +378,7 @@ namespace CivilizationEvolution.Disaster
             };
         }
 
-        // ===== 查询接口 =====
+ // ===== 查询接口 =====
         public IReadOnlyList<ActiveDisaster> GetActiveDisasters() => _activeDisasters;
 
         public List<ActiveDisaster> GetDisastersAtTile(int tileIndex)
@@ -405,22 +403,20 @@ namespace CivilizationEvolution.Disaster
         }
     }
 
-    /// <summary>活跃灾害实例</summary>
+ /// <summary>活跃灾害实例</summary>
 
 
-    /// <summary>灾害定义</summary>
+ /// <summary>灾害定义</summary>
 
 
-    /// <summary>
-    /// 疾病系统
-    /// 传染病与地方病，有传播机制、感染率、死亡率、治疗
-    /// </summary>
+ /// 疾病系统
+ /// 传染病与地方病，有传播机制、感染率、死亡率、治疗
 
 
-    /// <summary>活跃疾病实例</summary>
+ /// <summary>活跃疾病实例</summary>
 
 
-    /// <summary>疾病定义</summary>
+ /// <summary>疾病定义</summary>
 
 
 }

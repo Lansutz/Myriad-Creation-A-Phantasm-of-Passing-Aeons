@@ -4,15 +4,13 @@ using CivilizationEvolution.Core;
 
 namespace CivilizationEvolution.Politics
 {
-    /// <summary>
-    /// GovernmentConstraints.Templates —— 政体类型模板（推荐组合数据）（partial static class）
-    /// </summary>
+ /// GovernmentConstraints.Templates —— 政体类型模板（推荐组合数据）（partial static class）
     public static partial class GovernmentConstraints
     {
 
-        // ===== 6. 政体类型模板（推荐组合，不强制） =====
+ // ===== 6. 政体类型模板（推荐组合，不强制） =====
 
-        /// <summary>政体类型模板</summary>
+ /// <summary>政体类型模板</summary>
         public class GovernmentTemplate
         {
             public string name;
@@ -25,15 +23,15 @@ namespace CivilizationEvolution.Politics
             public DomainDistribution recommendedDomainDist = DomainDistribution.Exclusive;
         }
 
-        /// <summary>获取所有预设政体模板</summary>
+ /// <summary>获取所有预设政体模板</summary>
 
 
-        /// <summary>获取所有预设政体模板</summary>
+ /// <summary>获取所有预设政体模板</summary>
         public static List<GovernmentTemplate> GetTemplates()
         {
             var templates = new List<GovernmentTemplate>();
 
-            // 官僚君主国（中式）
+ // 官僚君主国（中式）
             templates.Add(new GovernmentTemplate
             {
                 name = "官僚君主国",
@@ -66,7 +64,7 @@ namespace CivilizationEvolution.Politics
                 }
             });
 
-            // 封建君主国（西欧式）
+ // 封建君主国（西欧式）
             templates.Add(new GovernmentTemplate
             {
                 name = "封建君主国",
@@ -98,7 +96,7 @@ namespace CivilizationEvolution.Politics
                 }
             });
 
-            // 罗马-东罗马式（僭主主导+推举次要+世袭次要）
+ // 罗马-东罗马式（僭主主导+推举次要+世袭次要）
             templates.Add(new GovernmentTemplate
             {
                 name = "罗马-东罗马式",
@@ -121,11 +119,11 @@ namespace CivilizationEvolution.Politics
                 {
                     { "任命主体", 2 }  // 军事任免
                 }
-                // 次要成分：推举制(第1次要) + 血缘世袭(第2次要)
-                // 需要高行政容量才能选2个次要
+ // 次要成分：推举制(第1次要) + 血缘世袭(第2次要)
+ // 需要高行政容量才能选2个次要
             });
 
-            // 古典民主共和
+ // 古典民主共和
             templates.Add(new GovernmentTemplate
             {
                 name = "古典民主共和",
@@ -151,7 +149,7 @@ namespace CivilizationEvolution.Politics
                 }
             });
 
-            // 贵族共和（元老院）
+ // 贵族共和（元老院）
             templates.Add(new GovernmentTemplate
             {
                 name = "贵族共和",
@@ -178,7 +176,7 @@ namespace CivilizationEvolution.Politics
                 }
             });
 
-            // 神权政体
+ // 神权政体
             templates.Add(new GovernmentTemplate
             {
                 name = "神权政体",
@@ -203,7 +201,7 @@ namespace CivilizationEvolution.Politics
                 }
             });
 
-            // 部落联盟（无常设中央机构）
+ // 部落联盟（无常设中央机构）
             templates.Add(new GovernmentTemplate
             {
                 name = "部落联盟",

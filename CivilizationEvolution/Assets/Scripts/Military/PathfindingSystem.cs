@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
@@ -6,11 +6,9 @@ using CivilizationEvolution.Politics;
 
 namespace CivilizationEvolution.Military
 {
-    /// <summary>
-    /// 军队寻路系统
-    /// 基于A*算法，考虑地形、坡度、海拔、建筑、外交通行管制
-    /// 支持左右连通/上下联通的环形地图
-    /// </summary>
+ /// 军队寻路系统
+ /// 基于A*算法，考虑地形、坡度、海拔、建筑、外交通行管制
+ /// 支持左右连通/上下联通的环形地图
     public class PathfindingSystem
     {
         private GameWorld _world;
@@ -19,7 +17,7 @@ namespace CivilizationEvolution.Military
         private bool _wrapX = true;  // 左右连通
         private bool _wrapY = false; // 上下联通（一般不连通，极地不可通行）
 
-        // 8方向移动
+ // 8方向移动
         private static readonly int[] DX = { 1, -1, 0, 0, 1, 1, -1, -1 };
         private static readonly int[] DY = { 0, 0, 1, -1, 1, -1, 1, -1 };
         private static readonly float[] DCost = { 1f, 1f, 1f, 1f, 1.414f, 1.414f, 1.414f, 1.414f };
@@ -33,7 +31,7 @@ namespace CivilizationEvolution.Military
             _wrapY = wrapY;
         }
 
-        /// <summary>寻路参数</summary>
+ /// <summary>寻路参数</summary>
         public class PathfindingParams
         {
             public int armyRealmId = -1;           // 军队所属政权
@@ -45,7 +43,7 @@ namespace CivilizationEvolution.Military
             public Dictionary<int, float> tileCostOverrides = new Dictionary<int, float>(); // 自定义地块成本
         }
 
-        /// <summary>寻路结果</summary>
+ /// <summary>寻路结果</summary>
         public class PathResult
         {
             public List<int> path = new List<int>(); // 地块索引列表
@@ -54,7 +52,7 @@ namespace CivilizationEvolution.Military
             public string failReason = "";
         }
 
-        /// <summary>执行寻路</summary>
+ /// <summary>执行寻路</summary>
         public PathResult FindPath(int startTile, int endTile, PathfindingParams param)
         {
             var result = new PathResult();
@@ -66,7 +64,7 @@ namespace CivilizationEvolution.Military
                 return result;
             }
 
-            // A*算法
+ // A*算法
             var openSet = new PriorityQueue<int, float>();
             var cameFrom = new Dictionary<int, int>();
             var gScore = new Dictionary<int, float>();
@@ -85,7 +83,7 @@ namespace CivilizationEvolution.Military
 
                 if (current == endTile)
                 {
-                    // 重建路径
+ // 重建路径
                     result.path = ReconstructPath(cameFrom, current);
                     result.totalCost = gScore[current];
                     result.success = true;
@@ -114,7 +112,7 @@ namespace CivilizationEvolution.Military
             return result;
         }
 
-        /// <summary>获取邻居地块及通行成本</summary>
+ /// <summary>获取邻居地块及通行成本</summary>
         private List<(int tile, float cost)> GetNeighbors(int tile, PathfindingParams param)
         {
             var neighbors = new List<(int, float)>();
@@ -126,7 +124,7 @@ namespace CivilizationEvolution.Military
                 int nx = x + DX[i];
                 int ny = y + DY[i];
 
-                // 处理环形地图
+ // 处理环形地图
                 if (_wrapX)
                 {
                     if (nx < 0) nx += _width;
@@ -143,7 +141,7 @@ namespace CivilizationEvolution.Military
 
                 int neighborTile = ny * _width + nx;
 
-                // 检查可通行性
+ // 检查可通行性
                 float moveCost = CalculateMoveCost(tile, neighborTile, param, DCost[i]);
                 if (moveCost < 0) continue; // 不可通行
 
@@ -153,53 +151,53 @@ namespace CivilizationEvolution.Military
             return neighbors;
         }
 
-        /// <summary>计算移动成本（返回负数表示不可通行）</summary>
+ /// <summary>计算移动成本（返回负数表示不可通行）</summary>
         private float CalculateMoveCost(int fromTile, int toTile, PathfindingParams param, float baseCost)
         {
             if (_world == null) return baseCost;
 
-            // 获取地块数据
+ // 获取地块数据
             var tileData = GetTileData(toTile);
             if (tileData == null) return -1;
 
-            // 海军特殊处理
+ // 海军特殊处理
             if (param.isNavy)
             {
-                // 海军只能在海洋地块移动
+ // 海军只能在海洋地块移动
                 if (!tileData.isOcean && !tileData.isCoastal)
                     return -1;
                 return baseCost * (tileData.isOcean ? 1f : 1.5f);
             }
 
-            // 陆军不可通行检查
+ // 陆军不可通行检查
             if (!param.canPassImpassable && tileData.isImpassable)
                 return -1;
 
-            // 坡度检查
+ // 坡度检查
             if (tileData.slope > param.maxSlope)
                 return -1;
 
-            // 海拔检查
+ // 海拔检查
             if (tileData.elevation > param.maxElevation)
                 return -1;
 
-            // 海洋地块陆军不可通行（除非有运输船）
+ // 海洋地块陆军不可通行（除非有运输船）
             if (tileData.isOcean)
                 return -1;
 
             float cost = baseCost;
 
-            // 地形成本修正
+ // 地形成本修正
             cost *= GetTerrainCostMultiplier(tileData);
 
-            // 坡度成本修正
+ // 坡度成本修正
             cost *= (1f + tileData.slope / 45f);
 
-            // 海拔成本修正
+ // 海拔成本修正
             if (tileData.elevation > 2000f)
                 cost *= 1.5f;
 
-            // 外交通行管制检查
+ // 外交通行管制检查
             if (param.armyRealmId >= 0)
             {
                 int tileOwner = GetTileOwner(toTile);
@@ -211,7 +209,7 @@ namespace CivilizationEvolution.Military
                         var controlLevel = ownerRealm.movementControl;
                         if (controlLevel == GameEnums.MovementControlLevel.Strict)
                         {
-                            // 严格管制需要军事通行权
+ // 严格管制需要军事通行权
                             if (!ownerRealm.militaryAccessGranted.Contains(param.armyRealmId))
                                 return -1; // 无通行权，不可通过
                             cost *= 1.2f;
@@ -221,7 +219,7 @@ namespace CivilizationEvolution.Military
                             cost *= 1.5f;
                         }
 
-                        // 敌对领土额外成本
+ // 敌对领土额外成本
                         if (IsAtWar(param.armyRealmId, tileOwner))
                         {
                             if (!param.canPassEnemyTerritory)
@@ -232,17 +230,17 @@ namespace CivilizationEvolution.Military
                 }
             }
 
-            // 建筑影响
+ // 建筑影响
             cost *= GetBuildingCostMultiplier(toTile, param);
 
-            // 自定义成本覆盖
+ // 自定义成本覆盖
             if (param.tileCostOverrides.TryGetValue(toTile, out var overrideCost))
                 cost = overrideCost;
 
             return cost;
         }
 
-        /// <summary>地形成本倍率</summary>
+ /// <summary>地形成本倍率</summary>
         private float GetTerrainCostMultiplier(PathTile tile)
         {
             if (tile.isMountain) return 3f;
@@ -255,10 +253,10 @@ namespace CivilizationEvolution.Military
             return 1.5f;
         }
 
-        /// <summary>建筑成本倍率</summary>
+ /// <summary>建筑成本倍率</summary>
         private float GetBuildingCostMultiplier(int tile, PathfindingParams param)
         {
-            // 堡垒/要塞增加敌方移动成本
+ // 堡垒/要塞增加敌方移动成本
             var buildings = GetBuildingsAtTile(tile);
             float multiplier = 1f;
             foreach (var b in buildings)
@@ -275,7 +273,7 @@ namespace CivilizationEvolution.Military
             return multiplier;
         }
 
-        /// <summary>启发式函数（曼哈顿距离，考虑环形地图）</summary>
+ /// <summary>启发式函数（曼哈顿距离，考虑环形地图）</summary>
         private float Heuristic(int a, int b)
         {
             int ax = a % _width, ay = a / _width;
@@ -290,7 +288,7 @@ namespace CivilizationEvolution.Military
             return dx + dy;
         }
 
-        /// <summary>重建路径</summary>
+ /// <summary>重建路径</summary>
         private List<int> ReconstructPath(Dictionary<int, int> cameFrom, int current)
         {
             var path = new List<int> { current };
@@ -302,17 +300,17 @@ namespace CivilizationEvolution.Military
             return path;
         }
 
-        // ===== 辅助方法（需要根据实际GameWorld结构调整） =====
+ // ===== 辅助方法（需要根据实际GameWorld结构调整） =====
 
         private PathTile GetTileData(int tileIndex)
         {
-            // 简化实现，实际需要从GameWorld获取
+ // 简化实现，实际需要从GameWorld获取
             return null;
         }
 
         private int GetTileOwner(int tileIndex)
         {
-            // 简化实现
+ // 简化实现
             return -1;
         }
 
@@ -325,18 +323,18 @@ namespace CivilizationEvolution.Military
 
         private bool IsAtWar(int realmA, int realmB)
         {
-            // 简化实现，实际需要检查战争状态
+ // 简化实现，实际需要检查战争状态
             return false;
         }
 
         private List<BuildingData> GetBuildingsAtTile(int tileIndex)
         {
-            // 简化实现
+ // 简化实现
             return new List<BuildingData>();
         }
     }
 
-    /// <summary>地块数据（简化版，实际应从GameWorld获取）</summary>
+ /// <summary>地块数据（简化版，实际应从GameWorld获取）</summary>
     public class PathTile
     {
         public bool isOcean;
@@ -352,7 +350,7 @@ namespace CivilizationEvolution.Military
         public float elevation;
     }
 
-    /// <summary>建筑数据（简化版）</summary>
+ /// <summary>建筑数据（简化版）</summary>
     public class BuildingData
     {
         public int ownerRealmId;
@@ -360,7 +358,7 @@ namespace CivilizationEvolution.Military
         public string buildingType;
     }
 
-    /// <summary>简单优先队列</summary>
+ /// <summary>简单优先队列</summary>
     public class PriorityQueue<T, TPriority> where TPriority : IComparable<TPriority>
     {
         private List<(T item, TPriority priority)> _elements = new List<(T, TPriority)>();

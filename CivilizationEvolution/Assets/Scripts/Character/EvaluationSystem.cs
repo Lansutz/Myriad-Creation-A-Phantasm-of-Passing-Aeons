@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using System;
 using UnityEngine;
@@ -6,20 +6,16 @@ using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Character
 {
-    /// <summary>
-    /// 评价分级（一生成就标尺——从高到低）：
-    /// 传奇 &gt; 卓越 &gt; 杰出 &gt; 优秀 &gt; 平平 &gt; 平庸 &gt; 无名 &gt; 遗臭
-    /// 等级名与绰号系统分离（不用"伟大"——伟大者是绰号非等级）
-    /// 成就分（0-1000）映射等级；绰号按等级+行为发放
-    /// </summary>
+ /// 评价分级（一生成就标尺——从高到低）：
+ /// 传奇 &gt; 卓越 &gt; 杰出 &gt; 优秀 &gt; 平平 &gt; 平庸 &gt; 无名 &gt; 遗臭
+ /// 等级名与绰号系统分离（不用"伟大"——伟大者是绰号非等级）
+ /// 成就分（0-1000）映射等级；绰号按等级+行为发放
 
 
-    /// <summary>
-    /// 评价系统（成就分→等级→绰号发放标尺）
-    /// </summary>
+ /// 评价系统（成就分→等级→绰号发放标尺）
     public static class EvaluationSystem
     {
-        /// <summary>等级名（中文——评价词非绰号）</summary>
+ /// <summary>等级名（中文——评价词非绰号）</summary>
         public static string LevelName(EvaluationLevel level)
         {
             switch (level)
@@ -36,7 +32,7 @@ namespace CivilizationEvolution.Character
             }
         }
 
-        /// <summary>成就分→等级（0-1000——阈值）</summary>
+ /// <summary>成就分→等级（0-1000——阈值）</summary>
         public static EvaluationLevel LevelFromScore(float score)
         {
             if (score >= 900f) return EvaluationLevel.Legendary;
@@ -49,10 +45,10 @@ namespace CivilizationEvolution.Character
             return EvaluationLevel.Infamous; // 负分=恶名
         }
 
-        /// <summary>行为统计（角色一生——绰号/评价的输入——[Serializable] 供 Unity 序列化分析器）</summary>
+ /// <summary>行为统计（角色一生——绰号/评价的输入——[Serializable] 供 Unity 序列化分析器）</summary>
 
 
-        /// <summary>成就评分（各行为加权——负项扣分）</summary>
+ /// <summary>成就评分（各行为加权——负项扣分）</summary>
         public static float CalculateScore(AchievementRecord r)
         {
             float s = 50f; // 基础（平平起点）

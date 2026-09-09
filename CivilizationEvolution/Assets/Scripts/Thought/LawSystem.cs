@@ -1,4 +1,4 @@
-using CivilizationEvolution.Politics;
+﻿using CivilizationEvolution.Politics;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -12,19 +12,19 @@ namespace CivilizationEvolution.Thought
         public string lawSystemName;
         public LawSource source = LawSource.Customary;
 
-        // 法律条文
+ // 法律条文
         public List<Law> laws = new List<Law>();
 
-        // 罪行定义
+ // 罪行定义
         [NonSerialized] public Dictionary<CrimeType, CrimeDefinition> crimes = new Dictionary<CrimeType, CrimeDefinition>();
 
 
-        // 司法效率
+ // 司法效率
         public float judicialEfficiency = 0.5f;
         public float corruption = 0.2f;
         public float lawEnforcement = 0.5f;
 
-        // 刑罚偏好
+ // 刑罚偏好
         public float severity = 0.5f; // 刑罚严厉程度
         public bool useCapitalPunishment = true;
         public bool useCorporalPunishment = true;
@@ -98,7 +98,7 @@ namespace CivilizationEvolution.Thought
             };
         }
 
-        /// <summary>审判罪行</summary>
+ /// <summary>审判罪行</summary>
         public TrialResult TrialCrime(CrimeType crime, int suspectCharacterId, int realmId, RealmData realm)
         {
             var result = new TrialResult();
@@ -108,11 +108,11 @@ namespace CivilizationEvolution.Thought
                 return result;
             }
 
-            // 定罪概率（受司法效率、腐败、嫌疑人身份影响）
+ // 定罪概率（受司法效率、腐败、嫌疑人身份影响）
             float convictionChance = judicialEfficiency * (1f - corruption);
 
-            // 贵族/神职人员有更高的脱罪概率
-            // 简化：假设身份影响
+ // 贵族/神职人员有更高的脱罪概率
+ // 简化：假设身份影响
             convictionChance *= 0.8f;
 
             result.verdict = UnityEngine.Random.value < convictionChance
@@ -121,11 +121,11 @@ namespace CivilizationEvolution.Thought
 
             if (result.verdict == VerdictType.Guilty)
             {
-                // 量刑
+ // 量刑
                 result.punishment = crimeDef.defaultPunishment;
                 result.severity = crimeDef.baseSeverity * severity;
 
-                // 罚款金额
+ // 罚款金额
                 if (result.punishment == PunishmentType.Fine)
                     result.fineAmount = crimeDef.baseSeverity * 10f;
             }
@@ -133,7 +133,7 @@ namespace CivilizationEvolution.Thought
             return result;
         }
 
-        /// <summary>每日法律Tick</summary>
+ /// <summary>每日法律Tick</summary>
         public void DailyTick()
         {
             judicialEfficiency = Mathf.Clamp(judicialEfficiency + UnityEngine.Random.Range(-0.001f, 0.001f), 0.1f, 1f);

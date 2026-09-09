@@ -1,13 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
 using CivilizationEvolution.Core;
 
 namespace CivilizationEvolution.Map
 {
-    /// <summary>
-    /// 沃罗诺伊细胞聚合的地块集合：政体/文化/战争/贸易的归属载体
-    /// </summary>
+ /// 沃罗诺伊细胞聚合的地块集合：政体/文化/战争/贸易的归属载体
     [Serializable]
     public class Province
     {
@@ -16,7 +14,7 @@ namespace CivilizationEvolution.Map
         public int centerTileIndex;      // 省中心地块（种子点位置）
         public List<int> memberTiles = new List<int>();
 
-        /// <summary>省界判定：与任一邻域省份归属不同即为边界地块（静态——供渲染与测试）</summary>
+ /// <summary>省界判定：与任一邻域省份归属不同即为边界地块（静态——供渲染与测试）</summary>
         public static bool IsBorder(TileData[] tiles, int width, int height, int index)
         {
             if (tiles[index].provinceId < 0) return false;
@@ -40,10 +38,8 @@ namespace CivilizationEvolution.Map
         }
     }
 
-    /// <summary>
-    /// 1. 陆地随机种子点（数量=陆地 tile 数 / cellsPerProvince）
-    /// 2. Lloyd 松弛迭代：每 tile 归最近种子 → 种子移到所属集合质心 → 循环
-    /// 3. 输出省份集合（每省中心/成员/省名）
-    /// </summary>
+ /// 1. 陆地随机种子点（数量=陆地 tile 数 / cellsPerProvince）
+ /// 2. Lloyd 松弛迭代：每 tile 归最近种子 → 种子移到所属集合质心 → 循环
+ /// 3. 输出省份集合（每省中心/成员/省名）
 
 }

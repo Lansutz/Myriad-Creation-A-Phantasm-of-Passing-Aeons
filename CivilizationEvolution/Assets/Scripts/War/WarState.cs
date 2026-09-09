@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Diplomacy;
@@ -27,10 +27,10 @@ namespace CivilizationEvolution.War
             this.startDay = startDay;
         }
 
-        /// <summary>某方当前分数</summary>
+ /// <summary>某方当前分数</summary>
         public float GetScore(int realmId) => realmId == attackerId ? attackerScore : defenderScore;
 
-        /// <summary>己方加成（胜方得分按 WarRules.scoreBattle×规模系数）</summary>
+ /// <summary>己方加成（胜方得分按 WarRules.scoreBattle×规模系数）</summary>
         public void AddScore(int realmId, float amount)
         {
             if (realmId == attackerId) attackerScore += amount;

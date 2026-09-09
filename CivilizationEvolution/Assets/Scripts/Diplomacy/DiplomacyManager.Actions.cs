@@ -8,15 +8,13 @@ using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Diplomacy
 {
-    /// <summary>
-    /// DiplomacyManager.Actions —— 外交行动（使馆/断交/礼物/侮辱/禁运/军事通行权）（partial class，与 DiplomacySystem.cs 共享字段）
-    /// </summary>
+ /// DiplomacyManager.Actions —— 外交行动（使馆/断交/礼物/侮辱/禁运/军事通行权）（partial class，与 DiplomacySystem.cs 共享字段）
     public partial class DiplomacyManager
     {
 
-        // ===== 外交动作 =====
+ // ===== 外交动作 =====
 
-        /// <summary>派遣使节/建立外交关系</summary>
+ /// <summary>派遣使节/建立外交关系</summary>
         public bool EstablishEmbassy(int realmA, int realmB)
         {
             var rel = GetRelation(realmA, realmB);
@@ -27,7 +25,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
-        /// <summary>断绝外交关系</summary>
+ /// <summary>断绝外交关系</summary>
         public bool SeverRelations(int realmA, int realmB)
         {
             var rel = GetRelation(realmA, realmB);
@@ -40,7 +38,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
-        /// <summary>赠送礼物</summary>
+ /// <summary>赠送礼物</summary>
         public bool SendGift(int fromId, int toId, float amount)
         {
             var rel = GetRelation(fromId, toId);
@@ -56,7 +54,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
-        /// <summary>外交侮辱</summary>
+ /// <summary>外交侮辱</summary>
         public bool DiplomaticInsult(int fromId, int toId, string insult)
         {
             var rel = GetRelation(fromId, toId);
@@ -68,7 +66,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
-        /// <summary>贸易禁运</summary>
+ /// <summary>贸易禁运</summary>
         public bool ImposeEmbargo(int fromId, int toId)
         {
             var rel = GetRelation(fromId, toId);
@@ -80,7 +78,7 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
-        /// <summary>解除禁运</summary>
+ /// <summary>解除禁运</summary>
         public bool LiftEmbargo(int fromId, int toId)
         {
             var rel = GetRelation(fromId, toId);
@@ -95,7 +93,7 @@ namespace CivilizationEvolution.Diplomacy
         {
             var rel = GetRelation(fromRealm, throughRealm);
             if (rel == null) return false;
-            // 军事通行权：全面同盟/阵营盟约包含通行权，或单独的通行权协议（由通行管制系统处理）
+ // 军事通行权：全面同盟/阵营盟约包含通行权，或单独的通行权协议（由通行管制系统处理）
             return rel.activeAlliances.Exists(a => a.isActive && a.militaryAccess);
         }
 

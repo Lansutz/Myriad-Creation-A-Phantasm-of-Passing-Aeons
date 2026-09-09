@@ -1,26 +1,23 @@
-using System;
+﻿using System;
 using System.Linq;
 using CivilizationEvolution.Core;
 using UnityEngine;
 
 namespace CivilizationEvolution.Climate
 {
-    /// <summary>
-    /// 洋流模拟（Ocean Current Simulation）
-    /// 简化版海洋环流模型，包含：
-    ///   1. 风生环流（Wind-driven circulation）：表层洋流由盛行风驱动
-    ///   2. 科里奥利效应（Coriolis effect）：北半球右偏（顺时针环流），南半球左偏（逆时针环流）
-    ///   3. 大陆阻挡与边界反射：大陆形状影响洋流路径（如美洲阻挡形成墨西哥湾流）
-    ///   4. 暖流/寒流分类：从低纬流向高纬为暖流，反之为寒流
-    ///   5. 沿海温度调节：暖流增温增湿，寒流降温减湿
-    ///   6. 温盐环流（简化）：深层洋流由温度盐度差异驱动（简化为回流）
-    ///
-    /// 参考：Tomczak & Godfrey (2003) "Regional Oceanography: An Introduction"；
-    ///       Pedlosky (1998) "Ocean Circulation Theory"
-    /// </summary>
+ /// 洋流模拟（Ocean Current Simulation）
+ /// 简化版海洋环流模型，包含：
+ /// 1. 风生环流（Wind-driven circulation）：表层洋流由盛行风驱动
+ /// 2. 科里奥利效应（Coriolis effect）：北半球右偏（顺时针环流），南半球左偏（逆时针环流）
+ /// 3. 大陆阻挡与边界反射：大陆形状影响洋流路径（如美洲阻挡形成墨西哥湾流）
+ /// 4. 暖流/寒流分类：从低纬流向高纬为暖流，反之为寒流
+ /// 5. 沿海温度调节：暖流增温增湿，寒流降温减湿
+ /// 6. 温盐环流（简化）：深层洋流由温度盐度差异驱动（简化为回流）
+ /// 参考：Tomczak & Godfrey (2003) "Regional Oceanography: An Introduction"；
+ /// Pedlosky (1998) "Ocean Circulation Theory"
     public class OceanCurrentSimulator
     {
-        // ===== 洋流参数 =====
+ // ===== 洋流参数 =====
         public float WindCoupling = 0.3f;          // 风-海耦合系数（风速→洋流速度比例）
         public float CoriolisStrength = 1.0f;       // 科里奥利效应强度
         public float BoundaryReflection = 0.8f;      // 边界反射系数（大陆阻挡后的反射强度）
@@ -34,7 +31,7 @@ namespace CivilizationEvolution.Climate
         private readonly int _width;
         private readonly int _height;
 
-        // 输出场
+ // 输出场
         public float[] CurrentU { get; private set; }    // 洋流东西分量（m/s，正=东）
         public float[] CurrentV { get; private set; }    // 洋流南北分量（m/s，正=北）
         public float[] CurrentSpeed { get; private set; } // 洋流速度（m/s）
@@ -53,30 +50,28 @@ namespace CivilizationEvolution.Climate
             IsColdCurrent = new bool[n];
         }
 
-        /// <summary>
-        /// 运行洋流模拟
-        /// </summary>
-        /// <param name="isLand">是否陆地</param>
-        /// <param name="windU">风的东西分量</param>
-        /// <param name="windV">风的南北分量</param>
-        /// <param name="temperature">温度（°C）</param>
+ /// 运行洋流模拟
+ /// <param name="isLand">是否陆地</param>
+ /// <param name="windU">风的东西分量</param>
+ /// <param name="windV">风的南北分量</param>
+ /// <param name="temperature">温度（°C）</param>
         public void Run(bool[] isLand, float[] windU, float[] windV, float[] temperature)
         {
             int n = _width * _height;
             Debug.Log($"[OceanCurrentSimulator] 洋流模拟开始：{_width}x{_height}，{Iterations}次迭代");
 
-            // 第1步：初始化洋流场（风生环流）
+ // 第1步：初始化洋流场（风生环流）
             for (int i = 0; i < n; i++)
             {
                 if (isLand[i]) continue;
                 int y = i / _width;
                 float lat = 90f - (y / (float)_height) * 180f;
 
-                // 风生洋流：表层洋流速度约为风速的2-3%
+ // 风生洋流：表层洋流速度约为风速的2-3%
                 CurrentU[i] = windU[i] * WindCoupling;
                 CurrentV[i] = windV[i] * WindCoupling;
 
-                // 科里奥利偏转：北半球右偏（顺时针），南半球左偏（逆时针）
+ // 科里奥利偏转：北半球右偏（顺时针），南半球左偏（逆时针）
                 float f = Mathf.Sin(lat * Mathf.Deg2Rad) * CoriolisStrength;
                 float rotatedU = CurrentU[i] - f * CurrentV[i] * 0.5f;
                 float rotatedV = CurrentV[i] + f * CurrentU[i] * 0.5f;
@@ -84,7 +79,7 @@ namespace CivilizationEvolution.Climate
                 CurrentV[i] = rotatedV;
             }
 
-            // 第2步：迭代稳定化（大陆阻挡+边界反射+扩散）
+ // 第2步：迭代稳定化（大陆阻挡+边界反射+扩散）
             for (int iter = 0; iter < Iterations; iter++)
             {
                 var newU = new float[n];
@@ -99,7 +94,7 @@ namespace CivilizationEvolution.Climate
                         int i = y * _width + x;
                         if (isLand[i]) continue;
 
-                        // 左右环绕
+ // 左右环绕
                         int xL = (x - 1 + _width) % _width;
                         int xR = (x + 1) % _width;
                         int iL = y * _width + xL;
@@ -107,22 +102,22 @@ namespace CivilizationEvolution.Climate
                         int iU = (y - 1) * _width + x;
                         int iD = (y + 1) * _width + x;
 
-                        // 大陆阻挡：如果洋流方向指向陆地，反射
+ // 大陆阻挡：如果洋流方向指向陆地，反射
                         float reflectU = 0f, reflectV = 0f;
                         if (CurrentU[i] > 0 && isLand[iR]) reflectU = -CurrentU[i] * BoundaryReflection;
                         if (CurrentU[i] < 0 && isLand[iL]) reflectU = -CurrentU[i] * BoundaryReflection;
                         if (CurrentV[i] > 0 && isLand[iD]) reflectV = -CurrentV[i] * BoundaryReflection;
                         if (CurrentV[i] < 0 && isLand[iU]) reflectV = -CurrentV[i] * BoundaryReflection;
 
-                        // 西边界强化（西边界流，如墨西哥湾流、黑潮）
+ // 西边界强化（西边界流，如墨西哥湾流、黑潮）
                         if (CurrentU[i] < 0 && !isLand[iL] && isLand[(y * _width + (xL - 2 + _width) % _width)])
                         {
-                            // 西边界流加速
+ // 西边界流加速
                             newU[i] *= 1.5f;
                             newV[i] *= 1.5f;
                         }
 
-                        // 扩散（拉普拉斯算子）
+ // 扩散（拉普拉斯算子）
                         float lapU = (CurrentU[iL] + CurrentU[iR] + CurrentU[iU] + CurrentU[iD] - 4f * CurrentU[i]) * Diffusion;
                         float lapV = (CurrentV[iL] + CurrentV[iR] + CurrentV[iU] + CurrentV[iD] - 4f * CurrentV[i]) * Diffusion;
 
@@ -135,7 +130,7 @@ namespace CivilizationEvolution.Climate
                 CurrentV = newV;
             }
 
-            // 第3步：计算洋流速度和暖流/寒流分类
+ // 第3步：计算洋流速度和暖流/寒流分类
             for (int i = 0; i < n; i++)
             {
                 if (isLand[i]) continue;
@@ -144,7 +139,7 @@ namespace CivilizationEvolution.Climate
 
                 CurrentSpeed[i] = Mathf.Sqrt(CurrentU[i] * CurrentU[i] + CurrentV[i] * CurrentV[i]);
 
-                // 暖流/寒流判断：向极地方向流动为暖流，向赤道方向为寒流
+ // 暖流/寒流判断：向极地方向流动为暖流，向赤道方向为寒流
                 bool movingPoleward = (lat > 0f && CurrentV[i] > 0f) || (lat < 0f && CurrentV[i] < 0f);
                 bool movingEquatorward = (lat > 0f && CurrentV[i] < 0f) || (lat < 0f && CurrentV[i] > 0f);
 
@@ -157,9 +152,7 @@ namespace CivilizationEvolution.Climate
             Debug.Log($"[OceanCurrentSimulator] 洋流模拟完成：暖流{warmCount}地块，寒流{coldCount}地块，最大速度{CurrentSpeed.Max():F2}m/s");
         }
 
-        /// <summary>
-        /// 将洋流影响应用到沿海陆地（温度调节+降水调节）
-        /// </summary>
+ /// 将洋流影响应用到沿海陆地（温度调节+降水调节）
         public void ApplyCoastalEffects(TileData[] tiles, bool[] isLand)
         {
             int n = Math.Min(tiles.Length, CurrentU.Length);
@@ -171,7 +164,7 @@ namespace CivilizationEvolution.Climate
                 int x = i % _width;
                 int y = i / _width;
 
-                // 检查沿海相邻海洋是否有暖流/寒流
+ // 检查沿海相邻海洋是否有暖流/寒流
                 bool adjacentWarm = false;
                 bool adjacentCold = false;
                 float maxWarmSpeed = 0f;
@@ -200,7 +193,7 @@ namespace CivilizationEvolution.Climate
                     }
                 }
 
-                // 暖流：增温增湿
+ // 暖流：增温增湿
                 if (adjacentWarm)
                 {
                     float strength = Mathf.Clamp01(maxWarmSpeed / 1.0f);
@@ -208,7 +201,7 @@ namespace CivilizationEvolution.Climate
                     tiles[i].annualPrecipMm += WarmCurrentPrecipBoost * strength;
                 }
 
-                // 寒流：降温减湿
+ // 寒流：降温减湿
                 if (adjacentCold)
                 {
                     float strength = Mathf.Clamp01(maxColdSpeed / 1.0f);

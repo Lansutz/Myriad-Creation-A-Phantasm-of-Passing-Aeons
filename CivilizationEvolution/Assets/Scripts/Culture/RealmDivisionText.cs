@@ -1,16 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace CivilizationEvolution.Culture
 {
-    /// <summary>
-    /// 行政区划详情页文本（多级下钻——点政权总览里的区划→本页）：
-    /// 区划名称/层级/辖境（地块数+人口）/治理头衔/子区划列表
-    /// </summary>
+ /// 行政区划详情页文本（多级下钻——点政权总览里的区划→本页）：
+ /// 区划名称/层级/辖境（地块数+人口）/治理头衔/子区划列表
     public static class RealmDivisionText
     {
-        /// <summary>构建区划详情（division+全列表[子区划查询用]）</summary>
+ /// <summary>构建区划详情（division+全列表[子区划查询用]）</summary>
         public static string Build(AdminDivision division, IReadOnlyList<AdminDivision> all,
             long population = -1, string holderName = "", string realmName = "")
         {
@@ -26,11 +24,11 @@ namespace CivilizationEvolution.Culture
             sb.AppendLine($"层级：第 {division.level} 级行政区" +
                 (division.level == 1 ? "（政权本身——治理根）" : ""));
 
-            // 辖境
+ // 辖境
             sb.AppendLine($"辖境：{division.tiles.Count} 地块" +
                 (population >= 0 ? $"｜人口 {population:N0}" : ""));
 
-            // 治理头衔
+ // 治理头衔
             if (!string.IsNullOrEmpty(division.titleId))
             {
                 var title = TitleCatalog.Get(division.titleId);
@@ -39,7 +37,7 @@ namespace CivilizationEvolution.Culture
                     (string.IsNullOrEmpty(holderName) ? "（空缺）" : $"｜治理者：{holderName}"));
             }
 
-            // 子区划列表（下一级）
+ // 子区划列表（下一级）
             var children = new List<AdminDivision>();
             if (all != null)
                 foreach (var d in all)

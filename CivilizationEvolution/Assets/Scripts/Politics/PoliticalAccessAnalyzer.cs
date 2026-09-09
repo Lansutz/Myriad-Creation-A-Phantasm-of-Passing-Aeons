@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 using UnityEngine;
 using CivilizationEvolution.Core;
@@ -7,7 +7,7 @@ namespace CivilizationEvolution.Politics
 {
     public static class PoliticalAccessAnalyzer
     {
-        /// <summary>计算指定阶层在给定政体下的政治通道 0~1</summary>
+ /// <summary>计算指定阶层在给定政体下的政治通道 0~1</summary>
         public static float GetAccess(GameEnums.SocialClass cls, GovernmentComposition comp)
         {
             if (comp == null) return 0.2f;
@@ -25,14 +25,14 @@ namespace CivilizationEvolution.Politics
             bool localElective = localSucc == LocalSuccession.Elected;
             bool hereditarySupreme = (SupremeSuccession)comp.supremeSuccession.primary == SupremeSuccession.Hereditary;
             bool localHereditary = localSucc == LocalSuccession.Hereditary;
-            // 两院制含平民院、等级会议含第三等级，对自由民更开放
+ // 两院制含平民院、等级会议含第三等级，对自由民更开放
             bool lowerHouse = hasAssembly &&
                 (comp.assemblyComposition == AssemblyComposition.Bicameral || comp.assemblyComposition == AssemblyComposition.Estate);
 
             switch (cls)
             {
                 case GameEnums.SocialClass.Royalty:
-                    // 君主制下王室通道完整；共和制下无世袭君主，通道弱
+ // 君主制下王室通道完整；共和制下无世袭君主，通道弱
                     return hereditarySupreme ? 1f : (isElectiveSupreme ? 0.35f : 0.6f);
 
                 case GameEnums.SocialClass.NobilityClergy:
@@ -59,7 +59,7 @@ namespace CivilizationEvolution.Politics
                 }
 
                 case GameEnums.SocialClass.Peasant:
-                    // 农民通常被排除在政治之外，仅直接民主（部落/公民大会）时有微弱通道
+ // 农民通常被排除在政治之外，仅直接民主（部落/公民大会）时有微弱通道
                     return directDemocracy ? 0.45f : 0.12f;
 
                 case GameEnums.SocialClass.Slave:
@@ -70,7 +70,7 @@ namespace CivilizationEvolution.Politics
             }
         }
 
-        /// <summary>一次性计算全部阶层的政治通道（情境采集时调用，避免重复解析）</summary>
+ /// <summary>一次性计算全部阶层的政治通道（情境采集时调用，避免重复解析）</summary>
         public static Dictionary<GameEnums.SocialClass, float> GetAllAccess(GovernmentComposition comp)
         {
             var result = new Dictionary<GameEnums.SocialClass, float>();

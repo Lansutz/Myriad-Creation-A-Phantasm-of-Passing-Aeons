@@ -1,4 +1,4 @@
-using CivilizationEvolution.Character;
+﻿using CivilizationEvolution.Character;
 using CivilizationEvolution.Diplomacy;
 using CivilizationEvolution.Tech;
 using CivilizationEvolution.Economy;
@@ -12,7 +12,7 @@ namespace CivilizationEvolution.AI
     {
         private readonly Dictionary<int, AIController> _controllers = new Dictionary<int, AIController>();
 
-        /// <summary>为政权创建AI控制器</summary>
+ /// <summary>为政权创建AI控制器</summary>
         public AIController CreateController(int realmId, AIPersonality? personality = null)
         {
             var p = personality ?? AIPersonality.RandomPersonality();
@@ -21,7 +21,7 @@ namespace CivilizationEvolution.AI
             return controller;
         }
 
-        /// <summary>每日所有AI Tick</summary>
+ /// <summary>每日所有AI Tick</summary>
         public void DailyTick(
             Dictionary<int, RealmData> realms,
             TileData[] tiles,
@@ -39,7 +39,7 @@ namespace CivilizationEvolution.AI
         public AIController GetController(int realmId) =>
             _controllers.TryGetValue(realmId, out var c) ? c : null;
 
-        /// <summary>同步各政权统治者的七维人格到 AI 偏置（人格漂移实时反映到决策）</summary>
+ /// <summary>同步各政权统治者的七维人格到 AI 偏置（人格漂移实时反映到决策）</summary>
         public void SyncRulers(CharacterManager characters)
         {
             if (characters == null) return;
