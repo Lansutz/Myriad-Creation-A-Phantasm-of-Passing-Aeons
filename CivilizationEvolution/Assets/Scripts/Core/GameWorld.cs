@@ -2,6 +2,7 @@
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Map;
+using CivilizationEvolution.World;
 using CivilizationEvolution.Climate;
 using CivilizationEvolution.Race;
 using CivilizationEvolution.Culture;
@@ -69,7 +70,9 @@ namespace CivilizationEvolution.Core
 
  // ===== 子系统 =====        private SeaLandGenerator _seaLandGenerator;
         private FeatureManager _featureManager;
+        private MapActorManager _mapActorManager;
         public FeatureManager Features => _featureManager;
+        public MapActorManager MapActors => _mapActorManager;
         private PlanetClimateSimulator _climateSimulator;
         private PlanetTerrainGenerator _planetTerrainGenerator;
         private AtmosphericCirculation _atmosphericCirculation;
@@ -143,6 +146,8 @@ namespace CivilizationEvolution.Core
 
  // 6.5 聚落控制/影响力范围（高等级聚落控制低等级，驻扎部队影响控制速度，虹吸效应通过税收贸易自然表现）            CivilizationEvolution.Map.SettlementControlSystem.DailyTick(
                 burgs, tiles, mapWidth, mapHeight, armies);
+
+ // 6.6 无主地图单位（流民/游牧民/商队/雇佣兵/野怪/动物灾害）            _mapActorManager?.Tick(1f);
 
  // 7. 外交（先同步世界时钟，供盟约/条约/事件时间戳使用）            _diplomacyManager.CurrentDay = currentDay;
             _diplomacyManager.DailyTick();
