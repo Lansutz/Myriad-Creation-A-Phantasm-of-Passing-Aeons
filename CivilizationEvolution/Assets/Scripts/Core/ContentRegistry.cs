@@ -6,6 +6,7 @@ using CivilizationEvolution.Culture;
 using CivilizationEvolution.Race;
 using CivilizationEvolution.Character;
 using CivilizationEvolution.Tech;
+using CivilizationEvolution.Climate;
 
 namespace CivilizationEvolution.Core
 {
@@ -81,6 +82,12 @@ namespace CivilizationEvolution.Core
             public List<InnovationDef> innovations = new List<InnovationDef>();
         }
 
+        [Serializable]
+        private class BiomesWrapper
+        {
+            public List<BiomeDef> biomes = new List<BiomeDef>();
+        }
+
         public static Dictionary<int, CultureContentPack> Cultures { get; private set; } = new Dictionary<int, CultureContentPack>();
         public static Dictionary<int, RaceData> Races { get; private set; } = new Dictionary<int, RaceData>();
 
@@ -95,6 +102,7 @@ namespace CivilizationEvolution.Core
         public static Dictionary<string, MentalDisorderDef> MentalDisorders { get; private set; } = new Dictionary<string, MentalDisorderDef>();
         public static Dictionary<int, InnovationDef> Innovations { get; private set; } = new Dictionary<int, InnovationDef>();
         public static Dictionary<int, ReligionDef> Religions { get; private set; } = new Dictionary<int, ReligionDef>();
+        public static Dictionary<int, BiomeDef> Biomes { get; private set; } = new Dictionary<int, BiomeDef>();
         public static Dictionary<string, DoctrineOptionDef> Doctrines { get; private set; } = new Dictionary<string, DoctrineOptionDef>();
 
         public static bool IsInitialized { get; private set; } = false;
@@ -114,6 +122,7 @@ namespace CivilizationEvolution.Core
             TalentDefects = new Dictionary<string, TalentDefectDef>();
             MentalDisorders = new Dictionary<string, MentalDisorderDef>();
             Innovations = new Dictionary<int, InnovationDef>();
+            Biomes = new Dictionary<int, BiomeDef>();
 
             string root = Application.streamingAssetsPath;
             if (!Directory.Exists(root))
@@ -147,6 +156,7 @@ namespace CivilizationEvolution.Core
             TalentDefects.Clear();
             MentalDisorders.Clear();
             Innovations.Clear();
+            Biomes.Clear();
         }
 
  // ===== 查询接口 =====
@@ -161,6 +171,7 @@ namespace CivilizationEvolution.Core
         public static bool TryGetTalentDefect(string id, out TalentDefectDef def) => TalentDefects.TryGetValue(id, out def);
         public static bool TryGetMentalDisorder(string id, out MentalDisorderDef def) => MentalDisorders.TryGetValue(id, out def);
         public static bool TryGetInnovation(int id, out InnovationDef def) => Innovations.TryGetValue(id, out def);
+        public static bool TryGetBiome(int id, out BiomeDef def) => Biomes.TryGetValue(id, out def);
 
  /// 从文化包提取随机名字（type: 0男名 1女名 2姓氏 3城名，可传 null 随机池） ///（文化→languageId→LanguageDef 男/女/姓/城池—— /// 同语言文化共享名字——模组化）——空回退文化包旧池（兼容旧数据）        public static string GetRandomName(CultureContentPack pack, int type, System.Random rng = null)
         {
@@ -296,6 +307,13 @@ namespace CivilizationEvolution.Core
             {
                 try { LoadInnovations(innovationFile); }
                 catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 革新定义加载失败：{e.Message}"); }
+            }
+
+            string biomeFile = Path.Combine(root, "Biome", "Biomes.json");
+            if (File.Exists(biomeFile))
+            {
+                try { LoadBiomes(biomeFile); }
+                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 群系定义加载失败：{e.Message}"); }
             }
         }
 
@@ -487,6 +505,18 @@ namespace CivilizationEvolution.Core
                 if (def == null || def.innovationId <= 0) continue;
                 Innovations[def.innovationId] = def;
             }
+        }
+
+ /// <summary>加载群系（Biome）定义表（数据驱动，模组可覆盖）</summary>        private static void LoadBiomes(string path)
+        {
+            var wrapper = JsonUtility.FromJson<BiomesWrapper>(File.ReadAllText(path));
+            if (wrapper == null || wrapper.biomes == null) return;
+            foreach (var def in wrapper.biomes)
+            {
+                if (def == null) continue;
+                Biomes[def.biomeId] = def;
+            }
+            Debug.Log($"[ContentRegistry] 群系定义加载：{wrapper.biomes.Count} 个");
         }
 
  /// <summary>解析名字池 CSV（格式：id,name，支持 # 注释行与空行）</summary>        private static void PackCsv(List<string> target, string path)
