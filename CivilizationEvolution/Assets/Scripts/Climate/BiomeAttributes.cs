@@ -7,7 +7,7 @@ namespace CivilizationEvolution.Climate
     /// <summary>
     /// 群系属性表（参考 Azgaar FMG 的 biomesData.cost / habitability 设计）。
     /// 每个群系有基础移动成本和可居住性，在群系划分时应用到地块。
-    /// 移动成本：1.0=平原正常，越高越难通行；海洋对陆地单位不可通行。
+    /// 移动成本：1.0=平原正常，越高越难通行；海洋对陆地单位极难通行（成本50）。
     /// 可居住性：0-100，影响人口承载、聚落生成、文化扩张。
     /// </summary>
     public static class BiomeAttributes
@@ -77,7 +77,7 @@ namespace CivilizationEvolution.Climate
             t[GameEnums.BiomeType.SemiAridShrubland] = new Attributes { MovementCost = 1.8f, Habitability = 45f };
             t[GameEnums.BiomeType.SaltDesert] = new Attributes { MovementCost = 3.0f, Habitability = 8f };
             t[GameEnums.BiomeType.DesertOasis] = new Attributes { MovementCost = 1.2f, Habitability = 75f };
-            t[GameEnums.BiomeType.EndorheicLake] = new Attributes { MovementCost = 999f, Habitability = 0f };
+            t[GameEnums.BiomeType.EndorheicLake] = new Attributes { MovementCost = 50f, Habitability = 0f };
             t[GameEnums.BiomeType.RiverSourceMarsh] = new Attributes { MovementCost = 2.5f, Habitability = 40f };
             t[GameEnums.BiomeType.AlpineMeadow] = new Attributes { MovementCost = 2.8f, Habitability = 35f };
             t[GameEnums.BiomeType.TemperateGrassland] = new Attributes { MovementCost = 1.2f, Habitability = 75f };
@@ -85,22 +85,22 @@ namespace CivilizationEvolution.Climate
             t[GameEnums.BiomeType.Yardang] = new Attributes { MovementCost = 3.0f, Habitability = 10f };
             t[GameEnums.BiomeType.LandBridgeIsthmus] = new Attributes { MovementCost = 1.3f, Habitability = 60f };
 
-            // ===== D系：海洋群系（陆地单位不可通行，可居住性0）=====
-            t[GameEnums.BiomeType.CoralReef] = new Attributes { MovementCost = 999f, Habitability = 0f };
-            t[GameEnums.BiomeType.KelpForest] = new Attributes { MovementCost = 999f, Habitability = 0f };
-            t[GameEnums.BiomeType.SeagrassMeadow] = new Attributes { MovementCost = 999f, Habitability = 0f };
-            t[GameEnums.BiomeType.HydrothermalVent] = new Attributes { MovementCost = 999f, Habitability = 0f };
-            t[GameEnums.BiomeType.AbyssalPlain] = new Attributes { MovementCost = 999f, Habitability = 0f };
-            t[GameEnums.BiomeType.OceanicTrench] = new Attributes { MovementCost = 999f, Habitability = 0f };
-            t[GameEnums.BiomeType.ContinentalShelf] = new Attributes { MovementCost = 999f, Habitability = 0f };
-            t[GameEnums.BiomeType.ContinentalSlope] = new Attributes { MovementCost = 999f, Habitability = 0f };
-            t[GameEnums.BiomeType.MidOceanRidge] = new Attributes { MovementCost = 999f, Habitability = 0f };
-            t[GameEnums.BiomeType.SeaMount] = new Attributes { MovementCost = 999f, Habitability = 0f };
-            t[GameEnums.BiomeType.Estuary] = new Attributes { MovementCost = 999f, Habitability = 0f };
-            t[GameEnums.BiomeType.Lagoon] = new Attributes { MovementCost = 999f, Habitability = 0f };
+            // ===== D系：海洋群系（陆地单位极难通行（成本50），可居住性0）=====
+            t[GameEnums.BiomeType.CoralReef] = new Attributes { MovementCost = 50f, Habitability = 0f };
+            t[GameEnums.BiomeType.KelpForest] = new Attributes { MovementCost = 50f, Habitability = 0f };
+            t[GameEnums.BiomeType.SeagrassMeadow] = new Attributes { MovementCost = 50f, Habitability = 0f };
+            t[GameEnums.BiomeType.HydrothermalVent] = new Attributes { MovementCost = 50f, Habitability = 0f };
+            t[GameEnums.BiomeType.AbyssalPlain] = new Attributes { MovementCost = 50f, Habitability = 0f };
+            t[GameEnums.BiomeType.OceanicTrench] = new Attributes { MovementCost = 50f, Habitability = 0f };
+            t[GameEnums.BiomeType.ContinentalShelf] = new Attributes { MovementCost = 50f, Habitability = 0f };
+            t[GameEnums.BiomeType.ContinentalSlope] = new Attributes { MovementCost = 50f, Habitability = 0f };
+            t[GameEnums.BiomeType.MidOceanRidge] = new Attributes { MovementCost = 50f, Habitability = 0f };
+            t[GameEnums.BiomeType.SeaMount] = new Attributes { MovementCost = 50f, Habitability = 0f };
+            t[GameEnums.BiomeType.Estuary] = new Attributes { MovementCost = 50f, Habitability = 0f };
+            t[GameEnums.BiomeType.Lagoon] = new Attributes { MovementCost = 50f, Habitability = 0f };
             t[GameEnums.BiomeType.TidalFlat] = new Attributes { MovementCost = 2.0f, Habitability = 35f };
-            t[GameEnums.BiomeType.UpwellingZone] = new Attributes { MovementCost = 999f, Habitability = 0f };
-            t[GameEnums.BiomeType.PolarSea] = new Attributes { MovementCost = 999f, Habitability = 0f };
+            t[GameEnums.BiomeType.UpwellingZone] = new Attributes { MovementCost = 50f, Habitability = 0f };
+            t[GameEnums.BiomeType.PolarSea] = new Attributes { MovementCost = 50f, Habitability = 0f };
             t[GameEnums.BiomeType.SeaIce] = new Attributes { MovementCost = 5.0f, Habitability = 5f };
 
             // ===== 补充群系 =====
@@ -115,7 +115,7 @@ namespace CivilizationEvolution.Climate
             t[GameEnums.BiomeType.Thermokarst] = new Attributes { MovementCost = 3.5f, Habitability = 18f };
             t[GameEnums.BiomeType.BadlandsDesert] = new Attributes { MovementCost = 3.2f, Habitability = 12f };
             t[GameEnums.BiomeType.ErgSea] = new Attributes { MovementCost = 3.5f, Habitability = 8f };
-            t[GameEnums.BiomeType.CalderaLake] = new Attributes { MovementCost = 999f, Habitability = 0f };
+            t[GameEnums.BiomeType.CalderaLake] = new Attributes { MovementCost = 50f, Habitability = 0f };
             t[GameEnums.BiomeType.GeyserField] = new Attributes { MovementCost = 2.5f, Habitability = 25f };
             t[GameEnums.BiomeType.TowerKarst] = new Attributes { MovementCost = 3.0f, Habitability = 30f };
             t[GameEnums.BiomeType.GlacialValley] = new Attributes { MovementCost = 3.5f, Habitability = 25f };
@@ -131,7 +131,7 @@ namespace CivilizationEvolution.Climate
             return t;
         }
 
-        /// <summary>获取群系基础移动成本（1.0=平原，999=不可通行）。优先读 JSON 配置，回退硬编码默认值。</summary>
+        /// <summary>获取群系基础移动成本（1.0=平原，50=极难通行）。优先读 JSON 配置，回退硬编码默认值。</summary>
         public static float GetMovementCost(GameEnums.BiomeType biome)
         {
             if (ContentRegistry.IsInitialized && ContentRegistry.TryGetBiome((int)biome, out var def))

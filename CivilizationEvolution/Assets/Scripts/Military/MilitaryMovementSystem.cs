@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CivilizationEvolution.Military
 {
- /// 军事通行系统 /// 负责：军队可通行检查、实际通行成本计算、敌对堡垒损耗、己方堡垒补给支援 /// 核心规则： /// - 不可通行地区（坡度>45°）：军队无法通过 /// - 关隘（Barrier）：敌对势力的关隘直接阻挡通行，除非攻破；己方/中立关隘正常通行 /// - 堡垒（Fort）区域：不直接阻挡通行，但敌对堡垒区域内军队损耗增加、行进速度下降；己方堡垒区域给补给和支援加成    public static class MilitaryMovementSystem
+ /// 军事通行系统 /// 负责：军队可通行检查、实际通行成本计算、敌对堡垒损耗、己方堡垒补给支援 /// 核心规则： /// - 极难通行地区（高山绝壁）：军队可强行军通过，但成本极高 /// - 关隘（Barrier）：敌对势力的关隘直接阻挡通行，除非攻破；己方/中立关隘正常通行 /// - 堡垒（Fort）区域：不直接阻挡通行，但敌对堡垒区域内军队损耗增加、行进速度下降；己方堡垒区域给补给和支援加成    public static class MilitaryMovementSystem
     {
  // ===== 堡垒区域影响参数 ===== /// <summary>敌对堡垒区域通行成本倍率（1级影响）</summary>        public const float EnemyFortCostMultiplier_L1 = 1.3f;
  /// <summary>敌对堡垒区域通行成本倍率（2级影响）</summary>        public const float EnemyFortCostMultiplier_L2 = 1.6f;
@@ -28,12 +28,11 @@ namespace CivilizationEvolution.Military
  /// <summary>关隘防御加成（守方战斗加成）</summary>        public const float BarrierDefenseBonus = 0.3f; // 30%防御加成
 
  // ===== 可通行检查 =====
- /// 检查军队是否可通行某地块 /// 考虑：不可通行地区、关隘封锁 /// <param name="tile">地块数据</param> /// <param name="armyRealmId">军队所属政权ID</param> /// <param name="isAtWarWithBarrierOwner">是否与关隘所有者处于战争状态</param> /// <returns>是否可通行</returns>        public static bool IsPassable(TileData tile, int armyRealmId, bool isAtWarWithBarrierOwner = true)
+ /// 检查军队是否可通行某地块 /// 考虑：极难通行地区、关隘封锁 /// <param name="tile">地块数据</param> /// <param name="armyRealmId">军队所属政权ID</param> /// <param name="isAtWarWithBarrierOwner">是否与关隘所有者处于战争状态</param> /// <returns>是否可通行</returns>        public static bool IsPassable(TileData tile, int armyRealmId, bool isAtWarWithBarrierOwner = true)
         {
             if (!tile.exists) return false;
 
- // 不可通行地区（坡度>45°）            if (!tile.passable) return false;
-
+ // 地形层面无绝对不可通行：极难通行地区（高山绝壁）可强行军通过，但成本极高(50)、损耗极大
  // 关隘封锁            if (tile.hasBarrier && tile.barrierOwnerRealmId >= 0)
             {
  // 己方关隘：可通行                if (tile.barrierOwnerRealmId == armyRealmId) return true;
@@ -59,7 +58,7 @@ namespace CivilizationEvolution.Military
  /// 计算军队通过某地块的实际通行成本 /// 考虑：基础地形成本、敌对堡垒区域加成、己方堡垒区域减成、关隘        public static float CalculateActualMovementCost(TileData tile, int armyRealmId,
             int fortOwnerRealmId = -1)
         {
-            if (!tile.passable) return 999f;
+            if (!tile.passable) return 50f; // 极难通行：强行军成本
 
             float cost = tile.movementCost;
 
@@ -107,7 +106,7 @@ namespace CivilizationEvolution.Military
             return Mathf.Max(0.2f, cost);
         }
 
- /// 检查军队是否可通行某地块（含通行管制） /// 综合：不可通行地区、关隘封锁、通行管制（外交）        public static bool IsPassableWithControl(TileData tile, int armyRealmId,
+ /// 检查军队是否可通行某地块（含通行管制） /// 综合：极难通行地区、关隘封锁、通行管制（外交）        public static bool IsPassableWithControl(TileData tile, int armyRealmId,
             RealmData ownerRealm, bool isAtWar, bool isAtWarWithBarrierOwner = true)
         {
  // 基础可通行检查（不可通行地区+关隘）            if (!IsPassable(tile, armyRealmId, isAtWarWithBarrierOwner)) return false;
@@ -198,7 +197,7 @@ namespace CivilizationEvolution.Military
  /// 获取通行状态描述（用于UI显示）        public static string GetMovementStatus(TileData tile, int armyRealmId, int fortOwnerRealmId)
         {
             if (!tile.exists) return "虚空";
-            if (!tile.passable) return "不可通行";
+            if (!tile.passable) return "极难通行（强行军）";
 
             var status = new List<string>();
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using CivilizationEvolution.Core;
 using UnityEngine;
 
@@ -21,7 +21,7 @@ namespace CivilizationEvolution.Climate
         /// <summary>群系颜色（十六进制，如 #4a7c23）</summary>
         public string color = "#808080";
 
-        /// <summary>基础移动成本（1.0=平原，999=不可通行）</summary>
+        /// <summary>基础移动成本（1.0=平原，50=极难通行）</summary>
         public float movementCost = 1.5f;
 
         /// <summary>可居住性（0-100，影响人口承载和聚落生成）</summary>

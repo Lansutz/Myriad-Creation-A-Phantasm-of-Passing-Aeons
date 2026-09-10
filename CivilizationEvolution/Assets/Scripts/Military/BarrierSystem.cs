@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace CivilizationEvolution.Military
 {
- /// 关隘与通行地理系统 /// 负责：不可通行地区计算（坡度）、通行成本计算、狭窄通道检测、关隘建造/攻破、堡垒区域影响 /// 核心区分： /// - 关隘（Barrier）：建在狭窄通道，直接阻挡敌对势力通行（除非攻破） /// - 堡垒（Fort）：区域控制，不直接阻挡通行，但敌对时经过有损耗和速度影响，己方给补给支援    public static class BarrierSystem
+ /// 关隘与通行地理系统 /// 负责：极难通行地区计算（坡度）、通行成本计算、狭窄通道检测、关隘建造/攻破、堡垒区域影响 /// 核心区分： /// - 关隘（Barrier）：建在狭窄通道，直接阻挡敌对势力通行（除非攻破） /// - 堡垒（Fort）：区域控制，不直接阻挡通行，但敌对时经过有损耗和速度影响，己方给补给支援    public static class BarrierSystem
     {
- // ===== 坡度/海拔阈值（综合判定可通行性）===== /// <summary>不可通行海拔阈值（高于此海拔且坡度足够陡峭才不可通行）</summary>        public const float ImpassableElevation = 0.85f;
+ // ===== 坡度/海拔阈值（综合判定可通行性）===== /// <summary>极难通行海拔阈值（高于此海拔且坡度足够陡峭才不可通行）</summary>        public const float ImpassableElevation = 0.85f;
 
- /// <summary>不可通行坡度阈值（度）——需同时满足高海拔</summary>        public const float ImpassableSlope = 50f;
+ /// <summary>极难通行坡度阈值（度）——需同时满足高海拔</summary>        public const float ImpassableSlope = 50f;
 
  /// <summary>高通行成本坡度阈值（度）</summary>        public const float HighCostSlope = 30f;
 
@@ -19,14 +19,14 @@ namespace CivilizationEvolution.Military
 
  /// <summary>中海拔阈值（山地，通行成本增加）</summary>        public const float MediumElevation = 0.5f;
 
- // ===== 关隘建造条件 ===== /// <summary>关隘所需的通道狭窄度（两侧不可通行/高成本地块的最小数量）</summary>        public const int MinNarrownessForBarrier = 2;
+ // ===== 关隘建造条件 ===== /// <summary>关隘所需的通道狭窄度（两侧极难通行/高成本地块的最小数量）</summary>        public const int MinNarrownessForBarrier = 2;
 
  /// <summary>关隘影响半径（格）</summary>        public const int BarrierRadius = 1;
 
  /// <summary>堡垒基础影响半径（格）</summary>        public const int FortBaseRadius = 2;
 
  // ===== 不可通行地区计算 =====
- /// 根据坡度计算所有地块的可通行性和基础通行成本 /// 生成地块时调用，智能生成不可通行地区        public static void CalculatePassability(TileData[] tiles, int width, int height)
+ /// 根据坡度计算所有地块的可通行性和基础通行成本 /// 生成地块时调用，智能生成极难通行地区        public static void CalculatePassability(TileData[] tiles, int width, int height)
         {
             for (int i = 0; i < tiles.Length; i++)
             {
@@ -34,7 +34,7 @@ namespace CivilizationEvolution.Military
                 if (!tile.exists || !tile.isLand)
                 {
                     tile.passable = tile.exists; // 海洋可通行（船只），虚空不可
-                    tile.movementCost = tile.isLand ? 999f : 2.0f; // 海洋通行成本
+                    tile.movementCost = tile.isLand ? 50f : 2.0f; // 极难通行陆地成本50，海洋2.0
                     continue;
                 }
 
@@ -45,9 +45,9 @@ namespace CivilizationEvolution.Military
             }
         }
 
- /// 计算单地块基础通行成本（综合海拔+坡度+道路+水文） /// 平原=1.0，山脉山口=2-4，高山绝壁=不可通行        public static float CalculateBaseMovementCost(TileData tile)
+ /// 计算单地块基础通行成本（综合海拔+坡度+道路+水文） /// 平原=1.0，山脉山口=2-4，高山绝壁=极难通行(成本50)        public static float CalculateBaseMovementCost(TileData tile)
         {
-            if (!tile.passable) return 999f; // 不可通行
+            if (!tile.passable) return 50f; // 极难通行（高山绝壁），理论可通过但代价极大
 
             float cost = 1.0f;
 
@@ -104,7 +104,7 @@ namespace CivilizationEvolution.Military
             return passages;
         }
 
- /// 检查某地块是否为狭窄通道 /// 判定：4方向邻居中，至少2个方向的连续3格内有不可通行/高成本地块        public static bool IsNarrowPassage(TileData[] tiles, int width, int height, int index)
+ /// 检查某地块是否为狭窄通道 /// 判定：4方向邻居中，至少2个方向的连续3格内有极难通行/高成本地块        public static bool IsNarrowPassage(TileData[] tiles, int width, int height, int index)
         {
             int x = index % width;
             int y = index / width;
@@ -123,7 +123,7 @@ namespace CivilizationEvolution.Military
  // 至少2个方向被阻挡（形成通道），且不是4面都被阻挡（不是孤立点）            return blockedDirections >= MinNarrownessForBarrier && blockedDirections < 4;
         }
 
- /// 检查某方向是否被阻挡（连续3格内有不可通行/高成本地块）        private static bool IsDirectionBlocked(TileData[] tiles, int width, int height,
+ /// 检查某方向是否被阻挡（连续3格内有极难通行/高成本地块）        private static bool IsDirectionBlocked(TileData[] tiles, int width, int height,
             int startX, int startY, int dx, int dy)
         {
             for (int step = 1; step <= 3; step++)

@@ -12,7 +12,7 @@ namespace CivilizationEvolution.Military
         private int _width;
         private int _height;
         private bool _wrapX = true;  // 左右连通
-        private bool _wrapY = false; // 上下联通（一般不连通，极地不可通行）
+        private bool _wrapY = false; // 上下联通（一般不连通）
 
  // 8方向移动        private static readonly int[] DX = { 1, -1, 0, 0, 1, 1, -1, -1 };
         private static readonly int[] DY = { 0, 0, 1, -1, 1, -1, 1, -1 };
@@ -34,7 +34,7 @@ namespace CivilizationEvolution.Military
             public float maxSlope = 45f;            // 最大可通行坡度（度）
             public float maxElevation = 5000f;      // 最大可通行海拔
             public bool canPassEnemyTerritory = false; // 是否可通过敌方领土（需要军事通行权）
-            public bool canPassImpassable = false;   // 是否可通过不可通行地区
+            public bool canPassImpassable = false;   // 是否强行军（忽略高成本偏好）
             public Dictionary<int, float> tileCostOverrides = new Dictionary<int, float>(); // 自定义地块成本
         }
 
@@ -131,7 +131,7 @@ namespace CivilizationEvolution.Military
                 int neighborTile = ny * _width + nx;
 
  // 检查可通行性                float moveCost = CalculateMoveCost(tile, neighborTile, param, DCost[i]);
-                if (moveCost < 0) continue; // 不可通行
+                // 无不可通行，高成本地块仍可选择（AI会自动规避）
 
                 neighbors.Add((neighborTile, moveCost));
             }
@@ -139,31 +139,31 @@ namespace CivilizationEvolution.Military
             return neighbors;
         }
 
- /// <summary>计算移动成本（返回负数表示不可通行）</summary>        private float CalculateMoveCost(int fromTile, int toTile, PathfindingParams param, float baseCost)
+ /// <summary>计算移动成本（无绝对不可通行，极难通行成本=50）</summary>        private float CalculateMoveCost(int fromTile, int toTile, PathfindingParams param, float baseCost)
         {
             if (_world == null) return baseCost;
 
  // 获取地块数据            var tileData = GetTileData(toTile);
-            if (tileData == null) return -1;
+            if (tileData == null) return 50f;
 
- // 海军特殊处理            if (param.isNavy)
+ // 海军特殊处理：上岸成本极高            if (param.isNavy)
             {
- // 海军只能在海洋地块移动                if (!tileData.isOcean && !tileData.isCoastal)
-                    return -1;
+                if (!tileData.isOcean && !tileData.isCoastal)
+                    return 50f; // 海军强行登陆
                 return baseCost * (tileData.isOcean ? 1f : 1.5f);
             }
 
- // 陆军不可通行检查            if (!param.canPassImpassable && tileData.isImpassable)
-                return -1;
+ // 陆军：极难通行地区（高山绝壁）成本50，可强行军            if (tileData.isImpassable)
+                return 50f;
 
- // 坡度检查            if (tileData.slope > param.maxSlope)
-                return -1;
+ // 坡度过陡：成本大幅增加（不阻断）            if (tileData.slope > param.maxSlope)
+                return 50f;
 
- // 海拔检查            if (tileData.elevation > param.maxElevation)
-                return -1;
+ // 海拔过高：成本大幅增加（不阻断）            if (tileData.elevation > param.maxElevation)
+                return 50f;
 
- // 海洋地块陆军不可通行（除非有运输船）            if (tileData.isOcean)
-                return -1;
+ // 陆军下海：成本极高（需要运输船才能降低）            if (tileData.isOcean)
+                return 50f;
 
             float cost = baseCost;
 
@@ -270,12 +270,30 @@ namespace CivilizationEvolution.Military
  // ===== 辅助方法（需要根据实际GameWorld结构调整） =====
         private PathTile GetTileData(int tileIndex)
         {
- // 简化实现，实际需要从GameWorld获取            return null;
+            if (_world == null || tileIndex < 0 || tileIndex >= _world.tiles.Length) return null;
+            var t = _world.tiles[tileIndex];
+            return new PathTile
+            {
+                isOcean = t.isOcean,
+                isCoastal = t.isCoastal,
+                isMountain = t.elevation01 >= 0.7f && t.slopeDegree >= 30f,
+                isHills = t.elevation01 >= 0.4f && t.slopeDegree >= 15f,
+                isForest = t.biome == GameEnums.BiomeType.DeciduousForest || t.biome == GameEnums.BiomeType.EvergreenForest ||
+                           t.biome == GameEnums.BiomeType.Rainforest || t.biome == GameEnums.BiomeType.Taiga,
+                isSwamp = t.biome == GameEnums.BiomeType.Swamp || t.biome == GameEnums.BiomeType.Marsh,
+                isDesert = t.biome == GameEnums.BiomeType.HotDesert || t.biome == GameEnums.BiomeType.InlandDesert ||
+                           t.biome == GameEnums.BiomeType.ColdDesert,
+                isPlains = t.biome == GameEnums.BiomeType.TemperateGrassland || t.biome == GameEnums.BiomeType.Savanna,
+                isImpassable = !t.passable,
+                slope = t.slopeDegree,
+                elevation = t.elevation01 * 5000f
+            };
         }
 
         private int GetTileOwner(int tileIndex)
         {
- // 简化实现            return -1;
+            if (_world == null || tileIndex < 0 || tileIndex >= _world.tiles.Length) return -1;
+            return _world.tiles[tileIndex].ownerRealmId;
         }
 
         private RealmData GetRealm(int realmId)
