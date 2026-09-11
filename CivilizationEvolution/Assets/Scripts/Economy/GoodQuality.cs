@@ -150,16 +150,24 @@ namespace CivilizationEvolution.Economy
         /// - 平均品质低时：低品质概率最高，高品质概率低但非零（偶尔出精品）
         /// - 平均品质高时：高品质概率最高，低品质概率低
         /// - 累计产量越多，分布越集中（品质越稳定）
+        /// - 原材料短缺时：品质中心下移，波动增大（工匠用替代品/偷工减料/仓促生产）
         /// </summary>
-        public int ProduceQuality(int goodsId)
+        /// <param name="materialAvailability">原材料可用度 0-1（1=充足，<1=短缺，由经济系统根据库存/消耗比计算传入）</param>
+        public int ProduceQuality(int goodsId, float materialAvailability = 1f)
         {
             var q = GetQuality(goodsId);
             float sigma = GetQualitySpread(goodsId);
+            float mat = Mathf.Clamp01(materialAvailability);
+            // 原材料短缺：品质中心下移（短缺越严重，中心越低）
+            float effectiveMean = q.quality * mat;
+            // 原材料短缺：波动增大（仓促生产，品质更不稳定），最多增大50%
+            if (mat < 1f)
+                sigma *= 1f + (1f - mat) * 0.5f;
             // Box-Muller 正态采样
             float u1 = 1f - UnityEngine.Random.value;
             float u2 = UnityEngine.Random.value;
             float z = Mathf.Sqrt(-2f * Mathf.Log(u1)) * Mathf.Cos(2f * Mathf.PI * u2);
-            float sample = q.quality + z * sigma;
+            float sample = effectiveMean + z * sigma;
             return Mathf.Clamp(Mathf.RoundToInt(sample), 0, 10);
         }
 
