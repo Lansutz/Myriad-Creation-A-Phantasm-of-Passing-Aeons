@@ -68,6 +68,26 @@ namespace CivilizationEvolution.Tech
                 }
                 if (!anyMet) return false;
             }
+            // 物产前置（AND：全部满足，含累计产量门槛）
+            if (def.requiredAllResources != null)
+            {
+                foreach (int resId in def.requiredAllResources)
+                {
+                    if (!HasResource(world, realmId, resId, def.allowTradeResource, def.requiredResourceAmount))
+                        return false;
+                }
+            }
+            // 物产前置（OR：至少一个满足，含累计产量门槛）
+            if (def.requiredAnyResources != null && def.requiredAnyResources.Count > 0)
+            {
+                bool anyRes = false;
+                foreach (int resId in def.requiredAnyResources)
+                {
+                    if (HasResource(world, realmId, resId, def.allowTradeResource, def.requiredResourceAmount))
+                    { anyRes = true; break; }
+                }
+                if (!anyRes) return false;
+            }
             return true;
         }
 
@@ -217,6 +237,9 @@ namespace CivilizationEvolution.Tech
  /// <summary>各革新的研究进度（key=innovationId）</summary>
         private readonly Dictionary<int, InnovationProgress> _innovationProgress = new Dictionary<int, InnovationProgress>();
 
+        /// <summary>各政权各物资的累计产量（key="realmId_goodsId"，用于物产数量门槛）</summary>
+        private readonly Dictionary<string, float> _resourceCumulativeOutput = new Dictionary<string, float>();
+
  /// <summary>获取革新的研究进度（不存在则创建）</summary>
         public InnovationProgress GetProgress(int innovationId)
         {
@@ -229,9 +252,10 @@ namespace CivilizationEvolution.Tech
         }
 
  /// <summary>检查政权是否拥有某物产（控制地块上的已发现资源点）</summary>
-        public bool HasResource(GameWorld world, int realmId, int goodsId, bool allowTrade)
+        public bool HasResource(GameWorld world, int realmId, int goodsId, bool allowTrade, float minAmount = 0f)
         {
             if (world == null || world.tiles == null) return false;
+            bool hasPoint = false;
             for (int i = 0; i < world.tiles.Length; i++)
             {
                 ref var tile = ref world.tiles[i];
@@ -240,10 +264,33 @@ namespace CivilizationEvolution.Tech
                 foreach (var res in tile.resources)
                 {
                     if (res.goodsId == goodsId && (res.discovered || res.developed))
-                        return true;
+                    { hasPoint = true; break; }
                 }
+                if (hasPoint) break;
             }
-            return false;
+            if (!hasPoint) return false;
+            if (minAmount > 0f)
+            {
+                string key = realmId + "_" + goodsId;
+                if (_resourceCumulativeOutput.TryGetValue(key, out float cum) && cum >= minAmount)
+                    return true;
+                return false;
+            }
+            return true;
+        }
+
+        private void AccumulateResourceOutput(int realmId, int goodsId, float monthlyOutput)
+        {
+            if (monthlyOutput <= 0f) return;
+            string key = realmId + "_" + goodsId;
+            _resourceCumulativeOutput.TryGetValue(key, out float cum);
+            _resourceCumulativeOutput[key] = cum + monthlyOutput;
+        }
+
+        public float GetResourceCumulativeOutput(int realmId, int goodsId)
+        {
+            string key = realmId + "_" + goodsId;
+            return _resourceCumulativeOutput.TryGetValue(key, out float cum) ? cum : 0f;
         }
 
  /// <summary>获取某物产的政权月产量（简化版：开发中资源点的丰度×开发程度之和）</summary>
@@ -295,6 +342,13 @@ namespace CivilizationEvolution.Tech
             p.cumulativeOutput += monthlyOutput;
             p.averageQuality = averageQuality;
             if (monthlyOutput > 0f) p.oldMethodPracticeCount++;
+            // 分别累加每种相关物资的累计产量（用于物产数量门槛）
+            if (def.requiredAnyResources != null)
+                foreach (int resId in def.requiredAnyResources)
+                    AccumulateResourceOutput(realmId, resId, GetResourceMonthlyOutput(world, realmId, resId));
+            if (def.requiredAllResources != null)
+                foreach (int resId in def.requiredAllResources)
+                    AccumulateResourceOutput(realmId, resId, GetResourceMonthlyOutput(world, realmId, resId));
 
             // 2. 品质决定产量上限：品质1=50, 品质5=250, 品质10=500
             // 累计产量超过上限后，实践经验不再增长——必须提升品质才能继续积累
@@ -397,7 +451,7 @@ namespace CivilizationEvolution.Tech
             {
                 foreach (int resId in def.requiredAllResources)
                 {
-                    if (!HasResource(world, realmId, resId, def.allowTradeResource))
+                    if (!HasResource(world, realmId, resId, def.allowTradeResource, def.requiredResourceAmount))
                     {
                         var goods = (world != null && world.goodsDefs != null && world.goodsDefs.ContainsKey(resId)) ? world.goodsDefs[resId] : null;
                         return "缺少物产：" + (goods != null ? goods.goodsName : resId.ToString());
@@ -409,7 +463,7 @@ namespace CivilizationEvolution.Tech
                 bool any = false;
                 foreach (int resId in def.requiredAnyResources)
                 {
-                    if (HasResource(world, realmId, resId, def.allowTradeResource)) { any = true; break; }
+                    if (HasResource(world, realmId, resId, def.allowTradeResource, def.requiredResourceAmount)) { any = true; break; }
                 }
                 if (!any)
                 {

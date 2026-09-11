@@ -24,6 +24,9 @@ namespace CivilizationEvolution.Economy
         /// <summary>历史最高质量（用于质量回退判断）</summary>
         public float peakQuality;
 
+        /// <summary>累计产量（用于品质稳定性计算和数量门槛）</summary>
+        public float cumulativeOutput;
+
         public GoodQuality(int goodsId)
         {
             this.goodsId = goodsId;
@@ -120,6 +123,62 @@ namespace CivilizationEvolution.Economy
                 sum += GetQuality(id).quality;
             }
             return sum / goodsIds.Count;
+        }
+
+        /// <summary>获取某加工品累计产量</summary>
+        public float GetCumulativeOutput(int goodsId)
+        {
+            return _qualities.TryGetValue(goodsId, out var q) ? q.cumulativeOutput : 0f;
+        }
+
+        /// <summary>
+        /// 计算当前品质离散度（σ）。
+        /// 初期产量少、技术不成熟 → σ大（波动大，偶尔出精品也偶尔出废品）；
+        /// 累计产量越多 → σ越小（品质趋于稳定）。
+        /// σ范围：1.0 ~ 3.0
+        /// </summary>
+        public float GetQualitySpread(int goodsId)
+        {
+            float cum = GetCumulativeOutput(goodsId);
+            float sigma = 3.0f - Mathf.Log(1f + cum) * 0.3f;
+            return Mathf.Clamp(sigma, 1.0f, 3.0f);
+        }
+
+        /// <summary>
+        /// 生产一次加工品，掷骰子决定本次实际品质（0-10整数）。
+        /// 以当前平均品质为中心的截断正态分布：
+        /// - 平均品质低时：低品质概率最高，高品质概率低但非零（偶尔出精品）
+        /// - 平均品质高时：高品质概率最高，低品质概率低
+        /// - 累计产量越多，分布越集中（品质越稳定）
+        /// </summary>
+        public int ProduceQuality(int goodsId)
+        {
+            var q = GetQuality(goodsId);
+            float sigma = GetQualitySpread(goodsId);
+            // Box-Muller 正态采样
+            float u1 = 1f - UnityEngine.Random.value;
+            float u2 = UnityEngine.Random.value;
+            float z = Mathf.Sqrt(-2f * Mathf.Log(u1)) * Mathf.Cos(2f * Mathf.PI * u2);
+            float sample = q.quality + z * sigma;
+            return Mathf.Clamp(Mathf.RoundToInt(sample), 0, 10);
+        }
+
+        /// <summary>
+        /// 记录一次生产：累计产量 + 用实际产出品质更新平均品质（加权移动平均）。
+        /// </summary>
+        /// <param name="goodsId">加工品ID</param>
+        /// <param name="amount">本次产量</param>
+        /// <param name="actualQuality">本次实际产出品质（ProduceQuality返回值）</param>
+        public void RecordProduction(int goodsId, float amount, int actualQuality)
+        {
+            if (amount <= 0f) return;
+            var q = GetQuality(goodsId);
+            q.cumulativeOutput += amount;
+            // 加权移动平均：新品质权重 = amount / (累计产量+amount)，避免单次大幅跳变
+            float totalWeight = q.cumulativeOutput + amount;
+            float newWeight = amount / totalWeight;
+            q.quality = q.quality * (1f - newWeight) + actualQuality * newWeight;
+            if (q.quality > q.peakQuality) q.peakQuality = q.quality;
         }
     }
 }

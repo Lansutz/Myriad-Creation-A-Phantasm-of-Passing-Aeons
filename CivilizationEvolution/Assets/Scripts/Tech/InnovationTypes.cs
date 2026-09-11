@@ -104,6 +104,9 @@ namespace CivilizationEvolution.Tech
         /// <summary>是否允许通过贸易获得的物产满足前置（true=贸易可得即可，false=必须本土控制资源点）</summary>
         public bool allowTradeResource = true;
 
+        /// <summary>物产前置的最低累计产量门槛（默认10；产量不足时即使有资源点也无法开始研究）</summary>
+        public float requiredResourceAmount = 10f;
+
  /// <summary>所属大类（由子类映射推导）</summary>        public InnovationDomain Domain => InnovationDomainMap.GetDomain(field);
 
  /// <summary>显示名：本地化表优先（&lt;id&gt;_name），回退内嵌字段</summary>        public string GetName() => Localization.Has(innovationId + "_name") ? Localization.Get(innovationId + "_name") : innovationName;
