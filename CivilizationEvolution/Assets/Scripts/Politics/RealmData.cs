@@ -22,6 +22,14 @@ namespace CivilizationEvolution.Politics
         public float stability = 50f;
         public float centralization = 0.5f; // 集权度 0~1
 
+        // ===== 政权根本形态（行国/城国）=====
+        /// <summary>政权形态：城国/半定居/行国（由文化移动模式决定初始值）</summary>
+        public RealmForm realmForm = RealmForm.Sedentary;
+        /// <summary>游牧亚型（仅行国：草原/山地/沙漠/半农半牧）</summary>
+        public NomadicSubtype nomadicSubtype = NomadicSubtype.None;
+        /// <summary>游牧活动范围（仅行国，城国为null）</summary>
+        [System.NonSerialized] public NomadicRange nomadicRange;
+
  // ===== 通行管制（外交联动）===== /// <summary>全国默认通行管制等级</summary>        public GameEnums.MovementControlLevel movementControl = GameEnums.MovementControlLevel.Loose;
 
  /// <summary>关键城镇/关隘的单独管制等级覆盖（tileIndex -> 管制等级）</summary>        [System.NonSerialized]

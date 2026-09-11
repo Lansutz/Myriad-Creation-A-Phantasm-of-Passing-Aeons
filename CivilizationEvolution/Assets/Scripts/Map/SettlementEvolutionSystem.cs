@@ -1,175 +1,196 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Map;
+using CivilizationEvolution.World;
 using UnityEngine;
 
 namespace CivilizationEvolution.Map
 {
- /// 聚落形态演化系统 /// 管理村镇/城/堡三种形态的渐进式演化，不突变 /// 形态-等级-倾向三者软性约束（AI遵循，玩家可手动突破）    public static class SettlementEvolutionSystem
+    /// <summary>
+    /// 据点演化系统：统一管理 营寨(Camp) → 坞堡(FortifiedCamp) → 聚落(Burg) 的生命周期转化。
+    ///
+    /// 升级路径（拟真）：
+    /// - 行军营地 → 驻屯营（驻扎时间长）
+    /// - 驻屯营/蛮族营地 → 坞堡（修筑防御工事，defense达到阈值）
+    /// - 营寨/坞堡 → 村镇（人口积累+永久化进度满+定居化）
+    /// - 坞堡 → 堡垒（军事化升级，成为Burg的Fort形态）
+    /// - 游牧营地不永久化（逐水草而居，只能通过"定居化改革"转化）
+    ///
+    /// 反向路径：
+    /// - 聚落被摧毁 → 废墟（SettlementDestructionSystem处理）
+    /// - 城国被游牧征服 → 聚落降级（定居点→贡赋据点）
+    /// </summary>
+    public static class SettlementEvolutionSystem
     {
- // ===== 演化阈值 ===== /// <summary>形态切换所需演化进度阈值</summary>        public const float EvolutionThreshold = 80f;
+        // ===== 升级阈值 =====
+        /// <summary>营寨升级为坞堡的防御值阈值</summary>
+        public const float FORTIFIED_CAMP_DEFENSE_THRESHOLD = 40f;
+        /// <summary>坞堡升级为堡垒聚落的防御值阈值</summary>
+        public const float FORT_SETTLEMENT_DEFENSE_THRESHOLD = 70f;
+        /// <summary>营寨转化为村镇的最低人口</summary>
+        public const int CAMP_TO_VILLAGE_POP = 50;
+        /// <summary>坞堡转化为堡垒聚落的最低人口</summary>
+        public const int FORTIFIED_CAMP_TO_FORT_POP = 100;
 
- /// <summary>形态切换冷却期（Tick数）</summary>        public const int TransitionCooldown = 365; // 约1年
-
- /// <summary>每Tick最大演化进度变化</summary>        public const float MaxEvolutionDeltaPerTick = 0.5f;
-
- // ===== 倾向阈值 ===== /// <summary>军政倾向高阈值（超过则堡形态稳定）</summary>        public const float HighMilitaryThreshold = 0.65f;
-
- /// <summary>军政倾向低阈值（低于则堡形态向村镇/城偏移）</summary>        public const float LowMilitaryThreshold = 0.35f;
-
- /// <summary>经贸倾向高阈值（超过则城形态稳定）</summary>        public const float HighEconomyThreshold = 0.6f;
-
- /// <summary>发展度阈值（村镇升城所需最低发展度）</summary>        public const float VillageToCityDevelopment = 40f;
-
- /// <summary>人口阈值（村镇升城所需最低人口）</summary>        public const float VillageToCityPopulation = 2000f;
-
- /// 每Tick更新单个聚落的形态演化进度 /// <param name="burg">聚落数据</param> /// <param name="militaryWeight">当前军政倾向权重（0~1）</param> /// <param name="economyWeight">当前经贸倾向权重（0~1）</param> /// <param name="cultureWeight">当前文教倾向权重（0~1）</param> /// <param name="isStrategicLocation">是否为战略要地（隘口/海峡/边境）</param> /// <param name="deltaTime">时间增量（Tick比例）</param> /// <returns>是否发生了形态切换</returns>        public static bool UpdateEvolution(BurgData burg,
-            float militaryWeight, float economyWeight, float cultureWeight,
-            bool isStrategicLocation, float deltaTime = 1f)
+        /// <summary>
+        /// 每日检查所有营寨的演化。
+        /// </summary>
+        public static void DailyTick(GameWorld world)
         {
-            if (burg == null) return false;
-
-            burg.ticksSinceLastTransition++;
-
- // 冷却期内不演化            if (burg.ticksSinceLastTransition < TransitionCooldown)
-                return false;
-
- // 计算演化方向和速度            float evolutionDelta = CalculateEvolutionDelta(burg,
-                militaryWeight, economyWeight, cultureWeight, isStrategicLocation);
-
- // 应用演化进度（向目标方向累积）            burg.settlementEvolution = Mathf.Clamp(
-                burg.settlementEvolution + evolutionDelta * deltaTime,
-                -100f, 100f);
-
- // 检查是否达到切换阈值            if (Mathf.Abs(burg.settlementEvolution) >= EvolutionThreshold)
+            if (world?.Camps == null) return;
+            var camps = world.Camps.AllCamps;
+            for (int i = camps.Count - 1; i >= 0; i--)
             {
-                return TryTransition(burg, burg.settlementEvolution > 0);
-            }
+                var camp = camps[i];
+                if (camp.isAbandoned) continue;
+                if (camp.type == CampType.Nomad) continue; // 游牧营地不自动演化
 
-            return false;
+                // 永久化进度在CampData.Tick里已增长，这里检查转化
+                if (camp.CanEvolveToSettlement)
+                {
+                    TryEvolveCampToBurg(world, camp);
+                }
+            }
         }
 
- /// 计算演化进度变化量 /// 正值表示向"更高阶"演化（村镇→城，城→堡） /// 负值表示向"更低阶"退化（堡→城/村镇，城→村镇）        private static float CalculateEvolutionDelta(BurgData burg,
-            float militaryWeight, float economyWeight, float cultureWeight,
-            bool isStrategicLocation)
+        /// <summary>
+        /// 营寨修筑防御工事（向坞堡演化）。
+        /// 由军队/政权主动调用，消耗物资（简化：直接增加defense和permanence）。
+        /// </summary>
+        public static void FortifyCamp(GameWorld world, int campId, float materialInput)
         {
-            float delta = 0f;
+            var camp = world?.Camps?.GetCamp(campId);
+            if (camp == null || camp.isAbandoned) return;
 
-            switch (burg.settlementType)
+            // 投入物资转化为防御和永久化
+            camp.defense = Mathf.Min(100f, camp.defense + materialInput * 0.5f);
+            camp.permanence = Mathf.Min(100f, camp.permanence + materialInput * 0.2f);
+
+            if (camp.defense >= FORTIFIED_CAMP_DEFENSE_THRESHOLD &&
+                camp.attributes != null && !camp.attributes.ContainsKey("isFortified"))
             {
-                case SettlementType.Village:
- // 村镇→城：发展度、人口、经贸达到阈值                    if (burg.development >= VillageToCityDevelopment &&
-                        burg.population >= VillageToCityPopulation &&
-                        economyWeight >= 0.4f)
-                    {
-                        delta += 0.3f * (economyWeight + burg.development / 100f);
-                    }
- // 村镇→堡：战略要地且军政倾向上升                    if (isStrategicLocation && militaryWeight >= HighMilitaryThreshold)
-                    {
-                        delta += 0.4f * militaryWeight;
-                    }
- // 稳定度抵抗演化                    delta -= burg.settlementStability * 0.002f;
-                    break;
-
-                case SettlementType.City:
- // 城→堡：军政倾向极高且地处战略要地                    if (isStrategicLocation && militaryWeight >= HighMilitaryThreshold)
-                    {
-                        delta += 0.35f * (militaryWeight - 0.5f);
-                    }
- // 城→村镇：军政经贸均低，发展度下降                    if (militaryWeight < LowMilitaryThreshold &&
-                        economyWeight < 0.3f &&
-                        burg.development < 20f)
-                    {
-                        delta -= 0.25f * (0.5f - economyWeight);
-                    }
-                    delta -= burg.settlementStability * 0.002f;
-                    break;
-
-                case SettlementType.Fort:
- // 堡→城：经贸文教持续增长，军政倾向下降                    if (militaryWeight < LowMilitaryThreshold &&
-                        (economyWeight >= 0.5f || cultureWeight >= 0.4f))
-                    {
-                        delta -= 0.3f * (0.5f - militaryWeight + economyWeight * 0.5f);
-                    }
- // 堡→村镇：军政持续极低，人口以农耕商贸为主                    if (militaryWeight < 0.2f && economyWeight < 0.3f &&
-                        burg.fortification < 2f)
-                    {
-                        delta -= 0.4f * (0.3f - militaryWeight);
-                    }
- // 战略要地的堡垒更稳定                    if (isStrategicLocation) delta += 0.1f;
-                    delta -= burg.settlementStability * 0.002f;
-                    break;
+                camp.attributes["isFortified"] = 1f;
+                Debug.Log($"[SettlementEvolution] 营寨#{camp.campId}升级为坞堡（防御={camp.defense:F0}）");
             }
-
- // 玩家指定演化目标时加速            if (burg.evolutionTarget.HasValue &&
-                burg.evolutionTarget.Value != burg.settlementType)
-            {
-                delta += 0.2f; // 玩家推动加速
-            }
-
-            return Mathf.Clamp(delta, -MaxEvolutionDeltaPerTick, MaxEvolutionDeltaPerTick);
         }
 
- /// 尝试形态切换        private static bool TryTransition(BurgData burg, bool upward)
+        /// <summary>
+        /// 营寨/坞堡转化为永久聚落（Burg）。
+        /// </summary>
+        public static BurgData TryEvolveCampToBurg(GameWorld world, CampData camp)
         {
-            SettlementType oldType = burg.settlementType;
-            SettlementType newType = oldType;
+            if (world == null || camp == null) return null;
+            if (camp.type == CampType.Nomad) return null; // 游牧营地不能直接转化
 
-            switch (oldType)
+            bool isFortified = camp.attributes != null &&
+                camp.attributes.TryGetValue("isFortified", out float fortified) && fortified > 0f;
+
+            // 判定转化形态
+            SettlementType targetType;
+            SettlementLevel targetLevel;
+            BurgType burgType;
+
+            if (isFortified && camp.defense >= FORT_SETTLEMENT_DEFENSE_THRESHOLD &&
+                camp.population >= FORTIFIED_CAMP_TO_FORT_POP)
             {
-                case SettlementType.Village:
-                    newType = upward ? SettlementType.City : SettlementType.Village;
- // 村镇不能向下退化                    if (!upward) return false;
-                    break;
-
-                case SettlementType.City:
-                    newType = upward ? SettlementType.Fort : SettlementType.Village;
-                    break;
-
-                case SettlementType.Fort:
- // 堡不能向上演化，只能向下                    if (upward) return false;
-                    newType = burg.development > 30f ? SettlementType.City : SettlementType.Village;
-                    break;
+                // 坞堡 → 堡垒
+                targetType = SettlementType.Fort;
+                targetLevel = SettlementLevel.LevelII;
+                burgType = BurgType.Fortress;
+            }
+            else if (camp.population >= CAMP_TO_VILLAGE_POP)
+            {
+                // 营寨 → 村镇
+                targetType = SettlementType.Village;
+                targetLevel = SettlementLevel.LevelI;
+                burgType = BurgType.Village;
+            }
+            else
+            {
+                return null; // 条件不足
             }
 
-            if (newType == oldType) return false;
-
- // 执行切换            burg.settlementType = newType;
-            burg.settlementEvolution = 0f;
-            burg.settlementStability = Mathf.Max(0f, burg.settlementStability - 20f);
-            burg.ticksSinceLastTransition = 0;
-
-            Debug.Log($"[SettlementEvolution] {burg.burgName}: {oldType} → {newType}");
-            return true;
-        }
-
- /// 检查形态-等级约束（软性规则） /// 返回是否违反约束（AI演化时应避免，玩家可突破）        public static bool CheckLevelConstraint(BurgData burg)
-        {
-            return burg.buildLevel <= burg.MaxBuildLevelForType;
-        }
-
- /// 获取形态描述        public static string GetSettlementDescription(SettlementType type)
-        {
-            return type switch
+            // 创建BurgData
+            int newBurgId = world.burgs.Count > 0 ? NextBurgId(world) : 1;
+            var burg = new BurgData
             {
-                SettlementType.Village => "村镇：村落、集镇，生产功能为主，防御薄弱，辐射范围小",
-                SettlementType.City => "城：城邑、都会、大都会，区域综合型中心，功能复合",
-                SettlementType.Fort => "堡：堡垒、要塞、堡寨，军事防御为核心，等级跨度完整",
-                _ => "未知"
+                burgId = newBurgId,
+                burgName = camp.campName,
+                type = burgType,
+                tileIndex = camp.tileIndex,
+                provinceId = world.tiles[camp.tileIndex].provinceId,
+                population = camp.population,
+                development = camp.permanence * 0.1f,
+                wealth = camp.supplies * 0.5f,
+                fortification = camp.defense * 0.1f,
+                garrison = camp.population / 5,
+                buildLevel = (int)targetLevel,
+                settlementType = targetType,
+                settlementLevel = targetLevel,
+                settlementEvolution = 100f,
+                settlementStability = 50f,
+                foundingTick = world.currentDay,
+                wallLevel = isFortified ? WallLevel.Palisade : WallLevel.None
             };
+
+            world.burgs[newBurgId] = burg;
+
+            // 清除营寨
+            world.Camps.AbandonCamp(camp.campId);
+            var tile = world.tiles[camp.tileIndex];
+            tile.campId = -1;
+            world.tiles[camp.tileIndex] = tile;
+
+            Debug.Log($"[SettlementEvolution] 营寨#{camp.campId}({camp.type}) 演化为聚落#{newBurgId}({targetType})");
+            return burg;
         }
 
- /// 根据BurgType推断初始SettlementType        public static SettlementType InferFromBurgType(BurgType burgType)
+        /// <summary>
+        /// 游牧营地通过"定居化改革"转化（需要革新条件，由文化/革新系统调用）。
+        /// </summary>
+        public static BurgData SettleNomadCamp(GameWorld world, int campId)
         {
-            return burgType switch
+            var camp = world?.Camps?.GetCamp(campId);
+            if (camp == null || camp.type != CampType.Nomad) return null;
+            if (camp.population < CAMP_TO_VILLAGE_POP) return null;
+
+            // 游牧定居化：直接走营寨→村镇路径
+            camp.type = CampType.Military; // 转为军事驻屯类型以通过Nomad检查
+            camp.permanence = 100f;
+            return TryEvolveCampToBurg(world, camp);
+        }
+
+        /// <summary>
+        /// 聚落反向降级（城国被游牧征服/严重衰退）：Burg → 营寨。
+        /// </summary>
+        public static CampData DegradeBurgToCamp(GameWorld world, int burgId,
+            CampType campType = CampType.Military, int ownerRealmId = -1)
+        {
+            if (world == null || !world.burgs.TryGetValue(burgId, out var burg)) return null;
+            if (burg.IsRuined) return null;
+
+            var camp = world.Camps.EstablishCamp(
+                campType, burg.tileIndex, Mathf.RoundToInt(burg.population),
+                ownerRealmId, -1, burg.burgName + "（降级）");
+            if (camp != null)
             {
-                BurgType.Village => SettlementType.Village,
-                BurgType.Town => SettlementType.Village,
-                BurgType.City => SettlementType.City,
-                BurgType.Port => SettlementType.City,
-                BurgType.Capital => SettlementType.City,
-                BurgType.Fortress => SettlementType.Fort,
-                _ => SettlementType.Village
-            };
+                camp.defense = burg.fortification * 10f;
+                camp.supplies = burg.wealth;
+                // 移除聚落（但不删除数据，标记为降级）
+                burg.ruinLevel = 2;
+                burg.ruinedDay = world.currentDay;
+                world.burgs[burgId] = burg;
+                Debug.Log($"[SettlementEvolution] 聚落#{burgId}降级为营寨#{camp.campId}");
+            }
+            return camp;
+        }
+
+        private static int NextBurgId(GameWorld world)
+        {
+            int max = 0;
+            foreach (var id in world.burgs.Keys)
+                if (id > max) max = id;
+            return max + 1;
         }
     }
 }

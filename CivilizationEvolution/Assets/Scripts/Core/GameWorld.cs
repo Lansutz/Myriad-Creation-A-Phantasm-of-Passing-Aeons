@@ -153,6 +153,12 @@ namespace CivilizationEvolution.Core
 
  // 6.7 营寨（军营/土匪寨/游牧营地/难民营）            _campManager?.Tick(1f);
 
+ // 6.8 据点演化（营寨→坞堡→聚落）            CivilizationEvolution.Map.SettlementEvolutionSystem.DailyTick(this);
+
+ // 6.9 废墟恢复（被摧毁聚落的重建）            CivilizationEvolution.War.SettlementDestructionSystem.DailyTickRecovery(this);
+
+ // 6.10 弃地巡检（无主低秩序地块滋生土匪）            CivilizationEvolution.Map.LandAbandonmentSystem.DailyCheckBanditSpawn(this);
+
  // 7. 外交（先同步世界时钟，供盟约/条约/事件时间戳使用）            _diplomacyManager.CurrentDay = currentDay;
             _diplomacyManager.DailyTick();
 

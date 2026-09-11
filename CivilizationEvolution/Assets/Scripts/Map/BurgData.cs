@@ -128,6 +128,26 @@ namespace CivilizationEvolution.Map
             SettlementType.Fort => 0.3f,      // 堡经贸通常偏低
             _ => 0.5f
         };
+
+        // ===== 废墟/摧毁系统 =====
+        /// <summary>废墟等级 0=正常，1=轻度劫掠，2=中度破城，3=重度夷平（废墟）</summary>
+        public int ruinLevel;
+        /// <summary>被摧毁日期（游戏日，-1=未被摧毁）</summary>
+        public int ruinedDay = -1;
+        /// <summary>摧毁前的聚落等级（用于恢复时还原）</summary>
+        public SettlementLevel preRuinLevel;
+        /// <summary>摧毁前的聚落形态</summary>
+        public SettlementType preRuinType;
+        /// <summary>废墟恢复进度 0-100（人口回流、重建）</summary>
+        public float recoveryProgress;
+        /// <summary>废墟残留文化ID（重新定居时可能恢复）</summary>
+        public int remnantCultureId = -1;
+        /// <summary>废墟残留信仰ID</summary>
+        public int remnantFaithId = -1;
+        /// <summary>是否为废墟</summary>
+        public bool IsRuined => ruinLevel >= 3;
+        /// <summary>是否受损（劫掠/破城但未夷平）</summary>
+        public bool IsDamaged => ruinLevel > 0 && ruinLevel < 3;
     }
 
  /// 子地块生成器 /// 对齐 FantasyMapSimulator: BurgsAndStateGenerator /// 规则：每个省份至少 1 个 Burg（省中心），沿海省份有港口，高发展度省份有更多 Burg
