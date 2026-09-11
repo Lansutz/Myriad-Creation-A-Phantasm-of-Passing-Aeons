@@ -325,6 +325,7 @@ namespace CivilizationEvolution.Core
             Wood,
             Stone,
             MetalOre,
+            Metal,
             PreciousMetal,
             Gem,
             Equipment,

@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using UnityEngine;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 using CivilizationEvolution.Culture;
 
 namespace CivilizationEvolution.Tests

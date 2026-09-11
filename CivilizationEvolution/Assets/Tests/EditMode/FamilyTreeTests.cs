@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Tests
 {

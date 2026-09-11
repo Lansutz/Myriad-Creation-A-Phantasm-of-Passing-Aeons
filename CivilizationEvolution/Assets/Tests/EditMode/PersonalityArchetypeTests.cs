@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 using CivilizationEvolution.Culture;
 
 namespace CivilizationEvolution.Tests

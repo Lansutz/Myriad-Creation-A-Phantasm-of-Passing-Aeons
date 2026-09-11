@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Politics;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 using CivilizationEvolution.UI;
 
 namespace CivilizationEvolution.Tests

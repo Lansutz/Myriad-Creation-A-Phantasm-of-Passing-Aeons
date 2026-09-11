@@ -126,6 +126,15 @@ namespace CivilizationEvolution.Core
             AddGoodsDef(40, "石料", GameEnums.GoodsCategory.Stone, 0.3f, 0.8f, false, 0f);
             AddGoodsDef(50, "铁矿", GameEnums.GoodsCategory.MetalOre, 1.5f, 0.3f, false, 0f);
             AddGoodsDef(51, "铜矿", GameEnums.GoodsCategory.MetalOre, 2.0f, 0.3f, false, 0f);
+            AddGoodsDef(54, "锡矿", GameEnums.GoodsCategory.MetalOre, 3.0f, 0.25f, false, 0f);
+            AddGoodsDef(58, "铅矿", GameEnums.GoodsCategory.MetalOre, 1.2f, 0.3f, false, 0f);
+            // 金属（加工品，由矿物冶炼而来）
+            AddGoodsDef(52, "铁", GameEnums.GoodsCategory.Metal, 4.0f, 0.15f, false, 0f, 50, 0.6f);
+            AddGoodsDef(53, "铜", GameEnums.GoodsCategory.Metal, 5.0f, 0.15f, false, 0f, 51, 0.6f);
+            AddGoodsDef(55, "锡", GameEnums.GoodsCategory.Metal, 8.0f, 0.1f, false, 0f, 54, 0.5f);
+            AddGoodsDef(59, "铅", GameEnums.GoodsCategory.Metal, 2.5f, 0.2f, false, 0f, 58, 0.7f);
+            AddGoodsDef(56, "青铜", GameEnums.GoodsCategory.Metal, 10.0f, 0.15f, false, 0f, 53, 0.8f);
+            AddGoodsDef(57, "钢", GameEnums.GoodsCategory.Metal, 15.0f, 0.12f, false, 0f, 52, 0.5f);
             AddGoodsDef(60, "金", GameEnums.GoodsCategory.PreciousMetal, 100f, 0.05f, false, 0f);
             AddGoodsDef(61, "银", GameEnums.GoodsCategory.PreciousMetal, 15f, 0.05f, false, 0f);
             AddGoodsDef(70, "武器", GameEnums.GoodsCategory.Equipment, 10f, 0.1f, false, 0f, 50, 0.3f);
@@ -133,6 +142,25 @@ namespace CivilizationEvolution.Core
             AddGoodsDef(80, "丝绸", GameEnums.GoodsCategory.Luxury, 50f, 0.02f, false, 0f);
             AddGoodsDef(81, "香料", GameEnums.GoodsCategory.Luxury, 30f, 0.01f, false, 0f);
             AddGoodsDef(90, "奴隶", GameEnums.GoodsCategory.Slave, 30f, 0f, false, 0f);
+            // 标记自然资源（地图资源点生成+物产前置门槛用）
+            MarkNaturalResource(50, ResourceType.Mineral, 0.4f, -1);
+            MarkNaturalResource(51, ResourceType.Mineral, 0.35f, -1);
+            MarkNaturalResource(54, ResourceType.Mineral, 0.15f, 1104);
+            MarkNaturalResource(58, ResourceType.Mineral, 0.3f, -1);
+            MarkNaturalResource(30, ResourceType.Forest, 0.6f, -1);
+            MarkNaturalResource(40, ResourceType.Mineral, 0.5f, -1);
+            MarkNaturalResource(3, ResourceType.Special, 0.3f, 934);
+        }
+
+        private void MarkNaturalResource(int goodsId, ResourceType type, float abundance, int requiredInnovation)
+        {
+            if (!goodsDefs.TryGetValue(goodsId, out var def)) return;
+            def.isNaturalResource = true;
+            def.resourceType = type;
+            def.baseAbundance = abundance;
+            def.requiredInnovation = requiredInnovation;
+            def.renewable = (type == ResourceType.Forest || type == ResourceType.WildAnimal || type == ResourceType.WildPlant || type == ResourceType.Aquatic);
+            goodsDefs[goodsId] = def;
         }
 
 

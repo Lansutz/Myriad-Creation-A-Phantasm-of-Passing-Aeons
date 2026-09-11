@@ -1,4 +1,4 @@
-{
+﻿{
   "innovations": [
     {
       "innovationId": 100,
@@ -93,10 +93,13 @@
       "era": 1,
       "researchCost": 200,
       "prerequisites": [
-        200
+        1105
       ],
-      "innovationName": "青铜冶炼",
-      "description": "石与火中炼出铜液，浇铸成鼎、成犁、成兵刃。"
+      "innovationName": "青铜铸造",
+      "description": "青铜液浇铸成鼎、成犁、成兵刃；范铸法与分铸法让复杂器型成为可能——青铜时代的礼器与兵器皆出于此。",
+      "requiredAnyResources": [
+        56
+      ]
     },
     {
       "innovationId": 202,
@@ -104,10 +107,14 @@
       "era": 2,
       "researchCost": 400,
       "prerequisites": [
-        201
+        1101,
+        925
       ],
       "innovationName": "冶铁术",
-      "description": "炉温更高，铁水奔流；青铜是贵族的，铁是所有人的。"
+      "description": "炉温更高，铁水奔流；赫梯人前二千纪率先冶铁，铁比铜更易得——青铜是贵族的，铁是所有人的。",
+      "requiredAnyResources": [
+        50
+      ]
     },
     {
       "innovationId": 203,
@@ -119,7 +126,10 @@
         803
       ],
       "innovationName": "炼钢术",
-      "description": "百炼成钢，刃口吹毛断发；军国利器从此不再受制于矿脉。"
+      "description": "百炼成钢，刃口吹毛断发；军国利器从此不再受制于矿脉。",
+      "requiredAnyResources": [
+        52
+      ]
     },
     {
       "innovationId": 200,
@@ -185,7 +195,10 @@
         201
       ],
       "innovationName": "青铜武器",
-      "description": "戈矛剑镞皆是青铜，武士手中的第一件金属兵刃。"
+      "description": "戈矛剑镞皆是青铜，武士手中的第一件金属兵刃。",
+      "requiredAnyResources": [
+        56
+      ]
     },
     {
       "innovationId": 301,
@@ -197,7 +210,10 @@
         300
       ],
       "innovationName": "铁制武器",
-      "description": "铁刃取代铜刃，军阵的杀伤力上了台阶。"
+      "description": "铁刃取代铜刃，军阵的杀伤力上了台阶。",
+      "requiredAnyResources": [
+        52
+      ]
     },
     {
       "innovationId": 303,
@@ -494,7 +510,10 @@
         201
       ],
       "innovationName": "铸币",
-      "description": "铜钱方孔，一吊钱走遍天下；价值第一次有了统一的度量。"
+      "description": "铜钱方孔，一吊钱走遍天下；价值第一次有了统一的度量。",
+      "requiredAnyResources": [
+        56
+      ]
     },
     {
       "innovationId": 702,
@@ -1035,7 +1054,7 @@
       "era": 1,
       "researchCost": 150,
       "prerequisites": [
-        201
+        1101
       ],
       "innovationName": "皮囊风箱",
       "description": "脚踏皮囊鼓风入炉，炉火纯青；底比斯墓壁画上的冶铜师已经这么干了四千年。"
@@ -1062,7 +1081,10 @@
         925
       ],
       "innovationName": "生铁高炉",
-      "description": "炉温破千，铁水奔流（六合程桥春秋铁器为世界最早实证）；铁从此可以浇铸。"
+      "description": "炉温破千，铁水奔流（六合程桥春秋铁器为世界最早实证）；铁从此可以浇铸。",
+      "requiredAnyResources": [
+        50
+      ]
     },
     {
       "innovationId": 930,
@@ -1105,11 +1127,15 @@
       "era": 2,
       "researchCost": 300,
       "prerequisites": [
-        201,
+        1101,
         925
       ],
       "innovationName": "灰吹法",
-      "description": "铅吸银入灰皿，火中炼出真银（Tepe Sialk 前四千年实证；安第斯独立发明）。"
+      "description": "铅吸银入灰皿，火中炼出真银（Tepe Sialk 前四千年实证；安第斯独立发明）。",
+      "requiredAllResources": [
+        58,
+        61
+      ]
     },
     {
       "innovationId": 928,
@@ -1117,7 +1143,7 @@
       "era": 2,
       "researchCost": 350,
       "prerequisites": [
-        201,
+        1105,
         200
       ],
       "innovationName": "失蜡法",
@@ -2227,7 +2253,10 @@
         "BronzeArmor"
       ],
       "innovationName": "青铜盔甲",
-      "description": "青铜胸甲与护胫——重装战士的金属防护。"
+      "description": "青铜胸甲与护胫——重装战士的金属防护。",
+      "requiredAnyResources": [
+        56
+      ]
     },
     {
       "innovationId": 1015,
@@ -2303,6 +2332,94 @@
       "prerequisitesAny": [],
       "innovationName": "领土王国",
       "description": "疆域想象的形成——先是某某人之王，而后才有王国：头衔所辖从'人'延展为'土地'，王国成为领土实体，地图上开始出现以国为名的疆域。"
+    },
+    {
+      "innovationId": 1100,
+      "field": 2,
+      "era": 0,
+      "researchCost": 40,
+      "prerequisites": [
+        900
+      ],
+      "requiredAnyResources": [
+        51
+      ],
+      "innovationName": "自然铜冷锻",
+      "description": "地表捡到的自然铜块，冷锤成小珠小管；安纳托利亚Çayönü前八千八百年已有冷锻铜珠——金属时代的第一缕微光。"
+    },
+    {
+      "innovationId": 1101,
+      "field": 2,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [
+        802,
+        1100,
+        200
+      ],
+      "requiredAnyResources": [
+        51
+      ],
+      "innovationName": "炼铜术",
+      "description": "铜矿石入陶坩埚，炭火还原出铜液；从矿石到金属的第一步——温查文明前五千五百年已炼出铜斧。"
+    },
+    {
+      "innovationId": 1102,
+      "field": 2,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        1101
+      ],
+      "requiredAnyResources": [
+        53
+      ],
+      "innovationName": "铜的退火与铸造",
+      "description": "加热后锻打不再脆裂，熔铜灌入石范陶范成器；红铜时代的成型工艺——纯铜虽软，却已能铸成斧凿。"
+    },
+    {
+      "innovationId": 1103,
+      "field": 2,
+      "era": 1,
+      "researchCost": 180,
+      "prerequisites": [
+        1101
+      ],
+      "requiredAnyResources": [
+        51
+      ],
+      "innovationName": "砷铜合金",
+      "description": "含砷铜矿石冶炼出砷铜，硬度与铸造性优于纯铜；青铜之前的合金时代——前四千纪两河与安纳托利亚的兵刃多是砷铜。"
+    },
+    {
+      "innovationId": 1104,
+      "field": 2,
+      "era": 1,
+      "researchCost": 160,
+      "prerequisites": [
+        1101
+      ],
+      "requiredAnyResources": [
+        54
+      ],
+      "innovationName": "炼锡术",
+      "description": "锡石木炭还原出锡液；锡的熔点虽低，却需要先认识这种特殊矿石——前三千纪近东的锡贸易催生了最早的长距离商路。"
+    },
+    {
+      "innovationId": 1105,
+      "field": 2,
+      "era": 1,
+      "researchCost": 200,
+      "prerequisites": [
+        1102,
+        1104
+      ],
+      "requiredAllResources": [
+        53,
+        55
+      ],
+      "innovationName": "青铜合金",
+      "description": "铜锡按配比共熔，硬度韧性铸造性兼备；真正的青铜——人类第一个广泛使用的合金，前三千纪开启了青铜时代。"
     }
   ]
 }

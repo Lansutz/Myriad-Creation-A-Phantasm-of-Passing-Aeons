@@ -44,7 +44,7 @@ namespace CivilizationEvolution.Tech
             if (!_innovations.TryGetValue(innovationId, out var def)) return false;
             if (HasInnovation(realmId, innovationId)) return false;
 
- // 检查前置（AND 全满足 + OR 任一满足；无前置则通过）            if (!ArePrerequisitesMet(realmId, def)) return false;
+ // 检查前置（AND 全满足 + OR 任一满足；无前置则通过）            if (!ArePrerequisitesMet(null, realmId, def)) return false; // 物产检查需要world，此处先跳过（研究开始时由调用方确保条件）
 
             _realmCurrentResearch[realmId] = innovationId;
             if (!_realmResearchPoints.ContainsKey(realmId))
@@ -53,7 +53,7 @@ namespace CivilizationEvolution.Tech
             return true;
         }
 
- /// <summary>前置检查：prerequisites 全部持有 + prerequisitesAny 至少一项持有（空列表视为通过）</summary>        public bool ArePrerequisitesMet(int realmId, InnovationDef def)
+ /// <summary>前置检查：prerequisites 全部持有 + prerequisitesAny 至少一项持有（空列表视为通过）</summary>        public bool ArePrerequisitesMet(GameWorld world, int realmId, InnovationDef def)
         {
             foreach (int prereq in def.prerequisites)
             {
@@ -136,7 +136,7 @@ namespace CivilizationEvolution.Tech
             {
                 if (HasInnovation(realmId, def.innovationId)) continue;
 
-                if (ArePrerequisitesMet(realmId, def))
+                if (ArePrerequisitesMet(null, realmId, def))
                     result.Add(def);
             }
             return result;
@@ -212,5 +212,217 @@ namespace CivilizationEvolution.Tech
         public IReadOnlyDictionary<int, InnovationDef> GetAllInnovations() => _innovations;
         public HashSet<int> GetRealmInnovations(int realmId) => _realmInnovations.TryGetValue(realmId, out var s) ? s : new HashSet<int>();
         public int GetRealmInnovationCount(int realmId) => _realmInnovations.TryGetValue(realmId, out var s) ? s.Count : 0;
+
+ // ===== 研究进度系统（实践驱动：资源产量积累经验） =====
+ /// <summary>各革新的研究进度（key=innovationId）</summary>
+        private readonly Dictionary<int, InnovationProgress> _innovationProgress = new Dictionary<int, InnovationProgress>();
+
+ /// <summary>获取革新的研究进度（不存在则创建）</summary>
+        public InnovationProgress GetProgress(int innovationId)
+        {
+            if (!_innovationProgress.TryGetValue(innovationId, out var p))
+            {
+                p = new InnovationProgress { innovationId = innovationId };
+                _innovationProgress[innovationId] = p;
+            }
+            return p;
+        }
+
+ /// <summary>检查政权是否拥有某物产（控制地块上的已发现资源点）</summary>
+        public bool HasResource(GameWorld world, int realmId, int goodsId, bool allowTrade)
+        {
+            if (world == null || world.tiles == null) return false;
+            for (int i = 0; i < world.tiles.Length; i++)
+            {
+                ref var tile = ref world.tiles[i];
+                if (!tile.exists || tile.ownerRealmId != realmId) continue;
+                if (tile.resources == null) continue;
+                foreach (var res in tile.resources)
+                {
+                    if (res.goodsId == goodsId && (res.discovered || res.developed))
+                        return true;
+                }
+            }
+            return false;
+        }
+
+ /// <summary>获取某物产的政权月产量（简化版：开发中资源点的丰度×开发程度之和）</summary>
+        public float GetResourceMonthlyOutput(GameWorld world, int realmId, int goodsId)
+        {
+            if (world == null || world.tiles == null) return 0f;
+            float total = 0f;
+            for (int i = 0; i < world.tiles.Length; i++)
+            {
+                ref var tile = ref world.tiles[i];
+                if (!tile.exists || tile.ownerRealmId != realmId) continue;
+                if (tile.resources == null) continue;
+                foreach (var res in tile.resources)
+                {
+                    if (res.goodsId == goodsId && res.developed)
+                        total += res.EffectiveOutput * 10f;
+                }
+            }
+            return total;
+        }
+
+ /// <summary>每月更新研究进度（实践驱动：基础+资源实践+规模+人员+建筑）</summary>
+        /// <summary>每月更新研究进度（实践驱动：累计产量×品质上限+边际递减+角色研究）</summary>
+        /// <param name="world">游戏世界</param>
+        /// <param name="realmId">政权ID</param>
+        /// <param name="innovationId">革新ID</param>
+        /// <param name="monthlyOutput">本月相关物资产量（累加到累计产量）</param>
+        /// <param name="averageQuality">相关加工品的平均品质（0-10，决定产量上限和经验系数）</param>
+        /// <param name="researcherCount">主动研究该革新的角色数量（工匠/学者/商人）</param>
+        /// <param name="hasFacility">是否有相关建筑</param>
+        public void MonthlyTickProgress(GameWorld world, int realmId, int innovationId,
+            float monthlyOutput, float averageQuality, int researcherCount, bool hasFacility)
+        {
+            if (!_innovations.TryGetValue(innovationId, out var def)) return;
+            if (HasInnovation(realmId, innovationId)) return;
+
+            var p = GetProgress(innovationId);
+            p.isAvailable = ArePrerequisitesMet(world, realmId, def);
+            if (!p.isAvailable)
+            {
+                p.lockedReason = GetLockedReason(world, realmId, def);
+                p.monthlyGain = 0f;
+                return;
+            }
+
+            p.gainBreakdown.Clear();
+
+            // 1. 累计产量（实践的基础——生产越多经验越多，但有品质上限）
+            p.cumulativeOutput += monthlyOutput;
+            p.averageQuality = averageQuality;
+            if (monthlyOutput > 0f) p.oldMethodPracticeCount++;
+
+            // 2. 品质决定产量上限：品质1=50, 品质5=250, 品质10=500
+            // 累计产量超过上限后，实践经验不再增长——必须提升品质才能继续积累
+            float outputCap = averageQuality * InnovationProgressConfig.OutputCapPerQuality;
+            float effectiveOutput = Mathf.Min(p.cumulativeOutput, outputCap);
+
+            // 3. 产量经验 = log(1 + 有效产量) × 基础系数 × 品质系数
+            // 品质系数：标准品质(5)为1.0，每高1级+10%，每低1级-10%
+            float outputExperience = 0f;
+            if (effectiveOutput > 0f)
+            {
+                float qualityMultiplier = 1f + (averageQuality - 5f) * InnovationProgressConfig.QualityCoefficientPerLevel;
+                outputExperience = Mathf.Log(1f + effectiveOutput) * InnovationProgressConfig.OutputExperienceBase * Mathf.Max(0.1f, qualityMultiplier);
+                p.gainBreakdown["生产实践"] = outputExperience;
+            }
+            if (p.cumulativeOutput > outputCap)
+            {
+                p.gainBreakdown["产量已达品质上限(需提升品质)"] = 0f;
+            }
+
+            // 4. 角色研究（与Character系统串联——工匠/学者/商人主动研究）
+            // 每个研究角色每月提供基础研究进度，旧方法实践次数够多后角色可能获得灵感加成
+            float characterResearch = researcherCount * InnovationProgressConfig.CharacterResearchBase;
+            if (p.oldMethodPracticeCount >= InnovationProgressConfig.OldMethodPracticeThreshold)
+            {
+                // 旧方法实践够多次后，角色有灵感，研究效率翻倍
+                characterResearch *= 2f;
+                p.gainBreakdown["角色灵感加成"] = characterResearch * 0.5f;
+            }
+            if (researcherCount > 0)
+            {
+                p.gainBreakdown["角色研究"] = characterResearch;
+            }
+
+            // 5. 设施加成
+            float facilityGain = 0f;
+            if (hasFacility)
+            {
+                facilityGain = InnovationProgressConfig.FacilityBonus;
+                p.gainBreakdown["设施支持"] = facilityGain;
+            }
+
+            // 6. 基础观察（极慢）
+            float baseGain = InnovationProgressConfig.BaseMonthlyGain;
+            p.gainBreakdown["基础观察"] = baseGain;
+
+            // 7. 合计基础增长
+            float rawGain = baseGain + outputExperience + characterResearch + facilityGain;
+
+            // 8. 边际递减系数：进度越高，增长越慢（连续函数，不是硬门槛）
+            // 递减系数 = 1 / (1 + progress / DiminishingBase)
+            float diminishingFactor = 1f / (1f + p.progress / InnovationProgressConfig.DiminishingBase);
+            p.gainBreakdown["边际递减系数"] = diminishingFactor;
+
+            float gain = rawGain * diminishingFactor;
+            gain = Mathf.Min(gain, InnovationProgressConfig.MaxMonthlyGain);
+
+            p.monthlyGain = gain;
+            p.progress += gain;
+            p.lockedReason = "";
+
+            if (p.progress >= 100f)
+            {
+                CompleteResearch(realmId, innovationId);
+                p.progress = 100f;
+            }
+        }
+
+        /// <summary>获取与革新相关的资源月产量（OR取最大，AND取最小）</summary>
+        private float GetRelevantResourceOutput(GameWorld world, int realmId, InnovationDef def)
+        {
+            float output = 0f;
+            if (def.requiredAnyResources != null && def.requiredAnyResources.Count > 0)
+            {
+                foreach (int resId in def.requiredAnyResources)
+                    output = Mathf.Max(output, GetResourceMonthlyOutput(world, realmId, resId));
+            }
+            if (def.requiredAllResources != null && def.requiredAllResources.Count > 0)
+            {
+                float minOutput = float.MaxValue;
+                foreach (int resId in def.requiredAllResources)
+                    minOutput = Mathf.Min(minOutput, GetResourceMonthlyOutput(world, realmId, resId));
+                if (minOutput < float.MaxValue) output = minOutput;
+            }
+            return output;
+        }
+
+ /// <summary>获取革新锁定原因的可读文本</summary>
+        private string GetLockedReason(GameWorld world, int realmId, InnovationDef def)
+        {
+            foreach (int prereq in def.prerequisites)
+            {
+                if (!HasInnovation(realmId, prereq))
+                {
+                    var prereqDef = GetInnovation(prereq);
+                    return "需要前置革新：" + (prereqDef != null ? prereqDef.GetName() : prereq.ToString());
+                }
+            }
+            if (def.requiredAllResources != null)
+            {
+                foreach (int resId in def.requiredAllResources)
+                {
+                    if (!HasResource(world, realmId, resId, def.allowTradeResource))
+                    {
+                        var goods = (world != null && world.goodsDefs != null && world.goodsDefs.ContainsKey(resId)) ? world.goodsDefs[resId] : null;
+                        return "缺少物产：" + (goods != null ? goods.goodsName : resId.ToString());
+                    }
+                }
+            }
+            if (def.requiredAnyResources != null && def.requiredAnyResources.Count > 0)
+            {
+                bool any = false;
+                foreach (int resId in def.requiredAnyResources)
+                {
+                    if (HasResource(world, realmId, resId, def.allowTradeResource)) { any = true; break; }
+                }
+                if (!any)
+                {
+                    var names = new List<string>();
+                    foreach (int resId in def.requiredAnyResources)
+                    {
+                        var goods = (world != null && world.goodsDefs != null && world.goodsDefs.ContainsKey(resId)) ? world.goodsDefs[resId] : null;
+                        names.Add(goods != null ? goods.goodsName : resId.ToString());
+                    }
+                    return "需要以下物产之一：" + string.Join("/", names);
+                }
+            }
+            return "条件未满足";
+        }
     }
 }

@@ -96,6 +96,14 @@ namespace CivilizationEvolution.Tech
  /// <summary>内置描述（本地化表有 &lt;id&gt;_desc 键时优先）</summary>        public string description;
  /// 节点级文化亲和标签（如 "Clay"/"Papyrus"/"Quipu"）： /// 文化 innovationAffinities 含该标签时研究速率加成——引导不同文明 /// 走向不同行政/技术形态（差异化路径，软引导非硬锁）        public List<string> affinityTags = new List<string>();
 
+        // ===== 物产前置条件（门槛，不是成本减免；地理→物产→革新） =====
+        /// <summary>或物产前置（OR：控制/贸易获得任一即可研究）</summary>
+        public List<int> requiredAnyResources = new List<int>();
+        /// <summary>且物产前置（AND：必须同时拥有全部才能研究）</summary>
+        public List<int> requiredAllResources = new List<int>();
+        /// <summary>是否允许通过贸易获得的物产满足前置（true=贸易可得即可，false=必须本土控制资源点）</summary>
+        public bool allowTradeResource = true;
+
  /// <summary>所属大类（由子类映射推导）</summary>        public InnovationDomain Domain => InnovationDomainMap.GetDomain(field);
 
  /// <summary>显示名：本地化表优先（&lt;id&gt;_name），回退内嵌字段</summary>        public string GetName() => Localization.Has(innovationId + "_name") ? Localization.Get(innovationId + "_name") : innovationName;

@@ -3,7 +3,7 @@ using NUnit.Framework;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Culture;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Tests
 {

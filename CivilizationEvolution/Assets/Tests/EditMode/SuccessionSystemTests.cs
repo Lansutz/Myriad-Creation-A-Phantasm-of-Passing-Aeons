@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Politics;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Tests
 {

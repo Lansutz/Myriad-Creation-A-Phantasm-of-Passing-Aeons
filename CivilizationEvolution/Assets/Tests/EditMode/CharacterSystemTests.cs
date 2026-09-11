@@ -4,7 +4,7 @@ using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Economy;
 using CivilizationEvolution.Politics;
-using CivilizationEvolution.Role;
+using CivilizationEvolution.Character;
 using CivilizationEvolution.Tech;
 
 namespace CivilizationEvolution.Tests
