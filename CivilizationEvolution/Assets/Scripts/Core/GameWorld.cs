@@ -71,8 +71,10 @@ namespace CivilizationEvolution.Core
  // ===== 子系统 =====        private SeaLandGenerator _seaLandGenerator;
         private FeatureManager _featureManager;
         private MapActorManager _mapActorManager;
+        private CampManager _campManager;
         public FeatureManager Features => _featureManager;
         public MapActorManager MapActors => _mapActorManager;
+        public CampManager Camps => _campManager;
         private PlanetClimateSimulator _climateSimulator;
         private PlanetTerrainGenerator _planetTerrainGenerator;
         private AtmosphericCirculation _atmosphericCirculation;
@@ -148,6 +150,8 @@ namespace CivilizationEvolution.Core
                 burgs, tiles, mapWidth, mapHeight, armies);
 
  // 6.6 无主地图单位（流民/游牧民/商队/雇佣兵/野怪/动物灾害）            _mapActorManager?.Tick(1f);
+
+ // 6.7 营寨（军营/土匪寨/游牧营地/难民营）            _campManager?.Tick(1f);
 
  // 7. 外交（先同步世界时钟，供盟约/条约/事件时间戳使用）            _diplomacyManager.CurrentDay = currentDay;
             _diplomacyManager.DailyTick();

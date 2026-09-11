@@ -77,6 +77,7 @@ namespace CivilizationEvolution.Core
             _seaLandGenerator = new SeaLandGenerator(config, tiles, mapWidth, mapHeight);
             _featureManager = new FeatureManager(tiles, mapWidth, mapHeight);
             _mapActorManager = new MapActorManager(this);
+            _campManager = new CampManager(this);
             _climateSimulator = new PlanetClimateSimulator(config, tiles, mapWidth, mapHeight, _seaLandGenerator);
             _currencySystem = new CurrencySystem();
             _taxSystem = new TaxSystem();

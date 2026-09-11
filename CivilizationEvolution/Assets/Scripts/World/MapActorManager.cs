@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Military;
 using UnityEngine;
@@ -18,24 +18,22 @@ namespace CivilizationEvolution.World
         private int _nextActorId = 1;
 
         // ===== 生成参数（可调） =====
-        public float RefugeeSpawnChance = 0.1f;     // 战乱地区每日流民生出概率
-        public float NomadSpawnChance = 0.05f;      // 草原每日游牧民生出概率
-        public float CaravanSpawnChance = 0.2f;     // 贸易中心每日商队生出概率
-        public float WildBeastSpawnChance = 0.03f;  // 荒野每日野怪生出概率
-        public int MaxActors = 500;                 // 最大同时存在单位数
+        public float RefugeeSpawnChance = 0.1f;
+        public float NomadSpawnChance = 0.05f;
+        public float CaravanSpawnChance = 0.2f;
+        public float WildBeastSpawnChance = 0.03f;
+        public float BanditSpawnChance = 0.04f;
+        public float AnimalDisasterSpawnChance = 0.01f;
+        public int MaxActors = 500;
 
         public MapActorManager(GameWorld world)
         {
             _world = world;
         }
 
-        /// <summary>所有无主单位</summary>
         public IReadOnlyList<MapActor> AllActors => _actors;
-
-        /// <summary>单位数量</summary>
         public int Count => _actors.Count;
 
-        /// <summary>按类型统计</summary>
         public Dictionary<MapActorType, int> CountByType()
         {
             var result = new Dictionary<MapActorType, int>();
@@ -47,14 +45,12 @@ namespace CivilizationEvolution.World
             return result;
         }
 
-        /// <summary>按ID查询</summary>
         public MapActor GetActor(int actorId)
         {
             _actorById.TryGetValue(actorId, out var actor);
             return actor;
         }
 
-        /// <summary>获取某地块上的所有单位</summary>
         public List<MapActor> GetActorsAtTile(int tileIndex)
         {
             var result = new List<MapActor>();
@@ -63,7 +59,6 @@ namespace CivilizationEvolution.World
             return result;
         }
 
-        /// <summary>获取某地块半径内的单位</summary>
         public List<MapActor> GetActorsNearTile(int tileIndex, int radius)
         {
             var result = new List<MapActor>();
@@ -84,11 +79,9 @@ namespace CivilizationEvolution.World
         /// <summary>每日更新：生成 + Tick + 清理死亡</summary>
         public void Tick(float deltaDays)
         {
-            // 生成新单位
             if (_actors.Count < MaxActors)
                 TrySpawnActors();
 
-            // 更新所有单位
             for (int i = _actors.Count - 1; i >= 0; i--)
             {
                 var actor = _actors[i];
@@ -101,41 +94,29 @@ namespace CivilizationEvolution.World
             }
         }
 
-        /// <summary>尝试生成各类无主单位</summary>
         private void TrySpawnActors()
         {
-            // 流民：战乱/饥荒地区
-            if (Random.value < RefugeeSpawnChance)
-                TrySpawnRefugee();
-
-            // 游牧民：草原地区
-            if (Random.value < NomadSpawnChance)
-                TrySpawnNomad();
-
-            // 商队：贸易中心之间
-            if (Random.value < CaravanSpawnChance)
-                TrySpawnCaravan();
-
-            // 野怪：荒野地区
-            if (Random.value < WildBeastSpawnChance)
-                TrySpawnWildBeast();
+            if (Random.value < RefugeeSpawnChance) TrySpawnRefugee();
+            if (Random.value < NomadSpawnChance) TrySpawnNomad();
+            if (Random.value < CaravanSpawnChance) TrySpawnCaravan();
+            if (Random.value < WildBeastSpawnChance) TrySpawnWildBeast();
+            if (Random.value < BanditSpawnChance) TrySpawnBandit();
+            if (Random.value < AnimalDisasterSpawnChance) TrySpawnAnimalDisaster();
         }
 
         // ===== 具体生成逻辑 =====
 
         private void TrySpawnRefugee()
         {
-            // 在战乱或饥荒地区找一个地块
             for (int attempt = 0; attempt < 20; attempt++)
             {
                 int idx = Random.Range(0, _world.tiles.Length);
                 var tile = _world.tiles[idx];
                 if (!tile.exists || !tile.isLand) continue;
-                // 简化：低秩序或低粮食地区生成流民
-                if (tile.order > 30f && tile.development * 10f > 20f) continue;
+                if (tile.order > 30f && tile.development > 0.2f) continue;
 
                 var actor = CreateActor(MapActorType.Refugee, idx, Random.Range(50, 500));
-                actor.actorName = $"流民队伍#{actor.actorId}";
+                actor.actorName = "流民队伍#" + actor.actorId;
                 actor.AI = new RefugeeAI();
                 actor.morale = 40f;
                 return;
@@ -149,13 +130,12 @@ namespace CivilizationEvolution.World
                 int idx = Random.Range(0, _world.tiles.Length);
                 var tile = _world.tiles[idx];
                 if (!tile.exists || !tile.isLand) continue;
-                // 草原/稀树草原生成游牧民
                 if (tile.biome != GameEnums.BiomeType.Savanna &&
                     tile.biome != GameEnums.BiomeType.TemperateGrassland &&
                     tile.biome != GameEnums.BiomeType.Steppe) continue;
 
                 var actor = CreateActor(MapActorType.Nomad, idx, Random.Range(100, 1000));
-                actor.actorName = $"游牧部落#{actor.actorId}";
+                actor.actorName = "游牧部落#" + actor.actorId;
                 actor.AI = new NomadAI();
                 actor.moveSpeed = 1.5f;
                 return;
@@ -164,22 +144,21 @@ namespace CivilizationEvolution.World
 
         private void TrySpawnCaravan()
         {
-            // 找两个有聚落的地块作为起点和终点
             int startTile = -1, endTile = -1;
             for (int attempt = 0; attempt < 30; attempt++)
             {
                 int idx = Random.Range(0, _world.tiles.Length);
                 var tile = _world.tiles[idx];
                 if (!tile.exists || !tile.isLand) continue;
-                if (tile.development > 20f ? 1 : -1 < 0) continue;
+                if (tile.development < 0.2f) continue;
                 if (startTile < 0) startTile = idx;
                 else { endTile = idx; break; }
             }
             if (startTile < 0 || endTile < 0 || startTile == endTile) return;
 
             var actor = CreateActor(MapActorType.Caravan, startTile, Random.Range(10, 50));
-            actor.actorName = $"商队#{actor.actorId}";
-            actor.AI = new CaravanAI(endTile);
+            actor.actorName = "商队#" + actor.actorId;
+            actor.AI = new CaravanAI(startTile, endTile);
             actor.moveSpeed = 1.2f;
             actor.supplies = 200f;
         }
@@ -191,21 +170,55 @@ namespace CivilizationEvolution.World
                 int idx = Random.Range(0, _world.tiles.Length);
                 var tile = _world.tiles[idx];
                 if (!tile.exists || !tile.isLand) continue;
-                // 森林/山地/荒野生成野怪
                 if (tile.biome != GameEnums.BiomeType.DeciduousForest &&
                     tile.biome != GameEnums.BiomeType.EvergreenForest &&
                     tile.biome != GameEnums.BiomeType.Rainforest &&
                     tile.elevation01 < 0.5f) continue;
 
                 var actor = CreateActor(MapActorType.WildBeast, idx, Random.Range(5, 50));
-                actor.actorName = $"野兽群#{actor.actorId}";
+                actor.actorName = "野兽群#" + actor.actorId;
                 actor.AI = new WildBeastAI();
                 actor.isHostile = true;
                 return;
             }
         }
 
-        /// <summary>创建单位并注册</summary>
+        private void TrySpawnBandit()
+        {
+            for (int attempt = 0; attempt < 20; attempt++)
+            {
+                int idx = Random.Range(0, _world.tiles.Length);
+                var tile = _world.tiles[idx];
+                if (!tile.exists || !tile.isLand) continue;
+                if (tile.order > 35f) continue;
+                if (tile.ownerRealmId >= 0 && tile.order > 20f) continue;
+
+                var actor = CreateActor(MapActorType.Bandit, idx, Random.Range(20, 200));
+                actor.actorName = "土匪#" + actor.actorId;
+                actor.AI = new BanditAI();
+                actor.isHostile = true;
+                actor.moveSpeed = 1.3f;
+                return;
+            }
+        }
+
+        private void TrySpawnAnimalDisaster()
+        {
+            for (int attempt = 0; attempt < 15; attempt++)
+            {
+                int idx = Random.Range(0, _world.tiles.Length);
+                var tile = _world.tiles[idx];
+                if (!tile.exists || !tile.isLand) continue;
+                if (tile.fertility < 40f) continue; // 农业区才会爆发
+
+                var actor = CreateActor(MapActorType.AnimalDisaster, idx, Random.Range(100, 1000));
+                actor.actorName = "蝗灾#" + actor.actorId;
+                actor.AI = new AnimalDisasterAI(Random.Range(60, 180));
+                actor.moveSpeed = 2.0f;
+                return;
+            }
+        }
+
         private MapActor CreateActor(MapActorType type, int tileIndex, int population)
         {
             var actor = new MapActor
@@ -228,7 +241,6 @@ namespace CivilizationEvolution.World
             return actor;
         }
 
-        /// <summary>移除单位</summary>
         public void RemoveActor(int actorId)
         {
             if (_actorById.TryGetValue(actorId, out var actor))
@@ -237,6 +249,8 @@ namespace CivilizationEvolution.World
                 _actorById.Remove(actorId);
             }
         }
+
+        // ===== 静态辅助方法 =====
 
         /// <summary>计算地块总人口（从populationBlocks汇总）</summary>
         public static int GetTilePopulation(TileData tile)
@@ -247,7 +261,48 @@ namespace CivilizationEvolution.World
             return total;
         }
 
-        /// <summary>清空所有单位</summary>
+        /// <summary>向地块添加/减少人口（修改populationBlocks，正数增加，负数减少）</summary>
+        public static void AddPopulationToTile(ref TileData tile, int amount)
+        {
+            if (amount == 0) return;
+            if (tile.populationBlocks == null) tile.populationBlocks = new List<PopulationBlock>();
+
+            if (amount > 0)
+            {
+                // 增加：加到第一个块或新建块
+                if (tile.populationBlocks.Count > 0)
+                {
+                    var block = tile.populationBlocks[0];
+                    block.count += amount;
+                    tile.populationBlocks[0] = block;
+                }
+                else
+                {
+                    tile.populationBlocks.Add(new PopulationBlock { count = amount });
+                }
+            }
+            else
+            {
+                // 减少：从各块依次扣除
+                int remaining = -amount;
+                for (int i = tile.populationBlocks.Count - 1; i >= 0 && remaining > 0; i--)
+                {
+                    var block = tile.populationBlocks[i];
+                    if (block.count <= remaining)
+                    {
+                        remaining -= Mathf.RoundToInt(block.count);
+                        tile.populationBlocks.RemoveAt(i);
+                    }
+                    else
+                    {
+                        block.count -= remaining;
+                        tile.populationBlocks[i] = block;
+                        remaining = 0;
+                    }
+                }
+            }
+        }
+
         public void Clear()
         {
             _actors.Clear();

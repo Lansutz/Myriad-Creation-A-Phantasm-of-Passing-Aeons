@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using CivilizationEvolution.Economy;
 
 namespace CivilizationEvolution.Core
 {
@@ -63,6 +64,10 @@ namespace CivilizationEvolution.Core
         public int[] buildingLevels;
 
  // ===== 人口 =====        public List<PopulationBlock> populationBlocks;
+
+ // ===== 资源点 =====        public List<TileResource> resources;
+
+ // ===== 营寨（军队/盗匪/蛮族的临时据点） =====        public int campId;
 
  // ===== 脏标记 =====        public bool isTerrainDirty;
         public bool isClimateDirty;
