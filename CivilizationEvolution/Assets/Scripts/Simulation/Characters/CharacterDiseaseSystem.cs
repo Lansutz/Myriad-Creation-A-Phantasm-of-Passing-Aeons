@@ -237,22 +237,22 @@ namespace CivilizationEvolution.Simulation.Characters
             // ===== 眼科疾病（可导致失明的渐进性疾病） =====
             RegisterDisease(new CharacterDiseaseDef
             {
-                diseaseId = "cataract", diseaseName = "白内障", description = "晶状体混浊导致的视力逐渐下降，老年高发，最终可致失明。与衰老、紫外线暴露、糖尿病相关，前现代无法有效治疗。",
+                diseaseId = "cataract", diseaseName = "白内障", description = "晶状体混浊导致的视力逐渐下降，最终可致失明。名称上不区分先天和后天，但描述上需要区分：后天性白内障与衰老、紫外线暴露、糖尿病、外伤相关，老年高发；先天性白内障出生即有，由遗传或宫内发育异常导致，可能伴随其他先天异常。前现代均无法有效治疗。",
                 category = CharacterDiseaseCategory.Chronic, transmission = TransmissionType.None,
                 baseMortalityRate = 0f, baseRecoveryRate = 0f,
                 acuteDurationDays = 0, isChronic = true, isPermanent = true,
-                minAgeOnset = 50, maxAgeOnset = 90,
+                minAgeOnset = 0, maxAgeOnset = 90,
                 healthMod = -0.1f, prowessMod = -5f, scholarshipMod = -3f, charmMod = -2f,
                 treatable = false
             });
 
             RegisterDisease(new CharacterDiseaseDef
             {
-                diseaseId = "glaucoma", diseaseName = "青光眼", description = "眼压升高导致视神经损伤，视力逐渐丧失，最终可致失明。与遗传、年龄相关，急性发作时眼痛头痛，前现代无法有效治疗。",
+                diseaseId = "glaucoma", diseaseName = "青光眼", description = "眼压升高导致视神经损伤，视力逐渐丧失，最终可致失明。名称上不区分先天和后天，但描述上需要区分：后天性青光眼与遗传、年龄、近视相关，中年以后发病，急性发作时眼痛头痛；先天性青光眼出生即有或婴幼儿期发病，由前房角发育异常导致，常表现为畏光流泪、眼球增大。前现代均无法有效治疗。",
                 category = CharacterDiseaseCategory.Chronic, transmission = TransmissionType.None,
                 baseMortalityRate = 0f, baseRecoveryRate = 0f,
                 acuteDurationDays = 3, isChronic = true, isPermanent = true,
-                minAgeOnset = 40, maxAgeOnset = 90,
+                minAgeOnset = 0, maxAgeOnset = 90,
                 healthMod = -0.2f, prowessMod = -8f, scholarshipMod = -4f, socialMod = -2f,
                 treatable = false
             });
