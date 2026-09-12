@@ -125,7 +125,7 @@ namespace CivilizationEvolution.Simulation.Characters
             // ===== 慢性病/老年病 =====
             RegisterDisease(new CharacterDiseaseDef
             {
-                diseaseId = "heart_disease", diseaseName = "心脏病", description = "慢性心血管疾病，老年高发，急性发作可致死",
+                diseaseId = "heart_disease", diseaseName = "心脏病", description = "心血管疾病的统称，名称上不区分先天和后天，但描述上需要区分：后天性心脏病（冠心病、心衰等）与肥胖、饮食、年龄、压力相关，中年以后发病；先天性心脏病（见 congenital_heart_defect）出生即有，由遗传和发育异常导致，体力受限、寿命较短。急性发作（心梗、心衰）可致死。",
                 category = CharacterDiseaseCategory.Chronic, transmission = TransmissionType.None,
                 baseMortalityRate = 0.005f, baseRecoveryRate = 0f,
                 acuteDurationDays = 3, isChronic = true, isPermanent = false,
@@ -225,12 +225,35 @@ namespace CivilizationEvolution.Simulation.Characters
 
             RegisterDisease(new CharacterDiseaseDef
             {
-                diseaseId = "blindness", diseaseName = "失明", description = "战斗受伤或疾病导致的视力丧失，永久不可逆",
+                diseaseId = "blindness", diseaseName = "失明", description = "视力完全丧失，这是一个最终状态而非独立疾病——可由战斗受伤直接导致，也可由白内障、青光眼、糖尿病并发症、衰老等多种原因逐渐导致。名称上不区分原因，但描述上需要区分：外伤性失明通常是急性的、单侧或双侧；疾病性失明通常是渐进的、双侧的。",
                 category = CharacterDiseaseCategory.Injury, transmission = TransmissionType.None,
                 baseMortalityRate = 0f, baseRecoveryRate = 0f,
                 acuteDurationDays = 7, isChronic = false, isPermanent = true,
                 combatInjury = true,
                 healthMod = -0.5f, prowessMod = -20f, militaryMod = -10f, scholarshipMod = -5f, charmMod = -5f,
+                treatable = false
+            });
+
+            // ===== 眼科疾病（可导致失明的渐进性疾病） =====
+            RegisterDisease(new CharacterDiseaseDef
+            {
+                diseaseId = "cataract", diseaseName = "白内障", description = "晶状体混浊导致的视力逐渐下降，老年高发，最终可致失明。与衰老、紫外线暴露、糖尿病相关，前现代无法有效治疗。",
+                category = CharacterDiseaseCategory.Chronic, transmission = TransmissionType.None,
+                baseMortalityRate = 0f, baseRecoveryRate = 0f,
+                acuteDurationDays = 0, isChronic = true, isPermanent = true,
+                minAgeOnset = 50, maxAgeOnset = 90,
+                healthMod = -0.1f, prowessMod = -5f, scholarshipMod = -3f, charmMod = -2f,
+                treatable = false
+            });
+
+            RegisterDisease(new CharacterDiseaseDef
+            {
+                diseaseId = "glaucoma", diseaseName = "青光眼", description = "眼压升高导致视神经损伤，视力逐渐丧失，最终可致失明。与遗传、年龄相关，急性发作时眼痛头痛，前现代无法有效治疗。",
+                category = CharacterDiseaseCategory.Chronic, transmission = TransmissionType.None,
+                baseMortalityRate = 0f, baseRecoveryRate = 0f,
+                acuteDurationDays = 3, isChronic = true, isPermanent = true,
+                minAgeOnset = 40, maxAgeOnset = 90,
+                healthMod = -0.2f, prowessMod = -8f, scholarshipMod = -4f, socialMod = -2f,
                 treatable = false
             });
 
