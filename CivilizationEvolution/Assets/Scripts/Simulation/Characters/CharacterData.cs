@@ -169,7 +169,7 @@ namespace CivilizationEvolution.Simulation.Characters
         public float prestige = 0f;
  /// <summary>威望容量等级 1-5（上限 100/300/600/1000/1500）</summary>
         public int prestigeCapacityLevel = 1;
- /// <summary>恶名当前值（0~当前容量上限，与威望并存）</summary>
+ /// <summary>恶名累积值（档位累积型，无容量上限，自然累积增加）</summary>
         public float notoriety = 0f;
 
  // ===== 上限型数值（0-100 固定上限） =====
@@ -584,8 +584,8 @@ namespace CivilizationEvolution.Simulation.Characters
             };
         }
 
- /// <summary>恶名容量上限（与威望同级）</summary>
-        public float GetNotorietyCapacity() => GetPrestigeCapacity();
+ /// <summary>恶名无容量上限（档位累积型，自然累积不设上限）</summary>
+        public float GetNotorietyCapacity() => float.MaxValue;
 
  /// <summary>修改威望（含容量等级自动维护：达上限升级，低于 30% 降级）</summary>
         public void ModifyPrestige(float delta)
@@ -603,21 +603,34 @@ namespace CivilizationEvolution.Simulation.Characters
             }
         }
 
- /// <summary>修改恶名（容量同威望，不触发等级变化）</summary>
+ /// <summary>修改恶名（档位累积型，无容量上限，自然累积）</summary>
         public void ModifyNotoriety(float delta)
         {
-            notoriety = Mathf.Clamp(notoriety + delta, 0f, GetNotorietyCapacity());
+            notoriety = Mathf.Max(0f, notoriety + delta);
         }
 
- /// <summary>统治类型判定（企划书：威望/恶名组合 → 明君/暴君/昏暴之君/平庸之主）</summary>
-        public RulerType GetRulerType()
+ /// <summary>恶名档位判定（0=无/1=小恶/2=大恶/3=极恶/4=遗臭，自然累积型，无容量上限）</summary>
+        public int GetNotorietyTier()
         {
-            bool highP = prestige / Mathf.Max(1f, GetPrestigeCapacity()) > 0.6f;
-            bool highN = notoriety / Mathf.Max(1f, GetNotorietyCapacity()) > 0.6f;
-            if (highP && highN) return RulerType.TyrantFool;   // 昏暴之君
-            if (highP) return RulerType.Benevolent;            // 明君
-            if (highN) return RulerType.Tyrant;                // 暴君
-            return RulerType.Mediocre;                         // 平庸之主
+            if (notoriety >= 1000f) return 4;  // 遗臭
+            if (notoriety >= 500f) return 3;   // 极恶
+            if (notoriety >= 200f) return 2;   // 大恶
+            if (notoriety >= 50f) return 1;    // 小恶
+            return 0;                            // 无恶名
+        }
+
+ /// <summary>恶名档位名称</summary>
+        public string GetNotorietyTierName()
+        {
+            return GetNotorietyTier() switch
+            {
+                0 => "无恶名",
+                1 => "小恶",
+                2 => "大恶",
+                3 => "极恶",
+                4 => "遗臭",
+                _ => "未知"
+            };
         }
     }
 }

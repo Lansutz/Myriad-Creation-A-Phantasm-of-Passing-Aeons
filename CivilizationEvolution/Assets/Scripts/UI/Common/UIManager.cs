@@ -455,16 +455,6 @@ namespace CivilizationEvolution.UI.Common
             return mp;
         }
 
-        private static string GetRulerTypeName(RulerType type)
-        {
-            return type switch
-            {
-                RulerType.Benevolent => "明君",
-                RulerType.Tyrant => "暴君",
-                RulerType.TyrantFool => "昏暴之君",
-                _ => "平庸之主"
-            };
-        }
 
  // ===== 面板控制 =====
         public void ToggleTileInfoPanel()

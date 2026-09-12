@@ -511,12 +511,11 @@ namespace CivilizationEvolution.UI.Common
 
             if (charStatusText != null)
             {
-                string rulerType = c.role == CharacterRole.Ruler ? $"｜{GetRulerTypeName(c.GetRulerType())}" : "";
                 string disorder = MentalHealthSystem.GetDisorderName(c);
                 string disorderStr = disorder.Length > 0
                     ? $"｜<color=#{ColorUtility.ToHtmlStringRGB(UITheme.LogWar)}>患{disorder}</color>" : "";
                 charStatusText.text =
-                    $"政权{c.realmId}｜{(c.isAlive ? "在世" : "已故")}｜威望 Lv{c.prestigeCapacityLevel}{rulerType}{disorderStr}";
+                    $"政权{c.realmId}｜{(c.isAlive ? "在世" : "已故")}｜威望 Lv{c.prestigeCapacityLevel}{disorderStr}";
             }
 
             if (charStatsText != null)
