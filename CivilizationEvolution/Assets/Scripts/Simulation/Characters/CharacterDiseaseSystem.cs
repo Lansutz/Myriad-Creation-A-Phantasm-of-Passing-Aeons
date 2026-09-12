@@ -237,12 +237,27 @@ namespace CivilizationEvolution.Simulation.Characters
             // ===== 眼科疾病（可导致失明的渐进性疾病） =====
             RegisterDisease(new CharacterDiseaseDef
             {
-                diseaseId = "cataract", diseaseName = "白内障", description = "晶状体混浊导致的视力逐渐下降，最终可致失明。名称上不区分先天和后天，但描述上需要区分：后天性白内障与衰老、紫外线暴露、糖尿病、外伤相关，老年高发；先天性白内障出生即有，由遗传或宫内发育异常导致，可能伴随其他先天异常。前现代均无法有效治疗。",
+                diseaseId = "cataract_1", diseaseName = "白内障", description = "形态一：渐进性白内障。晶状体混浊导致的视力逐渐下降，最终可致失明。可由DNA导致（出生即有，先天性），也可由年龄导致（后天发病，与衰老、紫外线暴露、糖尿病、外伤相关）。这两个是独立的发病途径（or关系），不是叠加。无论是哪种途径，临床表现都是渐进的，会随年龄逐渐恶化。这是更常见的类型。前现代无法有效治疗。",
                 category = CharacterDiseaseCategory.Chronic, transmission = TransmissionType.None,
+                morphology = 1, baseDiseaseId = "cataract",
+                onsetByDna = true, onsetByAge = true, dnaLocus = "cataract_susceptibility",
                 baseMortalityRate = 0f, baseRecoveryRate = 0f,
                 acuteDurationDays = 0, isChronic = true, isPermanent = true,
                 minAgeOnset = 0, maxAgeOnset = 90,
                 healthMod = -0.1f, prowessMod = -5f, scholarshipMod = -3f, charmMod = -2f,
+                treatable = false
+            });
+
+            RegisterDisease(new CharacterDiseaseDef
+            {
+                diseaseId = "cataract_2", diseaseName = "白内障", description = "形态二：静止性白内障。出生时即有晶状体混浊，但一辈子不发展、不进展。只有DNA导致，没有这个特定DNA几乎不会发病。因为只有DNA因素，所以只能是先天的。比形态一更罕见，几乎完全由遗传决定。前现代无法有效治疗。",
+                category = CharacterDiseaseCategory.Chronic, transmission = TransmissionType.None,
+                morphology = 2, baseDiseaseId = "cataract",
+                onsetByDna = true, onsetByAge = false, dnaLocus = "cataract_congenital_static",
+                baseMortalityRate = 0f, baseRecoveryRate = 0f,
+                acuteDurationDays = 0, isChronic = true, isPermanent = true,
+                minAgeOnset = 0, maxAgeOnset = 0,
+                healthMod = -0.05f, prowessMod = -3f, scholarshipMod = -2f, charmMod = -1f,
                 treatable = false
             });
 
