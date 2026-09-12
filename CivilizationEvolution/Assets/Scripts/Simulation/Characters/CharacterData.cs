@@ -196,6 +196,10 @@ namespace CivilizationEvolution.Simulation.Characters
  /// <summary>压力<30 持续天数（精神疾病缓解计时，失智不可逆）</summary>
         public int lowStressRecoveryDays = 0;
 
+ // ===== 身体疾病系统（传染病/慢性病/伤病/遗传病，与精神疾病分开） =====
+ /// <summary>活跃疾病列表——角色身上正在发生的身体疾病</summary>
+        public List<ActiveCharacterDisease> activeDiseases = new List<ActiveCharacterDisease>();
+
  // 人格特质列表
         public List<PersonalityTrait> traits = new List<PersonalityTrait>();
 
