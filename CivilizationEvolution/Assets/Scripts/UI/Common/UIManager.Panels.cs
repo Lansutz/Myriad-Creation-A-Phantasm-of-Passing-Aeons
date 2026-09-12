@@ -522,8 +522,8 @@ namespace CivilizationEvolution.UI.Common
             if (charStatsText != null)
             {
                 charStatsText.text =
-                    $"武力 {c.martial:F0}    外交 {c.diplomacy:F0}    军事经略 {c.warfare:F0}\n" +
-                    $"管理 {c.stewardship:F0}    谋略 {c.intrigue:F0}    学识 {c.learning:F0}\n" +
+                    $"武力 {c.prowess:F0}    外交 {c.social:F0}    军事经略 {c.military:F0}\n" +
+                    $"管理 {c.management:F0}    谋略 {c.conspiracy:F0}    学识 {c.scholarship:F0}\n" +
                     $"威望 {c.prestige:F0}/{c.GetPrestigeCapacity():F0}    恶名 {c.notoriety:F0}\n" +
                     $"健康 {c.health:F0}    压力 {c.stress:F0}    恐惧 {c.dread:F0}    肥胖 {c.obesity:F0}\n" +
                     $"魅力 {c.charm:F0}    预期寿命 {c.expectedLifespanYears:F0}岁";

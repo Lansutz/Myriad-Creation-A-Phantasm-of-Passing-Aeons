@@ -94,7 +94,7 @@ namespace CivilizationEvolution.Simulation.Characters
                         Debug.Log($"[Mental] {c.fullName} 罹患偏执（深度恐惧）");
                     }
                     else if (c.age >= MentalHealthSystem.DementiaAge
-                        && c.learning < MentalHealthSystem.DementiaLearningGate)
+                        && c.scholarship < MentalHealthSystem.DementiaLearningGate)
                     {
                         float risk = 0.0005f * (c.age - MentalHealthSystem.DementiaAge + 1) / 10f;
                         if (UnityEngine.Random.value < risk)

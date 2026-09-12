@@ -153,13 +153,17 @@ namespace CivilizationEvolution.Simulation.Characters
  /// <summary>个体综合抗性 0-100（种族抗性基准 + DNA 抗性偏移，疾病感染修正用）</summary>
         public float individualResistance = 50f;
 
- // 核心六维属性（0-100，企划书第九篇：武力/外交-社交/军事经略/学识/阴谋/管理）
-        [UnityEngine.Range(0f, 100f)] public float martial = 50f;      // 武力
-        [UnityEngine.Range(0f, 100f)] public float diplomacy = 50f;     // 外交-社交
-        [UnityEngine.Range(0f, 100f)] public float warfare = 50f;       // 军事经略（原 piety 位）
-        [UnityEngine.Range(0f, 100f)] public float stewardship = 50f;   // 管理
-        [UnityEngine.Range(0f, 100f)] public float intrigue = 50f;       // 谋略
-        [UnityEngine.Range(0f, 100f)] public float learning = 50f;       // 学识
+ // ===== 基本能力（底层、通用的身体素质和心智能力，四大类每类三子属性） =====
+        public BasicAbilities basicAbilities = new BasicAbilities();
+
+ // 核心六维专精（0-100，在基本能力基础上发展出来的面向特定领域的专业技能）
+ // 专精 = 基本能力 + 学到的技能
+        [UnityEngine.Range(0f, 100f)] public float prowess = 50f;       // 勇武：个人战斗能力和勇猛程度
+        [UnityEngine.Range(0f, 100f)] public float social = 50f;         // 社交：处理各种关系的能力
+        [UnityEngine.Range(0f, 100f)] public float military = 50f;       // 军事：军事指挥和战略能力
+        [UnityEngine.Range(0f, 100f)] public float management = 50f;     // 管理：行政管理和经济治理能力
+        [UnityEngine.Range(0f, 100f)] public float conspiracy = 50f;     // 阴谋：秘密策划和政治手腕的能力
+        [UnityEngine.Range(0f, 100f)] public float scholarship = 50f;    // 学识：知识水平和学习能力
 
  // ===== 容量型数值（企划书：当前值 + 容量等级 + 容量上限） ===== /// <summary>威望当前值（0~当前容量上限）</summary>
         public float prestige = 0f;
@@ -210,45 +214,44 @@ namespace CivilizationEvolution.Simulation.Characters
  // 军队指挥
         public int commandedArmyId = -1;
 
- /// <summary>计算综合能力值（六维：武力/外交/军事经略/管理/谋略/学识）</summary>
+ /// <summary>计算综合专精值（六维：勇武/社交/军事/管理/阴谋/学识）</summary>
         public float CalculateOverallAbility()
         {
-            return (martial + diplomacy + warfare + stewardship + intrigue + learning) / 6f;
+            return (prowess + social + military + management + conspiracy + scholarship) / 6f;
         }
 
  /// <summary>计算统治能力（用于政权稳定）</summary>
         public float CalculateRuleAbility()
         {
-            return stewardship * 0.4f + diplomacy * 0.3f + intrigue * 0.2f + learning * 0.1f;
+            return management * 0.4f + social * 0.3f + conspiracy * 0.2f + scholarship * 0.1f;
         }
 
- /// 计算军事指挥能力（选将/统兵）：以 warfare 军事经略为主导（大兵团组织/战役指挥），
- /// martial 个人勇武、intrigue 谋略、learning 学识为辅——修正旧版误用 martial 主导、
- /// 导致"军事经略"属性不参与选将的矛盾
+ /// 计算军事指挥能力（选将/统兵）：以 military 军事为主导（大兵团组织/战役指挥），
+ /// prowess 个人勇武、conspiracy 阴谋、scholarship 学识为辅
         public float CalculateCommandAbility()
         {
-            return warfare * 0.6f + martial * 0.2f + intrigue * 0.1f + learning * 0.1f;
+            return military * 0.6f + prowess * 0.2f + conspiracy * 0.1f + scholarship * 0.1f;
         }
 
- /// 有效属性（唯一权威出口）：基础六维 + 魅力，依次叠加已获得特质修正、精神疾病修正。
+ /// 有效专精（唯一权威出口）：基础六维专精 + 魅力，依次叠加已获得特质修正、精神疾病修正。
  /// UI 显示、AI 判定、能力计算的"含状态最终值"均应取此结果，避免"基础值/修正值"两套口径；
  /// 也让 PersonalityTrait 上原本空转的 XxxMod 字段真正生效。
  /// 派生特质（七维表现标签）不加属性修正——它是表现层，属性修正只来自已获得特质与疾病。
-        public void GetEffectiveStats(out float martial, out float diplomacy, out float warfare,
-            out float stewardship, out float intrigue, out float learning, out float charm)
+        public void GetEffectiveStats(out float prowess, out float social, out float military,
+            out float management, out float conspiracy, out float scholarship, out float charm)
         {
-            martial = this.martial; diplomacy = this.diplomacy; warfare = this.warfare;
-            stewardship = this.stewardship; intrigue = this.intrigue;
-            learning = this.learning; charm = this.charm;
+            prowess = this.prowess; social = this.social; military = this.military;
+            management = this.management; conspiracy = this.conspiracy;
+            scholarship = this.scholarship; charm = this.charm;
 
  // 已获得特质（事件/文化/教育/身体等 PersonalityTrait）修正——此前空转，此处统一生效
             if (traits != null)
             {
                 foreach (var t in traits)
                 {
-                    martial += t.martialMod; diplomacy += t.diplomacyMod; warfare += t.warfareMod;
-                    stewardship += t.stewardshipMod; intrigue += t.intrigueMod;
-                    learning += t.learningMod; charm += t.charmMod;
+                    prowess += t.martialMod; social += t.diplomacyMod; military += t.warfareMod;
+                    management += t.stewardshipMod; conspiracy += t.intrigueMod;
+                    scholarship += t.learningMod; charm += t.charmMod;
                 }
             }
 
@@ -256,9 +259,9 @@ namespace CivilizationEvolution.Simulation.Characters
             var disorder = MentalHealthSystem.GetDef(mentalDisorderId);
             if (disorder != null)
             {
-                martial += disorder.martialMod; diplomacy += disorder.diplomacyMod;
-                warfare += disorder.warfareMod; stewardship += disorder.stewardshipMod;
-                intrigue += disorder.intrigueMod; learning += disorder.learningMod;
+                prowess += disorder.martialMod; social += disorder.diplomacyMod;
+                military += disorder.warfareMod; management += disorder.stewardshipMod;
+                conspiracy += disorder.intrigueMod; scholarship += disorder.learningMod;
                 charm += disorder.charmMod;
             }
         }

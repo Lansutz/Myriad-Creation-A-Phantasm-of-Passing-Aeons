@@ -158,22 +158,22 @@ namespace CivilizationEvolution.Simulation.Characters
  // 有 DNA：勇武/学识由种族基准 + DNA 偏移 + 小随机浮动决定，其余四维保持随机
                 float martialBase = exprRace != null ? exprRace.martialBaseline : 50f;
                 float intelligenceBase = exprRace != null ? exprRace.intelligenceBaseline : 50f;
-                character.martial = Mathf.Clamp(martialBase + expr.martialOffset + UnityEngine.Random.Range(-3f, 3f), 5f, 95f);
-                character.learning = Mathf.Clamp(intelligenceBase + expr.intelligenceOffset + UnityEngine.Random.Range(-3f, 3f), 5f, 95f);
-                character.diplomacy = UnityEngine.Random.Range(20f, 80f);
-                character.stewardship = UnityEngine.Random.Range(20f, 80f);
-                character.intrigue = UnityEngine.Random.Range(20f, 80f);
-                character.warfare = UnityEngine.Random.Range(20f, 80f);
+                character.prowess = Mathf.Clamp(martialBase + expr.martialOffset + UnityEngine.Random.Range(-3f, 3f), 5f, 95f);
+                character.scholarship = Mathf.Clamp(intelligenceBase + expr.intelligenceOffset + UnityEngine.Random.Range(-3f, 3f), 5f, 95f);
+                character.social = UnityEngine.Random.Range(20f, 80f);
+                character.management = UnityEngine.Random.Range(20f, 80f);
+                character.conspiracy = UnityEngine.Random.Range(20f, 80f);
+                character.military = UnityEngine.Random.Range(20f, 80f);
             }
             else
             {
  // 无 DNA（兼容旧路径）：全随机
-                character.martial = UnityEngine.Random.Range(20f, 80f);
-                character.diplomacy = UnityEngine.Random.Range(20f, 80f);
-                character.stewardship = UnityEngine.Random.Range(20f, 80f);
-                character.intrigue = UnityEngine.Random.Range(20f, 80f);
-                character.learning = UnityEngine.Random.Range(20f, 80f);
-                character.warfare = UnityEngine.Random.Range(20f, 80f);
+                character.prowess = UnityEngine.Random.Range(20f, 80f);
+                character.social = UnityEngine.Random.Range(20f, 80f);
+                character.management = UnityEngine.Random.Range(20f, 80f);
+                character.conspiracy = UnityEngine.Random.Range(20f, 80f);
+                character.scholarship = UnityEngine.Random.Range(20f, 80f);
+                character.military = UnityEngine.Random.Range(20f, 80f);
             }
 
  // 天赋/缺陷叠加
@@ -199,7 +199,7 @@ namespace CivilizationEvolution.Simulation.Characters
 
  /// 套用角色模板（第九篇角色生成参数模板）：
  /// - 年龄范围：调用方未指定年龄（age<=0）时在模板范围内随机
- /// - 六维范围约束：statMin/statMax（0 表示不约束，顺序 martial/diplomacy/warfare/stewardship/intrigue/learning）
+ /// - 六维范围约束：statMin/statMax（0 表示不约束，顺序 prowess/social/military/management/conspiracy/scholarship）
  /// - 人格倾向偏移：七维 bias 叠加（在家族遗传基线之上）
         public void ApplyTemplate(CharacterData c, CharacterTemplateDef template)
         {
@@ -217,7 +217,7 @@ namespace CivilizationEvolution.Simulation.Characters
                     c.age = minA;
             }
 
-            float[] stats = { c.martial, c.diplomacy, c.warfare, c.stewardship, c.intrigue, c.learning };
+            float[] stats = { c.prowess, c.social, c.military, c.management, c.conspiracy, c.scholarship };
             for (int i = 0; i < 6; i++)
             {
                 if (template.statMin != null && i < template.statMin.Length && template.statMin[i] > 0f)
@@ -225,12 +225,12 @@ namespace CivilizationEvolution.Simulation.Characters
                 if (template.statMax != null && i < template.statMax.Length && template.statMax[i] > 0f)
                     stats[i] = Mathf.Min(stats[i], template.statMax[i]);
             }
-            c.martial = stats[0];
-            c.diplomacy = stats[1];
-            c.warfare = stats[2];
-            c.stewardship = stats[3];
-            c.intrigue = stats[4];
-            c.learning = stats[5];
+            c.prowess = stats[0];
+            c.social = stats[1];
+            c.military = stats[2];
+            c.management = stats[3];
+            c.conspiracy = stats[4];
+            c.scholarship = stats[5];
 
  // 人格倾向偏移（七维统一叠加，bias 访问走模板的枚举索引器）
             foreach (var pd in PersonalityDimensions.All)
@@ -265,11 +265,11 @@ namespace CivilizationEvolution.Simulation.Characters
         {
             switch (def.stat)
             {
-                case "learning":
-                    c.learning = Mathf.Clamp(c.learning + def.amount, 0f, 100f);
+                case "scholarship":
+                    c.scholarship = Mathf.Clamp(c.scholarship + def.amount, 0f, 100f);
                     break;
-                case "martial":
-                    c.martial = Mathf.Clamp(c.martial + def.amount, 0f, 100f);
+                case "prowess":
+                    c.prowess = Mathf.Clamp(c.prowess + def.amount, 0f, 100f);
                     break;
                 case "lifespan":
                     c.expectedLifespanYears = Mathf.Max(20f, c.expectedLifespanYears + def.amount);

@@ -119,25 +119,25 @@ namespace CivilizationEvolution.Simulation.Characters
         }
 
  /// <summary>精神疾病属性修正（六维 + 魅力，作用于显示/判定层）</summary>
-        public static void ApplyDisorderMods(CharacterData c, out float martial, out float diplomacy,
-            out float warfare, out float stewardship, out float intrigue, out float learning, out float charm)
+        public static void ApplyDisorderMods(CharacterData c, out float prowess, out float social,
+            out float military, out float management, out float conspiracy, out float scholarship, out float charm)
         {
-            martial = c.martial;
-            diplomacy = c.diplomacy;
-            warfare = c.warfare;
-            stewardship = c.stewardship;
-            intrigue = c.intrigue;
-            learning = c.learning;
+            prowess = c.prowess;
+            social = c.social;
+            military = c.military;
+            management = c.management;
+            conspiracy = c.conspiracy;
+            scholarship = c.scholarship;
             charm = c.charm;
 
             var def = GetDef(c.mentalDisorderId);
             if (def == null) return;
-            martial += def.martialMod;
-            diplomacy += def.diplomacyMod;
-            warfare += def.warfareMod;
-            stewardship += def.stewardshipMod;
-            intrigue += def.intrigueMod;
-            learning += def.learningMod;
+            prowess += def.martialMod;
+            social += def.diplomacyMod;
+            military += def.warfareMod;
+            management += def.stewardshipMod;
+            conspiracy += def.intrigueMod;
+            scholarship += def.learningMod;
             charm += def.charmMod;
         }
     }

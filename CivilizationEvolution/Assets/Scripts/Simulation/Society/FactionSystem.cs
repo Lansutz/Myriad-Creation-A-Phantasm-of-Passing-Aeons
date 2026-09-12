@@ -233,7 +233,7 @@ namespace CivilizationEvolution.Simulation.Society
 
  // 领袖评分：威望 + 适配六维 + 人格（野心/大胆更愿领头）
                 float score = c.prestige * 0.5f
-                    + c.diplomacy * 0.2f + c.intrigue * 0.15f + c.stewardship * 0.15f
+                    + c.social * 0.2f + c.conspiracy * 0.15f + c.management * 0.15f
                     + (c.greed + 100f) * 0.05f + (c.boldness + 100f) * 0.05f + aff * 10f;
                 if (score > bestScore) { bestScore = score; best = c; }
             }
@@ -254,7 +254,7 @@ namespace CivilizationEvolution.Simulation.Society
                 {
  // 威望与能力提供 0~25% 加成（领袖是放大器，不是力量根源）
                     float leaderBonus = (leader.prestige / 1500f) * 0.15f
-                        + (leader.diplomacy + leader.intrigue + leader.stewardship) / 300f * 0.10f;
+                        + (leader.social + leader.conspiracy + leader.management) / 300f * 0.10f;
                     power *= 1f + Mathf.Clamp(leaderBonus, 0f, 0.25f);
                 }
             }

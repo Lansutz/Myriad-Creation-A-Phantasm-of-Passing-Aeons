@@ -93,8 +93,8 @@ namespace CivilizationEvolution.Simulation.WorldState
 
             var ruler = _characterManager?.GetCharacter(newRulerCharId);
             if (ruler == null) return;
-            float competence = (ruler.diplomacy + ruler.stewardship + ruler.intrigue
-                              + ruler.martial + ruler.warfare + ruler.learning) / 6f;
+            float competence = (ruler.social + ruler.management + ruler.conspiracy
+                              + ruler.prowess + ruler.military + ruler.scholarship) / 6f;
             if (competence >= 70f && ruler.boldness >= 20f)
                 _regimeDynamics.NotifyEvent(d, realmId, CriticalJunctureType.StrongReformer, competence * 0.8f);
         }
