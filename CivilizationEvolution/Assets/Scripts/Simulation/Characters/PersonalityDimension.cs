@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Core.Constants;
@@ -28,6 +28,7 @@ namespace CivilizationEvolution.Simulation.Characters
     public enum PersonalityDimension
     {
         Boldness,       // 大胆（怯懦↔勇猛）
+        Sociability,    // 社交性（孤僻↔合群）
         Compassion,     // 悲悯（冷酷↔慈悲）
         Greed,          // 贪婪（慷慨↔贪婪）
         Honor,          // 荣誉（狡诈↔诚实/重诺）

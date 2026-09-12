@@ -32,6 +32,7 @@ namespace CivilizationEvolution.Simulation.Characters
         public static readonly PersonalityDimension[] All =
         {
             PersonalityDimension.Boldness,
+            PersonalityDimension.Sociability,
             PersonalityDimension.Compassion,
             PersonalityDimension.Greed,
             PersonalityDimension.Honor,
@@ -44,6 +45,7 @@ namespace CivilizationEvolution.Simulation.Characters
         public static string Key(this PersonalityDimension dim) => dim switch
         {
             PersonalityDimension.Boldness => "boldness",
+            PersonalityDimension.Sociability => "sociability",
             PersonalityDimension.Compassion => "compassion",
             PersonalityDimension.Greed => "greed",
             PersonalityDimension.Honor => "honor",
@@ -57,6 +59,7 @@ namespace CivilizationEvolution.Simulation.Characters
         public static string DisplayName(this PersonalityDimension dim) => dim switch
         {
             PersonalityDimension.Boldness => "大胆",
+            PersonalityDimension.Sociability => "社交性",
             PersonalityDimension.Compassion => "悲悯",
             PersonalityDimension.Greed => "贪婪",
             PersonalityDimension.Honor => "荣誉",
