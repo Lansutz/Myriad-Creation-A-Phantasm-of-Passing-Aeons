@@ -3,7 +3,7 @@ namespace CivilizationEvolution.Simulation.Characters
     /// <summary>
     /// 角色疾病定义——数据驱动，可由模组覆盖/新增
     /// 借鉴CK3的健康特质(Health traits)逻辑：疾病就是一个特质，有健康修正和属性修正
-    /// 不搞复杂的形态编号，先天性和后天性可以是同一个疾病，只是发病条件不同
+    /// 疾病可以导致感官/能力衰退（如白内障导致视力衰退），衰退到最高级后获得永久特质
     /// </summary>
     [System.Serializable]
     public struct CharacterDiseaseDef
@@ -13,6 +13,11 @@ namespace CivilizationEvolution.Simulation.Characters
         public string description;            // 疾病描述
         public CharacterDiseaseCategory category;  // 疾病分类
         public TransmissionType transmission; // 传播方式
+
+        // 导致的衰退（可选）——疾病可以导致某种感官/能力的渐进性衰退
+        public ImpairmentType? causesImpairment;   // 导致哪种衰退（如Vision）
+        public float impairmentProgressionRate;    // 衰退每日进展概率（0-1）
+        public ImpairmentLevel initialImpairmentLevel;  // 患病时初始衰退等级
 
         // 疾病参数
         public float baseInfectionRate;       // 基础感染率（传染病用）

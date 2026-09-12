@@ -237,23 +237,25 @@ namespace CivilizationEvolution.Simulation.Characters
             // ===== 眼科疾病（可导致失明的渐进性疾病） =====
             RegisterDisease(new CharacterDiseaseDef
             {
-                diseaseId = "cataract", diseaseName = "白内障", description = "晶状体混浊导致的视力逐渐下降，最终可致失明。借鉴CK3健康特质逻辑：不区分形态编号，先天性和后天性是同一个疾病特质，只是发病条件不同——先天性的出生即有，后天性的与衰老、紫外线暴露、糖尿病、外伤相关，老年高发。前现代无法有效治疗。",
+                diseaseId = "cataract", diseaseName = "白内障", description = "晶状体混浊导致的视力逐渐下降。不直接导致失明，而是导致视力渐进性衰退——从轻度模糊到中度下降到重度衰退，最终可能发展为失明。先天性的出生即有，后天性的与衰老、紫外线暴露、糖尿病、外伤相关，老年高发。前现代无法有效治疗。",
                 category = CharacterDiseaseCategory.Chronic, transmission = TransmissionType.None,
+                causesImpairment = ImpairmentType.Vision, impairmentProgressionRate = 0.002f, initialImpairmentLevel = ImpairmentLevel.Mild,
                 baseMortalityRate = 0f, baseRecoveryRate = 0f,
                 acuteDurationDays = 0, isChronic = true, isPermanent = true,
                 minAgeOnset = 0, maxAgeOnset = 90,
-                healthMod = -0.1f, prowessMod = -5f, scholarshipMod = -3f, charmMod = -2f,
+                healthMod = -0.05f, prowessMod = -2f, scholarshipMod = -1f, charmMod = -1f,
                 treatable = false
             });
 
             RegisterDisease(new CharacterDiseaseDef
             {
-                diseaseId = "glaucoma", diseaseName = "青光眼", description = "眼压升高导致视神经损伤，视力逐渐丧失，最终可致失明。名称上不区分先天和后天，但描述上需要区分：后天性青光眼与遗传、年龄、近视相关，中年以后发病，急性发作时眼痛头痛；先天性青光眼出生即有或婴幼儿期发病，由前房角发育异常导致，常表现为畏光流泪、眼球增大。前现代均无法有效治疗。",
+                diseaseId = "glaucoma", diseaseName = "青光眼", description = "眼压升高导致视神经损伤，视力逐渐丧失。导致视力衰退，进展比白内障快——急性发作时可能快速从轻度跳到重度。后天性与遗传、年龄、近视相关，中年以后发病；先天性出生即有或婴幼儿期发病。前现代无法有效治疗。",
                 category = CharacterDiseaseCategory.Chronic, transmission = TransmissionType.None,
+                causesImpairment = ImpairmentType.Vision, impairmentProgressionRate = 0.005f, initialImpairmentLevel = ImpairmentLevel.Moderate,
                 baseMortalityRate = 0f, baseRecoveryRate = 0f,
                 acuteDurationDays = 3, isChronic = true, isPermanent = true,
                 minAgeOnset = 0, maxAgeOnset = 90,
-                healthMod = -0.2f, prowessMod = -8f, scholarshipMod = -4f, socialMod = -2f,
+                healthMod = -0.1f, prowessMod = -4f, scholarshipMod = -2f, socialMod = -1f,
                 treatable = false
             });
 
@@ -494,6 +496,101 @@ namespace CivilizationEvolution.Simulation.Characters
                         character.health = Mathf.Max(0, character.health + def.healthMod * 0.1f);
                         break;
                 }
+
+                // 疾病导致的感官/能力衰退
+                if (def.causesImpairment.HasValue && def.impairmentProgressionRate > 0)
+                {
+                    // 慢性期和永久期持续导致衰退进展
+                    if (disease.stage == DiseaseStage.Chronic || disease.stage == DiseaseStage.Permanent)
+                    {
+                        if (character.impairments == null)
+                            character.impairments = new System.Collections.Generic.List<ActiveImpairment>();
+
+                        var impType = def.causesImpairment.Value;
+                        int existingIndex = character.impairments.FindIndex(imp => imp.type == impType);
+
+                        if (existingIndex >= 0)
+                        {
+                            var imp = character.impairments[existingIndex];
+                            // 取较快的进展速度
+                            if (def.impairmentProgressionRate > imp.progressionRate)
+                                imp.progressionRate = def.impairmentProgressionRate;
+                            character.impairments[existingIndex] = imp;
+                        }
+                        else
+                        {
+                            character.impairments.Add(new ActiveImpairment
+                            {
+                                type = impType,
+                                level = def.initialImpairmentLevel,
+                                progressionRate = def.impairmentProgressionRate,
+                                daysAtCurrentLevel = 0,
+                                cause = disease.diseaseId,
+                                isReversible = false
+                            });
+                        }
+                    }
+                }
+            }
+
+            // 处理衰退进展
+            if (character.impairments != null && character.impairments.Count > 0)
+            {
+                for (int i = character.impairments.Count - 1; i >= 0; i--)
+                {
+                    var imp = character.impairments[i];
+                    imp.daysAtCurrentLevel++;
+
+                    // 检查是否进展到下一级
+                    if (imp.level < ImpairmentLevel.Profound && imp.progressionRate > 0)
+                    {
+                        // 进展概率受等级影响——等级越高越难进展
+                        float progressChance = imp.progressionRate / (int)imp.level;
+                        if (UnityEngine.Random.value < progressChance)
+                        {
+                            imp.level++;
+                            imp.daysAtCurrentLevel = 0;
+
+                            // 达到最高级，获得永久特质
+                            if (imp.level == ImpairmentLevel.Profound)
+                            {
+                                ApplyPermanentImpairmentTrait(character, imp.type);
+                            }
+                        }
+                    }
+
+                    character.impairments[i] = imp;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 衰退达到最高级后获得永久特质
+        /// </summary>
+        private void ApplyPermanentImpairmentTrait(CharacterData character, ImpairmentType type)
+        {
+            switch (type)
+            {
+                case ImpairmentType.Vision:
+                    if (!character.activeDiseases.Exists(d => d.diseaseId == "blindness"))
+                        InfectCharacter(character, "blindness", "impairment_progression");
+                    break;
+                case ImpairmentType.Hearing:
+                    if (!character.activeDiseases.Exists(d => d.diseaseId == "deafness"))
+                        InfectCharacter(character, "deafness", "impairment_progression");
+                    break;
+                case ImpairmentType.Cognition:
+                    if (!character.activeDiseases.Exists(d => d.diseaseId == "dementia"))
+                        InfectCharacter(character, "dementia", "impairment_progression");
+                    break;
+                case ImpairmentType.Mobility:
+                    if (!character.activeDiseases.Exists(d => d.diseaseId == "paralysis"))
+                        InfectCharacter(character, "paralysis", "impairment_progression");
+                    break;
+                case ImpairmentType.Speech:
+                    if (!character.activeDiseases.Exists(d => d.diseaseId == "aphasia"))
+                        InfectCharacter(character, "aphasia", "impairment_progression");
+                    break;
             }
         }
 

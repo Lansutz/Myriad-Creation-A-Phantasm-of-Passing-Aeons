@@ -200,6 +200,10 @@ namespace CivilizationEvolution.Simulation.Characters
  /// <summary>活跃疾病列表——角色身上正在发生的身体疾病</summary>
         public List<ActiveCharacterDisease> activeDiseases = new List<ActiveCharacterDisease>();
 
+ // ===== 感官/能力衰退系统 =====
+ /// <summary>活跃衰退列表——视力/听力/认知/运动/语言的渐进性衰退</summary>
+        public List<ActiveImpairment> impairments = new List<ActiveImpairment>();
+
  // 人格特质列表
         public List<PersonalityTrait> traits = new List<PersonalityTrait>();
 
