@@ -41,7 +41,9 @@ namespace CivilizationEvolution.Render
         private const float MapTextureIntervalEdit = 0.2f;
         private bool _forceMapRefresh = true; // 首次/切换模式时立即重绘
  // 地图编辑器
+#if UNITY_EDITOR
         private MapEditor _mapEditor;
+#endif
         private int _hoverTile = -1; // 鼠标悬停地块（画笔预览）
 
  // 像素数组缓存：避免每次重绘都 new Color[8192] 产生 GC
@@ -113,7 +115,9 @@ namespace CivilizationEvolution.Render
             InitializeRenderer();
             InitializeColors();
             _mainCamera = Camera.main;
+            #if UNITY_EDITOR
             _mapEditor = new MapEditor(world, this);
+            #endif
             _forceMapRefresh = true; // 尺寸同步后强制重绘
  // 地图显示全链路（查漏补缺：Plane 缩放至地图世界尺寸+相机对准—— // 否则 10×10 默认 Plane+固定相机坐标=地图不可见）
             SetupMapDisplay();
@@ -135,11 +139,17 @@ namespace CivilizationEvolution.Render
  // 相机输入需要实时响应，不节流
             HandleCameraInput();
  // 地图编辑器鼠标处理（编辑模式下左键绘制）
+            #if UNITY_EDITOR
             HandleEditorInput();
+            #endif
 
  // 重绘节流：运行 1s[数据每秒才变]/编辑 0.2s[涂色实时]——force 即时
             _mapTextureTimer += Time.unscaledDeltaTime;
+            #if UNITY_EDITOR
             bool editing = _mapEditor != null && _mapEditor.IsEditMode;
+            #else
+            bool editing = false;
+            #endif
             float interval = editing ? MapTextureIntervalEdit : MapTextureInterval;
             if (_forceMapRefresh || _mapTextureTimer >= interval)
             {
@@ -170,6 +180,7 @@ namespace CivilizationEvolution.Render
         }
 
  /// <summary>编辑器鼠标输入处理（左键按下拖动绘制，悬停更新画笔预览）</summary>
+        #if UNITY_EDITOR
         private void HandleEditorInput()
         {
             if (_mapEditor == null || !_mapEditor.IsEditMode) return;
@@ -190,6 +201,7 @@ namespace CivilizationEvolution.Render
                 _mapEditor.OnPaintEnd();
             }
         }
+        #endif
  /// <summary>初始化渲染器</summary>
  /// 地图显示适配（全链路关键——学 FMS 场景搭建思路）：
  /// ① MapPlane 缩放至地图世界尺寸（hexSize=1：世界宽=mapWidth——
@@ -526,6 +538,7 @@ namespace CivilizationEvolution.Render
         }
 
  /// <summary>获取地图编辑器实例</summary>
+        #if UNITY_EDITOR
         public MapEditor GetMapEditor()
         {
  // 懒初始化（时序安全：UIManager 可能早于 _mapEditor 创建访问）
@@ -533,6 +546,7 @@ namespace CivilizationEvolution.Render
                 _mapEditor = new MapEditor(world, this);
             return _mapEditor;
         }
+        #endif
 
  /// <summary>当前鼠标悬停地块（画笔预览用）</summary>
         public int HoverTile => _hoverTile;

@@ -330,7 +330,7 @@ namespace CivilizationEvolution.Core
                 buildLevel = 1,
             };
             Map.SettlementTypologySystem.DeriveInitialType(burg, tile, mapWidth, mapHeight);
-            burg.settlementType = Map.SettlementEvolutionSystem.InferFromBurgType(burg.type);
+            burg.settlementType = Map.BurgTypeInferrer.InferSettlementType(burg.type);
             burgs[burg.burgId] = burg;
             string founderName = founder != null ? founder.firstName + founder.lastName : "某人";
             _chronicle?.Add("city_founded",

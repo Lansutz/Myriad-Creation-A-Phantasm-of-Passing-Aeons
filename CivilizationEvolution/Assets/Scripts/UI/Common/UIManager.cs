@@ -166,7 +166,9 @@ namespace CivilizationEvolution.UI
         private readonly Queue<string> _toastQueue = new Queue<string>();
         private Coroutine _toastRoutine;
  // 地图编辑器UI面板
+        #if UNITY_EDITOR
         private EditorUIPanel _editorPanel;
+        #endif
 
         [Header("地图信息")]
         [SerializeField] private TMP_Text mapInfoText;
@@ -282,6 +284,7 @@ namespace CivilizationEvolution.UI
             if (familyTreePrevButton != null) familyTreePrevButton.onClick.AddListener(() => { _charIndex--; RefreshFamilyTreePanel(); });
             if (familyTreeNextButton != null) familyTreeNextButton.onClick.AddListener(() => { _charIndex++; RefreshFamilyTreePanel(); });
 
+ #if UNITY_EDITOR
  // 地图编辑器UI面板（代码动态生成，无需在Inspector手动搭建）
             if (mapRenderer != null)
             {
@@ -292,6 +295,7 @@ namespace CivilizationEvolution.UI
                 _editorPanel.Initialize(mapRenderer, editor);
                 AddEventLog("编辑器UI面板已加载（Tab键显示/隐藏）", EventLogKind.System);
             }
+ #endif
             Debug.Log("[UIManager] UI初始化完成");
         }
 
@@ -456,13 +460,17 @@ namespace CivilizationEvolution.UI
                 eventLogPanel.SetActive(!eventLogPanel.activeSelf);
         }
  /// <summary>切换地图编辑器面板显示/隐藏</summary>
+        #if UNITY_EDITOR
         public void ToggleEditorPanel()
         {
             _editorPanel?.TogglePanel();
         }
+        #endif
 
  /// <summary>获取地图编辑器面板</summary>
+        #if UNITY_EDITOR
         public EditorUIPanel GetEditorPanel() => _editorPanel;
+        #endif
 
         public int GetSelectedTile() => _selectedTile;
         public void SetSelectedTile(int tile) => _selectedTile = tile;

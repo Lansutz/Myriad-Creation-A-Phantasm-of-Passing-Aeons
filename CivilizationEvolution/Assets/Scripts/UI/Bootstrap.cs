@@ -6,22 +6,8 @@ namespace CivilizationEvolution.Core
  /// 游戏启动入口
  /// 挂载到场景中的Bootstrap物体上，自动初始化GameManager和GameWorld
  /// <summary>地图尺寸预设（宽×高，总地块数）——去掉过小档，最大支持470万+地块</summary>
-    public enum MapSizePreset
-    {
- // 小尺寸已删除（过小世界无意义——最小 Large—— // 尺寸精神照架空地图模拟器[FMS 8192×4096 级——技术上限 Enormous]）
-        Large,     // 1024×512 = 524,288 地块（最小）
-        Huge,      // 2048×1024 = 2,097,152 地块（默认——平衡）
-        Reference, // 1920×1080 = 2,073,600 地块（对齐参考项目）
-        Enormous   // 3072×1536 = 4,718,592 地块（最大——需16GB+内存）
-    }
 
  /// <summary>地图环绕模式——决定边界是否连通</summary>
-    public enum MapWrapMode
-    {
-        Flat,        // 平面：四边都不连通，标准矩形地图
-        Cylindrical, // 柱面：左右连通（东西环绕），上下不连通——模拟地球
-        Toroidal     // 环面：左右上下全连通
-    }
 
     public class Bootstrap : MonoBehaviour
     {

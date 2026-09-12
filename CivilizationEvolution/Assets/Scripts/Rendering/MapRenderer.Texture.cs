@@ -106,6 +106,7 @@ namespace CivilizationEvolution.Render
                 }
             }
 
+            #if UNITY_EDITOR
  // 编辑器画笔预览（编辑模式下高亮鼠标悬停的画笔范围）
             if (_mapEditor != null && _mapEditor.IsEditMode && _hoverTile >= 0 && _mapEditor.CurrentTool != EditorTool.None)
             {
@@ -119,6 +120,7 @@ namespace CivilizationEvolution.Render
                     }
                 }
             }
+            #endif
             mapTexture.SetPixels(_pixelBuffer);
 
             mapTexture.Apply();

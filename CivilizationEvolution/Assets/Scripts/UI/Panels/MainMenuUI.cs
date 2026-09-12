@@ -25,7 +25,9 @@ namespace CivilizationEvolution.UI
         private Canvas _canvas;
         private GameObject _root;
         private SettingsPanel _settingsPanel;
+        #if UNITY_EDITOR
         private DataEditorMenu _dataEditorMenu;
+        #endif
         private SaveLoadPanel _saveLoadPanel;
         private bool _initialized;
 
@@ -97,7 +99,9 @@ namespace CivilizationEvolution.UI
             {
                 ("创建世界", true, OnStartGame),
                 ("加载世界", false, OnLoadWorld),
+                #if UNITY_EDITOR
                 ("编辑器", false, OnDataEditor),
+                #endif
                 ("设置", false, OnSettings),
                 ("退出游戏", false, OnExit),
             };
@@ -209,6 +213,7 @@ namespace CivilizationEvolution.UI
         }
 
  /// <summary>编辑器 → 数据编辑器（种族/文化/宗教等内容编辑选择）</summary>
+        #if UNITY_EDITOR
         private void OnDataEditor()
         {
             if (_dataEditorMenu == null)
@@ -220,6 +225,7 @@ namespace CivilizationEvolution.UI
             }
             _dataEditorMenu.Show();
         }
+        #endif
 
  /// <summary>设置 → 游戏设置面板（音量/分辨率/画质/语言）</summary>
         private void OnSettings()

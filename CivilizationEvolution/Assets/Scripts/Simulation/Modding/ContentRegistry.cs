@@ -122,7 +122,7 @@ namespace CivilizationEvolution.Core
         public static Dictionary<string, MentalDisorderDef> MentalDisorders { get; private set; } = new Dictionary<string, MentalDisorderDef>();
         public static Dictionary<int, InnovationDef> Innovations { get; private set; } = new Dictionary<int, InnovationDef>();
         public static Dictionary<int, ReligionDef> Religions { get; private set; } = new Dictionary<int, ReligionDef>();
-        public static Dictionary<int, BiomeDef> Biomes { get; private set; } = new Dictionary<int, BiomeDef>();
+        public static Dictionary<int, BiomeDef> Biomes => BiomeRegistry.Overrides;
         public static Dictionary<string, DoctrineOptionDef> Doctrines { get; private set; } = new Dictionary<string, DoctrineOptionDef>();
 
         public static bool IsInitialized { get; private set; } = false;
@@ -143,7 +143,7 @@ namespace CivilizationEvolution.Core
             TalentDefects = new Dictionary<string, TalentDefectDef>();
             MentalDisorders = new Dictionary<string, MentalDisorderDef>();
             Innovations = new Dictionary<int, InnovationDef>();
-            Biomes = new Dictionary<int, BiomeDef>();
+            BiomeRegistry.Overrides.Clear();
 
             string root = Application.streamingAssetsPath;
             if (!Directory.Exists(root))

@@ -77,6 +77,7 @@ namespace CivilizationEvolution.UI
  // 进入地图编辑器时显示游戏内UI
             if (uiManager != null) uiManager.ShowGameUI();
 
+            #if UNITY_EDITOR
             if (FindAnyObjectByType<CivilizationEvolution.Bootstrap.MapEditorBootstrap>() == null)
             {
                 var editorObj = new GameObject("MapEditorBootstrap");
@@ -84,6 +85,7 @@ namespace CivilizationEvolution.UI
                 bootstrap.startWithEmptyOcean = true;
                 Debug.Log("[SceneFlow] MapEditorBootstrap 已启动（全海空白地图模式）");
             }
+            #endif
             Debug.Log("[SceneFlow] 进入地图编辑器");
         }
 
@@ -94,6 +96,7 @@ namespace CivilizationEvolution.UI
             if (mainMenu != null && mainMenu.IsVisible) mainMenu.Hide();
             if (uiManager != null) uiManager.ShowGameUI();
 
+            #if UNITY_EDITOR
             if (FindAnyObjectByType<CivilizationEvolution.Bootstrap.MapEditorBootstrap>() == null)
             {
                 var editorObj = new GameObject("MapEditorBootstrap");
@@ -101,6 +104,7 @@ namespace CivilizationEvolution.UI
                 bootstrap.loadSaveFileName = saveFileName;
                 Debug.Log($"[SceneFlow] MapEditorBootstrap 已启动（加载存档模式: {saveFileName}）");
             }
+            #endif
             Debug.Log($"[SceneFlow] 进入地图编辑器（加载存档: {saveFileName}）");
         }
 

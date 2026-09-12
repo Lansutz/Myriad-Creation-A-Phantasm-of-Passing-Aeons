@@ -127,7 +127,7 @@ namespace CivilizationEvolution.Map
             SettlementTypologySystem.DeriveInitialType(burg, tile, _width, _height);
 
  // 覆盖：根据BurgType强制形态
-            burg.settlementType = SettlementEvolutionSystem.InferFromBurgType(type);
+            burg.settlementType = BurgTypeInferrer.InferSettlementType(type);
             burg.settlementLevel = type switch
             {
                 BurgType.City or BurgType.Port or BurgType.Capital => SettlementLevel.LevelIII,

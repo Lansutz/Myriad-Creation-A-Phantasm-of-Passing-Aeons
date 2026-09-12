@@ -1,0 +1,19 @@
+{
+    "name": "CivilizationEvolution.Infrastructure",
+    "rootNamespace": "CivilizationEvolution.Infrastructure",
+    "references": [
+        "CivilizationEvolution.Core",
+        "CivilizationEvolution.World",
+        "CivilizationEvolution.Simulation",
+        "CivilizationEvolution.Rendering"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -134,7 +134,7 @@ namespace CivilizationEvolution.Climate
         /// <summary>获取群系基础移动成本（1.0=平原，50=极难通行）。优先读 JSON 配置，回退硬编码默认值。</summary>
         public static float GetMovementCost(GameEnums.BiomeType biome)
         {
-            if (ContentRegistry.IsInitialized && ContentRegistry.TryGetBiome((int)biome, out var def))
+            if (BiomeRegistry.TryGet((int)biome, out var def))
                 return def.movementCost;
             return _table.TryGetValue(biome, out var a) ? a.MovementCost : 1.5f;
         }
@@ -142,7 +142,7 @@ namespace CivilizationEvolution.Climate
         /// <summary>获取群系可居住性（0-100）。优先读 JSON 配置，回退硬编码默认值。</summary>
         public static float GetHabitability(GameEnums.BiomeType biome)
         {
-            if (ContentRegistry.IsInitialized && ContentRegistry.TryGetBiome((int)biome, out var def))
+            if (BiomeRegistry.TryGet((int)biome, out var def))
                 return def.habitability;
             return _table.TryGetValue(biome, out var a) ? a.Habitability : 50f;
         }
@@ -150,7 +150,7 @@ namespace CivilizationEvolution.Climate
         /// <summary>获取群系全部属性。优先读 JSON 配置，回退硬编码默认值。</summary>
         public static Attributes GetAttributes(GameEnums.BiomeType biome)
         {
-            if (ContentRegistry.IsInitialized && ContentRegistry.TryGetBiome((int)biome, out var def))
+            if (BiomeRegistry.TryGet((int)biome, out var def))
                 return new Attributes { MovementCost = def.movementCost, Habitability = def.habitability };
             return _table.TryGetValue(biome, out var a) ? a : new Attributes { MovementCost = 1.5f, Habitability = 50f };
         }
