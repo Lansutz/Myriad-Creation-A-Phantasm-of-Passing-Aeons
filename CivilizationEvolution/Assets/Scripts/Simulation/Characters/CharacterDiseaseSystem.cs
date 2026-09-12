@@ -239,7 +239,7 @@ namespace CivilizationEvolution.Simulation.Characters
             {
                 diseaseId = "cataract", diseaseName = "白内障", description = "晶状体混浊导致的视力逐渐下降。不直接导致失明，而是导致视力渐进性衰退——从轻度模糊到中度下降到重度衰退，最终可能发展为失明。先天性的出生即有，后天性的与衰老、紫外线暴露、糖尿病、外伤相关，老年高发。前现代无法有效治疗。",
                 category = CharacterDiseaseCategory.Chronic, transmission = TransmissionType.None,
-                causesImpairment = ImpairmentType.Vision, impairmentProgressionRate = 0.002f, initialImpairmentLevel = ImpairmentLevel.Mild,
+                causesImpairmentId = "vision", impairmentProgressionRate = 0.002f, initialImpairmentStage = 0,
                 baseMortalityRate = 0f, baseRecoveryRate = 0f,
                 acuteDurationDays = 0, isChronic = true, isPermanent = true,
                 minAgeOnset = 0, maxAgeOnset = 90,
@@ -251,7 +251,7 @@ namespace CivilizationEvolution.Simulation.Characters
             {
                 diseaseId = "glaucoma", diseaseName = "青光眼", description = "眼压升高导致视神经损伤，视力逐渐丧失。导致视力衰退，进展比白内障快——急性发作时可能快速从轻度跳到重度。后天性与遗传、年龄、近视相关，中年以后发病；先天性出生即有或婴幼儿期发病。前现代无法有效治疗。",
                 category = CharacterDiseaseCategory.Chronic, transmission = TransmissionType.None,
-                causesImpairment = ImpairmentType.Vision, impairmentProgressionRate = 0.005f, initialImpairmentLevel = ImpairmentLevel.Moderate,
+                causesImpairmentId = "vision", impairmentProgressionRate = 0.005f, initialImpairmentStage = 1,
                 baseMortalityRate = 0f, baseRecoveryRate = 0f,
                 acuteDurationDays = 3, isChronic = true, isPermanent = true,
                 minAgeOnset = 0, maxAgeOnset = 90,
@@ -498,7 +498,7 @@ namespace CivilizationEvolution.Simulation.Characters
                 }
 
                 // 疾病导致的感官/能力衰退
-                if (def.causesImpairment.HasValue && def.impairmentProgressionRate > 0)
+                if (!string.IsNullOrEmpty(def.causesImpairmentId) && def.impairmentProgressionRate > 0)
                 {
                     // 慢性期和永久期持续导致衰退进展
                     if (disease.stage == DiseaseStage.Chronic || disease.stage == DiseaseStage.Permanent)
@@ -506,8 +506,8 @@ namespace CivilizationEvolution.Simulation.Characters
                         if (character.impairments == null)
                             character.impairments = new System.Collections.Generic.List<ActiveImpairment>();
 
-                        var impType = def.causesImpairment.Value;
-                        int existingIndex = character.impairments.FindIndex(imp => imp.type == impType);
+                        string impId = def.causesImpairmentId;
+                        int existingIndex = character.impairments.FindIndex(imp => imp.impairmentId == impId);
 
                         if (existingIndex >= 0)
                         {
@@ -521,10 +521,10 @@ namespace CivilizationEvolution.Simulation.Characters
                         {
                             character.impairments.Add(new ActiveImpairment
                             {
-                                type = impType,
-                                level = def.initialImpairmentLevel,
+                                impairmentId = impId,
+                                stageIndex = def.initialImpairmentStage,
                                 progressionRate = def.impairmentProgressionRate,
-                                daysAtCurrentLevel = 0,
+                                daysAtCurrentStage = 0,
                                 cause = disease.diseaseId,
                                 isReversible = false
                             });
@@ -539,22 +539,32 @@ namespace CivilizationEvolution.Simulation.Characters
                 for (int i = character.impairments.Count - 1; i >= 0; i--)
                 {
                     var imp = character.impairments[i];
-                    imp.daysAtCurrentLevel++;
+                    imp.daysAtCurrentStage++;
 
-                    // 检查是否进展到下一级
-                    if (imp.level < ImpairmentLevel.Profound && imp.progressionRate > 0)
+                    var impDef = ImpairmentRegistry.GetDef(imp.impairmentId);
+                    if (impDef == null) continue;
+
+                    int maxStage = impDef.Stages.Length - 1;
+
+                    // 检查是否进展到下一阶段
+                    if (imp.stageIndex < maxStage && imp.progressionRate > 0)
                     {
-                        // 进展概率受等级影响——等级越高越难进展
-                        float progressChance = imp.progressionRate / (int)imp.level;
+                        // 进展概率受阶段影响——阶段越高越难进展
+                        float progressChance = imp.progressionRate / (imp.stageIndex + 1);
                         if (UnityEngine.Random.value < progressChance)
                         {
-                            imp.level++;
-                            imp.daysAtCurrentLevel = 0;
+                            imp.stageIndex++;
+                            imp.daysAtCurrentStage = 0;
 
-                            // 达到最高级，获得永久特质
-                            if (imp.level == ImpairmentLevel.Profound)
+                            // 达到最高阶段，获得永久特质
+                            if (imp.stageIndex == maxStage)
                             {
-                                ApplyPermanentImpairmentTrait(character, imp.type);
+                                var stage = impDef.Stages[maxStage];
+                                if (!string.IsNullOrEmpty(stage.permanentTraitId) &&
+                                    !character.activeDiseases.Exists(d => d.diseaseId == stage.permanentTraitId))
+                                {
+                                    InfectCharacter(character, stage.permanentTraitId, "impairment_progression");
+                                }
                             }
                         }
                     }
@@ -564,35 +574,7 @@ namespace CivilizationEvolution.Simulation.Characters
             }
         }
 
-        /// <summary>
-        /// 衰退达到最高级后获得永久特质
-        /// </summary>
-        private void ApplyPermanentImpairmentTrait(CharacterData character, ImpairmentType type)
-        {
-            switch (type)
-            {
-                case ImpairmentType.Vision:
-                    if (!character.activeDiseases.Exists(d => d.diseaseId == "blindness"))
-                        InfectCharacter(character, "blindness", "impairment_progression");
-                    break;
-                case ImpairmentType.Hearing:
-                    if (!character.activeDiseases.Exists(d => d.diseaseId == "deafness"))
-                        InfectCharacter(character, "deafness", "impairment_progression");
-                    break;
-                case ImpairmentType.Cognition:
-                    if (!character.activeDiseases.Exists(d => d.diseaseId == "dementia"))
-                        InfectCharacter(character, "dementia", "impairment_progression");
-                    break;
-                case ImpairmentType.Mobility:
-                    if (!character.activeDiseases.Exists(d => d.diseaseId == "paralysis"))
-                        InfectCharacter(character, "paralysis", "impairment_progression");
-                    break;
-                case ImpairmentType.Speech:
-                    if (!character.activeDiseases.Exists(d => d.diseaseId == "aphasia"))
-                        InfectCharacter(character, "aphasia", "impairment_progression");
-                    break;
-            }
-        }
+
 
         /// <summary>
         /// 感染疾病——从人口级瘟疫或角色传播

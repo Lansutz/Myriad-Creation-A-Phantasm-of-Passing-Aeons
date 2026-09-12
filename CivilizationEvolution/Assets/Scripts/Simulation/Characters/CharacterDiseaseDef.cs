@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Simulation.Characters
+﻿namespace CivilizationEvolution.Simulation.Characters
 {
     /// <summary>
     /// 角色疾病定义——数据驱动，可由模组覆盖/新增
@@ -15,9 +15,9 @@ namespace CivilizationEvolution.Simulation.Characters
         public TransmissionType transmission; // 传播方式
 
         // 导致的衰退（可选）——疾病可以导致某种感官/能力的渐进性衰退
-        public ImpairmentType? causesImpairment;   // 导致哪种衰退（如Vision）
+        public string causesImpairmentId;          // 导致哪种衰退（如"vision"、"hearing"）
         public float impairmentProgressionRate;    // 衰退每日进展概率（0-1）
-        public ImpairmentLevel initialImpairmentLevel;  // 患病时初始衰退等级
+        public int initialImpairmentStage;         // 患病时初始衰退阶段索引（0=轻度，1=中度...）
 
         // 疾病参数
         public float baseInfectionRate;       // 基础感染率（传染病用）
