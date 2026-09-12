@@ -5,12 +5,31 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Render;
-using CivilizationEvolution.Race;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.Politics;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Rendering;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.UI;
 
-namespace CivilizationEvolution.UI
+
+
+
+
+
+
+using CivilizationEvolution.Simulation.Culture;
+namespace CivilizationEvolution.UI.Common
 {
  /// UIManager.Feedback —— 用户反馈（事件日志/Toast通知/确认对话框）（partial class，与 UIManager.cs 共享字段与组件引用）
     public partial class UIManager : MonoBehaviour

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.World.Terrain
 {
  /// 3D 球面 Simplex 噪声生成器
  /// 输入单位球面上的 3D 坐标，避免等矩形投影两极拉伸

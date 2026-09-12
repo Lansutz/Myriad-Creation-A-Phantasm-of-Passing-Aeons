@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Character;
+using CivilizationEvolution.Simulation.Characters;
 
-namespace CivilizationEvolution.Core
+
+
+using CivilizationEvolution.Core;
+namespace CivilizationEvolution.Simulation.Modding
 {
  // ============================================================================ // 模组化内容类型定义（企划书 1.2 模组扩展规范） // 全部类型：Base/Mods 双目录、JsonUtility 加载、同 Id 覆盖、失败仅告警 // 概念锚点：族群=Ethnos（术语表），族群精神=Ethos（CK3 文化支柱类比）， // 文化传统=Traditions（CK3 类比），语言=Ethnos 定义项 // 本地化约定：定义文件只存键；显示文本查 Localization 表 // - 族群精神：&lt;ethosId&gt;_name / &lt;ethosId&gt;_desc // - 文化传统：&lt;traditionId&gt;_name / &lt;traditionId&gt;_desc // - 语言：&lt;languageId&gt;_name / _desc / _script / _naming // - 族群：&lt;groupId&gt;_name / &lt;groupId&gt;_desc // ============================================================================
  /// <summary>通用效果条目（键由消费系统解释，如 development/levy/opinion...）</summary>

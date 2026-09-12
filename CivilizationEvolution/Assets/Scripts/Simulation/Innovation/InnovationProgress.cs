@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Tech
+namespace CivilizationEvolution.Simulation.Innovation
 {
     /// <summary>
     /// 单个革新的研究进度。

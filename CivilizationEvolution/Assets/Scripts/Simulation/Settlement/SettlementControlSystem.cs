@@ -2,8 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Map
+
+
+using CivilizationEvolution.World.Settlement;
+namespace CivilizationEvolution.Simulation.Settlement
 {
  /// 聚落控制/影响力范围系统。
  /// 设计原则：
@@ -35,7 +49,7 @@ namespace CivilizationEvolution.Map
             TileData[] tiles,
             int mapWidth,
             int mapHeight,
-            Dictionary<int, CivilizationEvolution.War.Army> armies = null)
+            Dictionary<int, CivilizationEvolution.Simulation.Warfare.Army> armies = null)
         {
             if (burgs == null || burgs.Count == 0) return;
 
@@ -56,7 +70,7 @@ namespace CivilizationEvolution.Map
         private static void UpdateGarrisonInfo(
             Dictionary<int, BurgData> burgs,
             TileData[] tiles,
-            Dictionary<int, CivilizationEvolution.War.Army> armies)
+            Dictionary<int, CivilizationEvolution.Simulation.Warfare.Army> armies)
         {
  // 先重置
             foreach (var burg in burgs.Values)
@@ -70,7 +84,7 @@ namespace CivilizationEvolution.Map
             {
                 foreach (var army in armies.Values)
                 {
-                    if (army.state == CivilizationEvolution.Core.GameEnums.CombatState.Dead) continue;
+                    if (army.state == CivilizationEvolution.Core.Enums.GameEnums.CombatState.Dead) continue;
  // 找军队所在地块的聚落
                     foreach (var burg in burgs.Values)
                     {

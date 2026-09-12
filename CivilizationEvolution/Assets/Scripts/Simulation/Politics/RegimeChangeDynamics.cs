@@ -2,9 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Tech;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Politics
+
+
+
+namespace CivilizationEvolution.Simulation.Politics
 {
  // ===================================================================================== // 政体变迁动力学（Regime Change Dynamics） // ------------------------------------------------------------------------------------- // 理论：历史制度主义（路径依赖+关键节点）+ 唯物史观（上层建筑随经济基础变化，但需偶然事件） // + 斯考切波（旧国家崩溃/精英分裂/底层组织三条件）+ 蒂利（战争-财政制造国家）。 // 核心命题：**条件具备 ≠ 必然变化**。 // ①结构条件：革新/阶层/思想只定义"哪些政体成分可能"（PolityComponentInnovations 硬约束）； // ②结构性张力：现政体与变化了的社会基础错配，只缓慢积累、只提高危机概率，永不自动触发变革； // ③关键节点：继承危机/战败/财政破产/精英分裂/起义/征服/强势改革者等**偶然事件**打开短暂窗口； // ④节点博弈：派系力量对比 × 革新可行性 → 改革/妥协/复辟/停滞/崩溃，结果非决定论。 // 窗口短暂，结束后回到路径依赖（制度自我强化）。 // =====================================================================================
  /// <summary>关键节点类型（打开制度流动窗口的偶然事件）</summary>

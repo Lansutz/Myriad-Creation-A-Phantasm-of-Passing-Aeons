@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace CivilizationEvolution.Render
+namespace CivilizationEvolution.Rendering
 {
  /// 地图可选叠加层（少量，可独立开关）。
  /// 设计原则：不搞无限叠加，只保留必要的、性能可控的叠加层。

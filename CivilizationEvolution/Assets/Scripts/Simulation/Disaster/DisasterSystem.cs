@@ -2,9 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Character;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Disaster
+
+
+
+namespace CivilizationEvolution.Simulation.Disaster
 {
  /// 灾害系统
  /// 自然灾害与人为灾害，有触发条件、影响范围、持续时间、后果

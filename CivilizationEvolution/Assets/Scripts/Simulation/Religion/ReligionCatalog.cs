@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace CivilizationEvolution.Culture
+namespace CivilizationEvolution.Simulation.Religion
 {
     public static class ReligionCatalog
     {

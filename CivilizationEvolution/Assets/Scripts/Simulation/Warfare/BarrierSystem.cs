@@ -1,9 +1,27 @@
-﻿using CivilizationEvolution.Map;
+﻿
 using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using UnityEngine;
 
-namespace CivilizationEvolution.Military
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
+
+
+namespace CivilizationEvolution.Simulation.Warfare
 {
  /// 关隘与通行地理系统
  /// 负责：极难通行地区计算（坡度）、通行成本计算、狭窄通道检测、关隘建造/攻破、堡垒区域影响

@@ -1,6 +1,7 @@
 using System;
 
-namespace CivilizationEvolution.UI
+using CivilizationEvolution.World;
+namespace CivilizationEvolution.Infrastructure.Save
 {
     [Serializable]
     public class BurgSaveData

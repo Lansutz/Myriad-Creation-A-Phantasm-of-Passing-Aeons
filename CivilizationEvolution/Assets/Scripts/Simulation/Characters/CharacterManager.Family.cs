@@ -2,13 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Race;
-using CivilizationEvolution.Culture;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.Thought;
-using CivilizationEvolution.War;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.Warfare;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Character
+
+
+
+
+
+
+
+namespace CivilizationEvolution.Simulation.Characters
 {
  /// CharacterManager.Family —— 家族与生育（生育/婚姻/亲属查询/家族树/自动生育/纽带）（partial class，与 CharacterSystem.cs 共享字段）
     public partial class CharacterManager

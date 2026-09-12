@@ -1,9 +1,14 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.Politics;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
 
-namespace CivilizationEvolution.War
+
+
+
+namespace CivilizationEvolution.Simulation.Warfare
 {
  /// 大圣战状态（特殊机制——区别于寻常圣战）：
  /// 号召制（教宗/哈里发号召——该教统/宗教的其他政权参战）

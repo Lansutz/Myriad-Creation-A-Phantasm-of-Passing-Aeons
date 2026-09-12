@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Character
+namespace CivilizationEvolution.Simulation.Characters
 {
     public static class MentalDisorderIds
     {

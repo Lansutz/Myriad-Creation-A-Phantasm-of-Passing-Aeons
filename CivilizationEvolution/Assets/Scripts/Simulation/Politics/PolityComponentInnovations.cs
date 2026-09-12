@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
-using CivilizationEvolution.Tech;
+using CivilizationEvolution.Simulation.Innovation;
 
-namespace CivilizationEvolution.Politics
+
+
+namespace CivilizationEvolution.Simulation.Politics
 {
  /// 政体成分 ↔ 支撑革新（政体学的每个部分都有相应的革新）
  /// 每个政体成分（A1 交接/B1 选人/B2 机构/C1 地方产生/C2 职能/央地结构）

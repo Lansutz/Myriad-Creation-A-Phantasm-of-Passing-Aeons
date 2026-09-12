@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using System;
 using UnityEngine;
-using CivilizationEvolution.Character;
 
-namespace CivilizationEvolution.Character
+
+namespace CivilizationEvolution.Simulation.Characters
 {
  /// 原型学术画像描述器（性格组合→学术化画像短句——CK3 trait 描述风格）
  /// 非称号：原型=性格的学术画像（大五人格式维度词汇）——

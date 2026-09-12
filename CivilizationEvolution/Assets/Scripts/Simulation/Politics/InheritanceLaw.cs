@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Character;
+using CivilizationEvolution.Simulation.Characters;
 
-namespace CivilizationEvolution.Politics
+
+
+namespace CivilizationEvolution.Simulation.Politics
 {
  /// 继承法系统（四轴独立选择）
  /// 轴1 继承范围：限本族 vs 血亲不论姓氏

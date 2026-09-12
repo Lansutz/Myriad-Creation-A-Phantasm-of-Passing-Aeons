@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Core
+namespace CivilizationEvolution.Core.Data
 {
     public static class TileGrid
     {

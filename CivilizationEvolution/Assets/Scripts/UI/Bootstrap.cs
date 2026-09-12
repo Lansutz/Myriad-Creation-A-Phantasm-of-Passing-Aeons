@@ -1,7 +1,21 @@
 ﻿using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Core
+
+
+namespace CivilizationEvolution.UI
 {
  /// 游戏启动入口
  /// 挂载到场景中的Bootstrap物体上，自动初始化GameManager和GameWorld

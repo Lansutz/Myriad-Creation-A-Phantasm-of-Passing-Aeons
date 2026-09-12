@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Core
+namespace CivilizationEvolution.Simulation.Events
 {
  /// 编年史（借鉴《地图上发生的事》Chronicle/Chronicle.Entry：
  /// event_id/tick/participants/major——世界大事的时序记录）

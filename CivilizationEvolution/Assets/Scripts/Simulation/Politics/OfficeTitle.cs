@@ -1,8 +1,22 @@
 ﻿using System.Collections.Generic;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Culture;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Politics
+
+
+
+namespace CivilizationEvolution.Simulation.Politics
 {
  /// <summary>官职（中央/地方治理的职位槽位）</summary>
 

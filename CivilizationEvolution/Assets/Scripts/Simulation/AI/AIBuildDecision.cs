@@ -1,6 +1,13 @@
-using CivilizationEvolution.Map;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
 
-namespace CivilizationEvolution.AI
+
+
+namespace CivilizationEvolution.Simulation.AI
 {
     public struct AIBuildDecision
     {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Building
+namespace CivilizationEvolution.Simulation.Society
 {
     [System.Serializable]
     public struct BuildingDef

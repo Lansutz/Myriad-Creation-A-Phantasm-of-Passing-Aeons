@@ -1,7 +1,13 @@
 ﻿using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
 
-namespace CivilizationEvolution.Map
+
+
+namespace CivilizationEvolution.World.Terrain
 {
  /// 大陆形态生成器：多倍频值噪声（fBm）高度场 + 山脉脊线 + 河流追踪
  /// 替代单一正弦波叠加，产生大陆轮廓/山脉链/水系

@@ -1,6 +1,9 @@
-using CivilizationEvolution.Politics;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
 
-namespace CivilizationEvolution.UI
+
+
+namespace CivilizationEvolution.Simulation.Society
 {
     public static class JunctureNames
     {

@@ -1,6 +1,11 @@
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
 
-namespace CivilizationEvolution.Core
+
+
+namespace CivilizationEvolution.Core.Data
 {
     [System.Serializable]
     public struct PopulationBlock

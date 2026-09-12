@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace CivilizationEvolution.Culture
+namespace CivilizationEvolution.Simulation.Religion
 {
  /// 宗教组织节点（双维度谱系：组织父 × 学派父）
  /// 组织父（parentReligionId）：组织谱系树——宗教→宗派（组织性分裂·互斥）

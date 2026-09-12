@@ -1,9 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Politics;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Culture
+
+
+
+namespace CivilizationEvolution.Simulation.Religion
 {
  /// 传教机制（政权传教渠道——传播机制）：
  /// 传教成功率 = 与当地主流信仰的冲突度（同宗教不同传统=易传；

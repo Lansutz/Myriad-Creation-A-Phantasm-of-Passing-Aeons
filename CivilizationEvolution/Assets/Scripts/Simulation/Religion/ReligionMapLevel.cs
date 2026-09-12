@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Culture
+namespace CivilizationEvolution.Simulation.Religion
 {
     public enum ReligionMapLevel
     {

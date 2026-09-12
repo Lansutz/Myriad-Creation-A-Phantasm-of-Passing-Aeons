@@ -2,13 +2,23 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using CivilizationEvolution.Culture;
-using CivilizationEvolution.Race;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.Tech;
-using CivilizationEvolution.Climate;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.World.Biome;
+using CivilizationEvolution.World.Climate;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Terrain;
 
-namespace CivilizationEvolution.Core
+
+
+
+
+
+
+namespace CivilizationEvolution.Simulation.Modding
 {
  /// 内容注册表（数据驱动架构，企划书 1.2 模组扩展规范）
  /// 启动时扫描 StreamingAssets/Base（内置内容）与 StreamingAssets/Mods（模组内容），目录同构：

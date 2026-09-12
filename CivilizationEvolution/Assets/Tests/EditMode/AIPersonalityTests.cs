@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.AI;
+using CivilizationEvolution.Simulation.AI;
+using CivilizationEvolution.Simulation.Characters;
+
+
+
 
 namespace CivilizationEvolution.Tests
 {

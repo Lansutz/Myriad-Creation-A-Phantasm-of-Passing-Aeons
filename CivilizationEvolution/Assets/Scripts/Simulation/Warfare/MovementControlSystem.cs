@@ -1,10 +1,24 @@
 ﻿using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Politics;
+
+
 using System;
 using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Military
+
+namespace CivilizationEvolution.Simulation.Warfare
 {
  /// 通行管制系统（外交联动）
  /// 负责：4级通行管制、军事通行权授予/撤销、管制带来的通行成本加成

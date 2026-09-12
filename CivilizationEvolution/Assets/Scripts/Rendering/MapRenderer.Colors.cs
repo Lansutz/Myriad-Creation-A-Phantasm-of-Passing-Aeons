@@ -2,12 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Map;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.Culture;
-using CivilizationEvolution.Diplomacy;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Diplomacy;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
 
-namespace CivilizationEvolution.Render
+
+
+
+
+
+
+namespace CivilizationEvolution.Rendering
 {
  /// MapRenderer.Colors —— 颜色计算（政权/地形/外交/同盟/文化/宗教颜色 + 地形着色）（partial class，与 MapRenderer.cs 共享字段）
     public partial class MapRenderer

@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Race
+namespace CivilizationEvolution.Simulation.Society
 {
     public enum Allele
     {

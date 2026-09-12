@@ -1,10 +1,23 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Economy;
-using CivilizationEvolution.Politics;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Building
+
+
+
+
+namespace CivilizationEvolution.Simulation.Society
 {
  /// 建筑基建系统
  /// 六大核心基建：农业、手工业、道路、城防、市场、行政

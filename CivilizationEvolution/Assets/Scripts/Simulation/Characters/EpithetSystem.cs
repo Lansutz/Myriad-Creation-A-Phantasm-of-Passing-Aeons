@@ -1,6 +1,6 @@
-﻿using CivilizationEvolution.Character;
+﻿
 
-namespace CivilizationEvolution.Character
+namespace CivilizationEvolution.Simulation.Characters
 {
     public static class EpithetSystem
     {

@@ -1,8 +1,15 @@
 ﻿using System;
-using CivilizationEvolution.Core;
-using UnityEngine;
 
-namespace CivilizationEvolution.Climate
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+
+
+using CivilizationEvolution.World.Climate;
+namespace CivilizationEvolution.World.Biome
 {
  /// Holdridge 生命地带分类系统（Holdridge 1967, 1987）
  /// 三个核心变量（对数刻度三角形坐标系）：

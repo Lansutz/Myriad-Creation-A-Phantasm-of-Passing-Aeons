@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CivilizationEvolution.Culture
+namespace CivilizationEvolution.Simulation.Culture
 {
     public class AdminDivision
     {

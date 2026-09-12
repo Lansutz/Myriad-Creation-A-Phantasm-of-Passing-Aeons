@@ -2,9 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Character;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Race
+
+
+
+namespace CivilizationEvolution.Simulation.Society
 {
  /// DNA 与遗传系统（种族系统 ↔ 角色系统的交叉层）
  /// 设计文档：《DNA与遗传系统.md》

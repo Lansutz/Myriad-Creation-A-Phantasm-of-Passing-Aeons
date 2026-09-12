@@ -2,10 +2,28 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Economy;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.Tech;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.UI;
+
+
+
+
+
+
 
 namespace CivilizationEvolution.Tests
 {
@@ -390,7 +408,7 @@ namespace CivilizationEvolution.Tests
         {
             var ruler = MakeRuler();
             ruler.greed = 90f;
-            var controller = new CivilizationEvolution.AI.AIController(0, CivilizationEvolution.AI.AIPersonality.RandomPersonality());
+            var controller = new CivilizationEvolution.Simulation.AI.AIController(0, CivilizationEvolution.Simulation.AI.AIPersonality.RandomPersonality());
             controller.SyncPersonality(ruler);
             Assert.That(controller.personality.economicBias, Is.GreaterThan(0.6f), "高贪婪统治者应显著偏好经济");
         }
@@ -401,7 +419,7 @@ namespace CivilizationEvolution.Tests
             var ruler = MakeRuler();
             ruler.vengefulness = 90f;
             ruler.boldness = 80f;
-            var controller = new CivilizationEvolution.AI.AIController(0, CivilizationEvolution.AI.AIPersonality.RandomPersonality());
+            var controller = new CivilizationEvolution.Simulation.AI.AIController(0, CivilizationEvolution.Simulation.AI.AIPersonality.RandomPersonality());
             controller.SyncPersonality(ruler);
             Assert.That(controller.personality.aggression, Is.GreaterThan(0.6f), "高报复统治者应显著好战");
         }

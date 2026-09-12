@@ -1,10 +1,27 @@
-﻿using CivilizationEvolution.Map;
+﻿
 using System.Collections.Generic;
 using System.Linq;
-using CivilizationEvolution.Core;
-using UnityEngine;
 
-namespace CivilizationEvolution.Building
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
+
+
+namespace CivilizationEvolution.Simulation.Society
 {
  /// 建筑可用性检查系统
  /// 负责：为每种建筑定义具体修建条件、检查地块可用性、UI过滤接口

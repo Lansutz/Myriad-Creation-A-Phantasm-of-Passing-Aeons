@@ -1,6 +1,6 @@
 using System;
 
-namespace CivilizationEvolution.Core
+namespace CivilizationEvolution.Core.Dto
 {
     [Serializable]
     public class IntBoolEntry

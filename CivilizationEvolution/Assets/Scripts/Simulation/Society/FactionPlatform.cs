@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace CivilizationEvolution.Politics
+namespace CivilizationEvolution.Simulation.Society
 {
     [Serializable]
     public struct FactionPlatform

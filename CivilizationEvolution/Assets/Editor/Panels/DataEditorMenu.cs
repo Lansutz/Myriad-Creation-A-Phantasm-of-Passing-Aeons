@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace CivilizationEvolution.UI
+namespace CivilizationEvolution.Editor.Panels
 {
  /// 数据编辑器菜单（代码动态生成）：选择编辑种族/文化/宗教/兵种/建筑/物资。
  /// 挂在主菜单 Canvas 下，点"编辑器"显示。

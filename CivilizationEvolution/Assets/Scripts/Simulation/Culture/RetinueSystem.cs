@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Culture
+namespace CivilizationEvolution.Simulation.Culture
 {
     /// <summary>
     /// 扈从制发展等级。

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Character;
+using CivilizationEvolution.Simulation.Characters;
 
-namespace CivilizationEvolution.Politics
+
+
+namespace CivilizationEvolution.Simulation.Politics
 {
  /// 继位扶正系统：统治者死亡 → 确定继承人并扶正（君主制=继承法四轴判定，
  /// 共和制=资格过滤+威望选举）→ 争议判定（绝嗣/幼主）供政体变迁注入

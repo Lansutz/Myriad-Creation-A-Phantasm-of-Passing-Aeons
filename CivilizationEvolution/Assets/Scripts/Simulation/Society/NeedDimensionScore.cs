@@ -1,6 +1,6 @@
 using System;
 
-namespace CivilizationEvolution.Politics
+namespace CivilizationEvolution.Simulation.Society
 {
     [Serializable]
     public struct NeedDimensionScore

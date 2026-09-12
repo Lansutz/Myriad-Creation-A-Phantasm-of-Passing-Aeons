@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.World.Terrain
 {
  /// 地形模板两大分类：完整世界 vs 局部。
  /// 两者的生成逻辑和参数体系不同：

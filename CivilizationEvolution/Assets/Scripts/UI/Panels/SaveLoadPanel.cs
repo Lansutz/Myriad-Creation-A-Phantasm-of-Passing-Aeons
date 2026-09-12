@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace CivilizationEvolution.UI
+using CivilizationEvolution.UI.Common;
+namespace CivilizationEvolution.UI.Panels
 {
  /// 存档选择面板——列出 MapSaves 目录下的所有 .json 存档，
  /// 选择后通过回调通知调用方加载指定存档。

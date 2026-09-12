@@ -1,10 +1,19 @@
-﻿using CivilizationEvolution.Culture;
-using CivilizationEvolution.Economy;
-using CivilizationEvolution.War;
+﻿
+
+
 using System.Collections.Generic;
 using System;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Warfare;
 
-namespace CivilizationEvolution.Core
+
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.World;
+namespace CivilizationEvolution.Infrastructure.Save
 {
     [Serializable]
     public class SaveData

@@ -1,10 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Map;
+
 using UnityEngine;
 using UnityEngine.UI;
+using CivilizationEvolution.Editor.MapEditing;
+using CivilizationEvolution.Editor.TerrainPainter;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
 
-namespace CivilizationEvolution.UI
+
+namespace CivilizationEvolution.Editor.Panels
 {
  /// 地图生成参数面板（右侧浮动面板）
  /// 对齐 FantasyMapSimulator 编辑器内一体化工作流：

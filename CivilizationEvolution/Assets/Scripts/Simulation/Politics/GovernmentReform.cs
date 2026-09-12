@@ -1,8 +1,21 @@
 ﻿using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Tech;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Politics
+
+
+
+namespace CivilizationEvolution.Simulation.Politics
 {
  /// 政体改革（研究新革新后可以改革政体成分）
  /// 改革条件=目标成分的支撑革新已持有（PolityComponentInnovations）；

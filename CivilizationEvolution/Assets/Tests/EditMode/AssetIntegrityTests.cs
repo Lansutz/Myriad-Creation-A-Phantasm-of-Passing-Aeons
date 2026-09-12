@@ -1,6 +1,15 @@
 using NUnit.Framework;
 using UnityEngine;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Editor.Panels;
+using CivilizationEvolution.Infrastructure.Audio;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Simulation.Society;
 using CivilizationEvolution.UI;
+using CivilizationEvolution.UI.Common;
+using CivilizationEvolution.UI.Panels;
+
+
 
 namespace CivilizationEvolution.Tests
 {

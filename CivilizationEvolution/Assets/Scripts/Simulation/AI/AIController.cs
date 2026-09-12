@@ -2,14 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.Diplomacy;
-using CivilizationEvolution.War;
-using CivilizationEvolution.Economy;
-using CivilizationEvolution.Tech;
-using CivilizationEvolution.Character;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Diplomacy;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.Warfare;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.AI
+
+
+
+
+
+
+
+
+namespace CivilizationEvolution.Simulation.AI
 {
  /// AI政权行为系统
  /// 每个AI政权有独立的AI控制器，基于效用函数做决策
@@ -43,7 +61,7 @@ namespace CivilizationEvolution.AI
             DiplomacyManager diplomacy,
             EconomyManager economy,
             InnovationTree innovations,
-            CivilizationEvolution.Character.CharacterManager characters = null)
+            CivilizationEvolution.Simulation.Characters.CharacterManager characters = null)
         {
             _decisionTimer++;
 
@@ -68,7 +86,7 @@ namespace CivilizationEvolution.AI
  /// 好战性格[aggression/expansionBias]驱动——屠城[Massacre]低概率
  /// [高侵略+随机]——成功屠城→执行政权统治者 massacres++（绰号判定数据）
         private void TryRaid(Dictionary<int, RealmData> realms, TileData[] tiles,
-            DiplomacyManager diplomacy, CivilizationEvolution.Character.CharacterManager characters)
+            DiplomacyManager diplomacy, CivilizationEvolution.Simulation.Characters.CharacterManager characters)
         {
             _raidCooldown++;
             if (_raidCooldown < RaidInterval) return;

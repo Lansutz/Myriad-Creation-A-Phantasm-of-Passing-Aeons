@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CivilizationEvolution.Map
+using CivilizationEvolution.World.Generation;
+namespace CivilizationEvolution.World.Terrain
 {
  /// 球面 Voronoi 图（Spherical Voronoi Diagram）
  /// 在单位球面上生成 N 个种子点，将球面划分为 N 个 Voronoi 单元

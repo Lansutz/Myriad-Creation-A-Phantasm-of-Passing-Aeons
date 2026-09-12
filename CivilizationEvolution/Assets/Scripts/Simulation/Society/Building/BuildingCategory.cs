@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Building
+namespace CivilizationEvolution.Simulation.Society
 {
 
     public enum BuildingCategory

@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Building
+namespace CivilizationEvolution.Simulation.Society
 {
     [System.Serializable]
     public class ActiveBuilding

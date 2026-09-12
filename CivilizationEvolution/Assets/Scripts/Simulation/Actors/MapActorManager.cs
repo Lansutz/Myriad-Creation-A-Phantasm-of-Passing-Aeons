@@ -1,9 +1,23 @@
 using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Military;
-using UnityEngine;
 
-namespace CivilizationEvolution.World
+
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.Warfare;
+using CivilizationEvolution.Simulation.WorldState;
+
+
+namespace CivilizationEvolution.Simulation.Actors
 {
     /// <summary>
     /// 无主地图单位管理器。

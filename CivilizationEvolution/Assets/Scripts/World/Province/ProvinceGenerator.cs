@@ -1,8 +1,14 @@
 ﻿using System;
-using CivilizationEvolution.Core;
-using System.Collections.Generic;
 
-namespace CivilizationEvolution.Map
+using System.Collections.Generic;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+
+
+namespace CivilizationEvolution.World
 {
     public class ProvinceGenerator
     {

@@ -2,9 +2,9 @@
 using System.Text;
 using System;
 using UnityEngine;
-using CivilizationEvolution.Character;
 
-namespace CivilizationEvolution.Character
+
+namespace CivilizationEvolution.Simulation.Characters
 {
  /// 评价分级（一生成就标尺——从高到低）：
  /// 传奇 &gt; 卓越 &gt; 杰出 &gt; 优秀 &gt; 平平 &gt; 平庸 &gt; 无名 &gt; 遗臭

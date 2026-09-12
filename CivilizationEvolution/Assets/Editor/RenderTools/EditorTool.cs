@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Render
+namespace CivilizationEvolution.Editor.RenderTools
 {
     public enum EditorTool
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace CivilizationEvolution.Diplomacy
+namespace CivilizationEvolution.Simulation.Diplomacy
 {
         [Serializable]
         public class NegotiationClause

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CivilizationEvolution.Core
+namespace CivilizationEvolution.Core.Enums
 {
     /// <summary>地图尺寸预设（宽x高，总地块数）</summary>
     public enum MapSizePreset

@@ -3,7 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace CivilizationEvolution.UI
+using CivilizationEvolution.UI.Common;
+namespace CivilizationEvolution.UI.Panels
 {
  /// 代码动态生成的主菜单 UI（替代场景中圆角正方形旧主菜单）。
  /// 设计：深色背景 + 金色标题 + 矩形按钮（底部金线/灰线），无圆角。

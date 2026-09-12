@@ -1,4 +1,4 @@
-﻿namespace CivilizationEvolution.Disaster
+﻿namespace CivilizationEvolution.Simulation.Disaster
 {
 
     public enum DisasterType

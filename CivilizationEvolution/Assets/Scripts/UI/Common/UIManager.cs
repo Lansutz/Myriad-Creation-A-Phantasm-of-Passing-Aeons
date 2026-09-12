@@ -5,12 +5,31 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Render;
-using CivilizationEvolution.Race;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.Politics;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Rendering;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.UI;
 
-namespace CivilizationEvolution.UI
+
+
+
+
+
+
+using CivilizationEvolution.Simulation.Culture;
+namespace CivilizationEvolution.UI.Common
 {
  /// <summary>事件日志分类（决定富文本着色）</summary>
 
@@ -379,8 +398,8 @@ namespace CivilizationEvolution.UI
         }
 
  /// <summary>查找区划（divisionId）</summary>
-        private static Culture.AdminDivision FindDivision(
-            System.Collections.Generic.List<Culture.AdminDivision> all, int divisionId)
+        private static AdminDivision FindDivision(
+            System.Collections.Generic.List<AdminDivision> all, int divisionId)
         {
             if (all == null) return null;
             foreach (var d in all)
@@ -405,14 +424,14 @@ namespace CivilizationEvolution.UI
             for (int o = 0; o < 6; o++)
             {
                 if (!realm.officeHolders.TryGetValue(o, out int holderId)) continue;
-                string officeName = ((Politics.OfficialOffice)o).ToString();
+                string officeName = ((OfficialOffice)o).ToString();
  // 文化定制称号（holder 的文化——无则默认）
-                string title = Politics.OfficeTitleCatalog.GetDefaultTitleKey(officeName);
+                string title = OfficeTitleCatalog.GetDefaultTitleKey(officeName);
                 var holder = cm?.GetCharacter(holderId);
                 if (holder != null)
                 {
                     var culture = world.cultures.TryGetValue(holder.cultureId, out var cd) ? cd : null;
-                    title = Politics.OfficeTitleCatalog.GetTitle(culture, (Politics.OfficialOffice)o, polityKey);
+                    title = OfficeTitleCatalog.GetTitle(culture, (OfficialOffice)o, polityKey);
                     result[o] = $"{(int)o + 1}. {title}：{holder.firstName} {holder.lastName}";
                 }
                 else
@@ -424,13 +443,13 @@ namespace CivilizationEvolution.UI
         }
 
  /// <summary>获取音乐播放器（场景中查找或懒创建）</summary>
-        private static CivilizationEvolution.Audio.MusicPlayerSystem MusicPlayer()
+        private static CivilizationEvolution.Infrastructure.Audio.MusicPlayerSystem MusicPlayer()
         {
-            var mp = UnityEngine.Object.FindAnyObjectByType<CivilizationEvolution.Audio.MusicPlayerSystem>(FindObjectsInactive.Include);
+            var mp = UnityEngine.Object.FindAnyObjectByType<CivilizationEvolution.Infrastructure.Audio.MusicPlayerSystem>(FindObjectsInactive.Include);
             if (mp == null)
             {
                 var go = new GameObject("MusicPlayer");
-                mp = go.AddComponent<CivilizationEvolution.Audio.MusicPlayerSystem>();
+                mp = go.AddComponent<CivilizationEvolution.Infrastructure.Audio.MusicPlayerSystem>();
                 mp.LoadFromResources();
             }
             return mp;

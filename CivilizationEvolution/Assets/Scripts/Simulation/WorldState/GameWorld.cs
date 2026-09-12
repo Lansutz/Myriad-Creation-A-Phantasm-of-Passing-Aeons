@@ -1,23 +1,53 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Map;
-using CivilizationEvolution.World;
-using CivilizationEvolution.Climate;
-using CivilizationEvolution.Race;
-using CivilizationEvolution.Culture;
-using CivilizationEvolution.Economy;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.War;
-using CivilizationEvolution.Diplomacy;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.Thought;
-using CivilizationEvolution.Disaster;
-using CivilizationEvolution.Building;
-using CivilizationEvolution.Tech;
-using CivilizationEvolution.AI;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.AI;
+using CivilizationEvolution.Simulation.Actors;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Diplomacy;
+using CivilizationEvolution.Simulation.Disaster;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.Warfare;
+using CivilizationEvolution.World.Biome;
+using CivilizationEvolution.World.Climate;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
 
-namespace CivilizationEvolution.Core
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+using CivilizationEvolution.World;
+namespace CivilizationEvolution.Simulation.WorldState
 {
  /// 游戏世界主类
  /// 管理所有地块数据、子系统、脏标记重算、主循环
@@ -175,7 +205,7 @@ namespace CivilizationEvolution.Core
             PoliticsTick();
 
  // 6.5 聚落控制/影响力范围（高等级聚落控制低等级，驻扎部队影响控制速度，虹吸效应通过税收贸易自然表现）
-            CivilizationEvolution.Map.SettlementControlSystem.DailyTick(
+            CivilizationEvolution.Simulation.Settlement.SettlementControlSystem.DailyTick(
                 burgs, tiles, mapWidth, mapHeight, armies);
 
  // 6.6 无主地图单位（流民/游牧民/商队/雇佣兵/野怪/动物灾害）
@@ -185,17 +215,17 @@ namespace CivilizationEvolution.Core
             _campManager?.Tick(1f);
 
  // 6.8 据点演化（营寨→坞堡→聚落）
-            CivilizationEvolution.Map.SettlementEvolutionSystem.DailyTick(this);
+            CivilizationEvolution.Simulation.Settlement.SettlementEvolutionSystem.DailyTick(this);
 
  // 6.9 废墟恢复（被摧毁聚落的重建）
-            CivilizationEvolution.War.SettlementDestructionSystem.DailyTickRecovery(this);
+            CivilizationEvolution.Simulation.Warfare.SettlementDestructionSystem.DailyTickRecovery(this);
 
  // 6.10 弃地巡检（无主低秩序地块滋生土匪）
-            CivilizationEvolution.Map.LandAbandonmentSystem.DailyCheckBanditSpawn(this);
+            CivilizationEvolution.Simulation.Settlement.LandAbandonmentSystem.DailyCheckBanditSpawn(this);
 
  // 6.11 文化阶段演化（每30天：自动计算社会分层/专业化，评估游群→部落→酋邦→族群→文明）
             if (currentDay % 30 == 0)
-                CivilizationEvolution.Culture.CultureStageEvolutionSystem.MonthlyTick(this);
+                CivilizationEvolution.Simulation.Culture.CultureStageEvolutionSystem.MonthlyTick(this);
 
  // 7. 外交（先同步世界时钟，供盟约/条约/事件时间戳使用）
             _diplomacyManager.CurrentDay = currentDay;
@@ -293,7 +323,7 @@ namespace CivilizationEvolution.Core
  /// 建城（事件接口——君主/政权在地块建城——纪念命名）：
  /// 命名优先=建城者名+城语义后缀[FounderCity——亚历山大城式——
  /// 查建城者文化→语言→城词]——语言缺城词→回退程序化生成
-        public Map.BurgData CreateCity(int realmId, int tileIndex, int founderCharId)
+        public BurgData CreateCity(int realmId, int tileIndex, int founderCharId)
         {
             if (tileIndex < 0 || tileIndex >= tiles.Length) return null;
             if (!tiles[tileIndex].isLand) return null;
@@ -318,19 +348,19 @@ namespace CivilizationEvolution.Core
             if (string.IsNullOrEmpty(name))
                 name = "新市镇";
 
-            var burg = new Map.BurgData
+            var burg = new BurgData
             {
                 burgId = nextId,
                 burgName = name,
-                type = Map.BurgType.City,
+                type = BurgType.City,
                 provinceId = tile.provinceId,
                 tileIndex = tileIndex,
                 x = 0.5f, y = 0.5f,
                 isCoastal = tile.isCoast,
                 buildLevel = 1,
             };
-            Map.SettlementTypologySystem.DeriveInitialType(burg, tile, mapWidth, mapHeight);
-            burg.settlementType = Map.BurgTypeInferrer.InferSettlementType(burg.type);
+            SettlementTypologySystem.DeriveInitialType(burg, tile, mapWidth, mapHeight);
+            burg.settlementType = BurgTypeInferrer.InferSettlementType(burg.type);
             burgs[burg.burgId] = burg;
             string founderName = founder != null ? founder.firstName + founder.lastName : "某人";
             _chronicle?.Add("city_founded",
@@ -504,7 +534,7 @@ namespace CivilizationEvolution.Core
             if (callerRealmId < 0 || callerRealmId >= realms.Count) return false;
             if (targetRealmId < 0 || targetRealmId >= realms.Count) return false;
 
-            var war = War.GreatHolyWarSystem.Declare(faithId, callerRealmId, targetRealmId,
+            var war = GreatHolyWarSystem.Declare(faithId, callerRealmId, targetRealmId,
                 targetTile, currentDay, hasLeader: true, fervor: faith.fervor);
             if (war == null) return false;
 
@@ -512,7 +542,7 @@ namespace CivilizationEvolution.Core
             if (!_diplomacyManager.DeclareWar(callerRealmId, targetRealmId, reason)) return false;
             var warState = new WarState(_nextWarId++, callerRealmId, targetRealmId, currentDay);
             _wars.Add(warState);
-            War.GreatHolyWarSystem.BindWar(war, warState.warId);
+            GreatHolyWarSystem.BindWar(war, warState.warId);
 
  // 异教冲突热忱（大圣战=异教战争——已由 DeclareWar 处理——不重复）
             _chronicle?.Add("religion",

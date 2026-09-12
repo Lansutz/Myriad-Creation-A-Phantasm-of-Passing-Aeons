@@ -1,8 +1,9 @@
-using CivilizationEvolution.Economy;
+
 using System.Collections.Generic;
 using System;
 
-namespace CivilizationEvolution.Core
+using CivilizationEvolution.Core.Dto;
+namespace CivilizationEvolution.Simulation.Economy
 {
     [Serializable]
     public class TradeCenterDTO

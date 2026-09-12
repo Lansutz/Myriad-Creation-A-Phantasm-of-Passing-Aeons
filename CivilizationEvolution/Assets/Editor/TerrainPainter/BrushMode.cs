@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.Editor.TerrainPainter
 {
     public enum BrushMode
     {

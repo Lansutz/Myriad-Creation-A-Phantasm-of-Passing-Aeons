@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.World.Generation
 {
         public struct Seed
         {

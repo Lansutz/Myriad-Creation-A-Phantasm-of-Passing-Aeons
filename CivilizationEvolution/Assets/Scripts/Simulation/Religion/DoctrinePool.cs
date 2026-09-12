@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace CivilizationEvolution.Culture
+namespace CivilizationEvolution.Simulation.Religion
 {
  /// 教义选项池（支柱选项——CK3 tenets 结构参考：中性词汇+宗教专属风味化）
  /// 每个支柱下有选项池——节点从池中选择——选项差异决定偏离度

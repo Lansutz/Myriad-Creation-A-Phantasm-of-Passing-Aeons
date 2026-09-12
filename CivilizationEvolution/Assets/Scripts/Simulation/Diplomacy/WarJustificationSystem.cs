@@ -1,9 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using UnityEngine;
 
-namespace CivilizationEvolution.Diplomacy
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+
+
+namespace CivilizationEvolution.Simulation.Diplomacy
 {
  /// 战争借口（Casus Belli）——为什么开战
  /// 由敌对活动、领土争端、宗教冲突等事件生成

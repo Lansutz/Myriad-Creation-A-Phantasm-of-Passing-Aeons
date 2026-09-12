@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-namespace CivilizationEvolution.Thought
+namespace CivilizationEvolution.Simulation.Religion
 {
     [System.Serializable]
     public class SchoolOfThought

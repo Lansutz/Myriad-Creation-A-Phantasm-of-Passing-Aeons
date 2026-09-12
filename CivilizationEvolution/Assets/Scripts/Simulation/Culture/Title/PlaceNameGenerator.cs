@@ -1,7 +1,20 @@
 ﻿using System.Collections.Generic;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Culture
+
+
+namespace CivilizationEvolution.Simulation.Culture
 {
  /// 地名语义组合引擎（——学《地图上发生的事》更细）：
  /// 词干（地形/人名/族群名）× 语义后缀类 → 地名

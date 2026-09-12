@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Race
+namespace CivilizationEvolution.Simulation.Society
 {
     [Serializable]
     public class DnaData

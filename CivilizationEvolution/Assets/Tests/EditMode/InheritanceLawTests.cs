@@ -1,8 +1,13 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.Character;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+
+
+
 
 namespace CivilizationEvolution.Tests
 {

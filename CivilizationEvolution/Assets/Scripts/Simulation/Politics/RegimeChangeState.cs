@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace CivilizationEvolution.Politics
+namespace CivilizationEvolution.Simulation.Politics
 {
     [Serializable]
     public class RegimeChangeState

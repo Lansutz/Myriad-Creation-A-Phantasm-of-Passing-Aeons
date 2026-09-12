@@ -2,8 +2,14 @@
 using System;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
 
-namespace CivilizationEvolution.Map
+
+
+namespace CivilizationEvolution.World.Terrain
 {
  /// 海陆生成与重算系统
  /// 画笔修改地形后增量重算海洋地块属性与连通性

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Core
+namespace CivilizationEvolution.Simulation.Events
 {
     public class ChronicleEntry
     {

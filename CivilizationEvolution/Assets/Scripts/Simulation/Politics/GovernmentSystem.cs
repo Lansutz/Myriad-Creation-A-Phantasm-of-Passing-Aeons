@@ -2,8 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Politics
+
+
+namespace CivilizationEvolution.Simulation.Politics
 {
  /// 政体效果门面：负责把当前政体成分（GovernmentComposition）换算成数值效果并缓存，
  /// 以及在政权创建 / 手动改制时应用这些效果。

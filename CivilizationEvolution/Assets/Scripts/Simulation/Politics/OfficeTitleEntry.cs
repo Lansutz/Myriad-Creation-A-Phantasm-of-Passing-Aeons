@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Politics
+namespace CivilizationEvolution.Simulation.Politics
 {
     [System.Serializable]
     public class OfficeTitleEntry

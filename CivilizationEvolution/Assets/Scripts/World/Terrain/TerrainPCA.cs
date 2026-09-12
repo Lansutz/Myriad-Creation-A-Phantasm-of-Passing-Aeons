@@ -1,8 +1,14 @@
 ﻿using System;
-using CivilizationEvolution.Core;
-using UnityEngine;
 
-namespace CivilizationEvolution.Map
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+
+
+namespace CivilizationEvolution.World.Terrain
 {
  /// PCA 地形特征提取（Principal Component Analysis for Terrain Characterization）
  /// 从多维地形特征中提取主成分，用于：

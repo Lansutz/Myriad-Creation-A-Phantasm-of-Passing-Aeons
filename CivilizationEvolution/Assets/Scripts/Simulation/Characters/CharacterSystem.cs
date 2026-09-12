@@ -2,13 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Economy;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.Race;
-using CivilizationEvolution.Tech;
-using CivilizationEvolution.Thought;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Character
+
+
+
+
+
+
+
+namespace CivilizationEvolution.Simulation.Characters
 {
  /// 人格七维（企划书 9.3：-100~100，家族遗传基线，压力&gt;60 漂移翻倍）。
  /// 定位：底层人格倾向 / AI 行为参数（参考 CK3 ai_boldness / ai_greed / ai_compassion

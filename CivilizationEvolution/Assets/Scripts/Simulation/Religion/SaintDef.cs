@@ -1,4 +1,4 @@
-﻿namespace CivilizationEvolution.Culture
+﻿namespace CivilizationEvolution.Simulation.Religion
 {
     [System.Serializable]
     public class SaintDef

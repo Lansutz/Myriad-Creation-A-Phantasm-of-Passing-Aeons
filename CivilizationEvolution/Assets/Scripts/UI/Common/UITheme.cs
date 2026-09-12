@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CivilizationEvolution.UI
+namespace CivilizationEvolution.UI.Common
 {
  /// UI 主题：统一色板 + 程序化圆角 Sprite + 按钮 ColorTint
  /// 供场景构建（编辑器工具）与运行时 UI（Toast 等）共用，保证视觉一致。

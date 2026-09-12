@@ -1,12 +1,32 @@
 ﻿using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.World;
-using CivilizationEvolution.Economy;
-using CivilizationEvolution.Map;
-using UnityEngine;
 
-namespace CivilizationEvolution.Culture
+
+
+
+
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Actors;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
+
+
+namespace CivilizationEvolution.Simulation.Culture
 {
     /// <summary>
     /// 国家形成路径（比较研究结论：同一文化阶段可通过不同路径形成国家）。
@@ -203,7 +223,7 @@ namespace CivilizationEvolution.Culture
             ApplyPathBonuses(realm, path);
 
             // MapActor解散（人口转化为政权人口）
-            World.MapActorManager.AddPopulationToTile(
+            MapActorManager.AddPopulationToTile(
                 ref world.tiles[actor.currentTile], actor.population);
             actor.population = 0;
 

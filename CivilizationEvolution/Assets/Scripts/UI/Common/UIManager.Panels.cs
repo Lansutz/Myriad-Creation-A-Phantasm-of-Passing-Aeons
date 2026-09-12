@@ -5,12 +5,33 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Render;
-using CivilizationEvolution.Race;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.Politics;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Rendering;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.UI;
 
-namespace CivilizationEvolution.UI
+
+
+
+
+
+
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.UI.Panels;
+namespace CivilizationEvolution.UI.Common
 {
  /// UIManager.Panels —— 各内容面板（角色/宗教/社会/政权概览/音乐/家族树/设置/顶栏/地块信息）（partial class，与 UIManager.cs 共享字段与组件引用）
     public partial class UIManager : MonoBehaviour
@@ -67,7 +88,7 @@ namespace CivilizationEvolution.UI
 
         private string GetReligionName(int faithId)
         {
-            var def = Culture.ReligionCatalog.Get(faithId);
+            var def = ReligionCatalog.Get(faithId);
             return def != null ? def.religionName : faithId.ToString();
         }
 
@@ -119,7 +140,7 @@ namespace CivilizationEvolution.UI
                 else if (pop > 0f)
                 {
  // 无主聚落（部落/自由民——无人涂色但有人——待征服/演化）
-                    int domCulture = Politics.PopulationStats.GetDominantCulture(tile);
+                    int domCulture = PopulationStats.GetDominantCulture(tile);
                     string cName = GetCultureName(domCulture);
                     tilePopulationText.text = $"人口: {people:N0} 人（无主聚落·{cName}）";
                 }
@@ -164,17 +185,17 @@ namespace CivilizationEvolution.UI
         {
             if (world == null || religionPanelText == null) return;
             int viewRealm = ViewRealmId; // 视角政权（点选跟随——非固定玩家）
-            Culture.ReligionDef succession = null;
-            Thought.FaithSystem faith = null;
+            ReligionDef succession = null;
+            FaithSystem faith = null;
             int patronSaint = -1;
             if (viewRealm >= 0 && viewRealm < world.realms.Count)
             {
                 var realm = world.realms[viewRealm];
-                succession = Culture.ReligionCatalog.Get(realm.stateReligionId);
+                succession = ReligionCatalog.Get(realm.stateReligionId);
                 faith = world.GetFaithSystem(realm.stateReligionId);
                 patronSaint = realm.statePatronSaintId;
             }
-            religionPanelText.text = Culture.ReligionPanelText.Build(succession, faith, patronSaint);
+            religionPanelText.text = ReligionPanelText.Build(succession, faith, patronSaint);
         }
 
 
@@ -245,23 +266,23 @@ namespace CivilizationEvolution.UI
             int realmId = ViewRealmId;
             if (!world.realms.TryGetValue(realmId, out var realm))
             {
-                overviewText.text = Culture.RealmOverviewText.Build(null, null);
+                overviewText.text = RealmOverviewText.Build(null, null);
                 return;
             }
             var society = world.GetRealmSociety(realmId);
             var officeDisplay = BuildOfficeDisplay(world, realm);
-            Culture.ReligionDef religion = realm.stateReligionId >= 0
-                ? Culture.ReligionCatalog.Get(realm.stateReligionId) : null;
+            ReligionDef religion = realm.stateReligionId >= 0
+                ? ReligionCatalog.Get(realm.stateReligionId) : null;
             string saint = "";
             if (realm.statePatronSaintId > 0 && religion != null)
             {
-                foreach (var snt in Culture.CanonizationSystem.GetSaints(realm.stateReligionId))
+                foreach (var snt in CanonizationSystem.GetSaints(realm.stateReligionId))
                     if (snt.saintId == realm.statePatronSaintId) { saint = snt.saintName; break; }
             }
  // 两态显示：-1=政权总览（含区划树）——≥0=区划详情（下钻页）
             if (_viewingDivisionId < 0)
             {
-                overviewText.text = Culture.RealmOverviewText.Build(realm, society, officeDisplay,
+                overviewText.text = RealmOverviewText.Build(realm, society, officeDisplay,
                     religion, saint, realmId == world.PlayerRealmId, realm.adminDivisions, -1);
             }
             else
@@ -279,7 +300,7 @@ namespace CivilizationEvolution.UI
                     }
                     pop = sum * 50L;
                 }
-                overviewText.text = Culture.RealmDivisionText.Build(division,
+                overviewText.text = RealmDivisionText.Build(division,
                     realm.adminDivisions, pop, "", realm.realmName);
             }
 
@@ -302,7 +323,7 @@ namespace CivilizationEvolution.UI
 
             int parentId = _viewingDivisionId < 0 ? -1 : _viewingDivisionId;
  // 收集直接子
-            var children = new List<Culture.AdminDivision>();
+            var children = new List<AdminDivision>();
             foreach (var d in realm.adminDivisions)
                 if (d.parentDivisionId == parentId && d.level > 1) children.Add(d);
  // 区划树显示模式：总览态展示层2入口按钮；详情态展示下一层

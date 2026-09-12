@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Disaster
+namespace CivilizationEvolution.Simulation.Disaster
 {
     [System.Serializable]
     public class ActiveDisease

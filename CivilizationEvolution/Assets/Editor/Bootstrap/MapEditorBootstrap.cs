@@ -1,13 +1,41 @@
 ﻿using System;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Map;
-using CivilizationEvolution.Render;
-using CivilizationEvolution.UI;
+
+
+
+
 using UnityEngine;
 using UnityEngine.UI;
-using MapEditor = CivilizationEvolution.Render.MapEditor;
+using MapEditor = CivilizationEvolution.Rendering.MapEditor;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Editor.MapEditing;
+using CivilizationEvolution.Editor.Panels;
+using CivilizationEvolution.Editor.RenderTools;
+using CivilizationEvolution.Editor.TerrainPainter;
+using CivilizationEvolution.Infrastructure.Audio;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Rendering;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.UI;
+using CivilizationEvolution.UI.Common;
+using CivilizationEvolution.UI.Panels;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
 
-namespace CivilizationEvolution.Bootstrap
+
+namespace CivilizationEvolution.Editor.Bootstrap
 {
  /// 地图编辑器场景引导脚本
  /// 挂在场景空物体上，Awake时自动组装：

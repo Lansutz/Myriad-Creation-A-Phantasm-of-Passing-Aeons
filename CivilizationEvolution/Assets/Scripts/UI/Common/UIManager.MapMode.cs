@@ -5,12 +5,31 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Render;
-using CivilizationEvolution.Race;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.Politics;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Rendering;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.UI;
 
-namespace CivilizationEvolution.UI
+
+
+
+
+
+
+using CivilizationEvolution.Simulation.Culture;
+namespace CivilizationEvolution.UI.Common
 {
  /// UIManager.MapMode —— 地图模式切换（分类/子模式/按钮生成/高亮）（partial class，与 UIManager.cs 共享字段与组件引用）
     public partial class UIManager : MonoBehaviour
@@ -181,7 +200,7 @@ namespace CivilizationEvolution.UI
         {
             if (ModeMap.TryGetValue((cat, sub), out var mode))
             {
-                var mr = FindAnyObjectByType<Render.MapRenderer>();
+                var mr = FindAnyObjectByType<Rendering.MapRenderer>();
                 if (mr != null) mr.SetDisplayMode(mode);
                 _modeCat = cat; _modeSub = sub;
             }

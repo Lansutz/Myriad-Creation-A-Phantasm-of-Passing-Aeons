@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using CivilizationEvolution.Thought;
 
-namespace CivilizationEvolution.Culture
+
+namespace CivilizationEvolution.Simulation.Religion
 {
  /// 宗教面板文本生成（纯静态可测——封圣/教义池改革/教统信息）：
  /// 教统信息（领袖/仪典语言/热忱/教阶）→ 支柱选择（可改革——

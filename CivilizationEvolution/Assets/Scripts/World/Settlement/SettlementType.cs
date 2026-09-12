@@ -1,6 +1,6 @@
 using System;
 
-namespace CivilizationEvolution.Map
+namespace CivilizationEvolution.World.Settlement
 {
     public enum SettlementType
     {

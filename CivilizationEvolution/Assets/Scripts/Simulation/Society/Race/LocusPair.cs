@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CivilizationEvolution.Race
+namespace CivilizationEvolution.Simulation.Society
 {
     [Serializable]
     public struct LocusPair

@@ -2,7 +2,23 @@
 using System.Collections;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
+
+
+using CivilizationEvolution.UI.Panels;
+using CivilizationEvolution.UI.Common;
 namespace CivilizationEvolution.UI
 {
  /// 场景链路控制器——统一管理主菜单→世界生成→游戏→返回主菜单的完整链路。
@@ -13,7 +29,7 @@ namespace CivilizationEvolution.UI
         public static SceneFlowController Instance { get; private set; }
 
         [Header("引用")]
-        [SerializeField] private CivilizationEvolution.Core.Bootstrap bootstrap;
+        [SerializeField] private Bootstrap bootstrap;
         [SerializeField] private UIManager uiManager;
         [SerializeField] private MainMenuUI mainMenu;
 
@@ -33,7 +49,7 @@ namespace CivilizationEvolution.UI
 
         void Start()
         {
-            if (bootstrap == null) bootstrap = FindAnyObjectByType<CivilizationEvolution.Core.Bootstrap>();
+            if (bootstrap == null) bootstrap = FindAnyObjectByType<Bootstrap>();
             if (uiManager == null) uiManager = FindAnyObjectByType<UIManager>();
 
  // 初始化主菜单
@@ -78,10 +94,10 @@ namespace CivilizationEvolution.UI
             if (uiManager != null) uiManager.ShowGameUI();
 
             #if UNITY_EDITOR
-            if (FindAnyObjectByType<CivilizationEvolution.Bootstrap.MapEditorBootstrap>() == null)
+            if (FindAnyObjectByType<CivilizationEvolution.Editor.Bootstrap.MapEditorBootstrap>() == null)
             {
                 var editorObj = new GameObject("MapEditorBootstrap");
-                var bootstrap = editorObj.AddComponent<CivilizationEvolution.Bootstrap.MapEditorBootstrap>();
+                var bootstrap = editorObj.AddComponent<CivilizationEvolution.Editor.Bootstrap.MapEditorBootstrap>();
                 bootstrap.startWithEmptyOcean = true;
                 Debug.Log("[SceneFlow] MapEditorBootstrap 已启动（全海空白地图模式）");
             }
@@ -97,10 +113,10 @@ namespace CivilizationEvolution.UI
             if (uiManager != null) uiManager.ShowGameUI();
 
             #if UNITY_EDITOR
-            if (FindAnyObjectByType<CivilizationEvolution.Bootstrap.MapEditorBootstrap>() == null)
+            if (FindAnyObjectByType<CivilizationEvolution.Editor.Bootstrap.MapEditorBootstrap>() == null)
             {
                 var editorObj = new GameObject("MapEditorBootstrap");
-                var bootstrap = editorObj.AddComponent<CivilizationEvolution.Bootstrap.MapEditorBootstrap>();
+                var bootstrap = editorObj.AddComponent<CivilizationEvolution.Editor.Bootstrap.MapEditorBootstrap>();
                 bootstrap.loadSaveFileName = saveFileName;
                 Debug.Log($"[SceneFlow] MapEditorBootstrap 已启动（加载存档模式: {saveFileName}）");
             }

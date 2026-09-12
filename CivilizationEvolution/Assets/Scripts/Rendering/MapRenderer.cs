@@ -1,12 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Diplomacy;
-using CivilizationEvolution.Culture;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Map;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Diplomacy;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
 
-namespace CivilizationEvolution.Render
+
+
+
+
+
+using CivilizationEvolution.World;
+namespace CivilizationEvolution.Rendering
 {
  /// 地图渲染器
  /// 用Mesh/Texture渲染六边形地块地图

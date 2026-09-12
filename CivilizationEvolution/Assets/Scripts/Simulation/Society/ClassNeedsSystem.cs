@@ -2,8 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Politics
+
+
+namespace CivilizationEvolution.Simulation.Society
 {
  // ===================================================================================== // 阶层需求系统（Class Needs System） // ------------------------------------------------------------------------------------- // 设计链条（唯物史观）： // 人口块阶层结构（人口数量）→ 各阶层多维需求 → 需求满足度（对接税/粮/战/灾/政体/革新） // → 阶层综合满足度（驱动 classRelations）→ 阶层政治能量（人口×不满×组织化）→ 派系/政体变迁 // 解耦原则：本系统不直接依赖 Economy/War/Disaster/Innovation 等子系统， // 由 GameWorld 每个政治 Tick 采集各系统指标，组装成 RealmSituation 情境快照后传入。 // 这样需求计算逻辑纯粹、可单测、可被模组替换权重表，也绕开了革新 int/string 双轨问题。 // =====================================================================================
  /// 阶层需求维度。每个阶层只关心其中若干维（无关维度权重为 0，不参与归一化）。

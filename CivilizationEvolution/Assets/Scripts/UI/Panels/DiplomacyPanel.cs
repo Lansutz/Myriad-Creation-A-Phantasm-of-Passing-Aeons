@@ -3,9 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Diplomacy;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Simulation.Diplomacy;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.UI;
 
-namespace CivilizationEvolution.UI
+
+
+
+using CivilizationEvolution.UI.Common;
+namespace CivilizationEvolution.UI.Panels
 {
  /// 外交面板
  /// 管理与其他政权的外交关系：关系概览、盟约、从属、战争借口、宣战、和平条约

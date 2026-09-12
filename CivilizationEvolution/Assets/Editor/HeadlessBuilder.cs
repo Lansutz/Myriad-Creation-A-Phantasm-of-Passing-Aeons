@@ -4,12 +4,12 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace CivilizationEvolution.EditorTools
+namespace CivilizationEvolution.Editor
 {
     /// <summary>
     /// 无界面（batchmode）构建入口
     /// 命令行：Unity.exe -batchmode -quit -projectPath &lt;项目&gt;
-    ///         -executeMethod CivilizationEvolution.EditorTools.HeadlessBuilder.BuildAll
+    ///         -executeMethod CivilizationEvolution.Editor.HeadlessBuilder.BuildAll
     /// 作用：生成/刷新全部 .meta、确保世界配置资产存在、搭建并保存 Main.unity 场景。
     /// </summary>
     public static class HeadlessBuilder
@@ -74,7 +74,7 @@ namespace CivilizationEvolution.EditorTools
         /// <summary>
         /// 构建玩家（第三关：打包验证）——Windows x64
         /// 命令行：Unity.exe -batchmode -quit -projectPath &lt;项目&gt;
-        ///         -executeMethod CivilizationEvolution.EditorTools.HeadlessBuilder.BuildPlayer
+        ///         -executeMethod CivilizationEvolution.Editor.HeadlessBuilder.BuildPlayer
         /// </summary>
         public static void BuildPlayer()
         {

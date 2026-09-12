@@ -2,13 +2,25 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using CivilizationEvolution.Culture;
-using CivilizationEvolution.Economy;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.Race;
-using CivilizationEvolution.War;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.Warfare;
 
-namespace CivilizationEvolution.Core
+
+
+
+
+
+
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.World;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+namespace CivilizationEvolution.Infrastructure.Save
 {
  /// 存档系统（v2）
  /// v1 使用 BinaryFormatter，在 Unity 6 中已被禁用（运行时抛 NotSupportedException，存档静默失败），

@@ -2,13 +2,13 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace CivilizationEvolution.EditorTools
+namespace CivilizationEvolution.Editor
 {
     /// <summary>
     /// 一次性工具：Windows 图形 API 强制 Direct3D11
     /// （修复 D3D12 GPU device error 崩溃——887a0006——
     /// 6000.6 + RTX 4060 D3D12 不稳定——DX11 稳）
-    /// 用法：Unity -batchmode -executeMethod CivilizationEvolution.EditorTools.GraphicsApiFix.ForceD3D11
+    /// 用法：Unity -batchmode -executeMethod CivilizationEvolution.Editor.GraphicsApiFix.ForceD3D11
     /// </summary>
     public static class GraphicsApiFix
     {

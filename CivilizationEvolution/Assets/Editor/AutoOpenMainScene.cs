@@ -3,7 +3,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 
-namespace CivilizationEvolution.EditorTools
+namespace CivilizationEvolution.Editor
 {
     /// <summary>
     /// 编辑器启动自动打开主场景（解决"每次打开都停在空白 3D 界面"）：

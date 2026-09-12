@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.AI
+namespace CivilizationEvolution.Simulation.AI
 {
 
 

@@ -1,8 +1,21 @@
 ﻿using System;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Render
+
+
+namespace CivilizationEvolution.Rendering
 {
  /// Cyowari 历史地图风格桥接组件
  /// 从 GameWorld 生成高程图/国家色块图/噪点图，传入 CyowariHistoricalMap Shader，

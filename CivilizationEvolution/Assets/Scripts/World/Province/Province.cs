@@ -2,8 +2,14 @@
 using System;
 using System.Collections.Generic;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
 
-namespace CivilizationEvolution.Map
+
+
+namespace CivilizationEvolution.World
 {
  /// 沃罗诺伊细胞聚合的地块集合：政体/文化/战争/贸易的归属载体
     [Serializable]

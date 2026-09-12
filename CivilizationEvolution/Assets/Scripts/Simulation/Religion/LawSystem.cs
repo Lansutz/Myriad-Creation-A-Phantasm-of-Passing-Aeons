@@ -1,9 +1,13 @@
-﻿using CivilizationEvolution.Politics;
+﻿
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
 
-namespace CivilizationEvolution.Thought
+
+namespace CivilizationEvolution.Simulation.Religion
 {
     [System.Serializable]
     public class LawSystem

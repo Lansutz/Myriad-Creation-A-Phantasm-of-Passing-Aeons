@@ -1,7 +1,9 @@
-﻿using CivilizationEvolution.Tech;
+﻿
 using System.Collections.Generic;
+using CivilizationEvolution.Simulation.Innovation;
 
-namespace CivilizationEvolution.AI
+
+namespace CivilizationEvolution.Simulation.AI
 {
     [System.Serializable]
     public struct AIPersonality

@@ -1,22 +1,50 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Map;
-using CivilizationEvolution.Climate;
-using CivilizationEvolution.Race;
-using CivilizationEvolution.Culture;
-using CivilizationEvolution.Economy;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.War;
-using CivilizationEvolution.Diplomacy;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.Thought;
-using CivilizationEvolution.Disaster;
-using CivilizationEvolution.Building;
-using CivilizationEvolution.Tech;
-using CivilizationEvolution.AI;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.AI;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Diplomacy;
+using CivilizationEvolution.Simulation.Disaster;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.Warfare;
+using CivilizationEvolution.World.Biome;
+using CivilizationEvolution.World.Climate;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
 
-namespace CivilizationEvolution.Core
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+namespace CivilizationEvolution.Simulation.WorldState
 {
  /// GameWorld.Simulation —— 主循环模拟Tick（人口/政治/社会/传教/信仰/时间推进）（partial class，与 GameWorld.cs 共享字段与子系统）
     public partial class GameWorld
@@ -239,14 +267,14 @@ namespace CivilizationEvolution.Core
                 int owner = tile.ownerRealmId;
                 if (owner < 0 || !realmFaith.TryGetValue(owner, out int stateFaith)) continue;
  // 本地主流已是国教→跳过
-                int localFaith = Politics.PopulationStats.GetDominantFaith(tile);
+                int localFaith = PopulationStats.GetDominantFaith(tile);
                 if (localFaith == stateFaith) continue;
  // 传教（成功率=冲突度）
-                float chance = Culture.MissionarySystem.CalculateSuccessChance(tile, stateFaith,
-                    id => Culture.ReligionCatalog.Get(id),
-                    id => { var r = Culture.ReligionCatalog.GetRoot(id); return r != null ? r.religionId : -1; });
+                float chance = MissionarySystem.CalculateSuccessChance(tile, stateFaith,
+                    id => ReligionCatalog.Get(id),
+                    id => { var r = ReligionCatalog.GetRoot(id); return r != null ? r.religionId : -1; });
                 if (chance > 0f)
-                    Culture.MissionarySystem.ConvertTile(tile, stateFaith, owner, chance, _missionaryRng);
+                    MissionarySystem.ConvertTile(tile, stateFaith, owner, chance, _missionaryRng);
             }
         }
 
@@ -281,8 +309,8 @@ namespace CivilizationEvolution.Core
                     foreach (var c in candidates)
                     {
                         if (c == null || c.characterId == rulerId || !c.isAlive) continue;
-                        if (c.role == Character.CharacterRole.Noble || c.role == Character.CharacterRole.Military
-                            || c.role == Character.CharacterRole.Scholar)
+                        if (c.role == CharacterRole.Noble || c.role == CharacterRole.Military
+                            || c.role == CharacterRole.Scholar)
                         { pick = c; break; }
                     }
                     if (pick == null && candidates.Count > 0)
@@ -366,7 +394,7 @@ namespace CivilizationEvolution.Core
  /// 圣战方胜→受益人谈判[继承法线外者]——土地归受益人[简化：目标地块转移]）</summary>
         private void CheckGreatHolyWarSettlements()
         {
-            var active = new List<War.GreatHolyWarState>(War.GreatHolyWarSystem.ActiveWars);
+            var active = new List<GreatHolyWarState>(GreatHolyWarSystem.ActiveWars);
             foreach (var ghw in active)
             {
                 if (ghw.ended) continue;
@@ -377,7 +405,7 @@ namespace CivilizationEvolution.Core
                 ghw.holySideWon = holySideWon;
                 var callerRealm = ghw.callerRealmId >= 0 && ghw.callerRealmId < realms.Count
                     ? realms[ghw.callerRealmId] : null;
-                int beneficiary = War.GreatHolyWarSystem.Resolve(ghw, GetCharacterManager(),
+                int beneficiary = GreatHolyWarSystem.Resolve(ghw, GetCharacterManager(),
                     callerRealm, Mathf.Max(1, GetRealmDivisibleEstates(ghw.callerRealmId)),
                     GetEffectiveLaw(ghw.callerRealmId));
                 if (holySideWon && beneficiary >= 0 && ghw.targetTile >= 0 && ghw.targetTile < tiles.Length)
@@ -390,7 +418,7 @@ namespace CivilizationEvolution.Core
                 }
                 ghw.ended = true;
             }
-            War.GreatHolyWarSystem.Cleanup();
+            GreatHolyWarSystem.Cleanup();
         }
 
     }

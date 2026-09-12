@@ -1,7 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-namespace CivilizationEvolution.Politics
+using CivilizationEvolution.Simulation.Society;
+namespace CivilizationEvolution.Simulation.Politics
 {
     [Serializable]
     public class StructuralTension

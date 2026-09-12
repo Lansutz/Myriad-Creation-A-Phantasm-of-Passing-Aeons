@@ -2,8 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Culture
+
+
+namespace CivilizationEvolution.Simulation.Culture
 {
  /// 头衔目录查询（TitleDef 数据驱动表——ContentRegistry.Titles——
  /// 三类[官僚/贵族/君主]+国名后缀——文化专属优先回退通用——

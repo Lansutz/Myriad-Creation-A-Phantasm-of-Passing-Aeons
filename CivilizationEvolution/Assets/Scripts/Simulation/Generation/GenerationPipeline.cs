@@ -1,9 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Map;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
 
-namespace CivilizationEvolution.Core
+
+
+using CivilizationEvolution.Simulation.WorldState;
+namespace CivilizationEvolution.Simulation.Generation
 {
  /// 世界生成阶段（有序依赖链，参考 Azgaar FMG 的 19 阶段管线）。
  /// 每阶段只读前序输出，修改某阶段后只需重算下游。

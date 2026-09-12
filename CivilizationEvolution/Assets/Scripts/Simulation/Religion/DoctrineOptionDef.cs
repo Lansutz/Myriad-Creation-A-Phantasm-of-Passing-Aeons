@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CivilizationEvolution.Culture
+namespace CivilizationEvolution.Simulation.Religion
 {
     [System.Serializable]
     public class DoctrineOptionDef

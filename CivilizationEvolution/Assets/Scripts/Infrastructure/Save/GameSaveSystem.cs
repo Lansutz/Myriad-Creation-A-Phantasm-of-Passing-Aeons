@@ -2,13 +2,34 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Map;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.UI;
-using UnityEngine;
 
-namespace CivilizationEvolution.Core
+
+
+
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Audio;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
+
+
+using CivilizationEvolution.World;
+namespace CivilizationEvolution.Infrastructure.Save
 {
  /// 完整游戏存档系统——保存/加载核心游戏状态（地图、时间、政权、编年史）。
  /// 大战略游戏完整存档，不只是地图。

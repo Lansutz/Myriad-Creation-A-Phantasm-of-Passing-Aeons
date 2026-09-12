@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CivilizationEvolution.Economy
+namespace CivilizationEvolution.Simulation.Economy
 {
     /// <summary>
     /// 加工品质量数据。

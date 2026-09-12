@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CivilizationEvolution.Politics
+namespace CivilizationEvolution.Simulation.Politics
 {
  /// 政体约束规则系统（条件子选项组设计·完整版）
  /// 层级结构：

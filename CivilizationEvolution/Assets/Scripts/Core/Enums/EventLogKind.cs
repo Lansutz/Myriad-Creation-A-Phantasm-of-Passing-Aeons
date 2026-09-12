@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.UI
+namespace CivilizationEvolution.Core.Enums
 {
     public enum EventLogKind
     {

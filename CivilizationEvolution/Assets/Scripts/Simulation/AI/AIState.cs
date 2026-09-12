@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace CivilizationEvolution.AI
+namespace CivilizationEvolution.Simulation.AI
 {
         [Serializable]
         public class AIState

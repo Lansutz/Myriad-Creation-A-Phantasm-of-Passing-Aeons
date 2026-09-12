@@ -2,8 +2,14 @@
 using System;
 using System.Collections.Generic;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
 
-namespace CivilizationEvolution.Map
+
+
+namespace CivilizationEvolution.World.Settlement
 {
  /// 子地块类型（对齐 CK3 男爵领 / FantasyMapSimulator Burg）
  /// 一个 Province 包含多个 Burg，Burg 是城镇/港口/首都的载体

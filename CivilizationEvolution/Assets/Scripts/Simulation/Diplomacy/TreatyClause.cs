@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Diplomacy
+namespace CivilizationEvolution.Simulation.Diplomacy
 {
     [System.Serializable]
     public struct TreatyClause

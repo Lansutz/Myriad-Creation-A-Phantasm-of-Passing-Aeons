@@ -1,8 +1,14 @@
 ﻿using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using UnityEngine;
 
-namespace CivilizationEvolution.Climate
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+
+
+namespace CivilizationEvolution.World.Biome
 {
     /// <summary>
     /// 群系属性表（参考 Azgaar FMG 的 biomesData.cost / habitability 设计）。

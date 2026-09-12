@@ -7,8 +7,23 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.UI;
 
-namespace CivilizationEvolution.EditorTools
+
+
+namespace CivilizationEvolution.Editor
 {
     /// <summary>
     /// 运行冒烟测试（batchmode）。结果统一写绝对路径 Temp/smoke_result.txt。
@@ -95,7 +110,7 @@ namespace CivilizationEvolution.EditorTools
                 var gw = UnityEngine.Object.FindAnyObjectByType<GameWorld>();
                 int land = gw != null ? gw.GetLandTileCount() : -1;
                 int sea = gw != null ? gw.GetSeaTileCount() : -1;
-                var mr = UnityEngine.Object.FindAnyObjectByType<CivilizationEvolution.Render.MapRenderer>();
+                var mr = UnityEngine.Object.FindAnyObjectByType<CivilizationEvolution.Rendering.MapRenderer>();
 
                 var sb = new StringBuilder();
                 sb.AppendLine("PLAY-OK");

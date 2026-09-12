@@ -1,12 +1,29 @@
-﻿using CivilizationEvolution.Character;
-using CivilizationEvolution.Diplomacy;
-using CivilizationEvolution.Tech;
-using CivilizationEvolution.Economy;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.Core;
-using System.Collections.Generic;
+﻿
 
-namespace CivilizationEvolution.AI
+
+
+
+
+using System.Collections.Generic;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Diplomacy;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+
+
+namespace CivilizationEvolution.Simulation.AI
 {
     public class AIManager
     {
@@ -28,7 +45,7 @@ namespace CivilizationEvolution.AI
             DiplomacyManager diplomacy,
             EconomyManager economy,
             InnovationTree innovations,
-            CivilizationEvolution.Character.CharacterManager characters = null)
+            CivilizationEvolution.Simulation.Characters.CharacterManager characters = null)
         {
             foreach (var controller in _controllers.Values)
             {

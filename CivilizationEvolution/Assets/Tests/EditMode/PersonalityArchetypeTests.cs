@@ -1,7 +1,11 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.Culture;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Religion;
+
+
+
 
 namespace CivilizationEvolution.Tests
 {

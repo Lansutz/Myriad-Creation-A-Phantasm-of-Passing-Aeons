@@ -2,11 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.War;
-using CivilizationEvolution.Character;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.Warfare;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Diplomacy
+
+
+
+
+
+namespace CivilizationEvolution.Simulation.Diplomacy
 {
  /// DiplomacyManager.War —— 战争与敌对（宣战/战争借口/敌对度/突袭/边境摩擦/和平条约）（partial class，与 DiplomacySystem.cs 共享字段）
     public partial class DiplomacyManager
@@ -34,9 +50,9 @@ namespace CivilizationEvolution.Diplomacy
 
  // 战争爆发：自动撤销双方的军事通行权
             if (_realms.TryGetValue(attackerId, out var atkRealm))
-                CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(atkRealm, defenderId);
+                CivilizationEvolution.Simulation.Warfare.MovementControlSystem.OnWarDeclared(atkRealm, defenderId);
             if (_realms.TryGetValue(defenderId, out var defRealm))
-                CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(defRealm, attackerId);
+                CivilizationEvolution.Simulation.Warfare.MovementControlSystem.OnWarDeclared(defRealm, attackerId);
             rel.trust = Mathf.Min(rel.trust, 10f);
             rel.threat = Mathf.Max(rel.threat, 90f);
 
@@ -115,10 +131,10 @@ namespace CivilizationEvolution.Diplomacy
             {
                 atkRealm.prestige = Mathf.Max(0f, atkRealm.prestige - penalties.prestigePenalty);
                 atkRealm.stability = Mathf.Max(0f, atkRealm.stability - penalties.stabilityPenalty);
-                CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(atkRealm, defenderId);
+                CivilizationEvolution.Simulation.Warfare.MovementControlSystem.OnWarDeclared(atkRealm, defenderId);
             }
             if (_realms.TryGetValue(defenderId, out var defRealm))
-                CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(defRealm, attackerId);
+                CivilizationEvolution.Simulation.Warfare.MovementControlSystem.OnWarDeclared(defRealm, attackerId);
 
             rel.AddEvent(new DiplomaticEvent
             {
@@ -222,9 +238,9 @@ namespace CivilizationEvolution.Diplomacy
 
  // 战争爆发：自动撤销双方的军事通行权
             if (_realms.TryGetValue(attackerId, out var atkRealm2))
-                CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(atkRealm2, defenderId);
+                CivilizationEvolution.Simulation.Warfare.MovementControlSystem.OnWarDeclared(atkRealm2, defenderId);
             if (_realms.TryGetValue(defenderId, out var defRealm2))
-                CivilizationEvolution.Military.MovementControlSystem.OnWarDeclared(defRealm2, attackerId);
+                CivilizationEvolution.Simulation.Warfare.MovementControlSystem.OnWarDeclared(defRealm2, attackerId);
             if (!isHostile) ApplySurpriseAttackPenalties(attackerId, defenderId, rel);
             rel.AddEvent(new DiplomaticEvent { type = DiplomaticEventType.WarDeclaration, description = $"{_realms[attackerId].realmName} 对 {_realms[defenderId].realmName} {attackType}" + (attackTileIndex >= 0 ? $"（地块 #{attackTileIndex}）" : ""), relationChange = -60f, trustChange = -45f, threatChange = 45f });
             Chronicle?.Add("war", $"{_realms[attackerId].realmName} 对 {_realms[defenderId].realmName} {attackType}", major: true, attackerId, defenderId);

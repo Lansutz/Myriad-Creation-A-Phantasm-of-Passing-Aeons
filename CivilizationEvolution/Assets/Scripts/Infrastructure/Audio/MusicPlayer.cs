@@ -4,7 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace CivilizationEvolution.UI
+namespace CivilizationEvolution.Infrastructure.Audio
 {
  /// 音乐播放器：加载 StreamingAssets/Music/ 下音频（mp3/ogg/wav）循环播放
  /// 支持播放/暂停/上一首/下一首/音量——用户可自行放入音乐文件

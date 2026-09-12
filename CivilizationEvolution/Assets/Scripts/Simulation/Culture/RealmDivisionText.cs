@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CivilizationEvolution.Culture
+namespace CivilizationEvolution.Simulation.Culture
 {
  /// 行政区划详情页文本（多级下钻——点政权总览里的区划→本页）：
  /// 区划名称/层级/辖境（地块数+人口）/治理头衔/子区划列表

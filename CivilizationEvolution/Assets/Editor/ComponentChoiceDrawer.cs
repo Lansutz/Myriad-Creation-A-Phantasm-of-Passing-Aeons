@@ -1,9 +1,13 @@
 using UnityEditor;
 using UnityEngine;
 using System;
-using CivilizationEvolution.Politics;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
 
-namespace CivilizationEvolution.EditorTools
+
+
+namespace CivilizationEvolution.Editor
 {
     /// <summary>
     /// 政体成分选择器（ComponentChoice）自定义 Inspector 绘制。

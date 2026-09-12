@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CivilizationEvolution.Core
+namespace CivilizationEvolution.Core.Enums
 {
  /// 全局枚举定义
     public static class GameEnums

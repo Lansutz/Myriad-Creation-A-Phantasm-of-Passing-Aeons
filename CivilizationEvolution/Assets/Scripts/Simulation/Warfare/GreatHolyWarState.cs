@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CivilizationEvolution.War
+namespace CivilizationEvolution.Simulation.Warfare
 {
     [System.Serializable]
     public class GreatHolyWarState

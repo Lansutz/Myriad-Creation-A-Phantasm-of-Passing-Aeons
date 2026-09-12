@@ -2,8 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Politics
+
+
+namespace CivilizationEvolution.Simulation.Society
 {
  // ===================================================================================== // 社会系统（Society System） // ------------------------------------------------------------------------------------- // 职责：把"地块人口块的阶层结构"与"阶层需求满足度"合成为政权级社会画像， // 并以需求满足度驱动阶层好感（RealmData.classRelations），替代旧的"机械 Lerp 回 50"。 // 政治力学（中性影响力 + 方向由满足度决定）： // influence（政治影响力）= 人口份额×组织化 + 制度性在位基底 // grievance（不满度） = (100 - 满足度)/100 // unrest（反对/动荡能量） = influence × grievance ——派系与反叛的燃料 // support（支持能量） = influence × 满足度/100 ——现政权的支柱 // 人口是基础（用户强调：阶层人口数量必然导致后果），组织化决定同样人口的政治效能， // 制度基底解释王室/当政贵族"人少却掌权"。 // =====================================================================================
  /// <summary>单个阶层在政权内的社会画像</summary>

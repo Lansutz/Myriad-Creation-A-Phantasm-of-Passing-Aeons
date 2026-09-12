@@ -2,13 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Economy;
-using CivilizationEvolution.War;
-using CivilizationEvolution.Disaster;
-using CivilizationEvolution.Tech;
-using CivilizationEvolution.Culture;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Disaster;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.Warfare;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Politics
+
+
+
+
+
+
+
+namespace CivilizationEvolution.Simulation.Politics
 {
  /// 政权情境采集器：每个政治 Tick 从各子系统采集客观指标，组装成 RealmSituation，
  /// 供 ClassNeedsSystem 评估。集中在此处对接，避免需求/社会系统直接耦合经济、战争、灾害等。

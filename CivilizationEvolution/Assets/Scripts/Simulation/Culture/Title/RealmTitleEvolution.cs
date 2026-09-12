@@ -1,8 +1,23 @@
 ﻿using CivilizationEvolution.Core;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.Tech;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Culture
+
+
+
+
+namespace CivilizationEvolution.Simulation.Culture
 {
  /// 头衔演化系统（——革新驱动领土化）：
  /// ①头衔期（领土王国革新前）：头衔=个人属格——"某某族群人之王"

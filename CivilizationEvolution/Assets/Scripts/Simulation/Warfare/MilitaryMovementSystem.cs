@@ -1,9 +1,23 @@
 ﻿using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Politics;
-using UnityEngine;
 
-namespace CivilizationEvolution.Military
+
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+
+
+namespace CivilizationEvolution.Simulation.Warfare
 {
  /// 军事通行系统
  /// 负责：军队可通行检查、实际通行成本计算、敌对堡垒损耗、己方堡垒补给支援

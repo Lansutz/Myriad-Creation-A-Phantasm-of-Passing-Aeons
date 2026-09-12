@@ -1,9 +1,23 @@
 using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.World;
-using UnityEngine;
 
-namespace CivilizationEvolution.Map
+
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Actors;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+
+
+namespace CivilizationEvolution.Simulation.Settlement
 {
     /// <summary>
     /// 弃地类型。
@@ -48,7 +62,7 @@ namespace CivilizationEvolution.Map
             var tile = world.tiles[tileIndex];
             if (!tile.exists) return null;
 
-            int popLost = World.MapActorManager.GetTilePopulation(tile);
+            int popLost = MapActorManager.GetTilePopulation(tile);
 
             var record = new AbandonmentRecord
             {
@@ -129,7 +143,7 @@ namespace CivilizationEvolution.Map
 
                 case AbandonmentType.Nomadic:
                     // 游牧弃地：人口随部落迁移（不产生流民，直接消失——他们跟着走了）
-                    World.MapActorManager.AddPopulationToTile(ref world.tiles[tileIndex], -pop);
+                    MapActorManager.AddPopulationToTile(ref world.tiles[tileIndex], -pop);
                     break;
             }
         }
@@ -156,12 +170,12 @@ namespace CivilizationEvolution.Map
                     var neighbor = world.tiles[idx];
                     if (neighbor.exists && neighbor.isLand)
                     {
-                        World.MapActorManager.AddPopulationToTile(ref world.tiles[idx], pop / 4);
+                        MapActorManager.AddPopulationToTile(ref world.tiles[idx], pop / 4);
                     }
                 }
             }
             // 原地块人口减少
-            World.MapActorManager.AddPopulationToTile(ref world.tiles[fromTile], -pop);
+            MapActorManager.AddPopulationToTile(ref world.tiles[fromTile], -pop);
         }
 
         /// <summary>产生流民MapActor</summary>
@@ -173,7 +187,7 @@ namespace CivilizationEvolution.Map
             refugee.actorName = "弃地流民#" + refugee.actorId;
             refugee.morale = 25f;
             // 原地块人口减少
-            World.MapActorManager.AddPopulationToTile(ref world.tiles[tileIndex], -count);
+            MapActorManager.AddPopulationToTile(ref world.tiles[tileIndex], -count);
         }
 
         /// <summary>
@@ -193,7 +207,7 @@ namespace CivilizationEvolution.Map
 
             tile.ownerRealmId = newRealmId;
             tile.order = Mathf.Max(tile.order, 20f); // 恢复基本秩序
-            World.MapActorManager.AddPopulationToTile(ref world.tiles[tileIndex], settlerCount);
+            MapActorManager.AddPopulationToTile(ref world.tiles[tileIndex], settlerCount);
             world.tiles[tileIndex] = tile;
 
             Debug.Log($"[Abandonment] 政权{newRealmId}重新定居地块{tileIndex}，迁入{settlerCount}人");

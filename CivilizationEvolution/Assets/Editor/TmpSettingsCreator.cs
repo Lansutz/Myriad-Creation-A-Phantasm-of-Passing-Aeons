@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using TMPro;
 
-namespace CivilizationEvolution.EditorTools
+namespace CivilizationEvolution.Editor
 {
     /// <summary>
     /// 创建 TMP Settings（6000.6 新格式——旧版资产字段失配删除后重建）：

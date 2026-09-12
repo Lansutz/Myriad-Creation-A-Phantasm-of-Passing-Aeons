@@ -1,10 +1,19 @@
-﻿using CivilizationEvolution.Climate;
+﻿
 using System;
 using System.Threading.Tasks;
-using CivilizationEvolution.Core;
-using UnityEngine;
 
-namespace CivilizationEvolution.Map
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.World.Biome;
+using CivilizationEvolution.World.Climate;
+using CivilizationEvolution.World.Hydrology;
+
+
+namespace CivilizationEvolution.World.Terrain
 {
  /// 球形行星地形生成器（专业版）
  /// 算法集成：

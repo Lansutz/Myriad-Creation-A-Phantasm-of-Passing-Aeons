@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CivilizationEvolution.Economy
+namespace CivilizationEvolution.Simulation.Economy
 {
     /// <summary>
     /// 资源类型（决定生成规则和开发方式）。

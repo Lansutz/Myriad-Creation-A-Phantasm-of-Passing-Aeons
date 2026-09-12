@@ -1,11 +1,27 @@
 using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Culture;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.Tech;
-using UnityEngine;
 
-namespace CivilizationEvolution.Economy
+
+
+
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+
+
+namespace CivilizationEvolution.Simulation.Economy
 {
     /// <summary>
     /// 社会分层完整度与专业化生产程度的量化计算器。

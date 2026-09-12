@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.Thought;
+using CivilizationEvolution.Simulation.Characters;
 
-namespace CivilizationEvolution.Culture
+
+
+
+namespace CivilizationEvolution.Simulation.Religion
 {
  /// 圣人定义（崇拜对象·历史出身——一神教崇拜对象的核心形态：
  /// 与多神教神祇[神话出身]并列——圣人=角色升格[封圣事件]）

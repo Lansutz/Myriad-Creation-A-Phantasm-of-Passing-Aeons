@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using CivilizationEvolution.UI;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Audio;
+using CivilizationEvolution.Simulation.Society;
 
-namespace CivilizationEvolution.Core
+
+
+using CivilizationEvolution.World;
+namespace CivilizationEvolution.Infrastructure.Save
 {
  /// 完整游戏存档数据——包含地图、游戏时间、政权、编年史等核心游戏状态。
  /// 地图数据复用 MapSaveData，额外保存游戏运行时状态。

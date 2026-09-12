@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Thought
+namespace CivilizationEvolution.Simulation.Religion
 {
     [System.Serializable]
     public struct Deity

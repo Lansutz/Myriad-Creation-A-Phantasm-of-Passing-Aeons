@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Linq;
-using CivilizationEvolution.Core;
-using UnityEngine;
 
-namespace CivilizationEvolution.Climate
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+
+
+namespace CivilizationEvolution.World.Climate
 {
  /// 洋流模拟（Ocean Current Simulation）
  /// 简化版海洋环流模型，包含：

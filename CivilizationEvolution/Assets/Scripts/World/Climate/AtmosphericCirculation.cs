@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Linq;
-using CivilizationEvolution.Core;
-using UnityEngine;
 
-namespace CivilizationEvolution.Climate
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+
+
+namespace CivilizationEvolution.World.Climate
 {
  /// 大气环流 GCM（General Circulation Model，简化版）
  /// 基于物理的大气环流模拟，替换旧的简单三圈环流降水。

@@ -2,8 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Politics
+
+
+namespace CivilizationEvolution.Simulation.Society
 {
  // ===================================================================================== // 社会分化系统（Social Differentiation） // ------------------------------------------------------------------------------------- // 唯物史观的阶层生成：人口最初都是农民；当物质/制度条件成熟（剩余产品、手工业、贸易、 // 公共权力、奴隶制被革新承认），才缓慢地从农业人口中分化出工商自由民、贵族教士与奴隶。 // 与既有系统的关系： // · "某阶层是否被制度承认"直接复用 RealmSituation.classRecognized // （由 SocialClassAvailability 依据 革新+文化 预算，不在此重复判定）； // · 本系统只做"人口在阶层间的平滑、守恒转移"，不创建角色、不改政体； // · 原始社会（无相关革新）时所有非农阶层未被承认 → 不发生分化，仍是均质农民社会； // · 过程可逆：工商业凋敝 / 阶层不再被承认时，过剩人口回流农业（城镇化可逆）。 // 守恒铁律：一次再平衡只搬运"收缩总量"，不新增/消灭人口；Royalty（王室）由角色系统 // 承载、不占地块人口，故不参与分化。 // =====================================================================================
  /// <summary>社会分化器：无状态静态工具，输入情境快照，就地调整地块人口块的阶层构成</summary>

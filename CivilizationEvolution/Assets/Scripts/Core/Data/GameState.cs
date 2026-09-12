@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Core
+namespace CivilizationEvolution.Core.Data
 {
 
         public enum GameState

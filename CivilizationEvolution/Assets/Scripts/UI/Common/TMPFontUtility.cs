@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine.TextCore.LowLevel;
 
-namespace CivilizationEvolution.UI
+namespace CivilizationEvolution.UI.Common
 {
  /// TMP 字体工具：中文字体 SDF 资产（动态生成——simhei.ttf → TMP_FontAsset
  /// SDFAA 4096 图集，Dynamic 按需渲染字形——替换 Legacy 字体提升 UI 清晰度）

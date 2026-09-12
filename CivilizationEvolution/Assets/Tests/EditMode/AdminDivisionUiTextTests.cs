@@ -1,7 +1,13 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.Culture;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Society;
+
+
+
 
 namespace CivilizationEvolution.Tests
 {

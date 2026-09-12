@@ -1,8 +1,14 @@
-﻿using CivilizationEvolution.Core;
+﻿
 using System.Collections.Generic;
 using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
 
-namespace CivilizationEvolution.Map
+
+namespace CivilizationEvolution.World.Hydrology
 {
     /// <summary>
     /// 海洋分区系统（参考 Azgaar FMG 的 grid.cells.t 距离场设计）。

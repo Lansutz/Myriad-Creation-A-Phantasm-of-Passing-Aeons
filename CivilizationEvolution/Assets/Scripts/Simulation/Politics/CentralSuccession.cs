@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Politics
+namespace CivilizationEvolution.Simulation.Politics
 {
     public enum CentralSuccession
     {

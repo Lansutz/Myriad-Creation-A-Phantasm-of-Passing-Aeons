@@ -1,23 +1,52 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Map;
-using CivilizationEvolution.Climate;
-using CivilizationEvolution.Race;
-using CivilizationEvolution.Culture;
-using CivilizationEvolution.Economy;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.War;
-using CivilizationEvolution.Diplomacy;
-using CivilizationEvolution.Character;
-using CivilizationEvolution.Thought;
-using CivilizationEvolution.Disaster;
-using CivilizationEvolution.World;
-using CivilizationEvolution.Building;
-using CivilizationEvolution.Tech;
-using CivilizationEvolution.AI;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.AI;
+using CivilizationEvolution.Simulation.Actors;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Diplomacy;
+using CivilizationEvolution.Simulation.Disaster;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.Warfare;
+using CivilizationEvolution.World.Biome;
+using CivilizationEvolution.World.Climate;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
 
-namespace CivilizationEvolution.Core
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+namespace CivilizationEvolution.Simulation.WorldState
 {
  /// GameWorld.Initialization —— 世界初始化与数据定义（物资/兵种/种族/文化/政权/信仰）（partial class，与 GameWorld.cs 共享字段与子系统）
     public partial class GameWorld
@@ -452,10 +481,10 @@ namespace CivilizationEvolution.Core
         private void InitializeFaithSystems()
         {
             _faithSystems.Clear();
-            foreach (var kv in Culture.ReligionCatalog.All)
+            foreach (var kv in ReligionCatalog.All)
             {
                 var def = kv.Value;
-                if (def.nodeType != Culture.ReligionNodeType.Succession) continue; // 只教统有运行时
+                if (def.nodeType != ReligionNodeType.Succession) continue; // 只教统有运行时
                 var faith = new FaithSystem
                 {
                     faithId = def.religionId,

@@ -2,9 +2,26 @@
 using System.Text;
 using System.Collections.Generic;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Politics;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.UI;
 
-namespace CivilizationEvolution.UI
+
+
+
+using CivilizationEvolution.UI.Common;
+namespace CivilizationEvolution.UI.Panels
 {
  /// 社会政治面板文本生成（阶层画像/派系力量/政体变迁状态——纯静态可测）
     public static class SocietyPanelText

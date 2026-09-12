@@ -2,13 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Race;
-using CivilizationEvolution.Culture;
-using CivilizationEvolution.Politics;
-using CivilizationEvolution.Thought;
-using CivilizationEvolution.War;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Population;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.Warfare;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Character
+
+
+
+
+
+
+
+namespace CivilizationEvolution.Simulation.Characters
 {
  /// CharacterManager.Faith —— 个人信仰（私人信仰/个人信条/信仰分歧/虔诚更新）（partial class，与 CharacterSystem.cs 共享字段）
     public partial class CharacterManager

@@ -3,9 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Character;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.WorldState;
 
-namespace CivilizationEvolution.Politics
+
+
+
+namespace CivilizationEvolution.Simulation.Society
 {
  // ===================================================================================== // 派系系统（Faction System） // ------------------------------------------------------------------------------------- // 定位：阶层是"客观社会结构"（人口块），派系是阶层利益在政治上层建筑中的"组织化行动者"。 // - 派系不是凭空生成：它由阶层的政治能量（RealmSociety 中的 influence/unrest）孕育； // - 同一阶层可分化出不同派系，不同阶层也可结盟（阶层基础是权重分布而非单一绑定）； // - 角色（CharacterData）只是派系的领袖/代言人，不是派系的根基；暂无合适有名角色时， // 派系可以"无明确领袖"状态存在（底层运动）。 // - 政体变迁的"关键节点博弈"中，派系是真正出手的力量（见 RegimeChangeDynamics）。 // 立场光谱（对现政体的态度）而非简单按阶层划线： // 保守派=现制度受益者（力量来自 support）；改革派=体制内调整；激进派=根本变革（力量来自 unrest）； // 复辟派=回到更早制度。政纲（开放度/集权度/经济/税负倾向）由阶层基础推导，可被模组模板覆盖。 // =====================================================================================
  /// <summary>派系对现政体的立场</summary>

@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Thought
+namespace CivilizationEvolution.Simulation.Religion
 {
     [System.Serializable]
     public struct Doctrine

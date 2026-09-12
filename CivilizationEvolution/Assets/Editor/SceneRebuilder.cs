@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace CivilizationEvolution.EditorTools
+namespace CivilizationEvolution.Editor
 {
     /// <summary>
     /// 场景重建（batchmode 用——UI 全面重建）：

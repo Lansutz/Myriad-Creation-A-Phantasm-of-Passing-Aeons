@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CivilizationEvolution.Core
+namespace CivilizationEvolution.Core.Data
 {
     /// <summary>
     /// 地块上的单个自然资源点。

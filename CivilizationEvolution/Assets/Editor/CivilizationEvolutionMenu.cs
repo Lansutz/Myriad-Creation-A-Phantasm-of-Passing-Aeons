@@ -5,11 +5,39 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using CivilizationEvolution.Core;
-using CivilizationEvolution.Render;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Editor.MapEditing;
+using CivilizationEvolution.Editor.Panels;
+using CivilizationEvolution.Editor.RenderTools;
+using CivilizationEvolution.Editor.TerrainPainter;
+using CivilizationEvolution.Infrastructure.Audio;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Rendering;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 using CivilizationEvolution.UI;
-using CivilizationEvolution.Map;
+using CivilizationEvolution.UI.Common;
+using CivilizationEvolution.UI.Panels;
+using CivilizationEvolution.World.Generation;
+using CivilizationEvolution.World.Hydrology;
+using CivilizationEvolution.World.Settlement;
+using CivilizationEvolution.World.Terrain;
 
-namespace CivilizationEvolution.EditorTools
+
+
+
+
+
+namespace CivilizationEvolution.Editor
 {
     /// <summary>
     /// 文明演化 · 编辑器一键搭建工具
@@ -74,7 +102,7 @@ namespace CivilizationEvolution.EditorTools
             lightGo.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
 
             // ---- MapEditor ----
-            var editor = worldGo.AddComponent<CivilizationEvolution.Render.MapEditor>();
+            var editor = worldGo.AddComponent<CivilizationEvolution.Rendering.MapEditor>();
             SetField(editor, "world", world);
             SetField(editor, "mapRenderer", renderer);
             SetField(editor, "mainCamera", cam);
