@@ -8,7 +8,7 @@ Shader "Custom/UI/MainPanel"
         _Color ("Tint", Color) = (1,1,1,1)
 
         // === 基础颜色 ===
-        _BaseColor ("基础颜色 Base Color", Color) = (0.149, 0.145, 0.133, 0.98) // #262522, Alpha 0.98
+        _BaseColor ("基础颜色 Base Color", Color) = (0.384, 0.365, 0.325, 0.98) // #262522, Alpha 0.98
 
         // === Noise纹理 ===
         _FineNoise ("细颗粒纹理 Fine Noise", 2D) = "gray" {}

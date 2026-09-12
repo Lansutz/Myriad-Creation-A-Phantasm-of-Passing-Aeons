@@ -8,9 +8,9 @@ Shader "Custom/UI/Border"
         _Color ("Tint", Color) = (1,1,1,1)
 
         // 青铜颜色
-        _BronzeColor ("青铜基础色", Color) = (0.318, 0.290, 0.243, 1.0) // #514A3E
-        _BronzeHighlight ("青铜高亮", Color) = (0.455, 0.416, 0.341, 1.0) // #746A57
-        _BronzeShadow ("青铜阴影", Color) = (0.188, 0.176, 0.153, 1.0) // #302D27
+        _BronzeColor ("青铜基础色", Color) = (0.506, 0.455, 0.365, 1.0) // #514A3E
+        _BronzeHighlight ("青铜高亮", Color) = (0.596, 0.541, 0.420, 1.0) // #746A57
+        _BronzeShadow ("青铜阴影", Color) = (0.224, 0.212, 0.184, 1.0) // #302D27
 
         // 金属感
         _Metallic ("金属度", Range(0, 1)) = 0.6

@@ -27,11 +27,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Metallic: 0.6
+    - _Metallic: 0.55
     - _Smoothness: 0.35
     - _NoiseScale: 3.0
     - _NoiseStrength: 0.08
-    - _EdgeHighlight: 0.12
+    - _EdgeHighlight: 0.10
     - _StencilComp: 8
     - _Stencil: 0
     - _StencilOp: 0
@@ -40,7 +40,7 @@ Material:
     - _ColorMask: 15
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _BronzeColor: {r: 0.318, g: 0.29, b: 0.243, a: 1.0}
-    - _BronzeHighlight: {r: 0.455, g: 0.416, b: 0.341, a: 1.0}
-    - _BronzeShadow: {r: 0.188, g: 0.176, b: 0.153, a: 1.0}
+    - _BronzeColor: {r: 0.505882, g: 0.454902, b: 0.364706, a: 1.0}
+    - _BronzeHighlight: {r: 0.596078, g: 0.541176, b: 0.419608, a: 1.0}
+    - _BronzeShadow: {r: 0.223529, g: 0.211765, b: 0.184314, a: 1.0}
   m_BuildTextureStacks: []

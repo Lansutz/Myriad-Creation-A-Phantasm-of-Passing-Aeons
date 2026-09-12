@@ -44,12 +44,12 @@ Material:
     - _LargeNoiseScale: 1.5
     - _LargeNoiseStrength: 0.04
     - _NormalStrength: 0.08
-    - _LightIntensity: 0.15
+    - _LightIntensity: 0.12
     - _RoughnessVariation: 0.05
     - _EdgeHighlightWidth: 0.015
-    - _EdgeHighlightStrength: 0.08
+    - _EdgeHighlightStrength: 0.06
     - _EdgeShadowWidth: 0.02
-    - _EdgeShadowStrength: 0.12
+    - _EdgeShadowStrength: 0.10
     - _WearColorShift: 0.03
     - _WearRoughnessShift: 0.1
     - _AOStrength: 0.14
@@ -61,6 +61,6 @@ Material:
     - _ColorMask: 15
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _BaseColor: {r: 0.149, g: 0.145, b: 0.133, a: 0.98}
+    - _BaseColor: {r: 0.384314, g: 0.364706, b: 0.325490, a: 0.98}
     - _LightDir: {r: -0.5, g: -0.7, b: 0.5, a: 0}
   m_BuildTextureStacks: []
