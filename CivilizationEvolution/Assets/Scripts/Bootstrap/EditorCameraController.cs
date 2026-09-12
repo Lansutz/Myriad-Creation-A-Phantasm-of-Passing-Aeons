@@ -17,7 +17,8 @@ namespace CivilizationEvolution.Bootstrap
         {
             if (targetCamera == null) return;
 
- // 右键拖拽平移            if (Input.GetMouseButtonDown(1))
+ // 右键拖拽平移
+            if (Input.GetMouseButtonDown(1))
             {
                 _isPanning = true;
                 _lastMousePos = Input.mousePosition;
@@ -34,7 +35,8 @@ namespace CivilizationEvolution.Bootstrap
                 _lastMousePos = Input.mousePosition;
             }
 
- // 滚轮缩放            float scroll = Input.GetAxis("Mouse ScrollWheel");
+ // 滚轮缩放
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (Mathf.Abs(scroll) > 0.01f)
             {
                 targetCamera.orthographicSize = Mathf.Clamp(
@@ -42,7 +44,8 @@ namespace CivilizationEvolution.Bootstrap
                     minZoom, maxZoom);
             }
 
- // WASD平移            float h = Input.GetAxis("Horizontal");
+ // WASD平移
+            float h = Input.GetAxis("Horizontal");
             float v = Input.GetAxis("Vertical");
             if (Mathf.Abs(h) > 0.01f || Mathf.Abs(v) > 0.01f)
             {

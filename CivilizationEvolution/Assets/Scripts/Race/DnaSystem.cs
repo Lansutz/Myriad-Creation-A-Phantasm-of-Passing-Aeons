@@ -6,30 +6,43 @@ using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Race
 {
- /// DNA 与遗传系统（种族系统 ↔ 角色系统的交叉层） /// 设计文档：《DNA与遗传系统.md》 /// - 7 固定基因座，每座一对等位基因（显性 A / 隐性 a），AA/Aa/aa 三种组合 /// - 孟德尔式遗传：父母各随机传递一个等位基因 /// - 简化生物模拟：不做逐基因演算，计算仅发生在角色创建/生育时，不参与每 Tick
+ /// DNA 与遗传系统（种族系统 ↔ 角色系统的交叉层）
+ /// 设计文档：《DNA与遗传系统.md》
+ /// - 7 固定基因座，每座一对等位基因（显性 A / 隐性 a），AA/Aa/aa 三种组合
+ /// - 孟德尔式遗传：父母各随机传递一个等位基因
+ /// - 简化生物模拟：不做逐基因演算，计算仅发生在角色创建/生育时，不参与每 Tick
  /// <summary>等位基因（显性 A / 隐性 a）</summary>
 
- /// <summary>基因座（原版 6 基因座，模组可扩展但建议 ≤15） /// 注：变革性为种族设定（RaceData.transformativity），社会维度归文化传统，不做个体级基因座</summary>
+ /// <summary>基因座（原版 6 基因座，模组可扩展但建议 ≤15）
+ /// 注：变革性为种族设定（RaceData.transformativity），社会维度归文化传统，不做个体级基因座</summary>
 
  /// <summary>一对等位基因（父源 + 母源）</summary>
 
- /// 个体 DNA：7 基因座 + 突变计数 + 近亲系数 /// 仅有名角色存储；人口块不存个体 DNA（属性分布由种族基因频率+统计决定）
+ /// 个体 DNA：7 基因座 + 突变计数 + 近亲系数
+ /// 仅有名角色存储；人口块不存个体 DNA（属性分布由种族基因频率+统计决定）
 
  /// <summary>DNA 表达结果（角色初始属性偏移与先天特征）</summary>
 
- /// 天赋/缺陷定义 /// 数据驱动：定义文件（Dna/DnaDefs.json，Base/Mods 可覆盖）只存键； /// name/description 为内置回退（未加载本地化表时用），显示优先走 GetName/GetDescription
+ /// 天赋/缺陷定义
+ /// 数据驱动：定义文件（Dna/DnaDefs.json，Base/Mods 可覆盖）只存键；
+ /// name/description 为内置回退（未加载本地化表时用），显示优先走 GetName/GetDescription
 
  /// <summary>种族基因座频率（各基因座显性等位基因 A 的频率，0-1）</summary>
 
- /// DNA 系统核心：生成 / 遗传 / 突变 / 近亲 / 表达 /// 全部为一次性计算（角色创建、生育时），不参与每 Tick 运算 /// 变革性为种族设定（RaceData.transformativity），个体 DNA 不设变革性基因座    public static class DnaSystem
+ /// DNA 系统核心：生成 / 遗传 / 突变 / 近亲 / 表达
+ /// 全部为一次性计算（角色创建、生育时），不参与每 Tick 运算
+ /// 变革性为种族设定（RaceData.transformativity），个体 DNA 不设变革性基因座
+    public static class DnaSystem
     {
- // ===== 概率常量 =====        public const float MutationChance = 0.0075f;              // 每基因座每代突变概率（文档 0.5%-1% 取中）
+ // ===== 概率常量 =====
+        public const float MutationChance = 0.0075f;              // 每基因座每代突变概率（文档 0.5%-1% 取中）
         public const float TalentDefectMutationChance = 0.015f;   // 天赋/缺陷基因座突变概率略高
         public const float TalentChanceAA = 0.25f;                // AA 触发特殊天赋概率
         public const float DefectChanceAA = 0.9f;                 // aa 触发遗传病概率（其余 10% 罕见正向突变）
         public const float OffsetRange = 15f;                     // 智慧/勇武/抗性基准 ±15 偏移量级
 
- /// <summary>活跃基因座（变革性为种族设定，不参与个体 DNA）</summary>        public static readonly DnaLocus[] ActiveLoci =
+ /// <summary>活跃基因座（变革性为种族设定，不参与个体 DNA）</summary>
+        public static readonly DnaLocus[] ActiveLoci =
         {
             DnaLocus.Longevity,
             DnaLocus.Intelligence,
@@ -39,7 +52,8 @@ namespace CivilizationEvolution.Race
             DnaLocus.TalentDefect
         };
 
- // ===== 原版预设天赋表（模组可扩展） =====        private static readonly List<TalentDefectDef> _talentDefs = new List<TalentDefectDef>
+ // ===== 原版预设天赋表（模组可扩展） =====
+        private static readonly List<TalentDefectDef> _talentDefs = new List<TalentDefectDef>
         {
             new TalentDefectDef { id = "talent_photographic", name = "过目不忘", isTalent = true, stat = "learning", amount = 5f, description = "记忆超群，见闻过目成诵" },
             new TalentDefectDef { id = "talent_divine_strength", name = "神力", isTalent = true, stat = "martial", amount = 5f, description = "天生神力，万夫莫当" },
@@ -47,7 +61,8 @@ namespace CivilizationEvolution.Race
             new TalentDefectDef { id = "talent_keen_mind", name = "慧心", isTalent = true, stat = "learning", amount = 3f, description = "颖悟绝伦，触类旁通" }
         };
 
- // ===== 原版预设遗传病表（aa 纯合隐性发病） =====        private static readonly List<TalentDefectDef> _defectDefs = new List<TalentDefectDef>
+ // ===== 原版预设遗传病表（aa 纯合隐性发病） =====
+        private static readonly List<TalentDefectDef> _defectDefs = new List<TalentDefectDef>
         {
             new TalentDefectDef { id = "defect_frail", name = "先天体弱", isTalent = false, stat = "lifespan", amount = -15f, description = "胎里带的孱弱，寿元受损" },
             new TalentDefectDef { id = "defect_feeblemind", name = "痴愚", isTalent = false, stat = "learning", amount = -20f, description = "心智蒙昧，难以开化" },
@@ -55,12 +70,14 @@ namespace CivilizationEvolution.Race
             new TalentDefectDef { id = "defect_pale", name = "白化", isTalent = false, stat = "appearance", amount = 0f, description = "肤发无色，畏光避日" }
         };
 
- // ===== 外观标签池（显性/杂合/隐性的特征组合） =====        private static readonly string[] _appearanceAA = { "肤色深邃", "体魄强健", "轮廓鲜明", "目光如炬" };
+ // ===== 外观标签池（显性/杂合/隐性的特征组合） =====
+        private static readonly string[] _appearanceAA = { "肤色深邃", "体魄强健", "轮廓鲜明", "目光如炬" };
         private static readonly string[] _appearanceAa = { "肤色匀称", "体型中等", "轮廓分明", "眉目清朗" };
         private static readonly string[] _appearanceaa = { "肤色浅淡", "身形纤细", "轮廓柔和", "形容清减" };
 
  // ===== 查询 =====
- /// <summary>天赋定义池（注册表优先——模组可扩展；未初始化/未定义时回退内置）</summary>        public static IReadOnlyList<TalentDefectDef> GetTalentDefs()
+ /// <summary>天赋定义池（注册表优先——模组可扩展；未初始化/未定义时回退内置）</summary>
+        public static IReadOnlyList<TalentDefectDef> GetTalentDefs()
         {
             if (ContentRegistry.IsInitialized && ContentRegistry.TalentDefects.Count > 0)
             {
@@ -72,7 +89,8 @@ namespace CivilizationEvolution.Race
             return _talentDefs;
         }
 
- /// <summary>遗传病定义池（注册表优先——模组可扩展；未初始化/未定义时回退内置）</summary>        public static IReadOnlyList<TalentDefectDef> GetDefectDefs()
+ /// <summary>遗传病定义池（注册表优先——模组可扩展；未初始化/未定义时回退内置）</summary>
+        public static IReadOnlyList<TalentDefectDef> GetDefectDefs()
         {
             if (ContentRegistry.IsInitialized && ContentRegistry.TalentDefects.Count > 0)
             {
@@ -84,7 +102,8 @@ namespace CivilizationEvolution.Race
             return _defectDefs;
         }
 
- /// <summary>按 id 查定义（注册表优先，回退内置表）</summary>        public static TalentDefectDef FindDef(string id)
+ /// <summary>按 id 查定义（注册表优先，回退内置表）</summary>
+        public static TalentDefectDef FindDef(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
             if (ContentRegistry.IsInitialized && ContentRegistry.TryGetTalentDefect(id, out var reg))
@@ -94,7 +113,8 @@ namespace CivilizationEvolution.Race
             return null;
         }
 
- // ===== 生成：无父母时按种族基因频率随机 ===== /// <summary>按种族基因频率随机生成个体 DNA（race 为空时各基因座频率取 0.5）</summary>        public static DnaData GenerateRandom(RaceData race)
+ // ===== 生成：无父母时按种族基因频率随机 ===== /// <summary>按种族基因频率随机生成个体 DNA（race 为空时各基因座频率取 0.5）</summary>
+        public static DnaData GenerateRandom(RaceData race)
         {
             var dna = new DnaData();
             foreach (DnaLocus locus in ActiveLoci)
@@ -108,7 +128,13 @@ namespace CivilizationEvolution.Race
             return dna;
         }
 
- // ===== 遗传：孟德尔式 + 突变 + 近亲修正 ===== /// 后代 DNA 遗传： /// 1. 父母每个基因座随机传递一个等位基因 /// 2. 每基因座低概率突变（显隐翻转；天赋/缺陷座概率略高） /// 3. 近亲系数越高，纯合概率越大（隐性遗传病风险上升） /// 父母缺失时按种族基因频率随机补位（混血场景：父方缺失用父种族频率） /// <param name="allowMutation">是否允许突变（测试确定性场景传 false）</param>        public static DnaData Inherit(DnaData father, DnaData mother, RaceData race, float inbreeding, bool allowMutation = true)
+ // ===== 遗传：孟德尔式 + 突变 + 近亲修正 ===== /// 后代 DNA 遗传：
+ /// 1. 父母每个基因座随机传递一个等位基因
+ /// 2. 每基因座低概率突变（显隐翻转；天赋/缺陷座概率略高）
+ /// 3. 近亲系数越高，纯合概率越大（隐性遗传病风险上升）
+ /// 父母缺失时按种族基因频率随机补位（混血场景：父方缺失用父种族频率）
+ /// <param name="allowMutation">是否允许突变（测试确定性场景传 false）</param>
+        public static DnaData Inherit(DnaData father, DnaData mother, RaceData race, float inbreeding, bool allowMutation = true)
         {
             var dna = new DnaData { inbreedingCoefficient = Mathf.Clamp01(inbreeding) };
             foreach (DnaLocus locus in ActiveLoci)
@@ -116,13 +142,15 @@ namespace CivilizationEvolution.Race
                 Allele paternal = father != null ? PickAllele(father.GetLocus(locus)) : RandomAllele(race, locus);
                 Allele maternal = mother != null ? PickAllele(mother.GetLocus(locus)) : RandomAllele(race, locus);
 
- // 近亲修正：以近亲系数概率将一个等位基因复制为另一个（提高纯合度）                if (dna.inbreedingCoefficient > 0f && UnityEngine.Random.value < dna.inbreedingCoefficient)
+ // 近亲修正：以近亲系数概率将一个等位基因复制为另一个（提高纯合度）
+                if (dna.inbreedingCoefficient > 0f && UnityEngine.Random.value < dna.inbreedingCoefficient)
                 {
                     if (UnityEngine.Random.value < 0.5f) paternal = maternal;
                     else maternal = paternal;
                 }
 
- // 突变                if (allowMutation)
+ // 突变
+                if (allowMutation)
                 {
                     float mutationChance = locus == DnaLocus.TalentDefect ? TalentDefectMutationChance : MutationChance;
                     if (UnityEngine.Random.value < mutationChance)
@@ -138,21 +166,30 @@ namespace CivilizationEvolution.Race
             return dna;
         }
 
- // ===== 表达：基因型 → 属性偏移与先天特征 ===== /// <summary>计算 DNA 在种族基准上的表达（角色出生时一次性计算，终身不变）</summary>        public static DnaExpression ComputeExpression(DnaData dna, RaceData race)
+ // ===== 表达：基因型 → 属性偏移与先天特征 ===== /// <summary>计算 DNA 在种族基准上的表达（角色出生时一次性计算，终身不变）</summary>
+        public static DnaExpression ComputeExpression(DnaData dna, RaceData race)
         {
             var expr = new DnaExpression();
             if (dna == null) return expr;
 
- // 寿命：偏移叠加在种族寿命区间上（区间半宽 lifespanRangeYears）            expr.longevityOffsetYears = ComputeOffset(dna, DnaLocus.Longevity, race != null ? race.lifespanRangeYears : 15f);
- // 智慧/勇武/抗性：种族基准 ±15 量级偏移（变革性为种族设定，无个体偏移）            expr.intelligenceOffset = ComputeOffset(dna, DnaLocus.Intelligence, OffsetRange);
+ // 寿命：偏移叠加在种族寿命区间上（区间半宽 lifespanRangeYears）
+            expr.longevityOffsetYears = ComputeOffset(dna, DnaLocus.Longevity, race != null ? race.lifespanRangeYears : 15f);
+ // 智慧/勇武/抗性：种族基准 ±15 量级偏移（变革性为种族设定，无个体偏移）
+            expr.intelligenceOffset = ComputeOffset(dna, DnaLocus.Intelligence, OffsetRange);
             expr.martialOffset = ComputeOffset(dna, DnaLocus.Martial, OffsetRange);
             expr.resistanceOffset = ComputeOffset(dna, DnaLocus.Resistance, OffsetRange);
- // 外观            expr.appearanceTag = ComputeAppearance(dna);
- // 天赋/缺陷            ApplyTalentDefect(dna, ref expr);
+ // 外观
+            expr.appearanceTag = ComputeAppearance(dna);
+ // 天赋/缺陷
+            ApplyTalentDefect(dna, ref expr);
             return expr;
         }
 
- /// 偏移幅度规则： /// AA（纯合显性）= 正向，区间上限的 80%-100% /// Aa（杂合） = 正向，区间上限的 30%-60% /// aa（纯合隐性）= 负向，区间下限的 50%-100%        private static float ComputeOffset(DnaData dna, DnaLocus locus, float range)
+ /// 偏移幅度规则：
+ /// AA（纯合显性）= 正向，区间上限的 80%-100%
+ /// Aa（杂合） = 正向，区间上限的 30%-60%
+ /// aa（纯合隐性）= 负向，区间下限的 50%-100%
+        private static float ComputeOffset(DnaData dna, DnaLocus locus, float range)
         {
             var pair = dna.GetLocus(locus);
             if (pair.IsHomozygousDominant) return range * UnityEngine.Random.Range(0.8f, 1.0f);
@@ -175,23 +212,29 @@ namespace CivilizationEvolution.Race
             var defects = GetDefectDefs();
             if (pair.IsHomozygousDominant)
             {
- // AA：有概率触发特殊天赋                if (UnityEngine.Random.value < TalentChanceAA && talents.Count > 0)
+ // AA：有概率触发特殊天赋
+                if (UnityEngine.Random.value < TalentChanceAA && talents.Count > 0)
                     expr.talentId = talents[UnityEngine.Random.Range(0, talents.Count)].id;
             }
             else if (pair.IsHeterozygous)
             {
- // Aa：隐性携带者，不发病但可遗传                expr.carriesDefect = true;
+ // Aa：隐性携带者，不发病但可遗传
+                expr.carriesDefect = true;
             }
             else
             {
- // aa：纯合隐性发病；极低概率罕见正向突变（触发天赋）                if (defects.Count > 0 && UnityEngine.Random.value < DefectChanceAA)
+ // aa：纯合隐性发病；极低概率罕见正向突变（触发天赋）
+                if (defects.Count > 0 && UnityEngine.Random.value < DefectChanceAA)
                     expr.defectId = defects[UnityEngine.Random.Range(0, defects.Count)].id;
                 else if (talents.Count > 0)
                     expr.talentId = talents[UnityEngine.Random.Range(0, talents.Count)].id;
             }
         }
 
- // ===== 近亲系数 ===== /// 近亲系数（Wright 简化查表，谱系深度 ≤2 代） /// 亲子=0.25 / 全同胞=0.25 / 半同胞=0.125 / 叔侄=0.125 / 堂表=0.0625 / 更远=0.03125 /// 近亲系数越高，隐性基因纯合概率越大，隐性遗传病发病率越高        public static float CalculateInbreeding(CharacterData a, CharacterData b, Dictionary<int, CharacterData> characters)
+ // ===== 近亲系数 ===== /// 近亲系数（Wright 简化查表，谱系深度 ≤2 代）
+ /// 亲子=0.25 / 全同胞=0.25 / 半同胞=0.125 / 叔侄=0.125 / 堂表=0.0625 / 更远=0.03125
+ /// 近亲系数越高，隐性基因纯合概率越大，隐性遗传病发病率越高
+        public static float CalculateInbreeding(CharacterData a, CharacterData b, Dictionary<int, CharacterData> characters)
         {
             if (a == null || b == null || a.characterId == b.characterId) return 0f;
 
@@ -209,7 +252,8 @@ namespace CivilizationEvolution.Race
                 if (total <= 1) f = 0.25f;                    // 亲子（0,1）
                 else if (total == 2)
                 {
- // 同胞：全同胞（同一对父母）0.25，半同胞（仅共享一个父母）0.125                    bool fullSibling = dA == 1 && dB == 1 && HasSameParents(a, b);
+ // 同胞：全同胞（同一对父母）0.25，半同胞（仅共享一个父母）0.125
+                    bool fullSibling = dA == 1 && dB == 1 && HasSameParents(a, b);
                     f = fullSibling ? 0.25f : 0.125f;
                 }
                 else if (total == 3) f = 0.125f;              // 叔侄/姑侄
@@ -221,7 +265,8 @@ namespace CivilizationEvolution.Race
             return best;
         }
 
- /// <summary>收集角色祖先链（自身深度0，父母深度1，祖父母深度2）</summary>        private static Dictionary<int, int> GetAncestry(CharacterData c, Dictionary<int, CharacterData> characters)
+ /// <summary>收集角色祖先链（自身深度0，父母深度1，祖父母深度2）</summary>
+        private static Dictionary<int, int> GetAncestry(CharacterData c, Dictionary<int, CharacterData> characters)
         {
             var result = new Dictionary<int, int>();
             CollectAncestors(c, characters, 0, result);
@@ -247,7 +292,8 @@ namespace CivilizationEvolution.Race
                 && a.motherId >= 0 && a.motherId == b.motherId;
         }
 
- // ===== 辅助 =====        private static Allele PickAllele(LocusPair pair)
+ // ===== 辅助 =====
+        private static Allele PickAllele(LocusPair pair)
         {
             return UnityEngine.Random.value < 0.5f ? pair.paternal : pair.maternal;
         }

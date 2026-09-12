@@ -11,7 +11,8 @@ namespace CivilizationEvolution.Core
     {
         public int realmId;
         public string realmName;
- /// <summary>政体七维成分组合（整体序列化；GovernmentComposition 及其成员类全部 [Serializable]，无 Dictionary）</summary>        public GovernmentComposition composition = new GovernmentComposition();
+ /// <summary>政体七维成分组合（整体序列化；GovernmentComposition 及其成员类全部 [Serializable]，无 Dictionary）</summary>
+        public GovernmentComposition composition = new GovernmentComposition();
         public float treasury;
         public float prestige;
         public float stability;
@@ -52,7 +53,8 @@ namespace CivilizationEvolution.Core
 
         public RealmData ToRealmData()
         {
- // 构造函数会初始化 classRelations 默认值与 taxSystem/currencySystem，随后整体覆盖            var r = new RealmData
+ // 构造函数会初始化 classRelations 默认值与 taxSystem/currencySystem，随后整体覆盖
+            var r = new RealmData
             {
                 realmId = realmId,
                 realmName = realmName,

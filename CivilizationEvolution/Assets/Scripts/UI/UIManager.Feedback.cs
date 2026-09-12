@@ -12,10 +12,12 @@ using CivilizationEvolution.Politics;
 
 namespace CivilizationEvolution.UI
 {
- /// UIManager.Feedback —— 用户反馈（事件日志/Toast通知/确认对话框）（partial class，与 UIManager.cs 共享字段与组件引用）    public partial class UIManager : MonoBehaviour
+ /// UIManager.Feedback —— 用户反馈（事件日志/Toast通知/确认对话框）（partial class，与 UIManager.cs 共享字段与组件引用）
+    public partial class UIManager : MonoBehaviour
     {
 
- /// <summary>添加事件日志（按类型着色）</summary>        public void AddEventLog(string message, EventLogKind kind = EventLogKind.Info)
+ /// <summary>添加事件日志（按类型着色）</summary>
+        public void AddEventLog(string message, EventLogKind kind = EventLogKind.Info)
         {
             string timestamp = world != null ? $"[{world.currentYear}年{world.currentDay}天] " : "";
             Color color = kind switch
@@ -41,7 +43,8 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>显示顶部 Toast 提示（支持排队，自动渐隐）</summary>        public void ShowToast(string message, float duration = 3f)
+ /// <summary>显示顶部 Toast 提示（支持排队，自动渐隐）</summary>
+        public void ShowToast(string message, float duration = 3f)
         {
             if (string.IsNullOrEmpty(message)) return;
             _toastQueue.Enqueue(message);
@@ -115,9 +118,11 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>显示确认对话框（简化：记录日志）</summary>        public void ShowConfirmation(string title, string message, Action onConfirm, Action onCancel = null)
+ /// <summary>显示确认对话框（简化：记录日志）</summary>
+        public void ShowConfirmation(string title, string message, Action onConfirm, Action onCancel = null)
         {
- // 简化：直接确认            AddEventLog($"{title}: {message}", EventLogKind.Warning);
+ // 简化：直接确认
+            AddEventLog($"{title}: {message}", EventLogKind.Warning);
             onConfirm?.Invoke();
         }
 

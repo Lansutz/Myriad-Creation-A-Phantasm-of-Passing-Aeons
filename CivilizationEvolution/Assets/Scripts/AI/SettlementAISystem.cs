@@ -6,21 +6,29 @@ using CivilizationEvolution.Building;
 
 namespace CivilizationEvolution.AI
 {
- /// 聚落AI建造决策系统 /// 负责AI政权的聚落建造决策：民用聚落自然生长、关口堡战略投资、4种区域堡寨、港口渡口附属设施 /// 综合：文档（AI建造逻辑）+ 文明引擎IN模块（关隘瓶颈/要塞体系/城镇功能）    public static class SettlementAISystem
+ /// 聚落AI建造决策系统
+ /// 负责AI政权的聚落建造决策：民用聚落自然生长、关口堡战略投资、4种区域堡寨、港口渡口附属设施
+ /// 综合：文档（AI建造逻辑）+ 文明引擎IN模块（关隘瓶颈/要塞体系/城镇功能）
+    public static class SettlementAISystem
     {
  // ===== 地区城镇容量硬上限 =====
- /// <summary>每地区最大聚落数（按地区面积和承载力计算）</summary>        public const int BaseSettlementCapacityPerRegion = 8;
+ /// <summary>每地区最大聚落数（按地区面积和承载力计算）</summary>
+        public const int BaseSettlementCapacityPerRegion = 8;
 
- /// <summary>每万人口最大聚落数</summary>        public const float SettlementPer10kPopulation = 0.5f;
+ /// <summary>每万人口最大聚落数</summary>
+        public const float SettlementPer10kPopulation = 0.5f;
 
- /// 建筑可用性前置检查（地形/水文/群系限制） /// 不符合条件的建筑AI不会建造，UI也不会显示        private static bool CheckBuildingAvailability(BuildableType type, TileData tile,
+ /// 建筑可用性前置检查（地形/水文/群系限制）
+ /// 不符合条件的建筑AI不会建造，UI也不会显示
+        private static bool CheckBuildingAvailability(BuildableType type, TileData tile,
             BurgData existingBurg = null, int techLevel = 0)
         {
             var result = BuildingAvailabilitySystem.CheckAvailability(type, tile, existingBurg, techLevel);
             return result.available;
         }
 
- /// 计算地区城镇容量硬上限        public static int CalculateRegionCapacity(int regionTileCount, float regionPopulation, float foodSurplus)
+ /// 计算地区城镇容量硬上限
+        public static int CalculateRegionCapacity(int regionTileCount, float regionPopulation, float foodSurplus)
         {
             int byArea = Mathf.CeilToInt(regionTileCount / 500f * BaseSettlementCapacityPerRegion);
             int byPopulation = Mathf.CeilToInt(regionPopulation / 10000f * SettlementPer10kPopulation);
@@ -30,40 +38,50 @@ namespace CivilizationEvolution.AI
         }
 
  // ===== 民用聚落（村镇→城）AI建造 =====
- /// AI决策：是否新建民用聚落（村镇） /// 触发条件：地块肥力高、商路流量大、人口压力大、区域粮食承载力充足        public static AIBuildDecision ShouldBuildVillage(TileData tile, float regionPopulationPressure,
+ /// AI决策：是否新建民用聚落（村镇）
+ /// 触发条件：地块肥力高、商路流量大、人口压力大、区域粮食承载力充足
+        public static AIBuildDecision ShouldBuildVillage(TileData tile, float regionPopulationPressure,
             float tradeRouteFlow, float foodCapacity, int currentSettlementCount, int regionCapacity)
         {
             var decision = new AIBuildDecision { shouldBuild = false, priority = 0f, reason = "" };
 
- // 容量硬上限            if (currentSettlementCount >= regionCapacity)
+ // 容量硬上限
+            if (currentSettlementCount >= regionCapacity)
             {
                 decision.reason = "地区城镇容量已满";
                 return decision;
             }
 
- // 必须是陆地且非山地            if (!tile.isLand || tile.elevation01 > 0.7f)
+ // 必须是陆地且非山地
+            if (!tile.isLand || tile.elevation01 > 0.7f)
             {
                 decision.reason = "地形不适宜建村";
                 return decision;
             }
 
- // 地块肥力评分（降水+温度+地形）            float fertilityScore = CalculateFertilityScore(tile);
+ // 地块肥力评分（降水+温度+地形）
+            float fertilityScore = CalculateFertilityScore(tile);
             if (fertilityScore < 0.3f)
             {
                 decision.reason = "地块肥力不足";
                 return decision;
             }
 
- // 人口压力评分            float pressureScore = Mathf.Clamp01(regionPopulationPressure / 100f);
+ // 人口压力评分
+            float pressureScore = Mathf.Clamp01(regionPopulationPressure / 100f);
 
- // 商路流量评分            float tradeScore = Mathf.Clamp01(tradeRouteFlow / 100f);
+ // 商路流量评分
+            float tradeScore = Mathf.Clamp01(tradeRouteFlow / 100f);
 
- // 粮食承载力评分            float foodScore = Mathf.Clamp01(foodCapacity / 100f);
+ // 粮食承载力评分
+            float foodScore = Mathf.Clamp01(foodCapacity / 100f);
 
- // 综合优先级            decision.priority = fertilityScore * 0.4f + pressureScore * 0.25f +
+ // 综合优先级
+            decision.priority = fertilityScore * 0.4f + pressureScore * 0.25f +
                                 tradeScore * 0.2f + foodScore * 0.15f;
 
- // 决策阈值            if (decision.priority > 0.5f)
+ // 决策阈值
+            if (decision.priority > 0.5f)
             {
                 decision.shouldBuild = true;
                 decision.reason = $"肥力{fertilityScore:0.00} 人口压力{pressureScore:0.00} 商路{tradeScore:0.00}";
@@ -72,9 +90,11 @@ namespace CivilizationEvolution.AI
             return decision;
         }
 
- /// <summary>计算地块肥力评分</summary>        public static float CalculateFertilityScore(TileData tile)
+ /// <summary>计算地块肥力评分</summary>
+        public static float CalculateFertilityScore(TileData tile)
         {
- // 降水评分（300-1500mm最佳）            float precipScore = tile.annualPrecipMm switch
+ // 降水评分（300-1500mm最佳）
+            float precipScore = tile.annualPrecipMm switch
             {
                 < 200f => 0.1f,
                 < 400f => 0.4f,
@@ -84,9 +104,11 @@ namespace CivilizationEvolution.AI
                 _ => 0.5f
             };
 
- // 温度评分（10-25°C最佳）            float tempScore = Mathf.Clamp01(1f - Mathf.Abs(tile.annualTemp - 18f) / 20f);
+ // 温度评分（10-25°C最佳）
+            float tempScore = Mathf.Clamp01(1f - Mathf.Abs(tile.annualTemp - 18f) / 20f);
 
- // 地形评分（平原最佳，山地最差）            float terrainScore = tile.elevation01 switch
+ // 地形评分（平原最佳，山地最差）
+            float terrainScore = tile.elevation01 switch
             {
                 < 0.3f => 1.0f,
                 < 0.5f => 0.8f,
@@ -95,40 +117,48 @@ namespace CivilizationEvolution.AI
                 _ => 0.05f
             };
 
- // 河流加成            float riverBonus = tile.isRiver ? 0.15f : 0f;
+ // 河流加成
+            float riverBonus = tile.isRiver ? 0.15f : 0f;
 
- // 海岸加成（渔业）            float coastBonus = tile.isCoast ? 0.1f : 0f;
+ // 海岸加成（渔业）
+            float coastBonus = tile.isCoast ? 0.1f : 0f;
 
             return Mathf.Clamp01(precipScore * 0.4f + tempScore * 0.25f +
                                   terrainScore * 0.25f + riverBonus + coastBonus);
         }
 
  // ===== 关口堡（Pass）AI建造 =====
- /// AI决策：是否修建关口堡 /// 触发条件：地形瓶颈+商路必经+敌方压力        public static AIBuildDecision ShouldBuildPassFort(TileData tile, BottleneckType bottleneck,
+ /// AI决策：是否修建关口堡
+ /// 触发条件：地形瓶颈+商路必经+敌方压力
+        public static AIBuildDecision ShouldBuildPassFort(TileData tile, BottleneckType bottleneck,
             float tradeRouteImportance, float enemyPressure, bool hasEnemyOnOtherSide,
             int currentFortCount, int maxForts)
         {
             var decision = new AIBuildDecision { shouldBuild = false, priority = 0f, reason = "" };
 
- // 建筑可用性前置检查（地形/水文/群系限制）            if (!CheckBuildingAvailability(BuildableType.PassFort, tile))
+ // 建筑可用性前置检查（地形/水文/群系限制）
+            if (!CheckBuildingAvailability(BuildableType.PassFort, tile))
             {
                 decision.reason = "地形条件不满足关口堡修建要求";
                 return decision;
             }
 
- // 必须是瓶颈节点            if (bottleneck == BottleneckType.None)
+ // 必须是瓶颈节点
+            if (bottleneck == BottleneckType.None)
             {
                 decision.reason = "非瓶颈节点";
                 return decision;
             }
 
- // 堡垒数量上限            if (currentFortCount >= maxForts)
+ // 堡垒数量上限
+            if (currentFortCount >= maxForts)
             {
                 decision.reason = "堡垒数量已达上限";
                 return decision;
             }
 
- // 瓶颈战略价值评分            float bottleneckScore = bottleneck switch
+ // 瓶颈战略价值评分
+            float bottleneckScore = bottleneck switch
             {
                 BottleneckType.StraitCrossing => 0.9f,
                 BottleneckType.MountainPass => 0.85f,
@@ -139,11 +169,14 @@ namespace CivilizationEvolution.AI
                 _ => 0.3f
             };
 
- // 商路重要性            float tradeScore = Mathf.Clamp01(tradeRouteImportance / 100f);
+ // 商路重要性
+            float tradeScore = Mathf.Clamp01(tradeRouteImportance / 100f);
 
- // 敌方压力            float enemyScore = hasEnemyOnOtherSide ? Mathf.Clamp01(enemyPressure / 100f) : 0.1f;
+ // 敌方压力
+            float enemyScore = hasEnemyOnOtherSide ? Mathf.Clamp01(enemyPressure / 100f) : 0.1f;
 
- // 综合优先级            decision.priority = bottleneckScore * 0.5f + tradeScore * 0.25f + enemyScore * 0.25f;
+ // 综合优先级
+            decision.priority = bottleneckScore * 0.5f + tradeScore * 0.25f + enemyScore * 0.25f;
 
             if (decision.priority > 0.55f)
             {
@@ -156,14 +189,17 @@ namespace CivilizationEvolution.AI
         }
 
  // ===== 4种区域堡寨AI建造 =====
- /// AI决策：是否修建高地堡（HighlandKeep） /// 触发：边境或易遭袭扰的丘陵高地；构建区域压制网        public static AIBuildDecision ShouldBuildHighlandKeep(TileData tile, bool isBorderRegion,
+ /// AI决策：是否修建高地堡（HighlandKeep）
+ /// 触发：边境或易遭袭扰的丘陵高地；构建区域压制网
+        public static AIBuildDecision ShouldBuildHighlandKeep(TileData tile, bool isBorderRegion,
             float raidRisk, float existingFortCoverage, int currentFortCount, int maxForts)
         {
             var decision = new AIBuildDecision { shouldBuild = false, priority = 0f, reason = "" };
 
             if (currentFortCount >= maxForts) { decision.reason = "堡垒上限"; return decision; }
 
- // 必须是丘陵高地            if (tile.elevation01 < 0.5f || tile.elevation01 > 0.8f)
+ // 必须是丘陵高地
+            if (tile.elevation01 < 0.5f || tile.elevation01 > 0.8f)
             {
                 decision.reason = "非丘陵高地";
                 return decision;
@@ -187,14 +223,17 @@ namespace CivilizationEvolution.AI
             return decision;
         }
 
- /// AI决策：是否修建坞堡庄园（ManorFort） /// 触发：内地农耕区域，人口扩散，地方庄园势力兴起        public static AIBuildDecision ShouldBuildManorFort(TileData tile, float regionPopulation,
+ /// AI决策：是否修建坞堡庄园（ManorFort）
+ /// 触发：内地农耕区域，人口扩散，地方庄园势力兴起
+        public static AIBuildDecision ShouldBuildManorFort(TileData tile, float regionPopulation,
             float localPower, float centralControl, int currentManorCount, int maxManors)
         {
             var decision = new AIBuildDecision { shouldBuild = false, priority = 0f, reason = "" };
 
             if (currentManorCount >= maxManors) { decision.reason = "坞堡上限"; return decision; }
 
- // 必须是肥沃农耕区            float fertility = CalculateFertilityScore(tile);
+ // 必须是肥沃农耕区
+            float fertility = CalculateFertilityScore(tile);
             if (fertility < 0.5f) { decision.reason = "非农耕区"; return decision; }
 
             float popScore = Mathf.Clamp01(regionPopulation / 50000f);
@@ -214,14 +253,17 @@ namespace CivilizationEvolution.AI
             return decision;
         }
 
- /// AI决策：是否修建平原屯堡（PlainGarrison） /// 触发：开阔平原边境，无天然山地隘口，沿边境线构筑防御带        public static AIBuildDecision ShouldBuildPlainGarrison(TileData tile, bool isBorder,
+ /// AI决策：是否修建平原屯堡（PlainGarrison）
+ /// 触发：开阔平原边境，无天然山地隘口，沿边境线构筑防御带
+        public static AIBuildDecision ShouldBuildPlainGarrison(TileData tile, bool isBorder,
             float enemyThreat, float terrainOpenness, int currentGarrisonCount, int maxGarrisons)
         {
             var decision = new AIBuildDecision { shouldBuild = false, priority = 0f, reason = "" };
 
             if (currentGarrisonCount >= maxGarrisons) { decision.reason = "屯堡上限"; return decision; }
 
- // 必须是开阔平原            if (tile.elevation01 > 0.4f || tile.slopeDegree > 5f)
+ // 必须是开阔平原
+            if (tile.elevation01 > 0.4f || tile.slopeDegree > 5f)
             {
                 decision.reason = "非开阔平原";
                 return decision;
@@ -243,14 +285,17 @@ namespace CivilizationEvolution.AI
             return decision;
         }
 
- /// AI决策：是否修建河口堡（EstuaryFort） /// 触发：大河河口、干流要道，管控内河与近海航线        public static AIBuildDecision ShouldBuildEstuaryFort(TileData tile, bool isRiverMouth,
+ /// AI决策：是否修建河口堡（EstuaryFort）
+ /// 触发：大河河口、干流要道，管控内河与近海航线
+        public static AIBuildDecision ShouldBuildEstuaryFort(TileData tile, bool isRiverMouth,
             float navalThreat, float tradeValue, int currentEstuaryCount, int maxEstuaries)
         {
             var decision = new AIBuildDecision { shouldBuild = false, priority = 0f, reason = "" };
 
             if (currentEstuaryCount >= maxEstuaries) { decision.reason = "河口堡上限"; return decision; }
 
- // 必须是河口（河流+海岸）            if (!isRiverMouth || !tile.isCoast || !tile.isRiver)
+ // 必须是河口（河流+海岸）
+            if (!isRiverMouth || !tile.isCoast || !tile.isRiver)
             {
                 decision.reason = "非河口位置";
                 return decision;
@@ -275,18 +320,21 @@ namespace CivilizationEvolution.AI
         }
 
  // ===== 港口/渡口（附属设施）AI建造 =====
- /// AI决策：是否在已有聚落升级港口        public static AIBuildDecision ShouldUpgradePort(BurgData burg, float tradeDemand,
+ /// AI决策：是否在已有聚落升级港口
+        public static AIBuildDecision ShouldUpgradePort(BurgData burg, float tradeDemand,
             float navalNeed, PortTier currentTier)
         {
             var decision = new AIBuildDecision { shouldBuild = false, priority = 0f, reason = "" };
 
- // 必须沿海或沿河            if (!burg.isCoastal && !burg.isPort)
+ // 必须沿海或沿河
+            if (!burg.isCoastal && !burg.isPort)
             {
                 decision.reason = "非沿海/沿河聚落";
                 return decision;
             }
 
- // 已达最高级            if (currentTier >= PortTier.ImperialPort)
+ // 已达最高级
+            if (currentTier >= PortTier.ImperialPort)
             {
                 decision.reason = "已达最高港口等级";
                 return decision;
@@ -307,14 +355,16 @@ namespace CivilizationEvolution.AI
             return decision;
         }
 
- /// AI决策：是否在空白地块修建简易码头/渡口        public static AIBuildDecision ShouldBuildFerry(TileData tile, float crossingDemand,
+ /// AI决策：是否在空白地块修建简易码头/渡口
+        public static AIBuildDecision ShouldBuildFerry(TileData tile, float crossingDemand,
             bool hasSettlementNearby, int currentFerryCount, int maxFerries)
         {
             var decision = new AIBuildDecision { shouldBuild = false, priority = 0f, reason = "" };
 
             if (currentFerryCount >= maxFerries) { decision.reason = "渡口中限"; return decision; }
 
- // 必须是河流或海岸            if (!tile.isRiver && !tile.isCoast)
+ // 必须是河流或海岸
+            if (!tile.isRiver && !tile.isCoast)
             {
                 decision.reason = "非水域边缘";
                 return decision;

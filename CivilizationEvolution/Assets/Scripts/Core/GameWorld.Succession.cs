@@ -18,10 +18,13 @@ using CivilizationEvolution.AI;
 
 namespace CivilizationEvolution.Core
 {
- /// GameWorld.Succession —— 继位扶正与战争成就（统治者死亡→继承人→争议判定→政体变迁注入）（partial class，与 GameWorld.cs 共享字段与子系统）    public partial class GameWorld
+ /// GameWorld.Succession —— 继位扶正与战争成就（统治者死亡→继承人→争议判定→政体变迁注入）（partial class，与 GameWorld.cs 共享字段与子系统）
+    public partial class GameWorld
     {
 
- /// 战争结束 → 政体变迁关键节点注入：按战败方领土被占比例区分普通战败与外部征服。 /// 事件烈度仍需盖过"基础阈值+制度黏性"才真正开窗——低张力战败会被现制度吸收。        private void NotifyWarDefeat(WarState war, int day)
+ /// 战争结束 → 政体变迁关键节点注入：按战败方领土被占比例区分普通战败与外部征服。
+ /// 事件烈度仍需盖过"基础阈值+制度黏性"才真正开窗——低张力战败会被现制度吸收。
+        private void NotifyWarDefeat(WarState war, int day)
         {
             if (_regimeDynamics == null) return;
             int winner = war.winnerId;
@@ -45,7 +48,10 @@ namespace CivilizationEvolution.Core
         }
 
 
- /// 统治者更替 → 政体变迁关键节点注入（供未来继位系统 / 宫廷事件调用）。 /// disputed=继位争议（绝嗣/幼主/僭夺）→继承危机；平稳继位但新君能力卓绝且大胆→强势改革者窗口； /// 平庸且无争议的平稳继位不打开窗口（制度平稳延续）。        public void NotifyRulerTransition(int realmId, int newRulerCharId, bool disputed, int day = -1)
+ /// 统治者更替 → 政体变迁关键节点注入（供未来继位系统 / 宫廷事件调用）。
+ /// disputed=继位争议（绝嗣/幼主/僭夺）→继承危机；平稳继位但新君能力卓绝且大胆→强势改革者窗口；
+ /// 平庸且无争议的平稳继位不打开窗口（制度平稳延续）。
+        public void NotifyRulerTransition(int realmId, int newRulerCharId, bool disputed, int day = -1)
         {
             if (_regimeDynamics == null || !realms.ContainsKey(realmId)) return;
             int d = day >= 0 ? day : currentDay;
@@ -66,24 +72,28 @@ namespace CivilizationEvolution.Core
         }
 
 
- /// <summary>每日继位检查：统治者死亡 → 扶正/争议 → 编年史 + 政体变迁注入</summary>        private void CheckRulerSuccessions()
+ /// <summary>每日继位检查：统治者死亡 → 扶正/争议 → 编年史 + 政体变迁注入</summary>
+        private void CheckRulerSuccessions()
         {
             foreach (var realm in realms.Values)
             {
                 var result = SuccessionSystem.ExecuteSuccession(realm, _characterManager, currentDay);
                 if (!result.triggered) continue;
 
- // 死亡统治者一生评估（绰号+谥号+评价——行为计数器数据源）                if (result.deadRulerId >= 0)
+ // 死亡统治者一生评估（绰号+谥号+评价——行为计数器数据源）
+                if (result.deadRulerId >= 0)
                     EvaluateDeadRulerLife(result.deadRulerId, realm);
 
- // 新君即位记录（即位日/幼主标记——年轻者绰号数据）                if (result.succeeded && result.newRulerId >= 0)
+ // 新君即位记录（即位日/幼主标记——年轻者绰号数据）
+                if (result.succeeded && result.newRulerId >= 0)
                 {
                     var nr = _characterManager?.GetCharacter(result.newRulerId);
                     if (nr != null && nr.accessionDay < 0)
                     {
                         nr.accessionDay = currentDay;
                         if (nr.age < 16) nr.achievements.youngAccession = true;
- // 摄政架空标记（幼主+争议或稳定度低——简化：争议=权臣摄政）                        if (result.disputed) nr.achievements.ruledUnderRegency = true;
+ // 摄政架空标记（幼主+争议或稳定度低——简化：争议=权臣摄政）
+                        if (result.disputed) nr.achievements.ruledUnderRegency = true;
                     }
                 }
 
@@ -105,7 +115,8 @@ namespace CivilizationEvolution.Core
         }
 
 
- /// <summary>战争胜利/失败计数器（统治者 achievements）</summary>        private void AddWarAchievement(int realmId, bool won)
+ /// <summary>战争胜利/失败计数器（统治者 achievements）</summary>
+        private void AddWarAchievement(int realmId, bool won)
         {
             var ruler = GetRealmRuler(realmId);
             if (ruler == null) return;
@@ -114,7 +125,8 @@ namespace CivilizationEvolution.Core
         }
 
 
- /// <summary>防御大捷计数器（卫国——铁锤判定）</summary>        private void AddDefensiveWin(int realmId)
+ /// <summary>防御大捷计数器（卫国——铁锤判定）</summary>
+        private void AddDefensiveWin(int realmId)
         {
             var ruler = GetRealmRuler(realmId);
             if (ruler != null) ruler.achievements.defensiveWins++;
@@ -131,18 +143,23 @@ namespace CivilizationEvolution.Core
         }
 
 
- /// 死亡统治者一生评估（行为计数器→评价/绰号/谥号）： /// reignYears 由即位日算——regionalInfluence 由领土规模近似—— /// 授予绰号+谥号+编年史        private void EvaluateDeadRulerLife(int charId, RealmData realm)
+ /// 死亡统治者一生评估（行为计数器→评价/绰号/谥号）：
+ /// reignYears 由即位日算——regionalInfluence 由领土规模近似——
+ /// 授予绰号+谥号+编年史
+        private void EvaluateDeadRulerLife(int charId, RealmData realm)
         {
             var c = _characterManager?.GetCharacter(charId);
             if (c == null || c.epithetEvaluated) return;
             c.epithetEvaluated = true;
 
- // 在位年数（即位日-死亡日）            if (c.accessionDay >= 0 && c.deathDay >= 0)
+ // 在位年数（即位日-死亡日）
+            if (c.accessionDay >= 0 && c.deathDay >= 0)
             {
                 int days = c.deathDay - c.accessionDay + (c.deathYear - c.birthYear) * 365;
                 c.achievements.reignYears = Mathf.Max(0f, days / 365f);
             }
- // 区域影响力近似（死亡时政权领土占全图比例×2 clamp——区域前列≈0.6+）            float landShare = realm != null ? GetRealmLandShare(realm.realmId) : 0f;
+ // 区域影响力近似（死亡时政权领土占全图比例×2 clamp——区域前列≈0.6+）
+            float landShare = realm != null ? GetRealmLandShare(realm.realmId) : 0f;
             c.achievements.regionalInfluence = Mathf.Clamp01(landShare * 3f);
 
             string epithet = EpithetSystem.EvaluateAndGrant(c, c.achievements);
@@ -159,7 +176,8 @@ namespace CivilizationEvolution.Core
         }
 
 
- /// <summary>政权陆地占比（0-1——领土数/总陆地块——区域影响力近似源）</summary>        private float GetRealmLandShare(int realmId)
+ /// <summary>政权陆地占比（0-1——领土数/总陆地块——区域影响力近似源）</summary>
+        private float GetRealmLandShare(int realmId)
         {
             int owned = 0, total = 0;
             foreach (var t in tiles)

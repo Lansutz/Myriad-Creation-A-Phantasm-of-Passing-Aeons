@@ -132,7 +132,7 @@ namespace CivilizationEvolution.World
                 if (!tile.exists || !tile.isLand) continue;
                 if (tile.biome != GameEnums.BiomeType.Savanna &&
                     tile.biome != GameEnums.BiomeType.TemperateGrassland &&
-                    tile.biome != GameEnums.BiomeType.Steppe) continue;
+                    tile.biome != GameEnums.BiomeType.TemperateGrassland) continue;
 
                 var actor = CreateActor(MapActorType.Nomad, idx, Random.Range(100, 1000));
                 actor.actorName = "游牧部落#" + actor.actorId;
@@ -172,7 +172,7 @@ namespace CivilizationEvolution.World
                 if (!tile.exists || !tile.isLand) continue;
                 if (tile.biome != GameEnums.BiomeType.DeciduousForest &&
                     tile.biome != GameEnums.BiomeType.EvergreenForest &&
-                    tile.biome != GameEnums.BiomeType.Rainforest &&
+                    tile.biome != GameEnums.BiomeType.TropicalRainforest &&
                     tile.elevation01 < 0.5f) continue;
 
                 var actor = CreateActor(MapActorType.WildBeast, idx, Random.Range(5, 50));

@@ -2,6 +2,8 @@
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Politics;
 using CivilizationEvolution.World;
+using CivilizationEvolution.Economy;
+using CivilizationEvolution.Map;
 using UnityEngine;
 
 namespace CivilizationEvolution.Culture
@@ -271,6 +273,73 @@ namespace CivilizationEvolution.Culture
             // 实际ID由Innovations.json定义，这里做范围检查
             foreach (int id in owned)
                 if (id >= 910 && id <= 930) return true;
+            return false;
+        }
+
+        // ===== 主循环月度驱动（自动计算分层/专业化，评估每个政权主体文化的阶段）=====
+
+        /// <summary>月度文化阶段评估（GameWorld 每30天调用一次）。</summary>
+        public static void MonthlyTick(GameWorld world)
+        {
+            if (world?.realms == null || world.cultures == null) return;
+            var tree = world.GetInnovationTree();
+
+            // 同一文化可能被多个政权共享，取发展程度最高者（文化=知识/社会复杂度，取最高水位）
+            var cultureBestProgress = new Dictionary<int, StageEvolutionResult>();
+
+            foreach (var kvp in world.realms)
+            {
+                var realm = kvp.Value;
+                int cultureId = realm.primaryCultureId;
+                if (cultureId < 0 || !world.cultures.TryGetValue(cultureId, out var culture)) continue;
+                if (culture.stage >= GameEnums.CultureStage.HighCivilization) continue;
+
+                // 自动计算社会分层与专业化（制度潜力+实际人口）
+                var strat = SocialStratificationCalculator.Calculate(world, realm.realmId, culture, tree);
+                int population = Mathf.RoundToInt(strat.totalPopulation);
+                HashSet<int> owned = tree != null ? tree.GetRealmInnovations(realm.realmId) : new HashSet<int>();
+                bool hasUrbanCenter = HasUrbanCenter(world, realm);
+
+                var result = EvaluateEvolution(
+                    culture.stage, population, owned,
+                    strat.socialStratification, strat.specialization, hasUrbanCenter);
+
+                // 保留进度最高的评估结果
+                if (!cultureBestProgress.TryGetValue(cultureId, out var prev) || result.progress > prev.progress)
+                    cultureBestProgress[cultureId] = result;
+
+                // 条件满足 → 升级文化阶段
+                if (result.canEvolve)
+                {
+                    var oldStage = culture.stage;
+                    culture.stage = result.targetStage;
+                    world.cultures[cultureId] = culture;
+                    Debug.Log($"[StageEvolution] 文化「{culture.cultureName}」{oldStage}→{culture.stage}" +
+                              $"（分层={strat.socialStratification:F2} 专业化={strat.specialization:F2} 人口={population}）");
+                }
+            }
+        }
+
+        /// <summary>是否具备城市中心：城国需城邑级以上聚落；行国需固定冬夏营地体系。</summary>
+        private static bool HasUrbanCenter(GameWorld world, RealmData realm)
+        {
+            if (realm.realmForm == RealmForm.Nomadic)
+            {
+                return realm.nomadicRange != null
+                    && realm.nomadicRange.winterCampTile >= 0
+                    && realm.nomadicRange.summerCampTile >= 0;
+            }
+
+            if (world.burgs == null) return false;
+            foreach (var burg in world.burgs.Values)
+            {
+                if (burg.IsRuined) continue;
+                if (world.tiles[burg.tileIndex].ownerRealmId != realm.realmId) continue;
+                // 城邑（LevelIII）及以上视为城市中心
+                if (burg.settlementType == SettlementType.City
+                    && burg.settlementLevel >= SettlementLevel.LevelIII)
+                    return true;
+            }
             return false;
         }
     }

@@ -93,7 +93,7 @@ namespace CivilizationEvolution.World
                 if (!tile.exists || !tile.isLand) continue;
                 if (tile.biome == GameEnums.BiomeType.Savanna ||
                     tile.biome == GameEnums.BiomeType.TemperateGrassland ||
-                    tile.biome == GameEnums.BiomeType.Steppe ||
+                    tile.biome == GameEnums.BiomeType.TemperateGrassland ||
                     tile.fertility > 30f)
                 {
                     actor.SetTarget(idx);

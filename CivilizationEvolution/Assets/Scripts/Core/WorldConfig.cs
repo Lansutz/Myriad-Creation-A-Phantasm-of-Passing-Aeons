@@ -2,7 +2,12 @@
 
 namespace CivilizationEvolution.Core
 {
- /// 世界配置（ScriptableObject 资产） /// 在 Project 窗口右键 Create/Civilization Evolution/World Config 创建配置预设， /// 可保存多套海陆/气候参数（如盘古大陆、群岛世界），挂到 GameWorld.config 上使用。 /// 运行时 GameWorld 会 Instantiate 一份副本，修改不会污染资产。 /// 注意：ScriptableObject 必须定义在与类名同名的文件中，否则 .asset 无法绑定脚本。    [CreateAssetMenu(fileName = "WorldConfig", menuName = "Civilization Evolution/World Config", order = 0)]
+ /// 世界配置（ScriptableObject 资产）
+ /// 在 Project 窗口右键 Create/Civilization Evolution/World Config 创建配置预设，
+ /// 可保存多套海陆/气候参数（如盘古大陆、群岛世界），挂到 GameWorld.config 上使用。
+ /// 运行时 GameWorld 会 Instantiate 一份副本，修改不会污染资产。
+ /// 注意：ScriptableObject 必须定义在与类名同名的文件中，否则 .asset 无法绑定脚本。
+    [CreateAssetMenu(fileName = "WorldConfig", menuName = "Civilization Evolution/World Config", order = 0)]
     public class WorldConfig : ScriptableObject
     {
         [Header("地图形状")]
@@ -43,7 +48,8 @@ namespace CivilizationEvolution.Core
         [Tooltip("温室效应增温（摄氏度）")] public float greenhouseFactor = 33f;
         [Tooltip("气温垂直递减率（摄氏度/千米）")] public float lapseRate = 6.5f;
 
- /// <summary>创建一份带默认值的运行时实例（不依赖资产文件）</summary>        public static WorldConfig CreateRuntimeInstance()
+ /// <summary>创建一份带默认值的运行时实例（不依赖资产文件）</summary>
+        public static WorldConfig CreateRuntimeInstance()
         {
             var cfg = CreateInstance<WorldConfig>();
             cfg.name = "RuntimeWorldConfig";

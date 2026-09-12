@@ -8,14 +8,18 @@ namespace CivilizationEvolution.Politics
 
  /// <summary>官职称号条目（文化定制：某文化某政体语境下某官职的称号键）</summary>
 
- /// 官职称号目录：文化定制优先 → 默认表回退 /// 政体语境键：Kingdom/Empire/Federation/Republic/Tribal/Theocracy（称号随政体语境变化）    public static class OfficeTitleCatalog
+ /// 官职称号目录：文化定制优先 → 默认表回退
+ /// 政体语境键：Kingdom/Empire/Federation/Republic/Tribal/Theocracy（称号随政体语境变化）
+    public static class OfficeTitleCatalog
     {
- /// <summary>默认称号键（office 枚举名 → 本地化键 office_&lt;office&gt;——政体语境仅文化定制时区分）</summary>        public static string GetDefaultTitleKey(string office, string polityKey = "")
+ /// <summary>默认称号键（office 枚举名 → 本地化键 office_&lt;office&gt;——政体语境仅文化定制时区分）</summary>
+        public static string GetDefaultTitleKey(string office, string polityKey = "")
         {
             return $"office_{office}";
         }
 
- /// 查询文化定制称号键（CultureData.officialTitles 匹配 office+polityKey），无定制回退默认        public static string GetTitleKey(CultureData culture, OfficialOffice office, string polityKey)
+ /// 查询文化定制称号键（CultureData.officialTitles 匹配 office+polityKey），无定制回退默认
+        public static string GetTitleKey(CultureData culture, OfficialOffice office, string polityKey)
         {
             if (culture != null && culture.officialTitles != null)
             {
@@ -28,7 +32,8 @@ namespace CivilizationEvolution.Politics
             return GetDefaultTitleKey(office.ToString(), polityKey);
         }
 
- /// <summary>查询显示文本（本地化解析；缺键回退键名）</summary>        public static string GetTitle(CultureData culture, OfficialOffice office, string polityKey)
+ /// <summary>查询显示文本（本地化解析；缺键回退键名）</summary>
+        public static string GetTitle(CultureData culture, OfficialOffice office, string polityKey)
         {
             return Localization.Get(GetTitleKey(culture, office, polityKey));
         }

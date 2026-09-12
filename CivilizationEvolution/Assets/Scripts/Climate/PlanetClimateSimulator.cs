@@ -6,7 +6,10 @@ using CivilizationEvolution.Map;
 
 namespace CivilizationEvolution.Climate
 {
- /// 行星气候模拟器 /// 成因层参数驱动，消除"全局温度/全局降水"滑块 /// 支持季节变化、迎风坡/背风坡地形雨、脏标记增量重算    public class PlanetClimateSimulator
+ /// 行星气候模拟器
+ /// 成因层参数驱动，消除"全局温度/全局降水"滑块
+ /// 支持季节变化、迎风坡/背风坡地形雨、脏标记增量重算
+    public class PlanetClimateSimulator
     {
         private readonly WorldConfig _config;
         private readonly TileData[] _tiles;
@@ -14,12 +17,14 @@ namespace CivilizationEvolution.Climate
         private readonly int _height;
         private readonly SeaLandGenerator _seaLand;
 
- // 内部派生常量        private float _obliquity;
+ // 内部派生常量
+        private float _obliquity;
         private float _polarCircleLat;
         private float _tropicLat;
         private float _effectiveSolarConstant;
 
- // 季节缓存：0=春,1=夏,2=秋,3=冬（北半球视角）        private float[] _seasonTempMod = new float[4];
+ // 季节缓存：0=春,1=夏,2=秋,3=冬（北半球视角）
+        private float[] _seasonTempMod = new float[4];
         private float[] _seasonPrecipMod = new float[4];
 
         public PlanetClimateSimulator(WorldConfig config, TileData[] tiles, int width, int height, SeaLandGenerator seaLand)
@@ -33,7 +38,8 @@ namespace CivilizationEvolution.Climate
             CalculateSeasonModifiers();
         }
 
- /// <summary>重算内部派生常量</summary>        private void RecalculateDerivedConstants()
+ /// <summary>重算内部派生常量</summary>
+        private void RecalculateDerivedConstants()
         {
             _obliquity = Mathf.Lerp(0f, 45f, _config.seasonIntensity);
             _tropicLat = _obliquity;
@@ -41,26 +47,31 @@ namespace CivilizationEvolution.Climate
             _effectiveSolarConstant = _config.stellarIrradiance * (1f - _config.albedo) / 4f;
         }
 
- /// <summary>计算季节修正因子</summary>        private void CalculateSeasonModifiers()
+ /// <summary>计算季节修正因子</summary>
+        private void CalculateSeasonModifiers()
         {
- // 季节温差由黄赤交角决定            float seasonalAmplitude = _obliquity / 23.5f * 15f;
+ // 季节温差由黄赤交角决定
+            float seasonalAmplitude = _obliquity / 23.5f * 15f;
             _seasonTempMod[0] = 0f;           // 春：年均温
             _seasonTempMod[1] = seasonalAmplitude;  // 夏：升温
             _seasonTempMod[2] = 0f;           // 秋：年均温
             _seasonTempMod[3] = -seasonalAmplitude; // 冬：降温
 
- // 降水季节变化：夏季季风区降水多，冬季地中海气候区降水多            _seasonPrecipMod[0] = 1.0f;
+ // 降水季节变化：夏季季风区降水多，冬季地中海气候区降水多
+            _seasonPrecipMod[0] = 1.0f;
             _seasonPrecipMod[1] = 1.3f;
             _seasonPrecipMod[2] = 1.0f;
             _seasonPrecipMod[3] = 0.7f;
         }
 
- /// <summary>全量重算所有地块气候</summary>        public void RecalculateAll()
+ /// <summary>全量重算所有地块气候</summary>
+        public void RecalculateAll()
         {
             RecalculateDerivedConstants();
             CalculateSeasonModifiers();
 
- // 先计算盛行风向场（用于迎风坡判断）            var windField = CalculateWindField();
+ // 先计算盛行风向场（用于迎风坡判断）
+            var windField = CalculateWindField();
 
             for (int i = 0; i < _tiles.Length; i++)
             {
@@ -69,7 +80,8 @@ namespace CivilizationEvolution.Climate
             }
         }
 
- /// <summary>脏区局部重算</summary>        public void RecalculateDirty(HashSet<int> dirtyIndices)
+ /// <summary>脏区局部重算</summary>
+        public void RecalculateDirty(HashSet<int> dirtyIndices)
         {
             RecalculateDerivedConstants();
             CalculateSeasonModifiers();
@@ -82,7 +94,8 @@ namespace CivilizationEvolution.Climate
             }
         }
 
- /// <summary>按季节更新气候（用于游戏内季节切换）</summary>        public void UpdateForSeason(int season)
+ /// <summary>按季节更新气候（用于游戏内季节切换）</summary>
+        public void UpdateForSeason(int season)
         {
             var windField = CalculateWindField();
             for (int i = 0; i < _tiles.Length; i++)
@@ -92,7 +105,11 @@ namespace CivilizationEvolution.Climate
             }
         }
 
- /// 计算盛行风向场 /// 低纬(0-30°)：信风（北半球东北风，南半球东南风） /// 中纬(30-60°)：西风（北半球西南风，南半球西北风） /// 高纬(60-90°)：极地东风        private Vector2[] CalculateWindField()
+ /// 计算盛行风向场
+ /// 低纬(0-30°)：信风（北半球东北风，南半球东南风）
+ /// 中纬(30-60°)：西风（北半球西南风，南半球西北风）
+ /// 高纬(60-90°)：极地东风
+        private Vector2[] CalculateWindField()
         {
             var windField = new Vector2[_tiles.Length];
 
@@ -111,18 +128,22 @@ namespace CivilizationEvolution.Climate
                 Vector2 windDir;
                 if (absLat < 30f)
                 {
- // 信风带：北半球东北风(→↓)，南半球东南风(→↑)                    windDir = isNorthern ? new Vector2(0.7f, -0.7f) : new Vector2(0.7f, 0.7f);
+ // 信风带：北半球东北风(→↓)，南半球东南风(→↑)
+                    windDir = isNorthern ? new Vector2(0.7f, -0.7f) : new Vector2(0.7f, 0.7f);
                 }
                 else if (absLat < 60f)
                 {
- // 西风带：北半球西南风(←↑)，南半球西北风(←↓)                    windDir = isNorthern ? new Vector2(-0.7f, 0.7f) : new Vector2(-0.7f, -0.7f);
+ // 西风带：北半球西南风(←↑)，南半球西北风(←↓)
+                    windDir = isNorthern ? new Vector2(-0.7f, 0.7f) : new Vector2(-0.7f, -0.7f);
                 }
                 else
                 {
- // 极地东风                    windDir = isNorthern ? new Vector2(0.8f, -0.6f) : new Vector2(0.8f, 0.6f);
+ // 极地东风
+                    windDir = isNorthern ? new Vector2(0.8f, -0.6f) : new Vector2(0.8f, 0.6f);
                 }
 
- // 季风区风向反转（夏季）                if (_config.monsoonStrength > 0.3f && absLat < 35f)
+ // 季风区风向反转（夏季）
+                if (_config.monsoonStrength > 0.3f && absLat < 35f)
                 {
                     float monsoonFactor = _config.monsoonStrength * _tiles[i].waterAdjacentWeight;
                     windDir = Vector2.Lerp(windDir, -windDir, monsoonFactor * 0.5f);
@@ -134,13 +155,15 @@ namespace CivilizationEvolution.Climate
             return windField;
         }
 
- /// 单地块气候计算        private void CalculateTileClimate(int index, Vector2[] windField, int season)
+ /// 单地块气候计算
+        private void CalculateTileClimate(int index, Vector2[] windField, int season)
         {
             ref TileData tile = ref _tiles[index];
             float lat = GetTileLatitude(index);
             float absLat = Mathf.Abs(lat);
 
- // ===== 1. 温度计算 =====            float equatorBaseTemp = CalculateEquatorBaseTemp();
+ // ===== 1. 温度计算 =====
+            float equatorBaseTemp = CalculateEquatorBaseTemp();
             float latDecay = Mathf.Pow(absLat / 90f, 1.5f) * (1.6f - _config.heatTransport * 0.3f);
             float latTemp = equatorBaseTemp * (1f - latDecay);
             float elevationTemp = -tile.elevation01 * 4000f / 1000f * _config.lapseRate;
@@ -152,7 +175,8 @@ namespace CivilizationEvolution.Climate
             tile.annualTemp = Mathf.Clamp(latTemp + elevationTemp + maritimeEffect + thermalEffect + seasonMod, -55f, 35f);
             tile.diurnalTempRange = (1f - tile.waterAdjacentWeight) * 12f + tile.elevation01 * 4f + 4f;
 
- // ===== 2. 降水计算 =====            float itczRain = CalculateITCZPrecipitation(lat);
+ // ===== 2. 降水计算 =====
+            float itczRain = CalculateITCZPrecipitation(lat);
             float westerlyRain = CalculateWesterlyPrecipitation(lat);
             float subtropicalDry = CalculateSubtropicalDry(lat);
             float monsoonRain = CalculateMonsoonPrecipitation(lat, tile.waterAdjacentWeight, season);
@@ -163,19 +187,23 @@ namespace CivilizationEvolution.Climate
             float totalRainMm = (itczRain + westerlyRain + monsoonRain + orographicRain) * continentalFactor * seasonPrecipMod - subtropicalDry;
             tile.annualPrecipMm = Mathf.Clamp(totalRainMm, 0f, 4000f);
 
- // ===== 3. 湿度计算 =====            tile.airHumidityPct = Mathf.Clamp(
+ // ===== 3. 湿度计算 =====
+            tile.airHumidityPct = Mathf.Clamp(
                 Mathf.Lerp(20f, 95f, tile.annualPrecipMm / 2000f) + tile.waterAdjacentWeight * 10f,
                 5f, 100f);
             tile.soilHumidityPct = Mathf.Clamp(
                 tile.airHumidityPct * 0.7f + (tile.annualPrecipMm / 1000f) * 30f,
                 0f, 100f);
 
- // ===== 4. 积温与无霜期 =====            tile.accumulatedTemp = Mathf.Max(0, tile.annualTemp - 10f) * 365f;
+ // ===== 4. 积温与无霜期 =====
+            tile.accumulatedTemp = Mathf.Max(0, tile.annualTemp - 10f) * 365f;
             tile.frostFreeDays = Mathf.Clamp((tile.annualTemp + 5f) / 30f * 365f, 0f, 365f);
 
- // ===== 5. 温度带判定 =====            tile.climateZone = DetermineClimateZone(tile.annualTemp, absLat, tile.elevation01, tile.annualPrecipMm);
+ // ===== 5. 温度带判定 =====
+            tile.climateZone = DetermineClimateZone(tile.annualTemp, absLat, tile.elevation01, tile.annualPrecipMm);
 
- // ===== 6. 群系匹配 =====            tile.biome = DetermineBiome(tile.climateZone, tile.annualTemp, tile.annualPrecipMm, tile.elevation01, tile.soilHumidityPct);
+ // ===== 6. 群系匹配 =====
+            tile.biome = DetermineBiome(tile.climateZone, tile.annualTemp, tile.annualPrecipMm, tile.elevation01, tile.soilHumidityPct);
         }
 
         private float CalculateEquatorBaseTemp()
@@ -184,7 +212,8 @@ namespace CivilizationEvolution.Climate
             return 27f * ratio + _config.greenhouseFactor * 0.3f;
         }
 
- /// <summary>赤道辐合带降水：环流模式决定降水带数量</summary>        private float CalculateITCZPrecipitation(float lat)
+ /// <summary>赤道辐合带降水：环流模式决定降水带数量</summary>
+        private float CalculateITCZPrecipitation(float lat)
         {
             float rain = 0f;
             int cellCount = _config.circulationMode switch
@@ -231,13 +260,16 @@ namespace CivilizationEvolution.Climate
             float absLat = Mathf.Abs(lat);
             if (absLat < 35f && waterWeight > 0.2f)
             {
- // 夏季季风降水强，冬季弱                float seasonFactor = season == 1 ? 1.5f : (season == 3 ? 0.3f : 1f);
+ // 夏季季风降水强，冬季弱
+                float seasonFactor = season == 1 ? 1.5f : (season == 3 ? 0.3f : 1f);
                 return _config.monsoonStrength * waterWeight * _config.seasonIntensity * 800f * seasonFactor;
             }
             return 0f;
         }
 
- /// 地形雨：迎风坡降水增加，背风坡雨影效应 /// 沿盛行风向追踪上游地块，计算高程抬升导致的降水增加        private float CalculateOrographicPrecipitation(int index, Vector2[] windField)
+ /// 地形雨：迎风坡降水增加，背风坡雨影效应
+ /// 沿盛行风向追踪上游地块，计算高程抬升导致的降水增加
+        private float CalculateOrographicPrecipitation(int index, Vector2[] windField)
         {
             ref TileData tile = ref _tiles[index];
             if (tile.elevation01 <= 0.05f) return 0f;
@@ -246,7 +278,8 @@ namespace CivilizationEvolution.Climate
             int x = index % _width;
             int y = index / _width;
 
- // 沿盛行风向回溯3格，计算上游高程（支持左右/上下环绕）            float upstreamElevation = 0f;
+ // 沿盛行风向回溯3格，计算上游高程（支持左右/上下环绕）
+            float upstreamElevation = 0f;
             int upstreamCount = 0;
             for (int step = 1; step <= 3; step++)
             {
@@ -269,15 +302,18 @@ namespace CivilizationEvolution.Climate
 
             if (elevationGain > 0f)
             {
- // 迎风坡：高程抬升 → 降水增加                return elevationGain * 800f + tile.elevation01 * 100f;
+ // 迎风坡：高程抬升 → 降水增加
+                return elevationGain * 800f + tile.elevation01 * 100f;
             }
             else
             {
- // 背风坡：雨影效应 → 降水减少（返回负值，在总降水中扣除）                return elevationGain * 400f;
+ // 背风坡：雨影效应 → 降水减少（返回负值，在总降水中扣除）
+                return elevationGain * 400f;
             }
         }
 
- /// <summary>九大温度带判定</summary>        private GameEnums.ClimateZone DetermineClimateZone(float temp, float absLat, float elevation, float precip)
+ /// <summary>九大温度带判定</summary>
+        private GameEnums.ClimateZone DetermineClimateZone(float temp, float absLat, float elevation, float precip)
         {
             if (elevation > 0.6f && temp < 5f)
                 return GameEnums.ClimateZone.HighlandAlpine;
@@ -294,7 +330,8 @@ namespace CivilizationEvolution.Climate
             return GameEnums.ClimateZone.Tropical;
         }
 
- /// <summary>群系匹配</summary>        private GameEnums.BiomeType DetermineBiome(GameEnums.ClimateZone zone, float temp, float precip, float elevation, float soilHumidity)
+ /// <summary>群系匹配</summary>
+        private GameEnums.BiomeType DetermineBiome(GameEnums.ClimateZone zone, float temp, float precip, float elevation, float soilHumidity)
         {
             if (elevation > 0.7f) return GameEnums.BiomeType.AlpineMeadow;
             if (temp < -15f) return GameEnums.BiomeType.IceSheet;

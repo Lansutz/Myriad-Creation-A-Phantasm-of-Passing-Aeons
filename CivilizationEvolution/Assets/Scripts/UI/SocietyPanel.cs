@@ -6,9 +6,11 @@ using CivilizationEvolution.Politics;
 
 namespace CivilizationEvolution.UI
 {
- /// 社会政治面板文本生成（阶层画像/派系力量/政体变迁状态——纯静态可测）    public static class SocietyPanelText
+ /// 社会政治面板文本生成（阶层画像/派系力量/政体变迁状态——纯静态可测）
+    public static class SocietyPanelText
     {
- /// <summary>生成面板全文（阶层区/派系区/政体变迁区）</summary>        public static string Build(RealmData realm, RealmSociety society,
+ /// <summary>生成面板全文（阶层区/派系区/政体变迁区）</summary>
+        public static string Build(RealmData realm, RealmSociety society,
             FactionManager factions, RegimeChangeDynamics regime, int currentDay,
             IReadOnlyDictionary<int, string> officeDisplay = null)
         {
@@ -16,7 +18,8 @@ namespace CivilizationEvolution.UI
             sb.AppendLine($"【{realm.realmName}】稳定 {realm.stability:F0} | 集权 {realm.centralization:F2} | 国库 {realm.treasury:F0}");
             sb.AppendLine();
 
- // ===== 官职体系区（officeHolders 持有者——OfficeTitle 消费） =====            if (officeDisplay != null && officeDisplay.Count > 0)
+ // ===== 官职体系区（officeHolders 持有者——OfficeTitle 消费） =====
+            if (officeDisplay != null && officeDisplay.Count > 0)
             {
                 sb.AppendLine("── 官职体系 ──");
                 foreach (var kv in officeDisplay)
@@ -24,9 +27,11 @@ namespace CivilizationEvolution.UI
                 sb.AppendLine();
             }
 
- // ===== 阶层区（调用 ClassPanelText 构建完整详情）=====            sb.Append(ClassPanelText.BuildFull(society));
+ // ===== 阶层区（调用 ClassPanelText 构建完整详情）=====
+            sb.Append(ClassPanelText.BuildFull(society));
 
- // ===== 派系区 =====            sb.AppendLine("── 派系 ──");
+ // ===== 派系区 =====
+            sb.AppendLine("── 派系 ──");
             if (factions != null)
             {
                 var list = factions.GetFactions(realm.realmId);
@@ -42,7 +47,8 @@ namespace CivilizationEvolution.UI
             }
             sb.AppendLine();
 
- // ===== 政体变迁区 =====            sb.AppendLine("── 政体变迁 ──");
+ // ===== 政体变迁区 =====
+            sb.AppendLine("── 政体变迁 ──");
             if (regime != null)
             {
                 var st = regime.GetState(realm.realmId);
@@ -63,7 +69,8 @@ namespace CivilizationEvolution.UI
             }
             sb.AppendLine();
 
- // ===== 关键节点历史 =====            if (regime != null)
+ // ===== 关键节点历史 =====
+            if (regime != null)
             {
                 var st = regime.GetState(realm.realmId);
                 if (st != null && st.history.Count > 0)

@@ -8,11 +8,13 @@ using CivilizationEvolution.Character;
 
 namespace CivilizationEvolution.Diplomacy
 {
- /// DiplomacyManager.Subordination —— 从属关系（朝贡/附庸/附属/保护国/傀儡/共主邦联/独立）（partial class，与 DiplomacySystem.cs 共享字段）    public partial class DiplomacyManager
+ /// DiplomacyManager.Subordination —— 从属关系（朝贡/附庸/附属/保护国/傀儡/共主邦联/独立）（partial class，与 DiplomacySystem.cs 共享字段）
+    public partial class DiplomacyManager
     {
 
  // ===== 从属关系 =====
- /// <summary>建立从属关系</summary>        public Subordination EstablishSubordination(int suzerainId, int vassalId, SubordinationType type)
+ /// <summary>建立从属关系</summary>
+        public Subordination EstablishSubordination(int suzerainId, int vassalId, SubordinationType type)
         {
             var rel = GetRelation(suzerainId, vassalId);
             if (rel == null) return null;
@@ -25,29 +27,35 @@ namespace CivilizationEvolution.Diplomacy
                 establishedDay = CurrentDay
             };
 
- // 设置从属条款（5种不平等从属：自治度 朝贡0.9→附庸0.65→附属0.45→保护国0.3→傀儡0.1）            switch (type)
+ // 设置从属条款（5种不平等从属：自治度 朝贡0.9→附庸0.65→附属0.45→保护国0.3→傀儡0.1）
+            switch (type)
             {
                 case SubordinationType.Tributary:
- // 朝贡：内政完全自主，象征性臣服+进贡                    sub.tributeRatio = 0.1f;
+ // 朝贡：内政完全自主，象征性臣服+进贡
+                    sub.tributeRatio = 0.1f;
                     sub.autonomy = 0.9f;
                     break;
                 case SubordinationType.Vassal:
- // 附庸国：外交权受限，军事义务，内政基本自主                    sub.tributeRatio = 0.15f;
+ // 附庸国：外交权受限，军事义务，内政基本自主
+                    sub.tributeRatio = 0.15f;
                     sub.militaryObligation = true;
                     sub.foreignPolicyControl = true;
                     sub.autonomy = 0.65f;
                     break;
                 case SubordinationType.Associate:
- // 附属：内政受法定监督（顾问/否决法律），外交国防全权代理                    sub.foreignPolicyControl = true;
+ // 附属：内政受法定监督（顾问/否决法律），外交国防全权代理
+                    sub.foreignPolicyControl = true;
                     sub.militaryObligation = true;
                     sub.autonomy = 0.45f;
                     break;
                 case SubordinationType.Protectorate:
- // 保护国：内政自主，外交与宣战权完全转让                    sub.foreignPolicyControl = true;
+ // 保护国：内政自主，外交与宣战权完全转让
+                    sub.foreignPolicyControl = true;
                     sub.autonomy = 0.3f;
                     break;
                 case SubordinationType.Puppet:
- // 傀儡：首脑由宗主指定，一切重大决策需批准                    sub.foreignPolicyControl = true;
+ // 傀儡：首脑由宗主指定，一切重大决策需批准
+                    sub.foreignPolicyControl = true;
                     sub.militaryObligation = true;
                     sub.successionControl = true;
                     sub.autonomy = 0.1f;
@@ -66,7 +74,8 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>获取两个政权之间的从属关系</summary>        public Subordination GetSubordination(int realmA, int realmB)
+ /// <summary>获取两个政权之间的从属关系</summary>
+        public Subordination GetSubordination(int realmA, int realmB)
         {
             return _subordinations.Find(s => s.isActive &&
                 ((s.suzerainId == realmA && s.vassalId == realmB) ||
@@ -74,7 +83,8 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>解除从属关系</summary>        public bool ReleaseSubordination(int suzerainId, int vassalId)
+ /// <summary>解除从属关系</summary>
+        public bool ReleaseSubordination(int suzerainId, int vassalId)
         {
             var sub = _subordinations.Find(s => s.suzerainId == suzerainId && s.vassalId == vassalId && s.isActive);
             if (sub == null) return false;
@@ -89,7 +99,9 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// 建立特殊纽带（谱系三：君合国/共主邦联——横向人身/王朝联合） /// 独立于从属与盟约：双方各自保留主权，仅共享君主        public bool EstablishPersonalUnion(int realmA, int realmB, SpecialBondType bond)
+ /// 建立特殊纽带（谱系三：君合国/共主邦联——横向人身/王朝联合）
+ /// 独立于从属与盟约：双方各自保留主权，仅共享君主
+        public bool EstablishPersonalUnion(int realmA, int realmB, SpecialBondType bond)
         {
             if (realmA == realmB || bond == SpecialBondType.None) return false;
             var rel = GetRelation(realmA, realmB);
@@ -105,7 +117,8 @@ namespace CivilizationEvolution.Diplomacy
         }
 
 
- /// <summary>附庸独立</summary>        public bool GrantIndependence(int suzerainId, int vassalId)
+ /// <summary>附庸独立</summary>
+        public bool GrantIndependence(int suzerainId, int vassalId)
         {
             var sub = _subordinations.Find(s => s.suzerainId == suzerainId && s.vassalId == vassalId && s.isActive);
             if (sub == null) return false;
@@ -113,7 +126,8 @@ namespace CivilizationEvolution.Diplomacy
             sub.isActive = false;
             _subordinations.Remove(sub);
 
- // 清理关系槽位1            var rel = GetRelation(suzerainId, vassalId);
+ // 清理关系槽位1
+            var rel = GetRelation(suzerainId, vassalId);
             if (rel != null && rel.subordination == sub)
                 rel.subordination = null;
 

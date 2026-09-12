@@ -6,16 +6,20 @@ using TMPro;
 
 namespace CivilizationEvolution.UI
 {
- /// 游戏设置面板（代码动态生成）：音量/分辨率/画质/语言/全屏。 /// 挂在主菜单 Canvas 下，点"设置"显示。    public class SettingsPanel : MonoBehaviour
+ /// 游戏设置面板（代码动态生成）：音量/分辨率/画质/语言/全屏。
+ /// 挂在主菜单 Canvas 下，点"设置"显示。
+    public class SettingsPanel : MonoBehaviour
     {
         private GameObject _root;
         private Slider _masterVol, _musicVol, _sfxVol;
         private TMP_Dropdown _resolution, _quality, _language;
         private Toggle _fullscreen;
 
- /// <summary>构建设置面板</summary>        public void Build(Transform parent, Action onClose)
+ /// <summary>构建设置面板</summary>
+        public void Build(Transform parent, Action onClose)
         {
- // 半透明遮罩            var overlayObj = new GameObject("SettingsOverlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+ // 半透明遮罩
+            var overlayObj = new GameObject("SettingsOverlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             _root = overlayObj;
             var ort = overlayObj.GetComponent<RectTransform>();
             ort.anchorMin = Vector2.zero; ort.anchorMax = Vector2.one;
@@ -23,7 +27,8 @@ namespace CivilizationEvolution.UI
             overlayObj.GetComponent<Image>().color = new Color(0, 0, 0, 0.7f);
             overlayObj.transform.SetParent(parent, false);
 
- // 面板            var panelObj = new GameObject("Panel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+ // 面板
+            var panelObj = new GameObject("Panel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             var prt = panelObj.GetComponent<RectTransform>();
             prt.anchorMin = new Vector2(0.5f, 0.5f); prt.anchorMax = new Vector2(0.5f, 0.5f);
             prt.pivot = new Vector2(0.5f, 0.5f);
@@ -32,10 +37,12 @@ namespace CivilizationEvolution.UI
             panelObj.transform.SetParent(overlayObj.transform, false);
 
             float y = 240;
- // 标题            CreateText(panelObj.transform, "Title", "设置", 32, new Color(0.88f, 0.75f, 0.45f, 1f), FontStyles.Bold, new Vector2(0, y));
+ // 标题
+            CreateText(panelObj.transform, "Title", "设置", 32, new Color(0.88f, 0.75f, 0.45f, 1f), FontStyles.Bold, new Vector2(0, y));
             y -= 50;
 
- // 分隔线            var line = new GameObject("Line", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+ // 分隔线
+            var line = new GameObject("Line", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             var lrt = line.GetComponent<RectTransform>();
             lrt.anchorMin = new Vector2(0.5f, 1f); lrt.anchorMax = new Vector2(0.5f, 1f);
             lrt.pivot = new Vector2(0.5f, 1f); lrt.anchoredPosition = new Vector2(0, y);
@@ -44,23 +51,29 @@ namespace CivilizationEvolution.UI
             line.transform.SetParent(panelObj.transform, false);
             y -= 30;
 
- // 音量            _masterVol = CreateSlider(panelObj.transform, "主音量", ref y, AudioListener.volume);
+ // 音量
+            _masterVol = CreateSlider(panelObj.transform, "主音量", ref y, AudioListener.volume);
             _musicVol = CreateSlider(panelObj.transform, "音乐音量", ref y, 0.8f);
             _sfxVol = CreateSlider(panelObj.transform, "音效音量", ref y, 0.9f);
             y -= 10;
 
- // 分辨率            _resolution = CreateDropdown(panelObj.transform, "分辨率", ref y,
+ // 分辨率
+            _resolution = CreateDropdown(panelObj.transform, "分辨率", ref y,
                 new string[] { "1920×1080", "2560×1440", "3840×2160", "1280×720" });
- // 画质            _quality = CreateDropdown(panelObj.transform, "画质", ref y,
+ // 画质
+            _quality = CreateDropdown(panelObj.transform, "画质", ref y,
                 new string[] { "低", "中", "高", "超高" });
             _quality.value = QualitySettings.GetQualityLevel();
- // 语言            _language = CreateDropdown(panelObj.transform, "语言", ref y,
+ // 语言
+            _language = CreateDropdown(panelObj.transform, "语言", ref y,
                 new string[] { "简体中文", "English" });
             y -= 10;
 
- // 全屏            _fullscreen = CreateToggle(panelObj.transform, "全屏模式", ref y, Screen.fullScreen);
+ // 全屏
+            _fullscreen = CreateToggle(panelObj.transform, "全屏模式", ref y, Screen.fullScreen);
 
- // 按钮            y -= 20;
+ // 按钮
+            y -= 20;
             CreateButton(panelObj.transform, "应用", new Vector2(-90, y), new Vector2(140, 40), true, () =>
             {
                 AudioListener.volume = _masterVol.value;

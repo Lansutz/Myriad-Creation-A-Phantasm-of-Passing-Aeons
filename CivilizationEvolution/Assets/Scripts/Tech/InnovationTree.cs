@@ -5,7 +5,12 @@ using CivilizationEvolution.Core;
 
 namespace CivilizationEvolution.Tech
 {
- /// 革新树系统 /// 前现代技术革新，有前置依赖、研究点、效果 /// 数据驱动：革新定义由 Innovation/Innovations.json 加载 /// （ContentRegistry 第十一类，Base/Mods 可覆盖、模组可新增）； /// 两级分类：大类（技术/思维/制度/传统）× 子类（见 InnovationTypes）    [System.Serializable]
+ /// 革新树系统
+ /// 前现代技术革新，有前置依赖、研究点、效果
+ /// 数据驱动：革新定义由 Innovation/Innovations.json 加载
+ /// （ContentRegistry 第十一类，Base/Mods 可覆盖、模组可新增）；
+ /// 两级分类：大类（技术/思维/制度/传统）× 子类（见 InnovationTypes）
+    [System.Serializable]
     public class InnovationTree
     {
         private readonly Dictionary<int, InnovationDef> _innovations = new Dictionary<int, InnovationDef>();
@@ -13,14 +18,16 @@ namespace CivilizationEvolution.Tech
         private readonly Dictionary<int, float> _realmResearchPoints = new Dictionary<int, float>();
         private readonly Dictionary<int, int> _realmCurrentResearch = new Dictionary<int, int>();
 
- /// <summary>革新完成事件（realmId, innovationId——阶层出现/政体改革等联动订阅）</summary>        public event System.Action<int, int> OnInnovationCompleted;
+ /// <summary>革新完成事件（realmId, innovationId——阶层出现/政体改革等联动订阅）</summary>
+        public event System.Action<int, int> OnInnovationCompleted;
 
         public InnovationTree()
         {
             LoadFromRegistry();
         }
 
- /// <summary>从内容注册表加载革新定义（未初始化则自动初始化；空表仅告警不崩溃）</summary>        private void LoadFromRegistry()
+ /// <summary>从内容注册表加载革新定义（未初始化则自动初始化；空表仅告警不崩溃）</summary>
+        private void LoadFromRegistry()
         {
             if (!ContentRegistry.IsInitialized)
                 ContentRegistry.Initialize();
@@ -33,18 +40,21 @@ namespace CivilizationEvolution.Tech
                 Debug.LogWarning("[InnovationTree] 革新定义为空（Innovation/Innovations.json 缺失或未加载）");
         }
 
- /// <summary>运行时注册/覆盖单个革新（模组热扩展入口）</summary>        public void RegisterInnovation(InnovationDef def)
+ /// <summary>运行时注册/覆盖单个革新（模组热扩展入口）</summary>
+        public void RegisterInnovation(InnovationDef def)
         {
             if (def == null || def.innovationId <= 0) return;
             _innovations[def.innovationId] = def;
         }
 
- /// <summary>开始研究</summary>        public bool StartResearch(int realmId, int innovationId)
+ /// <summary>开始研究</summary>
+        public bool StartResearch(int realmId, int innovationId)
         {
             if (!_innovations.TryGetValue(innovationId, out var def)) return false;
             if (HasInnovation(realmId, innovationId)) return false;
 
- // 检查前置（AND 全满足 + OR 任一满足；无前置则通过）            if (!ArePrerequisitesMet(null, realmId, def)) return false; // 物产检查需要world，此处先跳过（研究开始时由调用方确保条件）
+ // 检查前置（AND 全满足 + OR 任一满足；无前置则通过）
+            if (!ArePrerequisitesMet(null, realmId, def)) return false; // 物产检查需要world，此处先跳过（研究开始时由调用方确保条件）
 
             _realmCurrentResearch[realmId] = innovationId;
             if (!_realmResearchPoints.ContainsKey(realmId))
@@ -53,7 +63,8 @@ namespace CivilizationEvolution.Tech
             return true;
         }
 
- /// <summary>前置检查：prerequisites 全部持有 + prerequisitesAny 至少一项持有（空列表视为通过）</summary>        public bool ArePrerequisitesMet(GameWorld world, int realmId, InnovationDef def)
+ /// <summary>前置检查：prerequisites 全部持有 + prerequisitesAny 至少一项持有（空列表视为通过）</summary>
+        public bool ArePrerequisitesMet(GameWorld world, int realmId, InnovationDef def)
         {
             foreach (int prereq in def.prerequisites)
             {
@@ -91,7 +102,8 @@ namespace CivilizationEvolution.Tech
             return true;
         }
 
- /// <summary>每日研究Tick</summary>        public void DailyTick(int realmId, float researchRate)
+ /// <summary>每日研究Tick</summary>
+        public void DailyTick(int realmId, float researchRate)
         {
             if (!_realmCurrentResearch.TryGetValue(realmId, out int innovationId)) return;
             if (!_innovations.TryGetValue(innovationId, out var def)) return;
@@ -107,7 +119,8 @@ namespace CivilizationEvolution.Tech
             }
         }
 
- /// <summary>完成研究</summary>        private void CompleteResearch(int realmId, int innovationId)
+ /// <summary>完成研究</summary>
+        private void CompleteResearch(int realmId, int innovationId)
         {
             if (!_realmInnovations.ContainsKey(realmId))
                 _realmInnovations[realmId] = new HashSet<int>();
@@ -119,15 +132,18 @@ namespace CivilizationEvolution.Tech
             if (_innovations.TryGetValue(innovationId, out var def))
                 Debug.Log($"[Innovation] 政权 {realmId} 完成研究：{def.GetName()}（{def.Domain}/{def.field}）");
 
- // 完成事件（阶层出现检测/政体改革联动订阅）            OnInnovationCompleted?.Invoke(realmId, innovationId);
+ // 完成事件（阶层出现检测/政体改革联动订阅）
+            OnInnovationCompleted?.Invoke(realmId, innovationId);
         }
 
- /// <summary>检查是否拥有革新</summary>        public bool HasInnovation(int realmId, int innovationId)
+ /// <summary>检查是否拥有革新</summary>
+        public bool HasInnovation(int realmId, int innovationId)
         {
             return _realmInnovations.TryGetValue(realmId, out var set) && set.Contains(innovationId);
         }
 
- /// <summary>获取研究进度</summary>        public float GetResearchProgress(int realmId)
+ /// <summary>获取研究进度</summary>
+        public float GetResearchProgress(int realmId)
         {
             if (!_realmCurrentResearch.TryGetValue(realmId, out int innovationId)) return 0f;
             if (!_innovations.TryGetValue(innovationId, out var def)) return 0f;
@@ -135,21 +151,25 @@ namespace CivilizationEvolution.Tech
             return points / def.researchCost;
         }
 
- /// <summary>获取当前研究（null 表示无）</summary>        public InnovationDef GetCurrentResearch(int realmId)
+ /// <summary>获取当前研究（null 表示无）</summary>
+        public InnovationDef GetCurrentResearch(int realmId)
         {
             if (_realmCurrentResearch.TryGetValue(realmId, out int id) && _innovations.TryGetValue(id, out var def))
                 return def;
             return null;
         }
 
- /// 直接前置（仅最近一层——多链各一条；UI 展示不推全链） /// 返回 (prerequisites AND 链, prerequisitesAny OR 链) 的直接前置 ID        public (List<int> and, List<int> or) GetDirectPrerequisites(int innovationId)
+ /// 直接前置（仅最近一层——多链各一条；UI 展示不推全链）
+ /// 返回 (prerequisites AND 链, prerequisitesAny OR 链) 的直接前置 ID
+        public (List<int> and, List<int> or) GetDirectPrerequisites(int innovationId)
         {
             if (!_innovations.TryGetValue(innovationId, out var def))
                 return (new List<int>(), new List<int>());
             return (new List<int>(def.prerequisites), new List<int>(def.prerequisitesAny));
         }
 
- /// <summary>获取可研究的革新列表</summary>        public List<InnovationDef> GetAvailableInnovations(int realmId)
+ /// <summary>获取可研究的革新列表</summary>
+        public List<InnovationDef> GetAvailableInnovations(int realmId)
         {
             var result = new List<InnovationDef>();
             foreach (var def in _innovations.Values)
@@ -163,7 +183,10 @@ namespace CivilizationEvolution.Tech
         }
 
  // ===== 学习速率机制（速率由多种参数共同构成） =====
- /// 学习难度（前置完成比例 0~1）： /// 前置全完成=1.0（没有困难，速度很快）；缺前置=0.4 + 0.6×完成比例 /// （需要花时间——超前学习/链未补齐时学习慢）        public float GetLearningDifficulty(int realmId, int innovationId)
+ /// 学习难度（前置完成比例 0~1）：
+ /// 前置全完成=1.0（没有困难，速度很快）；缺前置=0.4 + 0.6×完成比例
+ /// （需要花时间——超前学习/链未补齐时学习慢）
+        public float GetLearningDifficulty(int realmId, int innovationId)
         {
             if (!_innovations.TryGetValue(innovationId, out var def)) return 0f;
 
@@ -172,7 +195,8 @@ namespace CivilizationEvolution.Tech
             foreach (int prereq in def.prerequisites)
                 if (HasInnovation(realmId, prereq)) done++;
 
- // OR 前置：任一满足即算完成            if (def.prerequisitesAny != null && def.prerequisitesAny.Count > 0)
+ // OR 前置：任一满足即算完成
+            if (def.prerequisitesAny != null && def.prerequisitesAny.Count > 0)
             {
                 total += 1;
                 bool anyMet = false;
@@ -186,7 +210,11 @@ namespace CivilizationEvolution.Tech
             return 0.4f + 0.6f * ratio;
         }
 
- /// 有效研究速率（速率=基础×学习难度×文化亲和加成） /// 文化亲和：革新的 field 名 或 affinityTags 与文化的 innovationAffinities /// 匹配 → ×1.25（Laethis 亲和 Agriculture/Craft/Script 是 field 级； /// Clay/Manor 等是节点级标签——两级都查）        public float GetEffectiveResearchRate(int realmId, int innovationId, float baseRate,
+ /// 有效研究速率（速率=基础×学习难度×文化亲和加成）
+ /// 文化亲和：革新的 field 名 或 affinityTags 与文化的 innovationAffinities
+ /// 匹配 → ×1.25（Laethis 亲和 Agriculture/Craft/Script 是 field 级；
+ /// Clay/Manor 等是节点级标签——两级都查）
+        public float GetEffectiveResearchRate(int realmId, int innovationId, float baseRate,
             Culture.CultureData culture)
         {
             float rate = baseRate * GetLearningDifficulty(realmId, innovationId);
@@ -206,7 +234,8 @@ namespace CivilizationEvolution.Tech
             return rate;
         }
 
- /// <summary>获取某大类的全部革新（AI 偏好/UI 筛选用）</summary>        public List<InnovationDef> GetInnovationsByDomain(InnovationDomain domain)
+ /// <summary>获取某大类的全部革新（AI 偏好/UI 筛选用）</summary>
+        public List<InnovationDef> GetInnovationsByDomain(InnovationDomain domain)
         {
             var result = new List<InnovationDef>();
             foreach (var def in _innovations.Values)
@@ -217,7 +246,8 @@ namespace CivilizationEvolution.Tech
             return result;
         }
 
- /// <summary>获取某子类的全部革新</summary>        public List<InnovationDef> GetInnovationsByField(InnovationField field)
+ /// <summary>获取某子类的全部革新</summary>
+        public List<InnovationDef> GetInnovationsByField(InnovationField field)
         {
             var result = new List<InnovationDef>();
             foreach (var def in _innovations.Values)
@@ -228,7 +258,8 @@ namespace CivilizationEvolution.Tech
             return result;
         }
 
- // ===== 查询接口 =====        public InnovationDef GetInnovation(int id) => _innovations.TryGetValue(id, out var d) ? d : null;
+ // ===== 查询接口 =====
+        public InnovationDef GetInnovation(int id) => _innovations.TryGetValue(id, out var d) ? d : null;
         public IReadOnlyDictionary<int, InnovationDef> GetAllInnovations() => _innovations;
         public HashSet<int> GetRealmInnovations(int realmId) => _realmInnovations.TryGetValue(realmId, out var s) ? s : new HashSet<int>();
         public int GetRealmInnovationCount(int realmId) => _realmInnovations.TryGetValue(realmId, out var s) ? s.Count : 0;
@@ -453,8 +484,8 @@ namespace CivilizationEvolution.Tech
                 {
                     if (!HasResource(world, realmId, resId, def.allowTradeResource, def.requiredResourceAmount))
                     {
-                        var goods = (world != null && world.goodsDefs != null && world.goodsDefs.ContainsKey(resId)) ? world.goodsDefs[resId] : null;
-                        return "缺少物产：" + (goods != null ? goods.goodsName : resId.ToString());
+                        string missingName = (world != null && world.goodsDefs != null && world.goodsDefs.TryGetValue(resId, out var missingGood)) ? missingGood.goodsName : resId.ToString();
+                        return "缺少物产：" + missingName;
                     }
                 }
             }
@@ -470,8 +501,7 @@ namespace CivilizationEvolution.Tech
                     var names = new List<string>();
                     foreach (int resId in def.requiredAnyResources)
                     {
-                        var goods = (world != null && world.goodsDefs != null && world.goodsDefs.ContainsKey(resId)) ? world.goodsDefs[resId] : null;
-                        names.Add(goods != null ? goods.goodsName : resId.ToString());
+                        names.Add((world != null && world.goodsDefs != null && world.goodsDefs.TryGetValue(resId, out var anyGood)) ? anyGood.goodsName : resId.ToString());
                     }
                     return "需要以下物产之一：" + string.Join("/", names);
                 }

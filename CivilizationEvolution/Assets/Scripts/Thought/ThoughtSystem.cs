@@ -6,9 +6,11 @@ using CivilizationEvolution.Politics;
 
 namespace CivilizationEvolution.Thought
 {
- /// 学派系统 /// 前现代思想学派，有核心经典、代表人物、传播机制
+ /// 学派系统
+ /// 前现代思想学派，有核心经典、代表人物、传播机制
 
- /// 信仰系统 /// 宗教信仰，有神灵体系、仪式、教义、组织
+ /// 信仰系统
+ /// 宗教信仰，有神灵体系、仪式、教义、组织
 
  /// <summary>神灵</summary>
 
@@ -16,10 +18,14 @@ namespace CivilizationEvolution.Thought
 
  /// 法律与罪行系统（简化版）
 
- /// 思潮系统（高阶解锁机制） /// 大规模思想运动，有起源、传播、高潮、衰退周期    [System.Serializable]
+ /// 思潮系统（高阶解锁机制）
+ /// 大规模思想运动，有起源、传播、高潮、衰退周期
+    [System.Serializable]
 
 
- /// 思想与规范管理器 /// 协调学派、信仰、法律、思潮系统    public class ThoughtManager
+ /// 思想与规范管理器
+ /// 协调学派、信仰、法律、思潮系统
+    public class ThoughtManager
     {
         private readonly Dictionary<int, SchoolOfThought> _schools = new Dictionary<int, SchoolOfThought>();
         private readonly Dictionary<int, FaithSystem> _faiths = new Dictionary<int, FaithSystem>();
@@ -30,7 +36,8 @@ namespace CivilizationEvolution.Thought
         private int _nextLawId = 1;
         private int _nextMovementId = 1;
 
- /// <summary>创建学派</summary>        public SchoolOfThought CreateSchool(string name, int founderId, int year)
+ /// <summary>创建学派</summary>
+        public SchoolOfThought CreateSchool(string name, int founderId, int year)
         {
             var school = new SchoolOfThought
             {
@@ -43,7 +50,8 @@ namespace CivilizationEvolution.Thought
             return school;
         }
 
- /// <summary>创建信仰</summary>        public FaithSystem CreateFaith(string name, FaithType type)
+ /// <summary>创建信仰</summary>
+        public FaithSystem CreateFaith(string name, FaithType type)
         {
             var faith = new FaithSystem
             {
@@ -55,7 +63,8 @@ namespace CivilizationEvolution.Thought
             return faith;
         }
 
- /// <summary>创建法律体系</summary>        public LawSystem CreateLawSystem(string name, LawSource source)
+ /// <summary>创建法律体系</summary>
+        public LawSystem CreateLawSystem(string name, LawSource source)
         {
             var law = new LawSystem
             {
@@ -67,7 +76,8 @@ namespace CivilizationEvolution.Thought
             return law;
         }
 
- /// <summary>创建思潮运动</summary>        public IdeologyMovement CreateMovement(string name, int originRegionId, int startYear)
+ /// <summary>创建思潮运动</summary>
+        public IdeologyMovement CreateMovement(string name, int originRegionId, int startYear)
         {
             var movement = new IdeologyMovement
             {
@@ -80,7 +90,8 @@ namespace CivilizationEvolution.Thought
             return movement;
         }
 
- /// <summary>每日思想Tick</summary>        public void DailyTick(int currentYear)
+ /// <summary>每日思想Tick</summary>
+        public void DailyTick(int currentYear)
         {
             foreach (var school in _schools.Values)
                 school.DailyTick();
@@ -99,7 +110,8 @@ namespace CivilizationEvolution.Thought
             }
         }
 
- // ===== 查询接口 =====        public SchoolOfThought GetSchool(int id) => _schools.TryGetValue(id, out var s) ? s : null;
+ // ===== 查询接口 =====
+        public SchoolOfThought GetSchool(int id) => _schools.TryGetValue(id, out var s) ? s : null;
         public FaithSystem GetFaith(int id) => _faiths.TryGetValue(id, out var f) ? f : null;
         public LawSystem GetLawSystem(int id) => _lawSystems.TryGetValue(id, out var l) ? l : null;
         public IdeologyMovement GetMovement(int id) => _movements.Find(m => m.movementId == id);
@@ -108,7 +120,8 @@ namespace CivilizationEvolution.Thought
         public IReadOnlyDictionary<int, FaithSystem> GetAllFaiths() => _faiths;
         public IReadOnlyList<IdeologyMovement> GetAllMovements() => _movements;
 
- /// <summary>获取地区最主流信仰</summary>        public FaithSystem GetDominantFaith(int regionId)
+ /// <summary>获取地区最主流信仰</summary>
+        public FaithSystem GetDominantFaith(int regionId)
         {
             FaithSystem dominant = null;
             float maxAdherence = 0f;
@@ -123,7 +136,8 @@ namespace CivilizationEvolution.Thought
             return dominant;
         }
 
- /// <summary>获取地区最有影响力学派</summary>        public SchoolOfThought GetDominantSchool(int regionId)
+ /// <summary>获取地区最有影响力学派</summary>
+        public SchoolOfThought GetDominantSchool(int regionId)
         {
             SchoolOfThought dominant = null;
             float maxPenetration = 0f;

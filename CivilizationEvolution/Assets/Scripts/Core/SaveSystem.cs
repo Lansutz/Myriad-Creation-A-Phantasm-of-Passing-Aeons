@@ -10,11 +10,17 @@ using CivilizationEvolution.War;
 
 namespace CivilizationEvolution.Core
 {
- /// 存档系统（v2） /// v1 使用 BinaryFormatter，在 Unity 6 中已被禁用（运行时抛 NotSupportedException，存档静默失败）， /// v2 改为 JsonUtility + 可序列化 DTO：Dictionary/HashSet 转 List 包装（JsonUtility 不支持字典）， /// 零第三方依赖；JSON 文本亦为 WebGL 等沙箱平台迁移留有余地。 /// 存档结构变更时递增 GameConstants.SaveVersion。    public static class SaveSystem
+ /// 存档系统（v2）
+ /// v1 使用 BinaryFormatter，在 Unity 6 中已被禁用（运行时抛 NotSupportedException，存档静默失败），
+ /// v2 改为 JsonUtility + 可序列化 DTO：Dictionary/HashSet 转 List 包装（JsonUtility 不支持字典），
+ /// 零第三方依赖；JSON 文本亦为 WebGL 等沙箱平台迁移留有余地。
+ /// 存档结构变更时递增 GameConstants.SaveVersion。
+    public static class SaveSystem
     {
         private static string SaveDirectory => Path.Combine(Application.persistentDataPath, "Saves");
 
- /// <summary>保存游戏</summary>        public static bool SaveGame(GameWorld world, string saveName)
+ /// <summary>保存游戏</summary>
+        public static bool SaveGame(GameWorld world, string saveName)
         {
             try
             {
@@ -36,7 +42,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
- /// <summary>加载游戏</summary>        public static GameWorld LoadGame(string saveName)
+ /// <summary>加载游戏</summary>
+        public static GameWorld LoadGame(string saveName)
         {
             try
             {
@@ -51,7 +58,8 @@ namespace CivilizationEvolution.Core
                 var saveData = JsonUtility.FromJson<SaveData>(json);
                 if (saveData == null || saveData.tiles == null)
                 {
- // 非法 JSON / v1 二进制存档无法解析                    Debug.LogError($"[SaveSystem] 读档失败: {filePath}（存档格式无效或为 v1 二进制存档，请新建游戏）");
+ // 非法 JSON / v1 二进制存档无法解析
+                    Debug.LogError($"[SaveSystem] 读档失败: {filePath}（存档格式无效或为 v1 二进制存档，请新建游戏）");
                     return null;
                 }
 
@@ -74,7 +82,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
- /// <summary>删除存档</summary>        public static bool DeleteSave(string saveName)
+ /// <summary>删除存档</summary>
+        public static bool DeleteSave(string saveName)
         {
             string filePath = Path.Combine(SaveDirectory, $"{saveName}.sav");
             if (File.Exists(filePath))
@@ -85,7 +94,8 @@ namespace CivilizationEvolution.Core
             return false;
         }
 
- /// <summary>列出所有存档</summary>        public static string[] ListSaves()
+ /// <summary>列出所有存档</summary>
+        public static string[] ListSaves()
         {
             if (!Directory.Exists(SaveDirectory))
                 return new string[0];
@@ -95,7 +105,8 @@ namespace CivilizationEvolution.Core
             return files;
         }
 
- /// <summary>获取存档目录路径</summary>        public static string GetSaveDirectory() => SaveDirectory;
+ /// <summary>获取存档目录路径</summary>
+        public static string GetSaveDirectory() => SaveDirectory;
 
  // ===== 游戏对象 ⇄ DTO 转换 =====
         private static SaveData ToSaveData(GameWorld world)
@@ -136,7 +147,8 @@ namespace CivilizationEvolution.Core
             world.currentSeason = data.currentSeason;
             world.tiles = data.tiles;
 
- // 注：AddComponent 时 GameWorld.Awake 已先跑 InitializeWorld（含默认种族/文化/unitDefs）， // 此处用存档数据整体覆盖；unitDefs 不入档，保留默认集。            world.races.Clear();
+ // 注：AddComponent 时 GameWorld.Awake 已先跑 InitializeWorld（含默认种族/文化/unitDefs）， // 此处用存档数据整体覆盖；unitDefs 不入档，保留默认集。
+            world.races.Clear();
             if (data.races != null)
                 foreach (var dto in data.races) world.races[dto.raceId] = dto.ToRaceData();
 
@@ -156,11 +168,13 @@ namespace CivilizationEvolution.Core
             if (data.goodsDefs != null)
                 foreach (var g in data.goodsDefs) world.goodsDefs[g.goodsId] = g;
 
- // ScriptableObject 配置：先建运行时实例，再用 JSON 快照覆盖恢复            world.config = WorldConfig.CreateRuntimeInstance();
+ // ScriptableObject 配置：先建运行时实例，再用 JSON 快照覆盖恢复
+            world.config = WorldConfig.CreateRuntimeInstance();
             if (!string.IsNullOrEmpty(data.configJson))
                 JsonUtility.FromJsonOverwrite(data.configJson, world.config);
 
- // 战争状态恢复（读档后战争闭环继续）            var wars = world.GetWars();
+ // 战争状态恢复（读档后战争闭环继续）
+            var wars = world.GetWars();
             if (wars != null)
             {
                 wars.Clear();
@@ -168,11 +182,13 @@ namespace CivilizationEvolution.Core
                     wars.AddRange(data.wars);
             }
 
- // 重新初始化子系统（引用类型无法序列化，需要重建）            world.ReinitializeSubsystems();
+ // 重新初始化子系统（引用类型无法序列化，需要重建）
+            world.ReinitializeSubsystems();
         }
     }
 
- /// 存档数据容器（v2，纯 JsonUtility 可序列化） /// 只包含可序列化的数据，引用类型的子系统由 ReinitializeSubsystems 重建
+ /// 存档数据容器（v2，纯 JsonUtility 可序列化）
+ /// 只包含可序列化的数据，引用类型的子系统由 ReinitializeSubsystems 重建
 
  /// <summary>通用键值包装（JsonUtility 不支持 Dictionary，存档用 List 包装）</summary>
 

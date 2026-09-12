@@ -3,26 +3,46 @@ using UnityEngine;
 
 namespace CivilizationEvolution.Render
 {
- /// 地图可选叠加层（少量，可独立开关）。 /// 设计原则：不搞无限叠加，只保留必要的、性能可控的叠加层。 /// 地图模式（政治/文化/宗教等）是互斥单选，不在此枚举中。    [Flags]
+ /// 地图可选叠加层（少量，可独立开关）。
+ /// 设计原则：不搞无限叠加，只保留必要的、性能可控的叠加层。
+ /// 地图模式（政治/文化/宗教等）是互斥单选，不在此枚举中。
+    [Flags]
     public enum MapOverlayLayer
     {
- /// <summary>无叠加层</summary>        None = 0,
- /// <summary>省份边界线</summary>        ProvinceBorders = 1 << 0,
- /// <summary>聚落标记（首都/城市/港口/要塞/集镇）</summary>        BurgMarkers = 1 << 1,
- /// <summary>网格线（经纬度/地块网格）</summary>        Grid = 1 << 2,
- /// <summary>军队标记</summary>        ArmyMarkers = 1 << 3,
- /// <summary>贸易路线</summary>        TradeRoutes = 1 << 4,
+ /// <summary>无叠加层</summary>
+        None = 0,
+ /// <summary>省份边界线</summary>
+        ProvinceBorders = 1 << 0,
+ /// <summary>聚落标记（首都/城市/港口/要塞/集镇）</summary>
+        BurgMarkers = 1 << 1,
+ /// <summary>网格线（经纬度/地块网格）</summary>
+        Grid = 1 << 2,
+ /// <summary>军队标记</summary>
+        ArmyMarkers = 1 << 3,
+ /// <summary>贸易路线</summary>
+        TradeRoutes = 1 << 4,
     }
 
- /// 地图基础图层（始终叠加，不可关闭）。 /// 这些是地图可读性的基础，任何地图模式下都必须显示。    [Flags]
+ /// 地图基础图层（始终叠加，不可关闭）。
+ /// 这些是地图可读性的基础，任何地图模式下都必须显示。
+    [Flags]
     public enum MapBaseLayer
     {
- /// <summary>地形底色（高程/海陆）——所有地图模式的底色</summary>        TerrainBase = 1 << 0,
- /// <summary>海岸线（海陆边界线）</summary>        Coastline = 1 << 1,
- /// <summary>河流（水系）</summary>        Rivers = 1 << 2,
+ /// <summary>地形底色（高程/海陆）——所有地图模式的底色</summary>
+        TerrainBase = 1 << 0,
+ /// <summary>海岸线（海陆边界线）</summary>
+        Coastline = 1 << 1,
+ /// <summary>河流（水系）</summary>
+        Rivers = 1 << 2,
     }
 
- /// 地图图层配置。 /// 设计原则： /// 1. 不搞无限叠加——只保留必要的、性能可控的叠加层 /// 2. 基础图层必须放在一起——始终叠加，不可关闭 /// 3. 地图模式互斥单选——选了文化就不能看政治，避免渲染压力 /// 4. 可选叠加层少量——省份边界、聚落标记、网格、军队、贸易路线    [Serializable]
+ /// 地图图层配置。
+ /// 设计原则：
+ /// 1. 不搞无限叠加——只保留必要的、性能可控的叠加层
+ /// 2. 基础图层必须放在一起——始终叠加，不可关闭
+ /// 3. 地图模式互斥单选——选了文化就不能看政治，避免渲染压力
+ /// 4. 可选叠加层少量——省份边界、聚落标记、网格、军队、贸易路线
+    [Serializable]
     public class MapLayerConfig
     {
         [Header("基础图层（始终叠加，不可关闭）")]
@@ -48,8 +68,11 @@ namespace CivilizationEvolution.Render
         public bool showVirtualControl = true;
         [Tooltip("聚落辐射范围（政治地图模式下显示）")]
         public bool showInfluenceRadius = false;
+        [Tooltip("行国游牧活动范围（核心/边缘半透明色块+虚线边界+移动王庭，政治地图模式下显示）")]
+        public bool showNomadicRange = true;
 
- /// <summary>当前启用的可选叠加层位掩码</summary>        public MapOverlayLayer ActiveOverlays
+ /// <summary>当前启用的可选叠加层位掩码</summary>
+        public MapOverlayLayer ActiveOverlays
         {
             get
             {
@@ -63,10 +86,12 @@ namespace CivilizationEvolution.Render
             }
         }
 
- /// <summary>检查某个可选叠加层是否启用</summary>        public bool IsOverlayEnabled(MapOverlayLayer layer) =>
+ /// <summary>检查某个可选叠加层是否启用</summary>
+        public bool IsOverlayEnabled(MapOverlayLayer layer) =>
             (ActiveOverlays & layer) == layer;
 
- /// <summary>切换某个可选叠加层</summary>        public void ToggleOverlay(MapOverlayLayer layer, bool enabled)
+ /// <summary>切换某个可选叠加层</summary>
+        public void ToggleOverlay(MapOverlayLayer layer, bool enabled)
         {
             switch (layer)
             {
@@ -78,7 +103,8 @@ namespace CivilizationEvolution.Render
             }
         }
 
- /// <summary>重置为默认配置</summary>        public void ResetToDefault()
+ /// <summary>重置为默认配置</summary>
+        public void ResetToDefault()
         {
             showTerrainBase = true;
             showCoastline = true;
@@ -90,6 +116,7 @@ namespace CivilizationEvolution.Render
             showTradeRoutes = false;
             showVirtualControl = true;
             showInfluenceRadius = false;
+            showNomadicRange = true;
         }
     }
 }

@@ -8,14 +8,18 @@ using UnityEngine;
 
 namespace CivilizationEvolution.UI
 {
- /// 地图存档数据（可序列化） /// 包含地形、省份、子地块的完整快照
+ /// 地图存档数据（可序列化）
+ /// 包含地形、省份、子地块的完整快照
 
- /// 地图保存/加载/导出系统 /// 支持 JSON 格式存档、PNG 纹理导出、省份重命名    public class MapSaveSystem
+ /// 地图保存/加载/导出系统
+ /// 支持 JSON 格式存档、PNG 纹理导出、省份重命名
+    public class MapSaveSystem
     {
         private readonly GameWorld _world;
         private readonly MapRenderer _renderer;
 
- // 存档目录        private static string SaveDirectory => Path.Combine(Application.persistentDataPath, "MapSaves");
+ // 存档目录
+        private static string SaveDirectory => Path.Combine(Application.persistentDataPath, "MapSaves");
 
         public MapSaveSystem(GameWorld world, MapRenderer renderer)
         {
@@ -25,7 +29,8 @@ namespace CivilizationEvolution.UI
                 Directory.CreateDirectory(SaveDirectory);
         }
 
- // ===== 保存 ===== /// <summary>保存地图到指定文件名（JSON格式）</summary>        public string SaveMap(string fileName)
+ // ===== 保存 ===== /// <summary>保存地图到指定文件名（JSON格式）</summary>
+        public string SaveMap(string fileName)
         {
             if (_world == null || _world.tiles == null)
             {
@@ -41,7 +46,8 @@ namespace CivilizationEvolution.UI
                 saveTimestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
             };
 
- // 序列化地形            saveData.tiles = new TileSaveData[_world.tiles.Length];
+ // 序列化地形
+            saveData.tiles = new TileSaveData[_world.tiles.Length];
             for (int i = 0; i < _world.tiles.Length; i++)
             {
                 ref TileData t = ref _world.tiles[i];
@@ -71,7 +77,8 @@ namespace CivilizationEvolution.UI
                 };
             }
 
- // 序列化省份            if (_world.provinces != null)
+ // 序列化省份
+            if (_world.provinces != null)
             {
                 saveData.provinces = new ProvinceSaveData[_world.provinces.Count];
                 int idx = 0;
@@ -87,7 +94,8 @@ namespace CivilizationEvolution.UI
                 }
             }
 
- // 序列化子地块            if (_world.burgs != null)
+ // 序列化子地块
+            if (_world.burgs != null)
             {
                 saveData.burgs = new BurgSaveData[_world.burgs.Count];
                 int idx = 0;
@@ -119,7 +127,8 @@ namespace CivilizationEvolution.UI
                 }
             }
 
- // 写入JSON            string json = JsonUtility.ToJson(saveData, true);
+ // 写入JSON
+            string json = JsonUtility.ToJson(saveData, true);
             string path = Path.Combine(SaveDirectory, fileName + ".json");
             File.WriteAllText(path, json);
 
@@ -128,7 +137,8 @@ namespace CivilizationEvolution.UI
             return path;
         }
 
- // ===== 加载 ===== /// <summary>从指定文件名加载地图（JSON格式）</summary>        public bool LoadMap(string fileName)
+ // ===== 加载 ===== /// <summary>从指定文件名加载地图（JSON格式）</summary>
+        public bool LoadMap(string fileName)
         {
             string path = Path.Combine(SaveDirectory, fileName + ".json");
             if (!File.Exists(path))
@@ -148,13 +158,15 @@ namespace CivilizationEvolution.UI
                     return false;
                 }
 
- // 验证尺寸                if (saveData.mapWidth * saveData.mapHeight != saveData.tiles.Length)
+ // 验证尺寸
+                if (saveData.mapWidth * saveData.mapHeight != saveData.tiles.Length)
                 {
                     Debug.LogError($"[MapSaveSystem] 尺寸不匹配: {saveData.mapWidth}x{saveData.mapHeight} != {saveData.tiles.Length}");
                     return false;
                 }
 
- // 恢复地形                _world.mapWidth = saveData.mapWidth;
+ // 恢复地形
+                _world.mapWidth = saveData.mapWidth;
                 _world.mapHeight = saveData.mapHeight;
                 _world.randomSeed = saveData.randomSeed;
                 _world.tiles = new TileData[saveData.tiles.Length];
@@ -188,7 +200,8 @@ namespace CivilizationEvolution.UI
                     };
                 }
 
- // 恢复省份                _world.provinces = new Dictionary<int, Province>();
+ // 恢复省份
+                _world.provinces = new Dictionary<int, Province>();
                 if (saveData.provinces != null)
                 {
                     foreach (var p in saveData.provinces)
@@ -204,7 +217,8 @@ namespace CivilizationEvolution.UI
                     }
                 }
 
- // 恢复子地块                _world.burgs = new Dictionary<int, BurgData>();
+ // 恢复子地块
+                _world.burgs = new Dictionary<int, BurgData>();
                 if (saveData.burgs != null)
                 {
                     foreach (var b in saveData.burgs)
@@ -236,7 +250,8 @@ namespace CivilizationEvolution.UI
                     }
                 }
 
- // 强制刷新渲染                if (_renderer != null)
+ // 强制刷新渲染
+                if (_renderer != null)
                 {
                     _renderer.BindWorld(_world);
                     _renderer.ForceRefresh();
@@ -252,7 +267,8 @@ namespace CivilizationEvolution.UI
             }
         }
 
- // ===== 省份重命名 ===== /// <summary>重命名指定省份</summary>        public bool RenameProvince(int provinceId, string newName)
+ // ===== 省份重命名 ===== /// <summary>重命名指定省份</summary>
+        public bool RenameProvince(int provinceId, string newName)
         {
             if (_world == null || _world.provinces == null) return false;
             if (!_world.provinces.TryGetValue(provinceId, out var province))
@@ -271,7 +287,8 @@ namespace CivilizationEvolution.UI
             return true;
         }
 
- /// <summary>获取所有省份名称列表（用于UI下拉）</summary>        public List<(int id, string name)> GetProvinceList()
+ /// <summary>获取所有省份名称列表（用于UI下拉）</summary>
+        public List<(int id, string name)> GetProvinceList()
         {
             var list = new List<(int, string)>();
             if (_world?.provinces == null) return list;
@@ -281,7 +298,10 @@ namespace CivilizationEvolution.UI
             return list;
         }
 
- // ===== 导出PNG ===== /// <summary>导出当前地图纹理为PNG</summary> /// <param name="fileName">文件名（不含扩展名）</param> /// <param name="mode">显示模式（-1=当前模式）</param>        public string ExportMapPNG(string fileName, int mode = -1)
+ // ===== 导出PNG ===== /// <summary>导出当前地图纹理为PNG</summary>
+ /// <param name="fileName">文件名（不含扩展名）</param>
+ /// <param name="mode">显示模式（-1=当前模式）</param>
+        public string ExportMapPNG(string fileName, int mode = -1)
         {
             if (_renderer == null)
             {
@@ -289,24 +309,29 @@ namespace CivilizationEvolution.UI
                 return null;
             }
 
- // 切换到指定显示模式（如果指定了）            MapDisplayMode originalMode = _renderer.DisplayMode;
+ // 切换到指定显示模式（如果指定了）
+            MapDisplayMode originalMode = _renderer.DisplayMode;
             if (mode >= 0)
                 _renderer.SetDisplayMode((MapDisplayMode)mode);
 
- // 强制刷新一帧确保纹理是最新的            _renderer.ForceRefresh();
+ // 强制刷新一帧确保纹理是最新的
+            _renderer.ForceRefresh();
 
- // 获取纹理            var texture = _renderer.GetMapTexture();
+ // 获取纹理
+            var texture = _renderer.GetMapTexture();
             if (texture == null)
             {
                 Debug.LogError("[MapSaveSystem] 地图纹理为空");
                 return null;
             }
 
- // 编码为PNG            byte[] pngData = texture.EncodeToPNG();
+ // 编码为PNG
+            byte[] pngData = texture.EncodeToPNG();
             string path = Path.Combine(SaveDirectory, fileName + ".png");
             File.WriteAllBytes(path, pngData);
 
- // 恢复原显示模式            if (mode >= 0)
+ // 恢复原显示模式
+            if (mode >= 0)
                 _renderer.SetDisplayMode(originalMode);
 
             long sizeKB = pngData.Length / 1024;
@@ -314,7 +339,8 @@ namespace CivilizationEvolution.UI
             return path;
         }
 
- /// <summary>导出所有显示模式的地图PNG（地形/气候/群系/政治/人口/经济）</summary>        public List<string> ExportAllMapPNGs(string baseName)
+ /// <summary>导出所有显示模式的地图PNG（地形/气候/群系/政治/人口/经济）</summary>
+        public List<string> ExportAllMapPNGs(string baseName)
         {
             var paths = new List<string>();
             string[] modeNames = { "terrain", "climate", "biome", "political", "population", "economy" };
@@ -326,7 +352,8 @@ namespace CivilizationEvolution.UI
             return paths;
         }
 
- // ===== 存档列表 ===== /// <summary>获取所有存档文件名</summary>        public string[] GetSaveList()
+ // ===== 存档列表 ===== /// <summary>获取所有存档文件名</summary>
+        public string[] GetSaveList()
         {
             if (!Directory.Exists(SaveDirectory)) return Array.Empty<string>();
             var files = Directory.GetFiles(SaveDirectory, "*.json");
@@ -335,7 +362,8 @@ namespace CivilizationEvolution.UI
             return files;
         }
 
- /// <summary>删除指定存档</summary>        public bool DeleteSave(string fileName)
+ /// <summary>删除指定存档</summary>
+        public bool DeleteSave(string fileName)
         {
             string path = Path.Combine(SaveDirectory, fileName + ".json");
             if (File.Exists(path))
@@ -347,7 +375,8 @@ namespace CivilizationEvolution.UI
             return false;
         }
 
- /// <summary>打开存档目录</summary>        public static void OpenSaveDirectory()
+ /// <summary>打开存档目录</summary>
+        public static void OpenSaveDirectory()
         {
             if (!Directory.Exists(SaveDirectory))
                 Directory.CreateDirectory(SaveDirectory);

@@ -33,6 +33,26 @@ namespace CivilizationEvolution.Map
         public const int FORTIFIED_CAMP_TO_FORT_POP = 100;
 
         /// <summary>
+        /// 由传统 BurgType 推断聚落形态（村镇/城/堡）。
+        /// Village/Town→Village；City/Port/Capital→City；Fortress→Fort。
+        /// </summary>
+        public static SettlementType InferFromBurgType(BurgType burgType)
+        {
+            switch (burgType)
+            {
+                case BurgType.Fortress:
+                    return SettlementType.Fort;
+                case BurgType.City:
+                case BurgType.Port:
+                case BurgType.Capital:
+                    return SettlementType.City;
+                default:
+                    return SettlementType.Village;
+            }
+        }
+
+
+        /// <summary>
         /// 每日检查所有营寨的演化。
         /// </summary>
         public static void DailyTick(GameWorld world)

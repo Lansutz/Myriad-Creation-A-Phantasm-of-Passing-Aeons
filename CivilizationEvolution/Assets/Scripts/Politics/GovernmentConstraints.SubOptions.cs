@@ -4,17 +4,21 @@ using CivilizationEvolution.Core;
 
 namespace CivilizationEvolution.Politics
 {
- /// GovernmentConstraints.SubOptions —— 条件子选项组定义与活跃过滤（各维度的下拉选项数据）（partial static class）    public static partial class GovernmentConstraints
+ /// GovernmentConstraints.SubOptions —— 条件子选项组定义与活跃过滤（各维度的下拉选项数据）（partial static class）
+    public static partial class GovernmentConstraints
     {
 
- /// <summary>获取某维度的所有条件子选项组</summary>        public static List<SubOptionGroup> GetSubOptionGroups(GovernmentDimension dimension)
+ /// <summary>获取某维度的所有条件子选项组</summary>
+        public static List<SubOptionGroup> GetSubOptionGroups(GovernmentDimension dimension)
         {
             var groups = new List<SubOptionGroup>();
 
             switch (dimension)
             {
- // A1 最高权力交接的子选项                case GovernmentDimension.SupremeSuccession:
- // 世袭 → 继承法四轴（多轴并行，不是单选）                    groups.Add(new SubOptionGroup
+ // A1 最高权力交接的子选项
+                case GovernmentDimension.SupremeSuccession:
+ // 世袭 → 继承法四轴（多轴并行，不是单选）
+                    groups.Add(new SubOptionGroup
                     {
                         groupName = "继承法（四轴）",
                         parentDimension = "SupremeSuccession",
@@ -27,7 +31,8 @@ namespace CivilizationEvolution.Politics
                             new SubOption { name = "长幼轴", value = 3, description = "年长者先 / 年幼者先" }
                         }
                     });
- // 选举君主 → 两轴：身份范围 + 性别（区别于世袭的血缘范围四轴）                    groups.Add(new SubOptionGroup
+ // 选举君主 → 两轴：身份范围 + 性别（区别于世袭的血缘范围四轴）
+                    groups.Add(new SubOptionGroup
                     {
                         groupName = "选举范围（身份）",
                         parentDimension = "SupremeSuccession",
@@ -54,7 +59,8 @@ namespace CivilizationEvolution.Politics
                             new SubOption { name = "仅女性", value = 4, description = "只有女性可被选举" }
                         }
                     });
- // 推举君主 → 两轴：推举主体身份 + 性别                    groups.Add(new SubOptionGroup
+ // 推举君主 → 两轴：推举主体身份 + 性别
+                    groups.Add(new SubOptionGroup
                     {
                         groupName = "推举主体（身份）",
                         parentDimension = "SupremeSuccession",
@@ -84,7 +90,8 @@ namespace CivilizationEvolution.Politics
                     });
                     break;
 
- // A2 最高权力分配的子选项（头衔分配+领地分配，双轴并行） // 头衔分配根据A0最高权力归属（君主制/共和制）显示不同选项                case GovernmentDimension.SupremeScope:
+ // A2 最高权力分配的子选项（头衔分配+领地分配，双轴并行） // 头衔分配根据A0最高权力归属（君主制/共和制）显示不同选项
+                case GovernmentDimension.SupremeScope:
                     groups.Add(new SubOptionGroup
                     {
                         groupName = "头衔分配",
@@ -92,9 +99,11 @@ namespace CivilizationEvolution.Politics
                         parentValue = -1,  // 始终显示，但选项根据A0过滤
                         options = new List<SubOption>
                         {
- // 君主制选项                            new SubOption { name = "独享（君主制）", value = 0, description = "一人独占最高头衔——君主制" },
+ // 君主制选项
+                            new SubOption { name = "独享（君主制）", value = 0, description = "一人独占最高头衔——君主制" },
                             new SubOption { name = "家族共享（君主制）", value = 1, description = "法兰克人式，家族共享最高头衔——君主制" },
- // 共和制选项                            new SubOption { name = "有最高头衔（共和制）", value = 2, description = "有最高头衔如执政官/独裁官——共和制" },
+ // 共和制选项
+                            new SubOption { name = "有最高头衔（共和制）", value = 2, description = "有最高头衔如执政官/独裁官——共和制" },
                             new SubOption { name = "无最高头衔（共和制）", value = 3, description = "无最高头衔，中央机构为主导如元老院——共和制" }
                         }
                     });
@@ -112,8 +121,10 @@ namespace CivilizationEvolution.Politics
                     });
                     break;
 
- // B2 中央权力机构的子选项（只有B0=有常设时才显示）                case GovernmentDimension.CentralInstitution:
- // 议会 → 议会构成                    groups.Add(new SubOptionGroup
+ // B2 中央权力机构的子选项（只有B0=有常设时才显示）
+                case GovernmentDimension.CentralInstitution:
+ // 议会 → 议会构成
+                    groups.Add(new SubOptionGroup
                     {
                         groupName = "议会构成",
                         parentDimension = "CentralInstitution",
@@ -125,7 +136,8 @@ namespace CivilizationEvolution.Politics
                             new SubOption { name = "等级会议", value = 2, description = "按等级分庭（法国三级会议/神罗帝国议会）" }
                         }
                     });
- // 长老议事会 → 长老构成                    groups.Add(new SubOptionGroup
+ // 长老议事会 → 长老构成
+                    groups.Add(new SubOptionGroup
                     {
                         groupName = "长老构成",
                         parentDimension = "CentralInstitution",
@@ -137,7 +149,8 @@ namespace CivilizationEvolution.Politics
                             new SubOption { name = "功勋长老", value = 2, description = "按功勋选拔的长老" }
                         }
                     });
- // 官僚中枢 → 官僚体系                    groups.Add(new SubOptionGroup
+ // 官僚中枢 → 官僚体系
+                    groups.Add(new SubOptionGroup
                     {
                         groupName = "官僚体系",
                         parentDimension = "CentralInstitution",
@@ -151,8 +164,10 @@ namespace CivilizationEvolution.Politics
                     });
                     break;
 
- // C1 地方权力交接的子选项（核心：封建vs官僚的子选项组互斥）                case GovernmentDimension.LocalSuccession:
- // 任命 → 任命主体（官僚体系的子选项）                    groups.Add(new SubOptionGroup
+ // C1 地方权力交接的子选项（核心：封建vs官僚的子选项组互斥）
+                case GovernmentDimension.LocalSuccession:
+ // 任命 → 任命主体（官僚体系的子选项）
+                    groups.Add(new SubOptionGroup
                     {
                         groupName = "任命主体",
                         parentDimension = "LocalSuccession",
@@ -164,7 +179,8 @@ namespace CivilizationEvolution.Politics
                             new SubOption { name = "军事任免", value = 2, description = "军事上级任免（军管区）" }
                         }
                     });
- // 世袭 → 领有身份（封建体系的子选项）                    groups.Add(new SubOptionGroup
+ // 世袭 → 领有身份（封建体系的子选项）
+                    groups.Add(new SubOptionGroup
                     {
                         groupName = "领有身份",
                         parentDimension = "LocalSuccession",
@@ -176,7 +192,8 @@ namespace CivilizationEvolution.Politics
                             new SubOption { name = "军功领邑", value = 2, description = "战功封赏" }
                         }
                     });
- // 选举 → 选举范围                    groups.Add(new SubOptionGroup
+ // 选举 → 选举范围
+                    groups.Add(new SubOptionGroup
                     {
                         groupName = "选举范围",
                         parentDimension = "LocalSuccession",
@@ -188,7 +205,8 @@ namespace CivilizationEvolution.Politics
                             new SubOption { name = "自治市议会", value = 2, description = "自治市议会选举" }
                         }
                     });
- // 考试 → 考试体系（官僚体系精英选拔）                    groups.Add(new SubOptionGroup
+ // 考试 → 考试体系（官僚体系精英选拔）
+                    groups.Add(new SubOptionGroup
                     {
                         groupName = "考试体系",
                         parentDimension = "LocalSuccession",
@@ -201,7 +219,8 @@ namespace CivilizationEvolution.Politics
                             new SubOption { name = "九品中正", value = 3, description = "中正官评定品级（魏晋式）" }
                         }
                     });
- // 城市特许 → 特许类型（可选项）                    groups.Add(new SubOptionGroup
+ // 城市特许 → 特许类型（可选项）
+                    groups.Add(new SubOptionGroup
                     {
                         groupName = "特许类型",
                         parentDimension = "LocalSuccession",
@@ -221,13 +240,18 @@ namespace CivilizationEvolution.Politics
         }
 
 
- /// 获取当前激活的子选项组（基于当前政体组合） /// 同一维度内，只有选中的父选项对应的子选项组被激活 /// 不同父选项的子选项组互斥（不能同时激活） /// B2中央机构只有B0=有常设时才显示子选项        public static List<SubOptionGroup> GetActiveSubOptionGroups(
+ /// 获取当前激活的子选项组（基于当前政体组合）
+ /// 同一维度内，只有选中的父选项对应的子选项组被激活
+ /// 不同父选项的子选项组互斥（不能同时激活）
+ /// B2中央机构只有B0=有常设时才显示子选项
+        public static List<SubOptionGroup> GetActiveSubOptionGroups(
             GovernmentDimension dimension, GovernmentComposition comp)
         {
             var allGroups = GetSubOptionGroups(dimension);
             var currentPrimary = GetCurrentPrimary(dimension, comp);
 
- // B2中央机构：只有B0=有常设时才显示            if (dimension == GovernmentDimension.CentralInstitution)
+ // B2中央机构：只有B0=有常设时才显示
+            if (dimension == GovernmentDimension.CentralInstitution)
             {
                 if (comp.centralExistence != CentralExistence.Established)
                     return new List<SubOptionGroup>();  // 无常设中央机构，不显示子选项
@@ -236,14 +260,16 @@ namespace CivilizationEvolution.Politics
             var activeGroups = new List<SubOptionGroup>();
             foreach (var group in allGroups)
             {
- // parentValue=-1表示始终显示（如A2的头衔分配和领地分配）                if (group.parentValue == -1)
+ // parentValue=-1表示始终显示（如A2的头衔分配和领地分配）
+                if (group.parentValue == -1)
                 {
                     group.isActive = true;
                     activeGroups.Add(group);
                     continue;
                 }
 
- // 只有父选项被选中时，子选项组才激活                group.isActive = (group.parentValue == currentPrimary);
+ // 只有父选项被选中时，子选项组才激活
+                group.isActive = (group.parentValue == currentPrimary);
                 if (group.isActive)
                     activeGroups.Add(group);
             }

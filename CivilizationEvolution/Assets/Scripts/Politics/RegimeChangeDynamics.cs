@@ -17,13 +17,16 @@ namespace CivilizationEvolution.Politics
 
  /// <summary>单政权的政体变迁运行时状态</summary>
 
- /// 政体变迁动力学主体。每政权一份 RegimeChangeState； /// 由 GameWorld 在政治 Tick 调用 Tick，并在具体事件（继位/战败/叛乱）发生时调用 NotifyEvent。    public class RegimeChangeDynamics
+ /// 政体变迁动力学主体。每政权一份 RegimeChangeState；
+ /// 由 GameWorld 在政治 Tick 调用 Tick，并在具体事件（继位/战败/叛乱）发生时调用 NotifyEvent。
+    public class RegimeChangeDynamics
     {
         private readonly Dictionary<int, RegimeChangeState> _states = new Dictionary<int, RegimeChangeState>();
         private InnovationTree _innovations;
         private Chronicle _chronicle;
 
- // —— 调参常量 ——        const int WindowDays = 120;                 // 关键节点窗口长度（约 4 个月，相对长期历史是短暂的）
+ // —— 调参常量 ——
+        const int WindowDays = 120;                 // 关键节点窗口长度（约 4 个月，相对长期历史是短暂的）
         const float OpenSeverityBase = 45f;         // 打开窗口所需基础事件烈度
         const float InertiaPerYear = 1.2f;          // 每年累积制度黏性
         const float InertiaMax = 40f;
@@ -49,23 +52,28 @@ namespace CivilizationEvolution.Politics
             return s;
         }
 
- /// <summary>现政体已存续年数（路径依赖）</summary>        public float GetRegimeAgeYears(int realmId, int currentDay)
+ /// <summary>现政体已存续年数（路径依赖）</summary>
+        public float GetRegimeAgeYears(int realmId, int currentDay)
         {
             var s = GetState(realmId);
             return s == null ? 0f : Mathf.Max(0f, currentDay - s.compositionEstablishedDay) / 365f;
         }
 
- /// 主 Tick：更新张力与黏性；路径依赖期自动检测临界条件；窗口期倒计时并在到期时博弈解决。        public void Tick(int currentDay, RealmData realm, RealmSociety society,
+ /// 主 Tick：更新张力与黏性；路径依赖期自动检测临界条件；窗口期倒计时并在到期时博弈解决。
+        public void Tick(int currentDay, RealmData realm, RealmSociety society,
             RealmSituation sit, FactionManager factions)
         {
             var state = Ensure(realm.realmId, currentDay);
 
- // 1) 张力重算（每 Tick 反映最新社会基础，但只积累/呈现，不直接变革）            state.tension.Recalculate(society, sit, realm);
+ // 1) 张力重算（每 Tick 反映最新社会基础，但只积累/呈现，不直接变革）
+            state.tension.Recalculate(society, sit, realm);
 
- // 2) 制度黏性随存续年数增长（路径依赖自我强化）            float ageYears = Mathf.Max(0f, currentDay - state.compositionEstablishedDay) / 365f;
+ // 2) 制度黏性随存续年数增长（路径依赖自我强化）
+            float ageYears = Mathf.Max(0f, currentDay - state.compositionEstablishedDay) / 365f;
             state.institutionalInertia = Mathf.Clamp(ageYears * InertiaPerYear, 0f, InertiaMax);
 
- // 3) 窗口期：倒计时 → 到期博弈            if (state.IsWindowOpen)
+ // 3) 窗口期：倒计时 → 到期博弈
+            if (state.IsWindowOpen)
             {
                 state.activeJuncture.remainingDays--;
                 if (state.activeJuncture.remainingDays <= 0)
@@ -73,35 +81,44 @@ namespace CivilizationEvolution.Politics
                 return;
             }
 
- // 4) 路径依赖期：自动检测可打开窗口的临界条件（偶然事件的内生识别）            DetectAutoJuncture(currentDay, realm, society, sit, factions, state);
+ // 4) 路径依赖期：自动检测可打开窗口的临界条件（偶然事件的内生识别）
+            DetectAutoJuncture(currentDay, realm, society, sit, factions, state);
         }
 
- // ===== 自动关键节点检测（外部也可用 NotifyEvent 主动注入）=====        private void DetectAutoJuncture(int day, RealmData realm, RealmSociety society,
+ // ===== 自动关键节点检测（外部也可用 NotifyEvent 主动注入）=====
+        private void DetectAutoJuncture(int day, RealmData realm, RealmSociety society,
             RealmSituation sit, FactionManager factions, RegimeChangeState state)
         {
- // 财政破产            if (realm.treasury < AutoFiscalTreasury && state.tension.fiscalMilitary > 50f)
+ // 财政破产
+            if (realm.treasury < AutoFiscalTreasury && state.tension.fiscalMilitary > 50f)
             { TryOpen(day, state, CriticalJunctureType.FiscalCollapse, 60f); return; }
 
- // 本土战争失败倾向（兵临境内 + 低稳定）            if (sit.warOnHomeSoil && realm.stability < 30f)
+ // 本土战争失败倾向（兵临境内 + 低稳定）
+            if (sit.warOnHomeSoil && realm.stability < 30f)
             { TryOpen(day, state, CriticalJunctureType.WarDefeat, 55f + (30f - realm.stability) * 0.5f); return; }
 
- // 民众起义：整体动荡超阈 + 最不安分阶层能量强            var restless = society.Get(society.mostRestlessClass);
+ // 民众起义：整体动荡超阈 + 最不安分阶层能量强
+            var restless = society.Get(society.mostRestlessClass);
             if (society.unrestScore > AutoUprisingTension && restless != null && restless.unrest > 25f)
             { TryOpen(day, state, CriticalJunctureType.PopularUprising, society.unrestScore * 0.8f); return; }
 
- // 精英分裂：要求变革与维持现状的派系都很强且高度极化（接近 50:50）            factions.GetChangeVsStatusQuo(realm.realmId, out float change, out float sq);
+ // 精英分裂：要求变革与维持现状的派系都很强且高度极化（接近 50:50）
+            factions.GetChangeVsStatusQuo(realm.realmId, out float change, out float sq);
             if (change > 30f && sq > 30f && Mathf.Abs(change - sq) < 8f && state.tension.total > 55f)
             { TryOpen(day, state, CriticalJunctureType.EliteSplit, 50f + state.tension.total * 0.2f); }
         }
 
- /// 外部事件注入（继位/军事惨败/被征服/改革者上台等由对应系统调用）。 /// 返回是否真的打开了窗口——低张力社会中事件会被现有制度吸收（窗口不开）。        public bool NotifyEvent(int currentDay, int realmId, CriticalJunctureType type, float rawSeverity)
+ /// 外部事件注入（继位/军事惨败/被征服/改革者上台等由对应系统调用）。
+ /// 返回是否真的打开了窗口——低张力社会中事件会被现有制度吸收（窗口不开）。
+        public bool NotifyEvent(int currentDay, int realmId, CriticalJunctureType type, float rawSeverity)
         {
             var state = Ensure(realmId, currentDay);
             if (state.IsWindowOpen) return false; // 已有窗口
             return TryOpen(currentDay, state, type, rawSeverity);
         }
 
- /// <summary>尝试打开窗口：事件烈度必须盖过"基础阈值 + 制度黏性"，否则被制度吸收</summary>        private bool TryOpen(int day, RegimeChangeState state, CriticalJunctureType type, float severity)
+ /// <summary>尝试打开窗口：事件烈度必须盖过"基础阈值 + 制度黏性"，否则被制度吸收</summary>
+        private bool TryOpen(int day, RegimeChangeState state, CriticalJunctureType type, float severity)
         {
             float threshold = OpenSeverityBase + state.institutionalInertia;
             if (severity < threshold) return false; // 事件被路径依赖的制度韧性吸收
@@ -118,7 +135,8 @@ namespace CivilizationEvolution.Politics
             return true;
         }
 
- // ===== 节点博弈：派系力量 × 革新可行性 → 非决定论结果 =====        private void ResolveJuncture(int day, RealmData realm, RealmSociety society,
+ // ===== 节点博弈：派系力量 × 革新可行性 → 非决定论结果 =====
+        private void ResolveJuncture(int day, RealmData realm, RealmSociety society,
             RealmSituation sit, FactionManager factions, RegimeChangeState state)
         {
             var j = state.activeJuncture;
@@ -137,7 +155,8 @@ namespace CivilizationEvolution.Politics
             }
             float changePower = reformPower + radicalPower;
 
- // 崩溃判定：整体动荡极高且各方都无压倒性力量 → 失控            if (society.unrestScore > 82f && changePower < conservativePower * 1.2f
+ // 崩溃判定：整体动荡极高且各方都无压倒性力量 → 失控
+            if (society.unrestScore > 82f && changePower < conservativePower * 1.2f
                 && j.type is CriticalJunctureType.PopularUprising or CriticalJunctureType.ForeignConquest)
             {
                 Finish(state, j, JunctureOutcomeType.Collapse, "各方失控，国家权威崩溃");
@@ -145,9 +164,11 @@ namespace CivilizationEvolution.Politics
                 return;
             }
 
- // 保守/复辟胜出：维持或回摆            if (conservativePower >= changePower && conservativePower >= reactionPower)
+ // 保守/复辟胜出：维持或回摆
+            if (conservativePower >= changePower && conservativePower >= reactionPower)
             {
- // 保守派勉强胜出=停滞；强势胜出=反扑（稳定度回升，改革派受压）                if (conservativePower > changePower * 1.25f)
+ // 保守派勉强胜出=停滞；强势胜出=反扑（稳定度回升，改革派受压）
+                if (conservativePower > changePower * 1.25f)
                 {
                     Finish(state, j, JunctureOutcomeType.Reaction, "保守派反扑，旧制强化");
                     realm.stability = Mathf.Clamp(realm.stability + 8f, 0f, 100f);
@@ -159,14 +180,16 @@ namespace CivilizationEvolution.Politics
                 return;
             }
 
- // 变革阵营胜出：激进派占优则改动更彻底（多维），改革派占优或势均则妥协（一维）            bool radicalLed = radicalPower > reformPower;
+ // 变革阵营胜出：激进派占优则改动更彻底（多维），改革派占优或势均则妥协（一维）
+            bool radicalLed = radicalPower > reformPower;
             int dimensionsToChange = radicalLed ? 2 : 1;
             var winPlatform = SelectWinningPlatform(factionsList, radicalLed);
 
             int changed = ApplyChangesTowardPlatform(day, realm, winPlatform, dimensionsToChange, state);
             if (changed == 0)
             {
- // 想改但没有革新支撑的可行目标——变革被技术/制度条件卡住（条件约束的真正含义）                Finish(state, j, JunctureOutcomeType.Stalemate, "变革诉求缺乏支撑革新，无从落地，窗口空转");
+ // 想改但没有革新支撑的可行目标——变革被技术/制度条件卡住（条件约束的真正含义）
+                Finish(state, j, JunctureOutcomeType.Stalemate, "变革诉求缺乏支撑革新，无从落地，窗口空转");
                 return;
             }
             state.compositionEstablishedDay = day; // 新制度进入新的路径依赖
@@ -174,7 +197,8 @@ namespace CivilizationEvolution.Politics
             Finish(state, j, outcome, $"按胜派政纲调整 {changed} 个政体维度");
         }
 
- /// <summary>选取胜派政纲（激进优先则取激进派，否则改革派，缺则用最不安分阶层反推）</summary>        private FactionPlatform SelectWinningPlatform(IReadOnlyList<Faction> factions, bool radicalLed)
+ /// <summary>选取胜派政纲（激进优先则取激进派，否则改革派，缺则用最不安分阶层反推）</summary>
+        private FactionPlatform SelectWinningPlatform(IReadOnlyList<Faction> factions, bool radicalLed)
         {
             Faction winner = null; float best = -1f;
             foreach (var f in factions)
@@ -187,49 +211,58 @@ namespace CivilizationEvolution.Politics
             return winner != null ? winner.platform : new FactionPlatform { openness = 0.5f, centralization = 0f };
         }
 
- /// 按政纲方向，在七维中挑选"现状差距最大且存在革新可行替代"的维度落地改革。 /// 严格通过 GovernmentReform.Reform（内含 PolityComponentInnovations 可行性检查）。        private int ApplyChangesTowardPlatform(int day, RealmData realm, FactionPlatform platform,
+ /// 按政纲方向，在七维中挑选"现状差距最大且存在革新可行替代"的维度落地改革。
+ /// 严格通过 GovernmentReform.Reform（内含 PolityComponentInnovations 可行性检查）。
+        private int ApplyChangesTowardPlatform(int day, RealmData realm, FactionPlatform platform,
             int maxChanges, RegimeChangeState state)
         {
             var candidates = new List<(PolityComponentInnovations.PolityDimension dim, int target, float gap)>();
 
- // 开放度 → A1 最高交接（选举系 vs 世袭系）            AddDimensionCandidate(candidates, realm,
+ // 开放度 → A1 最高交接（选举系 vs 世袭系）
+            AddDimensionCandidate(candidates, realm,
                 PolityComponentInnovations.PolityDimension.SupremeSuccession,
                 realm.composition.supremeSuccession.primary, platform.openness,
                 openPositive: new[] { (int)SupremeSuccession.ElectiveRepresentative, (int)SupremeSuccession.ElectiveDirect, (int)SupremeSuccession.Rotation },
                 openNegative: new[] { (int)SupremeSuccession.Hereditary, (int)SupremeSuccession.Divine });
 
- // 开放度 → B2 中央机构（议会 vs 王庭/长老）            AddDimensionCandidate(candidates, realm,
+ // 开放度 → B2 中央机构（议会 vs 王庭/长老）
+            AddDimensionCandidate(candidates, realm,
                 PolityComponentInnovations.PolityDimension.CentralInstitution,
                 realm.composition.centralInstitution.primary, platform.openness,
                 openPositive: new[] { (int)CentralInstitution.Assembly, (int)CentralInstitution.BureaucraticCore },
                 openNegative: new[] { (int)CentralInstitution.Court, (int)CentralInstitution.EldersCouncil });
 
- // 开放度 → C1 地方交接（选举/考试/城市特许 vs 世袭）            AddDimensionCandidate(candidates, realm,
+ // 开放度 → C1 地方交接（选举/考试/城市特许 vs 世袭）
+            AddDimensionCandidate(candidates, realm,
                 PolityComponentInnovations.PolityDimension.LocalSuccession,
                 realm.composition.localSuccession.primary, platform.openness,
                 openPositive: new[] { (int)LocalSuccession.Examination, (int)LocalSuccession.Elected, (int)LocalSuccession.CityCharter },
                 openNegative: new[] { (int)LocalSuccession.Hereditary });
 
- // 集权度 → D 央地结构（单一 vs 联邦/邦联）            AddDimensionCandidate(candidates, realm,
+ // 集权度 → D 央地结构（单一 vs 联邦/邦联）
+            AddDimensionCandidate(candidates, realm,
                 PolityComponentInnovations.PolityDimension.SpatialStructure,
                 realm.composition.spatialStructure.primary, platform.centralization,
                 openPositive: new[] { (int)SpatialStructure.Unitary },
                 openNegative: new[] { (int)SpatialStructure.Federal, (int)SpatialStructure.Confederal });
 
- // 集权度 → C2 地方职能（直辖 vs 自治）            AddDimensionCandidate(candidates, realm,
+ // 集权度 → C2 地方职能（直辖 vs 自治）
+            AddDimensionCandidate(candidates, realm,
                 PolityComponentInnovations.PolityDimension.LocalScope,
                 realm.composition.localScope.primary, platform.centralization,
                 openPositive: new[] { (int)LocalScope.None, (int)LocalScope.FiscalJudicial },
                 openNegative: new[] { (int)LocalScope.FullAutonomy });
 
- // 按差距降序，优先改矛盾最深的维度            candidates.Sort((a, b) => b.gap.CompareTo(a.gap));
+ // 按差距降序，优先改矛盾最深的维度
+            candidates.Sort((a, b) => b.gap.CompareTo(a.gap));
 
             int changed = 0;
             foreach (var cand in candidates)
             {
                 if (changed >= maxChanges) break;
                 if (cand.target == GetCurrentComponent(realm, cand.dim)) continue;
- // 革新可行性硬检查（不满足则跳过——这是"结构条件约束可能性空间"）                if (!PolityComponentInnovations.IsComponentAvailable(cand.dim, cand.target, _innovations, realm.realmId))
+ // 革新可行性硬检查（不满足则跳过——这是"结构条件约束可能性空间"）
+                if (!PolityComponentInnovations.IsComponentAvailable(cand.dim, cand.target, _innovations, realm.realmId))
                     continue;
                 if (GovernmentReform.Reform(realm, cand.dim, cand.target, _innovations, _chronicle))
                     changed++;
@@ -237,14 +270,16 @@ namespace CivilizationEvolution.Politics
             return changed;
         }
 
- /// <summary>构造一个维度的候选目标：按倾向方向选目标，差距=|倾向|（倾向越强越优先）</summary>        private void AddDimensionCandidate(
+ /// <summary>构造一个维度的候选目标：按倾向方向选目标，差距=|倾向|（倾向越强越优先）</summary>
+        private void AddDimensionCandidate(
             List<(PolityComponentInnovations.PolityDimension, int, float)> list, RealmData realm,
             PolityComponentInnovations.PolityDimension dim, int current, float tendency,
             int[] openPositive, int[] openNegative)
         {
             if (Mathf.Abs(tendency) < 0.15f) return; // 政纲在此维度无明显诉求
             int[] pool = tendency > 0f ? openPositive : openNegative;
- // 候选不选当前值；优先取池内第一个（最典型方向）            foreach (int t in pool)
+ // 候选不选当前值；优先取池内第一个（最典型方向）
+            foreach (int t in pool)
             {
                 if (t == current) continue;
                 list.Add((dim, t, Mathf.Abs(tendency)));

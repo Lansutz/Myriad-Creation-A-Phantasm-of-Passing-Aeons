@@ -9,7 +9,12 @@ using MapEditor = CivilizationEvolution.Render.MapEditor;
 
 namespace CivilizationEvolution.Bootstrap
 {
- /// 地图编辑器场景引导脚本 /// 挂在场景空物体上，Awake时自动组装： /// Canvas → 左侧工具面板(EditorUIPanel) + 右侧参数面板(MapGenerationPanel) /// GameWorld → MapRenderer → 相机 /// 面板回调连接到GameWorld的GenerateTerrainWithConfig/CalculateClimate/RecalculateHydrology    public class MapEditorBootstrap : MonoBehaviour
+ /// 地图编辑器场景引导脚本
+ /// 挂在场景空物体上，Awake时自动组装：
+ /// Canvas → 左侧工具面板(EditorUIPanel) + 右侧参数面板(MapGenerationPanel)
+ /// GameWorld → MapRenderer → 相机
+ /// 面板回调连接到GameWorld的GenerateTerrainWithConfig/CalculateClimate/RecalculateHydrology
+    public class MapEditorBootstrap : MonoBehaviour
     {
         [Header("地图尺寸（运行时可被GenConfig覆盖）")]
         public int mapWidth = 256;
@@ -27,7 +32,8 @@ namespace CivilizationEvolution.Bootstrap
         [Tooltip("不为空时，启动后自动加载指定存档文件名（不含.json后缀）")]
         public string loadSaveFileName = null;
 
- // 运行时创建的引用        private GameWorld _world;
+ // 运行时创建的引用
+        private GameWorld _world;
         private MapRenderer _renderer;
         private SphericalMapRenderer _sphericalRenderer;
         private MapEditor _mapEditor;
@@ -52,7 +58,8 @@ namespace CivilizationEvolution.Bootstrap
         {
             if (_world == null) return;
 
- // 加载存档模式：优先于其他启动模式            if (!string.IsNullOrEmpty(loadSaveFileName))
+ // 加载存档模式：优先于其他启动模式
+            if (!string.IsNullOrEmpty(loadSaveFileName))
             {
                 LoadSavedMap(loadSaveFileName);
                 return;
@@ -60,19 +67,22 @@ namespace CivilizationEvolution.Bootstrap
 
             if (startWithEmptyOcean)
             {
- // 全海空白地图模式：初始化 tiles 为全海，不生成地形                InitializeEmptyOcean();
+ // 全海空白地图模式：初始化 tiles 为全海，不生成地形
+                InitializeEmptyOcean();
                 Debug.Log("[MapEditorBootstrap] 全海空白地图已初始化（等待玩家编辑/生成）");
             }
             else
             {
- // 正常模式：自动生成默认地图                _world.GenerateTerrainWithConfig();
+ // 正常模式：自动生成默认地图
+                _world.GenerateTerrainWithConfig();
                 _world.CalculateClimate();
                 _renderer?.ForceRefresh();
                 Debug.Log("[MapEditorBootstrap] 默认地图已生成");
             }
         }
 
- /// <summary>加载已保存的地图（地形+省份+聚落）</summary>        private void LoadSavedMap(string fileName)
+ /// <summary>加载已保存的地图（地形+省份+聚落）</summary>
+        private void LoadSavedMap(string fileName)
         {
             try
             {
@@ -96,7 +106,8 @@ namespace CivilizationEvolution.Bootstrap
             }
         }
 
- /// <summary>初始化全海空白地图（所有地块为海洋，等待玩家编辑）</summary>        private void InitializeEmptyOcean()
+ /// <summary>初始化全海空白地图（所有地块为海洋，等待玩家编辑）</summary>
+        private void InitializeEmptyOcean()
         {
             int total = mapWidth * mapHeight;
             _world.tiles = new TileData[total];
@@ -126,7 +137,8 @@ namespace CivilizationEvolution.Bootstrap
             _renderer?.ForceRefresh();
         }
 
- // ===== 创建相机 =====        private void CreateCamera()
+ // ===== 创建相机 =====
+        private void CreateCamera()
         {
             var camGo = new GameObject("EditorCamera");
             _camera = camGo.AddComponent<Camera>();
@@ -137,19 +149,23 @@ namespace CivilizationEvolution.Bootstrap
             _camera.transform.position = new Vector3(0f, 0f, -10f);
             camGo.AddComponent<AudioListener>();
 
- // 相机控制器（平移缩放）            var controller = camGo.AddComponent<EditorCameraController>();
+ // 相机控制器（平移缩放）
+            var controller = camGo.AddComponent<EditorCameraController>();
             controller.targetCamera = _camera;
         }
 
- // ===== 创建GameWorld =====        private void CreateWorld()
+ // ===== 创建GameWorld =====
+        private void CreateWorld()
         {
             var worldGo = new GameObject("GameWorld");
             _world = worldGo.AddComponent<GameWorld>();
             _world.mapWidth = mapWidth;
             _world.mapHeight = mapHeight;
- // GenConfig使用默认值，面板会绑定它        }
+ // GenConfig使用默认值，面板会绑定它
+        }
 
- // ===== 创建MapRenderer =====        private void CreateRenderer()
+ // ===== 创建MapRenderer =====
+        private void CreateRenderer()
         {
             var rendererGo = new GameObject("MapRenderer");
             rendererGo.transform.SetParent(_world.transform, false);
@@ -157,7 +173,8 @@ namespace CivilizationEvolution.Bootstrap
             _renderer.BindWorld(_world);
         }
 
- // ===== 创建SphericalMapRenderer（默认隐藏） =====        private void CreateSphericalRenderer()
+ // ===== 创建SphericalMapRenderer（默认隐藏） =====
+        private void CreateSphericalRenderer()
         {
             var sphereGo = new GameObject("SphericalMapRenderer");
             sphereGo.transform.SetParent(_world.transform, false);
@@ -167,14 +184,17 @@ namespace CivilizationEvolution.Bootstrap
             sphereGo.SetActive(false); // 默认平面模式
         }
 
- // ===== 创建MapEditor（画笔工具，普通类非MonoBehaviour） =====        private void CreateMapEditor()
+ // ===== 创建MapEditor（画笔工具，普通类非MonoBehaviour） =====
+        private void CreateMapEditor()
         {
             _mapEditor = new MapEditor(_world, _renderer);
         }
 
- // ===== 创建Canvas和UI面板 =====        private void CreateCanvasAndPanels()
+ // ===== 创建Canvas和UI面板 =====
+        private void CreateCanvasAndPanels()
         {
- // Canvas            var canvasGo = new GameObject("EditorCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+ // Canvas
+            var canvasGo = new GameObject("EditorCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             var canvas = canvasGo.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 100;
@@ -183,15 +203,18 @@ namespace CivilizationEvolution.Bootstrap
             scaler.referenceResolution = new Vector2(1920f, 1080f);
             scaler.matchWidthOrHeight = 0.5f;
 
- // EventSystem            var eventGo = new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem), typeof(UnityEngine.EventSystems.StandaloneInputModule));
+ // EventSystem
+            var eventGo = new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem), typeof(UnityEngine.EventSystems.StandaloneInputModule));
 
- // 左侧工具面板            var toolPanelGo = new GameObject("ToolPanel");
+ // 左侧工具面板
+            var toolPanelGo = new GameObject("ToolPanel");
             toolPanelGo.transform.SetParent(canvasGo.transform, false);
             _toolPanel = toolPanelGo.AddComponent<EditorUIPanel>();
             _toolPanel.Initialize(_renderer, _mapEditor);
             _toolPanel.ShowPanel();
 
- // 右侧参数面板            var genPanelGo = new GameObject("GenPanel");
+ // 右侧参数面板
+            var genPanelGo = new GameObject("GenPanel");
             genPanelGo.transform.SetParent(canvasGo.transform, false);
             _genPanel = genPanelGo.AddComponent<MapGenerationPanel>();
             _genPanel.Initialize(
@@ -222,10 +245,12 @@ namespace CivilizationEvolution.Bootstrap
             );
             _genPanel.Show();
 
- // 右下角速度控制面板            CreateSpeedControl(canvasGo.transform);
+ // 右下角速度控制面板
+            CreateSpeedControl(canvasGo.transform);
         }
 
- /// <summary>右下角速度控制UI（暂停/1x/2x/3x）</summary>        private void CreateSpeedControl(Transform canvasParent)
+ /// <summary>右下角速度控制UI（暂停/1x/2x/3x）</summary>
+        private void CreateSpeedControl(Transform canvasParent)
         {
             var panelObj = new GameObject("SpeedControl", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             var prt = panelObj.GetComponent<RectTransform>();
@@ -277,17 +302,21 @@ namespace CivilizationEvolution.Bootstrap
             }
         }
 
- // ===== 连接面板回调 =====        private void ConnectPanelCallbacks()
+ // ===== 连接面板回调 =====
+        private void ConnectPanelCallbacks()
         {
- // 面板回调已在Initialize时连接 // 这里可以添加额外的事件绑定            Debug.Log("[MapEditorBootstrap] 面板回调已连接");
+ // 面板回调已在Initialize时连接 // 这里可以添加额外的事件绑定
+            Debug.Log("[MapEditorBootstrap] 面板回调已连接");
         }
 
- // ===== 公共访问器 =====        public GameWorld World => _world;
+ // ===== 公共访问器 =====
+        public GameWorld World => _world;
         public MapRenderer Renderer => _renderer;
         public MapEditor MapEditor => _mapEditor;
         public EditorUIPanel ToolPanel => _toolPanel;
         public MapGenerationPanel GenPanel => _genPanel;
     }
 
- /// 编辑器相机控制器（平移+缩放） /// 右键拖拽平移，滚轮缩放
+ /// 编辑器相机控制器（平移+缩放）
+ /// 右键拖拽平移，滚轮缩放
 }

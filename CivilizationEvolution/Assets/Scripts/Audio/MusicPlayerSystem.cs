@@ -3,7 +3,9 @@ using UnityEngine;
 
 namespace CivilizationEvolution.Audio
 {
- /// 音乐播放器：Resources/Music/ 下的 AudioClip 列表播放 /// （手动控制：播放/暂停/切歌/音量/循环——用户放 ogg/mp3 进 Resources/Music 即入列表）    public class MusicPlayerSystem : MonoBehaviour
+ /// 音乐播放器：Resources/Music/ 下的 AudioClip 列表播放
+ /// （手动控制：播放/暂停/切歌/音量/循环——用户放 ogg/mp3 进 Resources/Music 即入列表）
+    public class MusicPlayerSystem : MonoBehaviour
     {
         public static MusicPlayerSystem Instance { get; private set; }
 
@@ -28,7 +30,8 @@ namespace CivilizationEvolution.Audio
             source.volume = volume;
         }
 
- /// <summary>确保 AudioSource 存在（防御：AddComponent 后 Awake 时序/重建场景时）</summary>        private void EnsureSource()
+ /// <summary>确保 AudioSource 存在（防御：AddComponent 后 Awake 时序/重建场景时）</summary>
+        private void EnsureSource()
         {
             if (source == null)
             {
@@ -42,14 +45,16 @@ namespace CivilizationEvolution.Audio
 
         private void Update()
         {
- // 播完自动下一首（列表循环；仅"播放过且自然播完"时切歌——避免开局空转）            if (source != null && !source.isPlaying && !_manualPaused
+ // 播完自动下一首（列表循环；仅"播放过且自然播完"时切歌——避免开局空转）
+            if (source != null && !source.isPlaying && !_manualPaused
                 && _playlist.Count > 0 && _currentIndex >= 0 && source.timeSamples > 0)
             {
                 Next();
             }
         }
 
- /// <summary>加载 Resources/Music/ 全部曲目（外部注入或运行时加载）</summary>        public void LoadMusic(IEnumerable<AudioClip> clips)
+ /// <summary>加载 Resources/Music/ 全部曲目（外部注入或运行时加载）</summary>
+        public void LoadMusic(IEnumerable<AudioClip> clips)
         {
             _playlist.Clear();
             if (clips != null)
@@ -58,7 +63,8 @@ namespace CivilizationEvolution.Audio
             _currentIndex = _playlist.Count > 0 ? 0 : -1;
         }
 
- /// <summary>从 Resources 加载（Resources.LoadAll<AudioClip>("Music")）</summary>        public void LoadFromResources()
+ /// <summary>从 Resources 加载（Resources.LoadAll<AudioClip>("Music")）</summary>
+        public void LoadFromResources()
         {
             LoadMusic(Resources.LoadAll<AudioClip>("Music"));
         }

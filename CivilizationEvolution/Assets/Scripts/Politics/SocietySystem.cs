@@ -10,11 +10,14 @@ namespace CivilizationEvolution.Politics
 
  /// <summary>政权级社会画像</summary>
 
- /// 社会管理器：统计阶层人口 → 评估需求 → 计算政治能量 → 驱动阶层好感。 /// 无外部子系统依赖（情境由 RealmSituation 传入，人口由 tiles 统计）。    public class SocietyManager
+ /// 社会管理器：统计阶层人口 → 评估需求 → 计算政治能量 → 驱动阶层好感。
+ /// 无外部子系统依赖（情境由 RealmSituation 传入，人口由 tiles 统计）。
+    public class SocietyManager
     {
         public ClassNeedsSystem Needs { get; } = new ClassNeedsSystem();
 
- /// <summary>阶层固有组织化基准（血缘网络/教会/行会/国家机器/分散程度不同）</summary>        static float BaseOrganization(GameEnums.SocialClass cls) => cls switch
+ /// <summary>阶层固有组织化基准（血缘网络/教会/行会/国家机器/分散程度不同）</summary>
+        static float BaseOrganization(GameEnums.SocialClass cls) => cls switch
         {
             GameEnums.SocialClass.Royalty => 0.95f,       // 掌握国家机器
             GameEnums.SocialClass.NobilityClergy => 0.75f,// 血缘/教阶/地产网络
@@ -24,7 +27,8 @@ namespace CivilizationEvolution.Politics
             _ => 0.3f
         };
 
- /// <summary>制度性在位基底：不靠人数的掌权阶层（王室/当政贵族）</summary>        static float InstitutionalBase(GameEnums.SocialClass cls, RealmSituation sit)
+ /// <summary>制度性在位基底：不靠人数的掌权阶层（王室/当政贵族）</summary>
+        static float InstitutionalBase(GameEnums.SocialClass cls, RealmSituation sit)
         {
             float b = cls switch
             {
@@ -32,16 +36,20 @@ namespace CivilizationEvolution.Politics
                 GameEnums.SocialClass.NobilityClergy => 14f,
                 _ => 0f
             };
- // 政治通道越通畅，体制内阶层的制度性影响力越强            b += sit.GetPoliticalAccess(cls) * 12f;
+ // 政治通道越通畅，体制内阶层的制度性影响力越强
+            b += sit.GetPoliticalAccess(cls) * 12f;
             return b;
         }
 
- /// 统计并评估一个政权的社会结构。 /// tiles：全图地块（按 ownerRealmId 过滤本政权核心+领有地块）。        public RealmSociety EvaluateRealm(RealmData realm, TileData[] tiles, RealmSituation sit,
+ /// 统计并评估一个政权的社会结构。
+ /// tiles：全图地块（按 ownerRealmId 过滤本政权核心+领有地块）。
+        public RealmSociety EvaluateRealm(RealmData realm, TileData[] tiles, RealmSituation sit,
             IReadOnlyList<int> realmTiles = null)
         {
             var society = new RealmSociety { realmId = realm.realmId };
 
- // 1) 汇总各阶层人口（优化—— // 替代 核心+全扫补占领 的 N×tiles——无索引时原逻辑兼容）            var popByClass = new Dictionary<GameEnums.SocialClass, float>();
+ // 1) 汇总各阶层人口（优化—— // 替代 核心+全扫补占领 的 N×tiles——无索引时原逻辑兼容）
+            var popByClass = new Dictionary<GameEnums.SocialClass, float>();
             float totalPop = 0f;
             if (realmTiles != null)
             {
@@ -58,7 +66,8 @@ namespace CivilizationEvolution.Politics
                     if (idx < 0 || idx >= tiles.Length) continue;
                     Accumulate(tiles[idx], popByClass, ref totalPop);
                 }
- // 领有但未核心化的地块也计入（占领地社会压力同样存在）                for (int i = 0; i < tiles.Length; i++)
+ // 领有但未核心化的地块也计入（占领地社会压力同样存在）
+                for (int i = 0; i < tiles.Length; i++)
                 {
                     if (tiles[i].ownerRealmId != realm.realmId) continue;
                     if (realm.coreTiles.Contains(i)) continue;
@@ -67,7 +76,8 @@ namespace CivilizationEvolution.Politics
             }
             society.totalPopulation = totalPop;
 
- // 2) 逐阶层评估需求与政治能量            var needReports = Needs.EvaluateRealm(sit);
+ // 2) 逐阶层评估需求与政治能量
+            var needReports = Needs.EvaluateRealm(sit);
             float unrestSum = 0f, influenceSum = 0f;
             float maxPop = -1f, maxUnrest = -1f;
 
@@ -77,11 +87,13 @@ namespace CivilizationEvolution.Politics
                 var report = needReports[cls];
                 float share = totalPop > 0f ? Mathf.Clamp01(pop / totalPop) : 0f;
 
- // 组织化：基准 × 政治通道微调（有通道更易在体制内组织；奴隶恒低）                float org = BaseOrganization(cls);
+ // 组织化：基准 × 政治通道微调（有通道更易在体制内组织；奴隶恒低）
+                float org = BaseOrganization(cls);
                 if (cls != GameEnums.SocialClass.Slave)
                     org = Mathf.Clamp01(org + (sit.GetPoliticalAccess(cls) - 0.3f) * 0.15f);
 
- // 影响力 = 人口份额×组织化×100 + 制度基底                float influence = Mathf.Clamp(share * org * 100f + InstitutionalBase(cls, sit), 0f, 100f);
+ // 影响力 = 人口份额×组织化×100 + 制度基底
+                float influence = Mathf.Clamp(share * org * 100f + InstitutionalBase(cls, sit), 0f, 100f);
                 float grievance = Mathf.Clamp01((100f - report.overallSatisfaction) / 100f);
                 float unrest = influence * grievance;
                 float support = influence * (1f - grievance);
@@ -108,7 +120,8 @@ namespace CivilizationEvolution.Politics
                 unrestSum += unrest;
                 influenceSum += influence;
             }
- // 整体动荡 = 各阶层反对能量占总影响力之比（0~100）            society.unrestScore = influenceSum > 0f ? Mathf.Clamp(unrestSum / influenceSum * 100f, 0f, 100f) : 0f;
+ // 整体动荡 = 各阶层反对能量占总影响力之比（0~100）
+            society.unrestScore = influenceSum > 0f ? Mathf.Clamp(unrestSum / influenceSum * 100f, 0f, 100f) : 0f;
             return society;
         }
 
@@ -122,14 +135,18 @@ namespace CivilizationEvolution.Politics
             }
         }
 
- /// 以需求满足度驱动阶层好感（替代旧的机械 Lerp 回 50）。 /// 好感缓慢趋近满足度——存在滞后：一时粮荒不会立刻造反，长期被压迫也不会立刻原谅。 /// 同时人口规模影响收敛速度（人多势众的阶层情绪传导更快）。        public void ApplyClassRelations(RealmData realm, RealmSociety society, float daysPerTick)
+ /// 以需求满足度驱动阶层好感（替代旧的机械 Lerp 回 50）。
+ /// 好感缓慢趋近满足度——存在滞后：一时粮荒不会立刻造反，长期被压迫也不会立刻原谅。
+ /// 同时人口规模影响收敛速度（人多势众的阶层情绪传导更快）。
+        public void ApplyClassRelations(RealmData realm, RealmSociety society, float daysPerTick)
         {
             foreach (var kv in society.classes)
             {
                 var cls = kv.Key;
                 var profile = kv.Value;
                 float current = realm.classRelations.GetValueOrDefault(cls, 50f);
- // 基准日收敛率 1.5%/天；不满下降比满足上升略快（积怨易、立信难）                float rate = current > profile.satisfaction ? 0.02f : 0.012f;
+ // 基准日收敛率 1.5%/天；不满下降比满足上升略快（积怨易、立信难）
+                float rate = current > profile.satisfaction ? 0.02f : 0.012f;
                 float t = Mathf.Clamp01(rate * daysPerTick);
                 float next = Mathf.Lerp(current, profile.satisfaction, t);
                 realm.classRelations[cls] = Mathf.Clamp(next, 0f, 100f);

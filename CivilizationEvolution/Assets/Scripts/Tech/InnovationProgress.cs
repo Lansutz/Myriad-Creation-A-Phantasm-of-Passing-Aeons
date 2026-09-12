@@ -27,6 +27,15 @@ namespace CivilizationEvolution.Tech
 
         /// <summary>增长来源明细（UI显示用）</summary>
         public Dictionary<string, float> gainBreakdown = new Dictionary<string, float>();
+
+        /// <summary>累计相关产物产量（实践量；超过当前品质上限后不再提供经验）</summary>
+        public float cumulativeOutput;
+
+        /// <summary>相关产物的平均质量（1-10，决定产量经验上限与品质系数）</summary>
+        public float averageQuality;
+
+        /// <summary>沿用旧方法的实践次数（达到阈值后角色更易获得灵感）</summary>
+        public int oldMethodPracticeCount;
     }
 
     /// <summary>
@@ -57,5 +66,23 @@ namespace CivilizationEvolution.Tech
 
         /// <summary>规模效应阈值（月产量≥此值触发ScaleBonus）</summary>
         public const float ScaleThreshold = 100f;
+
+        /// <summary>每级品质对应的累计产量经验上限（品质1=50，品质5=250，品质10=500）</summary>
+        public const float OutputCapPerQuality = 50f;
+
+        /// <summary>品质系数：相对标准品质(5)每级的经验增减（+/-10%）</summary>
+        public const float QualityCoefficientPerLevel = 0.1f;
+
+        /// <summary>产量经验基础系数（log(1+有效产量) 的乘子）</summary>
+        public const float OutputExperienceBase = 0.4f;
+
+        /// <summary>每个研究角色（工匠/学者/商人）每月提供的基础研究进度</summary>
+        public const float CharacterResearchBase = 0.15f;
+
+        /// <summary>旧方法实践次数阈值：达到后角色获得灵感、研究效率翻倍</summary>
+        public const int OldMethodPracticeThreshold = 30;
+
+        /// <summary>边际递减基数：递减系数=1/(1+progress/此值)，progress 等于此值时增长减半</summary>
+        public const float DiminishingBase = 60f;
     }
 }

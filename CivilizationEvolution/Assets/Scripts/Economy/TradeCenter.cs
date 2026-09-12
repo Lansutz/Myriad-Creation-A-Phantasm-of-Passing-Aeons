@@ -21,7 +21,8 @@ namespace CivilizationEvolution.Economy
         [System.NonSerialized]
         public Dictionary<int, float> localSupply = new Dictionary<int, float>();
 
- /// <summary>获取物资价格（供需决定）</summary>        public float GetGoodsPrice(int goodsId, Dictionary<int, GoodsDef> goodsDefs)
+ /// <summary>获取物资价格（供需决定）</summary>
+        public float GetGoodsPrice(int goodsId, Dictionary<int, GoodsDef> goodsDefs)
         {
             if (!goodsDefs.TryGetValue(goodsId, out var def)) return 1f;
 
@@ -67,7 +68,8 @@ namespace CivilizationEvolution.Economy
             return total;
         }
 
- /// <summary>更新本地供需（由人口和生产决定）</summary>        public void UpdateSupplyDemand(TileData[] tiles, Dictionary<int, GoodsDef> goodsDefs, int regionTileStart, int regionTileEnd)
+ /// <summary>更新本地供需（由人口和生产决定）</summary>
+        public void UpdateSupplyDemand(TileData[] tiles, Dictionary<int, GoodsDef> goodsDefs, int regionTileStart, int regionTileEnd)
         {
             localSupply.Clear();
             localDemand.Clear();
@@ -76,15 +78,18 @@ namespace CivilizationEvolution.Economy
             {
                 if (!tiles[i].isLand) continue;
 
- // 农业产出                float agriOutput = tiles[i].fertility * tiles[i].development * 0.5f;
+ // 农业产出
+                float agriOutput = tiles[i].fertility * tiles[i].development * 0.5f;
                 AddToDict(localSupply, 0, agriOutput);  // 粮食
                 AddToDict(localSupply, 10, agriOutput * 0.8f); // 谷物
 
- // 人口消耗                float popCount = GetRegionPopulation(tiles, i);
+ // 人口消耗
+                float popCount = GetRegionPopulation(tiles, i);
                 AddToDict(localDemand, 0, popCount * 0.01f);  // 粮食消耗
                 AddToDict(localDemand, 3, popCount * 0.002f);  // 盐消耗
 
- // 基建产出                if (tiles[i].buildingLevels[1] > 0) // 手工业
+ // 基建产出
+                if (tiles[i].buildingLevels[1] > 0) // 手工业
                 {
                     AddToDict(localSupply, 70, tiles[i].buildingLevels[1] * 0.1f); // 武器
                     AddToDict(localSupply, 31, tiles[i].buildingLevels[1] * 0.2f); // 加工木材

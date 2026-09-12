@@ -10,9 +10,25 @@ using CivilizationEvolution.Climate;
 
 namespace CivilizationEvolution.Core
 {
- /// 内容注册表（数据驱动架构，企划书 1.2 模组扩展规范） /// 启动时扫描 StreamingAssets/Base（内置内容）与 StreamingAssets/Mods（模组内容），目录同构： /// Culture/&lt;文化包名&gt;/CultureData.json + 名字池CSV（CharacterFirstNames_Male/Female.csv、CharacterLastNames.csv、CityNames.csv） /// Race/RaceDefs.json（顶层包装 { "races": [...] }） /// Ethos/Ethos.json（顶层包装 { "ethos": [...] }——族群精神定义表） /// Tradition/Traditions.json（顶层包装 { "traditions": [...] }——文化传统定义表） /// FamilyTradition/FamilyTraditions.json（顶层包装 { "familyTraditions": [...] }——家族传统定义表） /// CharacterTemplate/CharacterTemplates.json（顶层包装 { "templates": [...] }——角色生成模板表） /// Dna/DnaDefs.json（顶层包装 { "defs": [...] }——DNA 天赋/遗传病定义表，模组可扩展） /// MentalHealth/MentalHealthDefs.json（顶层包装 { "disorders": [...] }——精神疾病定义表，模组可扩展） /// Innovation/Innovations.json（顶层包装 { "innovations": [...] }——革新定义表，两级分类：大类+子类，模组可扩展） /// Language/&lt;语言名&gt;/Language.json（语言定义） /// EthnicGroup/EthnicGroups.json（顶层包装 { "groups": [...] }——族群实体） /// Mods 与 Base 同名 Id 后者覆盖，实现内容热扩展。 /// 使用 File/Directory 直读，适用于 Standalone；WebGL 等沙箱平台加载失败时注册表为空（不崩溃）。    public static class ContentRegistry
+ /// 内容注册表（数据驱动架构，企划书 1.2 模组扩展规范）
+ /// 启动时扫描 StreamingAssets/Base（内置内容）与 StreamingAssets/Mods（模组内容），目录同构：
+ /// Culture/&lt;文化包名&gt;/CultureData.json + 名字池CSV（CharacterFirstNames_Male/Female.csv、CharacterLastNames.csv、CityNames.csv）
+ /// Race/RaceDefs.json（顶层包装 { "races": [...] }）
+ /// Ethos/Ethos.json（顶层包装 { "ethos": [...] }——族群精神定义表）
+ /// Tradition/Traditions.json（顶层包装 { "traditions": [...] }——文化传统定义表）
+ /// FamilyTradition/FamilyTraditions.json（顶层包装 { "familyTraditions": [...] }——家族传统定义表）
+ /// CharacterTemplate/CharacterTemplates.json（顶层包装 { "templates": [...] }——角色生成模板表）
+ /// Dna/DnaDefs.json（顶层包装 { "defs": [...] }——DNA 天赋/遗传病定义表，模组可扩展）
+ /// MentalHealth/MentalHealthDefs.json（顶层包装 { "disorders": [...] }——精神疾病定义表，模组可扩展）
+ /// Innovation/Innovations.json（顶层包装 { "innovations": [...] }——革新定义表，两级分类：大类+子类，模组可扩展）
+ /// Language/&lt;语言名&gt;/Language.json（语言定义）
+ /// EthnicGroup/EthnicGroups.json（顶层包装 { "groups": [...] }——族群实体）
+ /// Mods 与 Base 同名 Id 后者覆盖，实现内容热扩展。
+ /// 使用 File/Directory 直读，适用于 Standalone；WebGL 等沙箱平台加载失败时注册表为空（不崩溃）。
+    public static class ContentRegistry
     {
- /// <summary>文化名字池（五个 CSV 汇总）</summary>        [Serializable]
+ /// <summary>文化名字池（五个 CSV 汇总）</summary>
+        [Serializable]
         public class NamePoolData
         {
             public List<string> maleNames = new List<string>();
@@ -21,7 +37,8 @@ namespace CivilizationEvolution.Core
             public List<string> cityNames = new List<string>();
         }
 
- /// <summary>文化内容包：文化数据 + 名字池 + 包路径</summary>        public class CultureContentPack
+ /// <summary>文化内容包：文化数据 + 名字池 + 包路径</summary>
+        public class CultureContentPack
         {
             public CultureData data;
             public NamePoolData names = new NamePoolData();
@@ -91,12 +108,15 @@ namespace CivilizationEvolution.Core
         public static Dictionary<int, CultureContentPack> Cultures { get; private set; } = new Dictionary<int, CultureContentPack>();
         public static Dictionary<int, RaceData> Races { get; private set; } = new Dictionary<int, RaceData>();
 
- // ===== 模组化定义表（族群/族群精神/文化传统/语言/家族传统/角色模板，按 Id 覆盖） =====        public static Dictionary<string, EthosDef> Ethos { get; private set; } = new Dictionary<string, EthosDef>();
+ // ===== 模组化定义表（族群/族群精神/文化传统/语言/家族传统/角色模板，按 Id 覆盖） =====
+        public static Dictionary<string, EthosDef> Ethos { get; private set; } = new Dictionary<string, EthosDef>();
         public static Dictionary<string, TraditionDef> Traditions { get; private set; } = new Dictionary<string, TraditionDef>();
         public static Dictionary<string, LanguageDef> Languages { get; private set; } = new Dictionary<string, LanguageDef>();
         public static Dictionary<string, EthnicGroupDef> EthnicGroups { get; private set; } = new Dictionary<string, EthnicGroupDef>();
         public static Dictionary<string, FamilyTraditionDef> FamilyTraditions { get; private set; } = new Dictionary<string, FamilyTraditionDef>();
- /// <summary>头衔表（titleId→定义——名后缀—— /// cultureId 空=通用——模组可加/覆盖）</summary>        public static Dictionary<string, TitleDef> Titles { get; private set; } = new Dictionary<string, TitleDef>();
+ /// <summary>头衔表（titleId→定义——名后缀——
+ /// cultureId 空=通用——模组可加/覆盖）</summary>
+        public static Dictionary<string, TitleDef> Titles { get; private set; } = new Dictionary<string, TitleDef>();
         public static Dictionary<string, CharacterTemplateDef> CharacterTemplates { get; private set; } = new Dictionary<string, CharacterTemplateDef>();
         public static Dictionary<string, TalentDefectDef> TalentDefects { get; private set; } = new Dictionary<string, TalentDefectDef>();
         public static Dictionary<string, MentalDisorderDef> MentalDisorders { get; private set; } = new Dictionary<string, MentalDisorderDef>();
@@ -107,7 +127,8 @@ namespace CivilizationEvolution.Core
 
         public static bool IsInitialized { get; private set; } = false;
 
- /// <summary>初始化内容注册表（幂等，可重复调用）</summary>        public static void Initialize()
+ /// <summary>初始化内容注册表（幂等，可重复调用）</summary>
+        public static void Initialize()
         {
             if (IsInitialized) return;
             Cultures = new Dictionary<int, CultureContentPack>();
@@ -142,7 +163,8 @@ namespace CivilizationEvolution.Core
                 $"精神疾病 {MentalDisorders.Count}，革新 {Innovations.Count}");
         }
 
- /// <summary>重置注册表（编辑器重载数据时使用）</summary>        public static void Reset()
+ /// <summary>重置注册表（编辑器重载数据时使用）</summary>
+        public static void Reset()
         {
             IsInitialized = false;
             Cultures.Clear();
@@ -173,12 +195,16 @@ namespace CivilizationEvolution.Core
         public static bool TryGetInnovation(int id, out InnovationDef def) => Innovations.TryGetValue(id, out def);
         public static bool TryGetBiome(int id, out BiomeDef def) => Biomes.TryGetValue(id, out def);
 
- /// 从文化包提取随机名字（type: 0男名 1女名 2姓氏 3城名，可传 null 随机池） ///（文化→languageId→LanguageDef 男/女/姓/城池—— /// 同语言文化共享名字——模组化）——空回退文化包旧池（兼容旧数据）        public static string GetRandomName(CultureContentPack pack, int type, System.Random rng = null)
+ /// 从文化包提取随机名字（type: 0男名 1女名 2姓氏 3城名，可传 null 随机池）
+ ///（文化→languageId→LanguageDef 男/女/姓/城池——
+ /// 同语言文化共享名字——模组化）——空回退文化包旧池（兼容旧数据）
+        public static string GetRandomName(CultureContentPack pack, int type, System.Random rng = null)
         {
             rng = rng ?? new System.Random();
             List<string> list = null;
 
- // 语言池优先（文化挂语言——语言内名字池）            if (pack != null && pack.data != null && !string.IsNullOrEmpty(pack.data.languageId)
+ // 语言池优先（文化挂语言——语言内名字池）
+            if (pack != null && pack.data != null && !string.IsNullOrEmpty(pack.data.languageId)
                 && TryGetLanguage(pack.data.languageId, out var lang))
             {
                 list = type switch
@@ -191,7 +217,8 @@ namespace CivilizationEvolution.Core
             }
             if (list == null || list.Count == 0)
             {
- // 回退文化包旧池（兼容）                if (pack == null) return "无名";
+ // 回退文化包旧池（兼容）
+                if (pack == null) return "无名";
                 list = type switch
                 {
                     1 => pack.names.femaleNames,
@@ -206,7 +233,8 @@ namespace CivilizationEvolution.Core
         }
 
  // ===== 内容扫描 =====
- /// <summary>扫描一个内容根（Base 或 Mods）</summary>        private static void LoadContentRoot(string root)
+ /// <summary>扫描一个内容根（Base 或 Mods）</summary>
+        private static void LoadContentRoot(string root)
         {
             if (!Directory.Exists(root)) return;
 
@@ -241,7 +269,8 @@ namespace CivilizationEvolution.Core
                 catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 教义池加载失败：{e.Message}"); }
             }
 
- // ===== 模组化定义表 =====            string ethosFile = Path.Combine(root, "Ethos", "Ethos.json");
+ // ===== 模组化定义表 =====
+            string ethosFile = Path.Combine(root, "Ethos", "Ethos.json");
             if (File.Exists(ethosFile))
             {
                 try { LoadEthos(ethosFile); }
@@ -317,7 +346,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
- /// <summary>加载单个文化包目录</summary>        private static void LoadCulturePack(string dir)
+ /// <summary>加载单个文化包目录</summary>
+        private static void LoadCulturePack(string dir)
         {
             string defFile = Path.Combine(dir, "CultureData.json");
             if (!File.Exists(defFile)) return;
@@ -341,7 +371,8 @@ namespace CivilizationEvolution.Core
                 Debug.Log($"[ContentRegistry] 文化 [{data.cultureName}] 被 Mods 覆盖");
         }
 
- /// <summary>加载种族定义文件</summary>        private static void LoadRaceDefs(string path)
+ /// <summary>加载种族定义文件</summary>
+        private static void LoadRaceDefs(string path)
         {
             var wrapper = JsonUtility.FromJson<RaceDefsWrapper>(File.ReadAllText(path));
             if (wrapper == null || wrapper.races == null) return;
@@ -352,7 +383,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
- /// <summary>加载族群精神（Ethos）定义表</summary>        private static void LoadEthos(string path)
+ /// <summary>加载族群精神（Ethos）定义表</summary>
+        private static void LoadEthos(string path)
         {
             var wrapper = JsonUtility.FromJson<EthosWrapper>(File.ReadAllText(path));
             if (wrapper == null || wrapper.ethos == null) return;
@@ -363,7 +395,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
- /// <summary>加载文化传统（Tradition）定义表</summary>        private static void LoadTraditions(string path)
+ /// <summary>加载文化传统（Tradition）定义表</summary>
+        private static void LoadTraditions(string path)
         {
             var wrapper = JsonUtility.FromJson<TraditionsWrapper>(File.ReadAllText(path));
             if (wrapper == null || wrapper.traditions == null) return;
@@ -374,7 +407,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
- /// <summary>加载单个语言包目录（Language/&lt;语言名&gt;/Language.json）</summary>        private static void LoadLanguage(string dir)
+ /// <summary>加载单个语言包目录（Language/&lt;语言名&gt;/Language.json）</summary>
+        private static void LoadLanguage(string dir)
         {
             string defFile = Path.Combine(dir, "Language.json");
             if (!File.Exists(defFile)) return;
@@ -384,20 +418,23 @@ namespace CivilizationEvolution.Core
                 Debug.LogWarning($"[ContentRegistry] 语言包 {Path.GetFileName(dir)} 定义无效（languageId 缺失）");
                 return;
             }
- // 语言级名字池 CSV可选 // CharacterFirstNames_Male/Female.csv+LastNames+CityNames—— // 语言共享名字——模组化；文化级 CSV 仍兼容[回退链]）            PackCsv(def.maleNames, Path.Combine(dir, "CharacterFirstNames_Male.csv"));
+ // 语言级名字池 CSV可选 // CharacterFirstNames_Male/Female.csv+LastNames+CityNames—— // 语言共享名字——模组化；文化级 CSV 仍兼容[回退链]）
+            PackCsv(def.maleNames, Path.Combine(dir, "CharacterFirstNames_Male.csv"));
             PackCsv(def.femaleNames, Path.Combine(dir, "CharacterFirstNames_Female.csv"));
             PackCsv(def.familyNames, Path.Combine(dir, "CharacterLastNames.csv"));
             PackCsv(def.cityNames, Path.Combine(dir, "CityNames.csv"));
             Languages[def.languageId] = def;
         }
 
- /// <summary>加载族群（EthnicGroup）定义</summary>        [Serializable]
+ /// <summary>加载族群（EthnicGroup）定义</summary>
+        [Serializable]
         private class TitlesWrapper
         {
             public List<TitleDef> titles = new List<TitleDef>();
         }
 
- /// <summary>加载头衔表（Title/Titles.json——{ "titles": [...] }——模组覆盖）</summary>        private static void LoadTitlesFile(string path)
+ /// <summary>加载头衔表（Title/Titles.json——{ "titles": [...] }——模组覆盖）</summary>
+        private static void LoadTitlesFile(string path)
         {
             if (!File.Exists(path)) return;
             var wrapper = JsonUtility.FromJson<TitlesWrapper>(File.ReadAllText(path));
@@ -418,7 +455,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
- /// <summary>加载家族传统（FamilyTradition）定义表（企划书 9.4：家族团结度/家法/家族文化偏移）</summary>        private static void LoadFamilyTraditions(string path)
+ /// <summary>加载家族传统（FamilyTradition）定义表（企划书 9.4：家族团结度/家法/家族文化偏移）</summary>
+        private static void LoadFamilyTraditions(string path)
         {
             var wrapper = JsonUtility.FromJson<FamilyTraditionsWrapper>(File.ReadAllText(path));
             if (wrapper == null || wrapper.familyTraditions == null) return;
@@ -429,7 +467,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
- /// <summary>加载角色模板（CharacterTemplate）定义表（第九篇角色生成参数模板）</summary>        private static void LoadCharacterTemplates(string path)
+ /// <summary>加载角色模板（CharacterTemplate）定义表（第九篇角色生成参数模板）</summary>
+        private static void LoadCharacterTemplates(string path)
         {
             var wrapper = JsonUtility.FromJson<CharacterTemplatesWrapper>(File.ReadAllText(path));
             if (wrapper == null || wrapper.templates == null) return;
@@ -440,7 +479,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
- /// <summary>加载 DNA 天赋/遗传病（TalentDefect）定义表（DNA 文档：模组可新增天赋/遗传病列表）</summary>        private static void LoadDnaDefs(string path)
+ /// <summary>加载 DNA 天赋/遗传病（TalentDefect）定义表（DNA 文档：模组可新增天赋/遗传病列表）</summary>
+        private static void LoadDnaDefs(string path)
         {
             var wrapper = JsonUtility.FromJson<DnaDefsWrapper>(File.ReadAllText(path));
             if (wrapper == null || wrapper.defs == null) return;
@@ -451,7 +491,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
- /// <summary>加载精神疾病（MentalDisorder）定义表（模组可新增疾病类型）</summary>        private static void LoadMentalHealthDefs(string path)
+ /// <summary>加载精神疾病（MentalDisorder）定义表（模组可新增疾病类型）</summary>
+        private static void LoadMentalHealthDefs(string path)
         {
             var wrapper = JsonUtility.FromJson<MentalHealthDefsWrapper>(File.ReadAllText(path));
             if (wrapper == null || wrapper.disorders == null) return;
@@ -462,7 +503,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
- /// <summary>加载宗教定义（三级谱系：宗教→宗派→传统）</summary>        private static void LoadReligions(string path)
+ /// <summary>加载宗教定义（三级谱系：宗教→宗派→传统）</summary>
+        private static void LoadReligions(string path)
         {
             var wrapper = JsonUtility.FromJson<ReligionListWrapper>(File.ReadAllText(path));
             Religions.Clear();
@@ -479,7 +521,8 @@ namespace CivilizationEvolution.Core
             public List<ReligionDef> religions = new List<ReligionDef>();
         }
 
- /// <summary>加载教义池（七支柱选项——中性词汇+宗教专属风味化）</summary>        private static void LoadDoctrines(string path)
+ /// <summary>加载教义池（七支柱选项——中性词汇+宗教专属风味化）</summary>
+        private static void LoadDoctrines(string path)
         {
             var wrapper = JsonUtility.FromJson<DoctrineListWrapper>(File.ReadAllText(path));
             Doctrines.Clear();
@@ -496,7 +539,8 @@ namespace CivilizationEvolution.Core
             public List<DoctrineOptionDef> doctrines = new List<DoctrineOptionDef>();
         }
 
- /// <summary>加载革新（Innovation）定义表（两级分类：大类+子类；模组可新增）</summary>        private static void LoadInnovations(string path)
+ /// <summary>加载革新（Innovation）定义表（两级分类：大类+子类；模组可新增）</summary>
+        private static void LoadInnovations(string path)
         {
             var wrapper = JsonUtility.FromJson<InnovationsWrapper>(File.ReadAllText(path));
             if (wrapper == null || wrapper.innovations == null) return;
@@ -507,7 +551,8 @@ namespace CivilizationEvolution.Core
             }
         }
 
- /// <summary>加载群系（Biome）定义表（数据驱动，模组可覆盖）</summary>        private static void LoadBiomes(string path)
+ /// <summary>加载群系（Biome）定义表（数据驱动，模组可覆盖）</summary>
+        private static void LoadBiomes(string path)
         {
             var wrapper = JsonUtility.FromJson<BiomesWrapper>(File.ReadAllText(path));
             if (wrapper == null || wrapper.biomes == null) return;
@@ -519,7 +564,8 @@ namespace CivilizationEvolution.Core
             Debug.Log($"[ContentRegistry] 群系定义加载：{wrapper.biomes.Count} 个");
         }
 
- /// <summary>解析名字池 CSV（格式：id,name，支持 # 注释行与空行）</summary>        private static void PackCsv(List<string> target, string path)
+ /// <summary>解析名字池 CSV（格式：id,name，支持 # 注释行与空行）</summary>
+        private static void PackCsv(List<string> target, string path)
         {
             if (!File.Exists(path)) return;
             foreach (var raw in File.ReadAllLines(path))

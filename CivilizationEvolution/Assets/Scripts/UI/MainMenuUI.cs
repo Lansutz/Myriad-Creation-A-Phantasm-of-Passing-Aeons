@@ -5,7 +5,10 @@ using TMPro;
 
 namespace CivilizationEvolution.UI
 {
- /// 代码动态生成的主菜单 UI（替代场景中圆角正方形旧主菜单）。 /// 设计：深色背景 + 金色标题 + 矩形按钮（底部金线/灰线），无圆角。 /// 按钮：开始游戏（→地图编辑器）、编辑器（→数据编辑器）、设置、退出。    public class MainMenuUI : MonoBehaviour
+ /// 代码动态生成的主菜单 UI（替代场景中圆角正方形旧主菜单）。
+ /// 设计：深色背景 + 金色标题 + 矩形按钮（底部金线/灰线），无圆角。
+ /// 按钮：开始游戏（→地图编辑器）、编辑器（→数据编辑器）、设置、退出。
+    public class MainMenuUI : MonoBehaviour
     {
         [Header("引用")]
         [SerializeField] private UIManager uiManager;
@@ -32,7 +35,8 @@ namespace CivilizationEvolution.UI
                 uiManager = FindAnyObjectByType<UIManager>();
         }
 
- /// <summary>构建主菜单 UI（代码动态生成，不依赖场景预制体）</summary>        public void Build()
+ /// <summary>构建主菜单 UI（代码动态生成，不依赖场景预制体）</summary>
+        public void Build()
         {
             if (_initialized) return;
 
@@ -88,7 +92,8 @@ namespace CivilizationEvolution.UI
             crt.sizeDelta = new Vector2(320, 320);
             containerObj.transform.SetParent(_root.transform, false);
 
- // 按钮：开始游戏（主）、编辑器、设置、退出            var buttons = new (string label, bool primary, Action onClick)[]
+ // 按钮：开始游戏（主）、编辑器、设置、退出
+            var buttons = new (string label, bool primary, Action onClick)[]
             {
                 ("创建世界", true, OnStartGame),
                 ("加载世界", false, OnLoadWorld),
@@ -174,7 +179,8 @@ namespace CivilizationEvolution.UI
         }
 
  // ===== 按钮事件 =====
- /// <summary>创建世界 → 进入地图编辑器（全海空白地图 + 右侧编辑器UI + 右下速度控制）</summary>        private void OnStartGame()
+ /// <summary>创建世界 → 进入地图编辑器（全海空白地图 + 右侧编辑器UI + 右下速度控制）</summary>
+        private void OnStartGame()
         {
             Hide();
             var flow = SceneFlowController.Instance;
@@ -182,7 +188,8 @@ namespace CivilizationEvolution.UI
             else Debug.LogWarning("[MainMenuUI] SceneFlowController 不存在，无法进入地图编辑器");
         }
 
- /// <summary>加载世界 → 打开存档选择面板，选择后进入地图编辑器并加载存档</summary>        private void OnLoadWorld()
+ /// <summary>加载世界 → 打开存档选择面板，选择后进入地图编辑器并加载存档</summary>
+        private void OnLoadWorld()
         {
             if (_saveLoadPanel == null)
             {
@@ -191,7 +198,8 @@ namespace CivilizationEvolution.UI
                 _saveLoadPanel = obj.AddComponent<SaveLoadPanel>();
                 _saveLoadPanel.Build(_root.transform, (fileName) =>
                 {
- // 选择存档后，进入地图编辑器并加载                    var flow = SceneFlowController.Instance;
+ // 选择存档后，进入地图编辑器并加载
+                    var flow = SceneFlowController.Instance;
                     if (flow != null) flow.EnterMapEditorWithSave(fileName);
                     else Debug.LogWarning("[MainMenuUI] SceneFlowController 不存在，无法加载存档");
                 }, () => { _saveLoadPanel.Hide(); });
@@ -200,7 +208,8 @@ namespace CivilizationEvolution.UI
             _saveLoadPanel.Show();
         }
 
- /// <summary>编辑器 → 数据编辑器（种族/文化/宗教等内容编辑选择）</summary>        private void OnDataEditor()
+ /// <summary>编辑器 → 数据编辑器（种族/文化/宗教等内容编辑选择）</summary>
+        private void OnDataEditor()
         {
             if (_dataEditorMenu == null)
             {
@@ -212,7 +221,8 @@ namespace CivilizationEvolution.UI
             _dataEditorMenu.Show();
         }
 
- /// <summary>设置 → 游戏设置面板（音量/分辨率/画质/语言）</summary>        private void OnSettings()
+ /// <summary>设置 → 游戏设置面板（音量/分辨率/画质/语言）</summary>
+        private void OnSettings()
         {
             if (_settingsPanel == null)
             {
@@ -233,7 +243,8 @@ namespace CivilizationEvolution.UI
 #endif
         }
 
- // ===== 显示/隐藏 =====        public void Show() { if (_root != null) _root.SetActive(true); if (_canvas != null) _canvas.enabled = true; }
+ // ===== 显示/隐藏 =====
+        public void Show() { if (_root != null) _root.SetActive(true); if (_canvas != null) _canvas.enabled = true; }
         public void Hide() { if (_root != null) _root.SetActive(false); if (_canvas != null) _canvas.enabled = false; }
         public bool IsVisible => _root != null && _root.activeSelf;
 

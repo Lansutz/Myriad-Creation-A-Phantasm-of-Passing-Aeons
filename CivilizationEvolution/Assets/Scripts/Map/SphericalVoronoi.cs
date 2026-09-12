@@ -4,7 +4,15 @@ using UnityEngine;
 
 namespace CivilizationEvolution.Map
 {
- /// 球面 Voronoi 图（Spherical Voronoi Diagram） /// 在单位球面上生成 N 个种子点，将球面划分为 N 个 Voronoi 单元 /// 用于：板块构造边界、省份生成、生物地理区域划分 /// 算法： /// 1. 最远点采样（Farthest Point Sampling）生成均匀分布的种子点 /// 2. 球面大圆弧距离（haversine / 3D点积）计算最近种子 /// 3. Lloyd 松弛迭代优化单元形状（可选） /// 4. 边界检测：与邻域种子不同的点即为边界    public class SphericalVoronoi
+ /// 球面 Voronoi 图（Spherical Voronoi Diagram）
+ /// 在单位球面上生成 N 个种子点，将球面划分为 N 个 Voronoi 单元
+ /// 用于：板块构造边界、省份生成、生物地理区域划分
+ /// 算法：
+ /// 1. 最远点采样（Farthest Point Sampling）生成均匀分布的种子点
+ /// 2. 球面大圆弧距离（haversine / 3D点积）计算最近种子
+ /// 3. Lloyd 松弛迭代优化单元形状（可选）
+ /// 4. 边界检测：与邻域种子不同的点即为边界
+    public class SphericalVoronoi
     {
  /// <summary>Voronoi 种子点（单位球面 3D 坐标）</summary>
 
@@ -18,23 +26,32 @@ namespace CivilizationEvolution.Map
             _rng = new System.Random(seed);
         }
 
- /// 生成球面 Voronoi 图 /// <param name="seedCount">种子点数量（板块数/省份数）</param> /// <param name="lloydIterations">Lloyd 松弛迭代次数（0=不松弛，3-5次效果好）</param>        public void Generate(int seedCount, int lloydIterations = 3)
+ /// 生成球面 Voronoi 图
+ /// <param name="seedCount">种子点数量（板块数/省份数）</param>
+ /// <param name="lloydIterations">Lloyd 松弛迭代次数（0=不松弛，3-5次效果好）</param>
+        public void Generate(int seedCount, int lloydIterations = 3)
         {
- // 1. 最远点采样生成初始种子            Seeds = FarthestPointSampling(seedCount);
+ // 1. 最远点采样生成初始种子
+            Seeds = FarthestPointSampling(seedCount);
 
- // 2. Lloyd 松弛迭代            for (int iter = 0; iter < lloydIterations; iter++)
+ // 2. Lloyd 松弛迭代
+            for (int iter = 0; iter < lloydIterations; iter++)
             {
                 LloydRelaxation();
             }
         }
 
- /// 最远点采样（Farthest Point Sampling / Blue Noise） /// 在球面上生成均匀分布的种子点，避免聚集        private Seed[] FarthestPointSampling(int count)
+ /// 最远点采样（Farthest Point Sampling / Blue Noise）
+ /// 在球面上生成均匀分布的种子点，避免聚集
+        private Seed[] FarthestPointSampling(int count)
         {
             var seeds = new List<Seed>(count);
- // 第一个种子随机            var first = RandomSpherePoint();
+ // 第一个种子随机
+            var first = RandomSpherePoint();
             seeds.Add(new Seed(first.x, first.y, first.z, 0));
 
- // 每个后续种子选离已有种子最远的点 // 简化：采样 M 个候选点，选最小距离最大的            int candidateCount = Math.Max(100, count * 20);
+ // 每个后续种子选离已有种子最远的点 // 简化：采样 M 个候选点，选最小距离最大的
+            int candidateCount = Math.Max(100, count * 20);
             for (int i = 1; i < count; i++)
             {
                 float bestDist = -1f;
@@ -60,9 +77,12 @@ namespace CivilizationEvolution.Map
             return seeds.ToArray();
         }
 
- /// Lloyd 松弛：将每个种子移动到其 Voronoi 单元的质心 /// 使单元形状更规则（接近六边形）        private void LloydRelaxation()
+ /// Lloyd 松弛：将每个种子移动到其 Voronoi 单元的质心
+ /// 使单元形状更规则（接近六边形）
+        private void LloydRelaxation()
         {
- // 采样球面上的点，分配到最近种子，计算每个单元的质心            int sampleCount = Seeds.Length * 500; // 每个单元500个采样点
+ // 采样球面上的点，分配到最近种子，计算每个单元的质心
+            int sampleCount = Seeds.Length * 500; // 每个单元500个采样点
             var sums = new (float x, float y, float z, int count)[Seeds.Length];
 
             for (int i = 0; i < sampleCount; i++)
@@ -75,7 +95,8 @@ namespace CivilizationEvolution.Map
                 sums[nearest].count++;
             }
 
- // 更新种子位置为单元质心（归一化到单位球面）            for (int i = 0; i < Seeds.Length; i++)
+ // 更新种子位置为单元质心（归一化到单位球面）
+            for (int i = 0; i < Seeds.Length; i++)
             {
                 if (sums[i].count > 0)
                 {
@@ -90,7 +111,8 @@ namespace CivilizationEvolution.Map
             }
         }
 
- /// <summary>查找给定点最近的种子ID</summary>        public int FindNearestSeed(float x, float y, float z)
+ /// <summary>查找给定点最近的种子ID</summary>
+        public int FindNearestSeed(float x, float y, float z)
         {
             int nearest = 0;
             float bestDist = float.MaxValue;
@@ -106,7 +128,11 @@ namespace CivilizationEvolution.Map
             return nearest;
         }
 
- /// 对网格地图分配 Voronoi 单元 ID /// <param name="width">地图宽度</param> /// <param name="height">地图高度</param> /// <returns>每个网格点的种子ID数组</returns>        public int[] AssignToGrid(int width, int height)
+ /// 对网格地图分配 Voronoi 单元 ID
+ /// <param name="width">地图宽度</param>
+ /// <param name="height">地图高度</param>
+ /// <returns>每个网格点的种子ID数组</returns>
+        public int[] AssignToGrid(int width, int height)
         {
             var result = new int[width * height];
             for (int y = 0; y < height; y++)
@@ -120,7 +146,13 @@ namespace CivilizationEvolution.Map
             return result;
         }
 
- /// 检测 Voronoi 边界点（与任一邻域种子不同即为边界） /// <param name="grid">AssignToGrid的结果</param> /// <param name="width">宽度</param> /// <param name="height">高度</param> /// <param name="wrapX">是否左右环绕</param> /// <returns>边界点布尔数组</returns>        public bool[] DetectBoundaries(int[] grid, int width, int height, bool wrapX = true)
+ /// 检测 Voronoi 边界点（与任一邻域种子不同即为边界）
+ /// <param name="grid">AssignToGrid的结果</param>
+ /// <param name="width">宽度</param>
+ /// <param name="height">高度</param>
+ /// <param name="wrapX">是否左右环绕</param>
+ /// <returns>边界点布尔数组</returns>
+        public bool[] DetectBoundaries(int[] grid, int width, int height, bool wrapX = true)
         {
             var boundary = new bool[width * height];
             for (int y = 0; y < height; y++)
@@ -129,11 +161,13 @@ namespace CivilizationEvolution.Map
                 {
                     int idx = y * width + x;
                     int id = grid[idx];
- // 检查4邻域                    if (x > 0 && grid[idx - 1] != id) boundary[idx] = true;
+ // 检查4邻域
+                    if (x > 0 && grid[idx - 1] != id) boundary[idx] = true;
                     else if (x < width - 1 && grid[idx + 1] != id) boundary[idx] = true;
                     else if (y > 0 && grid[idx - width] != id) boundary[idx] = true;
                     else if (y < height - 1 && grid[idx + width] != id) boundary[idx] = true;
- // 左右环绕                    else if (wrapX && x == 0 && grid[y * width + width - 1] != id) boundary[idx] = true;
+ // 左右环绕
+                    else if (wrapX && x == 0 && grid[y * width + width - 1] != id) boundary[idx] = true;
                     else if (wrapX && x == width - 1 && grid[y * width] != id) boundary[idx] = true;
                 }
             }
@@ -141,9 +175,11 @@ namespace CivilizationEvolution.Map
         }
 
  // ===== 工具函数 =====
- /// <summary>球面上的随机点（均匀分布）</summary>        private (float x, float y, float z) RandomSpherePoint()
+ /// <summary>球面上的随机点（均匀分布）</summary>
+        private (float x, float y, float z) RandomSpherePoint()
         {
- // 均匀球面采样：u=cos(theta), phi=2*pi*v            float u = (float)_rng.NextDouble() * 2f - 1f; // -1~1
+ // 均匀球面采样：u=cos(theta), phi=2*pi*v
+            float u = (float)_rng.NextDouble() * 2f - 1f; // -1~1
             float theta = Mathf.Acos(u);
             float phi = (float)_rng.NextDouble() * Mathf.PI * 2f;
             return (
@@ -153,7 +189,9 @@ namespace CivilizationEvolution.Map
             );
         }
 
- /// 球面距离平方（用3D点积近似，避免acos计算） /// 实际大圆弧距离 = R * acos(dot)，这里用 (1-dot) 作为距离度量（单调递增）        private static float SphereDistanceSq(float x1, float y1, float z1, float x2, float y2, float z2)
+ /// 球面距离平方（用3D点积近似，避免acos计算）
+ /// 实际大圆弧距离 = R * acos(dot)，这里用 (1-dot) 作为距离度量（单调递增）
+        private static float SphereDistanceSq(float x1, float y1, float z1, float x2, float y2, float z2)
         {
             float dot = x1 * x2 + y1 * y2 + z1 * z2;
             return 1f - dot; // 0（同点）~2（对跖点）

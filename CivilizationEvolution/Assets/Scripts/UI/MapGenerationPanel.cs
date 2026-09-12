@@ -6,18 +6,31 @@ using UnityEngine.UI;
 
 namespace CivilizationEvolution.UI
 {
- /// 地图生成参数面板（右侧浮动面板） /// 对齐 FantasyMapSimulator 编辑器内一体化工作流： /// 调整参数 → 生成地形 → 计算气候 → 重算水文 → 手动编辑 /// 参数分组（可折叠）： /// 全局：地图尺寸、种子、生成模式 /// 海陆：外海缓冲、海平面、陆地量、破碎度、海岸破碎度 /// 气候：环流、热赤道、北缘纬度、南缘纬度、全球温度 /// 水文：河网密度、侵蚀强度 /// 省份划分：省份数量、大小差异、规整度 /// 底部按钮：生成地形 / 计算气候 / 重算水文 / 全部生成    public class MapGenerationPanel : MonoBehaviour
+ /// 地图生成参数面板（右侧浮动面板）
+ /// 对齐 FantasyMapSimulator 编辑器内一体化工作流：
+ /// 调整参数 → 生成地形 → 计算气候 → 重算水文 → 手动编辑
+ /// 参数分组（可折叠）：
+ /// 全局：地图尺寸、种子、生成模式
+ /// 海陆：外海缓冲、海平面、陆地量、破碎度、海岸破碎度
+ /// 气候：环流、热赤道、北缘纬度、南缘纬度、全球温度
+ /// 水文：河网密度、侵蚀强度
+ /// 省份划分：省份数量、大小差异、规整度
+ /// 底部按钮：生成地形 / 计算气候 / 重算水文 / 全部生成
+    public class MapGenerationPanel : MonoBehaviour
     {
- // ===== 外部引用 =====        private MapGenerationConfig _config;
+ // ===== 外部引用 =====
+        private MapGenerationConfig _config;
         private Action _onGenerateTerrain;
         private Action _onCalculateClimate;
         private Action _onRecalculateHydrology;
 
- // ===== UI 根节点 =====        private GameObject _panelRoot;
+ // ===== UI 根节点 =====
+        private GameObject _panelRoot;
         private RectTransform _panelRt;
         private Text _statusText;
 
- // ===== 全局参数控件 =====        private Dropdown _mapSizeDropdown;
+ // ===== 全局参数控件 =====
+        private Dropdown _mapSizeDropdown;
         private InputField _seedInput;
         private Button _randomSeedBtn;
         private Toggle _useStringSeedToggle;
@@ -31,32 +44,38 @@ namespace CivilizationEvolution.UI
         private MapProjectionMode _currentProjection = MapProjectionMode.Planar;
         private Action<MapProjectionMode> _onProjectionChanged;
 
- /// <summary>地图投影模式</summary>        public enum MapProjectionMode
+ /// <summary>地图投影模式</summary>
+        public enum MapProjectionMode
         {
             Planar,   // 平面地图（柱状/左右连通）
             Spherical // 球形地图（3D球面投影）
         }
 
- // ===== 海陆参数控件 =====        private Toggle _outerSeaBufferToggle;
+ // ===== 海陆参数控件 =====
+        private Toggle _outerSeaBufferToggle;
         private Slider _seaLevelSlider; private Text _seaLevelText;
         private Slider _landAmountSlider; private Text _landAmountText;
         private Slider _fragmentationSlider; private Text _fragmentationText;
         private Slider _coastFragSlider; private Text _coastFragText;
 
- // ===== 气候参数控件 =====        private Dropdown _circulationDropdown;
+ // ===== 气候参数控件 =====
+        private Dropdown _circulationDropdown;
         private Slider _thermalEquatorSlider; private Text _thermalEquatorText;
         private Slider _northLatSlider; private Text _northLatText;
         private Slider _southLatSlider; private Text _southLatText;
         private Slider _globalTempSlider; private Text _globalTempText;
 
- // ===== 水文参数控件 =====        private Slider _riverDensitySlider; private Text _riverDensityText;
+ // ===== 水文参数控件 =====
+        private Slider _riverDensitySlider; private Text _riverDensityText;
         private Slider _erosionSlider; private Text _erosionText;
 
- // ===== 省份划分控件 =====        private Slider _provinceCountSlider; private Text _provinceCountText;
+ // ===== 省份划分控件 =====
+        private Slider _provinceCountSlider; private Text _provinceCountText;
         private Slider _provinceSizeVarSlider; private Text _provinceSizeVarText;
         private Slider _provinceRegularitySlider; private Text _provinceRegularityText;
 
- // ===== 折叠分组状态 =====        private readonly Dictionary<string, bool> _foldState = new Dictionary<string, bool>
+ // ===== 折叠分组状态 =====
+        private readonly Dictionary<string, bool> _foldState = new Dictionary<string, bool>
         {
             { "global", true },
             { "seaLand", true },
@@ -65,7 +84,8 @@ namespace CivilizationEvolution.UI
             { "province", false },
         };
 
- // ===== 颜色主题 =====        private static readonly Color PanelBg = new Color(0.10f, 0.10f, 0.13f, 0.94f);
+ // ===== 颜色主题 =====
+        private static readonly Color PanelBg = new Color(0.10f, 0.10f, 0.13f, 0.94f);
         private static readonly Color HeaderBg = new Color(0.18f, 0.20f, 0.25f, 1f);
         private static readonly Color ButtonNormal = new Color(0.22f, 0.24f, 0.30f, 1f);
         private static readonly Color ButtonActive = new Color(0.30f, 0.50f, 0.80f, 1f);
@@ -79,7 +99,8 @@ namespace CivilizationEvolution.UI
         private const float LabelWidth = 110f;
         private const float ValueWidth = 60f;
 
- /// <summary>初始化生成参数面板</summary>        public void Initialize(MapGenerationConfig config,
+ /// <summary>初始化生成参数面板</summary>
+        public void Initialize(MapGenerationConfig config,
             Action onGenerateTerrain, Action onCalculateClimate, Action onRecalculateHydrology,
             Action<MapProjectionMode> onProjectionChanged = null)
         {
@@ -99,7 +120,8 @@ namespace CivilizationEvolution.UI
         public void Toggle() { if (_panelRoot != null) _panelRoot.SetActive(!_panelRoot.activeSelf); }
         public bool IsVisible => _panelRoot != null && _panelRoot.activeSelf;
 
- /// <summary>从配置同步到UI</summary>        public void SyncUIFromConfig()
+ /// <summary>从配置同步到UI</summary>
+        public void SyncUIFromConfig()
         {
             if (_config == null) return;
 
@@ -131,7 +153,8 @@ namespace CivilizationEvolution.UI
             UpdateParamVisibility();
         }
 
- // ===== UI 创建 =====        private void CreatePanel()
+ // ===== UI 创建 =====
+        private void CreatePanel()
         {
             var canvas = FindAnyObjectByType<Canvas>();
             if (canvas == null)
@@ -155,36 +178,42 @@ namespace CivilizationEvolution.UI
 
             float y = -10f;
 
- // 标题            var title = CreateText(_panelRoot.transform, "地图生成参数", 15, TextAnchor.MiddleCenter,
+ // 标题
+            var title = CreateText(_panelRoot.transform, "地图生成参数", 15, TextAnchor.MiddleCenter,
                 new Vector2(12f, y), new Vector2(ContentWidth, 26f));
             title.color = TextColor;
             y -= 32f;
 
- // ===== 全局分组 =====            y = CreateFoldableHeader("global", "全局设置", y);
+ // ===== 全局分组 =====
+            y = CreateFoldableHeader("global", "全局设置", y);
             if (_foldState["global"])
             {
                 y = CreateGlobalSection(y);
             }
 
- // ===== 海陆分组 =====            y = CreateFoldableHeader("seaLand", "海陆", y);
+ // ===== 海陆分组 =====
+            y = CreateFoldableHeader("seaLand", "海陆", y);
             if (_foldState["seaLand"])
             {
                 y = CreateSeaLandSection(y);
             }
 
- // ===== 气候分组 =====            y = CreateFoldableHeader("climate", "气候", y);
+ // ===== 气候分组 =====
+            y = CreateFoldableHeader("climate", "气候", y);
             if (_foldState["climate"])
             {
                 y = CreateClimateSection(y);
             }
 
- // ===== 水文分组 =====            y = CreateFoldableHeader("hydrology", "水文与地貌", y);
+ // ===== 水文分组 =====
+            y = CreateFoldableHeader("hydrology", "水文与地貌", y);
             if (_foldState["hydrology"])
             {
                 y = CreateHydrologySection(y);
             }
 
- // ===== 省份分组 =====            y = CreateFoldableHeader("province", "省份划分", y);
+ // ===== 省份分组 =====
+            y = CreateFoldableHeader("province", "省份划分", y);
             if (_foldState["province"])
             {
                 y = CreateProvinceSection(y);
@@ -194,10 +223,12 @@ namespace CivilizationEvolution.UI
             CreateDivider(_panelRoot.transform, new Vector2(12f, y), ContentWidth);
             y -= 12f;
 
- // ===== 生成按钮区 =====            y = CreateGenerateButtons(y);
+ // ===== 生成按钮区 =====
+            y = CreateGenerateButtons(y);
 
             y -= 8f;
- // 状态文本            _statusText = CreateText(_panelRoot.transform, "就绪", 10, TextAnchor.UpperLeft,
+ // 状态文本
+            _statusText = CreateText(_panelRoot.transform, "就绪", 10, TextAnchor.UpperLeft,
                 new Vector2(12f, y), new Vector2(ContentWidth, 30f));
             _statusText.color = TextDim;
             _statusText.horizontalOverflow = HorizontalWrapMode.Wrap;
@@ -208,14 +239,16 @@ namespace CivilizationEvolution.UI
 
         private float CreateGlobalSection(float y)
         {
- // 地图尺寸            CreateLabel("地图尺寸", y);
+ // 地图尺寸
+            CreateLabel("地图尺寸", y);
             _mapSizeDropdown = CreateDropdown(_panelRoot.transform,
                 new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f),
                 new List<string> { "微型 256×128", "小型 512×256", "中型 1024×512", "大型 2048×1024", "巨型 4096×2048" });
             _mapSizeDropdown.onValueChanged.AddListener(v => { _config.MapSize = (MapGenerationConfig.MapSizePreset)v; UpdateStatus("地图尺寸已更新"); });
             y -= 32f;
 
- // 种子（整数 + 字符串双模式）            CreateLabel("随机种子", y);
+ // 种子（整数 + 字符串双模式）
+            CreateLabel("随机种子", y);
             _seedInput = CreateInputField(_panelRoot.transform, "随机",
                 new Vector2(12f, y - 20f), new Vector2(ContentWidth - 60f, 24f));
             _seedInput.onEndEdit.AddListener(v =>
@@ -242,7 +275,8 @@ namespace CivilizationEvolution.UI
             });
             y -= 32f;
 
- // 字符串种子开关            CreateLabel("使用字符串种子", y);
+ // 字符串种子开关
+            CreateLabel("使用字符串种子", y);
             _useStringSeedToggle = CreateToggle(_panelRoot.transform,
                 new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f));
             _useStringSeedToggle.onValueChanged.AddListener(v =>
@@ -254,7 +288,8 @@ namespace CivilizationEvolution.UI
             });
             y -= 28f;
 
- // 字符串种子输入框            CreateLabel("字符串种子（任意文字）", y);
+ // 字符串种子输入框
+            CreateLabel("字符串种子（任意文字）", y);
             _stringSeedInput = CreateInputField(_panelRoot.transform, "",
                 new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f));
             _stringSeedInput.interactable = _config.UseStringSeed;
@@ -267,7 +302,8 @@ namespace CivilizationEvolution.UI
             _seedInput.interactable = !_config.UseStringSeed;
             y -= 32f;
 
- // 生成模式            CreateLabel("底图来源", y);
+ // 生成模式
+            CreateLabel("底图来源", y);
             _genModeDropdown = CreateDropdown(_panelRoot.transform,
                 new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f),
                 new List<string> { "程序生成", "内置底图", "导入高度图" });
@@ -279,7 +315,8 @@ namespace CivilizationEvolution.UI
             });
             y -= 32f;
 
- // 地形模板（完整世界/局部两大分类）            CreateLabel("地形规模", y);
+ // 地形模板（完整世界/局部两大分类）
+            CreateLabel("地形规模", y);
             _terrainScaleDropdown = CreateDropdown(_panelRoot.transform,
                 new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f),
                 new List<string> { "完整世界", "局部" });
@@ -293,7 +330,8 @@ namespace CivilizationEvolution.UI
             });
             y -= 32f;
 
- // 完整世界模板            CreateLabel("完整世界模板", y);
+ // 完整世界模板
+            CreateLabel("完整世界模板", y);
             _worldTemplateDropdown = CreateDropdown(_panelRoot.transform,
                 new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f),
                 new List<string>(TerrainTemplateSystem.GetWorldTemplateNames()));
@@ -306,7 +344,8 @@ namespace CivilizationEvolution.UI
             });
             y -= 32f;
 
- // 局部模板            CreateLabel("局部模板", y);
+ // 局部模板
+            CreateLabel("局部模板", y);
             _regionalTemplateDropdown = CreateDropdown(_panelRoot.transform,
                 new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f),
                 new List<string>(TerrainTemplateSystem.GetRegionalTemplateNames()));
@@ -319,14 +358,16 @@ namespace CivilizationEvolution.UI
             });
             y -= 32f;
 
- // 模板描述            _templateDescText = CreateText(_panelRoot.transform, "", 11, TextAnchor.MiddleLeft,
+ // 模板描述
+            _templateDescText = CreateText(_panelRoot.transform, "", 11, TextAnchor.MiddleLeft,
                 new Vector2(12f, y), new Vector2(ContentWidth, 18f));
             _templateDescText.color = TextDim;
             UpdateTemplateVisibility();
             UpdateTemplateDesc();
             y -= 24f;
 
- // 投影模式（平面/球形）            CreateLabel("地图投影", y);
+ // 投影模式（平面/球形）
+            CreateLabel("地图投影", y);
             _projectionDropdown = CreateDropdown(_panelRoot.transform,
                 new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f),
                 new List<string> { "平面地图", "球形地图" });
@@ -343,7 +384,8 @@ namespace CivilizationEvolution.UI
 
         private float CreateSeaLandSection(float y)
         {
- // 外海缓冲            CreateLabel("外海缓冲", y);
+ // 外海缓冲
+            CreateLabel("外海缓冲", y);
             _outerSeaBufferToggle = CreateToggle(_panelRoot.transform,
                 new Vector2(ContentWidth - 30f, y - 2f), new Vector2(24f, 20f));
             _outerSeaBufferToggle.onValueChanged.AddListener(v => { _config.OuterSeaBuffer = v; });
@@ -363,7 +405,8 @@ namespace CivilizationEvolution.UI
 
         private float CreateClimateSection(float y)
         {
- // 环流            CreateLabel("环流模式", y);
+ // 环流
+            CreateLabel("环流模式", y);
             _circulationDropdown = CreateDropdown(_panelRoot.transform,
                 new Vector2(12f, y - 20f), new Vector2(ContentWidth, 24f),
                 new List<string> { "单环流", "双环流", "三环流", "增强季风" });
@@ -404,7 +447,8 @@ namespace CivilizationEvolution.UI
 
         private float CreateGenerateButtons(float y)
         {
- // 生成地形            var genTerrainBtn = CreateButton(_panelRoot.transform, "生成地形",
+ // 生成地形
+            var genTerrainBtn = CreateButton(_panelRoot.transform, "生成地形",
                 new Vector2(12f, y), new Vector2(ContentWidth, 30f));
             genTerrainBtn.GetComponent<Image>().color = ButtonGenerate;
             genTerrainBtn.onClick.AddListener(() =>
@@ -415,7 +459,8 @@ namespace CivilizationEvolution.UI
             });
             y -= 36f;
 
- // 计算气候            var calcClimateBtn = CreateButton(_panelRoot.transform, "计算气候",
+ // 计算气候
+            var calcClimateBtn = CreateButton(_panelRoot.transform, "计算气候",
                 new Vector2(12f, y), new Vector2((ContentWidth - 8f) / 2f, 26f));
             calcClimateBtn.onClick.AddListener(() =>
             {
@@ -424,7 +469,8 @@ namespace CivilizationEvolution.UI
                 UpdateStatus("气候计算完成");
             });
 
- // 重算水文            var recalcHydroBtn = CreateButton(_panelRoot.transform, "重算水文",
+ // 重算水文
+            var recalcHydroBtn = CreateButton(_panelRoot.transform, "重算水文",
                 new Vector2(12f + (ContentWidth - 8f) / 2f + 8f, y), new Vector2((ContentWidth - 8f) / 2f, 26f));
             recalcHydroBtn.onClick.AddListener(() =>
             {
@@ -434,7 +480,8 @@ namespace CivilizationEvolution.UI
             });
             y -= 32f;
 
- // 全部生成            var genAllBtn = CreateButton(_panelRoot.transform, "全部生成 (地形+气候+水文)",
+ // 全部生成
+            var genAllBtn = CreateButton(_panelRoot.transform, "全部生成 (地形+气候+水文)",
                 new Vector2(12f, y), new Vector2(ContentWidth, 26f));
             genAllBtn.GetComponent<Image>().color = ButtonActive;
             genAllBtn.onClick.AddListener(() =>
@@ -450,7 +497,8 @@ namespace CivilizationEvolution.UI
             return y;
         }
 
- // ===== 折叠分组 =====        private float CreateFoldableHeader(string key, string title, float y)
+ // ===== 折叠分组 =====
+        private float CreateFoldableHeader(string key, string title, float y)
         {
             var headerGo = new GameObject($"Header_{key}", typeof(RectTransform), typeof(Image), typeof(Button));
             headerGo.transform.SetParent(_panelRoot.transform, false);
@@ -476,7 +524,8 @@ namespace CivilizationEvolution.UI
             {
                 _foldState[k] = !_foldState[k];
                 arrow.text = _foldState[k] ? "▼" : "▶";
- // 简单实现：重建整个面板 // 实际项目中可用CanvasGroup控制可见性                RebuildPanel();
+ // 简单实现：重建整个面板 // 实际项目中可用CanvasGroup控制可见性
+                RebuildPanel();
             });
 
             return y - 28f;
@@ -484,26 +533,32 @@ namespace CivilizationEvolution.UI
 
         private void RebuildPanel()
         {
- // 保存当前配置            var config = _config;
+ // 保存当前配置
+            var config = _config;
             var genT = _onGenerateTerrain;
             var calcC = _onCalculateClimate;
             var recalcH = _onRecalculateHydrology;
 
- // 销毁旧面板            if (_panelRoot != null) Destroy(_panelRoot);
+ // 销毁旧面板
+            if (_panelRoot != null) Destroy(_panelRoot);
 
- // 重新创建            Initialize(config, genT, calcC, recalcH);
+ // 重新创建
+            Initialize(config, genT, calcC, recalcH);
         }
 
- // ===== 参数可见性 =====        private void UpdateParamVisibility()
+ // ===== 参数可见性 =====
+        private void UpdateParamVisibility()
         {
- // 导入高度图模式下，禁用海陆骨架参数            bool landSkeletonEnabled = _config.IsLandSkeletonParamsEnabled;
+ // 导入高度图模式下，禁用海陆骨架参数
+            bool landSkeletonEnabled = _config.IsLandSkeletonParamsEnabled;
 
             if (_landAmountSlider != null) _landAmountSlider.interactable = landSkeletonEnabled;
             if (_fragmentationSlider != null) _fragmentationSlider.interactable = landSkeletonEnabled;
             if (_coastFragSlider != null) _coastFragSlider.interactable = landSkeletonEnabled;
         }
 
- // ===== UI 辅助方法 =====        private void CreateLabel(string text, float y)
+ // ===== UI 辅助方法 =====
+        private void CreateLabel(string text, float y)
         {
             var t = CreateText(_panelRoot.transform, text, 11, TextAnchor.MiddleLeft,
                 new Vector2(12f, y), new Vector2(LabelWidth, 18f));
@@ -541,14 +596,16 @@ namespace CivilizationEvolution.UI
             if (_statusText != null) _statusText.text = msg;
         }
 
- /// <summary>根据地形规模显示/隐藏对应模板下拉</summary>        private void UpdateTemplateVisibility()
+ /// <summary>根据地形规模显示/隐藏对应模板下拉</summary>
+        private void UpdateTemplateVisibility()
         {
             bool isWorld = _config.TerrainScale == TerrainScale.World;
             if (_worldTemplateDropdown != null) _worldTemplateDropdown.gameObject.SetActive(isWorld);
             if (_regionalTemplateDropdown != null) _regionalTemplateDropdown.gameObject.SetActive(!isWorld);
         }
 
- /// <summary>更新模板描述文本</summary>        private void UpdateTemplateDesc()
+ /// <summary>更新模板描述文本</summary>
+        private void UpdateTemplateDesc()
         {
             if (_templateDescText == null) return;
             var preset = _config.TerrainScale == TerrainScale.World
@@ -557,7 +614,8 @@ namespace CivilizationEvolution.UI
             _templateDescText.text = preset.Description;
         }
 
- // ===== 标准 UI 创建方法（复用 EditorUIPanel 的风格） =====        private Text CreateText(Transform parent, string content, int fontSize, TextAnchor anchor, Vector2 pos, Vector2 size)
+ // ===== 标准 UI 创建方法（复用 EditorUIPanel 的风格） =====
+        private Text CreateText(Transform parent, string content, int fontSize, TextAnchor anchor, Vector2 pos, Vector2 size)
         {
             var go = new GameObject("Text", typeof(RectTransform));
             go.transform.SetParent(parent, false);

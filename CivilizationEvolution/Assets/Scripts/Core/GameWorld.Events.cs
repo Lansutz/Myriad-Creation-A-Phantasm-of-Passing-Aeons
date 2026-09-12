@@ -18,10 +18,12 @@ using CivilizationEvolution.AI;
 
 namespace CivilizationEvolution.Core
 {
- /// GameWorld.Events —— 事件系统（事件队列/分发/各类型事件处理器）（partial class，与 GameWorld.cs 共享字段与子系统）    public partial class GameWorld
+ /// GameWorld.Events —— 事件系统（事件队列/分发/各类型事件处理器）（partial class，与 GameWorld.cs 共享字段与子系统）
+    public partial class GameWorld
     {
 
- /// <summary>事件系统</summary>        public void EnqueueEvent(GameEvent evt)
+ /// <summary>事件系统</summary>
+        public void EnqueueEvent(GameEvent evt)
         {
             _eventQueue.Enqueue(evt);
         }

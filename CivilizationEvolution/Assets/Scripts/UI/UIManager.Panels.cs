@@ -12,23 +12,27 @@ using CivilizationEvolution.Politics;
 
 namespace CivilizationEvolution.UI
 {
- /// UIManager.Panels —— 各内容面板（角色/宗教/社会/政权概览/音乐/家族树/设置/顶栏/地块信息）（partial class，与 UIManager.cs 共享字段与组件引用）    public partial class UIManager : MonoBehaviour
+ /// UIManager.Panels —— 各内容面板（角色/宗教/社会/政权概览/音乐/家族树/设置/顶栏/地块信息）（partial class，与 UIManager.cs 共享字段与组件引用）
+    public partial class UIManager : MonoBehaviour
     {
 
- /// <summary>更新顶部信息栏</summary>        private void UpdateTopBar()
+ /// <summary>更新顶部信息栏</summary>
+        private void UpdateTopBar()
         {
             if (world == null) return;
 
             if (dateText != null)
             {
- // 时间=已历时长（开局起算——非纪元年第——）                int ey = world.currentYear - world.startYear;
+ // 时间=已历时长（开局起算——非纪元年第——）
+                int ey = world.currentYear - world.startYear;
                 int ed = world.currentDay - world.startDay;
                 if (ed < 0) { ed += 365; ey -= 1; }
                 dateText.text = ey <= 0 && ed <= 0 ? "开局"
                     : $"已历 {ey} 年 {ed} 天";
             }
 
- // 顶栏政权名（当前查看政权——点选跟随——死显示"未选择势力"修复）            if (realmNameText != null)
+ // 顶栏政权名（当前查看政权——点选跟随——死显示"未选择势力"修复）
+            if (realmNameText != null)
             {
                 int vr = ViewRealmId;
                 if (world.realms.TryGetValue(vr, out var vrealm))
@@ -40,7 +44,8 @@ namespace CivilizationEvolution.UI
             }
 
  // 顶栏精简：国库/总人口移除（——政权数据进政权界面—— // 同时消除每 0.2s 全遍历地块算总人口的重操作）
- // 地图信息：尺寸 + 地块数 + 省份数            if (mapInfoText != null)
+ // 地图信息：尺寸 + 地块数 + 省份数
+            if (mapInfoText != null)
             {
                 int totalTiles = world.tiles.Length;
                 int landTiles = world.GetLandTileCount();
@@ -51,7 +56,8 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>更新地块详情</summary>        private string GetCultureName(int cultureId)
+ /// <summary>更新地块详情</summary>
+        private string GetCultureName(int cultureId)
         {
             if (world != null && world.cultures.TryGetValue(cultureId, out var c))
                 return c.cultureName;
@@ -75,7 +81,8 @@ namespace CivilizationEvolution.UI
 
             if (tileNameText != null)
             {
- // 标题=归属（CK3 式：点政权领=政权名——点无主=状态）                int owner = tile.ownerRealmId;
+ // 标题=归属（CK3 式：点政权领=政权名——点无主=状态）
+                int owner = tile.ownerRealmId;
                 string realmTag;
                 if (owner >= 0 && world.realms.TryGetValue(owner, out var or))
                     realmTag = or.realmName;
@@ -86,7 +93,8 @@ namespace CivilizationEvolution.UI
                 }
                 tileNameText.text = $"{realmTag} · 地块 #{_selectedTile}";
             }
- // 查看政权按钮：仅领地块可用（无主无政权可看——隐藏）            if (viewRealmButton != null)
+ // 查看政权按钮：仅领地块可用（无主无政权可看——隐藏）
+            if (viewRealmButton != null)
                 viewRealmButton.gameObject.SetActive(tile.ownerRealmId >= 0);
             if (tileTerrainText != null)
                 tileTerrainText.text = $"高程: {tile.elevation01:F2}\n坡度: {tile.slopeDegree:F1}°\n海陆: {(tile.isLand ? "陆地" : "海洋")}\n海洋分级: {tile.oceanTier}";
@@ -102,14 +110,16 @@ namespace CivilizationEvolution.UI
                         pop += pb.count;
                 long people = (long)(pop * 50f);
 
- // 地块归属分级（CK3 式——点任何地块都有准确反馈）： // 有主=政权领地；无主有人=部落/自由聚落；无主无人=荒野                int owner = tile.ownerRealmId;
+ // 地块归属分级（CK3 式——点任何地块都有准确反馈）： // 有主=政权领地；无主有人=部落/自由聚落；无主无人=荒野
+                int owner = tile.ownerRealmId;
                 if (owner >= 0 && world.realms.TryGetValue(owner, out var ownRealm))
                 {
                     tilePopulationText.text = $"人口: {people:N0} 人\n所属: {ownRealm.realmName}";
                 }
                 else if (pop > 0f)
                 {
- // 无主聚落（部落/自由民——无人涂色但有人——待征服/演化）                    int domCulture = Politics.PopulationStats.GetDominantCulture(tile);
+ // 无主聚落（部落/自由民——无人涂色但有人——待征服/演化）
+                    int domCulture = Politics.PopulationStats.GetDominantCulture(tile);
                     string cName = GetCultureName(domCulture);
                     tilePopulationText.text = $"人口: {people:N0} 人（无主聚落·{cName}）";
                 }
@@ -124,7 +134,8 @@ namespace CivilizationEvolution.UI
 
 
  // ===== 角色面板 =====
- /// <summary>打开角色面板（刷新角色列表并显示第一个）</summary>        public void OpenCharacterPanel()
+ /// <summary>打开角色面板（刷新角色列表并显示第一个）</summary>
+        public void OpenCharacterPanel()
         {
             var cm = world != null ? world.GetCharacterManager() : null;
             if (cm == null) return;
@@ -140,13 +151,16 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>关闭角色面板</summary>        public void CloseCharacterPanel()
+ /// <summary>关闭角色面板</summary>
+        public void CloseCharacterPanel()
         {
             if (characterPanel != null) characterPanel.SetActive(false);
         }
 
 
- /// <summary>打开社会政治面板</summary> /// <summary>刷新宗教面板（国教教统信息+支柱+圣人——静态文本生成）</summary>        private void RefreshReligionPanel()
+ /// <summary>打开社会政治面板</summary>
+ /// <summary>刷新宗教面板（国教教统信息+支柱+圣人——静态文本生成）</summary>
+        private void RefreshReligionPanel()
         {
             if (world == null || religionPanelText == null) return;
             int viewRealm = ViewRealmId; // 视角政权（点选跟随——非固定玩家）
@@ -164,7 +178,8 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>启动时恢复保存的显示设置（Bootstrap/GameManager 调）</summary>        public static void RestoreDisplaySettings()
+ /// <summary>启动时恢复保存的显示设置（Bootstrap/GameManager 调）</summary>
+        public static void RestoreDisplaySettings()
         {
             int w = PlayerPrefs.GetInt("screen_width", 0);
             int h = PlayerPrefs.GetInt("screen_height", 0);
@@ -183,7 +198,9 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>查看政权总览（打开聚合面板——人口/国库/官职/宗教—— /// 数据源=已有系统聚合——）</summary>        private void OpenViewRealmPanel()
+ /// <summary>查看政权总览（打开聚合面板——人口/国库/官职/宗教——
+ /// 数据源=已有系统聚合——）</summary>
+        private void OpenViewRealmPanel()
         {
             if (overviewPanel != null)
             {
@@ -195,7 +212,8 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>返回上一级（区划详情→父区划/政权总览）</summary>        private void OnOverviewBack()
+ /// <summary>返回上一级（区划详情→父区划/政权总览）</summary>
+        private void OnOverviewBack()
         {
             if (_viewingDivisionId < 0) { CloseOverviewPanel(); return; }
             _viewingDivisionId = _divisionNavStack.Count > 0
@@ -205,7 +223,8 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>下钻到区划（按钮点击——push 当前——显示子详情）</summary>        private void OnDivisionClicked(int divisionId)
+ /// <summary>下钻到区划（按钮点击——push 当前——显示子详情）</summary>
+        private void OnDivisionClicked(int divisionId)
         {
             if (_viewingDivisionId >= 0) _divisionNavStack.Add(_viewingDivisionId);
             _viewingDivisionId = divisionId;
@@ -219,7 +238,8 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>刷新政权总览（_viewRealmId 视角政权——聚合各系统）</summary>        private void RefreshOverviewPanel()
+ /// <summary>刷新政权总览（_viewRealmId 视角政权——聚合各系统）</summary>
+        private void RefreshOverviewPanel()
         {
             if (world == null || overviewText == null) return;
             int realmId = ViewRealmId;
@@ -238,7 +258,8 @@ namespace CivilizationEvolution.UI
                 foreach (var snt in Culture.CanonizationSystem.GetSaints(realm.stateReligionId))
                     if (snt.saintId == realm.statePatronSaintId) { saint = snt.saintName; break; }
             }
- // 两态显示：-1=政权总览（含区划树）——≥0=区划详情（下钻页）            if (_viewingDivisionId < 0)
+ // 两态显示：-1=政权总览（含区划树）——≥0=区划详情（下钻页）
+            if (_viewingDivisionId < 0)
             {
                 overviewText.text = Culture.RealmOverviewText.Build(realm, society, officeDisplay,
                     religion, saint, realmId == world.PlayerRealmId, realm.adminDivisions, -1);
@@ -262,24 +283,30 @@ namespace CivilizationEvolution.UI
                     realm.adminDivisions, pop, "", realm.realmName);
             }
 
- // 区划按钮（当前层的直接子区划——下钻入口——动态重建）            RefreshDivisionButtons(realm);
- // 返回按钮（详情态显示）            if (overviewBackButton != null)
+ // 区划按钮（当前层的直接子区划——下钻入口——动态重建）
+            RefreshDivisionButtons(realm);
+ // 返回按钮（详情态显示）
+            if (overviewBackButton != null)
                 overviewBackButton.gameObject.SetActive(_viewingDivisionId >= 0);
         }
 
 
- /// <summary>动态重建区划按钮（当前查看层[根或区划]的直接子——≤4 个）</summary>        private void RefreshDivisionButtons(RealmData realm)
+ /// <summary>动态重建区划按钮（当前查看层[根或区划]的直接子——≤4 个）</summary>
+        private void RefreshDivisionButtons(RealmData realm)
         {
             if (divisionButtonsRoot == null) return;
- // 清旧按钮            foreach (Transform child in divisionButtonsRoot.transform)
+ // 清旧按钮
+            foreach (Transform child in divisionButtonsRoot.transform)
                 Destroy(child.gameObject);
             if (realm == null || realm.adminDivisions == null) return;
 
             int parentId = _viewingDivisionId < 0 ? -1 : _viewingDivisionId;
- // 收集直接子            var children = new List<Culture.AdminDivision>();
+ // 收集直接子
+            var children = new List<Culture.AdminDivision>();
             foreach (var d in realm.adminDivisions)
                 if (d.parentDivisionId == parentId && d.level > 1) children.Add(d);
- // 区划树显示模式：总览态展示层2入口按钮；详情态展示下一层            if (_viewingDivisionId < 0)
+ // 区划树显示模式：总览态展示层2入口按钮；详情态展示下一层
+            if (_viewingDivisionId < 0)
             {
                 foreach (var d in realm.adminDivisions)
                     if (d.level == 2 && !children.Contains(d)) children.Add(d);
@@ -294,7 +321,8 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>运行时按钮（代码构建——区划下钻入口）</summary>        private UnityEngine.UI.Button CreateRuntimeButton(string label)
+ /// <summary>运行时按钮（代码构建——区划下钻入口）</summary>
+        private UnityEngine.UI.Button CreateRuntimeButton(string label)
         {
             var go = new GameObject("DivBtn_" + label, typeof(RectTransform));
             var img = go.AddComponent<UnityEngine.UI.Image>();
@@ -336,26 +364,30 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>关闭社会政治面板</summary>        private void CloseSocietyPanel()
+ /// <summary>关闭社会政治面板</summary>
+        private void CloseSocietyPanel()
         {
             if (societyPanel != null) societyPanel.SetActive(false);
         }
 
 
- /// <summary>刷新社会政治面板（阶层画像/派系/政体变迁）</summary>        private void RefreshSocietyPanel()
+ /// <summary>刷新社会政治面板（阶层画像/派系/政体变迁）</summary>
+        private void RefreshSocietyPanel()
         {
             if (societyText == null || world == null) return;
             int realmId = ViewRealmId; // 当前查看政权（点选地块自动跟随——非固定玩家）
             if (!world.realms.TryGetValue(realmId, out var realm)) return;
 
- // 官职显示组装（officeHolders→文化定制称号+持有者名——OfficeTitle 消费）            var officeDisplay = BuildOfficeDisplay(world, realm);
+ // 官职显示组装（officeHolders→文化定制称号+持有者名——OfficeTitle 消费）
+            var officeDisplay = BuildOfficeDisplay(world, realm);
             societyText.text = SocietyPanelText.Build(realm,
                 world.GetRealmSociety(realmId), world.Factions, world.RegimeDynamics, world.currentDay,
                 officeDisplay);
         }
 
 
- /// <summary>打开音乐播放器面板</summary>        private void OpenMusicPanel()
+ /// <summary>打开音乐播放器面板</summary>
+        private void OpenMusicPanel()
         {
             MusicPlayer();
             if (musicPanel != null) musicPanel.SetActive(true);
@@ -363,13 +395,15 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>关闭音乐播放器面板</summary>        private void CloseMusicPanel()
+ /// <summary>关闭音乐播放器面板</summary>
+        private void CloseMusicPanel()
         {
             if (musicPanel != null) musicPanel.SetActive(false);
         }
 
 
- /// <summary>刷新音乐面板（曲目列表+当前状态）</summary>        private void RefreshMusicPanel()
+ /// <summary>刷新音乐面板（曲目列表+当前状态）</summary>
+        private void RefreshMusicPanel()
         {
             if (musicText == null) return;
             var mp = MusicPlayer();
@@ -387,7 +421,8 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>打开家族树面板</summary>        private void OpenFamilyTreePanel()
+ /// <summary>打开家族树面板</summary>
+        private void OpenFamilyTreePanel()
         {
             RefreshCharacterList();
             if (familyTreePanel != null) familyTreePanel.SetActive(true);
@@ -395,13 +430,15 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>关闭家族树面板</summary>        private void CloseFamilyTreePanel()
+ /// <summary>关闭家族树面板</summary>
+        private void CloseFamilyTreePanel()
         {
             if (familyTreePanel != null) familyTreePanel.SetActive(false);
         }
 
 
- /// <summary>刷新家族树面板（当前角色分代树状）</summary>        private void RefreshFamilyTreePanel()
+ /// <summary>刷新家族树面板（当前角色分代树状）</summary>
+        private void RefreshFamilyTreePanel()
         {
             if (familyTreeText == null || world == null) return;
             var cm = world.GetCharacterManager();
@@ -418,7 +455,8 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>刷新角色列表（角色面板数据源）</summary>        private void RefreshCharacterList()
+ /// <summary>刷新角色列表（角色面板数据源）</summary>
+        private void RefreshCharacterList()
         {
             if (world == null) return;
             var cm = world.GetCharacterManager();
@@ -431,7 +469,8 @@ namespace CivilizationEvolution.UI
         }
 
 
- /// <summary>刷新角色面板（每帧调用，角色数据动态变化）</summary>        private void UpdateCharacterPanel()
+ /// <summary>刷新角色面板（每帧调用，角色数据动态变化）</summary>
+        private void UpdateCharacterPanel()
         {
             var cm = world != null ? world.GetCharacterManager() : null;
             if (cm == null || _characterList.Count == 0)

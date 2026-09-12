@@ -5,7 +5,10 @@ using CivilizationEvolution.Core;
 
 namespace CivilizationEvolution.Diplomacy
 {
- /// 条约谈判系统（简化版） /// 双方各有"让步"和"索取"两个清单，总价值受战争分数限制 /// 领地索取后续完善接壤检查    public static class PeaceNegotiationSystem
+ /// 条约谈判系统（简化版）
+ /// 双方各有"让步"和"索取"两个清单，总价值受战争分数限制
+ /// 领地索取后续完善接壤检查
+    public static class PeaceNegotiationSystem
     {
  // ===== 谈判条款 =====
 

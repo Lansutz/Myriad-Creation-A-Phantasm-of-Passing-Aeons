@@ -14,7 +14,8 @@ namespace CivilizationEvolution.Economy
         public float paperMoneyInCirculation = 0f;
         public float inflationRate = 0f;
 
- /// <summary>计算货币价值</summary>        public float GetCurrencyValue()
+ /// <summary>计算货币价值</summary>
+        public float GetCurrencyValue()
         {
             return currentStage switch
             {
@@ -28,13 +29,15 @@ namespace CivilizationEvolution.Economy
             };
         }
 
- /// <summary>铸造劣币</summary>        public void DebaseCoin(float purityReduction, float amountMinted)
+ /// <summary>铸造劣币</summary>
+        public void DebaseCoin(float purityReduction, float amountMinted)
         {
             coinPurity = Mathf.Max(0.1f, coinPurity - purityReduction);
             inflationRate += purityReduction * 0.5f;
         }
 
- /// <summary>发行纸币</summary>        public bool IssuePaperMoney(float amount)
+ /// <summary>发行纸币</summary>
+        public bool IssuePaperMoney(float amount)
         {
             float reserveValue = goldReserve + silverReserve * 0.1f;
             float maxIssue = reserveValue * 3f;
@@ -46,7 +49,8 @@ namespace CivilizationEvolution.Economy
             return true;
         }
 
- /// <summary>每日通胀衰减</summary>        public void DailyTick()
+ /// <summary>每日通胀衰减</summary>
+        public void DailyTick()
         {
             inflationRate = Mathf.Max(0f, inflationRate - 0.001f);
         }
