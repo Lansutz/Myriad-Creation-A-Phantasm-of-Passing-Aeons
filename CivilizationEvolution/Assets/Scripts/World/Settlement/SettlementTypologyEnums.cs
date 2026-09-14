@@ -125,20 +125,37 @@ namespace CivilizationEvolution.World.Settlement
         IsthmusPass         // 地峡通道：两块大陆之间的狭窄陆桥
     }
 
- /// 聚落升级路线（决定聚落从低级向高级演化的路径依赖）
- /// 不同起点的聚落有不同的升级路径和最终形态
+ /// 聚落起源类型（决定聚落从低级向高级演化的路径依赖）
+ /// 注意：这不是硬性的经济起源分类，而是起源方式。
+ /// 正常的定居点发展使用 NaturalGrowth，具体的经济成分由成分系统决定。
+ /// 特殊起源方式（建城/堡垒/城堡/港口）保留，因为它们的发展路径与正常定居点不同。
     public enum UpgradePath
     {
-        // ===== 定居点起源（基于经济基础和地理条件）=====
-        AgriculturalGrowth,   // 农业起源：农业村→集镇→城邑→都会→大都会（最常见）
-        FisheryGrowth,        // 渔业起源：渔村→渔业集镇→港口城市→贸易都会→大都会
-        MiningGrowth,         // 矿业起源：矿村→矿业集镇→矿业城市→工业都会→大都会
-        PastoralGrowth,       // 牧业起源：牧业点→牧业集镇（通常最高Ⅱ级，不适合发展成大城市）
-        PlannedCity,          // 规划起源：直接建城（迁都/殖民/军屯），从Ⅲ级开始
+        // ===== 正常定居点发展 =====
+        NaturalGrowth,        // 自然发展：正常的定居点发展，经济成分由地理条件和物产自然决定
+        PlannedCity,          // 规划建城：直接建城（迁都/殖民/军屯），从Ⅲ级开始
         // ===== 据点起源（基于军事和控制功能，条件满足时可发展为定居点）=====
         FortressGrowth,       // 堡垒起源：堡垒→军镇→军事城市→军事都会→大都会
         CastleGrowth,         // 城堡起源：城堡→贵族城→行政城市→行政都会→大都会
         PortDevelopment       // 港口起源：锚地/渡口→港口集镇→港口城市→贸易都会→大都会
+    }
+
+ /// 经济成分类型（城市内部的经济构成）
+ /// 地理条件和物产自然决定了城市的经济成分比例，不需要硬性分类。
+ /// 城市的名称、功能、建筑、区划等根据主要成分来描述。
+    public enum EconomicSector
+    {
+        None = 0,
+        Agriculture,          // 农业：农耕、畜牧、林业
+        Fishery,              // 渔业：捕捞、养殖、水产加工
+        Mining,               // 矿业：矿产开采、冶炼、加工
+        Commerce,             // 商业：贸易、市集、金融
+        Artisanal,            // 手工业：作坊、工场、制造业
+        Administrative,       // 行政：官署、衙门、官僚机构
+        Military,             // 军事：军营、武库、防御设施
+        Religious,            // 宗教：神庙、教堂、修道院
+        Cultural,             // 文化：大学、图书馆、剧院
+        Transportation        // 交通：港口、驿站、道路枢纽
     }
 
  /// 聚落演化阶段（用于渐进式演化，不突变）
@@ -161,5 +178,23 @@ namespace CivilizationEvolution.World.Settlement
         FortifiedWall,      // 加固城墙（都会级，塔楼+瓮城+护城河）
         StarFortification,  // 棱堡防御（火炮时代，星形多角度）
         MegaFortification   // 巨型防御体系（大都会级，多重城墙+外围堡垒链）
+    }
+
+ /// 城市区划类型（只有大型城市Ⅳ级都会/Ⅴ级大都会才会分区划）
+ /// 区划是城市的内部分区，不是独立的聚居点类型
+ /// 区划的形成受进化路径影响，不同起源的城市区划结构不同
+    public enum CityDistrictType
+    {
+        None = 0,
+        Commercial,         // 商业区：市集、商铺、贸易行
+        Artisanal,          // 手工业区：作坊、工场、制造业
+        Military,           // 军事区：军营、武库、训练场
+        Noble,              // 贵族区：贵族宅邸、庄园、园林
+        Administrative,     // 行政区：官署、衙门、法庭、粮仓
+        Religious,          // 宗教区：神庙、教堂、修道院、朝圣设施
+        Port,               // 港口区：码头、仓库、船坞、海关
+        Slum,               // 贫民区：贫民窟、棚户区、廉价出租屋
+        Cultural,           // 文教区：大学、图书馆、学院、剧院
+        Agricultural        // 农业区：城市周边的农田、菜园、粮仓
     }
 }

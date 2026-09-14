@@ -56,6 +56,22 @@ namespace CivilizationEvolution.World.Settlement
         // 建设度档位（1~5，当前等级内的建设进度档位）
         public int constructionTier;
 
+ // ===== 城市区划系统（只有Ⅳ级都会/Ⅴ级大都会才有区划）=====
+ /// <summary>城市区划列表（大型城市的内部分区）</summary>
+        public List<CityDistrict> districts = new List<CityDistrict>();
+ /// <summary>是否已生成分区（避免重复生成）</summary>
+        public bool districtsGenerated = false;
+
+ // ===== 经济成分系统（城市内部的经济构成）=====
+ /// <summary>经济成分比例（各经济成分占比，总和应为1）</summary>
+ /// 地理条件和物产自然决定了城市的经济成分比例，不需要硬性分类。
+ /// 城市的名称、功能、建筑、区划等根据主要成分来描述。
+        public Dictionary<EconomicSector, float> economicComposition = new Dictionary<EconomicSector, float>();
+ /// <summary>主要经济成分（占比最高的成分，用于描述和UI显示）</summary>
+        public EconomicSector primarySector = EconomicSector.None;
+ /// <summary>经济成分是否已初始化（避免重复初始化）</summary>
+        public bool economicInitialized = false;
+
  // ===== 聚落形态系统（村镇/城/堡，可缓慢演化）===== /// <summary>聚落形态：村镇/城/堡</summary>
         public SettlementType settlementType;
 

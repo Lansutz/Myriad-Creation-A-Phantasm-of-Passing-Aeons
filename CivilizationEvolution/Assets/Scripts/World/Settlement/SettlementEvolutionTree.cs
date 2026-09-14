@@ -10,14 +10,20 @@ namespace CivilizationEvolution.World.Settlement
 {
     /// <summary>
     /// 聚居点进化树系统
-    /// 定义不同起源的聚居点的发展路径和各阶段名称。
+    /// 定义不同起源方式的聚居点的发展路径和各阶段名称。
     ///
     /// 核心思想：不是简单的等级制（村落→集镇→城邑），而是进化树——
-    /// 不同起源的聚落在不同分支上演化，同一"规模"的聚落因为起源不同表现完全不同。
+    /// 不同起源方式的聚落在不同分支上演化，同一"规模"的聚落因为起源不同表现完全不同。
     ///
-    /// 起源基于经济基础和地理条件，不是基于附加属性（宗教/商业/战略等）：
-    /// - 定居点起源：农业、渔业、矿业、牧业、规划（直接建城）
-    /// - 据点起源：堡垒、城堡、港口（条件满足时可发展为定居点）
+    /// 重要调整：去掉了硬性的经济起源分类（农业/渔业/矿业/牧业），
+    /// 正常的定居点发展使用 NaturalGrowth，具体的经济成分由成分系统（EconomicComposition）决定。
+    /// 地理条件和物产自然决定了城市的经济成分比例，不需要人为分类。
+    ///
+    /// 保留的特殊起源方式：
+    /// - 建城（PlannedCity）：人为直接建城，不是自然发展
+    /// - 堡垒起源（FortressGrowth）：从军事堡垒发展来的
+    /// - 城堡起源（CastleGrowth）：从贵族城堡发展来的
+    /// - 港口起源（PortDevelopment）：从港口/渡口发展来的
     ///
     /// 阶段名称基于规模和功能，不是基于政治地位（没有"帝都"这种东西）。
     /// 最高级统一为"大都会"，中间阶段根据起源有不同的特色名称。
@@ -28,47 +34,17 @@ namespace CivilizationEvolution.World.Settlement
         // 每个路径有5个阶段，对应 SettlementLevel Ⅰ-Ⅴ级
         // 最高级统一为"大都会"，中间阶段根据起源有不同的特色名称
 
-        /// <summary>农业起源：农业村→集镇→城邑→都会→大都会</summary>
-        private static readonly string[] AgriculturalStages =
+        /// <summary>自然发展：村落→集镇→城邑→都会→大都会（最常见，正常的定居点发展）</summary>
+        private static readonly string[] NaturalStages =
         {
-            "农业村",     // Ⅰ级：以农业生产为主的小型村落
-            "集镇",       // Ⅱ级：周边农产品的集散地
+            "村落",       // Ⅰ级：小型定居点
+            "集镇",       // Ⅱ级：周边产品的集散地
             "城邑",       // Ⅲ级：有城墙和市场的区域中心
             "都会",       // Ⅳ级：区域经济文化中心
             "大都会"      // Ⅴ级：跨区域的超级城市
         };
 
-        /// <summary>渔业起源：渔村→渔业集镇→港口城市→贸易都会→大都会</summary>
-        private static readonly string[] FisheryStages =
-        {
-            "渔村",       // Ⅰ级：以渔业为主的小型村落
-            "渔业集镇",   // Ⅱ级：渔获集散地和小型码头
-            "港口城市",   // Ⅲ级：有完善港口设施的城市
-            "贸易都会",   // Ⅳ级：区域贸易中心
-            "大都会"      // Ⅴ级：跨区域贸易枢纽
-        };
-
-        /// <summary>矿业起源：矿村→矿业集镇→矿业城市→工业都会→大都会</summary>
-        private static readonly string[] MiningStages =
-        {
-            "矿村",       // Ⅰ级：矿工聚居的小型村落
-            "矿业集镇",   // Ⅱ级：矿石集散地和初加工点
-            "矿业城市",   // Ⅲ级：有冶炼和加工能力的城市
-            "工业都会",   // Ⅳ级：区域手工业中心
-            "大都会"      // Ⅴ级：跨区域制造业中心
-        };
-
-        /// <summary>牧业起源：牧业点→牧业集镇（通常最高Ⅱ级，不适合发展成大城市）</summary>
-        private static readonly string[] PastoralStages =
-        {
-            "牧业点",     // Ⅰ级：牧民季节性聚居点
-            "牧业集镇",   // Ⅱ级：畜牧产品集散地（通常到此为止）
-            "牧业城镇",   // Ⅲ级：极少数条件极好的地方可达到
-            "牧业都会",   // Ⅳ级：几乎不存在
-            "大都会"      // Ⅴ级：几乎不存在
-        };
-
-        /// <summary>规划起源：直接建城（迁都/殖民/军屯），从Ⅲ级开始</summary>
+        /// <summary>规划建城：直接建城（迁都/殖民/军屯），从Ⅲ级开始</summary>
         private static readonly string[] PlannedStages =
         {
             "新城",       // Ⅰ级：刚建立的新城（通常跳过）
@@ -111,10 +87,7 @@ namespace CivilizationEvolution.World.Settlement
         // ===== 进化路径→阶段名称映射 =====
         private static readonly Dictionary<UpgradePath, string[]> PathStages = new()
         {
-            { UpgradePath.AgriculturalGrowth, AgriculturalStages },
-            { UpgradePath.FisheryGrowth, FisheryStages },
-            { UpgradePath.MiningGrowth, MiningStages },
-            { UpgradePath.PastoralGrowth, PastoralStages },
+            { UpgradePath.NaturalGrowth, NaturalStages },
             { UpgradePath.PlannedCity, PlannedStages },
             { UpgradePath.FortressGrowth, FortressStages },
             { UpgradePath.CastleGrowth, CastleStages },
@@ -124,10 +97,7 @@ namespace CivilizationEvolution.World.Settlement
         // ===== 进化路径最大等级限制（某些起源不适合发展到最高级）=====
         private static readonly Dictionary<UpgradePath, SettlementLevel> PathMaxLevel = new()
         {
-            { UpgradePath.AgriculturalGrowth, SettlementLevel.LevelV },
-            { UpgradePath.FisheryGrowth, SettlementLevel.LevelV },
-            { UpgradePath.MiningGrowth, SettlementLevel.LevelV },
-            { UpgradePath.PastoralGrowth, SettlementLevel.LevelII }, // 牧业通常最高Ⅱ级
+            { UpgradePath.NaturalGrowth, SettlementLevel.LevelV },
             { UpgradePath.PlannedCity, SettlementLevel.LevelV },
             { UpgradePath.FortressGrowth, SettlementLevel.LevelV },
             { UpgradePath.CastleGrowth, SettlementLevel.LevelV },
@@ -139,7 +109,7 @@ namespace CivilizationEvolution.World.Settlement
         {
             if (burg == null) return "未知";
             if (!PathStages.TryGetValue(burg.upgradePath, out var stages))
-                stages = AgriculturalStages;
+                stages = NaturalStages;
 
             int levelIndex = (int)burg.settlementLevel;
             if (levelIndex < 0) levelIndex = 0;
@@ -163,9 +133,10 @@ namespace CivilizationEvolution.World.Settlement
         }
 
         /// <summary>
-        /// 根据地块特征和初始类型推导进化路径（起源）
-        /// 这是进化树的核心：不同起源决定不同的发展路径。
-        /// 起源基于经济基础和地理条件，不是基于附加属性。
+        /// 根据地块特征和初始类型推导起源方式
+        /// 注意：这不再推导经济起源（农业/渔业/矿业/牧业），
+        /// 只推导起源方式（自然发展/建城/堡垒/城堡/港口）。
+        /// 具体的经济成分由成分系统（EconomicComposition）根据地理条件和物产自然决定。
         /// </summary>
         public static UpgradePath DeriveEvolutionPath(TileData tile, BurgData burg)
         {
@@ -179,22 +150,13 @@ namespace CivilizationEvolution.World.Settlement
             if (burg.portTier >= PortTier.IntermediatePort)
                 return UpgradePath.PortDevelopment;
 
-            // 3. 沿海/沿河 + 非农业 → 渔业起源
-            if ((tile.isCoast || tile.isRiver) &&
-                burg.primaryFunction != SettlementFunction.Mining &&
-                burg.primaryFunction != SettlementFunction.Military)
-                return UpgradePath.FisheryGrowth;
+            // 3. 贵族城堡 → 城堡起源（有城堡特征的据点）
+            if (burg.fortSubtype == FortSubtype.RoyalCastle ||
+                burg.fortSubtype == FortSubtype.ManorFort)
+                return UpgradePath.CastleGrowth;
 
-            // 4. 山地 + 矿业 → 矿业起源
-            if (tile.elevation01 > 0.65f && burg.primaryFunction == SettlementFunction.Mining)
-                return UpgradePath.MiningGrowth;
-
-            // 5. 干旱 + 无水源 → 牧业起源
-            if (tile.annualPrecipMm < 300f && !tile.isRiver)
-                return UpgradePath.PastoralGrowth;
-
-            // 6. 默认 → 农业起源（最常见）
-            return UpgradePath.AgriculturalGrowth;
+            // 4. 默认 → 自然发展（正常的定居点发展，经济成分由成分系统决定）
+            return UpgradePath.NaturalGrowth;
         }
 
         /// <summary>获取进化路径的描述</summary>
@@ -202,10 +164,7 @@ namespace CivilizationEvolution.World.Settlement
         {
             return path switch
             {
-                UpgradePath.AgriculturalGrowth => "以农业生产为基础的自然发展路径",
-                UpgradePath.FisheryGrowth => "以渔业和海洋贸易为核心的发展路径",
-                UpgradePath.MiningGrowth => "以矿产开采和加工为核心的发展路径",
-                UpgradePath.PastoralGrowth => "以畜牧业为核心的发展路径（通常规模有限）",
+                UpgradePath.NaturalGrowth => "自然发展的定居点，经济成分由地理条件和物产自然决定",
                 UpgradePath.PlannedCity => "人为规划建造的城市（迁都/殖民/军屯）",
                 UpgradePath.FortressGrowth => "从军事堡垒发展而来的路径",
                 UpgradePath.CastleGrowth => "从贵族城堡发展而来的路径",
