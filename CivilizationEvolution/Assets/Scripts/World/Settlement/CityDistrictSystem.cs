@@ -185,9 +185,11 @@ namespace CivilizationEvolution.World.Settlement
         }
 
         /// <summary>
-        /// 获取区划对城市的影响（经济产出、驻军上限、税收、行政效率等）
-        /// 有区划的城市（Ⅳ级都会/Ⅴ级大都会）使用复杂的区划影响计算
-        /// 没有区划的城市（村落/集镇/城邑）使用简化计算，只看主要自然资源和加工品
+        /// 获取区划对聚居点的影响（经济产出、驻军上限、税收、行政效率等）
+        /// 分级计算：
+        /// - 村落（Ⅰ级）和集镇（Ⅱ级）：极简计算，主要看自然资源和简单加工
+        /// - 城邑（Ⅲ级）：中等复杂度计算，包括正常的贸易和税收
+        /// - 都会（Ⅳ级）和大都会（Ⅴ级）：使用区划系统的复杂计算
         /// </summary>
         public static DistrictEffects GetDistrictEffects(BurgData burg)
         {
@@ -196,12 +198,31 @@ namespace CivilizationEvolution.World.Settlement
             if (burg == null)
                 return effects;
 
-            // 没有区划的城市：简化计算，只看主要自然资源和加工品
-            if (!burg.districtsGenerated || burg.districts == null || burg.districts.Count == 0)
+            // 都会（Ⅳ级）和大都会（Ⅴ级）：使用区划系统的复杂计算
+            if (burg.districtsGenerated && burg.districts != null && burg.districts.Count > 0)
             {
-                GetSimpleEconomicEffects(burg, effects);
+                GetDistrictEconomicEffects(burg, effects);
                 return effects;
             }
+
+            // 城邑（Ⅲ级）：中等复杂度计算，包括正常的贸易和税收
+            if (burg.settlementLevel == SettlementLevel.LevelIII)
+            {
+                GetCityEconomicEffects(burg, effects);
+                return effects;
+            }
+
+            // 村落（Ⅰ级）和集镇（Ⅱ级）：极简计算，主要看自然资源和简单加工
+            GetVillageEconomicEffects(burg, effects);
+            return effects;
+        }
+
+        /// <summary>
+        /// 区划系统的复杂影响计算（都会/大都会）
+        /// 每种区划类型有不同的加成效果
+        /// </summary>
+        private static void GetDistrictEconomicEffects(BurgData burg, DistrictEffects effects)
+        {
 
             foreach (var district in burg.districts)
             {
@@ -291,15 +312,13 @@ namespace CivilizationEvolution.World.Settlement
                         break;
                 }
             }
-
-            return effects;
         }
 
         /// <summary>
-        /// 简化的经济影响计算（用于没有区划的小型/中型聚居点）
-        /// 只看主要的自然资源（农业/渔业/矿业）和加工品（手工业/商业）
+        /// 城邑（Ⅲ级）的中等复杂度经济影响计算
+        /// 包括正常的贸易和税收，经济结构已经比较复杂
         /// </summary>
-        private static void GetSimpleEconomicEffects(BurgData burg, DistrictEffects effects)
+        private static void GetCityEconomicEffects(BurgData burg, DistrictEffects effects)
         {
             if (burg.economicComposition == null || burg.economicComposition.Count == 0)
                 return;
@@ -310,39 +329,38 @@ namespace CivilizationEvolution.World.Settlement
             if (composition.ContainsKey(EconomicSector.Agriculture))
             {
                 float ratio = composition[EconomicSector.Agriculture];
-                effects.agriculturalOutput += ratio * 0.6f;
-                effects.foodStorage += ratio * 0.4f;
-                effects.populationCapacity += ratio * 0.3f;
+                effects.agriculturalOutput += ratio * 0.5f;
+                effects.foodStorage += ratio * 0.3f;
+                effects.populationCapacity += ratio * 0.2f;
             }
 
             // 渔业：渔业产出
             if (composition.ContainsKey(EconomicSector.Fishery))
             {
                 float ratio = composition[EconomicSector.Fishery];
-                effects.fisheryOutput += ratio * 0.5f;
+                effects.fisheryOutput += ratio * 0.4f;
                 effects.foodStorage += ratio * 0.2f;
-                effects.populationCapacity += ratio * 0.2f;
             }
 
-            // 矿业：矿业产出（用手工业产出的一部分表示，因为没有单独的矿业产出字段）
+            // 矿业：矿业产出和就业
             if (composition.ContainsKey(EconomicSector.Mining))
             {
                 float ratio = composition[EconomicSector.Mining];
-                effects.artisanalOutput += ratio * 0.4f; // 矿业初级加工
+                effects.artisanalOutput += ratio * 0.3f;
                 effects.employment += ratio * 0.3f;
             }
 
-            // 手工业：手工业产出和税收（加工品，城市的基本功能）
+            // 手工业：手工业产出和税收（加工品，城市的重要经济支柱）
             if (composition.ContainsKey(EconomicSector.Artisanal))
             {
                 float ratio = composition[EconomicSector.Artisanal];
                 effects.artisanalOutput += ratio * 0.5f;
-                effects.artisanalTax += ratio * 0.3f;
+                effects.artisanalTax += ratio * 0.35f;
                 effects.employment += ratio * 0.4f;
-                effects.populationCapacity += ratio * 0.3f;
+                effects.populationCapacity += ratio * 0.25f;
             }
 
-            // 商业：贸易收入和商业税收（城市的基本功能，系数和有区划的商业区接近）
+            // 商业：贸易收入和商业税收（城市的核心功能）
             if (composition.ContainsKey(EconomicSector.Commerce))
             {
                 float ratio = composition[EconomicSector.Commerce];
@@ -352,45 +370,106 @@ namespace CivilizationEvolution.World.Settlement
                 effects.populationCapacity += ratio * 0.2f;
             }
 
-            // 交通：交通效率（小型聚居点影响较小）
+            // 交通：交通效率
             if (composition.ContainsKey(EconomicSector.Transportation))
             {
                 float ratio = composition[EconomicSector.Transportation];
-                effects.transportEfficiency += ratio * 0.3f;
+                effects.transportEfficiency += ratio * 0.4f;
+                effects.tradeIncome += ratio * 0.1f; // 交通促进贸易
             }
 
-            // 行政：行政效率（小型聚居点影响很小）
+            // 行政：行政效率和税收效率
             if (composition.ContainsKey(EconomicSector.Administrative))
             {
                 float ratio = composition[EconomicSector.Administrative];
-                effects.administrativeEfficiency += ratio * 0.2f;
-                effects.taxEfficiency += ratio * 0.15f;
+                effects.administrativeEfficiency += ratio * 0.35f;
+                effects.taxEfficiency += ratio * 0.3f;
+                effects.order += ratio * 0.2f;
             }
 
-            // 军事：驻军上限和防御（小型聚居点影响很小）
+            // 军事：驻军上限和防御
             if (composition.ContainsKey(EconomicSector.Military))
             {
                 float ratio = composition[EconomicSector.Military];
-                effects.garrisonCapacity += ratio * 0.3f;
-                effects.defenseBonus += ratio * 0.2f;
+                effects.garrisonCapacity += ratio * 0.4f;
+                effects.defenseBonus += ratio * 0.3f;
+                effects.trainingEfficiency += ratio * 0.2f;
             }
 
-            // 宗教：宗教满意度和税收（小型聚居点影响很小）
+            // 宗教：宗教满意度和税收
             if (composition.ContainsKey(EconomicSector.Religious))
             {
                 float ratio = composition[EconomicSector.Religious];
-                effects.religiousApproval += ratio * 0.2f;
-                effects.religiousTax += ratio * 0.15f;
-                effects.stability += ratio * 0.15f;
+                effects.religiousApproval += ratio * 0.3f;
+                effects.religiousTax += ratio * 0.25f;
+                effects.stability += ratio * 0.2f;
             }
 
-            // 文化：文化产出（小型聚居点影响很小）
+            // 文化：文化产出和教育
             if (composition.ContainsKey(EconomicSector.Cultural))
             {
                 float ratio = composition[EconomicSector.Cultural];
-                effects.culturalOutput += ratio * 0.2f;
-                effects.education += ratio * 0.15f;
+                effects.culturalOutput += ratio * 0.35f;
+                effects.education += ratio * 0.3f;
+                effects.innovationBonus += ratio * 0.2f;
             }
+        }
+
+        /// <summary>
+        /// 村落（Ⅰ级）和集镇（Ⅱ级）的极简经济影响计算
+        /// 主要看自然资源（农业/渔业/矿业）和简单加工（手工业）
+        /// 贸易和税收很少，因为还没有形成真正的城市经济
+        /// </summary>
+        private static void GetVillageEconomicEffects(BurgData burg, DistrictEffects effects)
+        {
+            if (burg.economicComposition == null || burg.economicComposition.Count == 0)
+                return;
+
+            var composition = burg.economicComposition;
+
+            // 农业：农业产出和粮食储备（村落的核心经济）
+            if (composition.ContainsKey(EconomicSector.Agriculture))
+            {
+                float ratio = composition[EconomicSector.Agriculture];
+                effects.agriculturalOutput += ratio * 0.7f;
+                effects.foodStorage += ratio * 0.5f;
+                effects.populationCapacity += ratio * 0.3f;
+            }
+
+            // 渔业：渔业产出
+            if (composition.ContainsKey(EconomicSector.Fishery))
+            {
+                float ratio = composition[EconomicSector.Fishery];
+                effects.fisheryOutput += ratio * 0.6f;
+                effects.foodStorage += ratio * 0.3f;
+            }
+
+            // 矿业：矿业产出（简单开采，没有深加工）
+            if (composition.ContainsKey(EconomicSector.Mining))
+            {
+                float ratio = composition[EconomicSector.Mining];
+                effects.artisanalOutput += ratio * 0.2f; // 简单的初级加工
+                effects.employment += ratio * 0.2f;
+            }
+
+            // 手工业：简单加工品（村落级别的手工业很初级）
+            if (composition.ContainsKey(EconomicSector.Artisanal))
+            {
+                float ratio = composition[EconomicSector.Artisanal];
+                effects.artisanalOutput += ratio * 0.3f;
+                effects.employment += ratio * 0.2f;
+                // 村落的手工业税收很少，不计算
+            }
+
+            // 商业：少量的本地交换（村落没有真正的商业和贸易）
+            if (composition.ContainsKey(EconomicSector.Commerce))
+            {
+                float ratio = composition[EconomicSector.Commerce];
+                effects.tradeIncome += ratio * 0.15f; // 只有少量的本地贸易
+                // 村落的商业税收很少，不计算
+            }
+
+            // 其他成分（交通、行政、军事、宗教、文化）在村落级别影响很小，不计算
         }
     }
 
