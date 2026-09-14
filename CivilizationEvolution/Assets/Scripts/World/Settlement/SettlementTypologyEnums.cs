@@ -129,21 +129,16 @@ namespace CivilizationEvolution.World.Settlement
  /// 不同起点的聚落有不同的升级路径和最终形态
     public enum UpgradePath
     {
-        // ===== 定居点起源 =====
+        // ===== 定居点起源（基于经济基础和地理条件）=====
         AgriculturalGrowth,   // 农业起源：农业村→集镇→城邑→都会→大都会（最常见）
-        FisheryGrowth,        // 渔业起源：渔村→渔业集镇→港口城市→贸易都会
-        MiningGrowth,         // 矿业起源：矿村→矿业集镇→矿业城市→工业都会
-        PastoralGrowth,       // 牧业起源：牧业点→牧业集镇（通常最高Ⅱ级）
+        FisheryGrowth,        // 渔业起源：渔村→渔业集镇→港口城市→贸易都会→大都会
+        MiningGrowth,         // 矿业起源：矿村→矿业集镇→矿业城市→工业都会→大都会
+        PastoralGrowth,       // 牧业起源：牧业点→牧业集镇（通常最高Ⅱ级，不适合发展成大城市）
         PlannedCity,          // 规划起源：直接建城（迁都/殖民/军屯），从Ⅲ级开始
-        // ===== 据点起源（条件满足时可发展为定居点）=====
-        FortressGrowth,       // 堡垒起源：堡垒→军镇→军事城市→军事都会
-        CastleGrowth,         // 城堡起源：城堡→贵族城→行政城市→行政都会
-        PortDevelopment,      // 港口起源：锚地/渡口→港口集镇→港口城市→贸易都会
-        // ===== 其他起源 =====
-        ReligiousGrowth,      // 宗教起源：圣地村→朝圣集镇→宗教城市→圣城
-        CommercialGrowth,     // 商业起源：市集村→商业集镇→商业城市→商贸都会
-        StrategicGrowth,      // 战略起源：边境屯堡→军镇→战略要塞城
-        NaturalGrowth         // 自然生长：未明确起源时的默认路径
+        // ===== 据点起源（基于军事和控制功能，条件满足时可发展为定居点）=====
+        FortressGrowth,       // 堡垒起源：堡垒→军镇→军事城市→军事都会→大都会
+        CastleGrowth,         // 城堡起源：城堡→贵族城→行政城市→行政都会→大都会
+        PortDevelopment       // 港口起源：锚地/渡口→港口集镇→港口城市→贸易都会→大都会
     }
 
  /// 聚落演化阶段（用于渐进式演化，不突变）
