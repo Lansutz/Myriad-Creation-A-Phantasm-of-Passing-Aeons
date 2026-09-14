@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 using CivilizationEvolution.World;
 namespace CivilizationEvolution.Infrastructure.Save
@@ -25,6 +25,8 @@ namespace CivilizationEvolution.Infrastructure.Save
         public bool hasMarket;
         public bool hasTemple;
         public bool hasUniversity;
-        public int buildLevel;
+        public int settlementCategory;
+        public float constructionProgress;
+        public int constructionTier;
     }
 }

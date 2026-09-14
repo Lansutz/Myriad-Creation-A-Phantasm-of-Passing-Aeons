@@ -58,8 +58,36 @@ namespace CivilizationEvolution.World.Settlement
             burg.evolutionStage = EvolutionStage.Stable;
             burg.wallLevel = burg.settlementType == SettlementType.Fort ? WallLevel.Palisade : WallLevel.None;
 
+ // 7.5 聚居点分类推导
+            burg.settlementCategory = burg.settlementType == SettlementType.Fort
+                ? SettlementCategory.Outpost
+                : SettlementCategory.Burg;
+
+ // 7.6 建设度初始化（每个等级内分五档，0~100，每20一档）
+            burg.constructionProgress = 0f;
+            burg.constructionTier = 1;
+
  // 8. 城市重心（低级聚落默认均衡，升级后再确定）
             burg.cityFocus = CityFocus.Balanced;
+        }
+
+ /// <summary>建设度增长（每日调用，由发展度/人口/投资驱动）</summary>
+        public static void UpdateConstructionProgress(BurgData burg, float dailyDevelopmentGain)
+        {
+            if (burg == null) return;
+            if (burg.settlementLevel >= SettlementLevel.LevelV) return; // 最高等级不再增长建设度
+
+            // 建设度增长（简化：发展度增益直接转化为建设度，后续可细化）
+            burg.constructionProgress = Mathf.Min(100f, burg.constructionProgress + dailyDevelopmentGain);
+
+            // 更新建设度档位（每20一档，1~5档）
+            burg.constructionTier = Mathf.Clamp(Mathf.FloorToInt(burg.constructionProgress / 20f) + 1, 1, 5);
+        }
+
+ /// <summary>检查建设度是否达到升级条件（第5档即满100）</summary>
+        public static bool IsConstructionReady(BurgData burg)
+        {
+            return burg != null && burg.constructionTier >= 5;
         }
 
  /// <summary>检测瓶颈节点类型</summary>
@@ -187,9 +215,9 @@ namespace CivilizationEvolution.World.Settlement
  /// <summary>推导城的形态</summary>
         private static CityForm DeriveCityForm(TileData tile, BurgData burg)
         {
- // 港口城市 → 水城或不规则
+ // 港口城市 → 不规则形态（沿河/沿海城市通常受地形约束，有机生长）
             if (burg.portTier >= PortTier.RiverPort)
-                return tile.isRiver ? CityForm.WaterCity : CityForm.Irregular;
+                return CityForm.Irregular;
 
  // 山地城市 → 山城
             if (tile.elevation01 > 0.6f)
@@ -270,6 +298,13 @@ namespace CivilizationEvolution.World.Settlement
                 }
             }
 
+ // 建设度要求（必须达到当前等级第5档才能升级）
+            if (!IsConstructionReady(burg))
+            {
+                reason = $"建设度不足（需第5档/100，当前第{burg.constructionTier}档/{burg.constructionProgress:0}）";
+                return false;
+            }
+
  // 发展度要求
             float[] devRequirements = { 0f, 15f, 35f, 60f, 85f };
             if (burg.development < devRequirements[(int)nextLevel])
@@ -338,6 +373,10 @@ namespace CivilizationEvolution.World.Settlement
         {
             burg.settlementLevel++;
             burg.evolutionStage = EvolutionStage.Transformed;
+
+ // 升级后重置建设度（新等级从第1档开始）
+            burg.constructionProgress = 0f;
+            burg.constructionTier = 1;
 
  // 升级时提升城墙
             if (burg.settlementLevel >= SettlementLevel.LevelIII &&

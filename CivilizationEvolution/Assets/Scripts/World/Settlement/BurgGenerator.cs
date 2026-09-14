@@ -126,7 +126,9 @@ namespace CivilizationEvolution.World.Settlement
                 x = 0.5f,
                 y = 0.5f,
                 isCoastal = tile.isCoast,
-                buildLevel = type == BurgType.City ? 2 : type == BurgType.Town ? 1 : 0
+                settlementCategory = type == BurgType.Fortress ? SettlementCategory.Outpost : SettlementCategory.Burg,
+                constructionProgress = 0f,
+                constructionTier = 1
             };
 
  // 初始化聚落类型学（形态/功能/等级/城形/堡型/升级路线）

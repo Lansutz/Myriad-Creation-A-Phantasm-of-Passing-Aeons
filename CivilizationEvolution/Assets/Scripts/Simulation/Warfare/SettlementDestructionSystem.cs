@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 
 
@@ -169,12 +169,12 @@ namespace CivilizationEvolution.Simulation.Warfare
                 {
                     // 人口几乎灭绝，聚落消失（保留废墟数据）
                     burg.settlementLevel = SettlementLevel.LevelI;
-                    burg.buildLevel = 0;
+                    burg.constructionProgress = 0f; burg.constructionTier = 1;
                 }
                 else
                 {
                     burg.settlementLevel = SettlementLevel.LevelI;
-                    burg.buildLevel = Mathf.Max(0, burg.buildLevel - 2);
+                    burg.constructionProgress = Mathf.Max(0f, burg.constructionProgress - 40f); burg.constructionTier = Mathf.Clamp(Mathf.FloorToInt(burg.constructionProgress / 20f) + 1, 1, 5);
                 }
             }
         }

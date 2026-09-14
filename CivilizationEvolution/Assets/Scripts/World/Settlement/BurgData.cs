@@ -49,8 +49,12 @@ namespace CivilizationEvolution.World.Settlement
         public bool hasTemple;       // 是否有宗教建筑
         public bool hasUniversity;   // 是否有大学（高学识）
 
- // 建设等级（0~3，对应村庄→集镇→城市→大都市）
-        public int buildLevel;
+ // 聚居点分类：定居点(Burg)/据点(Outpost)/营地(Camp)
+        public SettlementCategory settlementCategory;
+        // 建设度（0~100，理解为经验值，每个等级内分五档）
+        public float constructionProgress;
+        // 建设度档位（1~5，当前等级内的建设进度档位）
+        public int constructionTier;
 
  // ===== 聚落形态系统（村镇/城/堡，可缓慢演化）===== /// <summary>聚落形态：村镇/城/堡</summary>
         public SettlementType settlementType;

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 
 
@@ -162,7 +162,9 @@ namespace CivilizationEvolution.Simulation.Settlement
                 wealth = camp.supplies * 0.5f,
                 fortification = camp.defense * 0.1f,
                 garrison = camp.population / 5,
-                buildLevel = (int)targetLevel,
+                settlementCategory = targetType == SettlementType.Fort ? SettlementCategory.Outpost : SettlementCategory.Burg,
+                constructionProgress = 0f,
+                constructionTier = 1,
                 settlementType = targetType,
                 settlementLevel = targetLevel,
                 settlementEvolution = 100f,

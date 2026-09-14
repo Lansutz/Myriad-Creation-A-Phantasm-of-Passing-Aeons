@@ -357,7 +357,6 @@ namespace CivilizationEvolution.Simulation.WorldState
                 tileIndex = tileIndex,
                 x = 0.5f, y = 0.5f,
                 isCoastal = tile.isCoast,
-                buildLevel = 1,
             };
             SettlementTypologySystem.DeriveInitialType(burg, tile, mapWidth, mapHeight);
             burg.settlementType = BurgTypeInferrer.InferSettlementType(burg.type);

@@ -175,7 +175,7 @@ namespace CivilizationEvolution.Infrastructure.Save
                         hasMarket = b.hasMarket,
                         hasTemple = b.hasTemple,
                         hasUniversity = b.hasUniversity,
-                        buildLevel = b.buildLevel,
+                        settlementCategory = (int)b.settlementCategory, constructionProgress = b.constructionProgress, constructionTier = b.constructionTier,
                     };
                 }
             }
@@ -383,7 +383,7 @@ namespace CivilizationEvolution.Infrastructure.Save
                         hasMarket = b.hasMarket,
                         hasTemple = b.hasTemple,
                         hasUniversity = b.hasUniversity,
-                        buildLevel = b.buildLevel,
+                        settlementCategory = (int)b.settlementCategory, constructionProgress = b.constructionProgress, constructionTier = b.constructionTier,
                     };
                     _world.burgs[b.burgId] = burg;
                 }
