@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Core.Data;
@@ -185,47 +185,152 @@ namespace CivilizationEvolution.World.Settlement
         }
 
         /// <summary>
-        /// 获取区划对城市的影响（经济产出、驻军上限等）
-        /// 后续可以细化，目前只是框架
+        /// 获取区划对城市的影响（经济产出、驻军上限、税收、行政效率等）
+        /// 各种区划类型对城市有不同的加成效果
         /// </summary>
-        public static Dictionary<string, float> GetDistrictEffects(BurgData burg)
+        public static DistrictEffects GetDistrictEffects(BurgData burg)
         {
-            var effects = new Dictionary<string, float>();
+            var effects = new DistrictEffects();
 
             if (burg == null || burg.districts == null || burg.districts.Count == 0)
                 return effects;
 
-            float commerceBonus = 0f;
-            float militaryBonus = 0f;
-            float adminBonus = 0f;
-            float culturalBonus = 0f;
-
             foreach (var district in burg.districts)
             {
                 float devFactor = district.development / 100f;
+                float areaFactor = district.areaRatio;
+                float effectiveFactor = devFactor * areaFactor;
+
                 switch (district.districtType)
                 {
                     case CityDistrictType.Commercial:
-                        commerceBonus += district.areaRatio * devFactor * 0.5f;
+                        // 商业区：增加贸易收入、商业税收、市场吸引力
+                        effects.tradeIncome += effectiveFactor * 0.5f;
+                        effects.commerceTax += effectiveFactor * 0.4f;
+                        effects.marketAttraction += effectiveFactor * 0.3f;
+                        effects.populationCapacity += effectiveFactor * 0.2f;
                         break;
+
+                    case CityDistrictType.Artisanal:
+                        // 手工业区：增加手工业产出、手工业税收、就业
+                        effects.artisanalOutput += effectiveFactor * 0.5f;
+                        effects.artisanalTax += effectiveFactor * 0.3f;
+                        effects.employment += effectiveFactor * 0.4f;
+                        effects.populationCapacity += effectiveFactor * 0.3f;
+                        break;
+
                     case CityDistrictType.Military:
-                        militaryBonus += district.areaRatio * devFactor * 0.3f;
+                        // 军事区：增加驻军上限、防御加成、训练效率
+                        effects.garrisonCapacity += effectiveFactor * 0.6f;
+                        effects.defenseBonus += effectiveFactor * 0.4f;
+                        effects.trainingEfficiency += effectiveFactor * 0.3f;
+                        effects.unrest += effectiveFactor * 0.1f; // 军事区可能增加不安
                         break;
+
+                    case CityDistrictType.Noble:
+                        // 贵族区：增加贵族满意度、税收、文化产出
+                        effects.nobleApproval += effectiveFactor * 0.5f;
+                        effects.nobleTax += effectiveFactor * 0.4f;
+                        effects.culturalOutput += effectiveFactor * 0.2f;
+                        effects.populationCapacity += effectiveFactor * 0.1f;
+                        break;
+
                     case CityDistrictType.Administrative:
-                        adminBonus += district.areaRatio * devFactor * 0.2f;
+                        // 行政区：增加行政效率、税收效率、秩序
+                        effects.administrativeEfficiency += effectiveFactor * 0.5f;
+                        effects.taxEfficiency += effectiveFactor * 0.4f;
+                        effects.order += effectiveFactor * 0.3f;
+                        effects.unrest -= effectiveFactor * 0.2f;
                         break;
+
+                    case CityDistrictType.Religious:
+                        // 宗教区：增加宗教满意度、宗教税收、稳定
+                        effects.religiousApproval += effectiveFactor * 0.5f;
+                        effects.religiousTax += effectiveFactor * 0.3f;
+                        effects.stability += effectiveFactor * 0.3f;
+                        effects.unrest -= effectiveFactor * 0.15f;
+                        break;
+
+                    case CityDistrictType.Port:
+                        // 港口区：增加贸易收入、交通效率、渔业产出
+                        effects.tradeIncome += effectiveFactor * 0.6f;
+                        effects.transportEfficiency += effectiveFactor * 0.5f;
+                        effects.fisheryOutput += effectiveFactor * 0.3f;
+                        effects.populationCapacity += effectiveFactor * 0.2f;
+                        break;
+
+                    case CityDistrictType.Slum:
+                        // 贫民区：增加人口容量，但降低满意度和税收
+                        effects.populationCapacity += effectiveFactor * 0.8f;
+                        effects.unrest += effectiveFactor * 0.3f;
+                        effects.publicHealth -= effectiveFactor * 0.2f;
+                        effects.taxEfficiency -= effectiveFactor * 0.1f;
+                        break;
+
                     case CityDistrictType.Cultural:
-                        culturalBonus += district.areaRatio * devFactor * 0.2f;
+                        // 文教区：增加文化产出、人才培养、创新
+                        effects.culturalOutput += effectiveFactor * 0.6f;
+                        effects.innovationBonus += effectiveFactor * 0.4f;
+                        effects.education += effectiveFactor * 0.5f;
+                        effects.populationCapacity += effectiveFactor * 0.15f;
+                        break;
+
+                    case CityDistrictType.Agricultural:
+                        // 农业区：增加农业产出、粮食储备
+                        effects.agriculturalOutput += effectiveFactor * 0.6f;
+                        effects.foodStorage += effectiveFactor * 0.4f;
+                        effects.populationCapacity += effectiveFactor * 0.2f;
                         break;
                 }
             }
 
-            effects["CommerceBonus"] = commerceBonus;
-            effects["MilitaryBonus"] = militaryBonus;
-            effects["AdminBonus"] = adminBonus;
-            effects["CulturalBonus"] = culturalBonus;
-
             return effects;
         }
+    }
+
+    /// <summary>
+    /// 区划对城市的影响数据
+    /// 各种区划类型对城市有不同的加成效果
+    /// </summary>
+    public class DistrictEffects
+    {
+        // 经济产出
+        public float tradeIncome = 0f;           // 贸易收入加成
+        public float artisanalOutput = 0f;       // 手工业产出加成
+        public float agriculturalOutput = 0f;    // 农业产出加成
+        public float fisheryOutput = 0f;         // 渔业产出加成
+        public float culturalOutput = 0f;        // 文化产出加成
+
+        // 税收
+        public float commerceTax = 0f;           // 商业税收加成
+        public float artisanalTax = 0f;          // 手工业税收加成
+        public float nobleTax = 0f;               // 贵族税收加成
+        public float religiousTax = 0f;           // 宗教税收加成
+        public float taxEfficiency = 0f;          // 税收效率加成
+
+        // 军事
+        public float garrisonCapacity = 0f;       // 驻军上限加成
+        public float defenseBonus = 0f;           // 防御加成
+        public float trainingEfficiency = 0f;     // 训练效率加成
+
+        // 行政
+        public float administrativeEfficiency = 0f; // 行政效率加成
+        public float order = 0f;                  // 秩序加成
+        public float stability = 0f;              // 稳定加成
+
+        // 社会
+        public float nobleApproval = 0f;          // 贵族满意度
+        public float religiousApproval = 0f;      // 宗教满意度
+        public float unrest = 0f;                 // 不安（负值为减少不安）
+        public float publicHealth = 0f;           // 公共卫生
+        public float employment = 0f;             // 就业
+        public float education = 0f;              // 教育
+
+        // 其他
+        public float populationCapacity = 0f;     // 人口容量加成
+        public float marketAttraction = 0f;       // 市场吸引力
+        public float transportEfficiency = 0f;    // 交通效率
+        public float foodStorage = 0f;            // 粮食储备
+        public float innovationBonus = 0f;        // 创新加成
     }
 }

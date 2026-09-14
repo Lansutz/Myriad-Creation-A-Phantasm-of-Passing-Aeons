@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Core.Data;
 using CivilizationEvolution.Core.Enums;
@@ -142,25 +143,85 @@ namespace CivilizationEvolution.World.Settlement
 
         /// <summary>
         /// 更新城市的经济成分（每日调用）
-        /// 成分比例随时间缓慢变化，受贸易、政策、人口、技术等影响
+        /// 成分比例随时间缓慢变化，受贸易、人口、军事、行政、宗教等因素影响
         /// </summary>
         public static void UpdateComposition(BurgData burg, float deltaTime)
         {
             if (burg == null || burg.economicComposition == null || burg.economicComposition.Count == 0)
                 return;
 
-            // 简化：成分比例变化非常缓慢，目前只做微小的随机波动
-            // 后续可以加入贸易、政策、人口、技术等因素的影响
-            float changeRate = 0.001f * deltaTime; // 每天变化0.1%
-
             var composition = burg.economicComposition;
             var keys = new List<EconomicSector>(composition.Keys);
 
-            // 随机波动（模拟经济的自然变化）
+            // 基础变化率（每天变化0.05%，非常缓慢）
+            float baseChangeRate = 0.0005f * deltaTime;
+
+            // ===== 因素1：人口规模 =====
+            // 人口越多，商业和手工业成分越高（更多的消费需求和劳动力）
+            float populationFactor = Mathf.Clamp01(burg.population / 5000f); // 5000人以上达到最大影响
+            if (composition.ContainsKey(EconomicSector.Commerce))
+                composition[EconomicSector.Commerce] += populationFactor * baseChangeRate * 2f;
+            if (composition.ContainsKey(EconomicSector.Artisanal))
+                composition[EconomicSector.Artisanal] += populationFactor * baseChangeRate * 1.5f;
+
+            // ===== 因素2：贸易和市场 =====
+            // 有市场或港口的城市，商业和交通成分越高
+            if (burg.hasMarket || burg.isPort)
+            {
+                float tradeFactor = burg.hasMarket ? 0.5f : 0f;
+                tradeFactor += burg.isPort ? 0.5f : 0f;
+                tradeFactor += burg.tradePower / 100f;
+                tradeFactor = Mathf.Clamp01(tradeFactor);
+
+                if (composition.ContainsKey(EconomicSector.Commerce))
+                    composition[EconomicSector.Commerce] += tradeFactor * baseChangeRate * 3f;
+                if (composition.ContainsKey(EconomicSector.Transportation))
+                    composition[EconomicSector.Transportation] += tradeFactor * baseChangeRate * 2f;
+            }
+
+            // ===== 因素3：军事和防御 =====
+            // 有驻军或高防御的城市，军事成分越高
+            float militaryFactor = Mathf.Clamp01(burg.garrison / 500f + burg.fortification / 10f);
+            if (militaryFactor > 0.1f && composition.ContainsKey(EconomicSector.Military))
+                composition[EconomicSector.Military] += militaryFactor * baseChangeRate * 2f;
+
+            // ===== 因素4：行政和首都 =====
+            // 首都或行政中心，行政成分越高
+            if (burg.isCapital)
+            {
+                if (composition.ContainsKey(EconomicSector.Administrative))
+                    composition[EconomicSector.Administrative] += baseChangeRate * 3f;
+                if (composition.ContainsKey(EconomicSector.Cultural))
+                    composition[EconomicSector.Cultural] += baseChangeRate * 1.5f;
+            }
+
+            // ===== 因素5：宗教 =====
+            // 有宗教建筑的城市，宗教成分越高
+            if (burg.hasTemple)
+            {
+                if (composition.ContainsKey(EconomicSector.Religious))
+                    composition[EconomicSector.Religious] += baseChangeRate * 2f;
+            }
+
+            // ===== 因素6：文化和教育 =====
+            // 有大学的城市，文化成分越高
+            if (burg.hasUniversity)
+            {
+                if (composition.ContainsKey(EconomicSector.Cultural))
+                    composition[EconomicSector.Cultural] += baseChangeRate * 3f;
+            }
+
+            // ===== 因素7：随机波动（模拟经济的自然变化）=====
             foreach (var key in keys)
             {
-                float randomChange = (UnityEngine.Random.value - 0.5f) * 2f * changeRate;
+                float randomChange = (UnityEngine.Random.value - 0.5f) * 2f * baseChangeRate * 0.5f;
                 composition[key] = Math.Max(0f, composition[key] + randomChange);
+            }
+
+            // 确保所有成分不为负
+            foreach (var key in keys)
+            {
+                composition[key] = Math.Max(0f, composition[key]);
             }
 
             // 重新归一化

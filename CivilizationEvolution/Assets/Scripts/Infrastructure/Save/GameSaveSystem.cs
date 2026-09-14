@@ -18,6 +18,7 @@ using CivilizationEvolution.Simulation.Events;
 using CivilizationEvolution.Simulation.Generation;
 using CivilizationEvolution.Simulation.Modding;
 using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.World.Settlement;
 using CivilizationEvolution.Simulation.Population;
 using CivilizationEvolution.Simulation.Settlement;
 using CivilizationEvolution.Simulation.Society;
@@ -175,7 +176,29 @@ namespace CivilizationEvolution.Infrastructure.Save
                         hasMarket = b.hasMarket,
                         hasTemple = b.hasTemple,
                         hasUniversity = b.hasUniversity,
-                        settlementCategory = (int)b.settlementCategory, constructionProgress = b.constructionProgress, constructionTier = b.constructionTier,
+                        settlementCategory = (int)b.settlementCategory,
+                        constructionProgress = b.constructionProgress,
+                        constructionTier = b.constructionTier,
+                        // 经济成分系统
+                        primarySector = (int)b.primarySector,
+                        economicInitialized = b.economicInitialized,
+                        economicSectors = b.economicComposition != null ?
+                            b.economicComposition.Keys.Select(k => (int)k).ToArray() : null,
+                        economicRatios = b.economicComposition != null ?
+                            b.economicComposition.Values.Select(v => v).ToArray() : null,
+                        // 城市区划系统
+                        districtsGenerated = b.districtsGenerated,
+                        districts = b.districts != null ?
+                            b.districts.Select(d => new CityDistrictSaveData
+                            {
+                                districtType = (int)d.districtType,
+                                districtName = d.districtName,
+                                areaRatio = d.areaRatio,
+                                populationRatio = d.populationRatio,
+                                development = d.development,
+                                wealth = d.wealth,
+                                foundedDate = d.foundedDate
+                            }).ToArray() : null
                     };
                 }
             }
@@ -383,8 +406,41 @@ namespace CivilizationEvolution.Infrastructure.Save
                         hasMarket = b.hasMarket,
                         hasTemple = b.hasTemple,
                         hasUniversity = b.hasUniversity,
-                        settlementCategory = (int)b.settlementCategory, constructionProgress = b.constructionProgress, constructionTier = b.constructionTier,
+                        settlementCategory = (SettlementCategory)b.settlementCategory,
+                        constructionProgress = b.constructionProgress,
+                        constructionTier = b.constructionTier,
+                        // 经济成分系统
+                        primarySector = (EconomicSector)b.primarySector,
+                        economicInitialized = b.economicInitialized
                     };
+
+                    // 恢复经济成分字典
+                    if (b.economicSectors != null && b.economicRatios != null && b.economicSectors.Length == b.economicRatios.Length)
+                    {
+                        for (int i = 0; i < b.economicSectors.Length; i++)
+                        {
+                            burg.economicComposition[(EconomicSector)b.economicSectors[i]] = b.economicRatios[i];
+                        }
+                    }
+
+                    // 恢复城市区划
+                    burg.districtsGenerated = b.districtsGenerated;
+                    if (b.districts != null)
+                    {
+                        foreach (var d in b.districts)
+                        {
+                            burg.districts.Add(new CityDistrict(
+                                (CityDistrictType)d.districtType,
+                                d.districtName,
+                                d.areaRatio,
+                                d.populationRatio,
+                                d.development,
+                                d.wealth,
+                                d.foundedDate
+                            ));
+                        }
+                    }
+
                     _world.burgs[b.burgId] = burg;
                 }
             }
