@@ -368,7 +368,6 @@ namespace CivilizationEvolution.UI.Common
             [(2, 0)] = MapDisplayMode.Climate,
             [(3, 0)] = MapDisplayMode.Biome,
             [(4, 0)] = MapDisplayMode.Population,
-            [(5, 0)] = MapDisplayMode.Economy,
             [(6, 0)] = MapDisplayMode.Diplomacy,
             [(6, 1)] = MapDisplayMode.Alliance,
             [(7, 0)] = MapDisplayMode.Culture,

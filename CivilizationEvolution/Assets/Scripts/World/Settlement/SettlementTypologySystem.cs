@@ -302,14 +302,6 @@ namespace CivilizationEvolution.World.Settlement
                 return false;
             }
 
- // 发展度要求
-            float[] devRequirements = { 0f, 15f, 35f, 60f, 85f };
-            if (burg.development < devRequirements[(int)nextLevel])
-            {
-                reason = $"发展度不足（需{devRequirements[(int)nextLevel]:0}，当前{burg.development:0}）";
-                return false;
-            }
-
  // 人口要求
             float[] popRequirements = { 0f, 500f, 2000f, 8000f, 20000f };
             if (burg.population < popRequirements[(int)nextLevel])

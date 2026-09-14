@@ -165,10 +165,6 @@ namespace CivilizationEvolution.Rendering
                     float popT = Mathf.Clamp(pop / 100f, 0f, 1f);
                     return Color.Lerp(new Color(0.9f, 0.9f, 0.9f), new Color(0.8f, 0.2f, 0.2f), popT);
 
-                case MapDisplayMode.Economy:
-                    float devT = Mathf.Clamp(tile.development, 0f, 1f);
-                    return Color.Lerp(new Color(0.5f, 0.5f, 0.5f), new Color(1f, 0.9f, 0.3f), devT);
-
                 case MapDisplayMode.Diplomacy:
                     return GetDiplomacyColor(tile);
 

@@ -122,7 +122,7 @@ namespace CivilizationEvolution.UI.Common
             if (tileClimateText != null)
                 tileClimateText.text = $"年均温: {tile.annualTemp:F1}℃\n年降水: {tile.annualPrecipMm:F0}mm\n湿度: {tile.airHumidityPct:F0}%\n温度带: {tile.climateZone}";
             if (tileBiomeText != null)
-                tileBiomeText.text = $"群系: {tile.biome}\n肥力: {tile.fertility:F2}\n发展度: {tile.development:F2}";
+                tileBiomeText.text = $"群系: {tile.biome}\n肥力: {tile.fertility:F2}";
             if (tilePopulationText != null)
             {
                 float pop = 0f;

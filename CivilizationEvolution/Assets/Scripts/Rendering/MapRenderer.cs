@@ -609,7 +609,6 @@ namespace CivilizationEvolution.Rendering
         Biome,          // 群系
         Political,      // 政治（常态）
         Population,     // 人口
-        Economy,        // 经济
         Diplomacy,      // 外交关系（玩家视角：战争/敌对/中立/友好/盟约）
         Alliance,       // 联盟阵营（普通盟友/阵营成员）
         Culture,        // 文化（主文化）
