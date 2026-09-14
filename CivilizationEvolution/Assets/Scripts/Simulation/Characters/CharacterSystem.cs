@@ -147,6 +147,10 @@ namespace CivilizationEvolution.Simulation.Characters
             RaceData exprRace = expressionRace ?? ResolveRace(raceId);
             var expr = DnaSystem.ComputeExpression(dna, exprRace);
             character.dnaExpression = expr;
+
+ // ===== 身体部位初始化（宏观部位+子结构病因数据层）=====
+            character.bodyParts = BodyPartSystem.InitializeBodyParts();
+
             character.expectedLifespanYears = Mathf.Clamp(
                 (exprRace != null ? exprRace.lifespanBaseYears : 75f) + expr.longevityOffsetYears, 20f, 150f);
  // 个体抗性：种族基准 + DNA 偏移（疾病感染修正用；变革性为种族设定，不做个体级）

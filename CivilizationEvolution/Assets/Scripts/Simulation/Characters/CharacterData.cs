@@ -100,6 +100,10 @@ namespace CivilizationEvolution.Simulation.Characters
  /// <summary>身体/外观特征标记（秃顶/跛足/失明/矮小/黑甲/白袍……——
  /// 事件/伤病系统写入——外貌型绰号[秃头/瘸子/瞎子/黑王]判定源）</summary>
         public List<string> bodyMarks = new List<string>();
+ /// <summary>身体部位数据（宏观部位+子结构病因数据——
+ /// 每个部位下有若干子结构，子结构的定量数据就是病因数据，病名是诊断结果——
+ /// 部位HP和功能水平由子结构汇总计算，属性惩罚由功能水平自动计算）</summary>
+        public Dictionary<BodyPartType, BodyPartData> bodyParts;
  /// <summary>一生成就计数（行为计数器——GameWorld 各系统事件写入——
  /// 死亡时 EvaluateAndGrant 评估绰号/谥号——评价分级的数据源）</summary>
         public AchievementRecord achievements;
