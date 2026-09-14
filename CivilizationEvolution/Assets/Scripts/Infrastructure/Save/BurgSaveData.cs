@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using CivilizationEvolution.World;
 namespace CivilizationEvolution.Infrastructure.Save
@@ -28,5 +28,30 @@ namespace CivilizationEvolution.Infrastructure.Save
         public int settlementCategory;
         public float constructionProgress;
         public int constructionTier;
+
+        // ===== 经济成分系统 =====
+        public int[] economicSectors;      // 成分类型数组（EconomicSector枚举值）
+        public float[] economicRatios;     // 成分比例数组
+        public int primarySector;          // 主要经济成分
+        public bool economicInitialized;   // 是否已初始化
+
+        // ===== 城市区划系统 =====
+        public CityDistrictSaveData[] districts;  // 区划数组
+        public bool districtsGenerated;            // 是否已生成区划
+    }
+
+    /// <summary>
+    /// 城市区划保存数据
+    /// </summary>
+    [Serializable]
+    public class CityDistrictSaveData
+    {
+        public int districtType;        // 区划类型（CityDistrictType枚举值）
+        public string districtName;     // 区划名称
+        public float areaRatio;         // 面积比例
+        public float populationRatio;   // 人口比例
+        public float development;       // 发展度
+        public float wealth;            // 财富
+        public float foundedDate;       // 创建时间
     }
 }

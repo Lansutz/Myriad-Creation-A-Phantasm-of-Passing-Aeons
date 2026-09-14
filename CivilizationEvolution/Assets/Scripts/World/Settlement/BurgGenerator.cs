@@ -134,6 +134,9 @@ namespace CivilizationEvolution.World.Settlement
  // 初始化聚落类型学（形态/功能/等级/城形/堡型/升级路线）
             SettlementTypologySystem.DeriveInitialType(burg, tile, _width, _height);
 
+ // 初始化经济成分系统（根据地理条件和物产决定成分比例）
+            EconomicCompositionSystem.InitializeComposition(burg, tile);
+
  // 覆盖：根据BurgType强制形态
             burg.settlementType = BurgTypeInferrer.InferSettlementType(type);
             burg.settlementLevel = type switch
