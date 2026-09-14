@@ -257,21 +257,10 @@ namespace CivilizationEvolution.World.Settlement
             return FortSubtype.ManorFort;
         }
 
- /// <summary>推导升级路线</summary>
+ /// <summary>推导升级路线（使用进化树系统，根据起源确定发展路径）</summary>
         private static UpgradePath DeriveUpgradePath(TileData tile, BurgData burg)
         {
-            return burg.primaryFunction switch
-            {
-                SettlementFunction.Commercial => burg.portTier != PortTier.None
-                    ? UpgradePath.PortDevelopment
-                    : UpgradePath.CommercialGrowth,
-                SettlementFunction.Military => UpgradePath.MilitaryGrowth,
-                SettlementFunction.Mining => UpgradePath.MiningGrowth,
-                SettlementFunction.Religious => UpgradePath.ReligiousGrowth,
-                SettlementFunction.Administrative => UpgradePath.AdministrativeGrowth,
-                SettlementFunction.Crossing => UpgradePath.StrategicGrowth,
-                _ => UpgradePath.NaturalGrowth
-            };
+            return SettlementEvolutionTree.DeriveEvolutionPath(tile, burg);
         }
 
  // ===== 升级路线：等级提升检查 =====
@@ -283,6 +272,14 @@ namespace CivilizationEvolution.World.Settlement
             if (nextLevel > SettlementLevel.LevelV)
             {
                 reason = "已达最高等级";
+                return false;
+            }
+
+ // 进化路径最大等级限制（如牧业通常最高Ⅱ级）
+            SettlementLevel pathMaxLevel = SettlementEvolutionTree.GetMaxLevel(burg.upgradePath);
+            if (nextLevel > pathMaxLevel)
+            {
+                reason = $"此发展路径最高只能达到 {pathMaxLevel}";
                 return false;
             }
 
@@ -411,19 +408,10 @@ namespace CivilizationEvolution.World.Settlement
             };
         }
 
- /// <summary>获取形态描述</summary>
+ /// <summary>获取形态描述（使用进化树的阶段名称）</summary>
         public static string GetFullDescription(BurgData burg)
         {
-            string level = burg.settlementLevel switch
-            {
-                SettlementLevel.LevelI => "村落",
-                SettlementLevel.LevelII => "集镇",
-                SettlementLevel.LevelIII => "城邑",
-                SettlementLevel.LevelIV => "都会",
-                SettlementLevel.LevelV => "大都会",
-                _ => "未知"
-            };
-
+            string stageName = SettlementEvolutionTree.GetStageName(burg);
             string form = burg.settlementType switch
             {
                 SettlementType.Village => "村镇",
@@ -432,7 +420,7 @@ namespace CivilizationEvolution.World.Settlement
                 _ => "未知"
             };
 
-            return $"{level}·{form}·{burg.cityFocus}";
+            return $"{stageName}·{form}·{burg.cityFocus}";
         }
     }
 }
