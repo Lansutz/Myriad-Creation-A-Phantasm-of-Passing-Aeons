@@ -26,10 +26,22 @@ namespace CivilizationEvolution.Simulation.WorldState
             _lastPlanTickDay = -1;
         }
 
-        /// <summary>手动推进计划系统；正常运行由运行时桥接器按世界日自动调用。</summary>
+        /// <summary>
+        /// 手动推进统一计划系统。
+        /// 研究突破判定也在这里执行：PlanSystem 管生命周期，ResearchPlanSystem 管革新领域规则。
+        /// </summary>
         public void TickPlans(float deltaDays = 1f)
         {
             Plans.DailyTick(currentDay, deltaDays);
+
+            if (_researchPlanSystem == null || _characterManager == null) return;
+
+            // 目前先按有名角色进行判定。后续接入“实践事件脏集”后，可只检查当天实际发生相关实践的角色。
+            foreach (var character in _characterManager.GetAllCharacters().Values)
+            {
+                if (character == null || !character.isAlive || character.realmId < 0) continue;
+                _researchPlanSystem.TryDailyBreakthrough(character.characterId, deltaDays);
+            }
         }
 
         private ResearchPlanSystem CreateResearchPlanSystem()
@@ -72,7 +84,6 @@ namespace CivilizationEvolution.Simulation.WorldState
                 if (_researchPlanSystem != null && currentDay != _lastPlanTickDay)
                 {
                     float deltaDays = _lastPlanTickDay < 0 ? 1f : Mathf.Max(1f, currentDay - _lastPlanTickDay);
-                    _researchPlanSystem.DailyTick(deltaDays);
                     TickPlans(deltaDays);
                     _lastPlanTickDay = currentDay;
                 }
