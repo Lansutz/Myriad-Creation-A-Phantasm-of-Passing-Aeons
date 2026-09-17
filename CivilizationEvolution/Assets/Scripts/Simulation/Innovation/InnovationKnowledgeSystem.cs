@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Core.Enums;
 using CivilizationEvolution.Simulation.Characters;
 
 namespace CivilizationEvolution.Simulation.Innovation
@@ -22,7 +21,6 @@ namespace CivilizationEvolution.Simulation.Innovation
         private readonly Dictionary<string, float> _practiceByCharacterInnovation
             = new Dictionary<string, float>();
 
-        /// <summary>角色对某革新的掌握等级；未记录=0。</summary>
         public int GetMastery(int characterId, int innovationId)
         {
             if (_masteryByCharacter.TryGetValue(characterId, out var map)
@@ -31,7 +29,6 @@ namespace CivilizationEvolution.Simulation.Innovation
             return 0;
         }
 
-        /// <summary>设置掌握等级，只允许向上推进，不允许把已经掌握的知识倒退。</summary>
         public bool SetMastery(int characterId, int innovationId, int level)
         {
             if (characterId < 0 || innovationId <= 0) return false;
@@ -49,7 +46,6 @@ namespace CivilizationEvolution.Simulation.Innovation
             return true;
         }
 
-        /// <summary>记录角色针对某革新的实践。实践是个人突破概率的重要输入，而不是抽象研究点。</summary>
         public float RecordPractice(int characterId, int innovationId, float amount)
         {
             if (characterId < 0 || innovationId <= 0 || amount <= 0f) return 0f;
@@ -67,15 +63,19 @@ namespace CivilizationEvolution.Simulation.Innovation
         }
 
         /// <summary>
-        /// 学习某个社会已经存在的革新。
-        /// L1 可使用；L2 才算形成足以继续学习后续革新的稳定掌握；L3 代表工艺成熟度。
+        /// 学习按一级一级推进：一次最多提升一级，不能直接从 L0 跳到 L3。
+        /// L1 可使用；L2 是稳定掌握并形成后续学习基础；L3 是成熟掌握。
         /// </summary>
         public bool Learn(int characterId, int innovationId, int targetLevel = MasteryLevel1)
         {
-            return SetMastery(characterId, innovationId, targetLevel);
+            if (characterId < 0 || innovationId <= 0) return false;
+            int current = GetMastery(characterId, innovationId);
+            int requested = Math.Max(MasteryLevel1, Math.Min(MasteryLevel3, targetLevel));
+            if (current >= requested) return false;
+            if (requested > current + 1) requested = current + 1;
+            return SetMastery(characterId, innovationId, requested);
         }
 
-        /// <summary>是否具备继续学习后续革新的个人知识基础。</summary>
         public bool HasFoundation(int characterId, int innovationId)
         {
             return GetMastery(characterId, innovationId) >= MasteryLevel2;
@@ -83,7 +83,7 @@ namespace CivilizationEvolution.Simulation.Innovation
 
         /// <summary>
         /// 返回角色当前知识边界内可作为突破候选的革新。
-        /// 候选必须属于社会可接触知识邻域：无前置革新，或至少一个直接前置已被角色掌握到 L2。
+        /// 随机判定只能决定“是否突破”，不能越过个人知识边界随机选择任意革新。
         /// </summary>
         public List<InnovationDef> GetDiscoveryCandidates(
             CharacterData character,
@@ -107,9 +107,12 @@ namespace CivilizationEvolution.Simulation.Innovation
             bool hasAnyFoundation = false;
 
             if (def.prerequisites == null || def.prerequisites.Count == 0)
+            {
                 hasAnyFoundation = true;
+            }
             else
             {
+                // prerequisites 是全部前置；所有社会前置必须已经存在，个人至少有一个 L2 前置作为知识桥梁。
                 foreach (int prereq in def.prerequisites)
                 {
                     if (!innovations.HasInnovation(realmId, prereq)) return false;
