@@ -27,6 +27,19 @@ namespace CivilizationEvolution.Simulation.WorldState
         }
 
         /// <summary>
+        /// 记录一次真实实践。
+        /// 生产、建造、采掘、工艺、军事或其他领域系统只需要提交“角色 + 革新 + 实践量”，
+        /// 不需要直接依赖个人知识数据结构。
+        /// </summary>
+        public float RecordInnovationPractice(int characterId, int innovationId, float amount)
+        {
+            if (amount <= 0f) return 0f;
+            if (_researchPlanSystem == null && _innovationTree != null && _characterManager != null)
+                _researchPlanSystem = CreateResearchPlanSystem();
+            return _researchPlanSystem?.RecordPractice(characterId, innovationId, amount) ?? 0f;
+        }
+
+        /// <summary>
         /// 手动推进统一计划系统。
         /// 研究突破判定也在这里执行：PlanSystem 管生命周期，ResearchPlanSystem 管革新领域规则。
         /// </summary>
