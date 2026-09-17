@@ -32,22 +32,19 @@ namespace CivilizationEvolution.Simulation.Innovation
             _plans.RegisterExecutor(_executor);
         }
 
-        internal CharacterData GetCharacter(int characterId)
-            => _world.Characters?.GetCharacter(characterId);
+        internal CharacterData GetCharacter(int characterId) => _world.Characters?.GetCharacter(characterId);
 
         public float RecordPractice(int characterId, int innovationId, float amount)
             => _knowledge.RecordPractice(characterId, innovationId, amount);
 
-        public int GetMastery(int characterId, int innovationId)
-            => _knowledge.GetMastery(characterId, innovationId);
+        public int GetMastery(int characterId, int innovationId) => _knowledge.GetMastery(characterId, innovationId);
 
         /// <summary>每日个人突破判定。随机只决定“是否今天发生”，候选始终受个人知识边界限制。</summary>
         public bool TryDailyBreakthrough(int characterId, float deltaDays = 1f)
         {
             var character = GetCharacter(characterId);
             var innovations = _world.Innovations;
-            if (character == null || !character.isAlive || innovations == null || character.realmId < 0)
-                return false;
+            if (character == null || !character.isAlive || innovations == null || character.realmId < 0) return false;
 
             var candidates = _knowledge.GetDiscoveryCandidates(character, innovations, character.realmId);
             if (candidates.Count == 0) return false;
@@ -125,10 +122,8 @@ namespace CivilizationEvolution.Simulation.Innovation
             float practice = _knowledge.GetPractice(characterId, def.innovationId);
             float maxPrereqPractice = 0f;
             if (def.prerequisites != null)
-            {
                 foreach (int prereq in def.prerequisites)
                     maxPrereqPractice = Mathf.Max(maxPrereqPractice, _knowledge.GetPractice(characterId, prereq));
-            }
             return Mathf.Clamp01((practice + maxPrereqPractice * 0.5f) * PracticeScale);
         }
 
@@ -153,12 +148,21 @@ namespace CivilizationEvolution.Simulation.Innovation
             return Mathf.Max(5f, cost / rate);
         }
 
-        internal bool CompleteResearchPlan(ResearchPlanData data)
+        /// <summary>
+        /// 临时兼容桥：旧 InnovationTree 仍负责写入社会革新集合。
+        /// 后续把正式写入迁移到独立的社会知识系统后，这里只需替换这一处。
+        /// </summary>
+        internal bool TryFormalizeResearch(ResearchPlanData data)
         {
             if (data == null || _world.Innovations == null) return false;
-            if (!_world.Innovations.TryCompleteResearch(data.realmId, data.innovationId)) return false;
-            data.formallyUnlocked = true;
-            return true;
+            if (_world.Innovations.HasInnovation(data.realmId, data.innovationId)) return true;
+            if (_world.Innovations.GetCurrentResearch(data.realmId) != null) return false;
+            if (!_world.Innovations.StartResearch(data.realmId, data.innovationId)) return false;
+
+            var def = _world.Innovations.GetInnovation(data.innovationId);
+            if (def == null) return false;
+            _world.Innovations.DailyTick(data.realmId, Mathf.Max(1f, def.researchCost));
+            return _world.Innovations.HasInnovation(data.realmId, data.innovationId);
         }
     }
 
@@ -191,15 +195,21 @@ namespace CivilizationEvolution.Simulation.Innovation
             float scholarship = Mathf.Clamp(character.scholarship / 100f, 0.05f, 1f);
             float rate = (0.004f + scholarship * 0.012f)
                 * (0.75f + data.relevance * 0.5f) * deltaDays;
-            data.verificationProgress = Mathf.Clamp01(data.verificationProgress + rate);
-            return rate;
+            float next = Mathf.Clamp01(data.verificationProgress + rate);
+
+            // 正式解锁必须在验证完成后发生；若旧桥暂时无法写入社会知识，计划保持在 99.9% 等待。
+            if (next >= 1f && !_system.TryFormalizeResearch(data))
+            {
+                next = 0.999f;
+            }
+            data.verificationProgress = next;
+            return Mathf.Max(0f, next - plan.progress);
         }
 
         public void OnPlanEnded(Plan plan)
         {
             if (plan.state != PlanState.Completed) return;
-            if (!_system.TryGetResearchData(plan.planId, out var data)) return;
-            _system.CompleteResearchPlan(data);
+            if (_system.TryGetResearchData(plan.planId, out var data)) data.formallyUnlocked = true;
         }
     }
 }
