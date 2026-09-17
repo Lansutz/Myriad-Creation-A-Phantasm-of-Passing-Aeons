@@ -7,10 +7,7 @@ using CivilizationEvolution.Simulation.WorldState;
 
 namespace CivilizationEvolution.Simulation.Innovation
 {
-    /// <summary>
-    /// 研究计划：把个人突破后的“研究/验证”纳入统一 PlanSystem。
-    /// 注意：发现、研究、正式解锁、后续学习是四个不同阶段，不再用一个“灵感值”代替。
-    /// </summary>
+    /// <summary>研究计划：个人突破后的研究/验证，正式解锁后才进入社会革新集合。</summary>
     public sealed class ResearchPlanSystem
     {
         private readonly GameWorld _world;
@@ -19,7 +16,6 @@ namespace CivilizationEvolution.Simulation.Innovation
         private readonly Dictionary<int, ResearchPlanData> _data = new Dictionary<int, ResearchPlanData>();
         private readonly ResearchPlanExecutor _executor;
 
-        /// <summary>个人突破的基础概率（每日，极低；实践和学识再放大）。</summary>
         public const float BaseBreakthroughChancePerDay = 0.0005f;
         public const float PracticeScale = 0.01f;
         public const float ScholarshipScale = 0.008f;
@@ -36,28 +32,26 @@ namespace CivilizationEvolution.Simulation.Innovation
             _plans.RegisterExecutor(_executor);
         }
 
-        /// <summary>记录角色在某项革新上的实践积累。</summary>
+        internal CharacterData GetCharacter(int characterId)
+            => _world.Characters?.GetCharacter(characterId);
+
         public float RecordPractice(int characterId, int innovationId, float amount)
             => _knowledge.RecordPractice(characterId, innovationId, amount);
 
         public int GetMastery(int characterId, int innovationId)
             => _knowledge.GetMastery(characterId, innovationId);
 
-        /// <summary>
-        /// 每日尝试个人突破。
-        /// 随机只决定“是否在今天发生、由谁发生”，候选革新始终受个人知识边界限制。
-        /// </summary>
+        /// <summary>每日个人突破判定。随机只决定“是否今天发生”，候选始终受个人知识边界限制。</summary>
         public bool TryDailyBreakthrough(int characterId, float deltaDays = 1f)
         {
-            var character = _world.Characters?.GetCharacter(characterId);
+            var character = GetCharacter(characterId);
             var innovations = _world.Innovations;
-            if (character == null || !character.isAlive || innovations == null) return false;
-            if (character.realmId < 0) return false;
+            if (character == null || !character.isAlive || innovations == null || character.realmId < 0)
+                return false;
 
             var candidates = _knowledge.GetDiscoveryCandidates(character, innovations, character.realmId);
             if (candidates.Count == 0) return false;
 
-            // 从知识邻域中选择与本人实践最相关的候选，而不是随机抽一个全局革新。
             InnovationDef candidate = null;
             float bestRelevance = 0f;
             for (int i = 0; i < candidates.Count; i++)
@@ -73,12 +67,10 @@ namespace CivilizationEvolution.Simulation.Innovation
 
             float chance = CalculateBreakthroughChance(character, bestRelevance, deltaDays);
             if (UnityEngine.Random.value > chance) return false;
-
-            CreateResearchPlan(character, candidate, bestRelevance);
-            return true;
+            return CreateResearchPlan(character, candidate, bestRelevance) != null;
         }
 
-        /// <summary>由外部角色/AI主动创建研究计划。创建后仍须经过计划生命周期。</summary>
+        /// <summary>创建个人突破后的研究/验证计划；不直接解锁革新。</summary>
         public Plan CreateResearchPlan(CharacterData character, InnovationDef innovation, float relevance = 1f)
         {
             if (character == null || innovation == null || character.realmId < 0) return null;
@@ -106,11 +98,9 @@ namespace CivilizationEvolution.Simulation.Innovation
                 relevance = Mathf.Clamp01(relevance),
                 discovered = true
             };
-
             return plan;
         }
 
-        /// <summary>接受并开始研究计划的便捷入口；实际执行仍由统一 PlanSystem 驱动。</summary>
         public bool StartResearchPlan(int planId)
         {
             if (!_plans.AcceptPlan(planId)) return false;
@@ -121,10 +111,10 @@ namespace CivilizationEvolution.Simulation.Innovation
         public bool TryGetResearchData(int planId, out ResearchPlanData data)
             => _data.TryGetValue(planId, out data);
 
-        /// <summary>正式解锁后，角色开始掌握该革新；L1 是能用，L2 才构成后续学习基础。</summary>
+        /// <summary>正式解锁后的持续学习：L1 能用，L2 构成后续学习基础，L3 为成熟工艺。</summary>
         public bool Learn(int characterId, int innovationId, int targetLevel = InnovationKnowledgeSystem.MasteryLevel1)
         {
-            var character = _world.Characters?.GetCharacter(characterId);
+            var character = GetCharacter(characterId);
             if (character == null || character.realmId < 0 || _world.Innovations == null) return false;
             if (!_world.Innovations.HasInnovation(character.realmId, innovationId)) return false;
             return _knowledge.Learn(characterId, innovationId, targetLevel);
@@ -142,7 +132,7 @@ namespace CivilizationEvolution.Simulation.Innovation
             return Mathf.Clamp01((practice + maxPrereqPractice * 0.5f) * PracticeScale);
         }
 
-        private float CalculateBreakthroughChance(CharacterData character, float relevance, float deltaDays)
+        private static float CalculateBreakthroughChance(CharacterData character, float relevance, float deltaDays)
         {
             float scholarship = Mathf.Clamp01(character.scholarship / 100f);
             float experience = Mathf.Clamp01((character.age - 15f) / 50f);
@@ -190,10 +180,7 @@ namespace CivilizationEvolution.Simulation.Innovation
         private readonly ResearchPlanSystem _system;
         public PlanType Type => PlanType.Research;
 
-        public ResearchPlanExecutor(ResearchPlanSystem system)
-        {
-            _system = system;
-        }
+        public ResearchPlanExecutor(ResearchPlanSystem system) => _system = system;
 
         public float Execute(Plan plan, float deltaDays)
         {
@@ -201,9 +188,9 @@ namespace CivilizationEvolution.Simulation.Innovation
             var character = _system.GetCharacter(data.characterId);
             if (character == null || !character.isAlive) return 0f;
 
-            // 研究计划的进度代表“验证/固化”过程，不代表社会已经拥有革新。
             float scholarship = Mathf.Clamp(character.scholarship / 100f, 0.05f, 1f);
-            float rate = (0.004f + scholarship * 0.012f) * (0.75f + data.relevance * 0.5f) * deltaDays;
+            float rate = (0.004f + scholarship * 0.012f)
+                * (0.75f + data.relevance * 0.5f) * deltaDays;
             data.verificationProgress = Mathf.Clamp01(data.verificationProgress + rate);
             return rate;
         }
@@ -213,18 +200,6 @@ namespace CivilizationEvolution.Simulation.Innovation
             if (plan.state != PlanState.Completed) return;
             if (!_system.TryGetResearchData(plan.planId, out var data)) return;
             _system.CompleteResearchPlan(data);
-        }
-    }
-
-    internal static class ResearchPlanSystemCharacterAccess
-    {
-        public static CharacterData GetCharacter(this ResearchPlanSystem system, int characterId)
-            => system.GetWorldCharacters()?.GetCharacter(characterId);
-
-        private static CharacterManager GetWorldCharacters(this ResearchPlanSystem system)
-        {
-            // 由实例公开的内部辅助接口转发；避免研究执行器直接依赖 GameWorld 私有字段。
-            return system.GetCharacters();
         }
     }
 }
