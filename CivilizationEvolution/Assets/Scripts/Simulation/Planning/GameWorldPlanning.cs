@@ -1,28 +1,39 @@
-using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Innovation;
 
-namespace CivilizationEvolution.Simulation.Planning
+namespace CivilizationEvolution.Simulation.WorldState
 {
-    /// <summary>
-    /// GameWorld 与计划系统的接入层。
-    /// 先独立存在，避免在计划框架尚未完成时侵入 GameWorld 主循环。
-    /// </summary>
+    /// <summary>GameWorld 与统一计划系统的接入层。</summary>
     public partial class GameWorld
     {
-        private PlanSystem _planSystem;
+        private Planning.PlanSystem _planSystem;
+        private ResearchPlanSystem _researchPlanSystem;
 
-        /// <summary>统一计划系统。由世界生命周期持有一个实例。</summary>
-        public PlanSystem Plans => _planSystem ??= new PlanSystem();
+        public Planning.PlanSystem Plans => _planSystem ??= CreatePlanSystem();
+        public ResearchPlanSystem ResearchPlans => _researchPlanSystem ??= CreateResearchPlanSystem();
 
-        /// <summary>重新初始化计划系统（新世界/读档重建时使用）。</summary>
         public void InitializePlanSystem()
         {
-            _planSystem = new PlanSystem();
+            _planSystem = new Planning.PlanSystem();
+            _researchPlanSystem = null;
         }
 
-        /// <summary>推进世界中的所有计划。</summary>
         public void TickPlans(float deltaDays = 1f)
         {
-            _planSystem?.DailyTick(currentDay, deltaDays);
+            Plans.DailyTick(currentDay, deltaDays);
         }
+
+        private ResearchPlanSystem CreateResearchPlanSystem()
+        {
+            return new ResearchPlanSystem(this, Plans);
+        }
+
+        private Planning.PlanSystem CreatePlanSystem()
+        {
+            return new Planning.PlanSystem();
+        }
+
+        public CharacterManager Characters => _characterManager;
+        public InnovationTree Innovations => _innovationTree;
     }
 }
