@@ -7,7 +7,10 @@ using CivilizationEvolution.Simulation.WorldState;
 
 namespace CivilizationEvolution.Simulation.Innovation
 {
-    /// <summary>研究计划：个人突破后的研究/验证，正式解锁后才进入社会革新集合。</summary>
+    /// <summary>
+    /// 个人革新计划系统：负责“实践 → 突破 → 研究/验证 → 社会正式解锁”。
+    /// PlanSystem 只负责生命周期，本系统负责革新领域规则。
+    /// </summary>
     public sealed class ResearchPlanSystem
     {
         private readonly GameWorld _world;
@@ -37,9 +40,28 @@ namespace CivilizationEvolution.Simulation.Innovation
         public float RecordPractice(int characterId, int innovationId, float amount)
             => _knowledge.RecordPractice(characterId, innovationId, amount);
 
-        public int GetMastery(int characterId, int innovationId) => _knowledge.GetMastery(characterId, innovationId);
+        public int GetMastery(int characterId, int innovationId)
+            => _knowledge.GetMastery(characterId, innovationId);
 
-        /// <summary>每日个人突破判定。随机只决定“是否今天发生”，候选始终受个人知识边界限制。</summary>
+        /// <summary>
+        /// 每日运行个人突破层。
+        /// 随机数只决定“今天是否发生突破”，候选革新由个人知识边界决定。
+        /// 研究计划随后进入统一 PlanSystem 执行。
+        /// </summary>
+        public int DailyTick(float deltaDays = 1f)
+        {
+            if (_world.Characters == null || deltaDays <= 0f) return 0;
+
+            int discoveries = 0;
+            foreach (var character in _world.Characters.GetAllCharacters())
+            {
+                if (character == null || !character.isAlive || character.realmId < 0) continue;
+                if (TryDailyBreakthrough(character.characterId, deltaDays)) discoveries++;
+            }
+            return discoveries;
+        }
+
+        /// <summary>每日个人突破判定。</summary>
         public bool TryDailyBreakthrough(int characterId, float deltaDays = 1f)
         {
             var character = GetCharacter(characterId);
@@ -49,6 +71,7 @@ namespace CivilizationEvolution.Simulation.Innovation
             var candidates = _knowledge.GetDiscoveryCandidates(character, innovations, character.realmId);
             if (candidates.Count == 0) return false;
 
+            // 不随机选择一个任意革新；实践最相关者才是当前突破方向。
             InnovationDef candidate = null;
             float bestRelevance = 0f;
             for (int i = 0; i < candidates.Count; i++)
@@ -60,18 +83,40 @@ namespace CivilizationEvolution.Simulation.Innovation
                     candidate = candidates[i];
                 }
             }
+
             if (candidate == null || bestRelevance <= 0f) return false;
+            if (HasActiveResearchPlan(character.characterId, candidate.innovationId)) return false;
 
             float chance = CalculateBreakthroughChance(character, bestRelevance, deltaDays);
             if (UnityEngine.Random.value > chance) return false;
-            return CreateResearchPlan(character, candidate, bestRelevance) != null;
+
+            var plan = CreateResearchPlan(character, candidate, bestRelevance);
+            if (plan == null) return false;
+
+            // 发现不是正式解锁；发现后自动进入研究计划生命周期。
+            return StartResearchPlan(plan.planId);
         }
 
-        /// <summary>创建个人突破后的研究/验证计划；不直接解锁革新。</summary>
+        /// <summary>检查角色是否已经在研究同一革新，避免重复计划。</summary>
+        public bool HasActiveResearchPlan(int characterId, int innovationId)
+        {
+            var plans = _plans.GetPlans(PlanType.Research);
+            for (int i = 0; i < plans.Count; i++)
+            {
+                var plan = plans[i];
+                if (plan.IsTerminal) continue;
+                if (!_data.TryGetValue(plan.planId, out var data)) continue;
+                if (data.characterId == characterId && data.innovationId == innovationId) return true;
+            }
+            return false;
+        }
+
+        /// <summary>创建个人突破后的研究/验证计划；此时绝不正式解锁革新。</summary>
         public Plan CreateResearchPlan(CharacterData character, InnovationDef innovation, float relevance = 1f)
         {
             if (character == null || innovation == null || character.realmId < 0) return null;
             if (_world.Innovations == null || _world.Innovations.HasInnovation(character.realmId, innovation.innovationId)) return null;
+            if (HasActiveResearchPlan(character.characterId, innovation.innovationId)) return null;
 
             var plan = _plans.CreatePlan(
                 PlanType.Research,
@@ -108,7 +153,7 @@ namespace CivilizationEvolution.Simulation.Innovation
         public bool TryGetResearchData(int planId, out ResearchPlanData data)
             => _data.TryGetValue(planId, out data);
 
-        /// <summary>正式解锁后的持续学习：L1 能用，L2 构成后续学习基础，L3 为成熟工艺。</summary>
+        /// <summary>正式解锁后的持续学习：L1→L2→L3，每次调用最多提升一级。</summary>
         public bool Learn(int characterId, int innovationId, int targetLevel = InnovationKnowledgeSystem.MasteryLevel1)
         {
             var character = GetCharacter(characterId);
@@ -150,7 +195,7 @@ namespace CivilizationEvolution.Simulation.Innovation
 
         /// <summary>
         /// 临时兼容桥：旧 InnovationTree 仍负责写入社会革新集合。
-        /// 后续把正式写入迁移到独立的社会知识系统后，这里只需替换这一处。
+        /// 研究计划完成前不会调用这里。
         /// </summary>
         internal bool TryFormalizeResearch(ResearchPlanData data)
         {
@@ -197,11 +242,10 @@ namespace CivilizationEvolution.Simulation.Innovation
                 * (0.75f + data.relevance * 0.5f) * deltaDays;
             float next = Mathf.Clamp01(data.verificationProgress + rate);
 
-            // 正式解锁必须在验证完成后发生；若旧桥暂时无法写入社会知识，计划保持在 99.9% 等待。
+            // 正式解锁必须在验证完成后发生；旧桥暂时无法写入时保持在 99.9%。
             if (next >= 1f && !_system.TryFormalizeResearch(data))
-            {
                 next = 0.999f;
-            }
+
             data.verificationProgress = next;
             return Mathf.Max(0f, next - plan.progress);
         }
