@@ -44,8 +44,7 @@ namespace CivilizationEvolution.Simulation.WorldState
 
         /// <summary>
         /// 计划系统运行时桥。
-        /// 之所以不重复实现 GameWorld.Update/GameTick，是避免与主循环产生两个时间源。
-        /// 每帧只检查 currentDay 是否已经由主循环推进；同一天最多执行一次计划 Tick。
+        /// 不重复实现 GameWorld.Update/GameTick，避免与主循环产生两个时间源。
         /// </summary>
         private void OnEnable()
         {
@@ -66,6 +65,10 @@ namespace CivilizationEvolution.Simulation.WorldState
         {
             while (true)
             {
+                // InitializeWorld 在运行时建立 InnovationTree；在此之前不创建研究系统，避免主菜单/空世界阶段提前绑定旧引用。
+                if (_researchPlanSystem == null && _innovationTree != null && _characterManager != null)
+                    _researchPlanSystem = CreateResearchPlanSystem();
+
                 if (_researchPlanSystem != null && currentDay != _lastPlanTickDay)
                 {
                     float deltaDays = _lastPlanTickDay < 0 ? 1f : Mathf.Max(1f, currentDay - _lastPlanTickDay);
