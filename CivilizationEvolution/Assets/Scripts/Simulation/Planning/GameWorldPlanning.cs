@@ -13,8 +13,7 @@ namespace CivilizationEvolution.Simulation.WorldState
     {
         private Planning.PlanSystem _planSystem;
         private ResearchPlanSystem _researchPlanSystem;
-        private Coroutine _planRuntimeCoroutine;
-        private int _lastPlanTickDay = -1;
+        
 
         public Planning.PlanSystem Plans => _planSystem ??= CreatePlanSystem();
         public ResearchPlanSystem ResearchPlans => _researchPlanSystem ??= CreateResearchPlanSystem();
@@ -23,8 +22,7 @@ namespace CivilizationEvolution.Simulation.WorldState
         {
             _planSystem = new Planning.PlanSystem();
             _researchPlanSystem = null;
-            _lastPlanTickDay = -1;
-        }
+                    }
 
         /// <summary>
         /// 记录一次真实实践。
@@ -65,44 +63,6 @@ namespace CivilizationEvolution.Simulation.WorldState
         private Planning.PlanSystem CreatePlanSystem()
         {
             return new Planning.PlanSystem();
-        }
-
-        /// <summary>
-        /// 计划系统运行时桥。
-        /// 不重复实现 GameWorld.Update/GameTick，避免与主循环产生两个时间源。
-        /// </summary>
-        private void OnEnable()
-        {
-            if (_planRuntimeCoroutine == null)
-                _planRuntimeCoroutine = StartCoroutine(PlanRuntimeLoop());
-        }
-
-        private void OnDisable()
-        {
-            if (_planRuntimeCoroutine != null)
-            {
-                StopCoroutine(_planRuntimeCoroutine);
-                _planRuntimeCoroutine = null;
-            }
-        }
-
-        private IEnumerator PlanRuntimeLoop()
-        {
-            while (true)
-            {
-                // InitializeWorld 在运行时建立 InnovationTree；在此之前不创建研究系统，避免主菜单/空世界阶段提前绑定旧引用。
-                if (_researchPlanSystem == null && _innovationTree != null && _characterManager != null)
-                    _researchPlanSystem = CreateResearchPlanSystem();
-
-                if (_researchPlanSystem != null && currentDay != _lastPlanTickDay)
-                {
-                    float deltaDays = _lastPlanTickDay < 0 ? 1f : Mathf.Max(1f, currentDay - _lastPlanTickDay);
-                    TickPlans(deltaDays);
-                    _lastPlanTickDay = currentDay;
-                }
-
-                yield return null;
-            }
         }
 
         public CharacterManager Characters => _characterManager;
