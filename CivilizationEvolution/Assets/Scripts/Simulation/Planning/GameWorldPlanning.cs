@@ -12,6 +12,8 @@ namespace CivilizationEvolution.Simulation.WorldState
     {
         private Planning.PlanSystem _planSystem;
         private ResearchPlanSystem _researchPlanSystem;
+        private readonly System.Collections.Generic.List<int> _practiceDirtyCharacters
+            = new System.Collections.Generic.List<int>();
         public Planning.PlanSystem Plans => _planSystem ??= CreatePlanSystem();
         public ResearchPlanSystem ResearchPlans => _researchPlanSystem ??= CreateResearchPlanSystem();
 
@@ -44,11 +46,15 @@ namespace CivilizationEvolution.Simulation.WorldState
 
             if (_researchPlanSystem == null || _characterManager == null) return;
 
-            // 目前先按有名角色进行判定。后续接入“实践事件脏集”后，可只检查当天实际发生相关实践的角色。
-            foreach (var character in _characterManager.GetAllCharacters().Values)
+            // 只检查本轮真正发生过实践的角色；没有实践就没有个人突破判定。
+            _practiceDirtyCharacters.Clear();
+            _researchPlanSystem.DrainPracticeDirtyCharacters(_practiceDirtyCharacters);
+            for (int i = 0; i < _practiceDirtyCharacters.Count; i++)
             {
+                int characterId = _practiceDirtyCharacters[i];
+                var character = _characterManager.GetCharacter(characterId);
                 if (character == null || !character.isAlive || character.realmId < 0) continue;
-                _researchPlanSystem.TryDailyBreakthrough(character.characterId, deltaDays);
+                _researchPlanSystem.TryDailyBreakthrough(characterId, deltaDays);
             }
         }
 
