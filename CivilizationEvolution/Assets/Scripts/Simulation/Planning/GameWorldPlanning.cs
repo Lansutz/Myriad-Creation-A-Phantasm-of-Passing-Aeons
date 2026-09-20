@@ -12,15 +12,20 @@ namespace CivilizationEvolution.Simulation.WorldState
     {
         private Planning.PlanSystem _planSystem;
         private ResearchPlanSystem _researchPlanSystem;
+        private Planning.ConstructionPlanSystem _constructionPlanSystem;
         private readonly System.Collections.Generic.List<int> _practiceDirtyCharacters
             = new System.Collections.Generic.List<int>();
+
         public Planning.PlanSystem Plans => _planSystem ??= CreatePlanSystem();
         public ResearchPlanSystem ResearchPlans => _researchPlanSystem ??= CreateResearchPlanSystem();
+        public Planning.ConstructionPlanSystem ConstructionPlans
+            => _constructionPlanSystem ??= CreateConstructionPlanSystem();
 
         public void InitializePlanSystem()
         {
             _planSystem = new Planning.PlanSystem();
             _researchPlanSystem = null;
+            _constructionPlanSystem = null;
         }
 
         /// <summary>
@@ -36,17 +41,13 @@ namespace CivilizationEvolution.Simulation.WorldState
             return _researchPlanSystem?.RecordPractice(characterId, innovationId, amount) ?? 0f;
         }
 
-        /// <summary>
-        /// 手动推进统一计划系统。
-        /// 研究突破判定也在这里执行：PlanSystem 管生命周期，ResearchPlanSystem 管革新领域规则。
-        /// </summary>
+        /// <summary>统一计划推进入口：先推进计划，再处理本轮真实实践产生的个人突破。</summary>
         public void TickPlans(float deltaDays = 1f)
         {
             Plans.DailyTick(currentDay, deltaDays);
 
             if (_researchPlanSystem == null || _characterManager == null) return;
 
-            // 只检查本轮真正发生过实践的角色；没有实践就没有个人突破判定。
             _practiceDirtyCharacters.Clear();
             _researchPlanSystem.DrainPracticeDirtyCharacters(_practiceDirtyCharacters);
             for (int i = 0; i < _practiceDirtyCharacters.Count; i++)
@@ -59,13 +60,31 @@ namespace CivilizationEvolution.Simulation.WorldState
         }
 
         private ResearchPlanSystem CreateResearchPlanSystem()
-        {
-            return new ResearchPlanSystem(this, Plans);
-        }
+            => new ResearchPlanSystem(this, Plans);
+
+        private Planning.ConstructionPlanSystem CreateConstructionPlanSystem()
+            => new Planning.ConstructionPlanSystem(this, Plans, _buildingSystem);
 
         private Planning.PlanSystem CreatePlanSystem()
+            => new Planning.PlanSystem();
+
+        /// <summary>
+        /// 统一建造入口：工程不再直接绕过 PlanSystem。
+        /// </summary>
+        public Planning.Plan CreateConstructionPlan(
+            int realmId,
+            int initiatorId,
+            int tileIndex,
+            int buildingId,
+            int builderCharacterId = -1,
+            int innovationId = -1)
         {
-            return new Planning.PlanSystem();
+            if (_buildingSystem == null || !realms.TryGetValue(realmId, out var realm))
+                return null;
+
+            return ConstructionPlans.CreateConstructionPlan(
+                realmId, initiatorId, tileIndex, buildingId, realm,
+                builderCharacterId, innovationId);
         }
 
         public CharacterManager Characters => _characterManager;
