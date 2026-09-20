@@ -286,6 +286,9 @@ namespace CivilizationEvolution.Simulation.WorldState
  // 12. 事件处理
             ProcessEvents();
 
+ // 12.5 统一计划系统（研究/阴谋/工程等共享同一计划生命周期；世界时间只由 GameWorld 推进）
+            TickPlans(1f);
+
  // 13. 时间推进
             AdvanceTime();
         }
