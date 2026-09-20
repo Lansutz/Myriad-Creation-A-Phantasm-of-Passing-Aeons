@@ -1,6 +1,7 @@
 using System;
 using CivilizationEvolution.Core.Dto;
 using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
 
 namespace CivilizationEvolution.Simulation.Planning
 {
