@@ -18,6 +18,7 @@ namespace CivilizationEvolution.Simulation.Innovation
         private readonly InnovationKnowledgeSystem _knowledge = new InnovationKnowledgeSystem();
         private readonly Dictionary<int, ResearchPlanData> _data = new Dictionary<int, ResearchPlanData>();
         private readonly ResearchPlanExecutor _executor;
+        private readonly HashSet<int> _practiceDirtyCharacters = new HashSet<int>();
 
         public const float BaseBreakthroughChancePerDay = 0.0005f;
         public const float PracticeScale = 0.01f;
@@ -38,7 +39,26 @@ namespace CivilizationEvolution.Simulation.Innovation
         internal CharacterData GetCharacter(int characterId) => _world.Characters?.GetCharacter(characterId);
 
         public float RecordPractice(int characterId, int innovationId, float amount)
-            => _knowledge.RecordPractice(characterId, innovationId, amount);
+        {
+            float recorded = _knowledge.RecordPractice(characterId, innovationId, amount);
+            if (recorded > 0f && characterId >= 0)
+                _practiceDirtyCharacters.Add(characterId);
+            return recorded;
+        }
+
+        /// <summary>
+        /// 取得并清空本轮发生真实实践的角色集合。
+        /// 生产/建造/采掘等行为系统写入实践后，突破判定只检查这些角色。
+        /// </summary>
+        public int DrainPracticeDirtyCharacters(List<int> destination)
+        {
+            if (destination == null) throw new ArgumentNullException(nameof(destination));
+            int count = _practiceDirtyCharacters.Count;
+            foreach (int characterId in _practiceDirtyCharacters)
+                destination.Add(characterId);
+            _practiceDirtyCharacters.Clear();
+            return count;
+        }
 
         public int GetMastery(int characterId, int innovationId)
             => _knowledge.GetMastery(characterId, innovationId);
