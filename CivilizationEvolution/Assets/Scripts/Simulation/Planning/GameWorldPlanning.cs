@@ -1,4 +1,3 @@
-using System.Collections;
 using CivilizationEvolution.Simulation.Characters;
 using CivilizationEvolution.Simulation.Innovation;
 using UnityEngine;
@@ -13,8 +12,6 @@ namespace CivilizationEvolution.Simulation.WorldState
     {
         private Planning.PlanSystem _planSystem;
         private ResearchPlanSystem _researchPlanSystem;
-        
-
         public Planning.PlanSystem Plans => _planSystem ??= CreatePlanSystem();
         public ResearchPlanSystem ResearchPlans => _researchPlanSystem ??= CreateResearchPlanSystem();
 
@@ -22,7 +19,7 @@ namespace CivilizationEvolution.Simulation.WorldState
         {
             _planSystem = new Planning.PlanSystem();
             _researchPlanSystem = null;
-                    }
+        }
 
         /// <summary>
         /// 记录一次真实实践。
