@@ -186,6 +186,36 @@ namespace CivilizationEvolution.Simulation.Warfare
             return result;
         }
 
+        /// <summary>
+        /// 将真实战斗行为转化为革新实践：
+        /// 指挥官只有在实际指挥包含某项革新要求的兵种参战后，才获得该革新的实践积累。
+        /// 这里不授予革新、不改变军队能力，只记录“做过这件事”。
+        /// </summary>
+        private void RecordBattlePractice(Army army, Action<int, int, float> practiceRecorder)
+        {
+            if (army == null || practiceRecorder == null || army.commanderId < 0) return;
+
+            foreach (var kv in army.unitCounts)
+            {
+                if (!_unitDefs.TryGetValue(kv.Key, out var def)
+                    || def.requiredInnovations == null
+                    || def.requiredInnovations.Count == 0
+                    || kv.Value <= 0f)
+                    continue;
+
+                // 以实际参战兵力为实践量；同一兵种的多个前置革新分别获得实践。
+                float practice = Mathf.Sqrt(kv.Value) * 0.05f;
+                if (practice <= 0f) continue;
+
+                for (int i = 0; i < def.requiredInnovations.Count; i++)
+                {
+                    int innovationId = def.requiredInnovations[i];
+                    if (innovationId >= 0)
+                        practiceRecorder(army.commanderId, innovationId, practice);
+                }
+            }
+        }
+
         private float ApplyLosses(Army army, float lossRate)
         {
             float totalLost = 0f;
@@ -209,7 +239,7 @@ namespace CivilizationEvolution.Simulation.Warfare
  /// 每日战争推进：同地块敌对军队自动交战（ResolveBattle），
  /// 胜方按 WarRules.scoreBattle 加分（×兵力规模系数 0.5~2）
         public void DailyTick(Dictionary<int, Army> armies, List<WarState> wars,
-            WarRules rules, int day)
+            WarRules rules, int day, Action<int, int, float> practiceRecorder = null)
         {
             if (wars == null || armies == null) return;
 
@@ -237,6 +267,8 @@ namespace CivilizationEvolution.Simulation.Warfare
 
  // 交战
                         var result = ResolveBattle(army, enemy);
+                        RecordBattlePractice(army, practiceRecorder);
+                        RecordBattlePractice(enemy, practiceRecorder);
                         war.lastBattleDay = day;
                         if (result.attackerWins)
                         {
