@@ -348,7 +348,7 @@ namespace CivilizationEvolution.Simulation.WorldState
  // 建城者文化→语言→城词（纪念名）
                 if (cultures != null && cultures.TryGetValue(founder.cultureId, out var cd))
                 {
-                    if (ContentRegistry.TryGetLanguage(cd.languageId, out var lang))
+                    if (ContentResolvers.Languages.TryGet(cd.languageId, out var lang))
                         name = Culture.PlaceNameGenerator.FounderCity(
                             $"{founder.firstName}{founder.lastName}", lang);
                 }
