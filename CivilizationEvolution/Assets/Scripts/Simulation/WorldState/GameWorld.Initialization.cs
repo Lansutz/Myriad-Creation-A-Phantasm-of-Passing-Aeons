@@ -120,7 +120,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             _taxSystem = new TaxSystem();
             _economyManager = new EconomyManager(tiles, tradeCenters, goodsDefs, _currencySystem, _taxSystem);
             _politicalManager = new PoliticalManager(tiles, realms);
-            _combatManager = new CombatManager(tiles, unitDefs, _seaLandGenerator);
+            _combatManager = new CombatManager(tiles, unitDefs, _seaLandGenerator, SimulationEvents);
             _diplomacyManager = new DiplomacyManager(realms);
             _characterManager = new CharacterManager();
             _characterManager.Races = races; // 注入种族表（DNA 表达/混血基准依赖）
