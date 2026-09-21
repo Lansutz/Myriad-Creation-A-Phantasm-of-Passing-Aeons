@@ -202,6 +202,30 @@ namespace CivilizationEvolution.Simulation.Modding
                 wrapper => wrapper == null ? null : wrapper.disorders,
                 def => def == null ? null : def.id);
 
+        private static readonly IContentProvider<int, ContentRegistry.CultureContentPack> CultureProvider =
+            new DelegateContentProvider<int, ContentRegistry.CultureContentPack>(
+                "Culture", (root, target) => LoadCultureRoot(root, target));
+
+        private static readonly IContentProvider<string, LanguageDef> LanguageProvider =
+            new DelegateContentProvider<string, LanguageDef>(
+                "Language", (root, target) => LoadLanguageRoot(root, target));
+
+        private static readonly IContentProvider<string, TitleDef> TitleProvider =
+            new DelegateContentProvider<string, TitleDef>(
+                "Title", (root, target) => LoadTitleRoot(root, target));
+
+        private static readonly IContentProvider<int, ReligionDef> ReligionProvider =
+            new DelegateContentProvider<int, ReligionDef>(
+                "Religion", (root, target) => LoadReligionRoot(root, target));
+
+        private static readonly IContentProvider<string, DoctrineOptionDef> DoctrineProvider =
+            new DelegateContentProvider<string, DoctrineOptionDef>(
+                "Doctrine", (root, target) => LoadDoctrineRoot(root, target));
+
+        private static readonly IContentProvider<int, BiomeDef> BiomeProvider =
+            new DelegateContentProvider<int, BiomeDef>(
+                "Biome", (root, target) => LoadBiomeRoot(root, target));
+
 
  /// <summary>初始化内容注册表（幂等，可重复调用）</summary>
         public static void Initialize()
@@ -244,6 +268,12 @@ namespace CivilizationEvolution.Simulation.Modding
                     CharacterTemplateProvider.Load(sources[i], new DictionaryContentStore<string, CharacterTemplateDef>(CharacterTemplates));
                     DnaProvider.Load(sources[i], new DictionaryContentStore<string, TalentDefectDef>(TalentDefects));
                     MentalHealthProvider.Load(sources[i], new DictionaryContentStore<string, MentalDisorderDef>(MentalDisorders));
+                    CultureProvider.Load(sources[i], new DictionaryContentStore<int, CultureContentPack>(Cultures));
+                    LanguageProvider.Load(sources[i], new DictionaryContentStore<string, LanguageDef>(Languages));
+                    TitleProvider.Load(sources[i], new DictionaryContentStore<string, TitleDef>(Titles));
+                    ReligionProvider.Load(sources[i], new DictionaryContentStore<int, ReligionDef>(Religions));
+                    DoctrineProvider.Load(sources[i], new DictionaryContentStore<string, DoctrineOptionDef>(Doctrines));
+                    BiomeProvider.Load(sources[i], new DictionaryContentStore<int, BiomeDef>(Biomes));
                 }
             }
 
@@ -405,7 +435,45 @@ namespace CivilizationEvolution.Simulation.Modding
         }
 
  /// <summary>加载单个文化包目录</summary>
-        private static void LoadCulturePack(string dir)
+        private static void LoadCultureRoot(string root, IContentStore<int, CultureContentPack> target)
+        {
+            var dir = Path.Combine(root, "Culture");
+            if (!Directory.Exists(dir)) return;
+            var packages = Directory.GetDirectories(dir);
+            Array.Sort(packages, StringComparer.Ordinal);
+            foreach (var package in packages) LoadCulturePack(package, target);
+        }
+
+        private static void LoadLanguageRoot(string root, IContentStore<string, LanguageDef> target)
+        {
+            var dir = Path.Combine(root, "Language");
+            if (!Directory.Exists(dir)) return;
+            var packages = Directory.GetDirectories(dir);
+            Array.Sort(packages, StringComparer.Ordinal);
+            foreach (var package in packages) LoadLanguage(package, target);
+        }
+
+        private static void LoadTitleRoot(string root, IContentStore<string, TitleDef> target)
+        {
+            LoadTitlesFile(Path.Combine(root, "Title", "Titles.json"), target);
+        }
+
+        private static void LoadReligionRoot(string root, IContentStore<int, ReligionDef> target)
+        {
+            LoadReligions(Path.Combine(root, "Religion", "Religions.json"), target);
+        }
+
+        private static void LoadDoctrineRoot(string root, IContentStore<string, DoctrineOptionDef> target)
+        {
+            LoadDoctrines(Path.Combine(root, "Religion", "Doctrines.json"), target);
+        }
+
+        private static void LoadBiomeRoot(string root, IContentStore<int, BiomeDef> target)
+        {
+            LoadBiomes(Path.Combine(root, "Biome", "Biomes.json"), target);
+        }
+
+        private static void LoadCulturePack(string dir, IContentStore<int, CultureContentPack> target)
         {
             string defFile = Path.Combine(dir, "CultureData.json");
             if (!File.Exists(defFile)) return;
@@ -423,8 +491,8 @@ namespace CivilizationEvolution.Simulation.Modding
             PackCsv(pack.names.lastNames, Path.Combine(dir, "CharacterLastNames.csv"));
             PackCsv(pack.names.cityNames, Path.Combine(dir, "CityNames.csv"));
 
-            bool overwritten = Cultures.ContainsKey(data.cultureId);
-            Cultures[data.cultureId] = pack;
+            bool overwritten = target.TryGet(data.cultureId, out _);
+            target.Set(data.cultureId, pack);
             if (overwritten)
                 Debug.Log($"[ContentRegistry] 文化 [{data.cultureName}] 被 Mods 覆盖");
         }
@@ -466,7 +534,7 @@ namespace CivilizationEvolution.Simulation.Modding
         }
 
  /// <summary>加载单个语言包目录（Language/&lt;语言名&gt;/Language.json）</summary>
-        private static void LoadLanguage(string dir)
+        private static void LoadLanguage(string dir, IContentStore<string, LanguageDef> target)
         {
             string defFile = Path.Combine(dir, "Language.json");
             if (!File.Exists(defFile)) return;
@@ -481,7 +549,7 @@ namespace CivilizationEvolution.Simulation.Modding
             PackCsv(def.femaleNames, Path.Combine(dir, "CharacterFirstNames_Female.csv"));
             PackCsv(def.familyNames, Path.Combine(dir, "CharacterLastNames.csv"));
             PackCsv(def.cityNames, Path.Combine(dir, "CityNames.csv"));
-            Languages[def.languageId] = def;
+            target.Set(def.languageId, def);
         }
 
  /// <summary>加载族群（EthnicGroup）定义</summary>
@@ -492,14 +560,14 @@ namespace CivilizationEvolution.Simulation.Modding
         }
 
  /// <summary>加载头衔表（Title/Titles.json——{ "titles": [...] }——模组覆盖）</summary>
-        private static void LoadTitlesFile(string path)
+        private static void LoadTitlesFile(string path, IContentStore<string, TitleDef> target)
         {
             if (!File.Exists(path)) return;
             var wrapper = JsonUtility.FromJson<TitlesWrapper>(File.ReadAllText(path));
             if (wrapper == null || wrapper.titles == null) return;
             foreach (var t in wrapper.titles)
                 if (t != null && !string.IsNullOrEmpty(t.titleId))
-                    Titles[t.titleId] = t; // 同名覆盖（模组优先——后加载赢）
+                    target.Set(t.titleId, t); // 同名覆盖（模组优先——后加载赢）
         }
 
         private static void LoadEthnicGroups(string path)
@@ -562,14 +630,13 @@ namespace CivilizationEvolution.Simulation.Modding
         }
 
  /// <summary>加载宗教定义（三级谱系：宗教→宗派→传统）</summary>
-        private static void LoadReligions(string path)
+        private static void LoadReligions(string path, IContentStore<int, ReligionDef> target)
         {
             var wrapper = JsonUtility.FromJson<ReligionListWrapper>(File.ReadAllText(path));
-            Religions.Clear();
             if (wrapper == null || wrapper.religions == null) return;
             foreach (var r in wrapper.religions)
-                if (r != null) Religions[r.religionId] = r;
-            ReligionCatalog.Load(new List<ReligionDef>(Religions.Values));
+                if (r != null) target.Set(r.religionId, r);
+            ReligionCatalog.Load(new List<ReligionDef>(target.All));
             ReligionCatalog.EnsureColors();
         }
 
@@ -580,15 +647,14 @@ namespace CivilizationEvolution.Simulation.Modding
         }
 
  /// <summary>加载教义池（七支柱选项——中性词汇+宗教专属风味化）</summary>
-        private static void LoadDoctrines(string path)
+        private static void LoadDoctrines(string path, IContentStore<string, DoctrineOptionDef> target)
         {
             var wrapper = JsonUtility.FromJson<DoctrineListWrapper>(File.ReadAllText(path));
-            Doctrines.Clear();
             if (wrapper == null || wrapper.doctrines == null) return;
             foreach (var d in wrapper.doctrines)
                 if (d != null && !string.IsNullOrEmpty(d.optionId))
-                    Doctrines[d.optionId] = d;
-            DoctrinePool.Load(new List<DoctrineOptionDef>(Doctrines.Values));
+                    target.Set(d.optionId, d);
+            DoctrinePool.Load(new List<DoctrineOptionDef>(target.All));
         }
 
         [System.Serializable]
@@ -610,14 +676,14 @@ namespace CivilizationEvolution.Simulation.Modding
         }
 
  /// <summary>加载群系（Biome）定义表（数据驱动，模组可覆盖）</summary>
-        private static void LoadBiomes(string path)
+        private static void LoadBiomes(string path, IContentStore<int, BiomeDef> target)
         {
             var wrapper = JsonUtility.FromJson<BiomesWrapper>(File.ReadAllText(path));
             if (wrapper == null || wrapper.biomes == null) return;
             foreach (var def in wrapper.biomes)
             {
                 if (def == null) continue;
-                Biomes[def.biomeId] = def;
+                target.Set(def.biomeId, def);
             }
             Debug.Log($"[ContentRegistry] 群系定义加载：{wrapper.biomes.Count} 个");
         }
