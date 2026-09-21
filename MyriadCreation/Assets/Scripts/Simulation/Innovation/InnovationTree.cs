@@ -43,7 +43,7 @@ namespace CivilizationEvolution.Simulation.Innovation
         private void LoadFromRegistry()
         {
             if (!ContentRegistry.IsInitialized)
-                ContentRegistry.Initialize();
+                throw new InvalidOperationException("Content runtime must be initialized before loading innovation definitions.");
 
             _innovations.Clear();
             foreach (var def in ContentResolvers.Innovations.All)
