@@ -140,6 +140,24 @@ namespace CivilizationEvolution.Tests.EditMode
         }
 
         [Test]
+        public void SimulationScheduler_DirtyRegistrationRunsOnlyWhenMarked()
+        {
+            var scheduler = new SimulationScheduler();
+            int runs = 0;
+            scheduler.RegisterDirty("terrain", SimulationCadence.Daily, 10, "world.terrain", _ => runs++);
+
+            scheduler.Tick(1, 1, 1);
+            Assert.AreEqual(0, runs);
+
+            scheduler.Dirty.Mark("world.terrain");
+            scheduler.Tick(2, 1, 1);
+            Assert.AreEqual(1, runs);
+
+            scheduler.Tick(3, 1, 1);
+            Assert.AreEqual(1, runs);
+        }
+
+        [Test]
         public void SimulationCommandBus_DispatchesWithoutExposingTarget()
         {
             var bus = new SimulationCommandBus();
