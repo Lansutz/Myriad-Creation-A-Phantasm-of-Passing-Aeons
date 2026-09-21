@@ -31,6 +31,45 @@ namespace CivilizationEvolution.Simulation.Modding
         void Load(ContentSource source, IContentStore<TKey, TValue> target);
     }
 
+    public interface IContentProviderRegistration
+    {
+        string ContentType { get; }
+        void Load(ContentSource source);
+    }
+
+    public sealed class ContentProviderRegistration<TKey, TValue> : IContentProviderRegistration
+    {
+        private readonly IContentProvider<TKey, TValue> _provider;
+        private readonly IContentStore<TKey, TValue> _target;
+
+        public ContentProviderRegistration(IContentProvider<TKey, TValue> provider, IContentStore<TKey, TValue> target)
+        {
+            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            _target = target ?? throw new ArgumentNullException(nameof(target));
+        }
+
+        public string ContentType => _provider.ContentType;
+        public void Load(ContentSource source) => _provider.Load(source, _target);
+    }
+
+    public sealed class ContentProviderCatalog
+    {
+        private readonly List<IContentProviderRegistration> _providers = new List<IContentProviderRegistration>();
+
+        public void Add<TKey, TValue>(IContentProvider<TKey, TValue> provider, IContentStore<TKey, TValue> target)
+        {
+            _providers.Add(new ContentProviderRegistration<TKey, TValue>(provider, target));
+        }
+
+        public void Load(ContentSource source)
+        {
+            foreach (var provider in _providers)
+                provider.Load(source);
+        }
+
+        public int Count => _providers.Count;
+    }
+
     /// <summary>Compatibility adapter while legacy registries migrate to typed stores.</summary>
     public sealed class DictionaryContentStore<TKey, TValue> : IContentStore<TKey, TValue>
     {
