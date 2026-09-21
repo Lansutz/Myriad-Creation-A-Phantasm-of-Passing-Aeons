@@ -106,7 +106,7 @@ namespace CivilizationEvolution.Simulation.Characters
         public static MentalDisorderDef GetDef(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
-            if (ContentRegistry.IsInitialized && ContentResolvers.MentalDisorders.TryGet(id, out var reg))
+            if (ContentResolvers.MentalDisorders.TryGet(id, out var reg))
                 return reg;
             return BuiltinDefs.TryGetValue(id, out var builtin) ? builtin : null;
         }
