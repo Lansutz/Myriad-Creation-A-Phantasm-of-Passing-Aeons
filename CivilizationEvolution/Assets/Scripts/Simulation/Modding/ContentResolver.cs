@@ -1,5 +1,10 @@
 using System;
 using System.Collections.Generic;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Society;
 
 namespace CivilizationEvolution.Simulation.Modding
 {
@@ -36,5 +41,77 @@ namespace CivilizationEvolution.Simulation.Modding
         }
 
         public IEnumerable<TValue> All => _all();
+    }
+
+    /// <summary>
+    /// Stable entry points for new code.
+    /// Existing ContentRegistry dictionaries remain a compatibility facade during migration.
+    /// </summary>
+    public static class ContentResolvers
+    {
+        public static IContentResolver<int, ContentRegistry.CultureContentPack> Cultures { get; } =
+            new ContentResolver<int, ContentRegistry.CultureContentPack>(
+                id => ContentRegistry.Cultures.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.Cultures.Values);
+
+        public static IContentResolver<int, RaceData> Races { get; } =
+            new ContentResolver<int, RaceData>(
+                id => ContentRegistry.Races.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.Races.Values);
+
+        public static IContentResolver<int, InnovationDef> Innovations { get; } =
+            new ContentResolver<int, InnovationDef>(
+                id => ContentRegistry.Innovations.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.Innovations.Values);
+
+        public static IContentResolver<int, ReligionDef> Religions { get; } =
+            new ContentResolver<int, ReligionDef>(
+                id => ContentRegistry.Religions.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.Religions.Values);
+
+        public static IContentResolver<string, EthosDef> Ethos { get; } =
+            new ContentResolver<string, EthosDef>(
+                id => ContentRegistry.Ethos.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.Ethos.Values);
+
+        public static IContentResolver<string, TraditionDef> Traditions { get; } =
+            new ContentResolver<string, TraditionDef>(
+                id => ContentRegistry.Traditions.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.Traditions.Values);
+
+        public static IContentResolver<string, LanguageDef> Languages { get; } =
+            new ContentResolver<string, LanguageDef>(
+                id => ContentRegistry.Languages.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.Languages.Values);
+
+        public static IContentResolver<string, EthnicGroupDef> EthnicGroups { get; } =
+            new ContentResolver<string, EthnicGroupDef>(
+                id => ContentRegistry.EthnicGroups.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.EthnicGroups.Values);
+
+        public static IContentResolver<string, FamilyTraditionDef> FamilyTraditions { get; } =
+            new ContentResolver<string, FamilyTraditionDef>(
+                id => ContentRegistry.FamilyTraditions.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.FamilyTraditions.Values);
+
+        public static IContentResolver<string, CharacterTemplateDef> CharacterTemplates { get; } =
+            new ContentResolver<string, CharacterTemplateDef>(
+                id => ContentRegistry.CharacterTemplates.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.CharacterTemplates.Values);
+
+        public static IContentResolver<string, TalentDefectDef> TalentDefects { get; } =
+            new ContentResolver<string, TalentDefectDef>(
+                id => ContentRegistry.TalentDefects.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.TalentDefects.Values);
+
+        public static IContentResolver<string, MentalDisorderDef> MentalDisorders { get; } =
+            new ContentResolver<string, MentalDisorderDef>(
+                id => ContentRegistry.MentalDisorders.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.MentalDisorders.Values);
+
+        public static IContentResolver<string, TitleDef> Titles { get; } =
+            new ContentResolver<string, TitleDef>(
+                id => ContentRegistry.Titles.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.Titles.Values);
     }
 }
