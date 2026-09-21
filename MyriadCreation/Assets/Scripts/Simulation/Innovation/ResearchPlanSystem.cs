@@ -282,6 +282,8 @@ namespace CivilizationEvolution.Simulation.Innovation
             // 正式解锁必须在验证完成后发生；旧桥暂时无法写入时保持在 99.9%。
             if (next >= 1f && !_system.TryFormalizeResearch(data))
                 next = 0.999f;
+            else if (next >= 1f)
+                data.formallyUnlocked = true;
 
             data.verificationProgress = next;
             float delta = Mathf.Max(0f, next - plan.progress);
