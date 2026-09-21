@@ -124,4 +124,25 @@ namespace CivilizationEvolution.Simulation.Modding
                 id => ContentRegistry.Biomes.TryGetValue(id, out var value) ? value : null,
                 () => ContentRegistry.Biomes.Values);
     }
+    /// <summary>Read-only content queries that combine multiple stable resolvers without exposing registry storage.</summary>
+    public static class ContentQueries
+    {
+        public static string GetRandomName(ContentRegistry.CultureContentPack pack, int type, System.Random rng = null)
+        {
+            rng = rng ?? new System.Random();
+            System.Collections.Generic.List<string> list = null;
+            if (pack != null && pack.data != null && !string.IsNullOrEmpty(pack.data.languageId)
+                && ContentResolvers.Languages.TryGet(pack.data.languageId, out var lang))
+                list = type switch { 1 => lang.femaleNames, 2 => lang.familyNames, 3 => lang.cityNames, _ => lang.maleNames };
+            if (list == null || list.Count == 0)
+            {
+                if (pack == null) return "无名";
+                list = type switch { 1 => pack.names.femaleNames, 2 => pack.names.lastNames, 3 => pack.names.cityNames, _ => pack.names.maleNames };
+                if (list.Count == 0 && type != 2) list = pack.names.lastNames;
+                if (list.Count == 0) return pack.data != null ? pack.data.cultureName : "无名";
+            }
+            return list[rng.Next(list.Count)];
+        }
+    }
+
 }
