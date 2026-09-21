@@ -88,6 +88,9 @@ namespace CivilizationEvolution.Simulation.Modding
         public static bool TryGetTalentDefect(string id, out TalentDefectDef def) => TalentDefects.TryGetValue(id, out def);
         public static bool TryGetMentalDisorder(string id, out MentalDisorderDef def) => MentalDisorders.TryGetValue(id, out def);
         public static bool TryGetInnovation(int id, out InnovationDef def) => Innovations.TryGetValue(id, out def);
+        public static bool TryGetReligion(int id, out ReligionDef def) => Religions.TryGetValue(id, out def);
+        public static bool TryGetDoctrine(string id, out DoctrineOptionDef def) => Doctrines.TryGetValue(id, out def);
+        public static bool TryGetTitle(string id, out TitleDef def) => Titles.TryGetValue(id, out def);
         public static bool TryGetBiome(int id, out BiomeDef def) => Biomes.TryGetValue(id, out def);
 
         public static string GetRandomName(CultureContentPack pack, int type, System.Random rng = null)
