@@ -131,7 +131,7 @@ namespace CivilizationEvolution.Tests.EditMode
             string file = System.IO.Path.Combine(root, "Race", "RaceDefs.json");
             try
             {
-                System.IO.File.WriteAllText(file, "{ \\\"items\\\": [{ \\\"id\\\": \\\"race.test\\\" }] }");
+                System.IO.File.WriteAllText(file, "{ \"items\": [{ \"id\": \"race.test\" }] }");
                 var provider = new JsonFileContentProvider<string, TestContent, TestWrapper>(
                     "Test", "Race/RaceDefs.json", text => UnityEngine.JsonUtility.FromJson<TestWrapper>(text),
                     wrapper => wrapper.items, item => item == null ? null : item.id);
