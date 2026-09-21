@@ -255,24 +255,25 @@ namespace CivilizationEvolution.Simulation.Modding
             else
             {
                 var sources = ContentSourceCatalog.CreateDefault(root);
+                var providers = new ContentProviderCatalog();
+                providers.Add(RaceProvider, new DictionaryContentStore<int, RaceData>(Races));
+                providers.Add(InnovationProvider, new DictionaryContentStore<int, InnovationDef>(Innovations));
+                providers.Add(EthosProvider, new DictionaryContentStore<string, EthosDef>(Ethos));
+                providers.Add(TraditionProvider, new DictionaryContentStore<string, TraditionDef>(Traditions));
+                providers.Add(EthnicGroupProvider, new DictionaryContentStore<string, EthnicGroupDef>(EthnicGroups));
+                providers.Add(FamilyTraditionProvider, new DictionaryContentStore<string, FamilyTraditionDef>(FamilyTraditions));
+                providers.Add(CharacterTemplateProvider, new DictionaryContentStore<string, CharacterTemplateDef>(CharacterTemplates));
+                providers.Add(DnaProvider, new DictionaryContentStore<string, TalentDefectDef>(TalentDefects));
+                providers.Add(MentalHealthProvider, new DictionaryContentStore<string, MentalDisorderDef>(MentalDisorders));
+                providers.Add(CultureProvider, new DictionaryContentStore<int, CultureContentPack>(Cultures));
+                providers.Add(LanguageProvider, new DictionaryContentStore<string, LanguageDef>(Languages));
+                providers.Add(TitleProvider, new DictionaryContentStore<string, TitleDef>(Titles));
+                providers.Add(ReligionProvider, new DictionaryContentStore<int, ReligionDef>(Religions));
+                providers.Add(DoctrineProvider, new DictionaryContentStore<string, DoctrineOptionDef>(Doctrines));
+                providers.Add(BiomeProvider, new DictionaryContentStore<int, BiomeDef>(Biomes));
                 for (int i = 0; i < sources.Count; i++)
                 {
-                    if (!sources[i].Exists) continue;
-                    RaceProvider.Load(sources[i], new DictionaryContentStore<int, RaceData>(Races));
-                    InnovationProvider.Load(sources[i], new DictionaryContentStore<int, InnovationDef>(Innovations));
-                    EthosProvider.Load(sources[i], new DictionaryContentStore<string, EthosDef>(Ethos));
-                    TraditionProvider.Load(sources[i], new DictionaryContentStore<string, TraditionDef>(Traditions));
-                    EthnicGroupProvider.Load(sources[i], new DictionaryContentStore<string, EthnicGroupDef>(EthnicGroups));
-                    FamilyTraditionProvider.Load(sources[i], new DictionaryContentStore<string, FamilyTraditionDef>(FamilyTraditions));
-                    CharacterTemplateProvider.Load(sources[i], new DictionaryContentStore<string, CharacterTemplateDef>(CharacterTemplates));
-                    DnaProvider.Load(sources[i], new DictionaryContentStore<string, TalentDefectDef>(TalentDefects));
-                    MentalHealthProvider.Load(sources[i], new DictionaryContentStore<string, MentalDisorderDef>(MentalDisorders));
-                    CultureProvider.Load(sources[i], new DictionaryContentStore<int, CultureContentPack>(Cultures));
-                    LanguageProvider.Load(sources[i], new DictionaryContentStore<string, LanguageDef>(Languages));
-                    TitleProvider.Load(sources[i], new DictionaryContentStore<string, TitleDef>(Titles));
-                    ReligionProvider.Load(sources[i], new DictionaryContentStore<int, ReligionDef>(Religions));
-                    DoctrineProvider.Load(sources[i], new DictionaryContentStore<string, DoctrineOptionDef>(Doctrines));
-                    BiomeProvider.Load(sources[i], new DictionaryContentStore<int, BiomeDef>(Biomes));
+                    if (sources[i].Exists) providers.Load(sources[i]);
                 }
             }
 
