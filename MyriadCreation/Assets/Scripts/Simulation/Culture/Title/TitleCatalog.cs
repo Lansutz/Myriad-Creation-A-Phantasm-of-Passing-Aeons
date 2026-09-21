@@ -50,7 +50,7 @@ namespace CivilizationEvolution.Simulation.Culture
         {
             TitleDef exclusive = null;
             TitleDef fallback = null;
-            foreach (var t in ContentRegistry.Titles.Values)
+            foreach (var t in ContentResolvers.Titles.All)
             {
                 if (t.kind != kind) continue;
                 if (t.cultureId == cultureId)
