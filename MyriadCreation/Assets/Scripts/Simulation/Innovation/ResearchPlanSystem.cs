@@ -290,10 +290,5 @@ namespace CivilizationEvolution.Simulation.Innovation
             return PlanExecutionResult.Continue(delta, "研究与验证");
         }
 
-        public void OnPlanEnded(Plan plan)
-        {
-            if (plan.state != PlanState.Completed) return;
-            if (_system.TryGetResearchData(plan.planId, out var data)) data.formallyUnlocked = true;
-        }
     }
 }
