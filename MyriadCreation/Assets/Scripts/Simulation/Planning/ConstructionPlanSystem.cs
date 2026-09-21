@@ -85,10 +85,6 @@ namespace CivilizationEvolution.Simulation.Planning
             return PlanExecutionResult.Continue(delta, "施工");
         }
 
-        internal void End(Plan plan)
-        {
-            // 建筑实际完成由 BuildingSystem 负责；PlanSystem 只记录生命周期结果。
-        }
     }
 
     internal sealed class ConstructionPlanExecutor : IPlanExecutor
@@ -105,7 +101,5 @@ namespace CivilizationEvolution.Simulation.Planning
         public float Execute(Plan plan, float deltaDays)
             => _system.Execute(plan, deltaDays);
 
-        public void OnPlanEnded(Plan plan)
-            => _system.End(plan);
     }
 }
