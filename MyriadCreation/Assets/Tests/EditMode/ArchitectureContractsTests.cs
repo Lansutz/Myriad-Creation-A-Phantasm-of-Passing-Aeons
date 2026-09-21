@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using CivilizationEvolution.Core.Events;
+using CivilizationEvolution.Core.Contracts;
 using CivilizationEvolution.Simulation.Modding;
 using CivilizationEvolution.Simulation.Planning;
 
@@ -122,8 +123,29 @@ namespace CivilizationEvolution.Tests.EditMode
             public PlanExecutionResult Execute(Plan plan, float deltaDays)
                 => PlanExecutionResult.Complete("test_completed", "执行活动");
 
-            public void OnPlanEnded(Plan plan) { }
         }
+        [Test]
+        public void SimulationCommandBus_DispatchesWithoutExposingTarget()
+        {
+            var bus = new SimulationCommandBus();
+            bus.Register(new TestCommandHandler());
+            var result = bus.Send(new TestCommand(7));
+            Assert.IsTrue(result.success);
+            Assert.AreEqual("handled", result.code);
+            Assert.IsTrue(bus.Unregister<TestCommand>());
+            Assert.IsFalse(bus.Send(new TestCommand(8)).success);
+        }
+
+        [Test]
+        public void SimulationQueryBus_ReturnsReadOnlyResult()
+        {
+            var bus = new SimulationQueryBus();
+            bus.Register<TestQuery, int>(new TestQueryHandler());
+            Assert.AreEqual(42, bus.Ask<TestQuery, int>(new TestQuery(7)));
+            Assert.IsTrue(bus.TryAsk<TestQuery, int>(new TestQuery(8), out var value));
+            Assert.AreEqual(43, value);
+        }
+
         [Test]
         public void JsonContentProvider_LoadsCanonicalWrappedFileIntoStore()
         {
@@ -174,6 +196,28 @@ namespace CivilizationEvolution.Tests.EditMode
 
             Assert.IsTrue(store.Remove("a"));
             Assert.IsFalse(resolver.TryGet("a", out _));
+        }
+
+        private readonly struct TestCommand : ISimulationCommand
+        {
+            public readonly int value;
+            public TestCommand(int value) { this.value = value; }
+        }
+
+        private sealed class TestCommandHandler : ISimulationCommandHandler<TestCommand>
+        {
+            public CommandResult Handle(TestCommand command) => CommandResult.Success("handled");
+        }
+
+        private readonly struct TestQuery : ISimulationQuery<int>
+        {
+            public readonly int value;
+            public TestQuery(int value) { this.value = value; }
+        }
+
+        private sealed class TestQueryHandler : ISimulationQueryHandler<TestQuery, int>
+        {
+            public int Handle(TestQuery query) => query.value + 35;
         }
 
         private sealed class TestProvider : IContentProvider<string, TestContent>
