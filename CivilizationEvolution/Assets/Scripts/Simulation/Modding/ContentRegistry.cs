@@ -165,11 +165,7 @@ namespace CivilizationEvolution.Simulation.Modding
             }
             else
             {
-                var sources = ContentSourceCatalog.CreateDefault(root);
-                for (int i = 0; i < sources.Count; i++)
-                    if (sources[i].Exists)
-                        LoadContentRoot(sources[i].rootPath);
-            }
+                var sources = ContentSourceCatalog.CreateDefault(root);\n                for (int i = 0; i < sources.Count; i++)\n                {\n                    if (!sources[i].Exists) continue;\n                    LoadContentRoot(sources[i].rootPath);\n                    RaceProvider.Load(sources[i], new DictionaryContentStore<int, RaceData>(Races));\n                    InnovationProvider.Load(sources[i], new DictionaryContentStore<int, InnovationDef>(Innovations));\n                }\n            }
 
             IsInitialized = true;
             Debug.Log($"[ContentRegistry] 内容加载完成：文化 {Cultures.Count}，种族 {Races.Count}，" +
