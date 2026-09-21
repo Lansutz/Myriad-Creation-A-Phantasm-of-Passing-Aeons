@@ -1,0 +1,87 @@
+- name: Unity - Builder
+  # You may pin to the exact commit or the version.
+  # uses: game-ci/unity-builder@d829bfc901f2347c8fe18898f06712b66916ef42
+  uses: game-ci/unity-builder@v5.0.0
+  with:
+    # Platform that the build should target.
+    targetPlatform: # default is 
+    # Version of unity to use for building the project. Use "auto" to get from your ProjectSettings/ProjectVersion.txt
+    unityVersion: # optional, default is auto
+    # Specific docker image that should be used for building the project
+    customImage: # optional, default is 
+    # Path to the project to be built, relative to the repository root.
+    projectPath: # optional, default is 
+    # Path to the build profile to activate, relative to the project root.
+    buildProfile: # optional, default is 
+    # Name of the build. Should not include a file extension.
+    buildName: # optional, default is 
+    # Path where the builds should be stored.
+    buildsPath: # optional, default is 
+    # Path to a Namespace.Class.StaticMethod to run to perform the build.
+    buildMethod: # optional, default is 
+    # Suppresses `-quit`. Exit your build method using `EditorApplication.Exit(0)` instead.
+    manualExit: # optional, default is 
+    # Launches unity without specifying `-nographics`.
+    enableGpu: # optional, default is 
+    # Custom parameters to configure the build.
+    customParameters: # optional, default is 
+    # Initialises Docker using the host network. (Linux only)
+    useHostNetwork: # optional
+    # The versioning scheme to use when building the project
+    versioning: # optional, default is Semantic
+    # The version, when used with the "Custom" versioning scheme
+    version: # optional, default is 
+    # The android versionCode
+    androidVersionCode: # optional, default is 
+    # The android export type. Should be androidPackage for apk, androidAppBundle for aab, or androidStudioProject for an android studio project.
+    androidExportType: # optional, default is androidPackage
+    # The android keystoreName
+    androidKeystoreName: # optional, default is 
+    # The base64 contents of the android keystore file
+    androidKeystoreBase64: # optional, default is 
+    # The android keystorePass
+    androidKeystorePass: # optional, default is 
+    # The android keyaliasName
+    androidKeyaliasName: # optional, default is 
+    # The android keyaliasPass
+    androidKeyaliasPass: # optional, default is 
+    # The android target API level.
+    androidTargetSdkVersion: # optional, default is 
+    # The android symbol type to export. Should be "none", "public" or "debugging".
+    androidSymbolType: # optional, default is none
+    # SSH Agent path to forward to the container
+    sshAgent: # optional, default is 
+    # Path to a directory containing SSH public keys to forward to the container.
+    sshPublicKeysDirectoryPath: # optional, default is 
+    # Github private token to pull from github
+    gitPrivateToken: # optional, default is 
+    # Build execution strategy. Use "local" for local Docker/Mac builds. For remote builds (aws, k8s, etc.), install @game-ci/orchestrator and use the game-ci/orchestrator action which declares its own inputs.
+    providerStrategy: # optional, default is local
+    # Whether to run as a user that matches the host system or the default root container user. Only applicable to Linux hosts and containers. This is useful for fixing permission errors on Self-Hosted runners.
+    runAsHostUser: # optional, default is false
+    # User and optionally group (user or user:group or uid:gid) to give ownership of the resulting build artifacts
+    chownFilesTo: # optional, default is 
+    # Number of CPU cores to assign the docker container. Defaults to all available cores on all platforms.
+    dockerCpuLimit: # optional, default is 
+    # Amount of memory to assign the docker container. Defaults to 95% of total system memory rounded down to the nearest megabyte on Linux and 80% on Windows. On unrecognized platforms, defaults to 75% of total system memory. To manually specify a value, use the format <number><unit>, where unit is either m or g. ie: 512m = 512 megabytes
+    dockerMemoryLimit: # optional, default is 
+    # Isolation mode to use for the docker container. Can be one of process, hyperv, or default. Default will pick the default mode as described by Microsoft where server versions use process and desktop versions use hyperv. Only applicable on Windows
+    dockerIsolationMode: # optional, default is default
+    # Container registry and repository to pull image from. Only applicable if customImage is not set.
+    containerRegistryRepository: # optional, default is unityci/editor
+    # Container registry image version. Only applicable if customImage is not set.
+    containerRegistryImageVersion: # optional, default is 3
+    # Allows the branch of the build to be dirty, and still generate the build.
+    allowDirtyBuild: # optional, default is 
+    # Whether to cache the Unity hub and editor installation on MacOS
+    cacheUnityInstallationOnMac: # optional, default is false
+    # The version of Unity Hub to install on MacOS (e.g. 3.4.0). Defaults to latest available on brew if empty string or nothing is specified.
+    unityHubVersionOnMac: # optional, default is 
+    # The Unity licensing server address to use for activating Unity.
+    unityLicensingServer: # optional, default is 
+    # The path to mount the workspace inside the docker container. For windows, leave out the drive letter. For example c:/github/workspace should be defined as /github/workspace
+    dockerWorkspacePath: # optional, default is /github/workspace
+    # Skip the activation/deactivation of Unity. This assumes Unity is already activated.
+    skipActivation: # optional, default is false
+    # When building for StandaloneLinux64, remove the default file extension of `.x86_64`. Set to true to restore the extensionless behavior from v4.
+    linux64RemoveExecutableExtension: # optional, default is false
