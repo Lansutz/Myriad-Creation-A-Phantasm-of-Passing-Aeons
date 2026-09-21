@@ -137,6 +137,7 @@ namespace CivilizationEvolution.Simulation.Modding
 
         public static bool IsInitialized { get; private set; } = false;
 
+        // Provider composition is intentionally kept here as a compatibility facade.\n        // Each content type can move to an independent provider without changing consumers.\n        private static readonly IContentProvider<int, RaceData> RaceProvider =\n            new JsonFileContentProvider<int, RaceData, RaceDefsWrapper>(\n                "Race", "Race/RaceDefs.json",\n                text => JsonUtility.FromJson<RaceDefsWrapper>(text),\n                wrapper => wrapper == null ? null : wrapper.races,\n                race => race == null ? 0 : race.raceId);\n\n        private static readonly IContentProvider<int, InnovationDef> InnovationProvider =\n            new JsonFileContentProvider<int, InnovationDef, InnovationsWrapper>(\n                "Innovation", "Innovation/Innovations.json",\n                text => JsonUtility.FromJson<InnovationsWrapper>(text),\n                wrapper => wrapper == null ? null : wrapper.innovations,\n                def => def == null ? 0 : def.innovationId);\n\n
  /// <summary>初始化内容注册表（幂等，可重复调用）</summary>
         public static void Initialize()
         {
