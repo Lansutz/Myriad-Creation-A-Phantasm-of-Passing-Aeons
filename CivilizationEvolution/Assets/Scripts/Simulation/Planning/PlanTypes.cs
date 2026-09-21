@@ -84,7 +84,6 @@ namespace CivilizationEvolution.Simulation.Planning
         public int initiatorId = -1;
         public int ownerId = -1;
         public int targetId = -1;
-        public int parentPlanId = -1;
         public string title = string.Empty;
         public string description = string.Empty;
         public float progress;
@@ -95,9 +94,9 @@ namespace CivilizationEvolution.Simulation.Planning
 
         public readonly List<PlanParticipant> participants = new List<PlanParticipant>();
         public readonly List<PlanRequirement> requirements = new List<PlanRequirement>();
-        public readonly List<int> childPlanIds = new List<int>();
 
         /// <summary>领域系统写入的轻量结果/原因标识，避免 PlanSystem 依赖具体领域类型。</summary>
+        public string currentActivity = string.Empty;
         public string resultCode = string.Empty;
 
         public Plan(int planId, PlanType type, int initiatorId, int targetId, int createdDay)
@@ -117,13 +116,61 @@ namespace CivilizationEvolution.Simulation.Planning
             || state == PlanState.Cancelled;
     }
 
+    /// <summary>统一的计划执行结果；PlanSystem 只解释结果，不理解领域规则。</summary>
+    public enum PlanExecutionOutcome
+    {
+        Continue,
+        Complete,
+        Fail,
+        Cancel
+    }
+
+    [Serializable]
+    public readonly struct PlanExecutionResult
+    {
+        public readonly PlanExecutionOutcome outcome;
+        public readonly float progressDelta;
+        public readonly string currentActivity;
+        public readonly string resultCode;
+
+        public PlanExecutionResult(
+            PlanExecutionOutcome outcome,
+            float progressDelta = 0f,
+            string currentActivity = null,
+            string resultCode = null)
+        {
+            this.outcome = outcome;
+            this.progressDelta = progressDelta;
+            this.currentActivity = currentActivity ?? string.Empty;
+            this.resultCode = resultCode ?? string.Empty;
+        }
+
+        public static PlanExecutionResult Continue(
+            float progressDelta = 0f, string currentActivity = null)
+            => new PlanExecutionResult(
+                PlanExecutionOutcome.Continue, progressDelta, currentActivity);
+
+        public static PlanExecutionResult Complete(
+            string resultCode = "completed", string currentActivity = null)
+            => new PlanExecutionResult(
+                PlanExecutionOutcome.Complete, 0f, currentActivity, resultCode);
+
+        public static PlanExecutionResult Fail(string resultCode = "failed")
+            => new PlanExecutionResult(
+                PlanExecutionOutcome.Fail, 0f, null, resultCode);
+
+        public static PlanExecutionResult Cancel(string resultCode = "cancelled")
+            => new PlanExecutionResult(
+                PlanExecutionOutcome.Cancel, 0f, null, resultCode);
+    }
+
     /// <summary>
-    /// 计划执行器接口。研究、阴谋、工程等子系统实现自己的执行逻辑，不把领域规则塞进 PlanSystem。
+    /// 计划执行器接口。领域系统只提供“当前计划怎么推进”，不管理统一生命周期。
     /// </summary>
     public interface IPlanExecutor
     {
         PlanType Type { get; }
-        float Execute(Plan plan, float deltaDays);
+        PlanExecutionResult Execute(Plan plan, float deltaDays);
         void OnPlanEnded(Plan plan);
     }
 }
