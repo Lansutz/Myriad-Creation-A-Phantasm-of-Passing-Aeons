@@ -330,8 +330,8 @@ namespace CivilizationEvolution.Simulation.Characters
                 bool rulerIsMale = UnityEngine.Random.value < 0.5f;
 
  // 角色模板（注册表有则套用：tmpl_ruler/tmpl_spouse；无则回退随机年龄）
-                ContentRegistry.TryGetCharacterTemplate("tmpl_ruler", out var rulerTpl);
-                ContentRegistry.TryGetCharacterTemplate("tmpl_spouse", out var spouseTpl);
+                ContentResolvers.CharacterTemplates.TryGet("tmpl_ruler", out var rulerTpl);
+                ContentResolvers.CharacterTemplates.TryGet("tmpl_spouse", out var spouseTpl);
 
                 var ruler = CreateCharacter(GenerateName(cultureId, rulerIsMale ? 0 : 1), lastName,
                     0, rulerIsMale, cultureId, raceId, 0, CharacterRole.Ruler,
