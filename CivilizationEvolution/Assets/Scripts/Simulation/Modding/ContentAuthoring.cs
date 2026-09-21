@@ -12,8 +12,10 @@ namespace CivilizationEvolution.Simulation.Modding
         ContentPackageManifest Manifest { get; }
         void SetManifest(ContentPackageManifest manifest);
         void Upsert(string contentType, string id, string serializedDefinition);
+        void UpsertFile(string relativePath, string content);
         bool Remove(string contentType, string id);
         IReadOnlyDictionary<string, string> GetDefinitions(string contentType);
+        IReadOnlyDictionary<string, string> GetFiles();
     }
 
     /// <summary>
@@ -24,6 +26,8 @@ namespace CivilizationEvolution.Simulation.Modding
     {
         private readonly Dictionary<string, Dictionary<string, string>> _definitions =
             new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, string> _files =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public ContentPackageManifest Manifest { get; private set; } = new ContentPackageManifest();
 
@@ -49,10 +53,22 @@ namespace CivilizationEvolution.Simulation.Modding
                 Manifest.contentTypes.Add(contentType);
         }
 
+        public void UpsertFile(string relativePath, string content)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+                throw new ArgumentException("relativePath");
+            if (relativePath.Contains(".."))
+                throw new ArgumentException("Path traversal is not allowed.", nameof(relativePath));
+
+            _files[relativePath.Replace('\\', '/')] = content ?? string.Empty;
+        }
+
         public bool Remove(string contentType, string id)
         {
             return _definitions.TryGetValue(contentType, out var bucket) && bucket.Remove(id);
         }
+
+        public IReadOnlyDictionary<string, string> GetFiles() => _files;
 
         public IReadOnlyDictionary<string, string> GetDefinitions(string contentType)
         {
