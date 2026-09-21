@@ -251,11 +251,13 @@ namespace CivilizationEvolution.Simulation.Innovation
 
         public ResearchPlanExecutor(ResearchPlanSystem system) => _system = system;
 
-        public float Execute(Plan plan, float deltaDays)
+        public PlanExecutionResult Execute(Plan plan, float deltaDays)
         {
-            if (!_system.TryGetResearchData(plan.planId, out var data)) return 0f;
+            if (!_system.TryGetResearchData(plan.planId, out var data))
+                return PlanExecutionResult.Fail("research_data_missing");
             var character = _system.GetCharacter(data.characterId);
-            if (character == null || !character.isAlive) return 0f;
+            if (character == null || !character.isAlive)
+                return PlanExecutionResult.Fail("researcher_unavailable");
 
             float scholarship = Mathf.Clamp(character.scholarship / 100f, 0.05f, 1f);
             float rate = (0.004f + scholarship * 0.012f)
@@ -267,7 +269,10 @@ namespace CivilizationEvolution.Simulation.Innovation
                 next = 0.999f;
 
             data.verificationProgress = next;
-            return Mathf.Max(0f, next - plan.progress);
+            float delta = Mathf.Max(0f, next - plan.progress);
+            if (next >= 1f && data.formallyUnlocked)
+                return PlanExecutionResult.Complete("research_verified", "验证与固化");
+            return PlanExecutionResult.Continue(delta, "研究与验证");
         }
 
         public void OnPlanEnded(Plan plan)
