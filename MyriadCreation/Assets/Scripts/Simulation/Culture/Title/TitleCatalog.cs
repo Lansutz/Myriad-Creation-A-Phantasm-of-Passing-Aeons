@@ -18,7 +18,7 @@ using CivilizationEvolution.Simulation.WorldState;
 
 namespace CivilizationEvolution.Simulation.Culture
 {
- /// 头衔目录查询（TitleDef 数据驱动表——ContentRegistry.Titles——
+ /// 头衔目录查询（TitleDef 数据驱动表——ContentResolvers.Titles——
  /// 三类[官僚/贵族/君主]+国名后缀——文化专属优先回退通用——
  /// 位阶值柔性比较/同级权重选择）
     public static class TitleCatalog
