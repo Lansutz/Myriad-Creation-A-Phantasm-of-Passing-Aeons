@@ -103,7 +103,7 @@ namespace CivilizationEvolution.Simulation.Economy
         private static bool HasTradition(CultureData culture, string traditionId)
         {
             if (culture == null) return false;
-            foreach (var group in ContentRegistry.EthnicGroups.Values)
+            foreach (var group in ContentResolvers.EthnicGroups.All)
             {
                 if (group.cultureId == culture.cultureId
                     && group.traditionIds != null
