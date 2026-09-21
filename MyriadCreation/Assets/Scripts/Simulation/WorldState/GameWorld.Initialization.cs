@@ -454,16 +454,16 @@ namespace CivilizationEvolution.Simulation.WorldState
             if (!ContentRegistry.IsInitialized) return;
 
             int raceOverrides = 0;
-            foreach (var kv in ContentRegistry.Races)
+            foreach (var race in ContentResolvers.Races.All)
             {
-                races[kv.Key] = kv.Value;
+                races[race.raceId] = race;
                 raceOverrides++;
             }
 
             int cultureOverrides = 0;
-            foreach (var kv in ContentRegistry.Cultures)
+            foreach (var culture in ContentResolvers.Cultures.All)
             {
-                cultures[kv.Key] = kv.Value.data;
+                cultures[culture.data.cultureId] = culture.data;
                 cultureOverrides++;
             }
 
