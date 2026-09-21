@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Events;
 using CivilizationEvolution.Core.Constants;
 using CivilizationEvolution.Core.Data;
 using CivilizationEvolution.Core.Dto;
@@ -24,18 +25,13 @@ namespace CivilizationEvolution.Simulation.Society
         private readonly TileData[] _tiles;
         private readonly Dictionary<int, BuildingDef> _buildingDefs = new Dictionary<int, BuildingDef>();
         private readonly Dictionary<int, List<ActiveBuilding>> _tileBuildings = new Dictionary<int, List<ActiveBuilding>>();
-        private Action<int, int, float> _practiceRecorder;
+        private readonly SimulationEventBus _events;
 
-        public BuildingSystem(TileData[] tiles)
+        public BuildingSystem(TileData[] tiles, SimulationEventBus events = null)
         {
             _tiles = tiles;
+            _events = events;
             InitializeBuildingDefs();
-        }
-
-        /// <summary>统一革新实践记录入口；由 GameWorld 注入。</summary>
-        public void SetPracticeRecorder(Action<int, int, float> recorder)
-        {
-            _practiceRecorder = recorder;
         }
 
         private void InitializeBuildingDefs()
@@ -192,7 +188,7 @@ namespace CivilizationEvolution.Simulation.Society
             if (target.builderCharacterId >= 0 && target.innovationId >= 0)
             {
                 float practice = Mathf.Max(0.1f, deltaDays);
-                _practiceRecorder?.Invoke(target.builderCharacterId, target.innovationId, practice);
+                _events?.Publish(new PracticeRecordedEvent(target.builderCharacterId, target.innovationId, practice));
             }
 
             if (target.remainingDays <= 0f)
@@ -208,7 +204,7 @@ namespace CivilizationEvolution.Simulation.Society
         {
             building.remainingDays = Mathf.Max(0f, building.remainingDays - 1f);
             if (building.builderCharacterId >= 0 && building.innovationId >= 0)
-                _practiceRecorder?.Invoke(building.builderCharacterId, building.innovationId, 1f);
+                _events?.Publish(new PracticeRecordedEvent(building.builderCharacterId, building.innovationId, 1f));
 
             if (building.remainingDays <= 0f)
             {
