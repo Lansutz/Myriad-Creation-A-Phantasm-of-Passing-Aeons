@@ -237,8 +237,7 @@ namespace CivilizationEvolution.Simulation.WorldState
 
  // 8. 战争（战争闭环：同地块交战→分数→胜负判定→停战）
             _combatManager.DailyTick(
-                armies, _wars, _diplomacyManager.WarRules, currentDay,
-                RecordInnovationPractice);
+                armies, _wars, _diplomacyManager.WarRules, currentDay);
             UpdateFaithFervor(currentDay);
 
  // 大圣战结算钩子（关联战争结束→圣战方胜→受益人谈判）
