@@ -23,8 +23,9 @@ namespace CivilizationEvolution.Simulation.WorldState
 
         public void InitializePlanSystem()
         {
+            _researchPlanSystem?.Dispose();
             _planSystem = new Planning.PlanSystem();
-            _researchPlanSystem = null;
+            _researchPlanSystem = CreateResearchPlanSystem();
             _constructionPlanSystem = null;
         }
 
@@ -38,7 +39,12 @@ namespace CivilizationEvolution.Simulation.WorldState
             if (amount <= 0f) return 0f;
             if (_researchPlanSystem == null && _innovationTree != null && _characterManager != null)
                 _researchPlanSystem = CreateResearchPlanSystem();
-            return _researchPlanSystem?.RecordPractice(characterId, innovationId, amount) ?? 0f;
+
+            SimulationEvents.Publish(
+                new CivilizationEvolution.Core.Events.PracticeRecordedEvent(
+                    characterId, innovationId, amount));
+
+            return amount;
         }
 
         /// <summary>统一计划推进入口：先推进计划，再处理本轮真实实践产生的个人突破。</summary>
