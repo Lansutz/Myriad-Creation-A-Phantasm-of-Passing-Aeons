@@ -171,6 +171,5 @@ namespace CivilizationEvolution.Simulation.Planning
     {
         PlanType Type { get; }
         PlanExecutionResult Execute(Plan plan, float deltaDays);
-        void OnPlanEnded(Plan plan);
     }
 }
