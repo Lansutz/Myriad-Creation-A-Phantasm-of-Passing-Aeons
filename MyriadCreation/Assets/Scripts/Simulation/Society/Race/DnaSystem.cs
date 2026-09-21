@@ -119,7 +119,7 @@ namespace CivilizationEvolution.Simulation.Society
         public static TalentDefectDef FindDef(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
-            if (ContentRegistry.IsInitialized && ContentRegistry.TryGetTalentDefect(id, out var reg))
+            if (ContentRegistry.IsInitialized && ContentResolvers.TalentDefects.TryGet(id, out var reg))
                 return reg;
             foreach (var t in _talentDefs) if (t.id == id) return t;
             foreach (var d in _defectDefs) if (d.id == id) return d;
