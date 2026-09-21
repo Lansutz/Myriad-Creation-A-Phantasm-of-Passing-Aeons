@@ -48,6 +48,39 @@ namespace CivilizationEvolution.Simulation.Modding
         public void Clear() => _values.Clear();
     }
 
+    /// <summary>Adapter for legacy/specialized content loaders. It still obeys the same provider contract.</summary>
+    public sealed class DelegateContentProvider<TKey, TValue> : IContentProvider<TKey, TValue>
+    {
+        private readonly Action<string, IContentStore<TKey, TValue>> _loadRoot;
+        public DelegateContentProvider(string contentType, Action<string, IContentStore<TKey, TValue>> loadRoot)
+        {
+            ContentType = string.IsNullOrEmpty(contentType) ? throw new ArgumentException("Content type is required.", nameof(contentType)) : contentType;
+            _loadRoot = loadRoot ?? throw new ArgumentNullException(nameof(loadRoot));
+        }
+        public string ContentType { get; }
+        public void Load(ContentSource source, IContentStore<TKey, TValue> target)
+        {
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            foreach (var root in EnumerateRoots(source.rootPath))
+            {
+                try { _loadRoot(root, target); }
+                catch (Exception e) { UnityEngine.Debug.LogWarning($"[ContentProvider] {ContentType} 加载失败：{root}：{e.Message}"); }
+            }
+        }
+        private static IEnumerable<string> EnumerateRoots(string root)
+        {
+            if (string.IsNullOrEmpty(root) || !System.IO.Directory.Exists(root)) yield break;
+            bool canonical = System.IO.Directory.Exists(System.IO.Path.Combine(root, "Culture"))
+                || System.IO.File.Exists(System.IO.Path.Combine(root, "Race", "RaceDefs.json"))
+                || System.IO.File.Exists(System.IO.Path.Combine(root, "Innovation", "Innovations.json"))
+                || System.IO.File.Exists(System.IO.Path.Combine(root, "Religion", "Religions.json"));
+            if (canonical) { yield return root; yield break; }
+            var dirs = System.IO.Directory.GetDirectories(root);
+            Array.Sort(dirs, StringComparer.Ordinal);
+            foreach (var dir in dirs) yield return dir;
+        }
+    }
+
     /// <summary>Generic provider for canonical wrapped JSON files.</summary>
     public sealed class JsonFileContentProvider<TKey, TValue, TWrapper> : IContentProvider<TKey, TValue>
     {
