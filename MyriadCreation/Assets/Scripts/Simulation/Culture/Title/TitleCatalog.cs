@@ -34,7 +34,7 @@ namespace CivilizationEvolution.Simulation.Culture
         public static List<TitleDef> ByKind(string kind, int cultureId = -1)
         {
             var list = new List<TitleDef>();
-            foreach (var t in ContentRegistry.Titles.Values)
+            foreach (var t in ContentResolvers.Titles.All)
             {
                 if (t.kind != kind) continue;
  // 文化专属优先收集；通用也收集（回退用）
