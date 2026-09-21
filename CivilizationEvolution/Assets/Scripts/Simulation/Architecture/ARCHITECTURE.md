@@ -67,3 +67,39 @@ It does not expose dictionaries, caches, jobs, or internal algorithms.
 ## Compatibility policy
 
 During migration, compatibility bridges are allowed at boundaries, but new domain code must not add another direct cross-domain callback. Each bridge is temporary and should be removed when all callers use the stable contract.
+
+## Editor and Mod relationship
+
+The built-in editor is an authoring client, not a privileged runtime system.
+
+A player can:
+1. create or edit Race, Culture, Religion, Innovation and other definitions with the built-in authoring tools;
+2. keep those definitions in an authoring workspace;
+3. export the workspace as a normal content package under StreamingAssets/Mods/<packageId>;
+4. distribute that package as a mod;
+5. edit the same package manually or with external tools using the Extension API.
+
+Therefore built-in editor content and mod content are not two competing data models. They are two authoring paths that produce the same package/runtime format.
+
+World/Scenario editing remains separate: changing a settlement, terrain tile, population or other live world state is not the same operation as authoring a reusable Definition.
+
+### Package boundary
+
+Editor / External Tool
+        |
+        v
+Content Authoring Workspace
+        |
+        v
+Content Package (mod.json + canonical content files)
+        |
+        v
+StreamingAssets/Mods/<packageId>
+        |
+        v
+Content Source
+        |
+        v
+Content Registry / Runtime Definitions
+
+The runtime deliberately does not need to know whether a definition was created by the built-in editor or by hand.
