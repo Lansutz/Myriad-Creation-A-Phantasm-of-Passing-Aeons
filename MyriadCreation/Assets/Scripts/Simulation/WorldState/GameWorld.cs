@@ -209,84 +209,98 @@ namespace CivilizationEvolution.Simulation.WorldState
             _simulationScheduler.Register("world.construction", SimulationCadence.Daily, 13, DailyConstruction);
             _simulationScheduler.Register("world.population", SimulationCadence.Daily, 14, DailyPopulation);
             _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 15, DailyPolitics);
-            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 16, DailyPolitics);
-            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 17, DailyPolitics);
-            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 18, DailyPolitics);
-            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 19, DailyPolitics);
-            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 20, DailyPolitics);
-            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 21, DailyPolitics);
-            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 22, DailyPolitics);
+            _simulationScheduler.Register("world.settlement-control", SimulationCadence.Daily, 16, DailySettlementControl);
+            _simulationScheduler.Register("world.map-actors", SimulationCadence.Daily, 17, DailyMapActors);
+            _simulationScheduler.Register("world.camps", SimulationCadence.Daily, 18, DailyCamps);
+            _simulationScheduler.Register("world.settlement-evolution", SimulationCadence.Daily, 19, DailySettlementEvolution);
+            _simulationScheduler.Register("world.settlement-recovery", SimulationCadence.Daily, 20, DailySettlementRecovery);
+            _simulationScheduler.Register("world.land-abandonment", SimulationCadence.Daily, 21, DailyLandAbandonment);
+            _simulationScheduler.Register("world.culture-stage-evolution", SimulationCadence.Monthly, 22, MonthlyCultureStageEvolution);
             _simulationScheduler.Register("world.diplomacy", SimulationCadence.Daily, 23, DailyDiplomacy);
             _simulationScheduler.Register("world.warfare-and-religion", SimulationCadence.Daily, 24, DailyWarfareAndReligion);
-            _simulationScheduler.Register("world.characters-and-succession", SimulationCadence.Daily, 25, DailyCharactersAndSuccession);
-            _simulationScheduler.Register("world.characters-and-succession", SimulationCadence.Daily, 26, DailyCharactersAndSuccession);
+            _simulationScheduler.Register("world.characters", SimulationCadence.Daily, 25, DailyCharacters);
+            _simulationScheduler.Register("world.succession", SimulationCadence.Daily, 26, DailySuccession);
             _simulationScheduler.Register("world.thought", SimulationCadence.Daily, 27, DailyThought);
             _simulationScheduler.Register("world.aiand-missionary", SimulationCadence.Daily, 28, DailyAIAndMissionary);
             _simulationScheduler.Register("world.events", SimulationCadence.Daily, 29, DailyEvents);
-            _simulationScheduler.Register("world.events", SimulationCadence.Daily, 30, DailyEvents);
+            _simulationScheduler.Register("world.plans", SimulationCadence.Daily, 30, DailyPlans);
             _simulationScheduler.Register("world.advance-simulation-time", SimulationCadence.Daily, 31, AdvanceSimulationTime);
         }
 
         private void DailyRecalculateDirty(SimulationTickContext context)
         {
-            RecalculateDirty();        }
+            RecalculateDirty();
+        }
 
         private void DailyDisasterAndDisease(SimulationTickContext context)
         {
             _disasterSystem.DailyTick(currentDay, currentYear);
-            _diseaseSystem.DailyTick(currentDay, currentYear);        }
+            _diseaseSystem.DailyTick(currentDay, currentYear);
+        }
 
         private void DailyEconomy(SimulationTickContext context)
         {
-            _economyManager.DailyTick();        }
+            _economyManager.DailyTick();
+        }
 
         private void DailyConstruction(SimulationTickContext context)
         {
-            _buildingSystem.DailyTick();        }
+            _buildingSystem.DailyTick();
+        }
 
         private void DailyPopulation(SimulationTickContext context)
         {
-            PopulationTick();        }
+            PopulationTick();
+        }
 
         private void DailyPolitics(SimulationTickContext context)
         {
             _politicalManager.DailyTick();
-            PoliticsTick();        }
+            PoliticsTick();
+        }
 
-        private void DailyPolitics(SimulationTickContext context)
+        private void DailySettlementControl(SimulationTickContext context)
         {
             CivilizationEvolution.Simulation.Settlement.SettlementControlSystem.DailyTick(
-                burgs, tiles, mapWidth, mapHeight, armies);        }
+                burgs, tiles, mapWidth, mapHeight, armies);
+        }
 
-        private void DailyPolitics(SimulationTickContext context)
+        private void DailyMapActors(SimulationTickContext context)
         {
-            _mapActorManager?.Tick(1f);        }
+            _mapActorManager?.Tick(1f);
+        }
 
-        private void DailyPolitics(SimulationTickContext context)
+        private void DailyCamps(SimulationTickContext context)
         {
-            _campManager?.Tick(1f);        }
+            _campManager?.Tick(1f);
+        }
 
-        private void DailyPolitics(SimulationTickContext context)
+        private void DailySettlementEvolution(SimulationTickContext context)
         {
-            CivilizationEvolution.Simulation.Settlement.SettlementEvolutionSystem.DailyTick(this);        }
+            CivilizationEvolution.Simulation.Settlement.SettlementEvolutionSystem.DailyTick(this);
+        }
 
-        private void DailyPolitics(SimulationTickContext context)
+        private void DailySettlementRecovery(SimulationTickContext context)
         {
-            CivilizationEvolution.Simulation.Warfare.SettlementDestructionSystem.DailyTickRecovery(this);        }
+            CivilizationEvolution.Simulation.Warfare.SettlementDestructionSystem.DailyTickRecovery(this);
+        }
 
-        private void DailyPolitics(SimulationTickContext context)
+        private void DailyLandAbandonment(SimulationTickContext context)
         {
-            CivilizationEvolution.Simulation.Settlement.LandAbandonmentSystem.DailyCheckBanditSpawn(this);        }
+            CivilizationEvolution.Simulation.Settlement.LandAbandonmentSystem.DailyCheckBanditSpawn(this);
+        }
 
-        private void DailyPolitics(SimulationTickContext context)
+        private void MonthlyCultureStageEvolution(SimulationTickContext context)
         {
             if (currentDay % 30 == 0)
-                CivilizationEvolution.Simulation.Culture.CultureStageEvolutionSystem.MonthlyTick(this);        }
+                CivilizationEvolution.Simulation.Culture.CultureStageEvolutionSystem.MonthlyTick(this);
+        }
 
         private void DailyDiplomacy(SimulationTickContext context)
         {
             _diplomacyManager.CurrentDay = currentDay;
-            _diplomacyManager.DailyTick();        }
+            _diplomacyManager.DailyTick();
+        }
 
         private void DailyWarfareAndReligion(SimulationTickContext context)
         {
@@ -324,19 +338,23 @@ namespace CivilizationEvolution.Simulation.WorldState
  // 政体变迁接线：战败暴露国家无能，为战败方打开关键节点窗口（战胜/白和不触发）
                 if (war.outcome == "victory" && war.winnerId >= 0)
                     NotifyWarDefeat(war, currentDay);
-            }        }
+            }
+        }
 
-        private void DailyCharactersAndSuccession(SimulationTickContext context)
+        private void DailyCharacters(SimulationTickContext context)
         {
-            _characterManager.DailyTick(currentDay, currentYear);        }
+            _characterManager.DailyTick(currentDay, currentYear);
+        }
 
-        private void DailyCharactersAndSuccession(SimulationTickContext context)
+        private void DailySuccession(SimulationTickContext context)
         {
-            CheckRulerSuccessions();        }
+            CheckRulerSuccessions();
+        }
 
         private void DailyThought(SimulationTickContext context)
         {
-            _thoughtManager.DailyTick(currentYear);        }
+            _thoughtManager.DailyTick(currentYear);
+        }
 
         private void DailyAIAndMissionary(SimulationTickContext context)
         {
@@ -344,20 +362,23 @@ namespace CivilizationEvolution.Simulation.WorldState
 
             _aiManager.SyncRulers(_characterManager);
             _aiManager.DailyTick(realms, tiles, _diplomacyManager, _economyManager, _innovationTree,
-                _characterManager); // characters 传入——AI 劫掠屠城计数器        }
+                _characterManager); // characters 传入——AI 劫掠屠城计数器
+        }
 
         private void DailyEvents(SimulationTickContext context)
         {
-            ProcessEvents();        }
+            ProcessEvents();
+        }
 
-        private void DailyEvents(SimulationTickContext context)
+        private void DailyPlans(SimulationTickContext context)
         {
-            TickPlans(1f);        }
+            TickPlans(1f);
+        }
 
         private void AdvanceSimulationTime(SimulationTickContext context)
         {
             AdvanceTime();
-                }
+        }
         public RealmSociety GetRealmSociety(int realmId) => _societyCache.GetValueOrDefault(realmId);
         public SocietyManager Society => _societyManager;
         public FactionManager Factions => _factionManager;
