@@ -32,16 +32,13 @@ namespace CivilizationEvolution.Editor.ContentAuthoring
                 workspace.Manifest,
                 overwrite);
 
-            foreach (var contentType in workspace.Manifest.contentTypes)
+            // File-level export is intentional: existing runtime loaders already define
+            // canonical filenames/wrapper formats. The editor must preserve those formats
+            // instead of inventing a second serialization model.
+            foreach (var pair in workspace.GetFiles())
             {
-                string directory = Path.Combine(packageRoot, contentType);
-                Directory.CreateDirectory(directory);
-
-                foreach (var pair in workspace.GetDefinitions(contentType))
-                {
-                    string fileName = SanitizeFileName(pair.Key) + ".json";
-                    WriteText(Path.Combine(directory, fileName), pair.Value, overwrite);
-                }
+                string relativePath = pair.Key.Replace('/', Path.DirectorySeparatorChar);
+                WriteText(Path.Combine(packageRoot, relativePath), pair.Value, overwrite);
             }
 
             AssetDatabase.Refresh();
