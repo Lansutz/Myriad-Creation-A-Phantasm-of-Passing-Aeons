@@ -3,6 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using CivilizationEvolution.Core.Events;
 using CivilizationEvolution.Core.Contracts;
+using CivilizationEvolution.Core.Simulation;
 using CivilizationEvolution.Simulation.Modding;
 using CivilizationEvolution.Simulation.Planning;
 
@@ -124,6 +125,20 @@ namespace CivilizationEvolution.Tests.EditMode
                 => PlanExecutionResult.Complete("test_completed", "执行活动");
 
         }
+        [Test]
+        public void SimulationScheduler_RunsRegisteredCadencesInStableOrder()
+        {
+            var scheduler = new SimulationScheduler();
+            var order = new List<string>();
+            scheduler.Register("monthly", SimulationCadence.Monthly, 20, _ => order.Add("monthly"));
+            scheduler.Register("daily", SimulationCadence.Daily, 10, _ => order.Add("daily"));
+            scheduler.Register("weekly", SimulationCadence.Weekly, 15, _ => order.Add("weekly"));
+
+            scheduler.Tick(30, 1);
+
+            CollectionAssert.AreEqual(new[] { "daily", "weekly", "monthly" }, order);
+        }
+
         [Test]
         public void SimulationCommandBus_DispatchesWithoutExposingTarget()
         {
