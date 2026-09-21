@@ -92,11 +92,11 @@ namespace CivilizationEvolution.Simulation.Society
  /// <summary>天赋定义池（注册表优先——模组可扩展；未初始化/未定义时回退内置）</summary>
         public static IReadOnlyList<TalentDefectDef> GetTalentDefs()
         {
-            if (ContentRegistry.IsInitialized && ContentRegistry.TalentDefects.Count > 0)
+            if (ContentRegistry.IsInitialized)
             {
                 var list = new List<TalentDefectDef>();
-                foreach (var kv in ContentRegistry.TalentDefects)
-                    if (kv.Value.isTalent) list.Add(kv.Value);
+                foreach (var def in ContentResolvers.TalentDefects.All)
+                    if (def.isTalent) list.Add(def);
                 return list;
             }
             return _talentDefs;
