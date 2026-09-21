@@ -155,6 +155,8 @@ namespace CivilizationEvolution.Simulation.WorldState
         private readonly SimulationEventBus _simulationEvents = new SimulationEventBus();
         private readonly SimulationScheduler _simulationScheduler = new SimulationScheduler();
         public SimulationScheduler SimulationScheduler => _simulationScheduler;
+        /// <summary>稳定的调度注册契约；领域系统只依赖接口，不依赖调度器实现。</summary>
+        public ISimulationScheduler Scheduler => _simulationScheduler;
         /// <summary>稳定的跨领域事件边界；领域系统不直接互相调用。</summary>
         public SimulationEventBus SimulationEvents => _simulationEvents;
 
