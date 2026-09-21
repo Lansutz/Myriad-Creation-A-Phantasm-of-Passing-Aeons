@@ -250,6 +250,28 @@ namespace CivilizationEvolution.Simulation.Modding
         {
             if (!Directory.Exists(root)) return;
 
+            // A source root may contain either canonical content directories (Base)
+            // or one directory per package (Mods/<package>). Both resolve to the
+            // same runtime registries.
+            bool hasCanonicalContent = Directory.Exists(Path.Combine(root, "Culture"))
+                || File.Exists(Path.Combine(root, "Race", "RaceDefs.json"))
+                || File.Exists(Path.Combine(root, "Innovation", "Innovations.json"))
+                || File.Exists(Path.Combine(root, "Religion", "Religions.json"));
+
+            if (!hasCanonicalContent)
+            {
+                foreach (var packageDir in Directory.GetDirectories(root))
+                {
+                    try { LoadContentRoot(packageDir); }
+                    catch (Exception e)
+                    {
+                        Debug.LogWarning(
+                            $"[ContentRegistry] 内容包 {Path.GetFileName(packageDir)} 加载失败：{e.Message}");
+                    }
+                }
+                return;
+            }
+
             string cultureDir = Path.Combine(root, "Culture");
             if (Directory.Exists(cultureDir))
             {
