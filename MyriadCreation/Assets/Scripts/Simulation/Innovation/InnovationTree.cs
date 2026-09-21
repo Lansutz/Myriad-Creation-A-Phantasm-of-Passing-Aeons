@@ -46,8 +46,8 @@ namespace CivilizationEvolution.Simulation.Innovation
                 ContentRegistry.Initialize();
 
             _innovations.Clear();
-            foreach (var kv in ContentRegistry.Innovations)
-                _innovations[kv.Key] = kv.Value;
+            foreach (var def in ContentResolvers.Innovations.All)
+                _innovations[def.innovationId] = def;
 
             if (_innovations.Count == 0)
                 Debug.LogWarning("[InnovationTree] 革新定义为空（Innovation/Innovations.json 缺失或未加载）");
