@@ -13,7 +13,14 @@ namespace CivilizationEvolution.Core.Simulation
 
     public enum SimulationCadence { Immediate, Daily, Weekly, Monthly, Seasonal, LongTerm }
 
-    public sealed class SimulationScheduler
+    public interface ISimulationScheduler
+    {
+        int Count { get; }
+        void Register(string id, SimulationCadence cadence, int order, Action<SimulationTickContext> execute);
+        bool Unregister(string id);
+    }
+
+    public sealed class SimulationScheduler : ISimulationScheduler
     {
         private sealed class Entry { public string id; public int intervalDays; public int order; public Action<SimulationTickContext> execute; }
         private readonly Dictionary<string, Entry> _entries = new Dictionary<string, Entry>();
