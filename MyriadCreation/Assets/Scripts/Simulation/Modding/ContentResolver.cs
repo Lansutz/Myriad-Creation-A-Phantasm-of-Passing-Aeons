@@ -113,5 +113,15 @@ namespace CivilizationEvolution.Simulation.Modding
             new ContentResolver<string, TitleDef>(
                 id => ContentRegistry.Titles.TryGetValue(id, out var value) ? value : null,
                 () => ContentRegistry.Titles.Values);
+
+        public static IContentResolver<string, DoctrineOptionDef> Doctrines { get; } =
+            new ContentResolver<string, DoctrineOptionDef>(
+                id => ContentRegistry.Doctrines.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.Doctrines.Values);
+
+        public static IContentResolver<int, BiomeDef> Biomes { get; } =
+            new ContentResolver<int, BiomeDef>(
+                id => ContentRegistry.Biomes.TryGetValue(id, out var value) ? value : null,
+                () => ContentRegistry.Biomes.Values);
     }
 }
