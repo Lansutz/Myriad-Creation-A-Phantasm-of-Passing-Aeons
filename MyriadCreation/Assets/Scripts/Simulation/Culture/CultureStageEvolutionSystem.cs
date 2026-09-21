@@ -189,7 +189,7 @@ namespace CivilizationEvolution.Simulation.Culture
             realm.primaryCultureId = cultureId;
 
             // 根据文化移动模式确定政权形态
-            if (ContentRegistry.TryGetCulture(cultureId, out var culturePack))
+            if (ContentResolvers.Cultures.TryGet(cultureId, out var culturePack))
             {
                 int mobility = culturePack.data.mobilityType;
                 realm.realmForm = NomadicRealmSystem.FormFromMobility(mobility);
