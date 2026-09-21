@@ -124,6 +124,26 @@ namespace CivilizationEvolution.Tests.EditMode
             public void OnPlanEnded(Plan plan) { }
         }
         [Test]
+        public void JsonContentProvider_LoadsCanonicalWrappedFileIntoStore()
+        {
+            string root = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "myriad-content-provider-test");
+            System.IO.Directory.CreateDirectory(System.IO.Path.Combine(root, "Race"));
+            string file = System.IO.Path.Combine(root, "Race", "RaceDefs.json");
+            try
+            {
+                System.IO.File.WriteAllText(file, "{ \\\"items\\\": [{ \\\"id\\\": \\\"race.test\\\" }] }");
+                var provider = new JsonFileContentProvider<string, TestContent, TestWrapper>(
+                    "Test", "Race/RaceDefs.json", text => UnityEngine.JsonUtility.FromJson<TestWrapper>(text),
+                    wrapper => wrapper.items, item => item == null ? null : item.id);
+                var store = new ContentStore<string, TestContent>();
+                provider.Load(new ContentSource(ContentSourceKind.Mod, "test", root, 100), store);
+                Assert.IsTrue(store.TryGet("race.test", out var value));
+                Assert.AreEqual("race.test", value.id);
+            }
+            finally { if (System.IO.Directory.Exists(root)) System.IO.Directory.Delete(root, true); }
+        }
+
+        [Test]
         public void ContentStore_ProvidesMutableStorageBehindStableResolver()
         {
             var store = new ContentStore<string, TestContent>();
@@ -138,10 +158,11 @@ namespace CivilizationEvolution.Tests.EditMode
             Assert.IsFalse(resolver.TryGet("a", out _));
         }
 
-        private sealed class TestContent
-        {
-            public string id;
-        }
+        [System.Serializable]
+        private sealed class TestWrapper { public List<TestContent> items = new List<TestContent>(); }
+
+        [System.Serializable]
+        private sealed class TestContent { public string id; }
 
     }
 }
