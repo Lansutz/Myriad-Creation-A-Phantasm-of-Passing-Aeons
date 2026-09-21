@@ -143,7 +143,7 @@ namespace CivilizationEvolution.Simulation.Characters
         public bool AddFamilyTradition(string traditionId)
         {
             if (string.IsNullOrEmpty(traditionId) || familyTraditions.ContainsKey(traditionId)) return false;
-            if (!ContentRegistry.TryGetFamilyTradition(traditionId, out var def))
+            if (!ContentResolvers.FamilyTraditions.TryGet(traditionId, out var def))
             {
                 Debug.LogWarning($"[Family] 家族传统 {traditionId} 未在注册表定义，拒绝添加");
                 return false;
@@ -185,7 +185,7 @@ namespace CivilizationEvolution.Simulation.Characters
             float total = 0f;
             foreach (var kv in familyTraditions)
             {
-                if (!ContentRegistry.TryGetFamilyTradition(kv.Key, out var def) || def.effects == null) continue;
+                if (!ContentResolvers.FamilyTraditions.TryGet(kv.Key, out var def) || def.effects == null) continue;
                 foreach (var e in def.effects)
                 {
                     if (e.key == key) total += e.value * kv.Value;
