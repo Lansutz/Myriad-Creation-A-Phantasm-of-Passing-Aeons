@@ -75,9 +75,14 @@ namespace CivilizationEvolution.Simulation.Planning
             return plan;
         }
 
-        internal float Execute(Plan plan, float deltaDays)
+        internal PlanExecutionResult Execute(Plan plan, float deltaDays)
         {
-            return _buildings.AdvancePlannedConstruction(plan.planId, deltaDays) - plan.progress;
+            float nextProgress = _buildings.AdvancePlannedConstruction(plan.planId, deltaDays);
+            float delta = nextProgress - plan.progress;
+            if (nextProgress >= 1f)
+                return PlanExecutionResult.Complete("construction_completed", "施工");
+
+            return PlanExecutionResult.Continue(delta, "施工");
         }
 
         internal void End(Plan plan)
