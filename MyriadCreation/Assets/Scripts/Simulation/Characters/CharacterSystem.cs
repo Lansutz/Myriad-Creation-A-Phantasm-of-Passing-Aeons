@@ -313,7 +313,7 @@ namespace CivilizationEvolution.Simulation.Characters
         private static string GenerateName(int cultureId, int type)
         {
             if (ContentResolvers.Cultures.TryGet(cultureId, out var pack))
-                return ContentRegistry.GetRandomName(pack, type);
+                return ContentQueries.GetRandomName(pack, type);
             return "无名";
         }
 
