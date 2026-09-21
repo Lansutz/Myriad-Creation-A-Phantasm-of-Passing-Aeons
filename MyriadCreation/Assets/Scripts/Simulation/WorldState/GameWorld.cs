@@ -205,7 +205,7 @@ namespace CivilizationEvolution.Simulation.WorldState
         private void RegisterSimulationSchedules()
         {
             _simulationScheduler.Clear();
-            _simulationScheduler.Register("world.recalculate-dirty", SimulationCadence.Daily, 10, DailyRecalculateDirty);
+            _simulationScheduler.RegisterDirty("world.recalculate-dirty", SimulationCadence.Daily, 10, "world.terrain", DailyRecalculateDirty);
             _simulationScheduler.Register("world.disaster-and-disease", SimulationCadence.Daily, 11, DailyDisasterAndDisease);
             _simulationScheduler.Register("world.economy", SimulationCadence.Daily, 12, DailyEconomy);
             _simulationScheduler.Register("world.construction", SimulationCadence.Daily, 13, DailyConstruction);
