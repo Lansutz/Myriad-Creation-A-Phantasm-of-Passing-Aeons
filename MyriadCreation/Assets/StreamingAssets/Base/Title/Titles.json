@@ -1,0 +1,130 @@
+{
+  "titles": [
+    {
+      "titleId": "title_emperor",
+      "kind": "monarch",
+      "rank": 3.0,
+      "weight": 1.2,
+      "semantic": "皇帝——主权最高（万王之王 3.2/皇帝本尊 3.0——位阶柔性的同级微差示例）"
+    },
+    {
+      "titleId": "title_king",
+      "kind": "monarch",
+      "rank": 2.0,
+      "weight": 1.0,
+      "semantic": "王——主权君主（king——某某人之王/某地之王——头衔先于王国的历史形态）"
+    },
+    {
+      "titleId": "title_vassal_king",
+      "kind": "monarch",
+      "rank": 1.8,
+      "weight": 0.7,
+      "semantic": "藩王/副王——王下王（皇下王——位阶低于王高于大贵族）"
+    },
+    {
+      "titleId": "title_khagan",
+      "kind": "monarch",
+      "rank": 2.6,
+      "weight": 1.1,
+      "semantic": "可汗/大汗——草原主权者（可汗 2.0/大汗 2.6——同级文化微差）"
+    },
+    {
+      "titleId": "title_khan",
+      "kind": "monarch",
+      "rank": 2.0,
+      "weight": 0.9,
+      "semantic": "可汗（部族级——2.0 与王同级——草原语境）"
+    },
+    {
+      "titleId": "title_basileus",
+      "kind": "monarch",
+      "rank": 3.1,
+      "weight": 1.1,
+      "semantic": "巴西琉斯——希腊式皇帝（罗马皇帝称号——语义含'王'但位阶皇帝级）"
+    },
+    {
+      "titleId": "title_duke",
+      "kind": "noble",
+      "rank": 1.5,
+      "weight": 1.0,
+      "semantic": "公爵——大贵族"
+    },
+    {
+      "titleId": "title_marquis",
+      "kind": "noble",
+      "rank": 1.4,
+      "weight": 0.9,
+      "semantic": "侯爵——边地贵族"
+    },
+    {
+      "titleId": "title_count",
+      "kind": "noble",
+      "rank": 1.3,
+      "weight": 1.0,
+      "semantic": "伯爵——地方贵族"
+    },
+    {
+      "titleId": "title_baron",
+      "kind": "noble",
+      "rank": 1.2,
+      "weight": 0.8,
+      "semantic": "男爵——低级贵族"
+    },
+    {
+      "titleId": "title_zhuhou",
+      "kind": "noble",
+      "rank": 1.6,
+      "weight": 1.0,
+      "semantic": "诸侯——分封贵族（宗法封建层级节点——分封 4 层的中层）"
+    },
+    {
+      "titleId": "title_qingdafu",
+      "kind": "noble",
+      "rank": 1.3,
+      "weight": 0.9,
+      "semantic": "卿大夫——分封采邑贵族"
+    },
+    {
+      "titleId": "title_prefect",
+      "kind": "bureaucratic",
+      "rank": 2.4,
+      "weight": 1.0,
+      "semantic": "郡守/州牧——行政区长官（位阶随行政层级——郡县 2-3 层的官员）"
+    },
+    {
+      "titleId": "title_magistrate",
+      "kind": "bureaucratic",
+      "rank": 1.4,
+      "weight": 1.0,
+      "semantic": "县令/县长——基层行政长官（郡县最末层）"
+    },
+    {
+      "titleId": "title_gov_general",
+      "kind": "bureaucratic",
+      "rank": 2.8,
+      "weight": 1.0,
+      "semantic": "总督/行省长官——高层官僚（行政容量高→道/省层）"
+    },
+    {
+      "titleId": "realm_kingdom",
+      "kind": "realmSuffix",
+      "rank": 2.0,
+      "weight": 1.0,
+      "semantic": "王国——领土化后缀（king-dom——革新解锁领土想象后可用）"
+    },
+    {
+      "titleId": "realm_empire",
+      "kind": "realmSuffix",
+      "rank": 3.0,
+      "weight": 1.2,
+      "semantic": "帝国——领土化后缀（最高）"
+    },
+    {
+      "titleId": "realm_khaganate",
+      "kind": "realmSuffix",
+      "rank": 2.6,
+      "weight": 1.0,
+      "semantic": "汗国——草原领土化后缀"
+    }
+  ]
+}

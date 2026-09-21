@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e156bdf2ae2f0c2498b3ecef6e932c29, type: 3}
+  m_Name: DefaultWorldConfig
+  m_EditorClassIdentifier: CivilizationEvolution.Runtime::CivilizationEvolution.Core.WorldConfig
+  wrapX: 1
+  wrapY: 0
+  seaLevel: 0.5
+  landAmount: 0.29
+  landFragment: 0.4
+  coastFragment: 0.3
+  oceanBuffer: 0.35
+  planetMaxLat: 90
+  planetTotalLon: 360
+  circulationMode: 2
+  thermalEquatorLat: 7
+  climTropicNorth: 23
+  climTropicSouth: -23
+  stellarIrradiance: 1361
+  seasonIntensity: 0.4
+  heatTransport: 1
+  monsoonStrength: 0.8
+  albedo: 0.3
+  greenhouseFactor: 33
+  lapseRate: 6.5

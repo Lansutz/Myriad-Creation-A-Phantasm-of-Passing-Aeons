@@ -1,0 +1,9 @@
+{
+  "disorders": [
+    { "id": "depression", "reversible": true, "learningMod": -5.0, "diplomacyMod": -5.0, "charmMod": -5.0, "stressDecayMult": 0.4 },
+    { "id": "anxiety", "reversible": true, "stewardshipMod": -5.0, "warfareMod": -3.0, "charmMod": -10.0, "stressDecayMult": 0.3 },
+    { "id": "paranoia", "reversible": true, "diplomacyMod": -8.0, "intrigueMod": 5.0, "opinionDecayMult": 2.0 },
+    { "id": "delirium", "reversible": true, "martialMod": -3.0, "diplomacyMod": -3.0, "warfareMod": -3.0, "stewardshipMod": -3.0, "intrigueMod": -3.0, "learningMod": -3.0 },
+    { "id": "dementia", "reversible": false, "learningMod": -15.0, "warfareMod": -5.0, "diplomacyMod": -5.0, "charmMod": -5.0 }
+  ]
+}

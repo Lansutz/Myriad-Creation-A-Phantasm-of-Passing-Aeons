@@ -1,0 +1,4 @@
+repository "CivilizationEvolution/Myriad Creation- A Phantasm of Passing Aeons@33264126583182@cloud"
+  path "/"
+    br "/main"
+    co "/main"

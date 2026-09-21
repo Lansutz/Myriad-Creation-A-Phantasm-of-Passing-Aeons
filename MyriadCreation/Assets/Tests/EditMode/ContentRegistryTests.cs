@@ -1,0 +1,256 @@
+using System.Collections.Generic;
+using NUnit.Framework;
+using UnityEngine;
+using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Core.Dto;
+using CivilizationEvolution.Core.Enums;
+using CivilizationEvolution.Infrastructure.Save;
+using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Simulation.Culture;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Events;
+using CivilizationEvolution.Simulation.Generation;
+using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Religion;
+using CivilizationEvolution.Simulation.Society;
+using CivilizationEvolution.Simulation.WorldState;
+using CivilizationEvolution.UI;
+
+
+
+
+
+namespace CivilizationEvolution.Tests
+{
+    /// <summary>
+    /// 模组化接口层 EditMode 测试（企划书 1.2 模组扩展规范）
+    /// 真实加载 Assets/StreamingAssets（EditMode 下 streamingAssetsPath 指向项目目录）
+    /// </summary>
+    public class ContentRegistryTests
+    {
+        [SetUp]
+        public void Setup()
+        {
+            ContentRegistry.Reset();
+            Localization.Reset();
+            Localization.Initialize("zh-Hans");
+            ContentRegistry.Initialize();
+        }
+
+        // ===== 九类注册表加载 =====
+
+        [Test]
+        public void ContentRegistry_LoadsAllNineTypes()
+        {
+            Assert.That(ContentRegistry.Cultures.Count, Is.GreaterThan(0), "文化包应加载");
+            // 预种族已删除（2026-08-29 定稿：仅人类为代码内置 raceId 0），Base 无种族定义属合法状态
+            Assert.That(ContentRegistry.Ethos.Count, Is.GreaterThan(0), "族群精神定义表应加载");
+            Assert.That(ContentRegistry.Traditions.Count, Is.GreaterThan(0), "文化传统定义表应加载");
+            Assert.That(ContentRegistry.Languages.Count, Is.GreaterThan(0), "语言定义应加载");
+            Assert.That(ContentRegistry.EthnicGroups.Count, Is.GreaterThan(0), "族群实体应加载");
+            Assert.That(ContentRegistry.FamilyTraditions.Count, Is.GreaterThan(0), "家族传统定义表应加载");
+            Assert.That(ContentRegistry.CharacterTemplates.Count, Is.GreaterThan(0), "角色模板定义表应加载");
+            Assert.That(ContentRegistry.TalentDefects.Count, Is.GreaterThan(0), "DNA 天赋/缺陷定义表应加载");
+            Assert.That(ContentRegistry.MentalDisorders.Count, Is.GreaterThan(0), "精神疾病定义表应加载");
+        }
+
+        // ===== DNA 天赋/缺陷定义表（Base/Mods 双目录真实加载） =====
+
+        [Test]
+        public void DnaDefs_ModsOverride_BaseSemantics()
+        {
+            // 真实加载语义：Mods 后载覆盖 Base 同名 Id；Mods 新增 Id 直接可用
+            Assert.IsTrue(ContentRegistry.TryGetTalentDefect("defect_pale", out var pale), "白化定义应存在");
+            Assert.AreEqual("lifespan", pale.stat, "Mods 示例覆盖：白化 stat 应为 lifespan（Base 为 appearance）");
+            Assert.AreEqual(-5f, pale.amount, "Mods 示例覆盖：白化 lifespan 修正 -5");
+
+            Assert.IsTrue(ContentRegistry.TryGetTalentDefect("talent_steadfast", out var steadfast), "Mods 新增天赋应可解析");
+            Assert.IsTrue(steadfast.isTalent, "Mods 新增应为天赋");
+            Assert.AreEqual("martial", steadfast.stat);
+        }
+
+        [Test]
+        public void DnaDefs_Name_LocalizedOrFallback()
+        {
+            // Base 定义：显示名走本地化表
+            Assert.IsTrue(ContentRegistry.TryGetTalentDefect("talent_photographic", out var photo));
+            Assert.AreEqual("过目不忘", photo.GetName(), "Base 天赋名应经本地化解析");
+
+            // Mods 新增定义无本地化键：回退内置 name 字段（不崩溃）
+            Assert.IsTrue(ContentRegistry.TryGetTalentDefect("talent_steadfast", out var modded));
+            Assert.IsFalse(string.IsNullOrEmpty(modded.name), "Mods 定义可带内置回退名");
+            Assert.IsFalse(string.IsNullOrEmpty(modded.GetName()), "缺键时 GetName 应回退内置字段");
+        }
+
+        // ===== 家族传统定义表 =====
+
+        [Test]
+        public void FamilyTradition_LuxuryThrifty_MutuallyExclusive()
+        {
+            Assert.IsTrue(ContentRegistry.TryGetFamilyTradition("famtrad_luxury_style", out var luxury));
+            Assert.IsTrue(ContentRegistry.TryGetFamilyTradition("famtrad_thrifty_style", out var thrifty));
+            Assert.IsTrue(luxury.incompatibleWith.Contains("famtrad_thrifty_style"), "奢华门风应互斥节俭家风");
+            Assert.IsTrue(thrifty.incompatibleWith.Contains("famtrad_luxury_style"), "互斥应双向声明");
+            Assert.IsFalse(string.IsNullOrEmpty(luxury.GetName()), "家族传统名应走本地化表");
+        }
+
+        // ===== 角色模板定义表 =====
+
+        [Test]
+        public void CharacterTemplate_Ruler_FieldsResolve()
+        {
+            Assert.IsTrue(ContentRegistry.TryGetCharacterTemplate("tmpl_ruler", out var tpl));
+            Assert.AreEqual(CharacterRole.Ruler, tpl.role, "统治者模板角色应为 Ruler");
+            Assert.That(tpl.statMin.Length, Is.EqualTo(6), "六维约束应 6 项（martial/diplomacy/warfare/stewardship/intrigue/learning）");
+            Assert.That(tpl.statMin[0], Is.GreaterThanOrEqualTo(30f), "统治者勇武下限");
+            Assert.That(tpl.weight, Is.GreaterThan(0f), "生成权重应为正");
+            Assert.IsFalse(string.IsNullOrEmpty(tpl.GetName()), "模板名应走本地化表");
+        }
+
+        // ===== 精神疾病定义表 =====
+
+        [Test]
+        public void MentalHealth_BaseDefs_ResolveAndLocalize()
+        {
+            Assert.IsTrue(ContentRegistry.TryGetMentalDisorder("depression", out var depression));
+            Assert.IsTrue(depression.reversible, "抑郁可逆");
+            Assert.AreEqual("抑郁", depression.GetName(), "精神疾病名应走本地化表");
+            Assert.IsFalse(string.IsNullOrEmpty(depression.GetDescription()));
+
+            Assert.IsTrue(ContentRegistry.TryGetMentalDisorder("dementia", out var dementia));
+            Assert.IsFalse(dementia.reversible, "失智不可逆");
+            Assert.AreEqual(-15f, dementia.learningMod, "失智学识修正 -15");
+        }
+
+        [Test]
+        public void MentalHealth_GetDef_RegistryNotInitialized_FallsBackToBuiltin()
+        {
+            // 注册表未初始化时：GetDef 回退内置定义（精神疾病机制不依赖注册表也能跑）
+            ContentRegistry.Reset();
+            var def = MentalHealthSystem.GetDef(MentalDisorderIds.Depression);
+            Assert.IsNotNull(def, "内置抑郁定义应可查");
+            Assert.AreEqual(-5f, def.learningMod, "内置抑郁学识修正 -5");
+            Assert.IsNull(MentalHealthSystem.GetDef("mod_only_disorder"), "注册表未加载时模组内容不可见");
+        }
+
+        // ===== 族群实体引用解析（Ethnos 支柱：精神/语言/传统） =====
+
+        [Test]
+        public void EthnicGroup_Laethis_AllPillarsResolve()
+        {
+            Assert.IsTrue(ContentRegistry.TryGetEthnicGroup("ethnos_laethis", out var group), "应存在莱希斯族群");
+            Assert.AreEqual("莱希斯", group.GetName(), "族群单数名不应带「族群」后缀");
+            // 挂靠文化
+            Assert.IsTrue(ContentRegistry.TryGetCulture(group.cultureId, out var culture), "族群应挂靠文化");
+            Assert.AreEqual("Laethis", culture.data.cultureName);
+
+            // 族群精神
+            Assert.IsTrue(ContentRegistry.TryGetEthos(group.ethosId, out var ethos), "族群精神应可解析");
+            Assert.IsFalse(string.IsNullOrEmpty(ethos.GetName()), "族群精神名应走本地化表");
+            Assert.IsFalse(string.IsNullOrEmpty(ethos.GetDescription()), "族群精神应有写实描述");
+
+            // 语言
+            Assert.IsTrue(ContentRegistry.TryGetLanguage(group.languageId, out var language), "语言应可解析");
+            Assert.IsFalse(string.IsNullOrEmpty(language.GetScriptType()), "语言应有书写系统");
+
+            // 文化传统（全部可解析）
+            Assert.That(group.traditionIds.Count, Is.GreaterThan(0), "族群应承载文化传统");
+            foreach (var tid in group.traditionIds)
+            {
+                Assert.IsTrue(ContentRegistry.TryGetTradition(tid, out var trad), $"传统 {tid} 应可解析");
+                Assert.IsFalse(string.IsNullOrEmpty(trad.GetName()), $"传统 {tid} 名应走本地化表");
+            }
+        }
+
+        [Test]
+        public void EthnicGroup_ThreeNameForms_Resolve()
+        {
+            // 族群称谓三形式：单数（xxx）/ 复数（xxx人）/ 形容词（xxx人的）
+            Assert.IsTrue(ContentRegistry.TryGetEthnicGroup("ethnos_laethis", out var group));
+            Assert.AreEqual("莱希斯", group.GetName(), "单数称谓（不带「族群」后缀）");
+            Assert.AreEqual("莱希斯人", group.GetPluralName(), "复数称谓（群体形式）");
+            Assert.AreEqual("莱希斯的", group.GetAdjectiveName(), "形容词形式（修饰语）");
+
+            // 缺键回退：不存在的族群 → 复数/形容词回退单数名（不崩溃）
+            var ghost = new EthnicGroupDef { groupId = "ethnos_ghost" };
+            Assert.AreEqual("ethnos_ghost_name", ghost.GetPluralName(), "无复数键应回退单数名");
+            Assert.AreEqual("ethnos_ghost_name", ghost.GetAdjectiveName(), "无形容词键应回退单数名");
+        }
+
+        [Test]
+        public void Culture_Laethis_SevenPillarsExtended()
+        {
+            Assert.IsTrue(ContentRegistry.TryGetCulture(1, out var pack));
+            var c = pack.data;
+            Assert.AreEqual(7, c.worshipVector.Length, "崇拜权重向量应为 7 维（生殖/自然/祖先/死亡/图腾/形象/巫术）");
+            Assert.That(c.burialTypes.Count, Is.GreaterThan(0), "葬俗应多选");
+            Assert.That(c.symbolicFoci.Count, Is.GreaterThan(0), "象征焦点应主次双焦点");
+            Assert.That(c.environmentAdapts.Count, Is.GreaterThan(0), "环境适应应多选");
+            Assert.AreEqual("laethis_lang", c.languageId, "文化应引用默认语言");
+        }
+
+        // ===== 传统互斥（CK3 traditions 类比） =====
+
+        [Test]
+        public void Tradition_AncestorCult_IncompatibleWithIconoclast()
+        {
+            Assert.IsTrue(ContentRegistry.TryGetTradition("trad_ancestor_cult", out var ancestor));
+            Assert.IsTrue(ContentRegistry.TryGetTradition("trad_iconoclast", out var iconoclast));
+            Assert.IsTrue(ancestor.incompatibleWith.Contains("trad_iconoclast"), "祖先祭祀应互斥破坏圣像");
+            Assert.IsTrue(iconoclast.incompatibleWith.Contains("trad_ancestor_cult"), "互斥应双向声明");
+        }
+
+        // ===== 文化相似度集合版（企划书 7.4.6 Jaccard 重合度） =====
+
+        [Test]
+        public void CultureSimilarity_SetJaccard_BurialOverlap()
+        {
+            // 对照设计：两组文化其余板块全相同（默认 0），仅葬俗不同
+            // a{1,3} vs b{1} → Jaccard 0.5；对照 c/d 空集回退单值 0=0 → 1
+            var a = new CultureData { burialTypes = new List<int> { 1, 3 } };
+            var b = new CultureData { burialTypes = new List<int> { 1 } };
+            var c = new CultureData();
+            var d = new CultureData();
+
+            float diff = CultureSimilarity.CalculateSim(a, b) - CultureSimilarity.CalculateSim(c, d);
+            Assert.That(diff, Is.EqualTo(0.15f * (0.5f - 1f)).Within(0.001f),
+                $"Jaccard 贡献应使葬俗项从 1 降到 0.5（权重 0.15）");
+        }
+
+        [Test]
+        public void CultureSimilarity_EmptySets_FallbackToSingle()
+        {
+            // 双方集合空：回退单值比较；worshipVector 相同则全板块一致 → 相似度 1
+            var a = new CultureData
+            {
+                burialType = 2,
+                worshipVector = new float[] { 1, 0, 0, 0, 0, 0, 0 }
+            };
+            var b = new CultureData
+            {
+                burialType = 2,
+                worshipVector = new float[] { 1, 0, 0, 0, 0, 0, 0 }
+            };
+            Assert.AreEqual(1f, CultureSimilarity.CalculateSim(a, b), 0.001f, "同单值葬俗+同崇拜向量应完全相似");
+        }
+
+        // ===== 模组覆盖语义（Mods 同名 Id 覆盖 Base） =====
+
+        [Test]
+        public void ModsOverride_ByIdSemantics()
+        {
+            // 语义验证：直接覆盖注册表同 Id 条目（Mods 加载路径由加载器保证后载）
+            var custom = new EthosDef { ethosId = "ethos_endurance" };
+            custom.effects.Add(new EffectEntry { key = "custom_marker", value = 1f });
+            ContentRegistry.Ethos["ethos_endurance"] = custom;
+            Assert.IsTrue(ContentRegistry.TryGetEthos("ethos_endurance", out var loaded));
+            Assert.AreEqual(1, loaded.effects.Count, "同名 Id 覆盖后效果应为新定义");
+            Assert.AreEqual("custom_marker", loaded.effects[0].key);
+            // 显示文本仍走本地化表（键化设计）
+            Assert.AreEqual("坚忍", loaded.GetName());
+        }
+    }
+}

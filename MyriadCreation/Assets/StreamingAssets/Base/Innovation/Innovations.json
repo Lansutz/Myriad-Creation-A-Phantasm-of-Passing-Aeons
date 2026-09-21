@@ -1,0 +1,2509 @@
+﻿{
+  "innovations": [
+    {
+      "innovationId": 100,
+      "field": 1,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [],
+      "innovationName": "刀耕火种",
+      "description": "放火烧荒，灰烬肥田；第一片耕地就这样从林莽中开辟出来。"
+    },
+    {
+      "innovationId": 101,
+      "field": 1,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        100
+      ],
+      "innovationName": "休耕制",
+      "description": "种一季歇一季，让土地喘口气；收成少了，地力却保住了。"
+    },
+    {
+      "innovationId": 102,
+      "field": 1,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        101
+      ],
+      "innovationName": "轮作制",
+      "description": "豆麦相轮，用地养地两不误；田亩不再有闲季。"
+    },
+    {
+      "innovationId": 103,
+      "field": 1,
+      "era": 2,
+      "researchCost": 400,
+      "prerequisites": [
+        102
+      ],
+      "innovationName": "三圃制",
+      "description": "春播、秋播、休耕三区轮转，一年到头都有地有粮。"
+    },
+    {
+      "innovationId": 104,
+      "field": 1,
+      "era": 2,
+      "researchCost": 350,
+      "prerequisites": [
+        101
+      ],
+      "innovationName": "重犁",
+      "description": "铁铧深翻，板结的黏土也能开出垄沟。"
+    },
+    {
+      "innovationId": 105,
+      "field": 1,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        104
+      ],
+      "innovationName": "马轭",
+      "description": "挽具改良，牛马不再被勒得喘不过气，耕地一天顶三天。"
+    },
+    {
+      "innovationId": 106,
+      "field": 1,
+      "era": 3,
+      "researchCost": 500,
+      "prerequisites": [
+        103,
+        105
+      ],
+      "innovationName": "水磨",
+      "description": "引水转轮，磨盘自己转了起来；舂米磨面的妇人省下了半日工夫。"
+    },
+    {
+      "innovationId": 107,
+      "field": 1,
+      "era": 3,
+      "researchCost": 600,
+      "prerequisites": [
+        103
+      ],
+      "innovationName": "灌溉技术",
+      "description": "沟渠纵横，旱地变水田；靠天吃饭的日子一去不返。"
+    },
+    {
+      "innovationId": 201,
+      "field": 2,
+      "era": 1,
+      "researchCost": 200,
+      "prerequisites": [
+        1105
+      ],
+      "innovationName": "青铜铸造",
+      "description": "青铜液浇铸成鼎、成犁、成兵刃；范铸法与分铸法让复杂器型成为可能——青铜时代的礼器与兵器皆出于此。",
+      "requiredAnyResources": [
+        56
+      ]
+    },
+    {
+      "innovationId": 202,
+      "field": 2,
+      "era": 2,
+      "researchCost": 400,
+      "prerequisites": [
+        925,
+        939
+      ],
+      "innovationName": "冶铁术",
+      "description": "铁矿在炉内被还原成海绵铁或铁块；关键不再是“先有铜”，而是能否持续提供足够的热量、燃料与送风，并掌握还原与锻打。",
+      "requiredAnyResources": [
+        50
+      ],
+      "requiredCapabilities": [
+        "heat.high",
+        "fuel.charcoal",
+        "airflow.forced",
+        "furnace.reducing"
+      ],
+      "practiceTags": [
+        "iron.ore",
+        "smelting",
+        "reduction",
+        "forge"
+      ]
+    },
+    {
+      "innovationId": 203,
+      "field": 2,
+      "era": 3,
+      "researchCost": 700,
+      "prerequisites": [
+        202
+      ],
+      "innovationName": "炼钢术",
+      "description": "通过控制含碳量、加热、锻打与冷却，把生铁或熟铁转化为性能更稳定的钢材；它依赖的是对温度、碳与热处理过程的控制，而不是某一种矿脉。",
+      "requiredCapabilities": [
+        "heat.high",
+        "fuel.charcoal",
+        "carbon.control",
+        "heat_treatment"
+      ],
+      "practiceTags": [
+        "steel",
+        "carbon",
+        "forge",
+        "heat_treatment"
+      ],
+      "requiredAnyResources": [
+        52
+      ]
+    },
+    {
+      "innovationId": 200,
+      "field": 6,
+      "era": 0,
+      "researchCost": 60,
+      "prerequisites": [],
+      "innovationName": "陶器制作",
+      "description": "一团泥巴在火里变成器皿；东亚仙人洞的陶片已有两万年（全球最早）。"
+    },
+    {
+      "innovationId": 204,
+      "field": 6,
+      "era": 2,
+      "researchCost": 350,
+      "prerequisites": [
+        200
+      ],
+      "innovationName": "纺织机",
+      "description": "经线纬线交错成布，一家的衣裳不再全靠手捻线、骨针缝。"
+    },
+    {
+      "innovationId": 205,
+      "field": 6,
+      "era": 3,
+      "researchCost": 500,
+      "prerequisites": [
+        204,
+        600
+      ],
+      "innovationName": "造纸术",
+      "description": "树皮麻头捣成纸浆，晾干成纸；竹简木牍的沉重日子结束了。"
+    },
+    {
+      "innovationId": 206,
+      "field": 6,
+      "era": 4,
+      "researchCost": 1000,
+      "prerequisites": [
+        205
+      ],
+      "innovationName": "印刷术",
+      "description": "雕版一刷，千卷同出；圣贤之言从此飞入寻常人家。"
+    },
+    {
+      "innovationId": 207,
+      "field": 5,
+      "era": 4,
+      "researchCost": 1200,
+      "prerequisites": [
+        203,
+        803
+      ],
+      "innovationName": "火药",
+      "description": "硝磺木炭按方调配，一声巨响，城墙与旧时代一同裂开。"
+    },
+    {
+      "innovationId": 300,
+      "field": 5,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        201
+      ],
+      "innovationName": "青铜武器",
+      "description": "戈矛剑镞皆是青铜，武士手中的第一件金属兵刃。",
+      "requiredAnyResources": [
+        56
+      ]
+    },
+    {
+      "innovationId": 301,
+      "field": 5,
+      "era": 2,
+      "researchCost": 350,
+      "prerequisites": [
+        202,
+        300
+      ],
+      "innovationName": "铁制武器",
+      "description": "铁刃取代铜刃，军阵的杀伤力上了台阶。",
+      "requiredAnyResources": [
+        52
+      ]
+    },
+    {
+      "innovationId": 303,
+      "field": 5,
+      "era": 3,
+      "researchCost": 600,
+      "prerequisites": [
+        301,
+        302,
+        924
+      ],
+      "innovationName": "重装骑兵",
+      "description": "人马俱甲，冲锋如墙；平原战场的主宰者登场。"
+    },
+    {
+      "innovationId": 304,
+      "field": 5,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        300
+      ],
+      "innovationName": "弩",
+      "description": "机括代臂力，老弱也能射穿重甲；守城的第一利器。"
+    },
+    {
+      "innovationId": 305,
+      "field": 5,
+      "era": 2,
+      "researchCost": 400,
+      "prerequisites": [
+        300
+      ],
+      "innovationName": "攻城器械",
+      "description": "云梯冲车投石机，高墙深池不再是天堑。"
+    },
+    {
+      "innovationId": 307,
+      "field": 5,
+      "era": 4,
+      "researchCost": 1500,
+      "prerequisites": [
+        207,
+        303
+      ],
+      "innovationName": "火器",
+      "description": "火药装入铳管，喷出铁丸；旧式武艺在硝烟中黯然失色。"
+    },
+    {
+      "innovationId": 306,
+      "field": 3,
+      "era": 3,
+      "researchCost": 500,
+      "prerequisites": [
+        305,
+        801
+      ],
+      "innovationName": "城堡建筑",
+      "description": "石墙高塔、瓮城箭楼，一座坚城就是一个政权的心脏。"
+    },
+    {
+      "innovationId": 400,
+      "field": 7,
+      "era": 0,
+      "researchCost": 80,
+      "prerequisites": [],
+      "innovationName": "独木舟",
+      "description": "一截巨木掏空成舟，人第一次离开了岸（Pesse 独木舟，约前 8000 年）。"
+    },
+    {
+      "innovationId": 401,
+      "field": 7,
+      "era": 1,
+      "researchCost": 200,
+      "prerequisites": [
+        400
+      ],
+      "innovationName": "帆船",
+      "description": "布帆借风，船不再是只靠人力的浮木。"
+    },
+    {
+      "innovationId": 402,
+      "field": 7,
+      "era": 2,
+      "researchCost": 400,
+      "prerequisites": [
+        401
+      ],
+      "innovationName": "桨帆船",
+      "description": "桨帆并用，逆风也能航行；沿海贸易的命脉打通了。"
+    },
+    {
+      "innovationId": 403,
+      "field": 7,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        802,
+        402
+      ],
+      "innovationName": "罗盘",
+      "description": "磁针指南，阴天雾海不再迷航；远洋从此有了眼睛。"
+    },
+    {
+      "innovationId": 404,
+      "field": 7,
+      "era": 3,
+      "researchCost": 700,
+      "prerequisites": [
+        402,
+        403
+      ],
+      "innovationName": "卡拉维尔帆船",
+      "description": "轻快多桅，能顶风抢航；海图上的未知海域被一艘艘划去。"
+    },
+    {
+      "innovationId": 405,
+      "field": 7,
+      "era": 3,
+      "researchCost": 900,
+      "prerequisites": [
+        404
+      ],
+      "innovationName": "克拉克帆船",
+      "description": "圆身大肚，载货万石；远洋商路的巨兽。"
+    },
+    {
+      "innovationId": 406,
+      "field": 7,
+      "era": 4,
+      "researchCost": 1200,
+      "prerequisites": [
+        405
+      ],
+      "innovationName": "盖伦帆船",
+      "description": "船身如刃，炮口森然；商船与战舰的完美合体。"
+    },
+    {
+      "innovationId": 600,
+      "field": 8,
+      "era": 1,
+      "researchCost": 200,
+      "prerequisites": [
+        200
+      ],
+      "innovationName": "文字",
+      "description": "刻符记事，言而可传于千里、藏之于百年；记忆第一次有了外置的仓库。"
+    },
+    {
+      "innovationId": 602,
+      "field": 10,
+      "era": 2,
+      "researchCost": 350,
+      "prerequisites": [
+        600
+      ],
+      "innovationName": "哲学",
+      "description": "问天问地问人，思辨之刃剖开一切理所当然。"
+    },
+    {
+      "innovationId": 604,
+      "field": 10,
+      "era": 4,
+      "researchCost": 1500,
+      "prerequisites": [
+        603,
+        206
+      ],
+      "innovationName": "文艺复兴",
+      "description": "古典重光，人重新成为万物的尺度；艺术与学问同时苏醒。"
+    },
+    {
+      "innovationId": 601,
+      "field": 12,
+      "era": 2,
+      "researchCost": 400,
+      "prerequisites": [
+        600
+      ],
+      "innovationName": "一神教",
+      "description": "万神殿塌了一角，唯一真神立定；人心从此有了唯一的皈依。"
+    },
+    {
+      "innovationId": 302,
+      "field": 13,
+      "era": 2,
+      "researchCost": 400,
+      "prerequisites": [
+        923
+      ],
+      "innovationName": "骑兵战术",
+      "description": "骑射奔袭、迂回包抄，战马不只是脚力，更是兵法的一部分。"
+    },
+    {
+      "innovationId": 500,
+      "field": 14,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [],
+      "innovationName": "部落联盟",
+      "description": "几个部落歃血为盟，公推共主；分散的力量第一次握成拳头。"
+    },
+    {
+      "innovationId": 501,
+      "field": 14,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        500
+      ],
+      "innovationName": "封建制度",
+      "description": "土地换忠诚，领主层层分封；契约与刀剑共同维系着等级。"
+    },
+    {
+      "innovationId": 502,
+      "field": 14,
+      "era": 3,
+      "researchCost": 600,
+      "prerequisites": [
+        958
+      ],
+      "innovationName": "中央集权",
+      "description": "权柄归于一尊，地方服从中央（由集权思想与治理形态共同支撑的制度结构）。",
+      "prerequisitesAny": [
+        959,
+        960
+      ]
+    },
+    {
+      "innovationId": 505,
+      "field": 15,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        200
+      ],
+      "innovationName": "成文法",
+      "description": "刑律铸于鼎、刻于碑，刑罚不再凭君一言而定。"
+    },
+    {
+      "innovationId": 506,
+      "field": 15,
+      "era": 3,
+      "researchCost": 600,
+      "prerequisites": [
+        505
+      ],
+      "innovationName": "民法典",
+      "description": "田宅婚姻借贷皆有法可依，官府断案有了万民可查的依据。"
+    },
+    {
+      "innovationId": 503,
+      "field": 16,
+      "era": 3,
+      "researchCost": 500,
+      "prerequisites": [
+        502
+      ],
+      "innovationName": "官僚制度",
+      "description": "以文书治国，官员由中枢任免；国家的机器不再靠血缘转动。",
+      "prerequisitesAny": [
+        822,
+        949
+      ]
+    },
+    {
+      "innovationId": 504,
+      "field": 16,
+      "era": 4,
+      "researchCost": 700,
+      "prerequisites": [
+        945,
+        205
+      ],
+      "innovationName": "科举制度",
+      "description": "寒窗苦读，一纸文章可跃龙门；门第之外，才学开了一条路。"
+    },
+    {
+      "innovationId": 700,
+      "field": 17,
+      "era": 1,
+      "researchCost": 50,
+      "prerequisites": [],
+      "innovationName": "以物易物",
+      "description": "一斗粟换一匹布，交换的雏形在集市上成形。"
+    },
+    {
+      "innovationId": 701,
+      "field": 17,
+      "era": 1,
+      "researchCost": 200,
+      "prerequisites": [
+        700,
+        201
+      ],
+      "innovationName": "铸币",
+      "description": "铜钱方孔，一吊钱走遍天下；价值第一次有了统一的度量。",
+      "requiredAnyResources": [
+        56
+      ]
+    },
+    {
+      "innovationId": 702,
+      "field": 17,
+      "era": 3,
+      "researchCost": 600,
+      "prerequisites": [
+        701
+      ],
+      "innovationName": "银行业",
+      "description": "存贷汇兑，钱庄的钱自己会生钱；商路不再全靠现银。"
+    },
+    {
+      "innovationId": 703,
+      "field": 17,
+      "era": 3,
+      "researchCost": 500,
+      "prerequisites": [
+        701,
+        205
+      ],
+      "innovationName": "纸币",
+      "description": "一张纸券抵作万钱，官府作保；铜山银矿的瓶颈被纸捅破。"
+    },
+    {
+      "innovationId": 704,
+      "field": 17,
+      "era": 4,
+      "researchCost": 1200,
+      "prerequisites": [
+        702
+      ],
+      "innovationName": "股份公司",
+      "description": "众人集资共担风险，远洋船队的旗帜下站着千百个东家。"
+    },
+    {
+      "innovationId": 705,
+      "field": 17,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        701
+      ],
+      "innovationName": "复式记账",
+      "description": "有借必有贷，收支一目了然；糊涂账从此有了照妖镜。"
+    },
+    {
+      "innovationId": 603,
+      "field": 20,
+      "era": 3,
+      "researchCost": 600,
+      "prerequisites": [
+        602,
+        205
+      ],
+      "innovationName": "大学",
+      "description": "聚徒讲学，藏书万卷；学问从师徒口耳相传变为一座常设的殿堂。"
+    },
+    {
+      "innovationId": 800,
+      "field": 3,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [],
+      "innovationName": "夯土筑城",
+      "description": "版筑成墙，土城虽朴却能挡兵挡水；聚落从此有了边界。"
+    },
+    {
+      "innovationId": 801,
+      "field": 3,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        800
+      ],
+      "innovationName": "拱券技术",
+      "description": "楔石相挤成拱，石桥城门跨度倍增；营造之术跨过了一道坎。"
+    },
+    {
+      "innovationId": 802,
+      "field": 0,
+      "era": 1,
+      "researchCost": 80,
+      "prerequisites": [],
+      "innovationName": "露天采掘",
+      "description": "凿山取石、掘地挖矿，大地腹中的馈赠被一层层揭开。"
+    },
+    {
+      "innovationId": 803,
+      "field": 0,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        802
+      ],
+      "innovationName": "深井采矿",
+      "description": "竖井巷道深入地下，支架排水步步跟进；矿脉不再止于地表。"
+    },
+    {
+      "innovationId": 804,
+      "field": 4,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [],
+      "innovationName": "草药学",
+      "description": "采百草辨药性，汤剂膏散初具雏形；病痛不再只能硬扛。"
+    },
+    {
+      "innovationId": 805,
+      "field": 4,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        804
+      ],
+      "innovationName": "外科医术",
+      "description": "清创缝合、正骨接骨，刀剪之下也有人命的学问。"
+    },
+    {
+      "innovationId": 806,
+      "field": 4,
+      "era": 3,
+      "researchCost": 450,
+      "prerequisites": [
+        805
+      ],
+      "innovationName": "痘疮防疫",
+      "description": "以痘防痘，疫起时封村隔离；瘟疫第一次被人的智慧拦在门外。"
+    },
+    {
+      "innovationId": 807,
+      "field": 7,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [],
+      "innovationName": "轮车",
+      "description": "圆木为轮，重货也能日行数十里；道路的意义从此不同。"
+    },
+    {
+      "innovationId": 808,
+      "field": 7,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        807
+      ],
+      "innovationName": "硬质道路",
+      "description": "碎石夯基、石板铺面，车辙不再陷进泥里；商路变通途。"
+    },
+    {
+      "innovationId": 809,
+      "field": 21,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [],
+      "innovationName": "宗族祭祀",
+      "description": "祖先行状刻于木主，春秋两祭；血脉的集体记忆有了仪式依托。"
+    },
+    {
+      "innovationId": 810,
+      "field": 21,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        809
+      ],
+      "innovationName": "冠婚丧祭",
+      "description": "冠礼成年、昏礼合卺、丧礼哀思、祭礼追远，人生四礼成文。"
+    },
+    {
+      "innovationId": 811,
+      "field": 22,
+      "era": 1,
+      "researchCost": 80,
+      "prerequisites": [],
+      "innovationName": "岁时节庆",
+      "description": "春祈秋报，年节有定日；一年的劳碌在庆典中有了刻度。"
+    },
+    {
+      "innovationId": 812,
+      "field": 22,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        811
+      ],
+      "innovationName": "庙会集市",
+      "description": "神诞日里搭台唱戏、列市通商，拜神与买卖同场热闹。"
+    },
+    {
+      "innovationId": 813,
+      "field": 23,
+      "era": 1,
+      "researchCost": 80,
+      "prerequisites": [],
+      "innovationName": "服饰礼制",
+      "description": "冠带衣裳别尊卑，服色纹样皆有规矩；衣冠从此是身份的语言。"
+    },
+    {
+      "innovationId": 814,
+      "field": 23,
+      "era": 2,
+      "researchCost": 180,
+      "prerequisites": [
+        813
+      ],
+      "innovationName": "节令饮食",
+      "description": "元日食糕、端午裹粽、冬至进补；一餐一饭也有了时令的讲究。"
+    },
+    {
+      "innovationId": 815,
+      "field": 24,
+      "era": 1,
+      "researchCost": 60,
+      "prerequisites": [],
+      "innovationName": "结绳纪事",
+      "description": "大事大结、小事小结，绳结里记着账目与盟约；记忆的雏形。"
+    },
+    {
+      "innovationId": 816,
+      "field": 24,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        815
+      ],
+      "innovationName": "口传史诗",
+      "description": "歌者代代传唱先祖的功业，没有文字的民族也有了自己的史书。"
+    },
+    {
+      "innovationId": 820,
+      "field": 16,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        600
+      ],
+      "innovationName": "简牍文书",
+      "description": "以简牍为书，官府文书、簿记账册皆有定式；言而有据，事而有文。"
+    },
+    {
+      "innovationId": 821,
+      "field": 16,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [],
+      "innovationName": "簿籍制度",
+      "description": "户籍田册、赋役簿帐逐户登记；编户齐民，国家第一次能数清自己的子民。",
+      "prerequisitesAny": [
+        820,
+        946,
+        947
+      ]
+    },
+    {
+      "innovationId": 822,
+      "field": 16,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        821,
+        505
+      ],
+      "innovationName": "文书行政",
+      "description": "政令皆以文书下达，上下相承皆有案卷可稽；国家的运转从口耳相传变为纸墨相传。"
+    },
+    {
+      "innovationId": 823,
+      "field": 16,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        808
+      ],
+      "innovationName": "驿传邮驿",
+      "description": "驿道置邮，文书昼夜兼程（印加以接力跑者传讯，奇普文明同此）；都城的诏令数日可抵千里。",
+      "prerequisitesAny": [
+        822,
+        949
+      ]
+    },
+    {
+      "innovationId": 824,
+      "field": 17,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        701
+      ],
+      "innovationName": "度量衡",
+      "description": "度长短、量多少、衡轻重，天下同制；交易与赋税第一次有了不争的标准。"
+    },
+    {
+      "innovationId": 900,
+      "field": 6,
+      "era": 0,
+      "researchCost": 30,
+      "prerequisites": [],
+      "innovationName": "用火",
+      "description": "留住天火，驱兽取暖；长夜不再只有黑暗与寒冷。"
+    },
+    {
+      "innovationId": 901,
+      "field": 6,
+      "era": 0,
+      "researchCost": 40,
+      "prerequisites": [
+        900
+      ],
+      "innovationName": "烹饪",
+      "description": "火烤熟食，肠胃解放，脑力渐开；一餐熟食抵得上生食数日。"
+    },
+    {
+      "innovationId": 902,
+      "field": 6,
+      "era": 0,
+      "researchCost": 20,
+      "prerequisites": [],
+      "innovationName": "石器打制",
+      "description": "击石取片，刃口锋利；第一件工具也是第一件武器。"
+    },
+    {
+      "innovationId": 903,
+      "field": 6,
+      "era": 0,
+      "researchCost": 50,
+      "prerequisites": [
+        902
+      ],
+      "innovationName": "磨制石器",
+      "description": "砺石磨刃，斧凿规整；木工与舟船从此有了趁手的家伙。"
+    },
+    {
+      "innovationId": 904,
+      "field": 6,
+      "era": 0,
+      "researchCost": 40,
+      "prerequisites": [
+        902
+      ],
+      "innovationName": "骨角器",
+      "description": "骨针骨叉骨矛头，兽骨化身为第二套工具库。"
+    },
+    {
+      "innovationId": 905,
+      "field": 6,
+      "era": 0,
+      "researchCost": 60,
+      "prerequisites": [
+        902
+      ],
+      "innovationName": "装柄复合工具",
+      "description": "石刃装柄、矛尖绑杆；手的力量顺着木杆伸出去了一倍。"
+    },
+    {
+      "innovationId": 906,
+      "field": 6,
+      "era": 0,
+      "researchCost": 50,
+      "prerequisites": [
+        905
+      ],
+      "innovationName": "标枪",
+      "description": "削尖木杆，掷向猎物；三十万年前的松木长矛已能刺穿巨兽。"
+    },
+    {
+      "innovationId": 907,
+      "field": 6,
+      "era": 0,
+      "researchCost": 80,
+      "prerequisites": [
+        906
+      ],
+      "innovationName": "弓箭",
+      "description": "弯木为弓、弦丝为弦，箭矢破空；小型猎物与飞禽进入食谱。"
+    },
+    {
+      "innovationId": 908,
+      "field": 6,
+      "era": 0,
+      "researchCost": 60,
+      "prerequisites": [
+        904
+      ],
+      "innovationName": "缝纫与衣物",
+      "description": "骨针引线，兽皮成衣；寒带之地从此也能住人。"
+    },
+    {
+      "innovationId": 909,
+      "field": 6,
+      "era": 0,
+      "researchCost": 40,
+      "prerequisites": [],
+      "innovationName": "编织篮筐",
+      "description": "藤条苇草编成筐篮，采集的果实有了随身携带的仓库。"
+    },
+    {
+      "innovationId": 911,
+      "field": 1,
+      "era": 0,
+      "researchCost": 50,
+      "prerequisites": [],
+      "innovationName": "狗的驯化",
+      "description": "狼在火堆边安了家，人有了第一个四足伙伴；驯化的时代由此开始。"
+    },
+    {
+      "innovationId": 916,
+      "field": 1,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        100
+      ],
+      "innovationName": "粟黍旱作",
+      "description": "华北的粟与黍，春种秋收；黄土高原上最早的田园。"
+    },
+    {
+      "innovationId": 917,
+      "field": 1,
+      "era": 1,
+      "researchCost": 200,
+      "prerequisites": [
+        100
+      ],
+      "innovationName": "稻作水田",
+      "description": "长江流域的稻穗低垂，水田阡陌；一万年前的米香至今未散。"
+    },
+    {
+      "innovationId": 918,
+      "field": 1,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        100
+      ],
+      "innovationName": "麦类耕作",
+      "description": "新月沃地的麦浪西行，面包的香气追随播种者传遍四方。"
+    },
+    {
+      "innovationId": 919,
+      "field": 1,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [
+        911
+      ],
+      "innovationName": "牲畜驯养",
+      "description": "羊群牛群猪群圈进栅栏，肉食与皮毛不再全靠狩猎。"
+    },
+    {
+      "innovationId": 920,
+      "field": 1,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        919
+      ],
+      "innovationName": "羊毛乳业",
+      "description": "剪毛织褐、挤奶制酪，同一群羊被反复再发明；次级产品革命。"
+    },
+    {
+      "innovationId": 921,
+      "field": 1,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        919
+      ],
+      "innovationName": "犁耕",
+      "description": "牛曳木犁，深耕破土；一犁之功胜过十锄。"
+    },
+    {
+      "innovationId": 922,
+      "field": 1,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        919
+      ],
+      "innovationName": "马的驯化",
+      "description": "草原上的野马被套上缰绳；Botai 的牧人留下了最早的骑乘齿痕。"
+    },
+    {
+      "innovationId": 923,
+      "field": 5,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        922
+      ],
+      "innovationName": "骑乘术",
+      "description": "人马合一，日行百里；斥候的视野与军队的腿脚一同变长。"
+    },
+    {
+      "innovationId": 924,
+      "field": 5,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        923,
+        301
+      ],
+      "innovationName": "马镫",
+      "description": "双脚有了支点，骑士挥刀稳如平地；骑兵的时代真正到来。"
+    },
+    {
+      "innovationId": 914,
+      "field": 11,
+      "era": 0,
+      "researchCost": 30,
+      "prerequisites": [],
+      "innovationName": "赭石珠饰",
+      "description": "赭石涂身、贝壳穿串；部落的边界画在了身体上。"
+    },
+    {
+      "innovationId": 915,
+      "field": 9,
+      "era": 0,
+      "researchCost": 50,
+      "prerequisites": [],
+      "innovationName": "刻痕计数",
+      "description": "骨棒上刻下一道道痕，数目第一次离开记忆独自存留。"
+    },
+    {
+      "innovationId": 913,
+      "field": 6,
+      "era": 0,
+      "researchCost": 80,
+      "prerequisites": [
+        200
+      ],
+      "innovationName": "酿酒",
+      "description": "陶瓮里的米谷悄悄发酵，宴饮与祭祀从此有了醉意。"
+    },
+    {
+      "innovationId": 925,
+      "field": 2,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        900,
+        902
+      ],
+      "innovationName": "皮囊风箱",
+      "description": "用皮囊持续把空气压入炉膛，提高燃烧强度与温度；它服务于任何需要强制送风的炉火，而不以炼铜为前提。",
+      "requiredCapabilities": [
+        "airflow.forced"
+      ],
+      "practiceTags": [
+        "bellows",
+        "airflow",
+        "furnace"
+      ]
+    },
+    {
+      "innovationId": 926,
+      "field": 2,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        925,
+        931
+      ],
+      "innovationName": "活塞风箱",
+      "description": "双动活塞连续压送空气，使炉膛获得更稳定、更强的风量；它提高高温炉的持续作业能力，是对送风能力的进一步工程化。",
+      "requiredCapabilities": [
+        "airflow.forced.stable",
+        "heat.very_high"
+      ],
+      "practiceTags": [
+        "piston_bellows",
+        "airflow",
+        "furnace"
+      ]
+    },
+    {
+      "innovationId": 931,
+      "field": 2,
+      "era": 3,
+      "researchCost": 450,
+      "prerequisites": [
+        202,
+        925,
+        939
+      ],
+      "innovationName": "生铁高炉",
+      "description": "炉体、炉料与持续送风被组织成高温还原体系，使炉温和产量跨过普通冶铁炉的上限；高炉是获得更高温度与连续铁水生产能力的一条具体工具路径，而非冶铁术的必然前置。",
+      "requiredCapabilities": [
+        "heat.very_high",
+        "fuel.charcoal",
+        "airflow.forced",
+        "tool.furnace.blast"
+      ],
+      "practiceTags": [
+        "iron.ore",
+        "blast_furnace",
+        "pig_iron",
+        "high_temperature"
+      ],
+      "requiredAnyResources": [
+        50
+      ]
+    },
+    {
+      "innovationId": 930,
+      "field": 2,
+      "era": 3,
+      "researchCost": 300,
+      "prerequisites": [
+        202
+      ],
+      "innovationName": "渗碳淬火",
+      "description": "烧红锻打、入水急冷，刃口硬如新磨；燕下都的淬火钢剑领先天下。"
+    },
+    {
+      "innovationId": 929,
+      "field": 2,
+      "era": 3,
+      "researchCost": 600,
+      "prerequisites": [
+        203,
+        200
+      ],
+      "innovationName": "坩埚钢",
+      "description": "密封坩埚慢火渗碳，钢纹如云（南印度 Kodumanal 最早实证）；大马士革刃的原料。"
+    },
+    {
+      "innovationId": 932,
+      "field": 2,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        931,
+        106
+      ],
+      "innovationName": "水力锻锤",
+      "description": "水轮带杵，锤落如雨；杜诗的水排让冶铁作坊昼夜不息。"
+    },
+    {
+      "innovationId": 927,
+      "field": 2,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        1101,
+        925
+      ],
+      "innovationName": "灰吹法",
+      "description": "铅吸银入灰皿，火中炼出真银（Tepe Sialk 前四千年实证；安第斯独立发明）。",
+      "requiredAllResources": [
+        58,
+        61
+      ]
+    },
+    {
+      "innovationId": 928,
+      "field": 2,
+      "era": 2,
+      "researchCost": 350,
+      "prerequisites": [
+        1105,
+        200
+      ],
+      "innovationName": "失蜡法",
+      "description": "蜡模化去、铜液注入，纹饰纤毫毕现；至少六个文明独立点亮（Nahal Mishmar/曾侯乙尊盘）。"
+    },
+    {
+      "innovationId": 939,
+      "field": 6,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [
+        900
+      ],
+      "innovationName": "木炭制备",
+      "description": "在受控缺氧条件下把木材转化为木炭；燃料从普通薪柴变成更稳定、能支撑高温冶炼的碳质燃料。",
+      "requiredCapabilities": [
+        "fuel.charcoal"
+      ],
+      "practiceTags": [
+        "charcoal",
+        "fuel",
+        "controlled_burning"
+      ]
+    },
+    {
+      "innovationId": 934,
+      "field": 0,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [
+        200
+      ],
+      "innovationName": "海盐煮盐",
+      "description": "陶器煮卤成盐，海边灶烟不绝（Provadia 遗址催生欧洲最早城镇）。"
+    },
+    {
+      "innovationId": 933,
+      "field": 0,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        803,
+        934
+      ],
+      "innovationName": "井盐深钻",
+      "description": "凿井及泉、竹筒汲卤，四川井盐养活半壁江山；北宋卓筒井的顿钻深达数百米。"
+    },
+    {
+      "innovationId": 935,
+      "field": 6,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        200,
+        201
+      ],
+      "innovationName": "玻璃制造",
+      "description": "石英砂与草木灰在高温中化成晶莹（阿马尔纳工坊工业级生产；罗马人吹出了透明时代）。"
+    },
+    {
+      "innovationId": 936,
+      "field": 6,
+      "era": 4,
+      "researchCost": 700,
+      "prerequisites": [
+        200,
+        202
+      ],
+      "innovationName": "瓷器",
+      "description": "高岭土入龙窑，千二百度烧成如玉之瓷（上虞小仙坛东汉窑为世界最早成熟瓷）。"
+    },
+    {
+      "innovationId": 937,
+      "field": 6,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        201,
+        200
+      ],
+      "innovationName": "金器细工",
+      "description": "锤揲累珠、錾刻鎏光（瓦尔纳前四千六百年金器为世界最早；三星堆金杖辉映星河）。"
+    },
+    {
+      "innovationId": 938,
+      "field": 6,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        937,
+        802
+      ],
+      "innovationName": "鎏金",
+      "description": "金汞齐涂器加热，金衣不落（满城汉墓长信宫灯；罗马普林尼同法记载）。"
+    },
+    {
+      "innovationId": 940,
+      "field": 16,
+      "era": 3,
+      "researchCost": 300,
+      "prerequisites": [
+        822,
+        821
+      ],
+      "innovationName": "档案典藏",
+      "description": "文书入库、副本分存、编目检索（里耶简牍库三万七千枚；尼尼微档案三万件）；行政有了记忆。"
+    },
+    {
+      "innovationId": 941,
+      "field": 16,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        821,
+        502
+      ],
+      "innovationName": "上计制度",
+      "description": "郡县岁末呈报计簿——人口、垦田、赋税、刑狱；皇帝亲受计，天下如在掌中。"
+    },
+    {
+      "innovationId": 942,
+      "field": 16,
+      "era": 3,
+      "researchCost": 300,
+      "prerequisites": [
+        941,
+        503
+      ],
+      "innovationName": "考课制度",
+      "description": "四善二十七最，岁考小考三年大考；《效律》盘点物资，绩效与审计并立。"
+    },
+    {
+      "innovationId": 943,
+      "field": 16,
+      "era": 4,
+      "researchCost": 500,
+      "prerequisites": [
+        942,
+        502
+      ],
+      "innovationName": "御史监察",
+      "description": "十三州部刺史秩六百石而监察二千石，以小制大；专职监察官独立于行政之外。"
+    },
+    {
+      "innovationId": 944,
+      "field": 16,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        503,
+        701
+      ],
+      "innovationName": "俸禄制度",
+      "description": "秩石定俸、半钱半谷，官员食君之禄（汉代秩石制；欧麦尔迪万俸册同旨）。"
+    },
+    {
+      "innovationId": 945,
+      "field": 16,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        503
+      ],
+      "innovationName": "九品中正",
+      "description": "中正官品评士人，九品定高下；门阀渐成，然品评之制终为科举铺路。"
+    },
+    {
+      "innovationId": 946,
+      "field": 16,
+      "era": 1,
+      "researchCost": 250,
+      "prerequisites": [
+        600,
+        200
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Clay"
+      ],
+      "innovationName": "泥板文书",
+      "description": "湿泥压字、晒干成板（乌鲁克泥板九成是账目——书写为行政而生）；两河路径的记录载体。"
+    },
+    {
+      "innovationId": 947,
+      "field": 16,
+      "era": 1,
+      "researchCost": 250,
+      "prerequisites": [
+        600,
+        204
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Papyrus"
+      ],
+      "innovationName": "莎草纸文书",
+      "description": "纸草茎剖为页，书吏伏案疾书（瓦迪·杰尔夫纸草为现存最早）；埃及与地中海路径。"
+    },
+    {
+      "innovationId": 948,
+      "field": 16,
+      "era": 0,
+      "researchCost": 80,
+      "prerequisites": [
+        915
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Quipu"
+      ],
+      "innovationName": "奇普结绳",
+      "description": "绳结记事记数（卡拉尔遗址结绳早于印加四千年）；无文字文明的记录形态。"
+    },
+    {
+      "innovationId": 949,
+      "field": 16,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        948
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Quipu"
+      ],
+      "innovationName": "奇普统计",
+      "description": "分层汇总会计（Urton & Brezine 破译普鲁丘科奇普群为记账系统）；户口贡赋尽在绳结中。"
+    },
+    {
+      "innovationId": 950,
+      "field": 16,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        823
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Barid"
+      ],
+      "innovationName": "巴里德驿站",
+      "description": "四法尔萨赫一驿，信鸽传讯（《道里邦国志》九百三十站）；驿传与情报网合体。"
+    },
+    {
+      "innovationId": 951,
+      "field": 16,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        947,
+        503
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Scribe"
+      ],
+      "innovationName": "书吏学校",
+      "description": "神庙附设学馆，书吏子弟世代执笔（《行业讽刺诗》）；选拔的埃及形态。"
+    },
+    {
+      "innovationId": 952,
+      "field": 17,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        501
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Manor"
+      ],
+      "innovationName": "庄园制度",
+      "description": "领主自营地与农奴份地交错，敞田三圃轮作（Bloch：封建社会的经济细胞）；庄园自给自足。"
+    },
+    {
+      "innovationId": 953,
+      "field": 15,
+      "era": 3,
+      "researchCost": 250,
+      "prerequisites": [
+        952
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Manor"
+      ],
+      "innovationName": "庄园法庭",
+      "description": "领主开庭，庄头陪审，争讼不出庄园（manorial court）；领地内自有法度。"
+    },
+    {
+      "innovationId": 954,
+      "field": 17,
+      "era": 3,
+      "researchCost": 200,
+      "prerequisites": [
+        952
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Manor"
+      ],
+      "innovationName": "公地制度",
+      "description": "牧场林地共牧共樵，茅舍农亦有生机（commons）；村社的公共财产。"
+    },
+    {
+      "innovationId": 955,
+      "field": 17,
+      "era": 3,
+      "researchCost": 300,
+      "prerequisites": [
+        952,
+        106
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Manor"
+      ],
+      "innovationName": "磨坊垄断",
+      "description": "领主的磨坊是唯一的磨坊，磨税入仓（mill soke）；水磨成了权力的象征。"
+    },
+    {
+      "innovationId": 956,
+      "field": 17,
+      "era": 3,
+      "researchCost": 250,
+      "prerequisites": [
+        952
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Manor"
+      ],
+      "innovationName": "劳役地租",
+      "description": "农奴每周数日在自营地服役（corvée）；劳动本身就是地租。"
+    },
+    {
+      "innovationId": 957,
+      "field": 16,
+      "era": 4,
+      "researchCost": 500,
+      "prerequisites": [
+        952,
+        941
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Manor"
+      ],
+      "innovationName": "末日审判书",
+      "description": "威廉一世全英清丈，一万三千聚落登记在册（1086）；封建王权的统计奇迹。"
+    },
+    {
+      "innovationId": 958,
+      "field": 10,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [],
+      "prerequisitesAny": [
+        600,
+        948
+      ],
+      "affinityTags": [],
+      "innovationName": "中央集权思想",
+      "description": "事在四方，要在中央（法家）；集权首先是一种理念——经文字或结绳传承，然后才成为制度。"
+    },
+    {
+      "innovationId": 959,
+      "field": 14,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        958
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Junxian"
+      ],
+      "innovationName": "郡县制",
+      "description": "郡统县、县统乡，地方官由中央任免、流官任期（李斯定策）；中央垂直管理地方。"
+    },
+    {
+      "innovationId": 960,
+      "field": 14,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        958
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Province"
+      ],
+      "innovationName": "行省制",
+      "description": "中央派出机构地方化（元之行省、罗马行省总督）；大帝国的地方枢纽。"
+    },
+    {
+      "innovationId": 961,
+      "field": 17,
+      "era": 3,
+      "researchCost": 300,
+      "prerequisites": [
+        958,
+        701
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "TaxFarming"
+      ],
+      "innovationName": "包税制",
+      "description": "税收征管以合同外包，包税人竞标定额（罗马 publicani、奥斯曼 iltizam）；财政的捷径与积弊。"
+    },
+    {
+      "innovationId": 962,
+      "field": 6,
+      "era": 0,
+      "researchCost": 60,
+      "prerequisites": [
+        902
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "预制石核",
+      "description": "先整石核再取片（勒瓦娄哇：一次成型）；工具第一次需要预谋。"
+    },
+    {
+      "innovationId": 963,
+      "field": 6,
+      "era": 0,
+      "researchCost": 70,
+      "prerequisites": [
+        962
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "石叶技术",
+      "description": "一核多叶、刃口绵长；石料利用率翻了三倍。"
+    },
+    {
+      "innovationId": 964,
+      "field": 6,
+      "era": 0,
+      "researchCost": 80,
+      "prerequisites": [
+        963
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "细石器",
+      "description": "几何小片嵌柄成刃（Howiesons Poort 六万五千年前）；复合刃的时代。"
+    },
+    {
+      "innovationId": 965,
+      "field": 6,
+      "era": 0,
+      "researchCost": 60,
+      "prerequisites": [
+        906
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "投矛器",
+      "description": "杠杆延长手臂，矛掷得又远又狠（马格德林文化）。"
+    },
+    {
+      "innovationId": 966,
+      "field": 11,
+      "era": 0,
+      "researchCost": 70,
+      "prerequisites": [
+        914
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "岩画艺术",
+      "description": "手印与野牛在洞壁上呼之欲出（苏拉威西四万五千年、Chauvet）；最早的艺术。"
+    },
+    {
+      "innovationId": 967,
+      "field": 9,
+      "era": 0,
+      "researchCost": 80,
+      "prerequisites": [
+        915
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "历法计时",
+      "description": "骨棒刻痕记月相（Ishango 骨）；时间第一次被数出来。"
+    },
+    {
+      "innovationId": 968,
+      "field": 23,
+      "era": 0,
+      "researchCost": 50,
+      "prerequisites": [
+        914
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "珠饰交换",
+      "description": "贝壳珠跨越千里易手（Blombos 七万五千年前）；最早的奢侈品贸易。"
+    },
+    {
+      "innovationId": 969,
+      "field": 1,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [
+        911
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "猪的驯化",
+      "description": "贾湖与安纳托利亚各自驯猪（多中心）；肉食稳定化的第一步。"
+    },
+    {
+      "innovationId": 970,
+      "field": 1,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [
+        911
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "羊的驯化",
+      "description": "扎格罗斯山麓的羊群入圈（Ganj Dareh）；毛奶肉的宝库。"
+    },
+    {
+      "innovationId": 971,
+      "field": 1,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [
+        911
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "牛的驯化",
+      "description": "安纳托利亚原牛驯服，印度瘤牛、非洲牛各成一系；力与乳的源泉。"
+    },
+    {
+      "innovationId": 972,
+      "field": 1,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        100
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "新大陆作物",
+      "description": "玉米土豆南瓜——无大牲畜的农业靠工具与智慧取胜（中美洲/安第斯）。"
+    },
+    {
+      "innovationId": 973,
+      "field": 6,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [
+        908,
+        909
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "纺轮",
+      "description": "陶木纺轮捻线如飞（河姆渡纺轮七千年前）；线比手捻又匀又长。"
+    },
+    {
+      "innovationId": 974,
+      "field": 6,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        973
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "养蚕缫丝",
+      "description": "桑蚕吐丝、缫成锦帛（钱山漾丝织品；贾湖丝蛋白八千五百年）；中国独有之秘。"
+    },
+    {
+      "innovationId": 975,
+      "field": 6,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        204
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "提花织机",
+      "description": "花楼之上提综换线，锦上能织山水（马钧改良绫机）。"
+    },
+    {
+      "innovationId": 976,
+      "field": 6,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        200
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "漆器",
+      "description": "漆树割汁髹涂成器（跨湖桥漆弓八千年，世界最早）；东亚的树脂文明。"
+    },
+    {
+      "innovationId": 977,
+      "field": 6,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        903
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "玉石加工",
+      "description": "砂绳切割、管钻成孔（良渚玉琮毫米级精度）；石头中的礼制。"
+    },
+    {
+      "innovationId": 978,
+      "field": 6,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        200
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "釉与釉砂",
+      "description": "石英砂挂釉入窑（埃及釉砂前四千年；唐三彩铅釉）；玻璃的兄长。"
+    },
+    {
+      "innovationId": 979,
+      "field": 6,
+      "era": 4,
+      "researchCost": 800,
+      "prerequisites": [
+        206
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "活字印刷",
+      "description": "毕昇泥活字、朝鲜金属活字、谷登堡铅活字——三次独立点亮；千书同出。"
+    },
+    {
+      "innovationId": 980,
+      "field": 14,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        505
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Democracy"
+      ],
+      "innovationName": "雅典公民议事",
+      "description": "五百人议事会轮值执政、抽签任职（克利斯提尼改革）；公民集体之治。"
+    },
+    {
+      "innovationId": 981,
+      "field": 16,
+      "era": 3,
+      "researchCost": 200,
+      "prerequisites": [
+        980
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Democracy"
+      ],
+      "innovationName": "陶片放逐",
+      "description": "万片陶片定流放（地米斯托克利之例）；民主的反独裁保险丝。"
+    },
+    {
+      "innovationId": 982,
+      "field": 10,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        600,
+        503
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Arthashastra"
+      ],
+      "innovationName": "政事论",
+      "description": "考底利耶著书立说：十八部门、逐级汇报、密探网络（孔雀王朝行政学）。"
+    },
+    {
+      "innovationId": 983,
+      "field": 16,
+      "era": 4,
+      "researchCost": 450,
+      "prerequisites": [
+        503,
+        506
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "拜占庭官僚",
+      "description": "官职表列名全套宫廷职官（taktika）；罗马官僚制的活化石。"
+    },
+    {
+      "innovationId": 984,
+      "field": 16,
+      "era": 4,
+      "researchCost": 350,
+      "prerequisites": [
+        823,
+        960
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Yam"
+      ],
+      "innovationName": "蒙古站赤",
+      "description": "一千四百站、牌符换乘（paiza）；欧亚大陆的驿传帝国。"
+    },
+    {
+      "innovationId": 985,
+      "field": 16,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        505
+      ],
+      "prerequisitesAny": [
+        820,
+        946,
+        947
+      ],
+      "affinityTags": [
+        "Seal"
+      ],
+      "innovationName": "印信封泥符券",
+      "description": "封泥盖印、剖符合验（秦封泥数万枚、虎符鱼符）；文书权威的凭据。"
+    },
+    {
+      "innovationId": 986,
+      "field": 16,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [],
+      "prerequisitesAny": [
+        820,
+        946,
+        947
+      ],
+      "affinityTags": [],
+      "innovationName": "神庙档案",
+      "description": "神庙与商号亦有账房（乌鲁克埃安纳两万件；穆拉舒家族租约）；文书化是复杂组织的通律。"
+    },
+    {
+      "innovationId": 987,
+      "field": 17,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        503,
+        701
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Diwan"
+      ],
+      "innovationName": "迪万财政",
+      "description": "欧麦尔设俸册，哈里发分设税务文翰印玺诸部（diwan）；部委制的雏形。"
+    },
+    {
+      "innovationId": 993,
+      "field": 15,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        505
+      ],
+      "prerequisitesAny": [
+        820,
+        946,
+        947
+      ],
+      "affinityTags": [],
+      "innovationName": "契约文书",
+      "description": "租约、借贷、合伙皆立契为凭（穆拉舒契约、庞贝蜡板）；私人间的法度。"
+    },
+    {
+      "innovationId": 988,
+      "field": 5,
+      "era": 5,
+      "researchCost": 900,
+      "prerequisites": [
+        603,
+        206
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "机械钟",
+      "description": "摆轮擒纵、昼夜自鸣（欧洲十三世纪钟楼）；时间脱离天象独立行走。"
+    },
+    {
+      "innovationId": 989,
+      "field": 5,
+      "era": 4,
+      "researchCost": 400,
+      "prerequisites": [
+        106,
+        801
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "风车",
+      "description": "风帆转轮、磨粉提水（波斯风车、欧洲风车）；风成了新的畜力。"
+    },
+    {
+      "innovationId": 990,
+      "field": 7,
+      "era": 4,
+      "researchCost": 500,
+      "prerequisites": [
+        403,
+        404
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "星盘导航",
+      "description": "观星定纬、测角知位（伊斯兰星盘传欧）；远洋有了天上的路标。"
+    },
+    {
+      "innovationId": 994,
+      "field": 14,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        701,
+        505
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "城市特许状",
+      "description": "领主颁赐特许状，城市自治、市民免赋役（中世纪自由城市）；城墙内的公民有了自己的法度。"
+    },
+    {
+      "innovationId": 995,
+      "field": 18,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [
+        500
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "军队编制",
+      "description": "什伍相连、十夫百夫层层有长（部落武装的制度化）；散兵游勇从此有了编制。"
+    },
+    {
+      "innovationId": 998,
+      "field": 18,
+      "era": 2,
+      "researchCost": 300,
+      "prerequisites": [
+        995,
+        505
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "军功爵制",
+      "description": "斩首赐爵、战功授田（秦二十等爵）；耕战之民有了上升之阶。"
+    },
+    {
+      "innovationId": 1002,
+      "field": 18,
+      "era": 3,
+      "researchCost": 450,
+      "prerequisites": [
+        995,
+        502
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "常备军",
+      "description": "脱产职业军人，国家供养（罗马军团）；平时也握刀的军队。"
+    },
+    {
+      "innovationId": 1003,
+      "field": 18,
+      "era": 3,
+      "researchCost": 400,
+      "prerequisites": [
+        995,
+        701
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "募兵制",
+      "description": "金钱募勇、佣兵从征（雇佣兵）；兵为钱卖，亦为钱叛。"
+    },
+    {
+      "innovationId": 996,
+      "field": 18,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [
+        500
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "号角军令",
+      "description": "号角旗鼓传令进退（金鼓之节）；千军万马听一个声音。"
+    },
+    {
+      "innovationId": 999,
+      "field": 18,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        800,
+        996
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "烽燧传警",
+      "description": "烽火相望、昼夜传警（长城烽燧）；边警一日千里。"
+    },
+    {
+      "innovationId": 1005,
+      "field": 18,
+      "era": 3,
+      "researchCost": 300,
+      "prerequisites": [
+        823,
+        996
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "急递铺",
+      "description": "十里一铺、铺铺换马接力（宋元急递）；军情文书昼夜兼程。"
+    },
+    {
+      "innovationId": 997,
+      "field": 18,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        807
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "粮秣辎重",
+      "description": "粮车辎队随军而行（车兵粮道）；兵马未动，粮草先行。"
+    },
+    {
+      "innovationId": 1000,
+      "field": 18,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        997,
+        808
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "兵站补给",
+      "description": "沿线设站储粮转运（补给线）；远征之师不断炊。"
+    },
+    {
+      "innovationId": 1001,
+      "field": 7,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        919
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "驮运畜力",
+      "description": "骡马骆驼载货随行（驮队）；大漠商道与军道同源。"
+    },
+    {
+      "innovationId": 1004,
+      "field": 18,
+      "era": 3,
+      "researchCost": 350,
+      "prerequisites": [
+        997,
+        100
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "军屯",
+      "description": "戍卒屯田自给（军屯）；兵农合一，边地自养。"
+    },
+    {
+      "innovationId": 1006,
+      "field": 18,
+      "era": 4,
+      "researchCost": 600,
+      "prerequisites": [
+        303,
+        203
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "具装甲骑",
+      "description": "人马俱披重甲，冲阵如墙（拜占庭甲骑/铁浮屠/帕提亚具装）；重骑兵的终极形态。"
+    },
+    {
+      "innovationId": 1007,
+      "field": 18,
+      "era": 2,
+      "researchCost": 250,
+      "prerequisites": [
+        402
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "撞角战术",
+      "description": "舰首包铜铁撞角，冲断敌舷（希腊三列桨/罗马战船）；海战从接舷变为撞击。"
+    },
+    {
+      "innovationId": 1008,
+      "field": 17,
+      "era": 3,
+      "researchCost": 450,
+      "prerequisites": [
+        404,
+        701
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [],
+      "innovationName": "远洋贸易",
+      "description": "远洋商路贯通（香料丝绸瓷器跨海而行）；海商们把世界缝在了一起。"
+    },
+    {
+      "innovationId": 1009,
+      "field": 6,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [
+        900
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Leather"
+      ],
+      "innovationName": "皮革加工",
+      "description": "兽皮鞣制与缝纫——皮囊、革带与早期护具的基础材料工艺。"
+    },
+    {
+      "innovationId": 1010,
+      "field": 5,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        1009,
+        903
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Leather"
+      ],
+      "innovationName": "皮甲",
+      "description": "多层皮革缝制的护甲——金属甲普及前最主要的防护。"
+    },
+    {
+      "innovationId": 1011,
+      "field": 7,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        807
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Wheel"
+      ],
+      "innovationName": "实心轮",
+      "description": "整木或拼板实心车轮——牛车马车的重载基础。"
+    },
+    {
+      "innovationId": 1012,
+      "field": 7,
+      "era": 2,
+      "researchCost": 220,
+      "prerequisites": [
+        1011
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Wheel"
+      ],
+      "innovationName": "辐条轮",
+      "description": "轮辐轻量化——战车速度的关键突破（青铜时代战车革命）。"
+    },
+    {
+      "innovationId": 1013,
+      "field": 18,
+      "era": 2,
+      "researchCost": 280,
+      "prerequisites": [
+        1012,
+        922,
+        300
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Chariot"
+      ],
+      "innovationName": "战车",
+      "description": "双马战车编队——青铜时代战场的主宰（赫梯/商/埃及战车）。"
+    },
+    {
+      "innovationId": 1014,
+      "field": 5,
+      "era": 2,
+      "researchCost": 260,
+      "prerequisites": [
+        300,
+        1010
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "BronzeArmor"
+      ],
+      "innovationName": "青铜盔甲",
+      "description": "青铜胸甲与护胫——重装战士的金属防护。",
+      "requiredAnyResources": [
+        56
+      ]
+    },
+    {
+      "innovationId": 1015,
+      "field": 18,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        995
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "CampFollowers"
+      ],
+      "innovationName": "随营军妓",
+      "description": "军队编制中的随营女性——战地生活服务与士气维系（历史普遍存在的制度）。"
+    },
+    {
+      "innovationId": 1016,
+      "field": 20,
+      "era": 4,
+      "researchCost": 420,
+      "prerequisites": [
+        979,
+        823
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Press"
+      ],
+      "innovationName": "报纸",
+      "description": "定期印刷发行的大众读物——公共舆论的载体。"
+    },
+    {
+      "innovationId": 1017,
+      "field": 25,
+      "era": 5,
+      "researchCost": 520,
+      "prerequisites": [
+        1016,
+        600
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "Nationalism"
+      ],
+      "innovationName": "民族主义",
+      "description": "民族共同体意识——以共同语言/历史/文化凝聚的集体认同。"
+    },
+    {
+      "innovationId": 1018,
+      "field": 14,
+      "era": 5,
+      "researchCost": 580,
+      "prerequisites": [
+        1017,
+        503
+      ],
+      "prerequisitesAny": [],
+      "affinityTags": [
+        "NationState"
+      ],
+      "innovationName": "民族国家",
+      "description": "以民族为政治单元的领土主权国家——官僚治理的现代形态。"
+    },
+    {
+      "innovationId": 1025,
+      "field": 14,
+      "era": 2,
+      "researchCost": 200,
+      "prerequisites": [
+        500
+      ],
+      "prerequisitesAny": [],
+      "innovationName": "领土王国",
+      "description": "疆域想象的形成——先是某某人之王，而后才有王国：头衔所辖从'人'延展为'土地'，王国成为领土实体，地图上开始出现以国为名的疆域。"
+    },
+    {
+      "innovationId": 1100,
+      "field": 2,
+      "era": 0,
+      "researchCost": 40,
+      "prerequisites": [
+        900
+      ],
+      "requiredAnyResources": [
+        51
+      ],
+      "innovationName": "自然铜冷锻",
+      "description": "地表捡到的自然铜块，冷锤成小珠小管；安纳托利亚Çayönü前八千八百年已有冷锻铜珠——金属时代的第一缕微光。"
+    },
+    {
+      "innovationId": 1101,
+      "field": 2,
+      "era": 1,
+      "researchCost": 120,
+      "prerequisites": [
+        802,
+        1100,
+        200
+      ],
+      "requiredAnyResources": [
+        51
+      ],
+      "innovationName": "炼铜术",
+      "description": "铜矿石入陶坩埚，炭火还原出铜液；从矿石到金属的第一步——温查文明前五千五百年已炼出铜斧。"
+    },
+    {
+      "innovationId": 1102,
+      "field": 2,
+      "era": 1,
+      "researchCost": 150,
+      "prerequisites": [
+        1101
+      ],
+      "requiredAnyResources": [
+        53
+      ],
+      "innovationName": "铜的退火与铸造",
+      "description": "加热后锻打不再脆裂，熔铜灌入石范陶范成器；红铜时代的成型工艺——纯铜虽软，却已能铸成斧凿。"
+    },
+    {
+      "innovationId": 1103,
+      "field": 2,
+      "era": 1,
+      "researchCost": 180,
+      "prerequisites": [
+        1101
+      ],
+      "requiredAnyResources": [
+        51
+      ],
+      "innovationName": "砷铜合金",
+      "description": "含砷铜矿石冶炼出砷铜，硬度与铸造性优于纯铜；青铜之前的合金时代——前四千纪两河与安纳托利亚的兵刃多是砷铜。"
+    },
+    {
+      "innovationId": 1104,
+      "field": 2,
+      "era": 1,
+      "researchCost": 160,
+      "prerequisites": [
+        900,
+        939
+      ],
+      "requiredAnyResources": [
+        54
+      ],
+      "innovationName": "炼锡术",
+      "description": "锡石在稳定燃料与还原炉火中被还原成锡液；锡冶炼本身不要求先掌握炼铜，而要求识别矿石、控制燃料与炉火。",
+      "requiredCapabilities": [
+        "heat.medium",
+        "fuel.charcoal",
+        "furnace.reducing"
+      ],
+      "practiceTags": [
+        "tin.ore",
+        "smelting",
+        "reduction"
+      ]
+    },
+    {
+      "innovationId": 1105,
+      "field": 2,
+      "era": 1,
+      "researchCost": 200,
+      "prerequisites": [
+        1102,
+        1104
+      ],
+      "requiredAllResources": [
+        53,
+        55
+      ],
+      "innovationName": "青铜合金",
+      "description": "铜锡按配比共熔，硬度韧性铸造性兼备；真正的青铜——人类第一个广泛使用的合金，前三千纪开启了青铜时代。"
+    }
+  ]
+}
