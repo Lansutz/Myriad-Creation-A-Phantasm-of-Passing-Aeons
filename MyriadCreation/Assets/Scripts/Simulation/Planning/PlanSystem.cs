@@ -187,7 +187,6 @@ namespace CivilizationEvolution.Simulation.Planning
 
             if (newState == PlanState.Completed)
             {
-                if (_executors.TryGetValue(plan.type, out var executor)) executor?.OnPlanEnded(plan);
                 PlanCompleted?.Invoke(plan);
             }
             else if (newState == PlanState.Failed)
