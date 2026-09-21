@@ -162,8 +162,10 @@ namespace CivilizationEvolution.Simulation.Modding
             }
             else
             {
-                LoadContentRoot(Path.Combine(root, "Base"));
-                LoadContentRoot(Path.Combine(root, "Mods")); // Mods 后载，覆盖同名
+                var sources = ContentSourceCatalog.CreateDefault(root);
+                for (int i = 0; i < sources.Count; i++)
+                    if (sources[i].Exists)
+                        LoadContentRoot(sources[i].rootPath);
             }
 
             IsInitialized = true;
