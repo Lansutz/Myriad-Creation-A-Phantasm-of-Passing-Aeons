@@ -59,32 +59,6 @@ namespace CivilizationEvolution.Simulation.Modding{internal static class Content
             public List<BiomeDef> biomes = new List<BiomeDef>();
         }
 
-        public static Dictionary<int, CultureContentPack> Cultures { get; private set; } = new Dictionary<int, CultureContentPack>();
-        public static Dictionary<int, RaceData> Races { get; private set; } = new Dictionary<int, RaceData>();
-
- // ===== 模组化定义表（族群/族群精神/文化传统/语言/家族传统/角色模板，按 Id 覆盖） =====
-        public static Dictionary<string, EthosDef> Ethos { get; private set; } = new Dictionary<string, EthosDef>();
-        public static Dictionary<string, TraditionDef> Traditions { get; private set; } = new Dictionary<string, TraditionDef>();
-        public static Dictionary<string, LanguageDef> Languages { get; private set; } = new Dictionary<string, LanguageDef>();
-        public static Dictionary<string, EthnicGroupDef> EthnicGroups { get; private set; } = new Dictionary<string, EthnicGroupDef>();
-        public static Dictionary<string, FamilyTraditionDef> FamilyTraditions { get; private set; } = new Dictionary<string, FamilyTraditionDef>();
- /// <summary>头衔表（titleId→定义——名后缀——
- /// cultureId 空=通用——模组可加/覆盖）</summary>
-        public static Dictionary<string, TitleDef> Titles { get; private set; } = new Dictionary<string, TitleDef>();
-        public static Dictionary<string, CharacterTemplateDef> CharacterTemplates { get; private set; } = new Dictionary<string, CharacterTemplateDef>();
-        public static Dictionary<string, TalentDefectDef> TalentDefects { get; private set; } = new Dictionary<string, TalentDefectDef>();
-        public static Dictionary<string, MentalDisorderDef> MentalDisorders { get; private set; } = new Dictionary<string, MentalDisorderDef>();
-        public static Dictionary<int, InnovationDef> Innovations { get; private set; } = new Dictionary<int, InnovationDef>();
-        public static Dictionary<int, ReligionDef> Religions { get; private set; } = new Dictionary<int, ReligionDef>();
-        public static Dictionary<int, BiomeDef> Biomes => BiomeRegistry.Overrides;
-        public static Dictionary<string, DoctrineOptionDef> Doctrines { get; private set; } = new Dictionary<string, DoctrineOptionDef>();
-
-        public static bool IsInitialized { get; private set; } = false;
-
-        // Provider composition is intentionally kept here as a compatibility facade.
-        // Each content type can move to an independent provider without changing consumers.
-
- /// <summary>初始化内容注册表（幂等，可重复调用）</summary>
         private static void LoadCultureRoot(string r,IContentStore<int,ContentRegistry.CultureContentPack> t){var d=Path.Combine(r,"Culture");if(Directory.Exists(d))foreach(var x in Directory.GetDirectories(d))LoadCulturePack(x,t);}
         private static void LoadRaceRoot(string r,IContentStore<int,RaceData> t){var f=Path.Combine(r,"Race/RaceDefs.json");if(File.Exists(f))LoadRaceDefs(f,t);}
         private static void LoadEthosRoot(string r,IContentStore<string,EthosDef> t){var f=Path.Combine(r,"Ethos/Ethos.json");if(File.Exists(f))LoadEthos(f,t);}
@@ -381,11 +355,10 @@ namespace CivilizationEvolution.Simulation.Modding{internal static class Content
         private static void LoadReligions(string path, IContentStore<int, ReligionDef> target)
         {
             var wrapper = JsonUtility.FromJson<ReligionListWrapper>(File.ReadAllText(path));
-            Religions.Clear();
             if (wrapper == null || wrapper.religions == null) return;
             foreach (var r in wrapper.religions)
                 if (r != null) target.Set(r.religionId, r);
-            ReligionCatalog.Load(new List<ReligionDef>(Religions.Values));
+            ReligionCatalog.Load(new List<ReligionDef>(target.All));
             ReligionCatalog.EnsureColors();
         }
 
@@ -399,12 +372,11 @@ namespace CivilizationEvolution.Simulation.Modding{internal static class Content
         private static void LoadDoctrines(string path, IContentStore<string, DoctrineOptionDef> target)
         {
             var wrapper = JsonUtility.FromJson<DoctrineListWrapper>(File.ReadAllText(path));
-            Doctrines.Clear();
             if (wrapper == null || wrapper.doctrines == null) return;
             foreach (var d in wrapper.doctrines)
                 if (d != null && !string.IsNullOrEmpty(d.optionId))
                     target.Set(d.optionId, d);
-            DoctrinePool.Load(new List<DoctrineOptionDef>(Doctrines.Values));
+            DoctrinePool.Load(new List<DoctrineOptionDef>(target.All));
         }
 
         [System.Serializable]
@@ -435,7 +407,7 @@ namespace CivilizationEvolution.Simulation.Modding{internal static class Content
                 if (def == null) continue;
                 target.Set(def.biomeId, def);
             }
-            Debug.Log($"[ContentRegistry] 群系定义加载：{wrapper.biomes.Count} 个");
+            Debug.Log($"[ContentRuntime] 群系定义加载：{wrapper.biomes.Count} 个");
         }
 
  /// <summary>解析名字池 CSV（格式：id,name，支持 # 注释行与空行）</summary>
