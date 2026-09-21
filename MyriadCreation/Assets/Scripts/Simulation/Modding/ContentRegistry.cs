@@ -384,56 +384,6 @@ namespace CivilizationEvolution.Simulation.Modding
                 return;
             }
 
-            string cultureDir = Path.Combine(root, "Culture");
-            if (Directory.Exists(cultureDir))
-            {
-                foreach (var dir in Directory.GetDirectories(cultureDir))
-                {
-                    try { LoadCulturePack(dir); }
-                    catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 文化包 {Path.GetFileName(dir)} 加载失败：{e.Message}"); }
-                }
-            }
-
-            string religionFile = Path.Combine(root, "Religion", "Religions.json");
-            if (File.Exists(religionFile))
-            {
-                try { LoadReligions(religionFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 宗教定义加载失败：{e.Message}"); }
-            }
-
-            string doctrineFile = Path.Combine(root, "Religion", "Doctrines.json");
-            if (File.Exists(doctrineFile))
-            {
-                try { LoadDoctrines(doctrineFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 教义池加载失败：{e.Message}"); }
-            }
-
- // ===== 模组化定义表 =====
-            string titleFile = Path.Combine(root, "Title", "Titles.json");
-            if (File.Exists(titleFile))
-            {
-                try { LoadTitlesFile(titleFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 头衔定义加载失败：{e.Message}"); }
-            }
-
-            string languageDir = Path.Combine(root, "Language");
-            if (Directory.Exists(languageDir))
-            {
-                foreach (var dir in Directory.GetDirectories(languageDir))
-                {
-                    try { LoadLanguage(dir); }
-                    catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 语言包 {Path.GetFileName(dir)} 加载失败：{e.Message}"); }
-                }
-            }
-
-            string biomeFile = Path.Combine(root, "Biome", "Biomes.json");
-            if (File.Exists(biomeFile))
-            {
-                try { LoadBiomes(biomeFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 群系定义加载失败：{e.Message}"); }
-            }
-        }
-
  /// <summary>加载单个文化包目录</summary>
         private static void LoadCultureRoot(string root, IContentStore<int, CultureContentPack> target)
         {
