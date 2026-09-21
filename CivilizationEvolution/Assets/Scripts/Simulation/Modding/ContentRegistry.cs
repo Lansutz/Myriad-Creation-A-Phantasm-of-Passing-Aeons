@@ -137,6 +137,23 @@ namespace CivilizationEvolution.Simulation.Modding
 
         public static bool IsInitialized { get; private set; } = false;
 
+        // Provider composition is intentionally kept here as a compatibility facade.
+        // Each content type can move to an independent provider without changing consumers.
+        private static readonly IContentProvider<int, RaceData> RaceProvider =
+            new JsonFileContentProvider<int, RaceData, RaceDefsWrapper>(
+                "Race", "Race/RaceDefs.json",
+                text => JsonUtility.FromJson<RaceDefsWrapper>(text),
+                wrapper => wrapper == null ? null : wrapper.races,
+                race => race == null ? 0 : race.raceId);
+
+        private static readonly IContentProvider<int, InnovationDef> InnovationProvider =
+            new JsonFileContentProvider<int, InnovationDef, InnovationsWrapper>(
+                "Innovation", "Innovation/Innovations.json",
+                text => JsonUtility.FromJson<InnovationsWrapper>(text),
+                wrapper => wrapper == null ? null : wrapper.innovations,
+                def => def == null ? 0 : def.innovationId);
+
+
  /// <summary>初始化内容注册表（幂等，可重复调用）</summary>
         public static void Initialize()
         {
@@ -153,6 +170,8 @@ namespace CivilizationEvolution.Simulation.Modding
             TalentDefects = new Dictionary<string, TalentDefectDef>();
             MentalDisorders = new Dictionary<string, MentalDisorderDef>();
             Innovations = new Dictionary<int, InnovationDef>();
+            Religions = new Dictionary<int, ReligionDef>();
+            Doctrines = new Dictionary<string, DoctrineOptionDef>();
             BiomeRegistry.Overrides.Clear();
 
             string root = Application.streamingAssetsPath;
@@ -162,8 +181,14 @@ namespace CivilizationEvolution.Simulation.Modding
             }
             else
             {
-                LoadContentRoot(Path.Combine(root, "Base"));
-                LoadContentRoot(Path.Combine(root, "Mods")); // Mods 后载，覆盖同名
+                var sources = ContentSourceCatalog.CreateDefault(root);
+                for (int i = 0; i < sources.Count; i++)
+                {
+                    if (!sources[i].Exists) continue;
+                    LoadContentRoot(sources[i].rootPath);
+                    RaceProvider.Load(sources[i], new DictionaryContentStore<int, RaceData>(Races));
+                    InnovationProvider.Load(sources[i], new DictionaryContentStore<int, InnovationDef>(Innovations));
+                }
             }
 
             IsInitialized = true;
@@ -188,6 +213,9 @@ namespace CivilizationEvolution.Simulation.Modding
             TalentDefects.Clear();
             MentalDisorders.Clear();
             Innovations.Clear();
+            Religions.Clear();
+            Doctrines.Clear();
+            Titles.Clear();
             Biomes.Clear();
         }
 
@@ -248,6 +276,28 @@ namespace CivilizationEvolution.Simulation.Modding
         {
             if (!Directory.Exists(root)) return;
 
+            // A source root may contain either canonical content directories (Base)
+            // or one directory per package (Mods/<package>). Both resolve to the
+            // same runtime registries.
+            bool hasCanonicalContent = Directory.Exists(Path.Combine(root, "Culture"))
+                || File.Exists(Path.Combine(root, "Race", "RaceDefs.json"))
+                || File.Exists(Path.Combine(root, "Innovation", "Innovations.json"))
+                || File.Exists(Path.Combine(root, "Religion", "Religions.json"));
+
+            if (!hasCanonicalContent)
+            {
+                foreach (var packageDir in Directory.GetDirectories(root))
+                {
+                    try { LoadContentRoot(packageDir); }
+                    catch (Exception e)
+                    {
+                        Debug.LogWarning(
+                            $"[ContentRegistry] 内容包 {Path.GetFileName(packageDir)} 加载失败：{e.Message}");
+                    }
+                }
+                return;
+            }
+
             string cultureDir = Path.Combine(root, "Culture");
             if (Directory.Exists(cultureDir))
             {
@@ -256,13 +306,6 @@ namespace CivilizationEvolution.Simulation.Modding
                     try { LoadCulturePack(dir); }
                     catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 文化包 {Path.GetFileName(dir)} 加载失败：{e.Message}"); }
                 }
-            }
-
-            string raceFile = Path.Combine(root, "Race", "RaceDefs.json");
-            if (File.Exists(raceFile))
-            {
-                try { LoadRaceDefs(raceFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 种族定义加载失败：{e.Message}"); }
             }
 
             string religionFile = Path.Combine(root, "Religion", "Religions.json");
@@ -339,13 +382,6 @@ namespace CivilizationEvolution.Simulation.Modding
             {
                 try { LoadMentalHealthDefs(mentalHealthFile); }
                 catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 精神疾病定义加载失败：{e.Message}"); }
-            }
-
-            string innovationFile = Path.Combine(root, "Innovation", "Innovations.json");
-            if (File.Exists(innovationFile))
-            {
-                try { LoadInnovations(innovationFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 革新定义加载失败：{e.Message}"); }
             }
 
             string biomeFile = Path.Combine(root, "Biome", "Biomes.json");

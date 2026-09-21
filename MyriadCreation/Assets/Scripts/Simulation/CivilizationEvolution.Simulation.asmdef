@@ -1,0 +1,17 @@
+{
+    "name": "CivilizationEvolution.Simulation",
+    "rootNamespace": "CivilizationEvolution.Simulation",
+    "references": [
+        "CivilizationEvolution.Core",
+        "CivilizationEvolution.World"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

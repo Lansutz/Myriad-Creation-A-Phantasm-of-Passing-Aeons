@@ -1,0 +1,12 @@
+{
+  "defs": [
+    { "id": "talent_photographic", "isTalent": true, "stat": "learning", "amount": 5.0 },
+    { "id": "talent_divine_strength", "isTalent": true, "stat": "martial", "amount": 5.0 },
+    { "id": "talent_iron_body", "isTalent": true, "stat": "lifespan", "amount": 10.0 },
+    { "id": "talent_keen_mind", "isTalent": true, "stat": "learning", "amount": 3.0 },
+    { "id": "defect_frail", "isTalent": false, "stat": "lifespan", "amount": -15.0 },
+    { "id": "defect_feeblemind", "isTalent": false, "stat": "learning", "amount": -20.0 },
+    { "id": "defect_hemophilia", "isTalent": false, "stat": "lifespan", "amount": -10.0 },
+    { "id": "defect_pale", "isTalent": false, "stat": "appearance", "amount": 0.0 }
+  ]
+}

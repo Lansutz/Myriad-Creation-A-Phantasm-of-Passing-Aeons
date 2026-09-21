@@ -1,0 +1,27 @@
+{
+    "name": "CivilizationEvolution.Editor",
+    "rootNamespace": "CivilizationEvolution.EditorTools",
+    "references": [
+        "CivilizationEvolution.Core",
+        "CivilizationEvolution.World",
+        "CivilizationEvolution.Simulation",
+        "CivilizationEvolution.Rendering",
+        "CivilizationEvolution.UI",
+        "CivilizationEvolution.Infrastructure",
+        "UnityEngine.UI",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_EDITOR"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 145eb2e525124048986486e830b052d9
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  textureCase: 13
+  characterPadding: 1
+  includeFontData: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  fontRenderingMode: 4
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

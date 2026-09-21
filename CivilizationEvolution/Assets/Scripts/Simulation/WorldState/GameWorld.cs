@@ -2,6 +2,7 @@
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Events;
 using CivilizationEvolution.Core.Data;
 using CivilizationEvolution.Core.Dto;
 using CivilizationEvolution.Core.Enums;
@@ -150,6 +151,9 @@ namespace CivilizationEvolution.Simulation.WorldState
         private InnovationTree _innovationTree;
         private Chronicle _chronicle;
         private AIManager _aiManager;
+        private readonly SimulationEventBus _simulationEvents = new SimulationEventBus();
+        /// <summary>稳定的跨领域事件边界；领域系统不直接互相调用。</summary>
+        public SimulationEventBus SimulationEvents => _simulationEvents;
 
  // ===== 脏标记 =====
         private HashSet<int> _terrainDirtyTiles = new HashSet<int>();
@@ -233,8 +237,7 @@ namespace CivilizationEvolution.Simulation.WorldState
 
  // 8. 战争（战争闭环：同地块交战→分数→胜负判定→停战）
             _combatManager.DailyTick(
-                armies, _wars, _diplomacyManager.WarRules, currentDay,
-                RecordInnovationPractice);
+                armies, _wars, _diplomacyManager.WarRules, currentDay);
             UpdateFaithFervor(currentDay);
 
  // 大圣战结算钩子（关联战争结束→圣战方胜→受益人谈判）

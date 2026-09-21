@@ -48,16 +48,6 @@ namespace CivilizationEvolution.Simulation.Planning
             return plan;
         }
 
-        public Plan CreateChildPlan(int parentPlanId, PlanType type, int initiatorId, int targetId,
-            int day, string title = null, string description = null, float estimatedDays = 0f)
-        {
-            if (!_plans.TryGetValue(parentPlanId, out var parent)) return null;
-            var child = CreatePlan(type, initiatorId, targetId, day, title, description, estimatedDays);
-            child.parentPlanId = parentPlanId;
-            parent.childPlanIds.Add(child.planId);
-            return child;
-        }
-
         public bool TryGetPlan(int planId, out Plan plan) => _plans.TryGetValue(planId, out plan);
         public Plan GetPlan(int planId) { _plans.TryGetValue(planId, out var plan); return plan; }
 
@@ -128,10 +118,34 @@ namespace CivilizationEvolution.Simulation.Planning
                 if (!_executors.TryGetValue(plan.type, out var executor) || executor == null)
                     continue;
 
-                float deltaProgress = executor.Execute(plan, deltaDays);
+                var result = executor.Execute(plan, deltaDays);
+
+                if (!string.IsNullOrEmpty(result.currentActivity))
+                    plan.currentActivity = result.currentActivity;
+
+                float deltaProgress = result.progressDelta;
                 if (float.IsNaN(deltaProgress) || float.IsInfinity(deltaProgress)) deltaProgress = 0f;
-                if (deltaProgress > 0f) plan.progress = Clamp01(plan.progress + deltaProgress);
-                if (plan.progress >= 1f) CompletePlan(plan.planId, "executor_completed");
+                if (deltaProgress > 0f)
+                    plan.progress = Clamp01(plan.progress + deltaProgress);
+
+                switch (result.outcome)
+                {
+                    case PlanExecutionOutcome.Complete:
+                        CompletePlan(plan.planId,
+                            string.IsNullOrEmpty(result.resultCode) ? "executor_completed" : result.resultCode);
+                        break;
+                    case PlanExecutionOutcome.Fail:
+                        FailPlan(plan.planId,
+                            string.IsNullOrEmpty(result.resultCode) ? "executor_failed" : result.resultCode);
+                        break;
+                    case PlanExecutionOutcome.Cancel:
+                        CancelPlan(plan.planId,
+                            string.IsNullOrEmpty(result.resultCode) ? "executor_cancelled" : result.resultCode);
+                        break;
+                }
+
+                if (plan.progress >= 1f && !plan.IsTerminal)
+                    CompletePlan(plan.planId, "executor_completed");
             }
         }
 

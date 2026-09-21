@@ -1,0 +1,22 @@
+{
+  "groups": [
+    {
+      "groupId": "ethnos_laethis",
+      "cultureId": 1,
+      "ethosId": "ethos_scholarly",
+      "languageId": "laethis_lang",
+      "traditionIds": [
+        "trad_agrarian_rites",
+        "trad_craft_guild",
+        "trad_ancestor_cult",
+        "trad_valley_elite"
+      ],
+      "innovationIds": [
+        600,
+        100,
+        200,
+        204
+      ]
+    }
+  ]
+}

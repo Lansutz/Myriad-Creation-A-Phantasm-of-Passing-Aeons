@@ -1,0 +1,12 @@
+{
+  "ethos": [
+    { "ethosId": "ethos_endurance", "effects": [ { "key": "combat_loss", "value": -0.1 }, { "key": "stress_decay", "value": 0.05 }, { "key": "stability", "value": 0.05 } ] },
+    { "ethosId": "ethos_hospitable", "effects": [ { "key": "opinion", "value": 0.05 }, { "key": "trade", "value": 0.1 }, { "key": "diplomacy", "value": 0.05 } ] },
+    { "ethosId": "ethos_warlike", "effects": [ { "key": "levy", "value": 0.15 }, { "key": "aggression", "value": 0.1 }, { "key": "warfare", "value": 0.05 } ] },
+    { "ethosId": "ethos_orderly", "effects": [ { "key": "stability", "value": 0.1 }, { "key": "order", "value": 0.1 }, { "key": "innovation", "value": -0.05 } ] },
+    { "ethosId": "ethos_pioneering", "effects": [ { "key": "expansion", "value": 0.1 }, { "key": "mobility", "value": 0.1 }, { "key": "development", "value": 0.05 } ] },
+    { "ethosId": "ethos_scholarly", "effects": [ { "key": "innovation", "value": 0.15 }, { "key": "learning", "value": 0.05 }, { "key": "craft", "value": 0.05 } ] },
+    { "ethosId": "ethos_communal", "effects": [ { "key": "unity", "value": 0.1 }, { "key": "class_relation", "value": 0.05 }, { "key": "rebellion_threshold", "value": 0.05 } ] },
+    { "ethosId": "ethos_mystical", "effects": [ { "key": "faith_influence", "value": 0.1 }, { "key": "piety", "value": 0.05 }, { "key": "innovation", "value": -0.03 } ] }
+  ]
+}

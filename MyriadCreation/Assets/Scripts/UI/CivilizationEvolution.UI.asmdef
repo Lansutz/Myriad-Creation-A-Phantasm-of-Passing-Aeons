@@ -1,0 +1,21 @@
+{
+    "name": "CivilizationEvolution.UI",
+    "rootNamespace": "CivilizationEvolution.UI",
+    "references": [
+        "CivilizationEvolution.Core",
+        "CivilizationEvolution.Simulation",
+        "CivilizationEvolution.Rendering",
+        "UnityEngine.UI",
+        "Unity.TextMeshPro",
+        "CivilizationEvolution.Infrastructure"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
