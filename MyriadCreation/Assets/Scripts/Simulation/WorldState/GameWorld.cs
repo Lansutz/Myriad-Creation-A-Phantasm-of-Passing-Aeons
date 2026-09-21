@@ -3,6 +3,7 @@ using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Core.Constants;
 using CivilizationEvolution.Core.Events;
+using CivilizationEvolution.Core.Simulation;
 using CivilizationEvolution.Core.Data;
 using CivilizationEvolution.Core.Dto;
 using CivilizationEvolution.Core.Enums;
@@ -152,6 +153,8 @@ namespace CivilizationEvolution.Simulation.WorldState
         private Chronicle _chronicle;
         private AIManager _aiManager;
         private readonly SimulationEventBus _simulationEvents = new SimulationEventBus();
+        private readonly SimulationScheduler _simulationScheduler = new SimulationScheduler();
+        public SimulationScheduler SimulationScheduler => _simulationScheduler;
         /// <summary>稳定的跨领域事件边界；领域系统不直接互相调用。</summary>
         public SimulationEventBus SimulationEvents => _simulationEvents;
 
@@ -187,6 +190,16 @@ namespace CivilizationEvolution.Simulation.WorldState
 
  /// <summary>游戏主循环Tick</summary>
         private void GameTick()
+        {
+            _simulationScheduler.Tick(currentDay, currentYear, daysPerTick);
+        }
+
+        /// <summary>
+        /// Compatibility composition entry for the current world tick. Domain phases are being
+        /// progressively registered as independent scheduler entries; keeping this seam preserves
+        /// exact execution order while the remaining phases are extracted.
+        /// </summary>
+        private void ExecuteScheduledSimulationDay(SimulationTickContext context)
         {
  // 1. 脏区重算
             RecalculateDirty();
