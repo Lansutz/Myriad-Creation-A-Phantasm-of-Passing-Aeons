@@ -199,56 +199,97 @@ namespace CivilizationEvolution.Simulation.WorldState
         /// progressively registered as independent scheduler entries; keeping this seam preserves
         /// exact execution order while the remaining phases are extracted.
         /// </summary>
-        private void ExecuteScheduledSimulationDay(SimulationTickContext context)
+        /// <summary>Stable scheduler composition boundary; execution order is explicit and independently schedulable.</summary>
+        private void RegisterSimulationSchedules()
         {
- // 1. 脏区重算
-            RecalculateDirty();
+            _simulationScheduler.Clear();
+            _simulationScheduler.Register("world.recalculate-dirty", SimulationCadence.Daily, 10, DailyRecalculateDirty);
+            _simulationScheduler.Register("world.disaster-and-disease", SimulationCadence.Daily, 11, DailyDisasterAndDisease);
+            _simulationScheduler.Register("world.economy", SimulationCadence.Daily, 12, DailyEconomy);
+            _simulationScheduler.Register("world.construction", SimulationCadence.Daily, 13, DailyConstruction);
+            _simulationScheduler.Register("world.population", SimulationCadence.Daily, 14, DailyPopulation);
+            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 15, DailyPolitics);
+            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 16, DailyPolitics);
+            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 17, DailyPolitics);
+            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 18, DailyPolitics);
+            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 19, DailyPolitics);
+            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 20, DailyPolitics);
+            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 21, DailyPolitics);
+            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 22, DailyPolitics);
+            _simulationScheduler.Register("world.diplomacy", SimulationCadence.Daily, 23, DailyDiplomacy);
+            _simulationScheduler.Register("world.warfare-and-religion", SimulationCadence.Daily, 24, DailyWarfareAndReligion);
+            _simulationScheduler.Register("world.characters-and-succession", SimulationCadence.Daily, 25, DailyCharactersAndSuccession);
+            _simulationScheduler.Register("world.characters-and-succession", SimulationCadence.Daily, 26, DailyCharactersAndSuccession);
+            _simulationScheduler.Register("world.thought", SimulationCadence.Daily, 27, DailyThought);
+            _simulationScheduler.Register("world.aiand-missionary", SimulationCadence.Daily, 28, DailyAIAndMissionary);
+            _simulationScheduler.Register("world.events", SimulationCadence.Daily, 29, DailyEvents);
+            _simulationScheduler.Register("world.events", SimulationCadence.Daily, 30, DailyEvents);
+            _simulationScheduler.Register("world.advance-simulation-time", SimulationCadence.Daily, 31, AdvanceSimulationTime);
+        }
 
- // 2. 灾害与疾病
+        private void DailyRecalculateDirty(SimulationTickContext context)
+        {
+            RecalculateDirty();        }
+
+        private void DailyDisasterAndDisease(SimulationTickContext context)
+        {
             _disasterSystem.DailyTick(currentDay, currentYear);
-            _diseaseSystem.DailyTick(currentDay, currentYear);
+            _diseaseSystem.DailyTick(currentDay, currentYear);        }
 
- // 3. 经济
-            _economyManager.DailyTick();
+        private void DailyEconomy(SimulationTickContext context)
+        {
+            _economyManager.DailyTick();        }
 
- // 4. 建筑建造进度
-            _buildingSystem.DailyTick();
+        private void DailyConstruction(SimulationTickContext context)
+        {
+            _buildingSystem.DailyTick();        }
 
- // 5. 人口
-            PopulationTick();
+        private void DailyPopulation(SimulationTickContext context)
+        {
+            PopulationTick();        }
 
- // 6. 政治
+        private void DailyPolitics(SimulationTickContext context)
+        {
             _politicalManager.DailyTick();
-            PoliticsTick();
+            PoliticsTick();        }
 
- // 6.5 聚落控制/影响力范围（高等级聚落控制低等级，驻扎部队影响控制速度，虹吸效应通过税收贸易自然表现）
+        private void DailyPolitics(SimulationTickContext context)
+        {
             CivilizationEvolution.Simulation.Settlement.SettlementControlSystem.DailyTick(
-                burgs, tiles, mapWidth, mapHeight, armies);
+                burgs, tiles, mapWidth, mapHeight, armies);        }
 
- // 6.6 无主地图单位（流民/游牧民/商队/雇佣兵/野怪/动物灾害）
-            _mapActorManager?.Tick(1f);
+        private void DailyPolitics(SimulationTickContext context)
+        {
+            _mapActorManager?.Tick(1f);        }
 
- // 6.7 营寨（军营/土匪寨/游牧营地/难民营）
-            _campManager?.Tick(1f);
+        private void DailyPolitics(SimulationTickContext context)
+        {
+            _campManager?.Tick(1f);        }
 
- // 6.8 据点演化（营寨→坞堡→聚落）
-            CivilizationEvolution.Simulation.Settlement.SettlementEvolutionSystem.DailyTick(this);
+        private void DailyPolitics(SimulationTickContext context)
+        {
+            CivilizationEvolution.Simulation.Settlement.SettlementEvolutionSystem.DailyTick(this);        }
 
- // 6.9 废墟恢复（被摧毁聚落的重建）
-            CivilizationEvolution.Simulation.Warfare.SettlementDestructionSystem.DailyTickRecovery(this);
+        private void DailyPolitics(SimulationTickContext context)
+        {
+            CivilizationEvolution.Simulation.Warfare.SettlementDestructionSystem.DailyTickRecovery(this);        }
 
- // 6.10 弃地巡检（无主低秩序地块滋生土匪）
-            CivilizationEvolution.Simulation.Settlement.LandAbandonmentSystem.DailyCheckBanditSpawn(this);
+        private void DailyPolitics(SimulationTickContext context)
+        {
+            CivilizationEvolution.Simulation.Settlement.LandAbandonmentSystem.DailyCheckBanditSpawn(this);        }
 
- // 6.11 文化阶段演化（每30天：自动计算社会分层/专业化，评估游群→部落→酋邦→族群→文明）
+        private void DailyPolitics(SimulationTickContext context)
+        {
             if (currentDay % 30 == 0)
-                CivilizationEvolution.Simulation.Culture.CultureStageEvolutionSystem.MonthlyTick(this);
+                CivilizationEvolution.Simulation.Culture.CultureStageEvolutionSystem.MonthlyTick(this);        }
 
- // 7. 外交（先同步世界时钟，供盟约/条约/事件时间戳使用）
+        private void DailyDiplomacy(SimulationTickContext context)
+        {
             _diplomacyManager.CurrentDay = currentDay;
-            _diplomacyManager.DailyTick();
+            _diplomacyManager.DailyTick();        }
 
- // 8. 战争（战争闭环：同地块交战→分数→胜负判定→停战）
+        private void DailyWarfareAndReligion(SimulationTickContext context)
+        {
             _combatManager.DailyTick(
                 armies, _wars, _diplomacyManager.WarRules, currentDay);
             UpdateFaithFervor(currentDay);
@@ -283,35 +324,40 @@ namespace CivilizationEvolution.Simulation.WorldState
  // 政体变迁接线：战败暴露国家无能，为战败方打开关键节点窗口（战胜/白和不触发）
                 if (war.outcome == "victory" && war.winnerId >= 0)
                     NotifyWarDefeat(war, currentDay);
-            }
+            }        }
 
- // 9. 角色与家族
-            _characterManager.DailyTick(currentDay, currentYear);
+        private void DailyCharactersAndSuccession(SimulationTickContext context)
+        {
+            _characterManager.DailyTick(currentDay, currentYear);        }
 
- // 9.5 继位扶正（统治者死亡→继承人扶正→政体变迁注入）
-            CheckRulerSuccessions();
+        private void DailyCharactersAndSuccession(SimulationTickContext context)
+        {
+            CheckRulerSuccessions();        }
 
- // 10. 思想与规范
-            _thoughtManager.DailyTick(currentYear);
+        private void DailyThought(SimulationTickContext context)
+        {
+            _thoughtManager.DailyTick(currentYear);        }
 
- // 11. AI决策（先同步统治者人格到 AI 偏置——人格漂移实时反映） // 传教定期推进（15 天一次——政权传教渠道——查漏补缺接线）
+        private void DailyAIAndMissionary(SimulationTickContext context)
+        {
             MissionaryTick();
 
             _aiManager.SyncRulers(_characterManager);
             _aiManager.DailyTick(realms, tiles, _diplomacyManager, _economyManager, _innovationTree,
-                _characterManager); // characters 传入——AI 劫掠屠城计数器
+                _characterManager); // characters 传入——AI 劫掠屠城计数器        }
 
- // 12. 事件处理
-            ProcessEvents();
+        private void DailyEvents(SimulationTickContext context)
+        {
+            ProcessEvents();        }
 
- // 12.5 统一计划系统（研究/阴谋/工程等共享同一计划生命周期；世界时间只由 GameWorld 推进）
-            TickPlans(1f);
+        private void DailyEvents(SimulationTickContext context)
+        {
+            TickPlans(1f);        }
 
- // 13. 时间推进
+        private void AdvanceSimulationTime(SimulationTickContext context)
+        {
             AdvanceTime();
-        }
-
- /// <summary>查询政权社会画像（UI/AI 用）</summary>
+                }
         public RealmSociety GetRealmSociety(int realmId) => _societyCache.GetValueOrDefault(realmId);
         public SocietyManager Society => _societyManager;
         public FactionManager Factions => _factionManager;
