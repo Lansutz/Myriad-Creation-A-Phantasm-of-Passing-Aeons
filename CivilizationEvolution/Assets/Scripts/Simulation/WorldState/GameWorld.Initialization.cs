@@ -130,12 +130,11 @@ namespace CivilizationEvolution.Simulation.WorldState
             _thoughtManager = new ThoughtManager();
             _disasterSystem = new DisasterSystem(tiles, mapWidth, mapHeight);
             _diseaseSystem = new DiseaseSystem(tiles, _characterManager, mapWidth, mapHeight);
-            _buildingSystem = new BuildingSystem(tiles);
+            _buildingSystem = new BuildingSystem(tiles, SimulationEvents);
             _innovationTree = new InnovationTree();
             _characterManager.Innovations = _innovationTree; // 注入革新树（家族传统解锁前置依赖）
             // 统一计划系统绑定本次世界实例的 CharacterManager / InnovationTree；读档重建时同步重建，避免持有旧引用。
             InitializePlanSystem();
-            _buildingSystem.SetPracticeRecorder(RecordInnovationPractice);
  // 阶层出现事件订阅（革新完成→检测解锁阶层→编年史——查漏补缺接线）
             _innovationTree.OnInnovationCompleted += OnInnovationCompletedHandler;
             _chronicle = new Chronicle(); // 编年史（世界大事日志）
