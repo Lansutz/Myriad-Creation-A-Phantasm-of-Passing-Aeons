@@ -107,13 +107,25 @@
       "era": 2,
       "researchCost": 400,
       "prerequisites": [
-        1101,
-        925
+        925,
+        939
       ],
       "innovationName": "冶铁术",
-      "description": "炉温更高，铁水奔流；赫梯人前二千纪率先冶铁，铁比铜更易得——青铜是贵族的，铁是所有人的。",
+      "description": "铁矿在炉内被还原成海绵铁或铁块；关键不再是“先有铜”，而是能否持续提供足够的热量、燃料与送风，并掌握还原与锻打。",
       "requiredAnyResources": [
         50
+      ],
+      "requiredCapabilities": [
+        "heat.high",
+        "fuel.charcoal",
+        "airflow.forced",
+        "furnace.reducing"
+      ],
+      "practiceTags": [
+        "iron.ore",
+        "smelting",
+        "reduction",
+        "forge"
       ]
     },
     {
@@ -122,11 +134,22 @@
       "era": 3,
       "researchCost": 700,
       "prerequisites": [
-        202,
-        803
+        202
       ],
       "innovationName": "炼钢术",
-      "description": "百炼成钢，刃口吹毛断发；军国利器从此不再受制于矿脉。",
+      "description": "通过控制含碳量、加热、锻打与冷却，把生铁或熟铁转化为性能更稳定的钢材；它依赖的是对温度、碳与热处理过程的控制，而不是某一种矿脉。",
+      "requiredCapabilities": [
+        "heat.high",
+        "fuel.charcoal",
+        "carbon.control",
+        "heat_treatment"
+      ],
+      "practiceTags": [
+        "steel",
+        "carbon",
+        "forge",
+        "heat_treatment"
+      ],
       "requiredAnyResources": [
         52
       ]
@@ -1054,10 +1077,19 @@
       "era": 1,
       "researchCost": 150,
       "prerequisites": [
-        1101
+        900,
+        902
       ],
       "innovationName": "皮囊风箱",
-      "description": "脚踏皮囊鼓风入炉，炉火纯青；底比斯墓壁画上的冶铜师已经这么干了四千年。"
+      "description": "用皮囊持续把空气压入炉膛，提高燃烧强度与温度；它服务于任何需要强制送风的炉火，而不以炼铜为前提。",
+      "requiredCapabilities": [
+        "airflow.forced"
+      ],
+      "practiceTags": [
+        "bellows",
+        "airflow",
+        "furnace"
+      ]
     },
     {
       "innovationId": 926,
@@ -1069,7 +1101,16 @@
         931
       ],
       "innovationName": "活塞风箱",
-      "description": "双动活塞一推一拉皆出风，炉温再上层楼；中国发明的强风利器。"
+      "description": "双动活塞连续压送空气，使炉膛获得更稳定、更强的风量；它提高高温炉的持续作业能力，是对送风能力的进一步工程化。",
+      "requiredCapabilities": [
+        "airflow.forced.stable",
+        "heat.very_high"
+      ],
+      "practiceTags": [
+        "piston_bellows",
+        "airflow",
+        "furnace"
+      ]
     },
     {
       "innovationId": 931,
@@ -1078,10 +1119,23 @@
       "researchCost": 450,
       "prerequisites": [
         202,
-        925
+        925,
+        939
       ],
       "innovationName": "生铁高炉",
-      "description": "炉温破千，铁水奔流（六合程桥春秋铁器为世界最早实证）；铁从此可以浇铸。",
+      "description": "炉体、炉料与持续送风被组织成高温还原体系，使炉温和产量跨过普通冶铁炉的上限；高炉是获得更高温度与连续铁水生产能力的一条具体工具路径，而非冶铁术的必然前置。",
+      "requiredCapabilities": [
+        "heat.very_high",
+        "fuel.charcoal",
+        "airflow.forced",
+        "tool.furnace.blast"
+      ],
+      "practiceTags": [
+        "iron.ore",
+        "blast_furnace",
+        "pig_iron",
+        "high_temperature"
+      ],
       "requiredAnyResources": [
         50
       ]
@@ -1148,6 +1202,25 @@
       ],
       "innovationName": "失蜡法",
       "description": "蜡模化去、铜液注入，纹饰纤毫毕现；至少六个文明独立点亮（Nahal Mishmar/曾侯乙尊盘）。"
+    },
+    {
+      "innovationId": 939,
+      "field": 6,
+      "era": 1,
+      "researchCost": 100,
+      "prerequisites": [
+        900
+      ],
+      "innovationName": "木炭制备",
+      "description": "在受控缺氧条件下把木材转化为木炭；燃料从普通薪柴变成更稳定、能支撑高温冶炼的碳质燃料。",
+      "requiredCapabilities": [
+        "fuel.charcoal"
+      ],
+      "practiceTags": [
+        "charcoal",
+        "fuel",
+        "controlled_burning"
+      ]
     },
     {
       "innovationId": 934,
