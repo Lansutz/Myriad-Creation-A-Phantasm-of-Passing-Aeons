@@ -123,5 +123,25 @@ namespace CivilizationEvolution.Tests.EditMode
 
             public void OnPlanEnded(Plan plan) { }
         }
+        [Test]
+        public void ContentStore_ProvidesMutableStorageBehindStableResolver()
+        {
+            var store = new ContentStore<string, TestContent>();
+            store.Set("a", new TestContent { id = "a" });
+
+            IContentResolver<string, TestContent> resolver = store;
+            Assert.IsTrue(resolver.TryGet("a", out var value));
+            Assert.AreEqual("a", value.id);
+            Assert.AreEqual(1, resolver.All.Count());
+
+            Assert.IsTrue(store.Remove("a"));
+            Assert.IsFalse(resolver.TryGet("a", out _));
+        }
+
+        private sealed class TestContent
+        {
+            public string id;
+        }
+
     }
 }
