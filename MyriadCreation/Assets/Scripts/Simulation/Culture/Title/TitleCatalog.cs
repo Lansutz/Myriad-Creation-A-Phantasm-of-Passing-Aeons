@@ -27,7 +27,7 @@ namespace CivilizationEvolution.Simulation.Culture
         public static TitleDef Get(string titleId)
         {
             if (string.IsNullOrEmpty(titleId)) return null;
-            return ContentResolvers.Titles.Get(titleId);
+            return ContentResolvers.Titles.TryGet(titleId, out var title) ? title : null;
         }
 
  /// <summary>某类头衔（kind——按位阶降序——可选文化专属优先）</summary>
