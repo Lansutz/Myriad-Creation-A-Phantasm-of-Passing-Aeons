@@ -312,7 +312,7 @@ namespace CivilizationEvolution.Simulation.Characters
  /// <summary>名字生成：文化名字池（type: 0男名 1女名 2姓氏），空池回退文化名</summary>
         private static string GenerateName(int cultureId, int type)
         {
-            if (ContentRegistry.TryGetCulture(cultureId, out var pack))
+            if (ContentResolvers.Cultures.TryGet(cultureId, out var pack))
                 return ContentRegistry.GetRandomName(pack, type);
             return "无名";
         }
