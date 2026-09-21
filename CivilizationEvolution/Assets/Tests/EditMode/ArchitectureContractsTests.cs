@@ -33,6 +33,23 @@ namespace CivilizationEvolution.Tests.EditMode
         }
 
         [Test]
+        public void ContentAuthoringWorkspace_PreservesCanonicalRuntimeFiles()
+        {
+            var workspace = new CivilizationEvolution.Simulation.Modding.ContentAuthoringWorkspace();
+            workspace.SetManifest(new CivilizationEvolution.Simulation.Modding.ContentPackageManifest
+            {
+                packageId = "test.package",
+                displayName = "Test Package"
+            });
+
+            workspace.UpsertFile("Innovation/Innovations.json", "{ \"innovations\": [] }");
+
+            Assert.IsTrue(workspace.GetFiles().ContainsKey("Innovation/Innovations.json"));
+            Assert.AreEqual("{ \"innovations\": [] }",
+                workspace.GetFiles()["Innovation/Innovations.json"]);
+        }
+
+        [Test]
         public void PlanSystem_UsesExecutionResultAndCurrentActivity()
         {
             var plans = new PlanSystem();
