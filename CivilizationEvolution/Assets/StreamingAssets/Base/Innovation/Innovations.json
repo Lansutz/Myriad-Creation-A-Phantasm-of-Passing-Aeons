@@ -2470,13 +2470,24 @@
       "era": 1,
       "researchCost": 160,
       "prerequisites": [
-        1101
+        900,
+        939
       ],
       "requiredAnyResources": [
         54
       ],
       "innovationName": "炼锡术",
-      "description": "锡石木炭还原出锡液；锡的熔点虽低，却需要先认识这种特殊矿石——前三千纪近东的锡贸易催生了最早的长距离商路。"
+      "description": "锡石在稳定燃料与还原炉火中被还原成锡液；锡冶炼本身不要求先掌握炼铜，而要求识别矿石、控制燃料与炉火。",
+      "requiredCapabilities": [
+        "heat.medium",
+        "fuel.charcoal",
+        "furnace.reducing"
+      ],
+      "practiceTags": [
+        "tin.ore",
+        "smelting",
+        "reduction"
+      ]
     },
     {
       "innovationId": 1105,
