@@ -258,7 +258,6 @@ namespace CivilizationEvolution.Simulation.Modding
                 for (int i = 0; i < sources.Count; i++)
                 {
                     if (!sources[i].Exists) continue;
-                    LoadContentRoot(sources[i].rootPath);
                     RaceProvider.Load(sources[i], new DictionaryContentStore<int, RaceData>(Races));
                     InnovationProvider.Load(sources[i], new DictionaryContentStore<int, InnovationDef>(Innovations));
                     EthosProvider.Load(sources[i], new DictionaryContentStore<string, EthosDef>(Ethos));
