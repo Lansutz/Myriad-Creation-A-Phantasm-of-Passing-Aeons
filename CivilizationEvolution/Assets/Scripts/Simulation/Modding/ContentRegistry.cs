@@ -284,13 +284,6 @@ namespace CivilizationEvolution.Simulation.Modding
                 }
             }
 
-            string raceFile = Path.Combine(root, "Race", "RaceDefs.json");
-            if (File.Exists(raceFile))
-            {
-                try { LoadRaceDefs(raceFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 种族定义加载失败：{e.Message}"); }
-            }
-
             string religionFile = Path.Combine(root, "Religion", "Religions.json");
             if (File.Exists(religionFile))
             {
@@ -365,13 +358,6 @@ namespace CivilizationEvolution.Simulation.Modding
             {
                 try { LoadMentalHealthDefs(mentalHealthFile); }
                 catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 精神疾病定义加载失败：{e.Message}"); }
-            }
-
-            string innovationFile = Path.Combine(root, "Innovation", "Innovations.json");
-            if (File.Exists(innovationFile))
-            {
-                try { LoadInnovations(innovationFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 革新定义加载失败：{e.Message}"); }
             }
 
             string biomeFile = Path.Combine(root, "Biome", "Biomes.json");
