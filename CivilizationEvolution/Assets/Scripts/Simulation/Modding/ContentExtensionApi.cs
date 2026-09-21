@@ -1,16 +1,15 @@
-using System;
 using CivilizationEvolution.Core.Simulation;
 
 namespace CivilizationEvolution.Simulation.Modding
 {
     /// <summary>
-    /// Public extension boundary. Mods and built-in authoring tools target this API,
-    /// not internal domain registries or simulation implementations.
+    /// Public content authoring boundary shared by the built-in editor and external mods.
+    /// Runtime definition resolution is deliberately a separate service so this API never
+    /// exposes ContentRegistry internals.
     /// </summary>
     public interface IContentExtensionApi
     {
         IContentAuthoringWorkspace CreateWorkspace(ContentPackageManifest manifest);
-        bool TryGetDefinition<T>(string id, out T definition) where T : class, IRuntimeDefinition;
     }
 
     public sealed class ContentExtensionApi : IContentExtensionApi
@@ -20,12 +19,6 @@ namespace CivilizationEvolution.Simulation.Modding
             var workspace = new ContentAuthoringWorkspace();
             workspace.SetManifest(manifest);
             return workspace;
-        }
-
-        public bool TryGetDefinition<T>(string id, out T definition) where T : class, IRuntimeDefinition
-        {
-            definition = null;
-            return false;
         }
     }
 }
