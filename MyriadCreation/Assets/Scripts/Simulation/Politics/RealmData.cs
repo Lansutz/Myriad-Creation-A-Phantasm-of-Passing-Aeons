@@ -96,7 +96,7 @@ namespace CivilizationEvolution.Simulation.Politics
         public InheritanceLaw GetEffectiveSuccessionLaw()
         {
             if (successionLawFromCulture && primaryCultureId >= 0
-                && ContentRegistry.TryGetCulture(primaryCultureId, out var pack))
+                && ContentResolvers.Cultures.TryGet(primaryCultureId, out var pack))
             {
                 return pack.data.defaultSuccessionLaw;
             }
