@@ -153,6 +153,8 @@ namespace CivilizationEvolution.Simulation.Modding
             TalentDefects = new Dictionary<string, TalentDefectDef>();
             MentalDisorders = new Dictionary<string, MentalDisorderDef>();
             Innovations = new Dictionary<int, InnovationDef>();
+            Religions = new Dictionary<int, ReligionDef>();
+            Doctrines = new Dictionary<string, DoctrineOptionDef>();
             BiomeRegistry.Overrides.Clear();
 
             string root = Application.streamingAssetsPath;
@@ -190,6 +192,9 @@ namespace CivilizationEvolution.Simulation.Modding
             TalentDefects.Clear();
             MentalDisorders.Clear();
             Innovations.Clear();
+            Religions.Clear();
+            Doctrines.Clear();
+            Titles.Clear();
             Biomes.Clear();
         }
 
