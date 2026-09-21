@@ -23,6 +23,16 @@ namespace CivilizationEvolution.Tests.EditMode
         }
 
         [Test]
+        public void ContentSourceCatalog_OrdersBaseBeforeMod()
+        {
+            var sources = CivilizationEvolution.Simulation.Modding.ContentSourceCatalog.CreateDefault("StreamingAssets");
+            Assert.AreEqual(2, sources.Count);
+            Assert.AreEqual(CivilizationEvolution.Simulation.Modding.ContentSourceKind.Base, sources[0].kind);
+            Assert.AreEqual(CivilizationEvolution.Simulation.Modding.ContentSourceKind.Mod, sources[1].kind);
+            Assert.Less(sources[0].priority, sources[1].priority);
+        }
+
+        [Test]
         public void PlanSystem_UsesExecutionResultAndCurrentActivity()
         {
             var plans = new PlanSystem();
