@@ -137,7 +137,23 @@ namespace CivilizationEvolution.Simulation.Modding
 
         public static bool IsInitialized { get; private set; } = false;
 
-        // Provider composition is intentionally kept here as a compatibility facade.\n        // Each content type can move to an independent provider without changing consumers.\n        private static readonly IContentProvider<int, RaceData> RaceProvider =\n            new JsonFileContentProvider<int, RaceData, RaceDefsWrapper>(\n                "Race", "Race/RaceDefs.json",\n                text => JsonUtility.FromJson<RaceDefsWrapper>(text),\n                wrapper => wrapper == null ? null : wrapper.races,\n                race => race == null ? 0 : race.raceId);\n\n        private static readonly IContentProvider<int, InnovationDef> InnovationProvider =\n            new JsonFileContentProvider<int, InnovationDef, InnovationsWrapper>(\n                "Innovation", "Innovation/Innovations.json",\n                text => JsonUtility.FromJson<InnovationsWrapper>(text),\n                wrapper => wrapper == null ? null : wrapper.innovations,\n                def => def == null ? 0 : def.innovationId);\n\n
+        // Provider composition is intentionally kept here as a compatibility facade.
+        // Each content type can move to an independent provider without changing consumers.
+        private static readonly IContentProvider<int, RaceData> RaceProvider =
+            new JsonFileContentProvider<int, RaceData, RaceDefsWrapper>(
+                "Race", "Race/RaceDefs.json",
+                text => JsonUtility.FromJson<RaceDefsWrapper>(text),
+                wrapper => wrapper == null ? null : wrapper.races,
+                race => race == null ? 0 : race.raceId);
+
+        private static readonly IContentProvider<int, InnovationDef> InnovationProvider =
+            new JsonFileContentProvider<int, InnovationDef, InnovationsWrapper>(
+                "Innovation", "Innovation/Innovations.json",
+                text => JsonUtility.FromJson<InnovationsWrapper>(text),
+                wrapper => wrapper == null ? null : wrapper.innovations,
+                def => def == null ? 0 : def.innovationId);
+
+
  /// <summary>初始化内容注册表（幂等，可重复调用）</summary>
         public static void Initialize()
         {
@@ -165,7 +181,15 @@ namespace CivilizationEvolution.Simulation.Modding
             }
             else
             {
-                var sources = ContentSourceCatalog.CreateDefault(root);\n                for (int i = 0; i < sources.Count; i++)\n                {\n                    if (!sources[i].Exists) continue;\n                    LoadContentRoot(sources[i].rootPath);\n                    RaceProvider.Load(sources[i], new DictionaryContentStore<int, RaceData>(Races));\n                    InnovationProvider.Load(sources[i], new DictionaryContentStore<int, InnovationDef>(Innovations));\n                }\n            }
+                var sources = ContentSourceCatalog.CreateDefault(root);
+                for (int i = 0; i < sources.Count; i++)
+                {
+                    if (!sources[i].Exists) continue;
+                    LoadContentRoot(sources[i].rootPath);
+                    RaceProvider.Load(sources[i], new DictionaryContentStore<int, RaceData>(Races));
+                    InnovationProvider.Load(sources[i], new DictionaryContentStore<int, InnovationDef>(Innovations));
+                }
+            }
 
             IsInitialized = true;
             Debug.Log($"[ContentRegistry] 内容加载完成：文化 {Cultures.Count}，种族 {Races.Count}，" +
