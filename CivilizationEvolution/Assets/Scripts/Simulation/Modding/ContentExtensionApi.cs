@@ -1,3 +1,4 @@
+using System;
 using CivilizationEvolution.Core.Simulation;
 
 namespace CivilizationEvolution.Simulation.Modding
@@ -10,6 +11,7 @@ namespace CivilizationEvolution.Simulation.Modding
     public interface IContentExtensionApi
     {
         IContentAuthoringWorkspace CreateWorkspace(ContentPackageManifest manifest);
+        ContentPackageValidationResult Validate(IContentAuthoringWorkspace workspace);
     }
 
     public sealed class ContentExtensionApi : IContentExtensionApi
@@ -19,6 +21,16 @@ namespace CivilizationEvolution.Simulation.Modding
             var workspace = new ContentAuthoringWorkspace();
             workspace.SetManifest(manifest);
             return workspace;
+        }
+
+        public ContentPackageValidationResult Validate(IContentAuthoringWorkspace workspace)
+        {
+            if (workspace == null)
+                throw new ArgumentNullException(nameof(workspace));
+
+            return ContentPackageValidator.Validate(
+                workspace.Manifest,
+                workspace.GetFiles().Keys);
         }
     }
 }
