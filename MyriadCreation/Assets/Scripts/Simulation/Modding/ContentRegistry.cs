@@ -153,6 +153,55 @@ namespace CivilizationEvolution.Simulation.Modding
                 wrapper => wrapper == null ? null : wrapper.innovations,
                 def => def == null ? 0 : def.innovationId);
 
+        private static readonly IContentProvider<string, EthosDef> EthosProvider =
+            new JsonFileContentProvider<string, EthosDef, EthosWrapper>(
+                "Ethos", "Ethos/Ethos.json",
+                text => JsonUtility.FromJson<EthosWrapper>(text),
+                wrapper => wrapper == null ? null : wrapper.ethos,
+                def => def == null ? null : def.ethosId);
+
+        private static readonly IContentProvider<string, TraditionDef> TraditionProvider =
+            new JsonFileContentProvider<string, TraditionDef, TraditionsWrapper>(
+                "Tradition", "Tradition/Traditions.json",
+                text => JsonUtility.FromJson<TraditionsWrapper>(text),
+                wrapper => wrapper == null ? null : wrapper.traditions,
+                def => def == null ? null : def.traditionId);
+
+        private static readonly IContentProvider<string, EthnicGroupDef> EthnicGroupProvider =
+            new JsonFileContentProvider<string, EthnicGroupDef, EthnicGroupsWrapper>(
+                "EthnicGroup", "EthnicGroup/EthnicGroups.json",
+                text => JsonUtility.FromJson<EthnicGroupsWrapper>(text),
+                wrapper => wrapper == null ? null : wrapper.groups,
+                def => def == null ? null : def.groupId);
+
+        private static readonly IContentProvider<string, FamilyTraditionDef> FamilyTraditionProvider =
+            new JsonFileContentProvider<string, FamilyTraditionDef, FamilyTraditionsWrapper>(
+                "FamilyTradition", "FamilyTradition/FamilyTraditions.json",
+                text => JsonUtility.FromJson<FamilyTraditionsWrapper>(text),
+                wrapper => wrapper == null ? null : wrapper.familyTraditions,
+                def => def == null ? null : def.traditionId);
+
+        private static readonly IContentProvider<string, CharacterTemplateDef> CharacterTemplateProvider =
+            new JsonFileContentProvider<string, CharacterTemplateDef, CharacterTemplatesWrapper>(
+                "CharacterTemplate", "CharacterTemplate/CharacterTemplates.json",
+                text => JsonUtility.FromJson<CharacterTemplatesWrapper>(text),
+                wrapper => wrapper == null ? null : wrapper.templates,
+                def => def == null ? null : def.templateId);
+
+        private static readonly IContentProvider<string, TalentDefectDef> DnaProvider =
+            new JsonFileContentProvider<string, TalentDefectDef, DnaDefsWrapper>(
+                "Dna", "Dna/DnaDefs.json",
+                text => JsonUtility.FromJson<DnaDefsWrapper>(text),
+                wrapper => wrapper == null ? null : wrapper.defs,
+                def => def == null ? null : def.id);
+
+        private static readonly IContentProvider<string, MentalDisorderDef> MentalHealthProvider =
+            new JsonFileContentProvider<string, MentalDisorderDef, MentalHealthDefsWrapper>(
+                "MentalHealth", "MentalHealth/MentalHealthDefs.json",
+                text => JsonUtility.FromJson<MentalHealthDefsWrapper>(text),
+                wrapper => wrapper == null ? null : wrapper.disorders,
+                def => def == null ? null : def.id);
+
 
  /// <summary>初始化内容注册表（幂等，可重复调用）</summary>
         public static void Initialize()
@@ -188,6 +237,13 @@ namespace CivilizationEvolution.Simulation.Modding
                     LoadContentRoot(sources[i].rootPath);
                     RaceProvider.Load(sources[i], new DictionaryContentStore<int, RaceData>(Races));
                     InnovationProvider.Load(sources[i], new DictionaryContentStore<int, InnovationDef>(Innovations));
+                    EthosProvider.Load(sources[i], new DictionaryContentStore<string, EthosDef>(Ethos));
+                    TraditionProvider.Load(sources[i], new DictionaryContentStore<string, TraditionDef>(Traditions));
+                    EthnicGroupProvider.Load(sources[i], new DictionaryContentStore<string, EthnicGroupDef>(EthnicGroups));
+                    FamilyTraditionProvider.Load(sources[i], new DictionaryContentStore<string, FamilyTraditionDef>(FamilyTraditions));
+                    CharacterTemplateProvider.Load(sources[i], new DictionaryContentStore<string, CharacterTemplateDef>(CharacterTemplates));
+                    DnaProvider.Load(sources[i], new DictionaryContentStore<string, TalentDefectDef>(TalentDefects));
+                    MentalHealthProvider.Load(sources[i], new DictionaryContentStore<string, MentalDisorderDef>(MentalDisorders));
                 }
             }
 
@@ -323,20 +379,11 @@ namespace CivilizationEvolution.Simulation.Modding
             }
 
  // ===== 模组化定义表 =====
-            string ethosFile = Path.Combine(root, "Ethos", "Ethos.json");
-            if (File.Exists(ethosFile))
-            {
-                try { LoadEthos(ethosFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 族群精神定义加载失败：{e.Message}"); }
-            }
-
-            string traditionFile = Path.Combine(root, "Tradition", "Traditions.json");
-            if (File.Exists(traditionFile))
-            {
-                try { LoadTraditions(traditionFile);
             string titleFile = Path.Combine(root, "Title", "Titles.json");
-            if (File.Exists(titleFile)) LoadTitlesFile(titleFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 文化传统定义加载失败：{e.Message}"); }
+            if (File.Exists(titleFile))
+            {
+                try { LoadTitlesFile(titleFile); }
+                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 头衔定义加载失败：{e.Message}"); }
             }
 
             string languageDir = Path.Combine(root, "Language");
@@ -347,41 +394,6 @@ namespace CivilizationEvolution.Simulation.Modding
                     try { LoadLanguage(dir); }
                     catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 语言包 {Path.GetFileName(dir)} 加载失败：{e.Message}"); }
                 }
-            }
-
-            string groupFile = Path.Combine(root, "EthnicGroup", "EthnicGroups.json");
-            if (File.Exists(groupFile))
-            {
-                try { LoadEthnicGroups(groupFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 族群定义加载失败：{e.Message}"); }
-            }
-
-            string familyTraditionFile = Path.Combine(root, "FamilyTradition", "FamilyTraditions.json");
-            if (File.Exists(familyTraditionFile))
-            {
-                try { LoadFamilyTraditions(familyTraditionFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 家族传统定义加载失败：{e.Message}"); }
-            }
-
-            string characterTemplateFile = Path.Combine(root, "CharacterTemplate", "CharacterTemplates.json");
-            if (File.Exists(characterTemplateFile))
-            {
-                try { LoadCharacterTemplates(characterTemplateFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 角色模板定义加载失败：{e.Message}"); }
-            }
-
-            string dnaDefsFile = Path.Combine(root, "Dna", "DnaDefs.json");
-            if (File.Exists(dnaDefsFile))
-            {
-                try { LoadDnaDefs(dnaDefsFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] DNA 天赋缺陷定义加载失败：{e.Message}"); }
-            }
-
-            string mentalHealthFile = Path.Combine(root, "MentalHealth", "MentalHealthDefs.json");
-            if (File.Exists(mentalHealthFile))
-            {
-                try { LoadMentalHealthDefs(mentalHealthFile); }
-                catch (Exception e) { Debug.LogWarning($"[ContentRegistry] 精神疾病定义加载失败：{e.Message}"); }
             }
 
             string biomeFile = Path.Combine(root, "Biome", "Biomes.json");
