@@ -1,5 +1,7 @@
+using System.Linq;
 using NUnit.Framework;
 using CivilizationEvolution.Core.Events;
+using CivilizationEvolution.Simulation.Modding;
 using CivilizationEvolution.Simulation.Planning;
 
 namespace CivilizationEvolution.Tests.EditMode
@@ -25,18 +27,18 @@ namespace CivilizationEvolution.Tests.EditMode
         [Test]
         public void ContentSourceCatalog_OrdersBaseBeforeMod()
         {
-            var sources = CivilizationEvolution.Simulation.Modding.ContentSourceCatalog.CreateDefault("StreamingAssets");
+            var sources = ContentSourceCatalog.CreateDefault("StreamingAssets");
             Assert.AreEqual(2, sources.Count);
-            Assert.AreEqual(CivilizationEvolution.Simulation.Modding.ContentSourceKind.Base, sources[0].kind);
-            Assert.AreEqual(CivilizationEvolution.Simulation.Modding.ContentSourceKind.Mod, sources[1].kind);
+            Assert.AreEqual(ContentSourceKind.Base, sources[0].kind);
+            Assert.AreEqual(ContentSourceKind.Mod, sources[1].kind);
             Assert.Less(sources[0].priority, sources[1].priority);
         }
 
         [Test]
         public void ContentAuthoringWorkspace_PreservesCanonicalRuntimeFiles()
         {
-            var workspace = new CivilizationEvolution.Simulation.Modding.ContentAuthoringWorkspace();
-            workspace.SetManifest(new CivilizationEvolution.Simulation.Modding.ContentPackageManifest
+            var workspace = new ContentAuthoringWorkspace();
+            workspace.SetManifest(new ContentPackageManifest
             {
                 packageId = "test.package",
                 displayName = "Test Package"
@@ -47,6 +49,50 @@ namespace CivilizationEvolution.Tests.EditMode
             Assert.IsTrue(workspace.GetFiles().ContainsKey("Innovation/Innovations.json"));
             Assert.AreEqual("{ \"innovations\": [] }",
                 workspace.GetFiles()["Innovation/Innovations.json"]);
+        }
+
+        [Test]
+        public void ContentResolvers_ExposeReadOnlyStableContracts()
+        {
+            ContentRegistry.Reset();
+            ContentRegistry.Initialize();
+
+            Assert.IsTrue(ContentResolvers.Cultures.TryGet(1, out var culture));
+            Assert.IsNotNull(culture);
+            Assert.IsTrue(ContentResolvers.Innovations.TryGet(1, out var innovation));
+            Assert.IsNotNull(innovation);
+            Assert.IsTrue(ContentResolvers.Languages.All.Any());
+        }
+
+        [Test]
+        public void ContentPackageValidator_RejectsUnsafeOrUnknownFiles()
+        {
+            var manifest = new ContentPackageManifest
+            {
+                packageId = "example.mod",
+                displayName = "Example Mod",
+                contentTypes = { "Race", "Innovation" }
+            };
+
+            var valid = ContentPackageValidator.Validate(
+                manifest,
+                new[]
+                {
+                    "mod.json",
+                    "Race/RaceDefs.json",
+                    "Innovation/Innovations.json"
+                });
+            Assert.IsTrue(valid.IsValid);
+
+            var invalid = ContentPackageValidator.Validate(
+                manifest,
+                new[]
+                {
+                    "../outside.json",
+                    "Scripts/Injected.txt"
+                });
+            Assert.IsFalse(invalid.IsValid);
+            Assert.IsTrue(invalid.Errors.Count >= 2);
         }
 
         [Test]
