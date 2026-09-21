@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using CivilizationEvolution.Core.Events;
 using CivilizationEvolution.Simulation.Characters;
 using CivilizationEvolution.Simulation.Planning;
 using CivilizationEvolution.Simulation.WorldState;
@@ -18,6 +19,7 @@ namespace CivilizationEvolution.Simulation.Innovation
         private readonly InnovationKnowledgeSystem _knowledge = new InnovationKnowledgeSystem();
         private readonly Dictionary<int, ResearchPlanData> _data = new Dictionary<int, ResearchPlanData>();
         private readonly ResearchPlanExecutor _executor;
+        private readonly SimulationEventBus _events;
         private readonly HashSet<int> _practiceDirtyCharacters = new HashSet<int>();
 
         public const float BaseBreakthroughChancePerDay = 0.0005f;
@@ -32,8 +34,21 @@ namespace CivilizationEvolution.Simulation.Innovation
         {
             _world = world ?? throw new ArgumentNullException(nameof(world));
             _plans = plans ?? throw new ArgumentNullException(nameof(plans));
+            _events = _world.SimulationEvents;
             _executor = new ResearchPlanExecutor(this);
             _plans.RegisterExecutor(_executor);
+            _events.Subscribe<PracticeRecordedEvent>(OnPracticeRecorded);
+        }
+
+        private void OnPracticeRecorded(PracticeRecordedEvent evt)
+        {
+            RecordPractice(evt.characterId, evt.innovationId, evt.amount);
+        }
+
+        public void Dispose()
+        {
+            _events.Unsubscribe<PracticeRecordedEvent>(OnPracticeRecorded);
+            _plans.UnregisterExecutor(PlanType.Research);
         }
 
         internal CharacterData GetCharacter(int characterId) => _world.Characters?.GetCharacter(characterId);
