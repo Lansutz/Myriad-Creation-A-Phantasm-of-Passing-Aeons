@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using CivilizationEvolution.Core;
+using CivilizationEvolution.Core.Events;
 using CivilizationEvolution.Core.Constants;
 using CivilizationEvolution.Core.Data;
 using CivilizationEvolution.Core.Dto;
@@ -33,12 +34,18 @@ namespace CivilizationEvolution.Simulation.Warfare
         private readonly TileData[] _tiles;
         private readonly Dictionary<int, UnitDef> _unitDefs;
         private readonly SeaLandGenerator _seaLand;
+        private readonly SimulationEventBus _events;
 
-        public CombatManager(TileData[] tiles, Dictionary<int, UnitDef> unitDefs, SeaLandGenerator seaLand)
+        public CombatManager(
+            TileData[] tiles,
+            Dictionary<int, UnitDef> unitDefs,
+            SeaLandGenerator seaLand,
+            SimulationEventBus events = null)
         {
             _tiles = tiles;
             _unitDefs = unitDefs;
             _seaLand = seaLand;
+            _events = events;
         }
 
  /// 解决一场战斗（分阶段推进 + 战斗结束机制）。
@@ -191,9 +198,9 @@ namespace CivilizationEvolution.Simulation.Warfare
         /// 指挥官只有在实际指挥包含某项革新要求的兵种参战后，才获得该革新的实践积累。
         /// 这里不授予革新、不改变军队能力，只记录“做过这件事”。
         /// </summary>
-        private void RecordBattlePractice(Army army, Action<int, int, float> practiceRecorder)
+        private void RecordBattlePractice(Army army)
         {
-            if (army == null || practiceRecorder == null || army.commanderId < 0) return;
+            if (army == null || _events == null || army.commanderId < 0) return;
 
             foreach (var kv in army.unitCounts)
             {
@@ -211,7 +218,7 @@ namespace CivilizationEvolution.Simulation.Warfare
                 {
                     int innovationId = def.requiredInnovations[i];
                     if (innovationId >= 0)
-                        practiceRecorder(army.commanderId, innovationId, practice);
+                        _events.Publish(new PracticeRecordedEvent(army.commanderId, innovationId, practice));
                 }
             }
         }
@@ -239,7 +246,7 @@ namespace CivilizationEvolution.Simulation.Warfare
  /// 每日战争推进：同地块敌对军队自动交战（ResolveBattle），
  /// 胜方按 WarRules.scoreBattle 加分（×兵力规模系数 0.5~2）
         public void DailyTick(Dictionary<int, Army> armies, List<WarState> wars,
-            WarRules rules, int day, Action<int, int, float> practiceRecorder = null)
+            WarRules rules, int day)
         {
             if (wars == null || armies == null) return;
 
@@ -267,8 +274,8 @@ namespace CivilizationEvolution.Simulation.Warfare
 
  // 交战
                         var result = ResolveBattle(army, enemy);
-                        RecordBattlePractice(army, practiceRecorder);
-                        RecordBattlePractice(enemy, practiceRecorder);
+                        RecordBattlePractice(army);
+                        RecordBattlePractice(enemy);
                         war.lastBattleDay = day;
                         if (result.attackerWins)
                         {
