@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using CivilizationEvolution.Core.Events;
@@ -144,6 +145,23 @@ namespace CivilizationEvolution.Tests.EditMode
         }
 
         [Test]
+        public void ContentProviderCatalog_LoadsAllRegisteredProviders()
+        {
+            var store = new ContentStore<string, TestContent>();
+            var catalog = new ContentProviderCatalog();
+            catalog.Add(new TestProvider("a", "alpha"), store);
+            catalog.Add(new TestProvider("b", "beta"), store);
+
+            catalog.Load(new ContentSource(ContentSourceKind.Base, "test", "unused", 0));
+
+            Assert.AreEqual(2, catalog.Count);
+            Assert.IsTrue(store.TryGet("a", out var a));
+            Assert.IsTrue(store.TryGet("b", out var b));
+            Assert.AreEqual("alpha", a.id);
+            Assert.AreEqual("beta", b.id);
+        }
+
+        [Test]
         public void ContentStore_ProvidesMutableStorageBehindStableResolver()
         {
             var store = new ContentStore<string, TestContent>();
@@ -156,6 +174,23 @@ namespace CivilizationEvolution.Tests.EditMode
 
             Assert.IsTrue(store.Remove("a"));
             Assert.IsFalse(resolver.TryGet("a", out _));
+        }
+
+        private sealed class TestProvider : IContentProvider<string, TestContent>
+        {
+            private readonly string _id;
+            private readonly string _value;
+
+            public TestProvider(string id, string value)
+            {
+                _id = id;
+                _value = value;
+            }
+
+            public string ContentType => _id;
+
+            public void Load(ContentSource source, IContentStore<string, TestContent> target)
+                => target.Set(_id, new TestContent { id = _value });
         }
 
         [System.Serializable]
