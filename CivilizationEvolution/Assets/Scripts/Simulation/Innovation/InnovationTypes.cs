@@ -146,6 +146,20 @@ namespace CivilizationEvolution.Simulation.Innovation
         /// <summary>物产前置的最低累计产量门槛（默认10；产量不足时即使有资源点也无法开始研究）</summary>
         public float requiredResourceAmount = 10f;
 
+        // ===== 工艺能力前置（描述“为什么能做”，不等同于物产占有） =====
+        /// <summary>
+        /// 工艺能力标签：描述革新真正依赖的物理/工艺能力，例如
+        /// "heat.high"、"fuel.charcoal"、"airflow.forced"、"tool.furnace.blast"。
+        /// 同一能力可以由不同革新、设施或实践路径提供，因此不应塞进 prerequisites。
+        /// </summary>
+        public List<string> requiredCapabilities = new List<string>();
+
+        /// <summary>
+        /// 实践对象标签：描述该革新主要解决的生产问题/操作对象。
+        /// 用于后续把真实行为映射到实践积累与发现候选，而不是作为硬前置。
+        /// </summary>
+        public List<string> practiceTags = new List<string>();
+
  /// <summary>所属大类（由子类映射推导）</summary>
         public InnovationDomain Domain => InnovationDomainMap.GetDomain(field);
 
