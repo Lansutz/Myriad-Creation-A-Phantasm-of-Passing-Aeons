@@ -156,7 +156,7 @@ namespace CivilizationEvolution.Simulation.Politics
 
  // ===== 阶层制度承认（革新+文化）=====
             CultureData culture = null;
-            if (realm.primaryCultureId >= 0 && ContentRegistry.TryGetCulture(realm.primaryCultureId, out var pack))
+            if (realm.primaryCultureId >= 0 && ContentResolvers.Cultures.TryGet(realm.primaryCultureId, out var pack))
                 culture = pack.data;
             foreach (GameEnums.SocialClass cls in Enum.GetValues(typeof(GameEnums.SocialClass)))
                 sit.classRecognized[cls] = SocialClassAvailability.IsClassAvailable(cls, culture, innovations, realm.realmId);
