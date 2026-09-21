@@ -21,7 +21,7 @@ Definition -> State -> Perception -> Decision -> Plan -> Activity -> Process -> 
 
 ## Extension flow
 
-Base / Editor / Scenario / Mod -> Content Provider -> Validation -> Resolver -> Runtime Definition -> Registry
+Base / Editor / Scenario / Mod -> Content Source -> Provider -> Validation -> Resolver -> Runtime Definition -> Registry
 
 ## Domain contract
 
@@ -52,3 +52,18 @@ It does not expose dictionaries, caches, jobs, or internal algorithms.
 - Calculate derived data once and expose it through queries.
 - Keep parallel work side-effect free; commit state changes centrally.
 - Keep Unity API usage outside core simulation calculations where practical.
+
+
+## Current migration slice
+
+- `SimulationEventBus` decouples cross-domain facts.
+- Building and combat now publish `PracticeRecordedEvent`; Innovation consumes it.
+- `Plan` no longer has parent/child plan hierarchy.
+- `Plan.currentActivity` describes what the plan is doing.
+- Plan executors return `PlanExecutionResult`; lifecycle decisions stay in `PlanSystem`.
+- Base/Mods now enter `ContentRegistry` through an ordered `ContentSourceCatalog`.
+- Existing public facades remain where needed so migration can proceed without a flag-day rewrite.
+
+## Compatibility policy
+
+During migration, compatibility bridges are allowed at boundaries, but new domain code must not add another direct cross-domain callback. Each bridge is temporary and should be removed when all callers use the stable contract.
