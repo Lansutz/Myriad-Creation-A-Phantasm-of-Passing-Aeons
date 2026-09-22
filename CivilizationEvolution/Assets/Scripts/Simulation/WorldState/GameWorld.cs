@@ -28,6 +28,7 @@ using CivilizationEvolution.World.Generation;
 using CivilizationEvolution.World.Hydrology;
 using CivilizationEvolution.World.Settlement;
 using CivilizationEvolution.World.Terrain;
+using CivilizationEvolution.Core.Simulation;
 
 
 
@@ -132,6 +133,9 @@ namespace CivilizationEvolution.Simulation.WorldState
         private CurrencySystem _currencySystem;
         private TaxSystem _taxSystem;
         private PoliticalManager _politicalManager;
+        private SimulationScheduler _simulationScheduler;
+        private PoliticsSimulationSystem _politicsSimulationSystem;
+        private SettlementSimulationSystem _settlementSimulationSystem;
 
  // 社会-派系-政体变迁链路（阶层需求→政治能量→派系组织化→关键节点博弈）
         private SocietyManager _societyManager = new SocietyManager();
@@ -201,12 +205,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             PopulationTick();
 
  // 6. 政治
-            _politicalManager.DailyTick();
-            PoliticsTick();
-
- // 6.5 聚落控制/影响力范围（高等级聚落控制低等级，驻扎部队影响控制速度，虹吸效应通过税收贸易自然表现）
-            CivilizationEvolution.Simulation.Settlement.SettlementControlSystem.DailyTick(
-                burgs, tiles, mapWidth, mapHeight, armies);
+            _simulationScheduler?.Tick(currentDay, currentYear, daysPerTick);
 
  // 6.6 无主地图单位（流民/游牧民/商队/雇佣兵/野怪/动物灾害）
             _mapActorManager?.Tick(1f);
