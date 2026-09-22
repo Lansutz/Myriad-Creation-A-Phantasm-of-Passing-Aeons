@@ -211,7 +211,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             EconomySchedule.Register(_simulationScheduler, _economyManager);
             CivilizationEvolution.Simulation.Society.Building.BuildingSchedule.Register(_simulationScheduler, _buildingSystem);
             _simulationScheduler.Register("world.population", SimulationCadence.Daily, 14, DailyPopulation);
-            _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 15, DailyPolitics);
+            CivilizationEvolution.Simulation.Politics.PoliticsSchedule.Register(_simulationScheduler, _politicalManager, PoliticsTick);
             _simulationScheduler.Register("world.settlement-control", SimulationCadence.Daily, 16, DailySettlementControl);
             _simulationScheduler.Register("world.map-actors", SimulationCadence.Daily, 17, DailyMapActors);
             _simulationScheduler.Register("world.camps", SimulationCadence.Daily, 18, DailyCamps);
@@ -220,7 +220,10 @@ namespace CivilizationEvolution.Simulation.WorldState
             _simulationScheduler.Register("world.land-abandonment", SimulationCadence.Daily, 21, DailyLandAbandonment);
             _simulationScheduler.Register("world.culture-stage-evolution", SimulationCadence.Monthly, 22, MonthlyCultureStageEvolution);
             CivilizationEvolution.Simulation.Diplomacy.DiplomacySchedule.Register(_simulationScheduler, _diplomacyManager, () => currentDay);
-            _simulationScheduler.Register("world.warfare-and-religion", SimulationCadence.Daily, 24, DailyWarfareAndReligion);
+            CivilizationEvolution.Simulation.Warfare.WarfareReligionSchedule.Register(
+                _simulationScheduler, _combatManager, armies, _wars, _diplomacyManager.WarRules, () => currentDay,
+                () => UpdateFaithFervor(currentDay), CheckGreatHolyWarSettlements,
+                () => ProcessWarOutcomes(currentDay));
             CivilizationEvolution.Simulation.Characters.CharacterSchedule.Register(_simulationScheduler, _characterManager, () => currentDay, () => currentYear);
             _simulationScheduler.Register("world.succession", SimulationCadence.Daily, 26, DailySuccession);
             _simulationScheduler.Register("world.thought", SimulationCadence.Daily, 27, DailyThought);
@@ -239,12 +242,6 @@ namespace CivilizationEvolution.Simulation.WorldState
          private void DailyPopulation(SimulationTickContext context)
         {
             PopulationTick();
-        }
-
-        private void DailyPolitics(SimulationTickContext context)
-        {
-            _politicalManager.DailyTick();
-            PoliticsTick();
         }
 
         private void DailySettlementControl(SimulationTickContext context)
@@ -284,24 +281,16 @@ namespace CivilizationEvolution.Simulation.WorldState
                 CivilizationEvolution.Simulation.Culture.CultureStageEvolutionSystem.MonthlyTick(this);
         }
 
-        private void DailyWarfareAndReligion(SimulationTickContext context)
+        private void ProcessWarOutcomes(int day)
         {
-            _combatManager.DailyTick(
-                armies, _wars, _diplomacyManager.WarRules, currentDay);
-            UpdateFaithFervor(currentDay);
-
- // 大圣战结算钩子（关联战争结束→圣战方胜→受益人谈判）
-            CheckGreatHolyWarSettlements();
-            var endedWars = CombatManager.UpdateWarOutcomes(_wars, _diplomacyManager.WarRules, currentDay);
+            var endedWars = CombatManager.UpdateWarOutcomes(_wars, _diplomacyManager.WarRules, day);
             foreach (var war in endedWars)
             {
- // 战争行为计数器（绰号/评价数据：胜仗/败仗/防御大捷）
                 if (war.outcome == "victory" && war.winnerId >= 0)
                 {
                     AddWarAchievement(war.winnerId, won: true);
                     int loserId = war.winnerId == war.attackerId ? war.defenderId : war.attackerId;
                     AddWarAchievement(loserId, won: false);
- // 防御大捷（被打的一方赢了——卫国成功——铁锤判定）
                     if (war.winnerId == war.defenderId) AddDefensiveWin(war.winnerId);
                 }
 
@@ -309,17 +298,12 @@ namespace CivilizationEvolution.Simulation.WorldState
                     ? $"{realms[war.winnerId].realmName} 赢得战争胜利"
                     : "双方白和";
                 _chronicle?.Add("war_end", outcomeText, major: true, war.attackerId, war.defenderId);
-                _diplomacyManager.ForcePeace(war.attackerId, war.defenderId, currentDay,
+                _diplomacyManager.ForcePeace(war.attackerId, war.defenderId, day,
                     _diplomacyManager.WarRules.truceYears, outcomeText);
-
- // 官职补缺（死亡/空缺时任命——OfficeTitle 消费方）
-            EnsureOfficeHolders();
- // 行政区划树（空才生成——分封 4/郡县容量 2-5——政体改革重建后续）
-            EnsureAdminDivisions();
-
- // 政体变迁接线：战败暴露国家无能，为战败方打开关键节点窗口（战胜/白和不触发）
+                EnsureOfficeHolders();
+                EnsureAdminDivisions();
                 if (war.outcome == "victory" && war.winnerId >= 0)
-                    NotifyWarDefeat(war, currentDay);
+                    NotifyWarDefeat(war, day);
             }
         }
 
