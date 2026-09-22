@@ -148,6 +148,8 @@ namespace CivilizationEvolution.Simulation.WorldState
         private Chronicle _chronicle;
         private AIManager _aiManager;
         private readonly SimulationEventBus _simulationEvents = new SimulationEventBus();
+        private readonly SimulationCommandBus _simulationCommands = new SimulationCommandBus();
+        public SimulationCommandBus SimulationCommands => _simulationCommands;
         private readonly SimulationScheduler _simulationScheduler = new SimulationScheduler();
         private PoliticsSimulationSystem _politicsSimulationSystem;
         public SimulationScheduler SimulationScheduler => _simulationScheduler;
