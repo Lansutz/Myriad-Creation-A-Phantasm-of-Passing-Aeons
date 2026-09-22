@@ -50,19 +50,8 @@ namespace CivilizationEvolution.Simulation.WorldState
         /// <summary>统一计划推进入口：先推进计划，再处理本轮真实实践产生的个人突破。</summary>
         public void TickPlans(float deltaDays = 1f)
         {
+            // Compatibility/manual entry only. Normal simulation uses ResearchPlanSchedule + PlanSchedule.
             Plans.DailyTick(currentDay, deltaDays);
-
-            if (_researchPlanSystem == null || _characterManager == null) return;
-
-            _practiceDirtyCharacters.Clear();
-            _researchPlanSystem.DrainPracticeDirtyCharacters(_practiceDirtyCharacters);
-            for (int i = 0; i < _practiceDirtyCharacters.Count; i++)
-            {
-                int characterId = _practiceDirtyCharacters[i];
-                var character = _characterManager.GetCharacter(characterId);
-                if (character == null || !character.isAlive || character.realmId < 0) continue;
-                _researchPlanSystem.TryDailyBreakthrough(characterId, deltaDays);
-            }
         }
 
         private ResearchPlanSystem CreateResearchPlanSystem()
