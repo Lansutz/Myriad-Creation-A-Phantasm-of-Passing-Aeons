@@ -223,7 +223,7 @@ namespace CivilizationEvolution.Tests.EditMode
             scheduler.Tick(1, 1, 1);
             Assert.AreEqual(0, runs);
 
-            scheduler.Dirty.Mark("world.terrain");
+            scheduler.MarkDirty("world.terrain");
             scheduler.Tick(2, 1, 1);
             Assert.AreEqual(1, runs);
 
@@ -265,7 +265,7 @@ namespace CivilizationEvolution.Tests.EditMode
                     scheduler.Dirty.Mark("world.terrain");
             });
 
-            scheduler.Dirty.Mark("world.terrain");
+            scheduler.MarkDirty("world.terrain");
             scheduler.Tick(1, 1, 1);
             Assert.AreEqual(1, runs);
             Assert.IsTrue(scheduler.Dirty.IsDirty("world.terrain"));
