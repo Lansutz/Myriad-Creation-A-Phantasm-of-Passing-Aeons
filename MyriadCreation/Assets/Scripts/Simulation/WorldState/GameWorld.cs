@@ -163,7 +163,7 @@ namespace CivilizationEvolution.Simulation.WorldState
  // ===== 脏标记 =====
         private HashSet<int> _terrainDirtyTiles = new HashSet<int>();
         private HashSet<int> _climateDirtyTiles = new HashSet<int>();
-        private bool _configDirty = false;
+        private WorldMapSimulationSystem _worldMapSimulation;
 
  // ===== 时间 =====
         public int currentYear = 1;
@@ -205,7 +205,7 @@ namespace CivilizationEvolution.Simulation.WorldState
         private void RegisterSimulationSchedules()
         {
             _simulationScheduler.Clear();
-            _simulationScheduler.RegisterDirty("world.recalculate-dirty", SimulationCadence.Daily, 10, "world.terrain", DailyRecalculateDirty);
+            WorldMapSchedule.Register(_simulationScheduler, _worldMapSimulation);
             CivilizationEvolution.Simulation.Disaster.DisasterSchedule.Register(
                 _simulationScheduler, _disasterSystem, _diseaseSystem, () => currentDay, () => currentYear);
             EconomySchedule.Register(_simulationScheduler, _economyManager);
@@ -235,11 +235,6 @@ namespace CivilizationEvolution.Simulation.WorldState
             CivilizationEvolution.Simulation.Events.EventSchedule.Register(_simulationScheduler, ProcessEvents);
             CivilizationEvolution.Simulation.Planning.PlanSchedule.Register(_simulationScheduler, _planSystem, () => currentDay, () => daysPerTick);
             CivilizationEvolution.Core.Simulation.SimulationTimeSchedule.Register(_simulationScheduler, AdvanceTime);
-        }
-
-        private void DailyRecalculateDirty(SimulationTickContext context)
-        {
-            RecalculateDirty();
         }
 
          private void ProcessWarOutcomes(int day)
