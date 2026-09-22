@@ -156,6 +156,50 @@ namespace CivilizationEvolution.Tests.EditMode
 
         }
         [Test]
+        public void PlanSystem_UsesSharedPurposeAndStructuredResult()
+        {
+            var plans = new PlanSystem();
+            plans.RegisterExecutor(new StructuredTestExecutor());
+
+            var plan = plans.CreatePlan(
+                PlanType.Custom, 1, 2, 10,
+                purpose: "测试统一计划",
+                targetKind: "realm");
+
+            Assert.AreEqual("测试统一计划", plan.purpose);
+            Assert.AreEqual("realm", plan.targetKind);
+            Assert.IsTrue(plans.AcceptPlan(plan.planId));
+            Assert.IsTrue(plans.BeginPreparation(plan.planId));
+            Assert.IsTrue(plans.BeginExecution(plan.planId));
+            plans.DailyTick(10, 1f);
+
+            Assert.AreEqual(PlanState.Completed, plan.state);
+            Assert.AreEqual("structured", plan.resultCode);
+            Assert.AreEqual("完成测试", plan.resultSummary);
+        }
+
+        [Test]
+        public void PlanSystem_RejectsInvalidLifecycleTransition()
+        {
+            var plans = new PlanSystem();
+            var plan = plans.CreatePlan(PlanType.Custom, 1, 2, 10);
+
+            Assert.IsFalse(plans.BeginExecution(plan.planId));
+            Assert.AreEqual(PlanState.Proposed, plan.state);
+            Assert.IsTrue(plans.AcceptPlan(plan.planId));
+            Assert.IsFalse(plans.AcceptPlan(plan.planId));
+            Assert.AreEqual(PlanState.Accepted, plan.state);
+        }
+
+        private sealed class StructuredTestExecutor : IPlanExecutor
+        {
+            public PlanType Type => PlanType.Custom;
+
+            public PlanExecutionResult Execute(Plan plan, float deltaDays)
+                => PlanExecutionResult.Complete("structured", "执行活动", "完成测试");
+        }
+
+        [Test]
         public void SimulationScheduler_RunsRegisteredCadencesInStableOrder()
         {
             var scheduler = new SimulationScheduler();
