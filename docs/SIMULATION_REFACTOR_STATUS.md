@@ -60,7 +60,25 @@ No Action callback fields remain in SettlementSimulationSystem.
 
 ## Remaining migration
 
-The settlement domain still has legacy static rule APIs underneath the runtime boundaries. The next step is to move state-changing operations toward command/process/event boundaries rather than treating runtime wrappers as the final architecture.
+The settlement domain still has legacy static rule APIs underneath the runtime boundaries, but state-changing settlement operations have now begun moving through explicit command/event contracts.
+
+Current command/event path:
+
+SimulationCommandBus -> Settlement command handler -> Settlement runtime -> legacy domain rule -> state change -> SimulationEventBus
+
+Implemented commands:
+- DestroySettlementCommand
+- AbandonSettlementTileCommand
+- ResettleTileCommand
+
+Implemented facts/events:
+- SettlementDestroyedEvent
+- SettlementTileAbandonedEvent
+- SettlementTileResettledEvent
+
+This is the beginning of the intended CK3-scale simulation pattern: player/AI intent becomes a command, the domain resolves it, the resulting fact is published independently, and downstream systems can react without direct cross-domain callbacks.
+
+The runtime wrappers are therefore transitional boundaries, not the final architecture. The next migration should continue from commands/events into ProcessResult-based multi-day activities and then into dirty/derived-state propagation.
 
 Warfare/religion, AI, events, and time already have schedule boundaries on this branch, but their remaining callback dependencies still need to be reduced where they point back into GameWorld.
 
