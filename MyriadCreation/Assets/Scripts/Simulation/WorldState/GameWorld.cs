@@ -162,8 +162,7 @@ namespace CivilizationEvolution.Simulation.WorldState
         public SimulationEventBus SimulationEvents => _simulationEvents;
 
  // ===== 脏标记 =====
-        private HashSet<int> _terrainDirtyTiles = new HashSet<int>();
-        private HashSet<int> _climateDirtyTiles = new HashSet<int>();
+        private WorldMapSimulationSystem _worldMapSimulation;
         private WorldMapSimulationSystem _worldMapSimulation;
 
  // ===== 时间 =====
@@ -380,8 +379,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             if (tiles[tileIndex].buildingLevels == null)
                 tiles[tileIndex].buildingLevels = new int[6];
 
-            _terrainDirtyTiles.Add(tileIndex);
-            MarkNeighboursDirty(tileIndex);
+            _worldMapSimulation?.MarkTileDirty(tileIndex);
             return true;
         }
 
@@ -396,7 +394,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             tiles[tileIndex].occupyingRealmId = -1;
             tiles[tileIndex].populationBlocks?.Clear();
 
-            MarkNeighboursDirty(tileIndex);
+            _worldMapSimulation?.MarkTileDirty(tileIndex);
             return true;
         }
 
