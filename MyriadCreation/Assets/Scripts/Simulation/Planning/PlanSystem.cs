@@ -175,10 +175,10 @@ namespace CivilizationEvolution.Simulation.Planning
             if (plan.state == newState || plan.IsTerminal) return false;
 
             PlanState oldState = plan.state;
+            if (!IsValidTransition(oldState, newState)) return false;
+
             plan.state = newState;
             plan.lastStateChangeDay = _currentDay;
-
-            if (!IsValidTransition(oldState, newState)) return false;
 
             if (newState == PlanState.Preparing || newState == PlanState.Executing)
                 AddToActive(planId);
