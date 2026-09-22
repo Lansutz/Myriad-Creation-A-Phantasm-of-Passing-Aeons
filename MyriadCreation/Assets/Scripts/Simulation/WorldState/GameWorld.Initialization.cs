@@ -136,14 +136,33 @@ namespace CivilizationEvolution.Simulation.WorldState
             _characterManager.Innovations = _innovationTree; // 注入革新树（家族传统解锁前置依赖）
             // 统一计划系统绑定本次世界实例的 CharacterManager / InnovationTree；读档重建时同步重建，避免持有旧引用。
             InitializePlanSystem();
-            RegisterSimulationSchedules();
  // 阶层出现事件订阅（革新完成→检测解锁阶层→编年史——查漏补缺接线）
             _innovationTree.OnInnovationCompleted += OnInnovationCompletedHandler;
             _chronicle = new Chronicle(); // 编年史（世界大事日志）
  // 政体变迁动力学需要革新树（可行性约束）与编年史（记录节点）
-            _regimeDynamics = new RegimeChangeDynamics(_innovationTree, _chronicle);
             _diplomacyManager.Chronicle = _chronicle;
             _aiManager = new AIManager();
+
+            var societyManager = new SocietyManager();
+            var factionManager = new FactionManager();
+            var regimeDynamics = new RegimeChangeDynamics(_innovationTree, _chronicle);
+            var societyCache = new Dictionary<int, RealmSociety>();
+            _politicsSimulationSystem = new PoliticsSimulationSystem(
+                _politicalManager,
+                realms,
+                tiles,
+                armies,
+                _wars,
+                _economyManager,
+                _disasterSystem,
+                _innovationTree,
+                societyManager,
+                factionManager,
+                regimeDynamics,
+                _characterManager,
+                societyCache);
+
+            RegisterSimulationSchedules();
         }
 
 
