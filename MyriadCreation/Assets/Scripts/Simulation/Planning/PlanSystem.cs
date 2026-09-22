@@ -101,26 +101,29 @@ namespace CivilizationEvolution.Simulation.Planning
             return ChangeState(planId, PlanState.Paused);
         }
 
-        public bool CancelPlan(int planId, string resultCode = "cancelled")
+        public bool CancelPlan(int planId, string resultCode = "cancelled", string resultSummary = null)
         {
             if (!TryGetPlan(planId, out var plan) || plan.IsTerminal) return false;
             plan.resultCode = resultCode ?? string.Empty;
+            plan.resultSummary = resultSummary ?? string.Empty;
             return ChangeState(planId, PlanState.Cancelled);
         }
 
-        public bool FailPlan(int planId, string resultCode = "failed")
+        public bool FailPlan(int planId, string resultCode = "failed", string resultSummary = null)
         {
             if (!TryGetPlan(planId, out var plan) || plan.IsTerminal) return false;
             plan.resultCode = resultCode ?? string.Empty;
+            plan.resultSummary = resultSummary ?? string.Empty;
             return ChangeState(planId, PlanState.Failed);
         }
 
-        public bool CompletePlan(int planId, string resultCode = "completed")
+        public bool CompletePlan(int planId, string resultCode = "completed", string resultSummary = null)
         {
             if (!TryGetPlan(planId, out var plan) || plan.IsTerminal) return false;
             plan.progress = 1f;
             plan.phase = PlanPhase.Resolution;
             plan.resultCode = resultCode ?? string.Empty;
+            plan.resultSummary = resultSummary ?? string.Empty;
             return ChangeState(planId, PlanState.Completed);
         }
 
@@ -147,6 +150,8 @@ namespace CivilizationEvolution.Simulation.Planning
 
                 if (!string.IsNullOrEmpty(result.currentActivity))
                     plan.currentActivity = result.currentActivity;
+                if (!string.IsNullOrEmpty(result.resultSummary))
+                    plan.resultSummary = result.resultSummary;
 
                 float deltaProgress = result.progressDelta;
                 if (float.IsNaN(deltaProgress) || float.IsInfinity(deltaProgress)) deltaProgress = 0f;
@@ -157,15 +162,18 @@ namespace CivilizationEvolution.Simulation.Planning
                 {
                     case PlanExecutionOutcome.Complete:
                         CompletePlan(plan.planId,
-                            string.IsNullOrEmpty(result.resultCode) ? "executor_completed" : result.resultCode);
+                            string.IsNullOrEmpty(result.resultCode) ? "executor_completed" : result.resultCode,
+                            result.resultSummary);
                         break;
                     case PlanExecutionOutcome.Fail:
                         FailPlan(plan.planId,
-                            string.IsNullOrEmpty(result.resultCode) ? "executor_failed" : result.resultCode);
+                            string.IsNullOrEmpty(result.resultCode) ? "executor_failed" : result.resultCode,
+                            result.resultSummary);
                         break;
                     case PlanExecutionOutcome.Cancel:
                         CancelPlan(plan.planId,
-                            string.IsNullOrEmpty(result.resultCode) ? "executor_cancelled" : result.resultCode);
+                            string.IsNullOrEmpty(result.resultCode) ? "executor_cancelled" : result.resultCode,
+                            result.resultSummary);
                         break;
                 }
 
