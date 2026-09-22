@@ -35,6 +35,29 @@ namespace CivilizationEvolution.Simulation.Settlement
     /// 统一处理：四种弃地类型、地块状态变化、连锁反应（流民/秩序下降/蛮族滋生）、重新占领。
     /// 与聚落摧毁系统、MapActor、游牧政权联动。
     /// </summary>
+    /// <summary>弃地领域运行时边界。持有世界依赖，保留旧静态规则 API。</summary>
+    public sealed class LandAbandonmentRuntime
+    {
+        private readonly GameWorld _world;
+
+        public LandAbandonmentRuntime(GameWorld world)
+        {
+            _world = world ?? throw new System.ArgumentNullException(nameof(world));
+        }
+
+        public AbandonmentRecord? AbandonTile(int tileIndex, AbandonmentType type, int realmId)
+            => LandAbandonmentSystem.AbandonTile(_world, tileIndex, type, realmId);
+
+        public List<AbandonmentRecord> AbandonTiles(IEnumerable<int> tileIndices, AbandonmentType type, int realmId)
+            => LandAbandonmentSystem.AbandonTiles(_world, tileIndices, type, realmId);
+
+        public bool ResettleTile(int tileIndex, int newRealmId, int settlerCount)
+            => LandAbandonmentSystem.ResettleTile(_world, tileIndex, newRealmId, settlerCount);
+
+        public void DailyCheckBanditSpawn()
+            => LandAbandonmentSystem.DailyCheckBanditSpawn(_world);
+    }
+
     public static class LandAbandonmentSystem
     {
         /// <summary>弃地记录（用于历史和外交）</summary>
