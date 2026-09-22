@@ -158,6 +158,28 @@ namespace CivilizationEvolution.Tests.EditMode
         }
 
         [Test]
+        public void SimulationScheduler_DirtyExecutionPreservesReinvalidations()
+        {
+            var scheduler = new SimulationScheduler();
+            int runs = 0;
+            scheduler.RegisterDirty("terrain", SimulationCadence.Daily, 10, "world.terrain", _ =>
+            {
+                runs++;
+                if (runs == 1)
+                    scheduler.Dirty.Mark("world.terrain");
+            });
+
+            scheduler.Dirty.Mark("world.terrain");
+            scheduler.Tick(1, 1, 1);
+            Assert.AreEqual(1, runs);
+            Assert.IsTrue(scheduler.Dirty.IsDirty("world.terrain"));
+
+            scheduler.Tick(2, 1, 1);
+            Assert.AreEqual(2, runs);
+            Assert.IsFalse(scheduler.Dirty.IsDirty("world.terrain"));
+        }
+
+        [Test]
         public void SimulationCommandBus_DispatchesWithoutExposingTarget()
         {
             var bus = new SimulationCommandBus();
