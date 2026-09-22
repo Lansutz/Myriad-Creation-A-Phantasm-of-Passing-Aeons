@@ -5,12 +5,32 @@ using CivilizationEvolution.Core.Events;
 using CivilizationEvolution.Core.Contracts;
 using CivilizationEvolution.Core.Simulation;
 using CivilizationEvolution.Simulation.Modding;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Society.Building;
 using CivilizationEvolution.Simulation.Planning;
 
 namespace CivilizationEvolution.Tests.EditMode
 {
     public class ArchitectureContractsTests
     {
+        [Test]
+        public void DomainSchedules_RegisterThroughStableSchedulerContract()
+        {
+            var scheduler = new SimulationScheduler();
+            var economy = new EconomyManager(
+                new TileData[0],
+                new Dictionary<int, TradeCenter>(),
+                new Dictionary<int, GoodsDef>(),
+                null,
+                null);
+            var buildings = new BuildingSystem(new TileData[0]);
+
+            EconomySchedule.Register(scheduler, economy);
+            BuildingSchedule.Register(scheduler, buildings);
+
+            Assert.AreEqual(2, scheduler.Count);
+        }
+
         [Test]
         public void SimulationEventBus_DeliversAndUnsubscribes()
         {
