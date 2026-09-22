@@ -158,6 +158,28 @@ namespace CivilizationEvolution.Tests.EditMode
         }
 
         [Test]
+        public void SimulationEventDirtyBridge_MapsFactsToDirtyAndUnsubscribes()
+        {
+            var events = new SimulationEventBus();
+            var scheduler = new SimulationScheduler();
+            using (var bridge = SimulationEventDirtyBridge.Create(events, scheduler.Dirty))
+            {
+                bridge.Register<PracticeRecordedEvent>("innovation.practice",
+                    evt => evt.amount >= 2f);
+
+                events.Publish(new PracticeRecordedEvent(1, 2, 1f));
+                Assert.IsFalse(scheduler.Dirty.IsDirty("innovation.practice"));
+
+                events.Publish(new PracticeRecordedEvent(1, 2, 2f));
+                Assert.IsTrue(scheduler.Dirty.IsDirty("innovation.practice"));
+            }
+
+            scheduler.Dirty.ClearAll();
+            events.Publish(new PracticeRecordedEvent(1, 2, 3f));
+            Assert.IsFalse(scheduler.Dirty.IsDirty("innovation.practice"));
+        }
+
+        [Test]
         public void SimulationScheduler_DirtyExecutionPreservesReinvalidations()
         {
             var scheduler = new SimulationScheduler();
