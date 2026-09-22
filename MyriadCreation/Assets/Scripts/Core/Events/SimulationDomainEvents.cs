@@ -18,3 +18,18 @@ namespace CivilizationEvolution.Core.Events
         }
     }
 }
+
+    /// <summary>Simulation clock crossed into a new season.</summary>
+    public readonly struct SeasonChangedEvent
+    {
+        public readonly int Day;
+        public readonly int Year;
+        public readonly int Season;
+
+        public SeasonChangedEvent(int day, int year, int season)
+        {
+            Day = day;
+            Year = year;
+            Season = season;
+        }
+    }
