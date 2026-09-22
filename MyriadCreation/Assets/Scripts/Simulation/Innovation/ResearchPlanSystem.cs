@@ -82,12 +82,12 @@ namespace CivilizationEvolution.Simulation.Innovation
         public int ProcessPracticeBreakthroughs(float deltaDays = 1f)
         {
             if (deltaDays <= 0f) return 0;
-            _practiceDirtyCharacters.Clear();
-            DrainPracticeDirtyCharacters(_practiceDirtyCharacters);
+            var dirtyCharacters = new List<int>();
+            DrainPracticeDirtyCharacters(dirtyCharacters);
             int discoveries = 0;
-            for (int i = 0; i < _practiceDirtyCharacters.Count; i++)
+            for (int i = 0; i < dirtyCharacters.Count; i++)
             {
-                int characterId = _practiceDirtyCharacters[i];
+                int characterId = dirtyCharacters[i];
                 var character = GetCharacter(characterId);
                 if (character == null || !character.isAlive || character.realmId < 0) continue;
                 if (TryDailyBreakthrough(characterId, deltaDays)) discoveries++;
