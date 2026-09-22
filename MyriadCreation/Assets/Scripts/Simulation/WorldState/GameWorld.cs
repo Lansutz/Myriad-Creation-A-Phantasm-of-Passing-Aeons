@@ -100,6 +100,7 @@ namespace CivilizationEvolution.Simulation.WorldState
  /// <summary>宗教运行时状态（每教统一个 FaithSystem——热忱/信徒/圣地——
  /// 由 ReligionCatalog 初始化）</summary>
         private readonly List<FaithSystem> _faithSystems = new List<FaithSystem>();
+        private ReligionSimulationEventHandler _religionSimulationEvents;
  /// <summary>开局年月（时间显示=已历时长——开局时记录）</summary>
         public int startYear = -1;
  /// <summary>并行段用随机（ThreadLocal——每线程独立——Parallel.For 内
@@ -358,10 +359,7 @@ namespace CivilizationEvolution.Simulation.WorldState
         public void OnWarBetweenFaiths(int faithA, int faithB)
         {
             if (faithA == faithB) return;
-            var fa = GetFaithSystem(faithA);
-            var fb = GetFaithSystem(faithB);
-            fa?.AddFervor(25f);
-            fb?.AddFervor(25f);
+            _simulationEvents.Publish(new FaithConflictTriggeredEvent(faithA, faithB, currentDay));
         }
 
  // ===== 地块增删（自由形状地图支持） =====
