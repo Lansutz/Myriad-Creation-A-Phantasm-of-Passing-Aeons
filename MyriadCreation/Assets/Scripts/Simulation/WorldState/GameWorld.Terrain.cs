@@ -206,7 +206,8 @@ namespace CivilizationEvolution.Simulation.WorldState
             terrainGen.TrackRivers(tiles);
 
  // 标记脏
-            for (int i = 0; i < tiles.Length; i++) _terrainDirtyTiles.Add(i);
+            _worldMapSimulation?.MarkAllTerrainDirty(tiles.Length);
+            SimulationScheduler.MarkDirty("world.terrain");
 
             Debug.Log($"[GameWorld] 水文重算完成：水力侵蚀+河网追踪已执行");
         }
