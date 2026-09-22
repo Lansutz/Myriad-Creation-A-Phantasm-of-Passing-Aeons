@@ -116,6 +116,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             _mapActorManager = new MapActorManager(this);
             _campManager = new CampManager(this);
             _climateSimulator = new PlanetClimateSimulator(config, tiles, mapWidth, mapHeight, _seaLandGenerator);
+            _worldMapSimulation = new WorldMapSimulationSystem(_seaLandGenerator, _climateSimulator);
             _currencySystem = new CurrencySystem();
             _taxSystem = new TaxSystem();
             _economyManager = new EconomyManager(tiles, tradeCenters, goodsDefs, _currencySystem, _taxSystem);
