@@ -207,8 +207,8 @@ namespace CivilizationEvolution.Simulation.WorldState
             _simulationScheduler.Clear();
             _simulationScheduler.RegisterDirty("world.recalculate-dirty", SimulationCadence.Daily, 10, "world.terrain", DailyRecalculateDirty);
             _simulationScheduler.Register("world.disaster-and-disease", SimulationCadence.Daily, 11, DailyDisasterAndDisease);
-            _simulationScheduler.Register("world.economy", SimulationCadence.Daily, 12, DailyEconomy);
-            _simulationScheduler.Register("world.construction", SimulationCadence.Daily, 13, DailyConstruction);
+            EconomySchedule.Register(_simulationScheduler, _economyManager);
+            CivilizationEvolution.Simulation.Society.Building.BuildingSchedule.Register(_simulationScheduler, _buildingSystem);
             _simulationScheduler.Register("world.population", SimulationCadence.Daily, 14, DailyPopulation);
             _simulationScheduler.Register("world.politics", SimulationCadence.Daily, 15, DailyPolitics);
             _simulationScheduler.Register("world.settlement-control", SimulationCadence.Daily, 16, DailySettlementControl);
@@ -240,17 +240,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             _diseaseSystem.DailyTick(currentDay, currentYear);
         }
 
-        private void DailyEconomy(SimulationTickContext context)
-        {
-            _economyManager.DailyTick();
-        }
-
-        private void DailyConstruction(SimulationTickContext context)
-        {
-            _buildingSystem.DailyTick();
-        }
-
-        private void DailyPopulation(SimulationTickContext context)
+         private void DailyPopulation(SimulationTickContext context)
         {
             PopulationTick();
         }
