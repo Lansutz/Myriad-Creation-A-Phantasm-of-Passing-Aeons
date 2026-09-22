@@ -7,16 +7,12 @@ namespace CivilizationEvolution.Simulation.Politics
     {
         public const string ScheduleId = "politics.daily";
 
-        public static void Register(ISimulationScheduler scheduler, PoliticalManager politics, Action worldPolitics)
+        public static void Register(ISimulationScheduler scheduler, PoliticsSimulationSystem system)
         {
             if (scheduler == null) throw new ArgumentNullException(nameof(scheduler));
-            if (politics == null) throw new ArgumentNullException(nameof(politics));
-            if (worldPolitics == null) throw new ArgumentNullException(nameof(worldPolitics));
-            scheduler.Register(ScheduleId, SimulationCadence.Daily, 15, _ =>
-            {
-                politics.DailyTick();
-                worldPolitics();
-            });
+            if (system == null) throw new ArgumentNullException(nameof(system));
+
+            scheduler.Register(ScheduleId, SimulationCadence.Daily, 15, system.DailyTick);
         }
     }
 }
