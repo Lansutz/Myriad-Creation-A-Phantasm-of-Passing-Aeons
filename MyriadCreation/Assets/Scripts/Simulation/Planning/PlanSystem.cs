@@ -35,12 +35,15 @@ namespace CivilizationEvolution.Simulation.Planning
         public bool UnregisterExecutor(PlanType type) => _executors.Remove(type);
 
         public Plan CreatePlan(PlanType type, int initiatorId, int targetId, int day,
-            string title = null, string description = null, float estimatedDays = 0f)
+            string title = null, string description = null, float estimatedDays = 0f,
+            string purpose = null, string targetKind = null)
         {
             var plan = new Plan(_nextPlanId++, type, initiatorId, targetId, day)
             {
                 title = title ?? string.Empty,
                 description = description ?? string.Empty,
+                purpose = purpose ?? string.Empty,
+                targetKind = targetKind ?? string.Empty,
                 estimatedDays = Math.Max(0f, estimatedDays)
             };
             _plans.Add(plan.planId, plan);
@@ -50,6 +53,28 @@ namespace CivilizationEvolution.Simulation.Planning
 
         public bool TryGetPlan(int planId, out Plan plan) => _plans.TryGetValue(planId, out plan);
         public Plan GetPlan(int planId) { _plans.TryGetValue(planId, out var plan); return plan; }
+
+        public bool TrySetPurpose(int planId, string purpose)
+        {
+            if (!_plans.TryGetValue(planId, out var plan) || plan.IsTerminal) return false;
+            plan.purpose = purpose ?? string.Empty;
+            return true;
+        }
+
+        public bool TrySetActivity(int planId, string activity)
+        {
+            if (!_plans.TryGetValue(planId, out var plan) || plan.IsTerminal) return false;
+            plan.currentActivity = activity ?? string.Empty;
+            return true;
+        }
+
+        public bool TrySetResult(int planId, string resultCode, string resultSummary = null)
+        {
+            if (!_plans.TryGetValue(planId, out var plan)) return false;
+            plan.resultCode = resultCode ?? string.Empty;
+            plan.resultSummary = resultSummary ?? string.Empty;
+            return true;
+        }
 
         public bool AcceptPlan(int planId) => ChangeState(planId, PlanState.Accepted);
 
