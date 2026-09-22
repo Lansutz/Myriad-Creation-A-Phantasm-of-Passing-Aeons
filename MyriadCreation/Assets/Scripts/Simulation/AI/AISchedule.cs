@@ -23,7 +23,8 @@ namespace CivilizationEvolution.Simulation.AI
             DiplomacyManager diplomacy,
             EconomyManager economy,
             InnovationTree innovation,
-            CharacterManager characters)
+            CharacterManager characters,
+            Action missionaryTick)
         {
             if (scheduler == null) throw new ArgumentNullException(nameof(scheduler));
             if (ai == null) throw new ArgumentNullException(nameof(ai));
@@ -33,9 +34,11 @@ namespace CivilizationEvolution.Simulation.AI
             if (economy == null) throw new ArgumentNullException(nameof(economy));
             if (innovation == null) throw new ArgumentNullException(nameof(innovation));
             if (characters == null) throw new ArgumentNullException(nameof(characters));
+            if (missionaryTick == null) throw new ArgumentNullException(nameof(missionaryTick));
 
             scheduler.Register(ScheduleId, SimulationCadence.Daily, 28, _ =>
             {
+                missionaryTick();
                 ai.SyncRulers(characters);
                 ai.DailyTick(realms(), tiles(), diplomacy, economy, innovation, characters);
             });
