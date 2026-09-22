@@ -120,6 +120,11 @@ namespace CivilizationEvolution.Simulation.WorldState
             _taxSystem = new TaxSystem();
             _economyManager = new EconomyManager(tiles, tradeCenters, goodsDefs, _currencySystem, _taxSystem);
             _politicalManager = new PoliticalManager(tiles, realms);
+            _simulationScheduler = new SimulationScheduler();
+            _politicsSimulationSystem = new PoliticsSimulationSystem(_politicalManager, PoliticsTick);
+            PoliticsSimulationSchedule.Register(_simulationScheduler, _politicsSimulationSystem);
+            _settlementSimulationSystem = new SettlementSimulationSystem(burgs, tiles, mapWidth, mapHeight, armies);
+            SettlementSimulationSchedule.Register(_simulationScheduler, _settlementSimulationSystem);
             _combatManager = new CombatManager(tiles, unitDefs, _seaLandGenerator);
             _diplomacyManager = new DiplomacyManager(realms);
             _characterManager = new CharacterManager();
