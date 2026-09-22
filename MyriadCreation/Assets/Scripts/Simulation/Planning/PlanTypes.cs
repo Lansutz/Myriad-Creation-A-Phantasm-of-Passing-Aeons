@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using CivilizationEvolution.Core.Contracts;
 
 namespace CivilizationEvolution.Simulation.Planning
 {
@@ -99,6 +100,11 @@ namespace CivilizationEvolution.Simulation.Planning
 
         /// <summary>领域系统写入的轻量结果/原因标识，避免 PlanSystem 依赖具体领域类型。</summary>
         public string currentActivity = string.Empty;
+        /// <summary>结构化的当前 Activity；currentActivity 保留为兼容显示字段。</summary>
+        public PlanActivityRuntime activity = new PlanActivityRuntime();
+        /// <summary>当前 Activity 的等待条件。Plan 本身仍保持 Executing。</summary>
+        public SimulationWaitCondition waitCondition;
+        public bool isWaiting;
         public string resultCode = string.Empty;
         public string resultSummary = string.Empty;
 
@@ -119,11 +125,31 @@ namespace CivilizationEvolution.Simulation.Planning
             || state == PlanState.Cancelled;
     }
 
+    [Serializable]
+    public sealed class PlanActivityRuntime : ISimulationActivity
+    {
+        public string activityId = string.Empty;
+        public string definitionId = string.Empty;
+        public string stateCode = string.Empty;
+
+        public string ActivityId => activityId;
+        public string DefinitionId => definitionId;
+        public string StateCode => stateCode;
+
+        public void Set(string id, string definition, string state)
+        {
+            activityId = id ?? string.Empty;
+            definitionId = definition ?? string.Empty;
+            stateCode = state ?? string.Empty;
+        }
+    }
+
     /// <summary>统一的计划执行结果；PlanSystem 只解释结果，不理解领域规则。</summary>
     public enum PlanExecutionOutcome
     {
         Continue,
         Complete,
+        Wait,
         Fail,
         Cancel
     }
@@ -136,19 +162,25 @@ namespace CivilizationEvolution.Simulation.Planning
         public readonly string currentActivity;
         public readonly string resultCode;
         public readonly string resultSummary;
+        public readonly SimulationWaitCondition waitCondition;
+        public readonly bool hasWaitCondition;
 
         public PlanExecutionResult(
             PlanExecutionOutcome outcome,
             float progressDelta = 0f,
             string currentActivity = null,
             string resultCode = null,
-            string resultSummary = null)
+            string resultSummary = null,
+            SimulationWaitCondition waitCondition = default(SimulationWaitCondition),
+            bool hasWaitCondition = false)
         {
             this.outcome = outcome;
             this.progressDelta = progressDelta;
             this.currentActivity = currentActivity ?? string.Empty;
             this.resultCode = resultCode ?? string.Empty;
             this.resultSummary = resultSummary ?? string.Empty;
+            this.waitCondition = waitCondition;
+            this.hasWaitCondition = hasWaitCondition;
         }
 
         public static PlanExecutionResult Continue(
@@ -160,6 +192,20 @@ namespace CivilizationEvolution.Simulation.Planning
             string resultCode = "completed", string currentActivity = null, string resultSummary = null)
             => new PlanExecutionResult(
                 PlanExecutionOutcome.Complete, 0f, currentActivity, resultCode, resultSummary);
+
+        public static PlanExecutionResult Wait(
+            string conditionId,
+            string description = null,
+            bool pollOnSchedule = true,
+            string currentActivity = null)
+            => new PlanExecutionResult(
+                PlanExecutionOutcome.Wait,
+                0f,
+                currentActivity,
+                "waiting",
+                description,
+                new SimulationWaitCondition(conditionId, description, pollOnSchedule),
+                true);
 
         public static PlanExecutionResult Fail(string resultCode = "failed", string resultSummary = null)
             => new PlanExecutionResult(
