@@ -501,6 +501,8 @@ namespace CivilizationEvolution.Simulation.WorldState
                 _faithSystems.Add(faith);
             }
             Debug.Log($"[GameWorld] 宗教运行时初始化：{_faithSystems.Count} 个教统");
+            _religionSimulationEvents?.Dispose();
+            _religionSimulationEvents = new ReligionSimulationEventHandler(_faithSystems, _simulationEvents);
         }
 
     }
