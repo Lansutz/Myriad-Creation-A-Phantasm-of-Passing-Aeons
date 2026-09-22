@@ -135,17 +135,20 @@ namespace CivilizationEvolution.Simulation.Planning
         public readonly float progressDelta;
         public readonly string currentActivity;
         public readonly string resultCode;
+        public readonly string resultSummary;
 
         public PlanExecutionResult(
             PlanExecutionOutcome outcome,
             float progressDelta = 0f,
             string currentActivity = null,
-            string resultCode = null)
+            string resultCode = null,
+            string resultSummary = null)
         {
             this.outcome = outcome;
             this.progressDelta = progressDelta;
             this.currentActivity = currentActivity ?? string.Empty;
             this.resultCode = resultCode ?? string.Empty;
+            this.resultSummary = resultSummary ?? string.Empty;
         }
 
         public static PlanExecutionResult Continue(
@@ -154,17 +157,17 @@ namespace CivilizationEvolution.Simulation.Planning
                 PlanExecutionOutcome.Continue, progressDelta, currentActivity);
 
         public static PlanExecutionResult Complete(
-            string resultCode = "completed", string currentActivity = null)
+            string resultCode = "completed", string currentActivity = null, string resultSummary = null)
             => new PlanExecutionResult(
-                PlanExecutionOutcome.Complete, 0f, currentActivity, resultCode);
+                PlanExecutionOutcome.Complete, 0f, currentActivity, resultCode, resultSummary);
 
-        public static PlanExecutionResult Fail(string resultCode = "failed")
+        public static PlanExecutionResult Fail(string resultCode = "failed", string resultSummary = null)
             => new PlanExecutionResult(
-                PlanExecutionOutcome.Fail, 0f, null, resultCode);
+                PlanExecutionOutcome.Fail, 0f, null, resultCode, resultSummary);
 
-        public static PlanExecutionResult Cancel(string resultCode = "cancelled")
+        public static PlanExecutionResult Cancel(string resultCode = "cancelled", string resultSummary = null)
             => new PlanExecutionResult(
-                PlanExecutionOutcome.Cancel, 0f, null, resultCode);
+                PlanExecutionOutcome.Cancel, 0f, null, resultCode, resultSummary);
     }
 
     /// <summary>
