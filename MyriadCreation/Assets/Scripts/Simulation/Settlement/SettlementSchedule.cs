@@ -20,6 +20,7 @@ namespace CivilizationEvolution.Simulation.Settlement
         private readonly MapActorManager _mapActors;
         private readonly CampManager _camps;
         private readonly SettlementEvolutionRuntime _evolutionRuntime;
+        private readonly SettlementControlRuntime _controlRuntime;
         private readonly SettlementDestructionRuntime _destructionRuntime;
         private readonly LandAbandonmentRuntime _abandonmentRuntime;
 
@@ -42,13 +43,15 @@ namespace CivilizationEvolution.Simulation.Settlement
             _mapActors = mapActors ?? throw new ArgumentNullException(nameof(mapActors));
             _camps = camps ?? throw new ArgumentNullException(nameof(camps));
             _evolutionRuntime = new SettlementEvolutionRuntime(_world);
+            _controlRuntime = new SettlementControlRuntime(
+                _burgs, _tiles, _mapWidth, _mapHeight, _armies);
             _destructionRuntime = new SettlementDestructionRuntime(_world);
             _abandonmentRuntime = new LandAbandonmentRuntime(_world);
         }
 
         public void ControlDailyTick(SimulationTickContext context)
         {
-            SettlementControlSystem.DailyTick(_burgs, _tiles, _mapWidth, _mapHeight, _armies);
+            _controlRuntime.DailyTick();
         }
 
         public void MapActorsDailyTick(SimulationTickContext context) => _mapActors.Tick(context.deltaDays);
