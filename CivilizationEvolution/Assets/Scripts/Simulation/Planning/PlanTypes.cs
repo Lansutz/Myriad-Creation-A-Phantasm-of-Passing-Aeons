@@ -97,6 +97,14 @@ namespace CivilizationEvolution.Simulation.Planning
         public readonly List<PlanRequirement> requirements = new List<PlanRequirement>();
         public readonly List<int> childPlanIds = new List<int>();
 
+        /// <summary>
+        /// Plan 的运行时活动序列。旧版 Plan 可保持为空，由旧 IPlanExecutor 兼容执行。
+        /// </summary>
+        public readonly List<Activity> activities = new List<Activity>();
+
+        /// <summary>当前活动索引；-1 表示尚未开始 Activity 链。</summary>
+        public int activeActivityIndex = -1;
+
         /// <summary>领域系统写入的轻量结果/原因标识，避免 PlanSystem 依赖具体领域类型。</summary>
         public string resultCode = string.Empty;
 
