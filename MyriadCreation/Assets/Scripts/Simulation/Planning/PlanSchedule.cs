@@ -7,12 +7,13 @@ namespace CivilizationEvolution.Simulation.Planning
     {
         public const string ScheduleId = "plans.daily";
 
-        public static void Register(ISimulationScheduler scheduler, PlanSystem plans, Func<float> delta)
+        public static void Register(ISimulationScheduler scheduler, PlanSystem plans, Func<int> currentDay, Func<float> delta)
         {
             if (scheduler == null) throw new ArgumentNullException(nameof(scheduler));
             if (plans == null) throw new ArgumentNullException(nameof(plans));
+            if (currentDay == null) throw new ArgumentNullException(nameof(currentDay));
             if (delta == null) throw new ArgumentNullException(nameof(delta));
-            scheduler.Register(ScheduleId, SimulationCadence.Daily, 30, _ => plans.DailyTick(delta()));
+            scheduler.Register(ScheduleId, SimulationCadence.Daily, 30, _ => plans.DailyTick(currentDay(), delta()));
         }
     }
 }
