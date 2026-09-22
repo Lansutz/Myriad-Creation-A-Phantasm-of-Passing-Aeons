@@ -24,6 +24,9 @@ namespace CivilizationEvolution.Simulation.Settlement
         private readonly SettlementDestructionRuntime _destructionRuntime;
         private readonly LandAbandonmentRuntime _abandonmentRuntime;
 
+        public SettlementDestructionRuntime DestructionRuntime => _destructionRuntime;
+        public LandAbandonmentRuntime AbandonmentRuntime => _abandonmentRuntime;
+
         public SettlementSimulationSystem(
             Dictionary<int, BurgData> burgs,
             TileData[] tiles,
