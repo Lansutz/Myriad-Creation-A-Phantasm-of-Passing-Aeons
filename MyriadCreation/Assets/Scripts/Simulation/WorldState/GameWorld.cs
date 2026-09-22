@@ -233,7 +233,7 @@ namespace CivilizationEvolution.Simulation.WorldState
                 _simulationScheduler, _aiManager, () => realms, () => tiles, _diplomacyManager, _economyManager, _innovationTree, _characterManager, MissionaryTick);
             CivilizationEvolution.Simulation.Events.EventSchedule.Register(_simulationScheduler, ProcessEvents);
             CivilizationEvolution.Simulation.Innovation.ResearchPlanSchedule.Register(_simulationScheduler, ResearchPlans);
-            CivilizationEvolution.Simulation.Planning.PlanSchedule.Register(_simulationScheduler, _planSystem, () => currentDay, () => daysPerTick);
+            CivilizationEvolution.Simulation.Planning.PlanSchedule.Register(_simulationScheduler, _planSystem);
             CivilizationEvolution.Core.Simulation.SimulationTimeSchedule.Register(_simulationScheduler, AdvanceTime);
         }
 
