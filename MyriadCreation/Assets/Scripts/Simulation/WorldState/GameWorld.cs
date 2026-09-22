@@ -206,7 +206,8 @@ namespace CivilizationEvolution.Simulation.WorldState
         {
             _simulationScheduler.Clear();
             _simulationScheduler.RegisterDirty("world.recalculate-dirty", SimulationCadence.Daily, 10, "world.terrain", DailyRecalculateDirty);
-            _simulationScheduler.Register("world.disaster-and-disease", SimulationCadence.Daily, 11, DailyDisasterAndDisease);
+            CivilizationEvolution.Simulation.Disaster.DisasterSchedule.Register(
+                _simulationScheduler, _disasterSystem, _diseaseSystem, () => currentDay, () => currentYear);
             EconomySchedule.Register(_simulationScheduler, _economyManager);
             CivilizationEvolution.Simulation.Society.Building.BuildingSchedule.Register(_simulationScheduler, _buildingSystem);
             _simulationScheduler.Register("world.population", SimulationCadence.Daily, 14, DailyPopulation);
@@ -218,7 +219,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             _simulationScheduler.Register("world.settlement-recovery", SimulationCadence.Daily, 20, DailySettlementRecovery);
             _simulationScheduler.Register("world.land-abandonment", SimulationCadence.Daily, 21, DailyLandAbandonment);
             _simulationScheduler.Register("world.culture-stage-evolution", SimulationCadence.Monthly, 22, MonthlyCultureStageEvolution);
-            _simulationScheduler.Register("world.diplomacy", SimulationCadence.Daily, 23, DailyDiplomacy);
+            CivilizationEvolution.Simulation.Diplomacy.DiplomacySchedule.Register(_simulationScheduler, _diplomacyManager);
             _simulationScheduler.Register("world.warfare-and-religion", SimulationCadence.Daily, 24, DailyWarfareAndReligion);
             _simulationScheduler.Register("world.characters", SimulationCadence.Daily, 25, DailyCharacters);
             _simulationScheduler.Register("world.succession", SimulationCadence.Daily, 26, DailySuccession);
@@ -232,12 +233,6 @@ namespace CivilizationEvolution.Simulation.WorldState
         private void DailyRecalculateDirty(SimulationTickContext context)
         {
             RecalculateDirty();
-        }
-
-        private void DailyDisasterAndDisease(SimulationTickContext context)
-        {
-            _disasterSystem.DailyTick(currentDay, currentYear);
-            _diseaseSystem.DailyTick(currentDay, currentYear);
         }
 
          private void DailyPopulation(SimulationTickContext context)
@@ -286,12 +281,6 @@ namespace CivilizationEvolution.Simulation.WorldState
         {
             if (currentDay % 30 == 0)
                 CivilizationEvolution.Simulation.Culture.CultureStageEvolutionSystem.MonthlyTick(this);
-        }
-
-        private void DailyDiplomacy(SimulationTickContext context)
-        {
-            _diplomacyManager.CurrentDay = currentDay;
-            _diplomacyManager.DailyTick();
         }
 
         private void DailyWarfareAndReligion(SimulationTickContext context)
