@@ -65,6 +65,28 @@ namespace CivilizationEvolution.Simulation.Planning
         {
             if (!_plans.TryGetValue(planId, out var plan) || plan.IsTerminal) return false;
             plan.currentActivity = activity ?? string.Empty;
+            plan.activity.Set(plan.currentActivity, plan.currentActivity, "executing");
+            plan.isWaiting = false;
+            plan.waitCondition = default(CivilizationEvolution.Core.Contracts.SimulationWaitCondition);
+            return true;
+        }
+
+        public bool TrySetActivity(int planId, string activityId, string definitionId, string stateCode)
+        {
+            if (!_plans.TryGetValue(planId, out var plan) || plan.IsTerminal) return false;
+            plan.activity.Set(activityId, definitionId, stateCode);
+            plan.currentActivity = activityId ?? string.Empty;
+            return true;
+        }
+
+        public bool TrySetWait(int planId, CivilizationEvolution.Core.Contracts.SimulationWaitCondition condition)
+        {
+            if (!_plans.TryGetValue(planId, out var plan) || plan.IsTerminal || plan.state != PlanState.Executing)
+                return false;
+            if (!condition.IsValid) return false;
+            plan.waitCondition = condition;
+            plan.isWaiting = true;
+            plan.activity.stateCode = "waiting";
             return true;
         }
 
@@ -149,7 +171,21 @@ namespace CivilizationEvolution.Simulation.Planning
                 var result = executor.Execute(plan, deltaDays);
 
                 if (!string.IsNullOrEmpty(result.currentActivity))
+                {
                     plan.currentActivity = result.currentActivity;
+                    plan.activity.Set(result.currentActivity, result.currentActivity, "executing");
+                }
+                if (result.outcome == PlanExecutionOutcome.Wait && result.hasWaitCondition)
+                {
+                    plan.waitCondition = result.waitCondition;
+                    plan.isWaiting = true;
+                    plan.activity.stateCode = "waiting";
+                }
+                else if (result.outcome != PlanExecutionOutcome.Wait)
+                {
+                    plan.isWaiting = false;
+                    plan.waitCondition = default(CivilizationEvolution.Core.Contracts.SimulationWaitCondition);
+                }
                 if (!string.IsNullOrEmpty(result.resultSummary))
                     plan.resultSummary = result.resultSummary;
 
