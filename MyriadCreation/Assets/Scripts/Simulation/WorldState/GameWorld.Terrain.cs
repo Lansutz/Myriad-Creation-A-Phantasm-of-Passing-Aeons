@@ -263,8 +263,6 @@ namespace CivilizationEvolution.Simulation.WorldState
  /// <summary>全量重算</summary>
         public void RecalculateAll()
         {
-            _seaLandGenerator.RecalculateAll();
-            _climateSimulator.RecalculateAll();
             _worldMapSimulation?.RecalculateAll();
         }
 
