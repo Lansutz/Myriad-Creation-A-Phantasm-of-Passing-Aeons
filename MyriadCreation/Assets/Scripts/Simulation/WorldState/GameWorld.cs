@@ -228,13 +228,13 @@ namespace CivilizationEvolution.Simulation.WorldState
                 () => UpdateFaithFervor(currentDay), CheckGreatHolyWarSettlements,
                 () => ProcessWarOutcomes(currentDay));
             CivilizationEvolution.Simulation.Characters.CharacterSchedule.Register(_simulationScheduler, _characterManager, () => currentDay, () => currentYear);
-            _simulationScheduler.Register("world.succession", SimulationCadence.Daily, 26, DailySuccession);
-            _simulationScheduler.Register("world.thought", SimulationCadence.Daily, 27, DailyThought);
+            CivilizationEvolution.Simulation.Characters.SuccessionSchedule.Register(_simulationScheduler, () => CheckRulerSuccessions());
+            CivilizationEvolution.Simulation.Thought.ThoughtSchedule.Register(_simulationScheduler, () => _thoughtManager.DailyTick(currentYear));
             CivilizationEvolution.Simulation.AI.AISchedule.Register(
                 _simulationScheduler, _aiManager, () => realms, () => tiles, _diplomacyManager, _economyManager, _innovationTree, _characterManager, MissionaryTick);
-            _simulationScheduler.Register("world.events", SimulationCadence.Daily, 29, DailyEvents);
+            CivilizationEvolution.Simulation.Events.EventSchedule.Register(_simulationScheduler, ProcessEvents);
             CivilizationEvolution.Simulation.Planning.PlanSchedule.Register(_simulationScheduler, _planSystem, () => 1f);
-            _simulationScheduler.Register("world.advance-simulation-time", SimulationCadence.Daily, 31, AdvanceSimulationTime);
+            CivilizationEvolution.Core.Simulation.SimulationTimeSchedule.Register(_simulationScheduler, AdvanceTime);
         }
 
         private void DailyRecalculateDirty(SimulationTickContext context)
@@ -266,39 +266,6 @@ namespace CivilizationEvolution.Simulation.WorldState
                 if (war.outcome == "victory" && war.winnerId >= 0)
                     NotifyWarDefeat(war, day);
             }
-        }
-
-        private void DailySuccession(SimulationTickContext context)
-        {
-            CheckRulerSuccessions();
-        }
-
-        private void DailyThought(SimulationTickContext context)
-        {
-            _thoughtManager.DailyTick(currentYear);
-        }
-
-        private void DailyEvents(SimulationTickContext context)
-        {
-            ProcessEvents();
-        }
-
-        private void AdvanceSimulationTime(SimulationTickContext context)
-        {
-            AdvanceTime();
-        }
-        public RealmSociety GetRealmSociety(int realmId) => _societyCache.GetValueOrDefault(realmId);
-        public SocietyManager Society => _societyManager;
-        public FactionManager Factions => _factionManager;
-        public RegimeChangeDynamics RegimeDynamics => _regimeDynamics;
-        public DiplomacyManager Diplomacy => _diplomacyManager;
-
- /// 通过生成管线全量生成（带进度回调）。
- /// 统一走 GenerationPipeline 的阶段管理，替代直接调用各生成方法。
-        public void GenerateAllWithPipeline()
-        {
-            Pipeline ??= new GenerationPipeline(this);
-            Pipeline.GenerateAll();
         }
 
  /// 从指定阶段开始重算下游（管线增量重算）。
