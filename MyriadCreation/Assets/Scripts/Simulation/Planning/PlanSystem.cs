@@ -178,6 +178,8 @@ namespace CivilizationEvolution.Simulation.Planning
             plan.state = newState;
             plan.lastStateChangeDay = _currentDay;
 
+            if (!IsValidTransition(oldState, newState)) return false;
+
             if (newState == PlanState.Preparing || newState == PlanState.Executing)
                 AddToActive(planId);
             else if (newState == PlanState.Completed || newState == PlanState.Failed || newState == PlanState.Cancelled)
@@ -186,20 +188,31 @@ namespace CivilizationEvolution.Simulation.Planning
             PlanStateChanged?.Invoke(plan, oldState, newState);
 
             if (newState == PlanState.Completed)
-            {
                 PlanCompleted?.Invoke(plan);
-            }
             else if (newState == PlanState.Failed)
-            {
-                if (_executors.TryGetValue(plan.type, out var executor)) executor?.OnPlanEnded(plan);
                 PlanFailed?.Invoke(plan);
-            }
             else if (newState == PlanState.Cancelled)
-            {
-                if (_executors.TryGetValue(plan.type, out var executor)) executor?.OnPlanEnded(plan);
                 PlanCancelled?.Invoke(plan);
-            }
             return true;
+        }
+
+        private static bool IsValidTransition(PlanState from, PlanState to)
+        {
+            switch (from)
+            {
+                case PlanState.Proposed:
+                    return to == PlanState.Accepted || to == PlanState.Cancelled || to == PlanState.Failed;
+                case PlanState.Accepted:
+                    return to == PlanState.Preparing || to == PlanState.Paused || to == PlanState.Cancelled || to == PlanState.Failed;
+                case PlanState.Preparing:
+                    return to == PlanState.Executing || to == PlanState.Paused || to == PlanState.Cancelled || to == PlanState.Failed;
+                case PlanState.Executing:
+                    return to == PlanState.Paused || to == PlanState.Completed || to == PlanState.Failed || to == PlanState.Cancelled;
+                case PlanState.Paused:
+                    return to == PlanState.Preparing || to == PlanState.Executing || to == PlanState.Cancelled || to == PlanState.Failed;
+                default:
+                    return false;
+            }
         }
 
         private void AddToActive(int planId)
