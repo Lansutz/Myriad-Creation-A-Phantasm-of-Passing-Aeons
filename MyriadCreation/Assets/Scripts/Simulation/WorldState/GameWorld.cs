@@ -137,12 +137,6 @@ namespace CivilizationEvolution.Simulation.WorldState
         private PoliticalManager _politicalManager;
 
  // 社会-派系-政体变迁链路（阶层需求→政治能量→派系组织化→关键节点博弈）
-        private SocietyManager _societyManager = new SocietyManager();
-        private FactionManager _factionManager = new FactionManager();
-        private RegimeChangeDynamics _regimeDynamics;
-        private readonly Dictionary<int, RealmSociety> _societyCache = new Dictionary<int, RealmSociety>();
-        private float _differentiationTimer = 0f;
-        private const float DifferentiationIntervalDays = 25f; // 社会分工/阶层分化推进间隔（天）
         private CombatManager _combatManager;
         private DiplomacyManager _diplomacyManager;
         private CharacterManager _characterManager;
@@ -155,6 +149,7 @@ namespace CivilizationEvolution.Simulation.WorldState
         private AIManager _aiManager;
         private readonly SimulationEventBus _simulationEvents = new SimulationEventBus();
         private readonly SimulationScheduler _simulationScheduler = new SimulationScheduler();
+        private PoliticsSimulationSystem _politicsSimulationSystem;
         public SimulationScheduler SimulationScheduler => _simulationScheduler;
         /// <summary>稳定的调度注册契约；领域系统只依赖接口，不依赖调度器实现。</summary>
         public ISimulationScheduler Scheduler => _simulationScheduler;
