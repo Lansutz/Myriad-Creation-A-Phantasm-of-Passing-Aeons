@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using CivilizationEvolution.Core.Data;
 using CivilizationEvolution.Core.Simulation;
 using CivilizationEvolution.Simulation.Warfare;
+using CivilizationEvolution.Simulation.Actors;
+using CivilizationEvolution.Simulation.WorldState;
 
 namespace CivilizationEvolution.Simulation.Settlement
 {
@@ -14,11 +16,9 @@ namespace CivilizationEvolution.Simulation.Settlement
         private readonly int _mapWidth;
         private readonly int _mapHeight;
         private readonly Dictionary<int, Army> _armies;
-        private readonly Action _mapActorsTick;
-        private readonly Action _campsTick;
-        private readonly Action _evolutionTick;
-        private readonly Action _recoveryTick;
-        private readonly Action _abandonmentTick;
+        private readonly GameWorld _world;
+        private readonly MapActorManager _mapActors;
+        private readonly CampManager _camps;
 
         public SettlementSimulationSystem(
             Dictionary<int, BurgData> burgs,
@@ -26,22 +26,18 @@ namespace CivilizationEvolution.Simulation.Settlement
             int mapWidth,
             int mapHeight,
             Dictionary<int, Army> armies,
-            Action mapActorsTick,
-            Action campsTick,
-            Action evolutionTick,
-            Action recoveryTick,
-            Action abandonmentTick)
+            GameWorld world,
+            MapActorManager mapActors,
+            CampManager camps)
         {
             _burgs = burgs ?? throw new ArgumentNullException(nameof(burgs));
             _tiles = tiles ?? throw new ArgumentNullException(nameof(tiles));
             _mapWidth = mapWidth;
             _mapHeight = mapHeight;
             _armies = armies ?? throw new ArgumentNullException(nameof(armies));
-            _mapActorsTick = mapActorsTick ?? throw new ArgumentNullException(nameof(mapActorsTick));
-            _campsTick = campsTick ?? throw new ArgumentNullException(nameof(campsTick));
-            _evolutionTick = evolutionTick ?? throw new ArgumentNullException(nameof(evolutionTick));
-            _recoveryTick = recoveryTick ?? throw new ArgumentNullException(nameof(recoveryTick));
-            _abandonmentTick = abandonmentTick ?? throw new ArgumentNullException(nameof(abandonmentTick));
+            _world = world ?? throw new ArgumentNullException(nameof(world));
+            _mapActors = mapActors ?? throw new ArgumentNullException(nameof(mapActors));
+            _camps = camps ?? throw new ArgumentNullException(nameof(camps));
         }
 
         public void ControlDailyTick(SimulationTickContext context)
@@ -49,11 +45,11 @@ namespace CivilizationEvolution.Simulation.Settlement
             SettlementControlSystem.DailyTick(_burgs, _tiles, _mapWidth, _mapHeight, _armies);
         }
 
-        public void MapActorsDailyTick(SimulationTickContext context) => _mapActorsTick();
-        public void CampsDailyTick(SimulationTickContext context) => _campsTick();
-        public void EvolutionDailyTick(SimulationTickContext context) => _evolutionTick();
-        public void RecoveryDailyTick(SimulationTickContext context) => _recoveryTick();
-        public void AbandonmentDailyTick(SimulationTickContext context) => _abandonmentTick();
+        public void MapActorsDailyTick(SimulationTickContext context) => _mapActors.Tick(context.deltaDays);
+        public void CampsDailyTick(SimulationTickContext context) => _camps.Tick(context.deltaDays);
+        public void EvolutionDailyTick(SimulationTickContext context) => SettlementEvolutionSystem.DailyTick(_world);
+        public void RecoveryDailyTick(SimulationTickContext context) => SettlementDestructionSystem.DailyTickRecovery(_world);
+        public void AbandonmentDailyTick(SimulationTickContext context) => LandAbandonmentSystem.DailyCheckBanditSpawn(_world);
     }
 
     public static class SettlementSchedule
