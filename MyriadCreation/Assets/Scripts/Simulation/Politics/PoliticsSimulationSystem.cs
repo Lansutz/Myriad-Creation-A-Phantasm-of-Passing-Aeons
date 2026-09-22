@@ -30,7 +30,7 @@ namespace CivilizationEvolution.Simulation.Politics
     {
         public const string ScheduleId = "politics.daily";
 
-        public static void Register(ISimulationScheduler scheduler, PoliticsSimulationSystem system)
+        public static void Register(SimulationScheduler scheduler, PoliticsSimulationSystem system)
         {
             if (scheduler == null) throw new ArgumentNullException(nameof(scheduler));
             if (system == null) throw new ArgumentNullException(nameof(system));
