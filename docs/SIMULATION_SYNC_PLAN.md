@@ -90,7 +90,22 @@ Concrete verification from this pass:
 
 This tooling constraint is part of the synchronization plan because ignoring it can produce false architecture conclusions and incorrect file writes.
 
-## 5. Next implementation order
+## 5. Current implementation status
+
+Completed in the current synchronization pass:
+- Added the Activity/Process runtime contracts under CivilizationEvolution/Simulation/Planning.
+- Added Activity state and active-activity cursor to Plan.
+- Connected PlanSystem to ISimulationProcess with backward-compatible IPlanExecutor fallback.
+- Added reusable ActivitySimulationProcess with Wait/Resume and terminal result handling.
+- Added SettlementSimulationSystem as a scheduler-facing domain boundary for SettlementControlSystem.
+- Fixed the Politics schedule adapter to use the actual SimulationScheduler type rather than the previously referenced non-existent ISimulationScheduler contract.
+
+Not yet claimed:
+- GameWorld has not yet been fully rewired to register Settlement/Politics through the scheduler.
+- Warfare, Religion, AI, Event processing, and time advancement still require domain-boundary extraction.
+- Unity compilation has not been run in this pass.
+
+## 6. Next implementation order
 
 1. Establish one authoritative simulation source root/boundary for the new scheduler-facing systems.
 2. Add the process/activity abstraction required by Plan execution.
@@ -101,7 +116,7 @@ This tooling constraint is part of the synchronization plan because ignoring it 
 7. Move time advancement to the simulation clock boundary last, so existing systems can migrate against a stable day/tick context.
 8. Verify exact repository path and branch before every write.
 
-## 6. Non-goals
+## 7. Non-goals
 
 - Do not create parallel Plan systems for Construction, Research, Military, Diplomacy, etc.
 - Do not make GameWorld the universal service locator for domain execution.
