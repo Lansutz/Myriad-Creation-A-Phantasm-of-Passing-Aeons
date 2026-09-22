@@ -63,7 +63,7 @@ namespace CivilizationEvolution.Simulation.WorldState
 
  // 标记所有地块为脏，触发渲染刷新
             _worldMapSimulation?.MarkAllTerrainDirty(tiles.Length);
-            SimulationScheduler.Dirty.Mark("world.terrain");
+            SimulationScheduler.MarkDirty("world.terrain");
 
  // 河流追踪（须在 isLand 判定完成后，复用旧TerrainGenerator的河流算法）
             var terrainGen = new TerrainGenerator(seed);
@@ -120,7 +120,7 @@ namespace CivilizationEvolution.Simulation.WorldState
 
  // 标记脏
             _worldMapSimulation?.MarkAllTerrainDirty(tiles.Length);
-            SimulationScheduler.Dirty.Mark("world.terrain");
+            SimulationScheduler.MarkDirty("world.terrain");
 
  // 生成省份和Burg
             GenerateProvinces(seed);
@@ -282,7 +282,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             if (tileIndex < 0 || tileIndex >= tiles.Length) return;
             tiles[tileIndex].elevation01 = newElevation;
             _worldMapSimulation?.MarkTileDirty(tileIndex);
-            SimulationScheduler.Dirty.Mark("world.terrain");
+            SimulationScheduler.MarkDirty("world.terrain");
         }
 
 
@@ -291,7 +291,7 @@ namespace CivilizationEvolution.Simulation.WorldState
         {
             configUpdater?.Invoke(config);
             _worldMapSimulation?.MarkConfigDirty();
-            SimulationScheduler.Dirty.Mark("world.terrain");
+            SimulationScheduler.MarkDirty("world.terrain");
         }
 
 
