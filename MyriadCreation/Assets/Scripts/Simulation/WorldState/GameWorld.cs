@@ -205,7 +205,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             EconomySchedule.Register(_simulationScheduler, _economyManager);
             CivilizationEvolution.Simulation.Society.Building.BuildingSchedule.Register(_simulationScheduler, _buildingSystem);
             CivilizationEvolution.Simulation.Population.PopulationSchedule.Register(_simulationScheduler, PopulationTick);
-            CivilizationEvolution.Simulation.Politics.PoliticsSchedule.Register(_simulationScheduler, _politicalManager, PoliticsTick);
+            CivilizationEvolution.Simulation.Politics.PoliticsSchedule.Register(_simulationScheduler, _politicsSimulationSystem);
             CivilizationEvolution.Simulation.Settlement.SettlementSchedule.Register(
                 _simulationScheduler,
                 () => CivilizationEvolution.Simulation.Settlement.SettlementControlSystem.DailyTick(
