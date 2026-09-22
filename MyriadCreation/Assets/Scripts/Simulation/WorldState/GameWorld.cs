@@ -221,12 +221,13 @@ namespace CivilizationEvolution.Simulation.WorldState
             _simulationScheduler.Register("world.culture-stage-evolution", SimulationCadence.Monthly, 22, MonthlyCultureStageEvolution);
             CivilizationEvolution.Simulation.Diplomacy.DiplomacySchedule.Register(_simulationScheduler, _diplomacyManager, () => currentDay);
             _simulationScheduler.Register("world.warfare-and-religion", SimulationCadence.Daily, 24, DailyWarfareAndReligion);
-            _simulationScheduler.Register("world.characters", SimulationCadence.Daily, 25, DailyCharacters);
+            CivilizationEvolution.Simulation.Characters.CharacterSchedule.Register(_simulationScheduler, _characterManager, () => currentDay, () => currentYear);
             _simulationScheduler.Register("world.succession", SimulationCadence.Daily, 26, DailySuccession);
             _simulationScheduler.Register("world.thought", SimulationCadence.Daily, 27, DailyThought);
-            _simulationScheduler.Register("world.aiand-missionary", SimulationCadence.Daily, 28, DailyAIAndMissionary);
+            CivilizationEvolution.Simulation.AI.AISchedule.Register(
+                _simulationScheduler, _aiManager, () => realms, () => tiles, _diplomacyManager, _economyManager, _innovationTree, _characterManager);
             _simulationScheduler.Register("world.events", SimulationCadence.Daily, 29, DailyEvents);
-            _simulationScheduler.Register("world.plans", SimulationCadence.Daily, 30, DailyPlans);
+            CivilizationEvolution.Simulation.Planning.PlanSchedule.Register(_simulationScheduler, _planSystem, () => 1f);
             _simulationScheduler.Register("world.advance-simulation-time", SimulationCadence.Daily, 31, AdvanceSimulationTime);
         }
 
@@ -322,11 +323,6 @@ namespace CivilizationEvolution.Simulation.WorldState
             }
         }
 
-        private void DailyCharacters(SimulationTickContext context)
-        {
-            _characterManager.DailyTick(currentDay, currentYear);
-        }
-
         private void DailySuccession(SimulationTickContext context)
         {
             CheckRulerSuccessions();
@@ -337,23 +333,9 @@ namespace CivilizationEvolution.Simulation.WorldState
             _thoughtManager.DailyTick(currentYear);
         }
 
-        private void DailyAIAndMissionary(SimulationTickContext context)
-        {
-            MissionaryTick();
-
-            _aiManager.SyncRulers(_characterManager);
-            _aiManager.DailyTick(realms, tiles, _diplomacyManager, _economyManager, _innovationTree,
-                _characterManager); // characters 传入——AI 劫掠屠城计数器
-        }
-
         private void DailyEvents(SimulationTickContext context)
         {
             ProcessEvents();
-        }
-
-        private void DailyPlans(SimulationTickContext context)
-        {
-            TickPlans(1f);
         }
 
         private void AdvanceSimulationTime(SimulationTickContext context)
