@@ -43,9 +43,26 @@ rather than:
 
 `SimulationScheduler -> GameWorld.PoliticsTick()`
 
+## Settlement migration checkpoint
+
+Settlement has now moved beyond callback-shaped execution for its six scheduled phases:
+- SettlementControlRuntime owns the control-state dependencies and invokes the existing control rules.
+- SettlementEvolutionRuntime owns the GameWorld dependency for evolution.
+- SettlementDestructionRuntime owns the GameWorld dependency for ruin recovery and destruction entry points.
+- LandAbandonmentRuntime owns the GameWorld dependency for abandonment/resettlement/bandit-spawn entry points.
+- MapActorManager and CampManager remain explicit injected dependencies for their daily phases.
+
+The execution boundary is now:
+
+SimulationScheduler -> SettlementSchedule -> SettlementSimulationSystem -> domain runtimes -> state/rules
+
+No Action callback fields remain in SettlementSimulationSystem.
+
 ## Remaining migration
 
-The settlement schedule still contains callback-shaped dependencies, including settlement control, map actors, camps, evolution, recovery, and abandonment. These should be extracted one domain boundary at a time.
+The settlement domain still has legacy static rule APIs underneath the runtime boundaries. The next step is to move state-changing operations toward command/process/event boundaries rather than treating runtime wrappers as the final architecture.
+
+Warfare/religion, AI, events, and time already have schedule boundaries on this branch, but their remaining callback dependencies still need to be reduced where they point back into GameWorld.
 
 Warfare/religion, AI, events, and time already have schedule boundaries on this branch, but their remaining callback dependencies still need to be reduced where they point back into GameWorld.
 
