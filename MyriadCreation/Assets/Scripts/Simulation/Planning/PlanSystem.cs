@@ -116,6 +116,18 @@ namespace CivilizationEvolution.Simulation.Planning
             return ChangeState(planId, PlanState.Executing);
         }
 
+        public bool TryResumeWaitingPlan(int planId)
+        {
+            if (!_plans.TryGetValue(planId, out var plan) || plan.IsTerminal)
+                return false;
+            if (plan.state != PlanState.Executing || !plan.isWaiting)
+                return false;
+            plan.isWaiting = false;
+            plan.waitCondition = default(CivilizationEvolution.Core.Contracts.SimulationWaitCondition);
+            plan.activity.stateCode = "executing";
+            return true;
+        }
+
         public bool PausePlan(int planId)
         {
             if (!TryGetPlan(planId, out var plan)) return false;
@@ -161,7 +173,7 @@ namespace CivilizationEvolution.Simulation.Planning
             for (int i = 0; i < _scratchPlanIds.Count; i++)
             {
                 int planId = _scratchPlanIds[i];
-                if (!_plans.TryGetValue(planId, out var plan) || plan.IsTerminal || plan.state != PlanState.Executing)
+                if (!_plans.TryGetValue(planId, out var plan) || plan.IsTerminal || plan.state != PlanState.Executing || plan.isWaiting)
                     continue;
 
                 plan.elapsedDays += deltaDays;
