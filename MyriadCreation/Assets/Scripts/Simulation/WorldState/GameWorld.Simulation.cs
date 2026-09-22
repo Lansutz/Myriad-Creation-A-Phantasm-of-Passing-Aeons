@@ -340,6 +340,9 @@ namespace CivilizationEvolution.Simulation.WorldState
             {
                 currentSeason = newSeason;
                 _climateSimulator.UpdateForSeason(currentSeason);
+                SimulationEvents.Publish(
+                    new CivilizationEvolution.Core.Events.SeasonChangedEvent(
+                        currentDay, currentYear, currentSeason));
                 EnqueueEvent(new GameEvent
                 {
                     eventType = GameEventType.SeasonChange,
