@@ -24,10 +24,11 @@ The refactor branch already contains:
 
 ## This synchronization pass
 
-The latest active-line work was ported into the refactor architecture instead of copying the newer `CivilizationEvolution/...` files verbatim.
+Main and refactor are intentionally synchronized by functional delta: the latest main-line architecture changes are carried into the authoritative `MyriadCreation/...` source root without introducing a second competing Unity source root.
 
 Completed:
-1. Added `PoliticsSimulationSystem` under the refactor branch.
+1. Ported the latest main-line command/query boundary into the refactor core contracts.
+2. Added `PoliticsSimulationSystem` under the refactor branch.
 2. Moved the full politics daily runtime out of `GameWorld.PoliticsTick()` into that system.
 3. Removed the GameWorld-owned politics/social-pulse implementation and its private state.
 4. Changed `PoliticsSchedule` from a GameWorld callback adapter to a domain-system registration.
@@ -57,3 +58,18 @@ Merge only after:
 2. callback-shaped GameWorld dependencies have been removed or reduced to legitimate composition boundaries;
 3. source-root and namespace consistency is verified;
 4. a real Unity build/test is run successfully.
+
+
+## Main synchronization checkpoint
+
+At 2026-09-22, main was at cf548666d0e868d7ceae6c6f1ed39bf44b93f730 and architecture-2-0-refactor was at c127ad15e5911d331afaee285c216e5a88be3b3a.
+
+A direct main -> architecture-2-0-refactor PR was created for verification, but GitHub reported it as non-mergeable because the branches have different source-root histories. PR #7 is therefore not used as the synchronization mechanism.
+
+The synchronization rule is:
+- preserve the refactor branch's authoritative MyriadCreation/... implementation;
+- port functional changes from the latest main into that source root;
+- do not copy the less-refactored CivilizationEvolution/... tree back into the refactor project;
+- verify each port against the latest main implementation before continuing.
+
+This means the refactor branch must contain the latest applicable main-line behavior, while retaining its deeper refactor work.
