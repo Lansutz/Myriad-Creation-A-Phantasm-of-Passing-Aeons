@@ -225,7 +225,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             _simulationScheduler.Register("world.succession", SimulationCadence.Daily, 26, DailySuccession);
             _simulationScheduler.Register("world.thought", SimulationCadence.Daily, 27, DailyThought);
             CivilizationEvolution.Simulation.AI.AISchedule.Register(
-                _simulationScheduler, _aiManager, () => realms, () => tiles, _diplomacyManager, _economyManager, _innovationTree, _characterManager);
+                _simulationScheduler, _aiManager, () => realms, () => tiles, _diplomacyManager, _economyManager, _innovationTree, _characterManager, MissionaryTick);
             _simulationScheduler.Register("world.events", SimulationCadence.Daily, 29, DailyEvents);
             CivilizationEvolution.Simulation.Planning.PlanSchedule.Register(_simulationScheduler, _planSystem, () => 1f);
             _simulationScheduler.Register("world.advance-simulation-time", SimulationCadence.Daily, 31, AdvanceSimulationTime);
