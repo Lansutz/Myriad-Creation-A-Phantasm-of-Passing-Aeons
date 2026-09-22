@@ -53,6 +53,23 @@ namespace CivilizationEvolution.Simulation.Warfare
     /// 统一处理：劫掠/破城/夷平三级程度，六种手段，废墟状态，连锁反应（流民/弃地/经济崩溃），废墟恢复。
     /// 历史案例：汉谟拉比毁玛睿（拆城+劫掠=中度）、杨坚毁建康（拆城+移民+焚毁=中~重度）、赵炅毁晋阳（火烧+水淹+移民=重度夷平）。
     /// </summary>
+    /// <summary>聚落摧毁领域运行时边界。持有世界依赖，保留旧静态规则 API。</summary>
+    public sealed class SettlementDestructionRuntime
+    {
+        private readonly GameWorld _world;
+
+        public SettlementDestructionRuntime(GameWorld world)
+        {
+            _world = world ?? throw new System.ArgumentNullException(nameof(world));
+        }
+
+        public string DestroySettlement(int burgId, DestructionMethod method, int attackerRealmId = -1)
+            => SettlementDestructionSystem.DestroySettlement(_world, burgId, method, attackerRealmId);
+
+        public void DailyTickRecovery()
+            => SettlementDestructionSystem.DailyTickRecovery(_world);
+    }
+
     public static class SettlementDestructionSystem
     {
         // ===== 摧毁效果参数表（severity → 各项损失比例）=====
