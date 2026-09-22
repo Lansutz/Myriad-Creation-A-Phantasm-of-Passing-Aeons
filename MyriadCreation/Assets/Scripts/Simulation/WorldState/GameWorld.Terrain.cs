@@ -62,8 +62,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             planetGen.Generate(tiles, mapWidth, mapHeight);
 
  // 标记所有地块为脏，触发渲染刷新
-            for (int i = 0; i < tiles.Length; i++)
-                _terrainDirtyTiles.Add(i);
+            _worldMapSimulation?.MarkAllTerrainDirty(tiles.Length);
             SimulationScheduler.Dirty.Mark("world.terrain");
 
  // 河流追踪（须在 isLand 判定完成后，复用旧TerrainGenerator的河流算法）
@@ -120,7 +119,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             terrainGen.TrackRivers(tiles);
 
  // 标记脏
-            for (int i = 0; i < tiles.Length; i++) _terrainDirtyTiles.Add(i);
+            _worldMapSimulation?.MarkAllTerrainDirty(tiles.Length);
             SimulationScheduler.Dirty.Mark("world.terrain");
 
  // 生成省份和Burg
@@ -160,7 +159,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             {
                 tiles[i].annualPrecipMm = _atmosphericCirculation.Precipitation[i];
                 tiles[i].airHumidityPct = Mathf.Clamp(_atmosphericCirculation.SpecificHumidity[i] * 10000f, 0f, 100f);
-                _climateDirtyTiles.Add(i);
+                _worldMapSimulation?.MarkClimateDirty(i);
             }
 
  // 用Holdridge分类器更新生物群系，并应用群系基础属性（参考Azgaar FMG biomesData.cost）
@@ -265,34 +264,14 @@ namespace CivilizationEvolution.Simulation.WorldState
         {
             _seaLandGenerator.RecalculateAll();
             _climateSimulator.RecalculateAll();
-            _terrainDirtyTiles.Clear();
-            _climateDirtyTiles.Clear();
-            _configDirty = false;
+            _worldMapSimulation?.RecalculateAll();
         }
 
 
  /// <summary>脏区增量重算</summary>
         public void RecalculateDirty()
         {
-            if (_configDirty)
-            {
-                RecalculateAll();
-                return;
-            }
-
-            if (_terrainDirtyTiles.Count > 0)
-            {
-                _seaLandGenerator.RecalculateDirty(_terrainDirtyTiles);
-                foreach (int idx in _terrainDirtyTiles)
-                    _climateDirtyTiles.Add(idx);
-                _terrainDirtyTiles.Clear();
-            }
-
-            if (_climateDirtyTiles.Count > 0)
-            {
-                _climateSimulator.RecalculateDirty(_climateDirtyTiles);
-                _climateDirtyTiles.Clear();
-            }
+            _worldMapSimulation?.RecalculateDirty();
         }
 
 
@@ -301,9 +280,8 @@ namespace CivilizationEvolution.Simulation.WorldState
         {
             if (tileIndex < 0 || tileIndex >= tiles.Length) return;
             tiles[tileIndex].elevation01 = newElevation;
-            _terrainDirtyTiles.Add(tileIndex);
+            _worldMapSimulation?.MarkTileDirty(tileIndex);
             SimulationScheduler.Dirty.Mark("world.terrain");
-            MarkNeighboursDirty(tileIndex);
         }
 
 
@@ -311,16 +289,10 @@ namespace CivilizationEvolution.Simulation.WorldState
         public void UpdateConfig(System.Action<WorldConfig> configUpdater)
         {
             configUpdater?.Invoke(config);
-            _configDirty = true;
+            _worldMapSimulation?.MarkConfigDirty();
             SimulationScheduler.Dirty.Mark("world.terrain");
         }
 
-
-        private void MarkNeighboursDirty(int centerIndex)
-        {
-            foreach (int n in _seaLandGenerator.GetNeighbourIndices(centerIndex))
-                _terrainDirtyTiles.Add(n);
-        }
 
 
         /// <summary>生成省份划分（Lloyd松弛算法，参考 Azgaar FMG provinces-generator）</summary>
