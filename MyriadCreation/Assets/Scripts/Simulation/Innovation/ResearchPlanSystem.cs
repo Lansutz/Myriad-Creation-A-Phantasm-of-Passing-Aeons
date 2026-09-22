@@ -75,6 +75,26 @@ namespace CivilizationEvolution.Simulation.Innovation
             return count;
         }
 
+        /// <summary>
+        /// Consumes only characters that actually recorded practice this simulation step.
+        /// This is the scheduler-facing entry point; it does not scan the whole population.
+        /// </summary>
+        public int ProcessPracticeBreakthroughs(float deltaDays = 1f)
+        {
+            if (deltaDays <= 0f) return 0;
+            _practiceDirtyCharacters.Clear();
+            DrainPracticeDirtyCharacters(_practiceDirtyCharacters);
+            int discoveries = 0;
+            for (int i = 0; i < _practiceDirtyCharacters.Count; i++)
+            {
+                int characterId = _practiceDirtyCharacters[i];
+                var character = GetCharacter(characterId);
+                if (character == null || !character.isAlive || character.realmId < 0) continue;
+                if (TryDailyBreakthrough(characterId, deltaDays)) discoveries++;
+            }
+            return discoveries;
+        }
+
         public int GetMastery(int characterId, int innovationId)
             => _knowledge.GetMastery(characterId, innovationId);
 
