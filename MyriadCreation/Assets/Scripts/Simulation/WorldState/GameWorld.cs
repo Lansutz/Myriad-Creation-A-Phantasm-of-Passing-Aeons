@@ -163,7 +163,6 @@ namespace CivilizationEvolution.Simulation.WorldState
 
  // ===== 脏标记 =====
         private WorldMapSimulationSystem _worldMapSimulation;
-        private WorldMapSimulationSystem _worldMapSimulation;
 
  // ===== 时间 =====
         public int currentYear = 1;
