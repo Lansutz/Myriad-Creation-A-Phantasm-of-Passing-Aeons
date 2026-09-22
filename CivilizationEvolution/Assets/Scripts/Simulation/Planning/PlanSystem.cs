@@ -11,6 +11,7 @@ namespace CivilizationEvolution.Simulation.Planning
     {
         private readonly Dictionary<int, Plan> _plans = new Dictionary<int, Plan>();
         private readonly Dictionary<PlanType, IPlanExecutor> _executors = new Dictionary<PlanType, IPlanExecutor>();
+        private readonly Dictionary<PlanType, ISimulationProcess> _processes = new Dictionary<PlanType, ISimulationProcess>();
         private readonly List<int> _activePlanIds = new List<int>();
         private readonly List<int> _scratchPlanIds = new List<int>();
         private int _nextPlanId = 1;
@@ -33,6 +34,15 @@ namespace CivilizationEvolution.Simulation.Planning
         }
 
         public bool UnregisterExecutor(PlanType type) => _executors.Remove(type);
+
+        /// <summary>注册新的 Plan 运行时过程。过程优先于旧 IPlanExecutor 执行。</summary>
+        public void RegisterProcess(ISimulationProcess process)
+        {
+            if (process == null) throw new ArgumentNullException(nameof(process));
+            _processes[process.Type] = process;
+        }
+
+        public bool UnregisterProcess(PlanType type) => _processes.Remove(type);
 
         public Plan CreatePlan(PlanType type, int initiatorId, int targetId, int day,
             string title = null, string description = null, float estimatedDays = 0f)
@@ -125,6 +135,42 @@ namespace CivilizationEvolution.Simulation.Planning
                     continue;
 
                 plan.elapsedDays += deltaDays;
+
+                // 新运行时优先：Plan -> Activity -> ISimulationProcess。
+                // 没有新过程时继续走旧 IPlanExecutor，保证 Construction/Research 等现有代码兼容。
+                if (_processes.TryGetValue(plan.type, out var process) && process != null)
+                {
+                    ProcessResult result = process.Execute(plan, currentDay, deltaDays);
+
+                    if (result.progressDelta > 0f)
+                        plan.progress = Clamp01(plan.progress + result.progressDelta);
+
+                    switch (result.status)
+                    {
+                        case ProcessStatus.Complete:
+                            CompletePlan(plan.planId, string.IsNullOrEmpty(result.code) ? "process_completed" : result.code);
+                            process.OnProcessEnded(plan);
+                            break;
+
+                        case ProcessStatus.Fail:
+                            FailPlan(plan.planId, string.IsNullOrEmpty(result.code) ? "process_failed" : result.code);
+                            process.OnProcessEnded(plan);
+                            break;
+
+                        case ProcessStatus.Cancel:
+                            CancelPlan(plan.planId, string.IsNullOrEmpty(result.code) ? "process_cancelled" : result.code);
+                            process.OnProcessEnded(plan);
+                            break;
+
+                        case ProcessStatus.Wait:
+                        case ProcessStatus.Continue:
+                        default:
+                            break;
+                    }
+
+                    continue;
+                }
+
                 if (!_executors.TryGetValue(plan.type, out var executor) || executor == null)
                     continue;
 
