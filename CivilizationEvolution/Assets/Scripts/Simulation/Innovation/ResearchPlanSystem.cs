@@ -96,6 +96,29 @@ namespace CivilizationEvolution.Simulation.Innovation
             return discoveries;
         }
 
+        /// <summary>
+        /// 处理本轮真实实践产生的突破候选。
+        /// 与全角色扫描的 DailyTick 不同，这里只消费被 PracticeRecordedEvent 标记过的角色。
+        /// </summary>
+        public int ProcessPracticeBreakthroughs(float deltaDays = 1f)
+        {
+            if (deltaDays <= 0f || _world.Characters == null || _practiceDirtyCharacters.Count == 0)
+                return 0;
+
+            var dirtyCharacters = new List<int>(_practiceDirtyCharacters);
+            _practiceDirtyCharacters.Clear();
+
+            int discoveries = 0;
+            for (int i = 0; i < dirtyCharacters.Count; i++)
+            {
+                int characterId = dirtyCharacters[i];
+                var character = GetCharacter(characterId);
+                if (character == null || !character.isAlive || character.realmId < 0) continue;
+                if (TryDailyBreakthrough(characterId, deltaDays)) discoveries++;
+            }
+            return discoveries;
+        }
+
         /// <summary>每日个人突破判定。</summary>
         public bool TryDailyBreakthrough(int characterId, float deltaDays = 1f)
         {
