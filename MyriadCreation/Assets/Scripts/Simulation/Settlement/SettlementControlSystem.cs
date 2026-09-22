@@ -30,6 +30,44 @@ namespace CivilizationEvolution.Simulation.Settlement
  /// 7. 虹吸效应通过税收和贸易自然表现（下属聚落向控制聚落缴纳额外税收，贸易优先经过）
  /// 模拟早期文明的"城市节点控制"模式：
  /// 早期通过城市节点实现控制，不是明确边界；高等级城市控制周围低等级聚落
+    /// <summary>聚落控制领域运行时边界。封装状态集合与控制规则入口。</summary>
+    public sealed class SettlementControlRuntime
+    {
+        private readonly Dictionary<int, BurgData> _burgs;
+        private readonly TileData[] _tiles;
+        private readonly int _mapWidth;
+        private readonly int _mapHeight;
+        private readonly Dictionary<int, CivilizationEvolution.Simulation.Warfare.Army> _armies;
+
+        public SettlementControlRuntime(
+            Dictionary<int, BurgData> burgs,
+            TileData[] tiles,
+            int mapWidth,
+            int mapHeight,
+            Dictionary<int, CivilizationEvolution.Simulation.Warfare.Army> armies)
+        {
+            _burgs = burgs ?? throw new ArgumentNullException(nameof(burgs));
+            _tiles = tiles ?? throw new ArgumentNullException(nameof(tiles));
+            _mapWidth = mapWidth;
+            _mapHeight = mapHeight;
+            _armies = armies ?? throw new ArgumentNullException(nameof(armies));
+        }
+
+        public void DailyTick()
+        {
+            SettlementControlSystem.DailyTick(_burgs, _tiles, _mapWidth, _mapHeight, _armies);
+        }
+
+        public BurgData GetSuzerain(BurgData burg)
+            => SettlementControlSystem.GetSuzerain(burg, _burgs);
+
+        public float GetTaxSiphonModifier(BurgData burg)
+            => SettlementControlSystem.GetTaxSiphonModifier(burg, _burgs);
+
+        public float GetTradeSiphonModifier(BurgData burg)
+            => SettlementControlSystem.GetTradeSiphonModifier(burg, _burgs);
+    }
+
     public static class SettlementControlSystem
     {
  /// <summary>控制进度每日基础增长速度</summary>
