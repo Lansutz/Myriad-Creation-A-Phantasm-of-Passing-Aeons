@@ -210,15 +210,18 @@ namespace CivilizationEvolution.Simulation.WorldState
                 _simulationScheduler, _disasterSystem, _diseaseSystem, () => currentDay, () => currentYear);
             EconomySchedule.Register(_simulationScheduler, _economyManager);
             CivilizationEvolution.Simulation.Society.Building.BuildingSchedule.Register(_simulationScheduler, _buildingSystem);
-            _simulationScheduler.Register("world.population", SimulationCadence.Daily, 14, DailyPopulation);
+            CivilizationEvolution.Simulation.Population.PopulationSchedule.Register(_simulationScheduler, PopulationTick);
             CivilizationEvolution.Simulation.Politics.PoliticsSchedule.Register(_simulationScheduler, _politicalManager, PoliticsTick);
-            _simulationScheduler.Register("world.settlement-control", SimulationCadence.Daily, 16, DailySettlementControl);
-            _simulationScheduler.Register("world.map-actors", SimulationCadence.Daily, 17, DailyMapActors);
-            _simulationScheduler.Register("world.camps", SimulationCadence.Daily, 18, DailyCamps);
-            _simulationScheduler.Register("world.settlement-evolution", SimulationCadence.Daily, 19, DailySettlementEvolution);
-            _simulationScheduler.Register("world.settlement-recovery", SimulationCadence.Daily, 20, DailySettlementRecovery);
-            _simulationScheduler.Register("world.land-abandonment", SimulationCadence.Daily, 21, DailyLandAbandonment);
-            _simulationScheduler.Register("world.culture-stage-evolution", SimulationCadence.Monthly, 22, MonthlyCultureStageEvolution);
+            CivilizationEvolution.Simulation.Settlement.SettlementSchedule.Register(
+                _simulationScheduler,
+                () => CivilizationEvolution.Simulation.Settlement.SettlementControlSystem.DailyTick(
+                    burgs, tiles, mapWidth, mapHeight, armies),
+                () => _mapActorManager?.Tick(1f),
+                () => _campManager?.Tick(1f),
+                () => CivilizationEvolution.Simulation.Settlement.SettlementEvolutionSystem.DailyTick(this),
+                () => CivilizationEvolution.Simulation.Warfare.SettlementDestructionSystem.DailyTickRecovery(this),
+                () => CivilizationEvolution.Simulation.Settlement.LandAbandonmentSystem.DailyCheckBanditSpawn(this));
+            CivilizationEvolution.Simulation.Culture.CultureSchedule.Register(_simulationScheduler, MonthlyCultureStageEvolution);
             CivilizationEvolution.Simulation.Diplomacy.DiplomacySchedule.Register(_simulationScheduler, _diplomacyManager, () => currentDay);
             CivilizationEvolution.Simulation.Warfare.WarfareReligionSchedule.Register(
                 _simulationScheduler, _combatManager, armies, _wars, _diplomacyManager.WarRules, () => currentDay,
@@ -239,49 +242,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             RecalculateDirty();
         }
 
-         private void DailyPopulation(SimulationTickContext context)
-        {
-            PopulationTick();
-        }
-
-        private void DailySettlementControl(SimulationTickContext context)
-        {
-            CivilizationEvolution.Simulation.Settlement.SettlementControlSystem.DailyTick(
-                burgs, tiles, mapWidth, mapHeight, armies);
-        }
-
-        private void DailyMapActors(SimulationTickContext context)
-        {
-            _mapActorManager?.Tick(1f);
-        }
-
-        private void DailyCamps(SimulationTickContext context)
-        {
-            _campManager?.Tick(1f);
-        }
-
-        private void DailySettlementEvolution(SimulationTickContext context)
-        {
-            CivilizationEvolution.Simulation.Settlement.SettlementEvolutionSystem.DailyTick(this);
-        }
-
-        private void DailySettlementRecovery(SimulationTickContext context)
-        {
-            CivilizationEvolution.Simulation.Warfare.SettlementDestructionSystem.DailyTickRecovery(this);
-        }
-
-        private void DailyLandAbandonment(SimulationTickContext context)
-        {
-            CivilizationEvolution.Simulation.Settlement.LandAbandonmentSystem.DailyCheckBanditSpawn(this);
-        }
-
-        private void MonthlyCultureStageEvolution(SimulationTickContext context)
-        {
-            if (currentDay % 30 == 0)
-                CivilizationEvolution.Simulation.Culture.CultureStageEvolutionSystem.MonthlyTick(this);
-        }
-
-        private void ProcessWarOutcomes(int day)
+         private void ProcessWarOutcomes(int day)
         {
             var endedWars = CombatManager.UpdateWarOutcomes(_wars, _diplomacyManager.WarRules, day);
             foreach (var war in endedWars)
