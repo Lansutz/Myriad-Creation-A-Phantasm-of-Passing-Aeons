@@ -84,6 +84,8 @@ namespace CivilizationEvolution.Simulation.Planning
         public int initiatorId = -1;
         public int ownerId = -1;
         public int targetId = -1;
+        public string targetKind = string.Empty;
+        public string purpose = string.Empty;
         public string title = string.Empty;
         public string description = string.Empty;
         public float progress;
@@ -98,6 +100,7 @@ namespace CivilizationEvolution.Simulation.Planning
         /// <summary>领域系统写入的轻量结果/原因标识，避免 PlanSystem 依赖具体领域类型。</summary>
         public string currentActivity = string.Empty;
         public string resultCode = string.Empty;
+        public string resultSummary = string.Empty;
 
         public Plan(int planId, PlanType type, int initiatorId, int targetId, int createdDay)
         {
