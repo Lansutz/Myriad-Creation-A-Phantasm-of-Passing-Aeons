@@ -219,7 +219,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             _simulationScheduler.Register("world.settlement-recovery", SimulationCadence.Daily, 20, DailySettlementRecovery);
             _simulationScheduler.Register("world.land-abandonment", SimulationCadence.Daily, 21, DailyLandAbandonment);
             _simulationScheduler.Register("world.culture-stage-evolution", SimulationCadence.Monthly, 22, MonthlyCultureStageEvolution);
-            CivilizationEvolution.Simulation.Diplomacy.DiplomacySchedule.Register(_simulationScheduler, _diplomacyManager);
+            CivilizationEvolution.Simulation.Diplomacy.DiplomacySchedule.Register(_simulationScheduler, _diplomacyManager, () => currentDay);
             _simulationScheduler.Register("world.warfare-and-religion", SimulationCadence.Daily, 24, DailyWarfareAndReligion);
             _simulationScheduler.Register("world.characters", SimulationCadence.Daily, 25, DailyCharacters);
             _simulationScheduler.Register("world.succession", SimulationCadence.Daily, 26, DailySuccession);
