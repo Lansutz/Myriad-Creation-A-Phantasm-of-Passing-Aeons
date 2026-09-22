@@ -6,6 +6,8 @@ using CivilizationEvolution.Core.Contracts;
 using CivilizationEvolution.Core.Simulation;
 using CivilizationEvolution.Simulation.Modding;
 using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Disaster;
+using CivilizationEvolution.Simulation.Diplomacy;
 using CivilizationEvolution.Simulation.Society.Building;
 using CivilizationEvolution.Simulation.Planning;
 
@@ -27,8 +29,13 @@ namespace CivilizationEvolution.Tests.EditMode
 
             EconomySchedule.Register(scheduler, economy);
             BuildingSchedule.Register(scheduler, buildings);
+            var disasters = new DisasterSystem(new TileData[0], 0, 0);
+            var diseases = new DiseaseSystem(new TileData[0], null, 0, 0);
+            var diplomacy = new DiplomacyManager(new Dictionary<int, RealmData>());
+            DisasterSchedule.Register(scheduler, disasters, diseases, () => 1, () => 1);
+            DiplomacySchedule.Register(scheduler, diplomacy, () => 1);
 
-            Assert.AreEqual(2, scheduler.Count);
+            Assert.AreEqual(4, scheduler.Count);
         }
 
         [Test]
