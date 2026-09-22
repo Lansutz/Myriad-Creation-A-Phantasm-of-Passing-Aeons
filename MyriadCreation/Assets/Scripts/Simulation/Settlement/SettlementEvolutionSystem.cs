@@ -38,8 +38,37 @@ namespace CivilizationEvolution.Simulation.Settlement
     /// - 聚落被摧毁 → 废墟（SettlementDestructionSystem处理）
     /// - 城国被游牧征服 → 聚落降级（定居点→贡赋据点）
     /// </summary>
-    public static class SettlementEvolutionSystem
+    public sealed class SettlementEvolutionSystem
     {
+        private readonly GameWorld _world;
+
+        public SettlementEvolutionSystem(GameWorld world)
+        {
+            _world = world ?? throw new System.ArgumentNullException(nameof(world));
+        }
+
+        public void DailyTick()
+        {
+            DailyTick(_world);
+        }
+
+        public BurgData TryEvolveCampToBurg(CampData camp)
+        {
+            return TryEvolveCampToBurg(_world, camp);
+        }
+
+        public BurgData SettleNomadCamp(int campId)
+        {
+            return SettleNomadCamp(_world, campId);
+        }
+
+        public CampData DegradeBurgToCamp(int burgId, CampType campType = CampType.Military, int ownerRealmId = -1)
+        {
+            return DegradeBurgToCamp(_world, burgId, campType, ownerRealmId);
+        }
+
+        public static class Rules
+        {
         // ===== 升级阈值 =====
         /// <summary>营寨升级为坞堡的防御值阈值</summary>
         public const float FORTIFIED_CAMP_DEFENSE_THRESHOLD = 40f;
