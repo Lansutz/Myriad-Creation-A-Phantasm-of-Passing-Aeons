@@ -172,6 +172,7 @@ namespace CivilizationEvolution.Simulation.WorldState
                 _mapActorManager,
                 _campManager);
 
+            RegisterSettlementCommandHandlers();
             RegisterSimulationSchedules();
         }
 
