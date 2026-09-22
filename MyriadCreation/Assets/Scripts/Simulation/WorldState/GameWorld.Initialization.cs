@@ -162,6 +162,18 @@ namespace CivilizationEvolution.Simulation.WorldState
                 _characterManager,
                 societyCache);
 
+            _settlementSimulationSystem = new SettlementSimulationSystem(
+                burgs,
+                tiles,
+                mapWidth,
+                mapHeight,
+                armies,
+                () => _mapActorManager?.Tick(1f),
+                () => _campManager?.Tick(1f),
+                () => CivilizationEvolution.Simulation.Settlement.SettlementEvolutionSystem.DailyTick(this),
+                () => CivilizationEvolution.Simulation.Warfare.SettlementDestructionSystem.DailyTickRecovery(this),
+                () => CivilizationEvolution.Simulation.Settlement.LandAbandonmentSystem.DailyCheckBanditSpawn(this));
+
             RegisterSimulationSchedules();
         }
 
