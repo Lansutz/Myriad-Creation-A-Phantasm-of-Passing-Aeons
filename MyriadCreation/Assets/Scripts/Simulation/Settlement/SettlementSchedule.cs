@@ -19,6 +19,7 @@ namespace CivilizationEvolution.Simulation.Settlement
         private readonly GameWorld _world;
         private readonly MapActorManager _mapActors;
         private readonly CampManager _camps;
+        private readonly SettlementEvolutionRuntime _evolutionRuntime;
 
         public SettlementSimulationSystem(
             Dictionary<int, BurgData> burgs,
@@ -38,6 +39,7 @@ namespace CivilizationEvolution.Simulation.Settlement
             _world = world ?? throw new ArgumentNullException(nameof(world));
             _mapActors = mapActors ?? throw new ArgumentNullException(nameof(mapActors));
             _camps = camps ?? throw new ArgumentNullException(nameof(camps));
+            _evolutionRuntime = new SettlementEvolutionRuntime(_world);
         }
 
         public void ControlDailyTick(SimulationTickContext context)
@@ -47,7 +49,7 @@ namespace CivilizationEvolution.Simulation.Settlement
 
         public void MapActorsDailyTick(SimulationTickContext context) => _mapActors.Tick(context.deltaDays);
         public void CampsDailyTick(SimulationTickContext context) => _camps.Tick(context.deltaDays);
-        public void EvolutionDailyTick(SimulationTickContext context) => SettlementEvolutionSystem.DailyTick(_world);
+        public void EvolutionDailyTick(SimulationTickContext context) => _evolutionRuntime.DailyTick();
         public void RecoveryDailyTick(SimulationTickContext context) => SettlementDestructionSystem.DailyTickRecovery(_world);
         public void AbandonmentDailyTick(SimulationTickContext context) => LandAbandonmentSystem.DailyCheckBanditSpawn(_world);
     }
