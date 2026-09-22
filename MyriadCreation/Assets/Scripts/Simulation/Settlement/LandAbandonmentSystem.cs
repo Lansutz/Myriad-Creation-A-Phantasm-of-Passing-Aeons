@@ -45,10 +45,10 @@ namespace CivilizationEvolution.Simulation.Settlement
             _world = world ?? throw new System.ArgumentNullException(nameof(world));
         }
 
-        public AbandonmentRecord? AbandonTile(int tileIndex, AbandonmentType type, int realmId)
+        public LandAbandonmentSystem.AbandonmentRecord? AbandonTile(int tileIndex, AbandonmentType type, int realmId)
             => LandAbandonmentSystem.AbandonTile(_world, tileIndex, type, realmId);
 
-        public List<AbandonmentRecord> AbandonTiles(IEnumerable<int> tileIndices, AbandonmentType type, int realmId)
+        public List<LandAbandonmentSystem.AbandonmentRecord> AbandonTiles(IEnumerable<int> tileIndices, AbandonmentType type, int realmId)
             => LandAbandonmentSystem.AbandonTiles(_world, tileIndices, type, realmId);
 
         public bool ResettleTile(int tileIndex, int newRealmId, int settlerCount)
