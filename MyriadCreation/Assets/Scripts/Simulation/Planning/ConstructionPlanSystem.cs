@@ -1,9 +1,9 @@
 using System;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
 
-namespace CivilizationEvolution.Simulation.Planning
+namespace MyriadCreation.Simulation.Planning
 {
     /// <summary>
     /// 建造领域计划层：把建筑工程纳入统一 PlanSystem。

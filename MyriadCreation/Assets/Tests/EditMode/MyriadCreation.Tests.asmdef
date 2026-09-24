@@ -1,8 +1,8 @@
 {
-    "name": "CivilizationEvolution.Tests",
+    "name": "MyriadCreation.Tests",
     "rootNamespace": "",
     "references": [
-        "CivilizationEvolution.Runtime",
+        "MyriadCreation.Runtime",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Unity.TextMeshPro"

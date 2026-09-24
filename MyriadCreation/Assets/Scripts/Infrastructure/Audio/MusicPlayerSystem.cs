@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace CivilizationEvolution.Infrastructure.Audio
+namespace MyriadCreation.Infrastructure.Audio
 {
  /// 音乐播放器：Resources/Music/ 下的 AudioClip 列表播放
  /// （手动控制：播放/暂停/切歌/音量/循环——用户放 ogg/mp3 进 Resources/Music 即入列表）

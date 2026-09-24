@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-namespace CivilizationEvolution.Simulation.Religion
+namespace MyriadCreation.Simulation.Religion
 {
     [System.Serializable]
     public class FaithSystem
@@ -85,7 +85,7 @@ namespace CivilizationEvolution.Simulation.Religion
         public bool CanDeclareGreatHolyWar() => fervor >= GreatHolyWarThreshold && highPriestCharacterId >= 0;
 
  /// <summary>美德/罪行得分（宗教对性格的判定——traitId 匹配基 id 前缀）</summary>
-        public int GetVirtueScore(CivilizationEvolution.Simulation.Characters.CharacterData character)
+        public int GetVirtueScore(MyriadCreation.Simulation.Characters.CharacterData character)
         {
             if (character == null || character.traits == null) return 0;
             int score = 0;
@@ -96,7 +96,7 @@ namespace CivilizationEvolution.Simulation.Religion
             return score;
         }
 
-        public int GetSinScore(CivilizationEvolution.Simulation.Characters.CharacterData character)
+        public int GetSinScore(MyriadCreation.Simulation.Characters.CharacterData character)
         {
             if (character == null || character.traits == null) return 0;
             int score = 0;

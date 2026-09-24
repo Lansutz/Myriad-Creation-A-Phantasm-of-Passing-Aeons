@@ -1,11 +1,11 @@
 {
-    "name": "CivilizationEvolution.Infrastructure",
-    "rootNamespace": "CivilizationEvolution.Infrastructure",
+    "name": "MyriadCreation.Infrastructure",
+    "rootNamespace": "MyriadCreation.Infrastructure",
     "references": [
-        "CivilizationEvolution.Core",
-        "CivilizationEvolution.World",
-        "CivilizationEvolution.Simulation",
-        "CivilizationEvolution.Rendering"
+        "MyriadCreation.Core",
+        "MyriadCreation.World",
+        "MyriadCreation.Simulation",
+        "MyriadCreation.Rendering"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

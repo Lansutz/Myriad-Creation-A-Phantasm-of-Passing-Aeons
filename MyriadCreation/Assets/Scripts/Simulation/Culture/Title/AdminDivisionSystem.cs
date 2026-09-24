@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Society;
+using System.Collections.Generic;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Society;
 
 
 
-namespace CivilizationEvolution.Simulation.Culture
+namespace MyriadCreation.Simulation.Culture
 {
  /// 行政区划实体（政权内部治理树节点——）：
  /// 政权=第 1 层（根）——层数由治理模式定：

@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Simulation.Culture
+namespace MyriadCreation.Simulation.Culture
 {
     /// <summary>
     /// 扈从制发展等级。

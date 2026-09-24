@@ -1,28 +1,28 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Infrastructure.Save;
-using CivilizationEvolution.Simulation.Diplomacy;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
-using CivilizationEvolution.UI;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Simulation.Diplomacy;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.UI;
 
 
 
 
-using CivilizationEvolution.UI.Common;
-namespace CivilizationEvolution.UI.Panels
+using MyriadCreation.UI.Common;
+namespace MyriadCreation.UI.Panels
 {
  /// 外交面板
  /// 管理与其他政权的外交关系：关系概览、盟约、从属、战争借口、宣战、和平条约

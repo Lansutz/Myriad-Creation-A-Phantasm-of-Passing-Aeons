@@ -1,4 +1,4 @@
-﻿namespace CivilizationEvolution.Simulation.Diplomacy
+namespace MyriadCreation.Simulation.Diplomacy
 {
     [System.Serializable]
     public class Alliance

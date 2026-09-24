@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Simulation.Characters
+namespace MyriadCreation.Simulation.Characters
 {
     /// <summary>
     /// 活跃的衰退状态实例

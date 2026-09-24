@@ -1,15 +1,15 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
 
 
 
-namespace CivilizationEvolution.World
+namespace MyriadCreation.World
 {
  /// 沃罗诺伊细胞聚合的地块集合：政体/文化/战争/贸易的归属载体
     [Serializable]

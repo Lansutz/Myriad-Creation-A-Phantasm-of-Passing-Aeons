@@ -1,22 +1,22 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 
-using MapEditor = CivilizationEvolution.Rendering.MapEditor;
+using MapEditor = MyriadCreation.Rendering.MapEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using CivilizationEvolution.Editor.MapEditing;
-using CivilizationEvolution.Editor.RenderTools;
-using CivilizationEvolution.Editor.TerrainPainter;
-using CivilizationEvolution.Rendering;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Settlement;
-using CivilizationEvolution.World.Generation;
-using CivilizationEvolution.World.Hydrology;
-using CivilizationEvolution.World.Settlement;
-using CivilizationEvolution.World.Terrain;
+using MyriadCreation.Editor.MapEditing;
+using MyriadCreation.Editor.RenderTools;
+using MyriadCreation.Editor.TerrainPainter;
+using MyriadCreation.Rendering;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Settlement;
+using MyriadCreation.World.Generation;
+using MyriadCreation.World.Hydrology;
+using MyriadCreation.World.Settlement;
+using MyriadCreation.World.Terrain;
 
 
-namespace CivilizationEvolution.Editor.Panels
+namespace MyriadCreation.Editor.Panels
 {
  /// 地图编辑器 UI 面板
  /// 代码动态生成浮动工具栏：模式切换、8种工具、画笔大小、省份选择、Burg类型、撤销重做
@@ -344,17 +344,17 @@ namespace CivilizationEvolution.Editor.Panels
 
             _layerProvinceBordersBtn = CreateButton(_panelRoot.transform, "省份边界: 开",
                 new Vector2(10f, y), new Vector2(contentWidth, 22f));
-            _layerProvinceBordersBtn.onClick.AddListener(() => ToggleLayer(CivilizationEvolution.Rendering.MapOverlayLayer.ProvinceBorders, _layerProvinceBordersBtn, "省份边界"));
+            _layerProvinceBordersBtn.onClick.AddListener(() => ToggleLayer(MyriadCreation.Rendering.MapOverlayLayer.ProvinceBorders, _layerProvinceBordersBtn, "省份边界"));
             y -= 26f;
 
             _layerBurgMarkersBtn = CreateButton(_panelRoot.transform, "聚落标记: 开",
                 new Vector2(10f, y), new Vector2(contentWidth, 22f));
-            _layerBurgMarkersBtn.onClick.AddListener(() => ToggleLayer(CivilizationEvolution.Rendering.MapOverlayLayer.BurgMarkers, _layerBurgMarkersBtn, "聚落标记"));
+            _layerBurgMarkersBtn.onClick.AddListener(() => ToggleLayer(MyriadCreation.Rendering.MapOverlayLayer.BurgMarkers, _layerBurgMarkersBtn, "聚落标记"));
             y -= 26f;
 
             _layerGridBtn = CreateButton(_panelRoot.transform, "网格: 关",
                 new Vector2(10f, y), new Vector2(contentWidth, 22f));
-            _layerGridBtn.onClick.AddListener(() => ToggleLayer(CivilizationEvolution.Rendering.MapOverlayLayer.Grid, _layerGridBtn, "网格"));
+            _layerGridBtn.onClick.AddListener(() => ToggleLayer(MyriadCreation.Rendering.MapOverlayLayer.Grid, _layerGridBtn, "网格"));
             y -= 26f;
 
             _layerVirtualControlBtn = CreateButton(_panelRoot.transform, "虚控制范围: 开",
@@ -373,7 +373,7 @@ namespace CivilizationEvolution.Editor.Panels
 
         #region 图层开关
 
-        private void ToggleLayer(CivilizationEvolution.Rendering.MapOverlayLayer layer, Button btn, string label)
+        private void ToggleLayer(MyriadCreation.Rendering.MapOverlayLayer layer, Button btn, string label)
         {
             if (_renderer == null) return;
             bool current = _renderer.IsOverlayEnabled(layer);

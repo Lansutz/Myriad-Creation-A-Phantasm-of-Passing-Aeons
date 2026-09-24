@@ -1,22 +1,22 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Simulation.Culture;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Religion;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.Warfare;
-using CivilizationEvolution.Simulation.WorldState;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Religion;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.Warfare;
+using MyriadCreation.Simulation.WorldState;
 
 
 
@@ -25,7 +25,7 @@ using CivilizationEvolution.Simulation.WorldState;
 
 
 
-namespace CivilizationEvolution.Simulation.Characters
+namespace MyriadCreation.Simulation.Characters
 {
  /// CharacterManager.Family —— 家族与生育（生育/婚姻/亲属查询/家族树/自动生育/纽带）（partial class，与 CharacterSystem.cs 共享字段）
     public partial class CharacterManager

@@ -1,41 +1,41 @@
-﻿using System;
+using System;
 
 
 
 
 using UnityEngine;
 using UnityEngine.UI;
-using MapEditor = CivilizationEvolution.Rendering.MapEditor;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Editor.MapEditing;
-using CivilizationEvolution.Editor.Panels;
-using CivilizationEvolution.Editor.RenderTools;
-using CivilizationEvolution.Editor.TerrainPainter;
-using CivilizationEvolution.Infrastructure.Audio;
-using CivilizationEvolution.Infrastructure.Save;
-using CivilizationEvolution.Rendering;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Settlement;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
-using CivilizationEvolution.UI;
-using CivilizationEvolution.UI.Common;
-using CivilizationEvolution.UI.Panels;
-using CivilizationEvolution.World.Generation;
-using CivilizationEvolution.World.Hydrology;
-using CivilizationEvolution.World.Settlement;
-using CivilizationEvolution.World.Terrain;
+using MapEditor = MyriadCreation.Rendering.MapEditor;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Editor.MapEditing;
+using MyriadCreation.Editor.Panels;
+using MyriadCreation.Editor.RenderTools;
+using MyriadCreation.Editor.TerrainPainter;
+using MyriadCreation.Infrastructure.Audio;
+using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Rendering;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Settlement;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.UI;
+using MyriadCreation.UI.Common;
+using MyriadCreation.UI.Panels;
+using MyriadCreation.World.Generation;
+using MyriadCreation.World.Hydrology;
+using MyriadCreation.World.Settlement;
+using MyriadCreation.World.Terrain;
 
 
-namespace CivilizationEvolution.Editor.Bootstrap
+namespace MyriadCreation.Editor.Bootstrap
 {
  /// 地图编辑器场景引导脚本
  /// 挂在场景空物体上，Awake时自动组装：
@@ -309,7 +309,7 @@ namespace CivilizationEvolution.Editor.Bootstrap
                 int idx = i;
                 btn.onClick.AddListener(() =>
                 {
-                    var gm = CivilizationEvolution.Core.GameManager.Instance;
+                    var gm = MyriadCreation.Core.GameManager.Instance;
                     if (gm != null) gm.SetGameSpeed(speedValues[idx]);
                 });
 

@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 
-namespace CivilizationEvolution.Rendering
+namespace MyriadCreation.Rendering
 {
  /// 球形地图渲染器
  /// 将平面地图纹理通过经纬度UV映射到球面上

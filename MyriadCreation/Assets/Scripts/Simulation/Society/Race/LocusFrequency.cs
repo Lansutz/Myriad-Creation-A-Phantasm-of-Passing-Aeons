@@ -1,6 +1,6 @@
 using System;
 
-namespace CivilizationEvolution.Simulation.Society
+namespace MyriadCreation.Simulation.Society
 {
     [Serializable]
     public class LocusFrequency

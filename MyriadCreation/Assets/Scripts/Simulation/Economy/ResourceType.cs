@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace CivilizationEvolution.Simulation.Economy
+namespace MyriadCreation.Simulation.Economy
 {
     /// <summary>
     /// 资源类型（决定生成规则和开发方式）。

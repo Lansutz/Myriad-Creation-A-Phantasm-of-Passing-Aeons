@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Society;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Society;
 
 
 
 
-namespace CivilizationEvolution.Tests
+namespace MyriadCreation.Tests
 {
     /// <summary>
     /// 继承法系统 EditMode 测试（用户定稿四轴：范围/支系/性别/长幼）

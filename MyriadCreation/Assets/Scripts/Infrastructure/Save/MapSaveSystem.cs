@@ -1,33 +1,33 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
 
 
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Rendering;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Settlement;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
-using CivilizationEvolution.World.Generation;
-using CivilizationEvolution.World.Hydrology;
-using CivilizationEvolution.World.Settlement;
-using CivilizationEvolution.World.Terrain;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Rendering;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Settlement;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.World.Generation;
+using MyriadCreation.World.Hydrology;
+using MyriadCreation.World.Settlement;
+using MyriadCreation.World.Terrain;
 
 
-using CivilizationEvolution.World;
-using CivilizationEvolution.World.Settlement;
-namespace CivilizationEvolution.Infrastructure.Save
+using MyriadCreation.World;
+using MyriadCreation.World.Settlement;
+namespace MyriadCreation.Infrastructure.Save
 {
  /// 地图存档数据（可序列化）
  /// 包含地形、省份、子地块的完整快照

@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
 
 
-namespace CivilizationEvolution.World.Settlement
+namespace MyriadCreation.World.Settlement
 {
  /// 聚落类型学系统
  /// 负责：类型推导（地形/位置/资源→形态功能）、升级路线管理、形态约束、城形/堡型选择

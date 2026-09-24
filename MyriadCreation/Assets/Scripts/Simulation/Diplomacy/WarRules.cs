@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace CivilizationEvolution.Simulation.Diplomacy
+namespace MyriadCreation.Simulation.Diplomacy
 {
  /// 战争规则（借鉴《地图上发生的事》WarRules 参数化：
  /// score_*/truce_years/allow_alliance_intervention/allow_vassal_obligation/

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-namespace CivilizationEvolution.Simulation.Religion
+namespace MyriadCreation.Simulation.Religion
 {
     [System.Serializable]
     public class SchoolOfThought

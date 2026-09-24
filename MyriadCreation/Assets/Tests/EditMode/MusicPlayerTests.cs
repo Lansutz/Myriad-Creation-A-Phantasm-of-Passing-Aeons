@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using CivilizationEvolution.Infrastructure.Audio;
+using MyriadCreation.Infrastructure.Audio;
 
 
 
-namespace CivilizationEvolution.Tests
+namespace MyriadCreation.Tests
 {
     /// <summary>
     /// 音乐播放器测试（列表加载/播放控制/音量——代码生成音频不依赖外部文件）

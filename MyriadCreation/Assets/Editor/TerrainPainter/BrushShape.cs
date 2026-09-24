@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Editor.TerrainPainter
+namespace MyriadCreation.Editor.TerrainPainter
 {
     public enum BrushShape
     {

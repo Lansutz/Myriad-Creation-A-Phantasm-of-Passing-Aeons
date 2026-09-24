@@ -1,7 +1,7 @@
 using System;
-using CivilizationEvolution.Core.Simulation;
+using MyriadCreation.Core.Simulation;
 
-namespace CivilizationEvolution.Simulation.Planning
+namespace MyriadCreation.Simulation.Planning
 {
     public static class PlanSchedule
     {

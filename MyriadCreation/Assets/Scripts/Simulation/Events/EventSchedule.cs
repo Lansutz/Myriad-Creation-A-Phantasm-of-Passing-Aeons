@@ -1,7 +1,7 @@
 using System;
-using CivilizationEvolution.Core.Simulation;
+using MyriadCreation.Core.Simulation;
 
-namespace CivilizationEvolution.Simulation.Events
+namespace MyriadCreation.Simulation.Events
 {
     public static class EventSchedule
     {

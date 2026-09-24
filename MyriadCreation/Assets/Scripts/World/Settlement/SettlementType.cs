@@ -1,6 +1,6 @@
 using System;
 
-namespace CivilizationEvolution.World.Settlement
+namespace MyriadCreation.World.Settlement
 {
     public enum SettlementType
     {

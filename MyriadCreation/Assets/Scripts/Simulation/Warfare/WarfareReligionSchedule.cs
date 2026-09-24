@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Core.Simulation;
-using CivilizationEvolution.Core.Data;
+using MyriadCreation.Core.Simulation;
+using MyriadCreation.Core.Data;
 
-namespace CivilizationEvolution.Simulation.Warfare
+namespace MyriadCreation.Simulation.Warfare
 {
     public static class WarfareReligionSchedule
     {

@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using CivilizationEvolution.Simulation.AI;
-using CivilizationEvolution.Simulation.Characters;
+using MyriadCreation.Simulation.AI;
+using MyriadCreation.Simulation.Characters;
 
 
 
 
-namespace CivilizationEvolution.Tests
+namespace MyriadCreation.Tests
 {
     /// <summary>
     /// AI 人格测试（角色 AI 原型——Preset 预设/性格驱动涌现命名/固定原型开关）

@@ -4,52 +4,52 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Editor.MapEditing;
-using CivilizationEvolution.Editor.Panels;
-using CivilizationEvolution.Editor.RenderTools;
-using CivilizationEvolution.Editor.TerrainPainter;
-using CivilizationEvolution.Infrastructure.Audio;
-using CivilizationEvolution.Infrastructure.Save;
-using CivilizationEvolution.Rendering;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Settlement;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
-using CivilizationEvolution.UI;
-using CivilizationEvolution.UI.Common;
-using CivilizationEvolution.UI.Panels;
-using CivilizationEvolution.World.Generation;
-using CivilizationEvolution.World.Hydrology;
-using CivilizationEvolution.World.Settlement;
-using CivilizationEvolution.World.Terrain;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Editor.MapEditing;
+using MyriadCreation.Editor.Panels;
+using MyriadCreation.Editor.RenderTools;
+using MyriadCreation.Editor.TerrainPainter;
+using MyriadCreation.Infrastructure.Audio;
+using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Rendering;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Settlement;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.UI;
+using MyriadCreation.UI.Common;
+using MyriadCreation.UI.Panels;
+using MyriadCreation.World.Generation;
+using MyriadCreation.World.Hydrology;
+using MyriadCreation.World.Settlement;
+using MyriadCreation.World.Terrain;
 
 
 
 
 
 
-namespace CivilizationEvolution.Editor
+namespace MyriadCreation.Editor
 {
     /// <summary>
     /// 文明演化 · 编辑器一键搭建工具
     /// 顶部菜单 Civilization Evolution / ...
     /// </summary>
-    public static class CivilizationEvolutionMenu
+    public static class MyriadCreationMenu
     {
         private const string MenuRoot = "Civilization Evolution/";
         private const string MainScenePath = "Assets/Scenes/Main.unity";
         private const string DefaultConfigPath = "Assets/ScriptableObjects/DefaultWorldConfig.asset";
 
-        // UI 主题（统一色板/圆角/Tint，见 CivilizationEvolution.UI.UITheme）
+        // UI 主题（统一色板/圆角/Tint，见 MyriadCreation.UI.UITheme）
         private static readonly Color PanelColor = UITheme.PanelBg;
         private static readonly Color TextColor = UITheme.TextMain;
 
@@ -102,7 +102,7 @@ namespace CivilizationEvolution.Editor
             lightGo.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
 
             // ---- MapEditor ----
-            var editor = worldGo.AddComponent<CivilizationEvolution.Rendering.MapEditor>();
+            var editor = worldGo.AddComponent<MyriadCreation.Rendering.MapEditor>();
             SetField(editor, "world", world);
             SetField(editor, "mapRenderer", renderer);
             SetField(editor, "mainCamera", cam);

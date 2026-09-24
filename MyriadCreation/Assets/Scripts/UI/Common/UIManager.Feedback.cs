@@ -1,26 +1,26 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Infrastructure.Save;
-using CivilizationEvolution.Rendering;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
-using CivilizationEvolution.UI;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Rendering;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.UI;
 
 
 
@@ -28,8 +28,8 @@ using CivilizationEvolution.UI;
 
 
 
-using CivilizationEvolution.Simulation.Culture;
-namespace CivilizationEvolution.UI.Common
+using MyriadCreation.Simulation.Culture;
+namespace MyriadCreation.UI.Common
 {
  /// UIManager.Feedback —— 用户反馈（事件日志/Toast通知/确认对话框）（partial class，与 UIManager.cs 共享字段与组件引用）
     public partial class UIManager : MonoBehaviour

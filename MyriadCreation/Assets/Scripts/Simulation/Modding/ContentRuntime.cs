@@ -1,5 +1,5 @@
-using System;using System.Collections.Generic;using System.IO;using UnityEngine;using CivilizationEvolution.Simulation.Characters;using CivilizationEvolution.Simulation.Culture;using CivilizationEvolution.Simulation.Innovation;using CivilizationEvolution.Simulation.Religion;using CivilizationEvolution.Simulation.Society;using CivilizationEvolution.World.Biome;using CivilizationEvolution.World.Climate;using CivilizationEvolution.World.Hydrology;using CivilizationEvolution.World.Terrain;
-namespace CivilizationEvolution.Simulation.Modding{internal static class ContentRuntime{        [Serializable]
+using System;using System.Collections.Generic;using System.IO;using UnityEngine;using MyriadCreation.Simulation.Characters;using MyriadCreation.Simulation.Culture;using MyriadCreation.Simulation.Innovation;using MyriadCreation.Simulation.Religion;using MyriadCreation.Simulation.Society;using MyriadCreation.World.Biome;using MyriadCreation.World.Climate;using MyriadCreation.World.Hydrology;using MyriadCreation.World.Terrain;
+namespace MyriadCreation.Simulation.Modding{internal static class ContentRuntime{        [Serializable]
         private class RaceDefsWrapper
         {
             public List<RaceData> races = new List<RaceData>();

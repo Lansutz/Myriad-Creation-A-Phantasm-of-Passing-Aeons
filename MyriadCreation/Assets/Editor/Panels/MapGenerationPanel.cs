@@ -1,19 +1,19 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.UI;
-using CivilizationEvolution.Editor.MapEditing;
-using CivilizationEvolution.Editor.TerrainPainter;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Settlement;
-using CivilizationEvolution.World.Generation;
-using CivilizationEvolution.World.Hydrology;
-using CivilizationEvolution.World.Settlement;
-using CivilizationEvolution.World.Terrain;
+using MyriadCreation.Editor.MapEditing;
+using MyriadCreation.Editor.TerrainPainter;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Settlement;
+using MyriadCreation.World.Generation;
+using MyriadCreation.World.Hydrology;
+using MyriadCreation.World.Settlement;
+using MyriadCreation.World.Terrain;
 
 
-namespace CivilizationEvolution.Editor.Panels
+namespace MyriadCreation.Editor.Panels
 {
  /// 地图生成参数面板（右侧浮动面板）
  /// 对齐 FantasyMapSimulator 编辑器内一体化工作流：

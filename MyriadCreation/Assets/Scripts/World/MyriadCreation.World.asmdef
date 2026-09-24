@@ -1,9 +1,8 @@
 {
-    "name": "CivilizationEvolution.Simulation",
-    "rootNamespace": "CivilizationEvolution.Simulation",
+    "name": "MyriadCreation.World",
+    "rootNamespace": "MyriadCreation.World",
     "references": [
-        "CivilizationEvolution.Core",
-        "CivilizationEvolution.World"
+        "MyriadCreation.Core"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

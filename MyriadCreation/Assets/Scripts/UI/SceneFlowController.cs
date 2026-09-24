@@ -1,25 +1,25 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Infrastructure.Save;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
 
 
 
-using CivilizationEvolution.UI.Panels;
-using CivilizationEvolution.UI.Common;
-namespace CivilizationEvolution.UI
+using MyriadCreation.UI.Panels;
+using MyriadCreation.UI.Common;
+namespace MyriadCreation.UI
 {
  /// 场景链路控制器——统一管理主菜单→世界生成→游戏→返回主菜单的完整链路。
  /// 解决：主菜单显示无统一管理、世界生成同步阻塞导致 loadingPanel 来不及显示、
@@ -94,10 +94,10 @@ namespace CivilizationEvolution.UI
             if (uiManager != null) uiManager.ShowGameUI();
 
             #if UNITY_EDITOR
-            if (FindAnyObjectByType<CivilizationEvolution.Editor.Bootstrap.MapEditorBootstrap>() == null)
+            if (FindAnyObjectByType<MyriadCreation.Editor.Bootstrap.MapEditorBootstrap>() == null)
             {
                 var editorObj = new GameObject("MapEditorBootstrap");
-                var bootstrap = editorObj.AddComponent<CivilizationEvolution.Editor.Bootstrap.MapEditorBootstrap>();
+                var bootstrap = editorObj.AddComponent<MyriadCreation.Editor.Bootstrap.MapEditorBootstrap>();
                 bootstrap.startWithEmptyOcean = true;
                 Debug.Log("[SceneFlow] MapEditorBootstrap 已启动（全海空白地图模式）");
             }
@@ -113,10 +113,10 @@ namespace CivilizationEvolution.UI
             if (uiManager != null) uiManager.ShowGameUI();
 
             #if UNITY_EDITOR
-            if (FindAnyObjectByType<CivilizationEvolution.Editor.Bootstrap.MapEditorBootstrap>() == null)
+            if (FindAnyObjectByType<MyriadCreation.Editor.Bootstrap.MapEditorBootstrap>() == null)
             {
                 var editorObj = new GameObject("MapEditorBootstrap");
-                var bootstrap = editorObj.AddComponent<CivilizationEvolution.Editor.Bootstrap.MapEditorBootstrap>();
+                var bootstrap = editorObj.AddComponent<MyriadCreation.Editor.Bootstrap.MapEditorBootstrap>();
                 bootstrap.loadSaveFileName = saveFileName;
                 Debug.Log($"[SceneFlow] MapEditorBootstrap 已启动（加载存档模式: {saveFileName}）");
             }

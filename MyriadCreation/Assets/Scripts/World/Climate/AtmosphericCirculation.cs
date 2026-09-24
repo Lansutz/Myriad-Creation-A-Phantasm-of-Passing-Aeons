@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
 
 
-namespace CivilizationEvolution.World.Climate
+namespace MyriadCreation.World.Climate
 {
  /// 大气环流 GCM（General Circulation Model，简化版）
  /// 基于物理的大气环流模拟，替换旧的简单三圈环流降水。

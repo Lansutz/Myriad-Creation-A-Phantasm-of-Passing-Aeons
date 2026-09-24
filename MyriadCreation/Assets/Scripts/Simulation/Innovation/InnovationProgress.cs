@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Simulation.Innovation
+namespace MyriadCreation.Simulation.Innovation
 {
     /// <summary>
     /// 单个革新的研究进度。

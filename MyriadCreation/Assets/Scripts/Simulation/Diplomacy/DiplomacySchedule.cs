@@ -1,7 +1,7 @@
 using System;
-using CivilizationEvolution.Core.Simulation;
+using MyriadCreation.Core.Simulation;
 
-namespace CivilizationEvolution.Simulation.Diplomacy
+namespace MyriadCreation.Simulation.Diplomacy
 {
     public static class DiplomacySchedule
     {

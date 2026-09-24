@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
 
 
-namespace CivilizationEvolution.World.Terrain
+namespace MyriadCreation.World.Terrain
 {
     /// <summary>
     /// 特征锁定管理器（参考 Azgaar FMG 的 Features / Zones lock 机制）。

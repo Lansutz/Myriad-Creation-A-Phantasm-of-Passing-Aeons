@@ -1,23 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
 
 
 
-using CivilizationEvolution.World.Settlement;
-namespace CivilizationEvolution.Simulation.Settlement
+using MyriadCreation.World.Settlement;
+namespace MyriadCreation.Simulation.Settlement
 {
  /// 聚落控制/影响力范围系统。
  /// 设计原则：
@@ -37,14 +37,14 @@ namespace CivilizationEvolution.Simulation.Settlement
         private readonly TileData[] _tiles;
         private readonly int _mapWidth;
         private readonly int _mapHeight;
-        private readonly Dictionary<int, CivilizationEvolution.Simulation.Warfare.Army> _armies;
+        private readonly Dictionary<int, MyriadCreation.Simulation.Warfare.Army> _armies;
 
         public SettlementControlRuntime(
             Dictionary<int, BurgData> burgs,
             TileData[] tiles,
             int mapWidth,
             int mapHeight,
-            Dictionary<int, CivilizationEvolution.Simulation.Warfare.Army> armies)
+            Dictionary<int, MyriadCreation.Simulation.Warfare.Army> armies)
         {
             _burgs = burgs ?? throw new ArgumentNullException(nameof(burgs));
             _tiles = tiles ?? throw new ArgumentNullException(nameof(tiles));
@@ -87,7 +87,7 @@ namespace CivilizationEvolution.Simulation.Settlement
             TileData[] tiles,
             int mapWidth,
             int mapHeight,
-            Dictionary<int, CivilizationEvolution.Simulation.Warfare.Army> armies = null)
+            Dictionary<int, MyriadCreation.Simulation.Warfare.Army> armies = null)
         {
             if (burgs == null || burgs.Count == 0) return;
 
@@ -108,7 +108,7 @@ namespace CivilizationEvolution.Simulation.Settlement
         private static void UpdateGarrisonInfo(
             Dictionary<int, BurgData> burgs,
             TileData[] tiles,
-            Dictionary<int, CivilizationEvolution.Simulation.Warfare.Army> armies)
+            Dictionary<int, MyriadCreation.Simulation.Warfare.Army> armies)
         {
  // 先重置
             foreach (var burg in burgs.Values)
@@ -122,7 +122,7 @@ namespace CivilizationEvolution.Simulation.Settlement
             {
                 foreach (var army in armies.Values)
                 {
-                    if (army.state == CivilizationEvolution.Core.Enums.GameEnums.CombatState.Dead) continue;
+                    if (army.state == MyriadCreation.Core.Enums.GameEnums.CombatState.Dead) continue;
  // 找军队所在地块的聚落
                     foreach (var burg in burgs.Values)
                     {

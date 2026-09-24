@@ -1,29 +1,29 @@
-﻿
+
 
 
 
 
 
 using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Diplomacy;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Innovation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Diplomacy;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Innovation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
 
 
-namespace CivilizationEvolution.Simulation.AI
+namespace MyriadCreation.Simulation.AI
 {
     public class AIManager
     {
@@ -44,7 +44,7 @@ namespace CivilizationEvolution.Simulation.AI
             TileData[] tiles,
             DiplomacyManager diplomacy,
             InnovationTree innovations,
-            CivilizationEvolution.Simulation.Characters.CharacterManager characters = null)
+            MyriadCreation.Simulation.Characters.CharacterManager characters = null)
         {
             foreach (var controller in _controllers.Values)
             {

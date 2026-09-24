@@ -1,24 +1,24 @@
-﻿using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Simulation.Culture;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Innovation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Religion;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
+using System.Collections.Generic;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Innovation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Religion;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
 
 
 
 
 
-namespace CivilizationEvolution.Simulation.Economy
+namespace MyriadCreation.Simulation.Economy
 {
  /// 社会阶层可用性（不是所有社会都有全部阶层——
  /// 阶层存在性由 革新 + 文化传统 决定）

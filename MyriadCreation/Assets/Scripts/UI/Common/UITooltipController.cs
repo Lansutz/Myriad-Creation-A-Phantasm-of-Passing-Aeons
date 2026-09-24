@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CivilizationEvolution.UI.Common
+namespace MyriadCreation.UI.Common
 {
     /// <summary>
     /// Tooltip控制器 - 灰米色旧纸信息层

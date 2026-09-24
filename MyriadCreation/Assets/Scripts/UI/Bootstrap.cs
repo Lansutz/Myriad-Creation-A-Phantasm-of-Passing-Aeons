@@ -1,21 +1,21 @@
-﻿using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Infrastructure.Save;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
+using UnityEngine;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace CivilizationEvolution.UI
+namespace MyriadCreation.UI
 {
  /// 游戏启动入口
  /// 挂载到场景中的Bootstrap物体上，自动初始化GameManager和GameWorld
@@ -92,10 +92,10 @@ namespace CivilizationEvolution.UI
             Debug.Log("[Bootstrap] 游戏初始化完成");
 
  // 初始化场景链路控制器（主菜单→生成→游戏→返回主菜单）
-            if (CivilizationEvolution.UI.SceneFlowController.Instance == null)
+            if (MyriadCreation.UI.SceneFlowController.Instance == null)
             {
                 var flowObj = new GameObject("SceneFlowController");
-                flowObj.AddComponent<CivilizationEvolution.UI.SceneFlowController>();
+                flowObj.AddComponent<MyriadCreation.UI.SceneFlowController>();
             }
         }
 

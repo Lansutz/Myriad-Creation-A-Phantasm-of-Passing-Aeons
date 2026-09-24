@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Simulation;
-using CivilizationEvolution.Simulation.Warfare;
-using CivilizationEvolution.Simulation.Actors;
-using CivilizationEvolution.Simulation.WorldState;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Simulation;
+using MyriadCreation.Simulation.Warfare;
+using MyriadCreation.Simulation.Actors;
+using MyriadCreation.Simulation.WorldState;
 
-namespace CivilizationEvolution.Simulation.Settlement
+namespace MyriadCreation.Simulation.Settlement
 {
     /// <summary>聚落领域运行时。负责聚落控制与现有聚落相关日常阶段。</summary>
     public sealed class SettlementSimulationSystem

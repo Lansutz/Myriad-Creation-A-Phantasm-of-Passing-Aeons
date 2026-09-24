@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Culture;
-using CivilizationEvolution.Simulation.Innovation;
-using CivilizationEvolution.Simulation.Religion;
-using CivilizationEvolution.Simulation.Society;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.Innovation;
+using MyriadCreation.Simulation.Religion;
+using MyriadCreation.Simulation.Society;
 
-namespace CivilizationEvolution.Simulation.Modding
+namespace MyriadCreation.Simulation.Modding
 {
     /// <summary>
     /// Stable read-only contract for resolving runtime content.

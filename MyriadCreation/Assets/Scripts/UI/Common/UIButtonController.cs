@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CivilizationEvolution.UI.Common
+namespace MyriadCreation.UI.Common
 {
     /// <summary>
     /// 按钮状态控制器 - 暖灰褐磨砂石材按钮

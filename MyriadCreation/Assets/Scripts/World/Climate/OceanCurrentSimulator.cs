@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
 
 
-namespace CivilizationEvolution.World.Climate
+namespace MyriadCreation.World.Climate
 {
  /// 洋流模拟（Ocean Current Simulation）
  /// 简化版海洋环流模型，包含：

@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Society;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Society;
 
 
 
 
-namespace CivilizationEvolution.Simulation.Warfare
+namespace MyriadCreation.Simulation.Warfare
 {
  /// 大圣战状态（特殊机制——区别于寻常圣战）：
  /// 号召制（教宗/哈里发号召——该教统/宗教的其他政权参战）

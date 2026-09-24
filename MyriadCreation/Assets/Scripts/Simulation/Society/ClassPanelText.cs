@@ -1,23 +1,23 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.WorldState;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.WorldState;
 
 
 
 
-namespace CivilizationEvolution.Simulation.Society
+namespace MyriadCreation.Simulation.Society
 {
  /// 阶层 UI 面板文本构建器（纯静态可测，TMP 富文本）
  /// 展示：整体社会概览 + 各阶层详情（人口/满足/忠诚/组织/影响/动荡/支持 + 8维需求条形图 + 主要不满）

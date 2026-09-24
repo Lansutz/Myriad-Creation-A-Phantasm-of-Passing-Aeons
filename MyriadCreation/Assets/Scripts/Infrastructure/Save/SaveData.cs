@@ -1,19 +1,19 @@
-﻿
+
 
 
 using System.Collections.Generic;
 using System;
-using CivilizationEvolution.Simulation.Culture;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Religion;
-using CivilizationEvolution.Simulation.Warfare;
+using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Religion;
+using MyriadCreation.Simulation.Warfare;
 
 
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.World;
-namespace CivilizationEvolution.Infrastructure.Save
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Core.Data;
+using MyriadCreation.World;
+namespace MyriadCreation.Infrastructure.Save
 {
     [Serializable]
     public class SaveData

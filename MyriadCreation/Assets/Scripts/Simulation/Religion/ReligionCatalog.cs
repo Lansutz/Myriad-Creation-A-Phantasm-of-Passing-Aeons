@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace CivilizationEvolution.Simulation.Religion
+namespace MyriadCreation.Simulation.Religion
 {
     public static class ReligionCatalog
     {

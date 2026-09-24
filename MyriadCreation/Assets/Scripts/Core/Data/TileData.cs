@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-using CivilizationEvolution.Core.Enums;
-namespace CivilizationEvolution.Core.Data
+using MyriadCreation.Core.Enums;
+namespace MyriadCreation.Core.Data
 {
  /// 地块完整数据结构
  /// 所有模拟数据下沉到地块级，行省仅为逻辑分组

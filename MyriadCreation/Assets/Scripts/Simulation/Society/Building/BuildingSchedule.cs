@@ -1,8 +1,8 @@
 using System;
-using CivilizationEvolution.Core.Events;
-using CivilizationEvolution.Core.Simulation;
+using MyriadCreation.Core.Events;
+using MyriadCreation.Core.Simulation;
 
-namespace CivilizationEvolution.Simulation.Society.Building
+namespace MyriadCreation.Simulation.Society.Building
 {
     public static class BuildingSchedule
     {

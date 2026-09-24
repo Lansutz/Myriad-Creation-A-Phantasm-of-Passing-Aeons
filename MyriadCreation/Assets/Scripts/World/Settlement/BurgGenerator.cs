@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 
 using System.Collections.Generic;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
 
 
-namespace CivilizationEvolution.World.Settlement
+namespace MyriadCreation.World.Settlement
 {
     public class BurgGenerator
     {

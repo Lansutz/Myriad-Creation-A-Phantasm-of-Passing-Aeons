@@ -1,7 +1,7 @@
 using System;
-using CivilizationEvolution.Core.Simulation;
+using MyriadCreation.Core.Simulation;
 
-namespace CivilizationEvolution.Simulation.Population
+namespace MyriadCreation.Simulation.Population
 {
     public static class PopulationSchedule
     {

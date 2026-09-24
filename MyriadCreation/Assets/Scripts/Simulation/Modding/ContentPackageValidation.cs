@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace CivilizationEvolution.Simulation.Modding
+namespace MyriadCreation.Simulation.Modding
 {
     public sealed class ContentPackageValidationResult
     {

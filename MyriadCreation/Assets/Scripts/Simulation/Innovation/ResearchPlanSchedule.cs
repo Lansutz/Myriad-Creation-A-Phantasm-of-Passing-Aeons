@@ -1,7 +1,7 @@
 using System;
-using CivilizationEvolution.Core.Simulation;
+using MyriadCreation.Core.Simulation;
 
-namespace CivilizationEvolution.Simulation.Innovation
+namespace MyriadCreation.Simulation.Innovation
 {
     /// <summary>
     /// Research is scheduled as a domain runtime system, not as a GameWorld callback.

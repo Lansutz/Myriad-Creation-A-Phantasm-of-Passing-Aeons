@@ -1,8 +1,8 @@
 {
-    "name": "CivilizationEvolution.Tests.PlayMode",
-    "rootNamespace": "CivilizationEvolution.Tests",
+    "name": "MyriadCreation.Tests.PlayMode",
+    "rootNamespace": "MyriadCreation.Tests",
     "references": [
-        "CivilizationEvolution.Runtime",
+        "MyriadCreation.Runtime",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

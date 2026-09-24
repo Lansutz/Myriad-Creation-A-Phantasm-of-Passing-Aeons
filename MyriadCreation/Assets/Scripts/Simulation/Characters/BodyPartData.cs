@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Simulation.Characters
+namespace MyriadCreation.Simulation.Characters
 {
     /// <summary>
     /// 子结构数据——病因数据层

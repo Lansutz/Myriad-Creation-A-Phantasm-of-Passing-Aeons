@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using UnityEngine;
 
-using CivilizationEvolution.Simulation.Society;
-namespace CivilizationEvolution.Simulation.Politics
+using MyriadCreation.Simulation.Society;
+namespace MyriadCreation.Simulation.Politics
 {
     [Serializable]
     public class StructuralTension

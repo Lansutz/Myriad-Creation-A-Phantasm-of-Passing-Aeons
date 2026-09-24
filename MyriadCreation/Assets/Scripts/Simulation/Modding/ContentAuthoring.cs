@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Simulation.Modding
+namespace MyriadCreation.Simulation.Modding
 {
     /// <summary>
     /// Authoring contract. UI/editor implementations manipulate definitions through

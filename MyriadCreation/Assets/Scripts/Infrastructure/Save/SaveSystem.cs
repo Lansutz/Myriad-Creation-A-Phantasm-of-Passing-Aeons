@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using CivilizationEvolution.Simulation.Culture;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Religion;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.Warfare;
+using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Religion;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.Warfare;
 
 
 
@@ -16,11 +16,11 @@ using CivilizationEvolution.Simulation.Warfare;
 
 
 
-using CivilizationEvolution.Simulation.WorldState;
-using CivilizationEvolution.World;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-namespace CivilizationEvolution.Infrastructure.Save
+using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.World;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+namespace MyriadCreation.Infrastructure.Save
 {
  /// 存档系统（v2）
  /// v1 使用 BinaryFormatter，在 Unity 6 中已被禁用（运行时抛 NotSupportedException，存档静默失败），

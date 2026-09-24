@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Core.Data
+namespace MyriadCreation.Core.Data
 {
 
         public enum GameState

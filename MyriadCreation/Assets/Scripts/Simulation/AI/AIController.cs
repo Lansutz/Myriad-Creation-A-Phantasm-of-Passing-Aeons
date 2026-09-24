@@ -1,23 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Diplomacy;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Innovation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.Warfare;
-using CivilizationEvolution.Simulation.WorldState;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Diplomacy;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Innovation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.Warfare;
+using MyriadCreation.Simulation.WorldState;
 
 
 
@@ -27,7 +27,7 @@ using CivilizationEvolution.Simulation.WorldState;
 
 
 
-namespace CivilizationEvolution.Simulation.AI
+namespace MyriadCreation.Simulation.AI
 {
  /// AI政权行为系统
  /// 每个AI政权有独立的AI控制器，基于效用函数做决策
@@ -60,7 +60,7 @@ namespace CivilizationEvolution.Simulation.AI
             TileData[] tiles,
             DiplomacyManager diplomacy,
             InnovationTree innovations,
-            CivilizationEvolution.Simulation.Characters.CharacterManager characters = null)
+            MyriadCreation.Simulation.Characters.CharacterManager characters = null)
         {
             _pendingIntents.Clear();
             _decisionTimer++;
@@ -100,7 +100,7 @@ namespace CivilizationEvolution.Simulation.AI
  /// 好战性格[aggression/expansionBias]驱动——屠城[Massacre]低概率
  /// [高侵略+随机]——成功屠城→执行政权统治者 massacres++（绰号判定数据）
         private void TryRaid(Dictionary<int, RealmData> realms, TileData[] tiles,
-            DiplomacyManager diplomacy, CivilizationEvolution.Simulation.Characters.CharacterManager characters, List<AIIntent> intents)
+            DiplomacyManager diplomacy, MyriadCreation.Simulation.Characters.CharacterManager characters, List<AIIntent> intents)
         {
             _raidCooldown++;
             if (_raidCooldown < RaidInterval) return;

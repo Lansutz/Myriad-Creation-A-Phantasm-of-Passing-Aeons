@@ -1,17 +1,17 @@
 using NUnit.Framework;
 using UnityEngine;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Editor.Panels;
-using CivilizationEvolution.Infrastructure.Audio;
-using CivilizationEvolution.Infrastructure.Save;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.UI;
-using CivilizationEvolution.UI.Common;
-using CivilizationEvolution.UI.Panels;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Editor.Panels;
+using MyriadCreation.Infrastructure.Audio;
+using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.UI;
+using MyriadCreation.UI.Common;
+using MyriadCreation.UI.Panels;
 
 
 
-namespace CivilizationEvolution.Tests
+namespace MyriadCreation.Tests
 {
     /// <summary>
     /// 资源完整性测试（用户定稿：检查项目缺不缺文件——UI/字体/Shader/GFX）

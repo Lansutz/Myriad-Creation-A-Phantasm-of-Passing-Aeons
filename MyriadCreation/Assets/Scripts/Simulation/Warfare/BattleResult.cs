@@ -1,4 +1,4 @@
-﻿namespace CivilizationEvolution.Simulation.Warfare
+namespace MyriadCreation.Simulation.Warfare
 {
     [System.Serializable]
     public struct BattleResult
@@ -15,8 +15,8 @@
         public bool defenderRetreated;
 
  /// <summary>攻方溃败踩踏事件（null=未触发）</summary>
-        public CivilizationEvolution.Simulation.Disaster.StampedeEvent attackerStampede;
+        public MyriadCreation.Simulation.Disaster.StampedeEvent attackerStampede;
  /// <summary>守方溃败踩踏事件（null=未触发）</summary>
-        public CivilizationEvolution.Simulation.Disaster.StampedeEvent defenderStampede;
+        public MyriadCreation.Simulation.Disaster.StampedeEvent defenderStampede;
     }
 }

@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Simulation.Characters
+namespace MyriadCreation.Simulation.Characters
 {
     /// <summary>
     /// 宏观身体部位枚举

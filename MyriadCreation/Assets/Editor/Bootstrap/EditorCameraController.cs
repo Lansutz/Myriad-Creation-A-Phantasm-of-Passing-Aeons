@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 
-namespace CivilizationEvolution.Editor.Bootstrap
+namespace MyriadCreation.Editor.Bootstrap
 {
     public class EditorCameraController : MonoBehaviour
     {

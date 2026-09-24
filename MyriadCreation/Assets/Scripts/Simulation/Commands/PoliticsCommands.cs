@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Core.Contracts;
-using CivilizationEvolution.Core.Data;
+using MyriadCreation.Core.Contracts;
+using MyriadCreation.Core.Data;
 
-namespace CivilizationEvolution.Simulation.Politics
+namespace MyriadCreation.Simulation.Politics
 {
     /// <summary>政治领域的政权治理写入契约。</summary>
     public readonly struct ConsolidateRealmCommand : ISimulationCommand

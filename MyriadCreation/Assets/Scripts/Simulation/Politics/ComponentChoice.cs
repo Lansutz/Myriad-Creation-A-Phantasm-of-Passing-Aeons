@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System;
 
-namespace CivilizationEvolution.Simulation.Politics
+namespace MyriadCreation.Simulation.Politics
 {
     [Serializable]
     public class ComponentChoice

@@ -1,32 +1,32 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Editor.Panels;
-using CivilizationEvolution.Infrastructure.Audio;
-using CivilizationEvolution.Infrastructure.Save;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
-using CivilizationEvolution.UI;
-using CivilizationEvolution.UI.Common;
-using CivilizationEvolution.UI.Panels;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Editor.Panels;
+using MyriadCreation.Infrastructure.Audio;
+using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.UI;
+using MyriadCreation.UI.Common;
+using MyriadCreation.UI.Panels;
 
 
 
 
 
 
-namespace CivilizationEvolution.Tests
+namespace MyriadCreation.Tests
 {
     /// <summary>
     /// 社会政治面板测试（阶层画像/派系/政体变迁文本生成）

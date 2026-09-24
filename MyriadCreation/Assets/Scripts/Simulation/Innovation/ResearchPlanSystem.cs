@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Core.Events;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Planning;
-using CivilizationEvolution.Simulation.WorldState;
+using MyriadCreation.Core.Events;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Planning;
+using MyriadCreation.Simulation.WorldState;
 
-namespace CivilizationEvolution.Simulation.Innovation
+namespace MyriadCreation.Simulation.Innovation
 {
     /// <summary>
     /// 个人革新计划系统：负责“实践 → 突破 → 研究/验证 → 社会正式解锁”。

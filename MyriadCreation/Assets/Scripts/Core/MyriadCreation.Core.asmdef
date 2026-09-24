@@ -1,9 +1,7 @@
 {
-    "name": "CivilizationEvolution.World",
-    "rootNamespace": "CivilizationEvolution.World",
-    "references": [
-        "CivilizationEvolution.Core"
-    ],
+    "name": "MyriadCreation.Core",
+    "rootNamespace": "MyriadCreation.Core",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

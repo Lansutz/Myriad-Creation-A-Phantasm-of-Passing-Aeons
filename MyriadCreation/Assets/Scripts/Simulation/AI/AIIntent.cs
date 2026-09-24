@@ -1,6 +1,6 @@
-using CivilizationEvolution.Core.Enums;
+using MyriadCreation.Core.Enums;
 
-namespace CivilizationEvolution.Simulation.AI
+namespace MyriadCreation.Simulation.AI
 {
     /// <summary>
     /// AI 的决策输出。AIController 只负责选择意图，不直接修改外交、经济、地图或角色状态。

@@ -1,23 +1,23 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Infrastructure.Save;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Innovation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
-using CivilizationEvolution.UI;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Innovation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.UI;
 
 
 
@@ -25,7 +25,7 @@ using CivilizationEvolution.UI;
 
 
 
-namespace CivilizationEvolution.Tests
+namespace MyriadCreation.Tests
 {
     /// <summary>
     /// 角色数值体系 EditMode 测试（企划书第九篇：容量型/上限型数值、人格七维、精神疾病、饮食联动）
@@ -408,7 +408,7 @@ namespace CivilizationEvolution.Tests
         {
             var ruler = MakeRuler();
             ruler.greed = 90f;
-            var controller = new CivilizationEvolution.Simulation.AI.AIController(0, CivilizationEvolution.Simulation.AI.AIPersonality.RandomPersonality());
+            var controller = new MyriadCreation.Simulation.AI.AIController(0, MyriadCreation.Simulation.AI.AIPersonality.RandomPersonality());
             controller.SyncPersonality(ruler);
             Assert.That(controller.personality.economicBias, Is.GreaterThan(0.6f), "高贪婪统治者应显著偏好经济");
         }
@@ -419,7 +419,7 @@ namespace CivilizationEvolution.Tests
             var ruler = MakeRuler();
             ruler.vengefulness = 90f;
             ruler.boldness = 80f;
-            var controller = new CivilizationEvolution.Simulation.AI.AIController(0, CivilizationEvolution.Simulation.AI.AIPersonality.RandomPersonality());
+            var controller = new MyriadCreation.Simulation.AI.AIController(0, MyriadCreation.Simulation.AI.AIPersonality.RandomPersonality());
             controller.SyncPersonality(ruler);
             Assert.That(controller.personality.aggression, Is.GreaterThan(0.6f), "高报复统治者应显著好战");
         }

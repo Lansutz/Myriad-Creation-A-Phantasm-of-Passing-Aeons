@@ -1,17 +1,17 @@
 using NUnit.Framework;
 using TMPro;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Editor.Panels;
-using CivilizationEvolution.Infrastructure.Audio;
-using CivilizationEvolution.Infrastructure.Save;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.UI;
-using CivilizationEvolution.UI.Common;
-using CivilizationEvolution.UI.Panels;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Editor.Panels;
+using MyriadCreation.Infrastructure.Audio;
+using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.UI;
+using MyriadCreation.UI.Common;
+using MyriadCreation.UI.Panels;
 
 
 
-namespace CivilizationEvolution.Tests
+namespace MyriadCreation.Tests
 {
     /// <summary>
     /// TMP 字体测试（SDF 动态字体生成——中文字体可用性）

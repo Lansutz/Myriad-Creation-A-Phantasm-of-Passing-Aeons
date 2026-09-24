@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Religion;
-using CivilizationEvolution.Simulation.Society;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Religion;
+using MyriadCreation.Simulation.Society;
 
 
 
 
-namespace CivilizationEvolution.Simulation.Culture
+namespace MyriadCreation.Simulation.Culture
 {
  /// 政权总览面板文本（点政权→人口/国库/官职/宗教聚合——
  /// 全局数值不上顶栏——政权级数据集中于此）：

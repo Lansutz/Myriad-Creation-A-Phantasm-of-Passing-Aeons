@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace CivilizationEvolution.Core.Data
+namespace MyriadCreation.Core.Data
 {
     /// <summary>
     /// 地块上的单个自然资源点。

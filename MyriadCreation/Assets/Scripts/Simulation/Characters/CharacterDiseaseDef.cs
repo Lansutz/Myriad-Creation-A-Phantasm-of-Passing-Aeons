@@ -1,4 +1,4 @@
-﻿namespace CivilizationEvolution.Simulation.Characters
+namespace MyriadCreation.Simulation.Characters
 {
     /// <summary>
     /// 角色疾病定义——数据驱动，可由模组覆盖/新增

@@ -1,4 +1,4 @@
-﻿namespace CivilizationEvolution.Core.Constants
+namespace MyriadCreation.Core.Constants
 {
  /// 游戏全局常量
     public static class GameConstants

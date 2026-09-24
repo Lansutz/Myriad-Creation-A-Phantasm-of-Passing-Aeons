@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Core.Events
+namespace MyriadCreation.Core.Events
 {
     /// <summary>
     /// A war between realms with different state faiths occurred.

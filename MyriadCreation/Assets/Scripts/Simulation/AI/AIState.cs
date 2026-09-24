@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace CivilizationEvolution.Simulation.AI
+namespace MyriadCreation.Simulation.AI
 {
         [Serializable]
         public class AIState

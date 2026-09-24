@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace CivilizationEvolution.Simulation.Warfare
+namespace MyriadCreation.Simulation.Warfare
 {
     [System.Serializable]
     public class GreatHolyWarState

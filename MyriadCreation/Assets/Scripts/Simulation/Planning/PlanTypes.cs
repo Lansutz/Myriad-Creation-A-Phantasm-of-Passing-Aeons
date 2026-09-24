@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Core.Contracts;
+using MyriadCreation.Core.Contracts;
 
-namespace CivilizationEvolution.Simulation.Planning
+namespace MyriadCreation.Simulation.Planning
 {
     /// <summary>
     /// 统一计划类型。具体领域系统通过此类型注册自己的执行逻辑，PlanSystem 只负责生命周期与调度。

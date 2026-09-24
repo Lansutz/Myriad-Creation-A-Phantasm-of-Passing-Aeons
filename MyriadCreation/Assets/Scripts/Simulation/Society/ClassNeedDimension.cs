@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Simulation.Society
+namespace MyriadCreation.Simulation.Society
 {
     public enum ClassNeedDimension
     {

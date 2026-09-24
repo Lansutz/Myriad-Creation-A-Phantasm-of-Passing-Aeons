@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.World.Generation
+namespace MyriadCreation.World.Generation
 {
         public struct Seed
         {

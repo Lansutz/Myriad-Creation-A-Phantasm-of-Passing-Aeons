@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Core.Contracts;
-using CivilizationEvolution.Core.Data;
+using MyriadCreation.Core.Contracts;
+using MyriadCreation.Core.Data;
 
-namespace CivilizationEvolution.Simulation.Warfare
+namespace MyriadCreation.Simulation.Warfare
 {
     /// <summary>战争领域的军事预算写入契约。
     /// 当前只迁移既有 AI 行为：记录/消耗军事建设预算；实际兵力扩编仍由军队/招募领域负责。</summary>

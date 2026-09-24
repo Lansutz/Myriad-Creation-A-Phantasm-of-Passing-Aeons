@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using CivilizationEvolution.Simulation.Culture;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Religion;
-using CivilizationEvolution.Simulation.Society;
+using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Religion;
+using MyriadCreation.Simulation.Society;
 
 
 
 
-namespace CivilizationEvolution.Tests
+namespace MyriadCreation.Tests
 {
     /// <summary>
     /// 行政区划树测试（批4：分封固定 4 层/郡县容量弹性 2-5——

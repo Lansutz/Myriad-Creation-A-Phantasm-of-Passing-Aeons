@@ -6,24 +6,24 @@ using System.Text;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Infrastructure.Save;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
-using CivilizationEvolution.UI;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.UI;
 
 
 
-namespace CivilizationEvolution.Editor
+namespace MyriadCreation.Editor
 {
     /// <summary>
     /// 运行冒烟测试（batchmode）。结果统一写绝对路径 Temp/smoke_result.txt。
@@ -110,7 +110,7 @@ namespace CivilizationEvolution.Editor
                 var gw = UnityEngine.Object.FindAnyObjectByType<GameWorld>();
                 int land = gw != null ? gw.GetLandTileCount() : -1;
                 int sea = gw != null ? gw.GetSeaTileCount() : -1;
-                var mr = UnityEngine.Object.FindAnyObjectByType<CivilizationEvolution.Rendering.MapRenderer>();
+                var mr = UnityEngine.Object.FindAnyObjectByType<MyriadCreation.Rendering.MapRenderer>();
 
                 var sb = new StringBuilder();
                 sb.AppendLine("PLAY-OK");

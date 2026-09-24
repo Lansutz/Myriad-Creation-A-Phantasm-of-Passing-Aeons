@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Simulation.Planning
+namespace MyriadCreation.Simulation.Planning
 {
     /// <summary>
     /// 全局计划调度器。
@@ -67,7 +67,7 @@ namespace CivilizationEvolution.Simulation.Planning
             plan.currentActivity = activity ?? string.Empty;
             plan.activity.Set(plan.currentActivity, plan.currentActivity, "executing");
             plan.isWaiting = false;
-            plan.waitCondition = default(CivilizationEvolution.Core.Contracts.SimulationWaitCondition);
+            plan.waitCondition = default(MyriadCreation.Core.Contracts.SimulationWaitCondition);
             return true;
         }
 
@@ -79,7 +79,7 @@ namespace CivilizationEvolution.Simulation.Planning
             return true;
         }
 
-        public bool TrySetWait(int planId, CivilizationEvolution.Core.Contracts.SimulationWaitCondition condition)
+        public bool TrySetWait(int planId, MyriadCreation.Core.Contracts.SimulationWaitCondition condition)
         {
             if (!_plans.TryGetValue(planId, out var plan) || plan.IsTerminal || plan.state != PlanState.Executing)
                 return false;
@@ -123,7 +123,7 @@ namespace CivilizationEvolution.Simulation.Planning
             if (plan.state != PlanState.Executing || !plan.isWaiting)
                 return false;
             plan.isWaiting = false;
-            plan.waitCondition = default(CivilizationEvolution.Core.Contracts.SimulationWaitCondition);
+            plan.waitCondition = default(MyriadCreation.Core.Contracts.SimulationWaitCondition);
             plan.activity.stateCode = "executing";
             return true;
         }
@@ -196,7 +196,7 @@ namespace CivilizationEvolution.Simulation.Planning
                 else if (result.outcome != PlanExecutionOutcome.Wait)
                 {
                     plan.isWaiting = false;
-                    plan.waitCondition = default(CivilizationEvolution.Core.Contracts.SimulationWaitCondition);
+                    plan.waitCondition = default(MyriadCreation.Core.Contracts.SimulationWaitCondition);
                 }
                 if (!string.IsNullOrEmpty(result.resultSummary))
                     plan.resultSummary = result.resultSummary;

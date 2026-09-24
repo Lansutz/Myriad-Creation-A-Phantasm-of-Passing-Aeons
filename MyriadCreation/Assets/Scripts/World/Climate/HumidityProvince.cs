@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.World.Climate
+namespace MyriadCreation.World.Climate
 {
         public enum HumidityProvince
         {

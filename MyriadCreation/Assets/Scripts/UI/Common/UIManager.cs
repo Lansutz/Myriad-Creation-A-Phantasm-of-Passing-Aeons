@@ -1,26 +1,26 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Infrastructure.Save;
-using CivilizationEvolution.Rendering;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.WorldState;
-using CivilizationEvolution.UI;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Rendering;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.UI;
 
 
 
@@ -28,8 +28,8 @@ using CivilizationEvolution.UI;
 
 
 
-using CivilizationEvolution.Simulation.Culture;
-namespace CivilizationEvolution.UI.Common
+using MyriadCreation.Simulation.Culture;
+namespace MyriadCreation.UI.Common
 {
  /// <summary>事件日志分类（决定富文本着色）</summary>
 
@@ -442,13 +442,13 @@ namespace CivilizationEvolution.UI.Common
         }
 
  /// <summary>获取音乐播放器（场景中查找或懒创建）</summary>
-        private static CivilizationEvolution.Infrastructure.Audio.MusicPlayerSystem MusicPlayer()
+        private static MyriadCreation.Infrastructure.Audio.MusicPlayerSystem MusicPlayer()
         {
-            var mp = UnityEngine.Object.FindAnyObjectByType<CivilizationEvolution.Infrastructure.Audio.MusicPlayerSystem>(FindObjectsInactive.Include);
+            var mp = UnityEngine.Object.FindAnyObjectByType<MyriadCreation.Infrastructure.Audio.MusicPlayerSystem>(FindObjectsInactive.Include);
             if (mp == null)
             {
                 var go = new GameObject("MusicPlayer");
-                mp = go.AddComponent<CivilizationEvolution.Infrastructure.Audio.MusicPlayerSystem>();
+                mp = go.AddComponent<MyriadCreation.Infrastructure.Audio.MusicPlayerSystem>();
                 mp.LoadFromResources();
             }
             return mp;

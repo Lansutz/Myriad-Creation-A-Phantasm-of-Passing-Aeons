@@ -1,13 +1,13 @@
 using NUnit.Framework;
 using UnityEngine;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Culture;
-using CivilizationEvolution.Simulation.Religion;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.Religion;
 
 
 
 
-namespace CivilizationEvolution.Tests
+namespace MyriadCreation.Tests
 {
     /// <summary>
     /// 原型学术画像 + 称号系统测试

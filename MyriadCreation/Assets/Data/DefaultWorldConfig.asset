@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e156bdf2ae2f0c2498b3ecef6e932c29, type: 3}
   m_Name: DefaultWorldConfig
-  m_EditorClassIdentifier: CivilizationEvolution.Runtime::CivilizationEvolution.Core.WorldConfig
+  m_EditorClassIdentifier: MyriadCreation.Runtime::MyriadCreation.Core.WorldConfig
   wrapX: 1
   wrapY: 0
   seaLevel: 0.5

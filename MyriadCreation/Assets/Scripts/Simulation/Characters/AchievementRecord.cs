@@ -1,4 +1,4 @@
-﻿namespace CivilizationEvolution.Simulation.Characters
+namespace MyriadCreation.Simulation.Characters
 {
         [System.Serializable]
         public struct AchievementRecord

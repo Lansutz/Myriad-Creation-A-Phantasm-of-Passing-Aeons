@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Core.Simulation
+namespace MyriadCreation.Core.Simulation
 {
     public readonly struct SimulationTickContext
     {

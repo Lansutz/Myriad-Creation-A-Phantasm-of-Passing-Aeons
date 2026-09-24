@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Core.Simulation;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Simulation.AI;
-using CivilizationEvolution.Simulation.WorldState;
+using MyriadCreation.Core.Simulation;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Simulation.AI;
+using MyriadCreation.Simulation.WorldState;
 
-namespace CivilizationEvolution.Simulation.Innovation
+namespace MyriadCreation.Simulation.Innovation
 {
     /// <summary>
     /// 旧式 Realm × Innovation 研究进度的兼容运行时。

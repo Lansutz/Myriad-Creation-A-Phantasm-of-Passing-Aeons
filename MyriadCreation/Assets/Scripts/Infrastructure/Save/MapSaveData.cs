@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 
-using CivilizationEvolution.World;
-namespace CivilizationEvolution.Infrastructure.Save
+using MyriadCreation.World;
+namespace MyriadCreation.Infrastructure.Save
 {
     [Serializable]
     public class MapSaveData

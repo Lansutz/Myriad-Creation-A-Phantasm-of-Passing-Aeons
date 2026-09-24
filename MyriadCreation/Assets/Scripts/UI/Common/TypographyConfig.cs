@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CivilizationEvolution.UI.Common
+namespace MyriadCreation.UI.Common
 {
     [CreateAssetMenu(fileName = "TypographyConfig", menuName = "UI/Typography Config")]
     public class TypographyConfig : ScriptableObject

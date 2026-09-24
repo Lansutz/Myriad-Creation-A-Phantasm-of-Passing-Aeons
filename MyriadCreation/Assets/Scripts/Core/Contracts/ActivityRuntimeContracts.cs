@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Core.Contracts
+namespace MyriadCreation.Core.Contracts
 {
     /// <summary>
     /// A concrete behavior currently performed by a Plan.

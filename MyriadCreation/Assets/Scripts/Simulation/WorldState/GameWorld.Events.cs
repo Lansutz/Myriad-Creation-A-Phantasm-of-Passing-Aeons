@@ -1,32 +1,32 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Simulation.AI;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Culture;
-using CivilizationEvolution.Simulation.Diplomacy;
-using CivilizationEvolution.Simulation.Disaster;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Innovation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Religion;
-using CivilizationEvolution.Simulation.Settlement;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.Warfare;
-using CivilizationEvolution.World.Biome;
-using CivilizationEvolution.World.Climate;
-using CivilizationEvolution.World.Generation;
-using CivilizationEvolution.World.Hydrology;
-using CivilizationEvolution.World.Settlement;
-using CivilizationEvolution.World.Terrain;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Simulation.AI;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.Diplomacy;
+using MyriadCreation.Simulation.Disaster;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Innovation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Religion;
+using MyriadCreation.Simulation.Settlement;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.Warfare;
+using MyriadCreation.World.Biome;
+using MyriadCreation.World.Climate;
+using MyriadCreation.World.Generation;
+using MyriadCreation.World.Hydrology;
+using MyriadCreation.World.Settlement;
+using MyriadCreation.World.Terrain;
 
 
 
@@ -44,7 +44,7 @@ using CivilizationEvolution.World.Terrain;
 
 
 
-namespace CivilizationEvolution.Simulation.WorldState
+namespace MyriadCreation.Simulation.WorldState
 {
  /// GameWorld.Events —— 事件系统（事件队列/分发/各类型事件处理器）（partial class，与 GameWorld.cs 共享字段与子系统）
     public partial class GameWorld

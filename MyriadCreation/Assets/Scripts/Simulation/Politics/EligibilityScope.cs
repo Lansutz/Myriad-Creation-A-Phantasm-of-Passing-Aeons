@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Simulation.Politics
+namespace MyriadCreation.Simulation.Politics
 {
     public enum EligibilityScope
     {

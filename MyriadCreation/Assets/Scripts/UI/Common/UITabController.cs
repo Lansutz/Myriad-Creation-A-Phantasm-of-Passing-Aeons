@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CivilizationEvolution.UI.Common
+namespace MyriadCreation.UI.Common
 {
     /// <summary>
     /// 标签页控制器 - 嵌入式磨砂石材 + Active时底部青铜强调线

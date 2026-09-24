@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
 
 
-using CivilizationEvolution.World.Climate;
-namespace CivilizationEvolution.World.Biome
+using MyriadCreation.World.Climate;
+namespace MyriadCreation.World.Biome
 {
  /// Holdridge 生命地带分类系统（Holdridge 1967, 1987）
  /// 三个核心变量（对数刻度三角形坐标系）：

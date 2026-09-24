@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Core.Events
+namespace MyriadCreation.Core.Events
 {
     /// <summary>
     /// Lightweight in-process simulation event bus.

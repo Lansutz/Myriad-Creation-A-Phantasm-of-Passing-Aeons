@@ -1,7 +1,7 @@
 using System;
-using CivilizationEvolution.Core.Simulation;
+using MyriadCreation.Core.Simulation;
 
-namespace CivilizationEvolution.Simulation.Modding
+namespace MyriadCreation.Simulation.Modding
 {
     /// <summary>
     /// Public content authoring boundary shared by the built-in editor and external mods.

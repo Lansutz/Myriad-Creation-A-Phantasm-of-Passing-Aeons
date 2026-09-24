@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Simulation;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Disaster;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Innovation;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.Warfare;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Simulation;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Disaster;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Innovation;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.Warfare;
 
-namespace CivilizationEvolution.Simulation.Politics
+namespace MyriadCreation.Simulation.Politics
 {
     /// <summary>
     /// 政治领域运行时。

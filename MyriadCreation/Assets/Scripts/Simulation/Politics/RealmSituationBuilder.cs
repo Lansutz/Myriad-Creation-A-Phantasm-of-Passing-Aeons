@@ -1,22 +1,22 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Simulation.Culture;
-using CivilizationEvolution.Simulation.Disaster;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Events;
-using CivilizationEvolution.Simulation.Generation;
-using CivilizationEvolution.Simulation.Innovation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Religion;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.Simulation.Warfare;
-using CivilizationEvolution.Simulation.WorldState;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.Disaster;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Events;
+using MyriadCreation.Simulation.Generation;
+using MyriadCreation.Simulation.Innovation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Religion;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.Warfare;
+using MyriadCreation.Simulation.WorldState;
 
 
 
@@ -25,7 +25,7 @@ using CivilizationEvolution.Simulation.WorldState;
 
 
 
-namespace CivilizationEvolution.Simulation.Politics
+namespace MyriadCreation.Simulation.Politics
 {
  /// 政权情境采集器：每个政治 Tick 从各子系统采集客观指标，组装成 RealmSituation，
  /// 供 ClassNeedsSystem 评估。集中在此处对接，避免需求/社会系统直接耦合经济、战争、灾害等。

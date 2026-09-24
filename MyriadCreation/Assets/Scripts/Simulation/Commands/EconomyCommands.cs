@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Core.Contracts;
-using CivilizationEvolution.Core.Data;
+using MyriadCreation.Core.Contracts;
+using MyriadCreation.Core.Data;
 
-namespace CivilizationEvolution.Simulation.Economy
+namespace MyriadCreation.Simulation.Economy
 {
     /// <summary>经济领域的政权投资写入契约。</summary>
     public readonly struct ImproveRealmEconomyCommand : ISimulationCommand

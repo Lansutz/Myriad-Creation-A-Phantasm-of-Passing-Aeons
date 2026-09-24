@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Simulation.Diplomacy
+namespace MyriadCreation.Simulation.Diplomacy
 {
     public enum SpecialBondType
     {

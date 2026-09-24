@@ -1,6 +1,6 @@
 using System;
 
-namespace CivilizationEvolution.Core.Dto
+namespace MyriadCreation.Core.Dto
 {
     [Serializable]
     public class IntFloatEntry

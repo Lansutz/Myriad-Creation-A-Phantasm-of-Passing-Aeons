@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Core.Contracts;
-using CivilizationEvolution.Core.Simulation;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Diplomacy;
-using CivilizationEvolution.Simulation.Innovation;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.WorldState;
+using MyriadCreation.Core.Contracts;
+using MyriadCreation.Core.Simulation;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Diplomacy;
+using MyriadCreation.Simulation.Innovation;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.WorldState;
 
-namespace CivilizationEvolution.Simulation.AI
+namespace MyriadCreation.Simulation.AI
 {
     public static class AISchedule
     {

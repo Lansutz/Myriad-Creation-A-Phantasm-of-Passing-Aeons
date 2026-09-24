@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Simulation.Disaster
+namespace MyriadCreation.Simulation.Disaster
 {
 
     public enum DiseaseType

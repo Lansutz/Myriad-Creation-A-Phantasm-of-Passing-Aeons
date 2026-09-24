@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace CivilizationEvolution.Simulation.Society
+namespace MyriadCreation.Simulation.Society
 {
     [Serializable]
     public struct FactionPlatform

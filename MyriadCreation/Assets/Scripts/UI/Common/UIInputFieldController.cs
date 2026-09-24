@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 
-namespace CivilizationEvolution.UI.Common
+namespace MyriadCreation.UI.Common
 {
     /// <summary>
     /// 输入框控制器 - 内凹暗槽编辑区域

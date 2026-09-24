@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Core.Events;
+using MyriadCreation.Core.Events;
 
-namespace CivilizationEvolution.Core.Simulation
+namespace MyriadCreation.Core.Simulation
 {
     /// <summary>
     /// Bridges domain facts into scheduler invalidation without coupling the producer

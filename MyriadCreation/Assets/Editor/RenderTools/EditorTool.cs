@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Editor.RenderTools
+namespace MyriadCreation.Editor.RenderTools
 {
     public enum EditorTool
     {

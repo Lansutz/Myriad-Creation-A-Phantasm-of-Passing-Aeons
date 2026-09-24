@@ -4,12 +4,12 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace CivilizationEvolution.Editor
+namespace MyriadCreation.Editor
 {
     /// <summary>
     /// 无界面（batchmode）构建入口
     /// 命令行：Unity.exe -batchmode -quit -projectPath &lt;项目&gt;
-    ///         -executeMethod CivilizationEvolution.Editor.HeadlessBuilder.BuildAll
+    ///         -executeMethod MyriadCreation.Editor.HeadlessBuilder.BuildAll
     /// 作用：生成/刷新全部 .meta、确保世界配置资产存在、搭建并保存 Main.unity 场景。
     /// </summary>
     public static class HeadlessBuilder
@@ -31,12 +31,12 @@ namespace CivilizationEvolution.Editor
             // 2. 确保世界配置资产存在
             if (AssetDatabase.LoadAssetAtPath<ScriptableObject>(ConfigPath) == null)
             {
-                CivilizationEvolutionMenu.CreateWorldConfigAsset();
+                MyriadCreationMenu.CreateWorldConfigAsset();
             }
 
             // 3. 新建空场景并搭建
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            CivilizationEvolutionMenu.BuildGameScene();
+            MyriadCreationMenu.BuildGameScene();
 
             // 4. 保存场景
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -74,7 +74,7 @@ namespace CivilizationEvolution.Editor
         /// <summary>
         /// 构建玩家（第三关：打包验证）——Windows x64
         /// 命令行：Unity.exe -batchmode -quit -projectPath &lt;项目&gt;
-        ///         -executeMethod CivilizationEvolution.Editor.HeadlessBuilder.BuildPlayer
+        ///         -executeMethod MyriadCreation.Editor.HeadlessBuilder.BuildPlayer
         /// </summary>
         public static void BuildPlayer()
         {
@@ -91,7 +91,7 @@ namespace CivilizationEvolution.Editor
             {
                 scenes = new[] { ScenePath },
                 locationPathName = System.IO.Path.Combine(
-                    System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(Application.dataPath)), "Builds", "CivilizationEvolution.exe"),
+                    System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(Application.dataPath)), "Builds", "MyriadCreation.exe"),
                 target = BuildTarget.StandaloneWindows64,
                 options = BuildOptions.None
             };

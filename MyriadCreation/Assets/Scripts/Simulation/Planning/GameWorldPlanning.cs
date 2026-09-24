@@ -1,8 +1,8 @@
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Innovation;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Innovation;
 using UnityEngine;
 
-namespace CivilizationEvolution.Simulation.WorldState
+namespace MyriadCreation.Simulation.WorldState
 {
     /// <summary>
     /// GameWorld 与统一计划系统的接入层。
@@ -41,7 +41,7 @@ namespace CivilizationEvolution.Simulation.WorldState
                 _researchPlanSystem = CreateResearchPlanSystem();
 
             SimulationEvents.Publish(
-                new CivilizationEvolution.Core.Events.PracticeRecordedEvent(
+                new MyriadCreation.Core.Events.PracticeRecordedEvent(
                     characterId, innovationId, amount));
 
             return amount;

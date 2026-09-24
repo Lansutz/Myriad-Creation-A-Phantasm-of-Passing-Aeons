@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Core.Events;
+using MyriadCreation.Core.Events;
 
-namespace CivilizationEvolution.Simulation.Religion
+namespace MyriadCreation.Simulation.Religion
 {
     /// <summary>
     /// Converts simulation facts into religion-domain state changes.

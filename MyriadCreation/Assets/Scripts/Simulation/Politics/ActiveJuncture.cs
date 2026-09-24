@@ -1,6 +1,6 @@
 using System;
 
-namespace CivilizationEvolution.Simulation.Politics
+namespace MyriadCreation.Simulation.Politics
 {
     [Serializable]
     public class ActiveJuncture

@@ -1,12 +1,12 @@
-using CivilizationEvolution.Core.Contracts;
-using CivilizationEvolution.Simulation.Diplomacy;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Innovation;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Settlement;
-using CivilizationEvolution.Simulation.Warfare;
+using MyriadCreation.Core.Contracts;
+using MyriadCreation.Simulation.Diplomacy;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Innovation;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Settlement;
+using MyriadCreation.Simulation.Warfare;
 
-namespace CivilizationEvolution.Simulation.WorldState
+namespace MyriadCreation.Simulation.WorldState
 {
     /// <summary>
     /// 世界级 Command Handler 注册边界。

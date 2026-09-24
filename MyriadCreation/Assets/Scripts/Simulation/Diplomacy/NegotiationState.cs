@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-namespace CivilizationEvolution.Simulation.Diplomacy
+namespace MyriadCreation.Simulation.Diplomacy
 {
         [Serializable]
         public class NegotiationState

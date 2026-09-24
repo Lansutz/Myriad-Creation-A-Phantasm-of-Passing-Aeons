@@ -1,9 +1,9 @@
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
 
 
 
-namespace CivilizationEvolution.Simulation.Society
+namespace MyriadCreation.Simulation.Society
 {
     public static class FactionNames
     {

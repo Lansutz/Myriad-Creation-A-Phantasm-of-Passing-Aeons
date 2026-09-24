@@ -1,13 +1,13 @@
-﻿
+
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Population;
-using CivilizationEvolution.Simulation.Society;
+using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Population;
+using MyriadCreation.Simulation.Society;
 
 
-namespace CivilizationEvolution.Simulation.Religion
+namespace MyriadCreation.Simulation.Religion
 {
     [System.Serializable]
     public class LawSystem

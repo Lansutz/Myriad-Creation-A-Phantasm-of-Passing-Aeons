@@ -1,7 +1,7 @@
 using System;
-using CivilizationEvolution.Core.Simulation;
+using MyriadCreation.Core.Simulation;
 
-namespace CivilizationEvolution.Simulation.Disaster
+namespace MyriadCreation.Simulation.Disaster
 {
     public static class DisasterSchedule
     {

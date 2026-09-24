@@ -1,7 +1,7 @@
 using System;
-using CivilizationEvolution.Core.Contracts;
+using MyriadCreation.Core.Contracts;
 
-namespace CivilizationEvolution.Simulation.Innovation
+namespace MyriadCreation.Simulation.Innovation
 {
     /// <summary>革新领域的写入契约。</summary>
     public readonly struct StartInnovationResearchCommand : ISimulationCommand

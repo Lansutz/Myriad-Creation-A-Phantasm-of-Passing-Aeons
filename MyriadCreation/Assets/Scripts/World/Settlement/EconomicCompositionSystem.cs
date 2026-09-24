@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Enums;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Enums;
 
-namespace CivilizationEvolution.World.Settlement
+namespace MyriadCreation.World.Settlement
 {
     /// <summary>
     /// 经济成分系统

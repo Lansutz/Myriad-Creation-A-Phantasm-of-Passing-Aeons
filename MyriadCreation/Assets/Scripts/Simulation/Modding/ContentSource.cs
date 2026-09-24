@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace CivilizationEvolution.Simulation.Modding
+namespace MyriadCreation.Simulation.Modding
 {
     /// <summary>
     /// All authoring/runtime content enters the game through a named source.

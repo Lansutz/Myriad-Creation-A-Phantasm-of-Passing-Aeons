@@ -1,9 +1,9 @@
-﻿
+
 using System.Collections.Generic;
-using CivilizationEvolution.Simulation.Innovation;
+using MyriadCreation.Simulation.Innovation;
 
 
-namespace CivilizationEvolution.Simulation.AI
+namespace MyriadCreation.Simulation.AI
 {
     [System.Serializable]
     public struct AIPersonality

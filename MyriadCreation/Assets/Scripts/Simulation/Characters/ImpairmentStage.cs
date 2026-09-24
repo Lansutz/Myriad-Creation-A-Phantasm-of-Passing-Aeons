@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Simulation.Characters
+namespace MyriadCreation.Simulation.Characters
 {
     /// <summary>
     /// 衰退阶段定义——每个衰退类型有自己的阶段

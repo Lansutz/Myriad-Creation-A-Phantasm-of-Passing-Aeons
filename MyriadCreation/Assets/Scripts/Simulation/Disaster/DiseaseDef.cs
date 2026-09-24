@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Simulation.Disaster
+namespace MyriadCreation.Simulation.Disaster
 {
     [System.Serializable]
     public struct DiseaseDef

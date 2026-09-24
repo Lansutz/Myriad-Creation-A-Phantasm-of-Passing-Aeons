@@ -1,10 +1,10 @@
 using System;
-using CivilizationEvolution.Core.Contracts;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Simulation.Characters;
+using MyriadCreation.Core.Contracts;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Enums;
+using MyriadCreation.Simulation.Characters;
 
-namespace CivilizationEvolution.Simulation.Diplomacy
+namespace MyriadCreation.Simulation.Diplomacy
 {
     /// <summary>
     /// 外交/战争领域的写入契约。

@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using CivilizationEvolution.Core.Events;
-using CivilizationEvolution.Core.Contracts;
-using CivilizationEvolution.Core.Simulation;
-using CivilizationEvolution.Simulation.Modding;
-using CivilizationEvolution.Simulation.Economy;
-using CivilizationEvolution.Simulation.Disaster;
-using CivilizationEvolution.Simulation.AI;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Planning;
-using CivilizationEvolution.Simulation.Diplomacy;
-using CivilizationEvolution.Simulation.Society.Building;
-using CivilizationEvolution.Simulation.Planning;
+using MyriadCreation.Core.Events;
+using MyriadCreation.Core.Contracts;
+using MyriadCreation.Core.Simulation;
+using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Economy;
+using MyriadCreation.Simulation.Disaster;
+using MyriadCreation.Simulation.AI;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Planning;
+using MyriadCreation.Simulation.Diplomacy;
+using MyriadCreation.Simulation.Society.Building;
+using MyriadCreation.Simulation.Planning;
 
-namespace CivilizationEvolution.Tests.EditMode
+namespace MyriadCreation.Tests.EditMode
 {
     public class ArchitectureContractsTests
     {

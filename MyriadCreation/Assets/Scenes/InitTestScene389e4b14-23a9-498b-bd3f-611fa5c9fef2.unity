@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.TestRunner::UnityEngine.TestTools.TestRunner.PlaymodeTestsController
   m_AssembliesWithTests:
-  - CivilizationEvolution.Tests.PlayMode
+  - MyriadCreation.Tests.PlayMode
   - Unity.PerformanceTesting
   - UnityEngine.TestRunner
   testStartedEvent:

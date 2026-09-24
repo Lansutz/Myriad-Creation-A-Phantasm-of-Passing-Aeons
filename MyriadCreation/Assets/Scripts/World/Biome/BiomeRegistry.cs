@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace CivilizationEvolution.World.Biome
+namespace MyriadCreation.World.Biome
 {
     /// <summary>
     /// 群系配置覆盖字典：World 层持有硬编码默认值，Simulation 层的 ContentRegistry

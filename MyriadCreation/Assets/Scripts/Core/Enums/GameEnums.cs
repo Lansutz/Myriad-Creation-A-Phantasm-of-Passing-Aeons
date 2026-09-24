@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CivilizationEvolution.Core.Enums
+namespace MyriadCreation.Core.Enums
 {
  /// 全局枚举定义
     public static class GameEnums

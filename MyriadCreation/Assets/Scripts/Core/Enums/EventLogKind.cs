@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Core.Enums
+namespace MyriadCreation.Core.Enums
 {
     public enum EventLogKind
     {

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Simulation.Characters;
+using MyriadCreation.Simulation.Characters;
 
-namespace CivilizationEvolution.Simulation.Innovation
+namespace MyriadCreation.Simulation.Innovation
 {
     /// <summary>
     /// 革新知识层：把“社会已有知识”和“个人掌握程度”分开。

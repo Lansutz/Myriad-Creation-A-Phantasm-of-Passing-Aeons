@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Simulation.Characters
+namespace MyriadCreation.Simulation.Characters
 {
     /// <summary>
     /// 子结构类型枚举——身体部位下的具体病变位置

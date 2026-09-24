@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-using CivilizationEvolution.World.Generation;
-namespace CivilizationEvolution.World.Terrain
+using MyriadCreation.World.Generation;
+namespace MyriadCreation.World.Terrain
 {
  /// 球面 Voronoi 图（Spherical Voronoi Diagram）
  /// 在单位球面上生成 N 个种子点，将球面划分为 N 个 Voronoi 单元

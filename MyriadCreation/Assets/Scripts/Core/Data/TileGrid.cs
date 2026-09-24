@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Core.Data
+namespace MyriadCreation.Core.Data
 {
     public static class TileGrid
     {

@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace CivilizationEvolution.Core
+namespace MyriadCreation.Core
 {
  /// 本地化管理器（键→文本，CK3 localization 模式）
  /// 数据/代码只存键；显示文本按语言查表；缺键回退键名（开发期可见）

@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 
-using CivilizationEvolution.Core.Enums;
-namespace CivilizationEvolution.Core.Data
+using MyriadCreation.Core.Enums;
+namespace MyriadCreation.Core.Data
 {
  /// 世界配置（ScriptableObject 资产）
  /// 在 Project 窗口右键 Create/Civilization Evolution/World Config 创建配置预设，

@@ -1,13 +1,13 @@
 {
-    "name": "CivilizationEvolution.UI",
-    "rootNamespace": "CivilizationEvolution.UI",
+    "name": "MyriadCreation.UI",
+    "rootNamespace": "MyriadCreation.UI",
     "references": [
-        "CivilizationEvolution.Core",
-        "CivilizationEvolution.Simulation",
-        "CivilizationEvolution.Rendering",
+        "MyriadCreation.Core",
+        "MyriadCreation.Simulation",
+        "MyriadCreation.Rendering",
         "UnityEngine.UI",
         "Unity.TextMeshPro",
-        "CivilizationEvolution.Infrastructure"
+        "MyriadCreation.Infrastructure"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

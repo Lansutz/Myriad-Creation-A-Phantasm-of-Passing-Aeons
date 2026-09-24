@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Simulation.AI
+namespace MyriadCreation.Simulation.AI
 {
 
 

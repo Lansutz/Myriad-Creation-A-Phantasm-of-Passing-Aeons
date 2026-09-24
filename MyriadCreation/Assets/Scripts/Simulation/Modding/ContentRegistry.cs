@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CivilizationEvolution.Simulation.Characters;
-using CivilizationEvolution.Simulation.Culture;
-using CivilizationEvolution.Simulation.Innovation;
-using CivilizationEvolution.Simulation.Religion;
-using CivilizationEvolution.Simulation.Society;
-using CivilizationEvolution.World.Biome;
+using MyriadCreation.Simulation.Characters;
+using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.Innovation;
+using MyriadCreation.Simulation.Religion;
+using MyriadCreation.Simulation.Society;
+using MyriadCreation.World.Biome;
 
-namespace CivilizationEvolution.Simulation.Modding
+namespace MyriadCreation.Simulation.Modding
 {
     /// <summary>
     /// Compatibility facade for legacy consumers. Provider composition lives in ContentRuntime.

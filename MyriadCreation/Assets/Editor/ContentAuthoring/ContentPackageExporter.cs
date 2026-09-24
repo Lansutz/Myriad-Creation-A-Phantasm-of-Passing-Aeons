@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using CivilizationEvolution.Simulation.Modding;
+using MyriadCreation.Simulation.Modding;
 
-namespace CivilizationEvolution.Editor.ContentAuthoring
+namespace MyriadCreation.Editor.ContentAuthoring
 {
     /// <summary>
     /// Exports editor-authored definitions into the exact StreamingAssets/Mods package

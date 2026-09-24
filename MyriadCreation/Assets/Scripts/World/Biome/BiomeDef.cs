@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 
 using UnityEngine;
-using CivilizationEvolution.Core;
-using CivilizationEvolution.Core.Constants;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
+using MyriadCreation.Core;
+using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Enums;
 
 
-namespace CivilizationEvolution.World.Biome
+namespace MyriadCreation.World.Biome
 {
     /// <summary>
     /// 群系定义（JSON 可序列化，参考 Azgaar FMG 的 biomesData 数据驱动设计）。

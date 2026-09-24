@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-using CivilizationEvolution.UI.Common;
-namespace CivilizationEvolution.UI.Panels
+using MyriadCreation.UI.Common;
+namespace MyriadCreation.UI.Panels
 {
  /// 游戏设置面板（代码动态生成）：音量/分辨率/画质/语言/全屏。
  /// 挂在主菜单 Canvas 下，点"设置"显示。

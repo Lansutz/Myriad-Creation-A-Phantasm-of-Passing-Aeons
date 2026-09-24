@@ -1,7 +1,11 @@
 {
-    "name": "CivilizationEvolution.Core",
-    "rootNamespace": "CivilizationEvolution.Core",
-    "references": [],
+    "name": "MyriadCreation.Rendering",
+    "rootNamespace": "MyriadCreation.Rendering",
+    "references": [
+        "MyriadCreation.Core",
+        "MyriadCreation.World",
+        "MyriadCreation.Simulation"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

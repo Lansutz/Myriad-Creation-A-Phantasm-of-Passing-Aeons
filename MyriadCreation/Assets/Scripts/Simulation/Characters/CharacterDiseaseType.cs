@@ -1,4 +1,4 @@
-﻿namespace CivilizationEvolution.Simulation.Characters
+namespace MyriadCreation.Simulation.Characters
 {
     /// <summary>
     /// 角色疾病类型——按病因和性质分类

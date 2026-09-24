@@ -1,6 +1,6 @@
 using System;
 
-namespace CivilizationEvolution.Core.Simulation
+namespace MyriadCreation.Core.Simulation
 {
     /// <summary>Stable read-only query contract. Internal data structures remain replaceable.</summary>
     public interface ISimulationQuery<out TResult>

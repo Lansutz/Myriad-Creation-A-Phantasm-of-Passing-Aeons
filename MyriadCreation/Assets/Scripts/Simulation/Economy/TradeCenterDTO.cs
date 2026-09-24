@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System;
 
-using CivilizationEvolution.Core.Dto;
-namespace CivilizationEvolution.Simulation.Economy
+using MyriadCreation.Core.Dto;
+namespace MyriadCreation.Simulation.Economy
 {
     [Serializable]
     public class TradeCenterDTO

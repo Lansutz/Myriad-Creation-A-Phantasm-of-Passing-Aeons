@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace CivilizationEvolution.World.Settlement
+namespace MyriadCreation.World.Settlement
 {
  // ============================================================ // 聚落类型学核心枚举 // 综合：文档（村镇/城/堡形态系统）+ 文明引擎IN模块 // （港口层级/关隘瓶颈/要塞体系/城镇功能类型学） // ============================================================
  /// 聚居点分类：定居点/据点/营地

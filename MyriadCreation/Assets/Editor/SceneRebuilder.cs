@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace CivilizationEvolution.Editor
+namespace MyriadCreation.Editor
 {
     /// <summary>
     /// 场景重建（batchmode 用——UI 全面重建）：
@@ -16,8 +16,8 @@ namespace CivilizationEvolution.Editor
             // 新建空场景（替换当前——旧对象全清）
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             // 加默认光照（场景无光——Bootstrap 会建？——BuildGameScene 有灯光）
-            CivilizationEvolutionMenu.BuildGameScene();
-            CivilizationEvolutionMenu.SaveActiveScene();
+            MyriadCreationMenu.BuildGameScene();
+            MyriadCreationMenu.SaveActiveScene();
             Debug.Log("[SceneRebuilder] Main.unity 已重建（全 UI 面板就位）");
         }
     }

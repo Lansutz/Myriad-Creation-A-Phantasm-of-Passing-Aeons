@@ -1,8 +1,8 @@
-using CivilizationEvolution.Core.Contracts;
-using CivilizationEvolution.Core.Events;
-using CivilizationEvolution.Simulation.Warfare;
+using MyriadCreation.Core.Contracts;
+using MyriadCreation.Core.Events;
+using MyriadCreation.Simulation.Warfare;
 
-namespace CivilizationEvolution.Simulation.Settlement
+namespace MyriadCreation.Simulation.Settlement
 {
     public readonly struct DestroySettlementCommand : ISimulationCommand
     {

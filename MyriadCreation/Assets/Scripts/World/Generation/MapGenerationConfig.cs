@@ -1,13 +1,13 @@
-﻿
+
 using System;
 using UnityEngine;
-using CivilizationEvolution.World.Biome;
-using CivilizationEvolution.World.Climate;
-using CivilizationEvolution.World.Hydrology;
-using CivilizationEvolution.World.Terrain;
+using MyriadCreation.World.Biome;
+using MyriadCreation.World.Climate;
+using MyriadCreation.World.Hydrology;
+using MyriadCreation.World.Terrain;
 
 
-namespace CivilizationEvolution.World.Generation
+namespace MyriadCreation.World.Generation
 {
  /// 地图生成参数配置（对齐FantasyMapSimulator编辑器内一体化模式）
  /// 工作流（参考FantasyMapSimulator，Unity引擎，编辑器内一体化）：

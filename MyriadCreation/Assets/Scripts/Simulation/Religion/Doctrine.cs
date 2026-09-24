@@ -1,4 +1,4 @@
-namespace CivilizationEvolution.Simulation.Religion
+namespace MyriadCreation.Simulation.Religion
 {
     [System.Serializable]
     public struct Doctrine

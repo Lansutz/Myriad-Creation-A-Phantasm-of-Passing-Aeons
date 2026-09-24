@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CivilizationEvolution.Simulation.Modding
+namespace MyriadCreation.Simulation.Modding
 {
     public interface IContentStore<TKey, TValue> : IContentResolver<TKey, TValue>
     {

@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-using CivilizationEvolution.UI.Common;
-namespace CivilizationEvolution.UI.Panels
+using MyriadCreation.UI.Common;
+namespace MyriadCreation.UI.Panels
 {
  /// 存档选择面板——列出 MapSaves 目录下的所有 .json 存档，
  /// 选择后通过回调通知调用方加载指定存档。

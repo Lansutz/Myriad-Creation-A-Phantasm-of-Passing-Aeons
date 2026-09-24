@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace CivilizationEvolution.UI.Common
+namespace MyriadCreation.UI.Common
 {
  /// 按钮悬停动效组件：鼠标移入放大+高亮，移出平滑恢复，按下轻微收缩。
  /// 挂在任意 Button 上即可，无需额外配置。

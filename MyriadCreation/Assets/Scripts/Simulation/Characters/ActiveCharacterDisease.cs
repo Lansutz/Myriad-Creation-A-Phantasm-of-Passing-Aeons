@@ -1,4 +1,4 @@
-﻿namespace CivilizationEvolution.Simulation.Characters
+namespace MyriadCreation.Simulation.Characters
 {
     /// <summary>
     /// 活跃疾病实例——角色身上正在发生的疾病

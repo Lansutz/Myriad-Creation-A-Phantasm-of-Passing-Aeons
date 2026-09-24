@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using CivilizationEvolution.Core.Simulation;
-using CivilizationEvolution.World.Climate;
-using CivilizationEvolution.World.Generation;
+using MyriadCreation.Core.Simulation;
+using MyriadCreation.World.Climate;
+using MyriadCreation.World.Generation;
 
-namespace CivilizationEvolution.Simulation.WorldState
+namespace MyriadCreation.Simulation.WorldState
 {
     /// <summary>
     /// Owns runtime map dirty state and incremental terrain/climate recalculation.
