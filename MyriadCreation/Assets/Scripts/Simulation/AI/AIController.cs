@@ -63,19 +63,20 @@ namespace CivilizationEvolution.Simulation.AI
             InnovationTree innovations,
             CivilizationEvolution.Simulation.Characters.CharacterManager characters = null)
         {
+            _pendingIntents.Clear();
             _decisionTimer++;
 
  // 日常行为
-            SelectDailyIntent(realms, tiles, innovations);
+            SelectDailyIntent(realms, tiles, innovations, _pendingIntents);
 
  // 劫掠机会（低烈度冲突——好战 AI 对敌对政权劫掠——屠城计数）
-            TryRaid(realms, tiles, diplomacy, characters);
+            TryRaid(realms, tiles, diplomacy, characters, _pendingIntents);
 
  // 重大决策
             if (_decisionTimer >= DecisionInterval)
             {
                 _decisionTimer = 0f;
-                MakeMajorDecision(realms, tiles, diplomacy);
+                MakeMajorDecision(realms, tiles, diplomacy, _pendingIntents);
             }
         }
 
@@ -86,13 +87,21 @@ namespace CivilizationEvolution.Simulation.AI
         }
 
         private int _raidCooldown = 0;
+        private readonly List<AIIntent> _pendingIntents = new List<AIIntent>();
+
+        public IReadOnlyList<AIIntent> DrainIntents()
+        {
+            var result = new List<AIIntent>(_pendingIntents);
+            _pendingIntents.Clear();
+            return result;
+        }
         private const int RaidInterval = 45; // 每 45 天可劫掠一次
 
  /// 劫掠决策（敌对状态下的低烈度冲突——RaidSettlement 的 AI 调用方）：
  /// 好战性格[aggression/expansionBias]驱动——屠城[Massacre]低概率
  /// [高侵略+随机]——成功屠城→执行政权统治者 massacres++（绰号判定数据）
         private void TryRaid(Dictionary<int, RealmData> realms, TileData[] tiles,
-            DiplomacyManager diplomacy, CivilizationEvolution.Simulation.Characters.CharacterManager characters)
+            DiplomacyManager diplomacy, CivilizationEvolution.Simulation.Characters.CharacterManager characters, List<AIIntent> intents)
         {
             _raidCooldown++;
             if (_raidCooldown < RaidInterval) return;
@@ -126,24 +135,16 @@ namespace CivilizationEvolution.Simulation.AI
             if (personality.aggression > 0.6f && UnityEngine.Random.value < 0.12f)
                 type = GameEnums.RaidType.Massacre;
 
-            var result = diplomacy.RaidSettlement(realmId, targetId, targetTile, type, tiles);
-            if (result.success)
-            {
-                _raidCooldown = 0;
- // 屠城→执行政权统治者 massacres++（绰号[屠夫/恐怖者]判定数据）
-                if (type == GameEnums.RaidType.Massacre && characters != null)
-                {
-                    var ruler = characters.FindRulerOfRealm(realmId);
-                    if (ruler != null) ruler.achievements.massacres++;
-                }
-            }
+            intents.Add(new AIIntent(AIIntentType.RaidSettlement, realmId, targetId, targetTile, raidType: type));
+            _raidCooldown = 0;
         }
 
  /// <summary>日常行为</summary>
         private void SelectDailyIntent(
             Dictionary<int, RealmData> realms,
             TileData[] tiles,
-            InnovationTree innovations)
+            InnovationTree innovations,
+            List<AIIntent> intents)
         {
             if (!realms.TryGetValue(realmId, out var realm)) return;
 
@@ -158,9 +159,9 @@ namespace CivilizationEvolution.Simulation.AI
                     var preferred = available.Find(i =>
                         personality.preferredDomains.Contains(i.Domain));
                     if (preferred.innovationId != 0)
-                        innovations.StartResearch(realmId, preferred.innovationId);
+                        intents.Add(new AIIntent(AIIntentType.StartResearch, realmId, innovationId: preferred.innovationId));
                     else
-                        innovations.StartResearch(realmId, available[0].innovationId);
+                        intents.Add(new AIIntent(AIIntentType.StartResearch, realmId, innovationId: available[0].innovationId));
                 }
             }
 
@@ -212,7 +213,8 @@ namespace CivilizationEvolution.Simulation.AI
         private void MakeMajorDecision(
             Dictionary<int, RealmData> realms,
             TileData[] tiles,
-            DiplomacyManager diplomacy)
+            DiplomacyManager diplomacy,
+            List<AIIntent> intents)
         {
             if (!realms.TryGetValue(realmId, out var realm)) return;
 
@@ -240,7 +242,7 @@ namespace CivilizationEvolution.Simulation.AI
             _currentGoal = bestGoal;
 
  // 执行决策
-            ExecuteGoal(bestGoal, realm, realms, tiles, diplomacy);
+            ExecuteGoal(bestGoal, realm, realms, tiles, diplomacy, intents);
         }
 
  /// <summary>计算扩张效用</summary>
@@ -342,36 +344,36 @@ namespace CivilizationEvolution.Simulation.AI
 
  /// <summary>执行目标</summary>
         private void ExecuteGoal(AIGoal goal, RealmData realm,
-            Dictionary<int, RealmData> realms, TileData[] tiles, DiplomacyManager diplomacy)
+            Dictionary<int, RealmData> realms, TileData[] tiles, DiplomacyManager diplomacy, List<AIIntent> intents)
         {
             switch (goal)
             {
                 case AIGoal.ExpandTerritory:
  // 寻找弱邻宣战
-                    FindWeakNeighborAndDeclareWar(realm, realms, tiles, diplomacy);
+                    FindWeakNeighborAndDeclareWar(realm, realms, tiles, diplomacy, intents);
                     break;
                 case AIGoal.ImproveEconomy:
  // 经济建设（简化：增加发展度）
-                    ImproveEconomy(realm, tiles);
+                    intents.Add(new AIIntent(AIIntentType.ImproveEconomy, realmId));
                     break;
                 case AIGoal.Diplomacy:
  // 外交行动
-                    DoDiplomacy(realm, realms, diplomacy);
+                    DoDiplomacy(realm, realms, diplomacy, intents);
                     break;
                 case AIGoal.Consolidate:
  // 巩固统治
-                    ConsolidateRealm(realm, tiles);
+                    intents.Add(new AIIntent(AIIntentType.ConsolidateRealm, realmId));
                     break;
                 case AIGoal.MilitaryBuildUp:
  // 军事建设（简化）
-                    realm.treasury = Mathf.Max(0, realm.treasury - 50f);
+                    intents.Add(new AIIntent(AIIntentType.MilitaryBuildUp, realmId));
                     break;
             }
         }
 
  /// <summary>寻找弱邻宣战</summary>
         private void FindWeakNeighborAndDeclareWar(RealmData realm,
-            Dictionary<int, RealmData> realms, TileData[] tiles, DiplomacyManager diplomacy)
+            Dictionary<int, RealmData> realms, TileData[] tiles, DiplomacyManager diplomacy, List<AIIntent> intents)
         {
             RealmData weakest = null;
             float weakestScore = float.MaxValue;
@@ -394,61 +396,11 @@ namespace CivilizationEvolution.Simulation.AI
 
             if (weakest != null && realm.treasury > 200f)
             {
-                diplomacy.DeclareWar(realmId, weakest.realmId, "领土扩张");
-                Debug.Log($"[AI] 政权 {realmId} 对政权 {weakest.realmId} 宣战");
+                intents.Add(new AIIntent(AIIntentType.DeclareWar, realmId, weakest.realmId));
             }
         }
 
- /// <summary>经济建设</summary>
-        private void ImproveEconomy(RealmData realm, TileData[] tiles)
-        {
-            foreach (int idx in realm.coreTiles)
-            {
-                if (idx >= 0 && idx < tiles.Length && realm.treasury > 50f)
-                {
-                    tiles[idx].development = Mathf.Min(1f, tiles[idx].development + 0.01f);
-                    realm.treasury -= 10f;
-                }
-            }
-        }
-
- /// <summary>外交行动</summary>
-        private void DoDiplomacy(RealmData realm, Dictionary<int, RealmData> realms, DiplomacyManager diplomacy)
-        {
-            foreach (var other in realms.Values)
-            {
-                if (other.realmId == realmId) continue;
-                var rel = diplomacy.GetRelation(realmId, other.realmId);
-                if (rel == null) continue;
-
- // 关系好的提议结盟
-                if (rel.relation > 40f && !rel.isAtWar)
-                {
-                    diplomacy.ProposeAlliance(realmId, other.realmId, AllianceType.DefensiveAlliance);
-                }
-
- // 关系差的送礼物改善
-                if (rel.relation < -20f && realm.treasury > 500f)
-                {
-                    diplomacy.SendGift(realmId, other.realmId, 100f);
-                }
-            }
-        }
-
- /// <summary>巩固统治</summary>
-        private void ConsolidateRealm(RealmData realm, TileData[] tiles)
-        {
-            foreach (int idx in realm.coreTiles)
-            {
-                if (idx >= 0 && idx < tiles.Length)
-                {
-                    tiles[idx].stability = Mathf.Min(100f, tiles[idx].stability + 1f);
-                    tiles[idx].order = Mathf.Min(100f, tiles[idx].order + 0.5f);
-                }
-            }
-        }
-
- // ===== 查询接口 =====
+ // 经济建设、巩固与军事建设已经转为 AIIntent，由执行阶段处理。\n\n // ===== 查询接口 =====
         public AIGoal GetCurrentGoal() => _currentGoal;
         public int GetTargetRealm() => _targetRealmId;
 
