@@ -44,7 +44,7 @@ namespace CivilizationEvolution.Simulation.AI
                 missionaryTick();
                 ai.SyncRulers(characters);
                 ai.DailyTick(realms(), tiles(), diplomacy, economy, innovation, characters);
-                var executor = new AIIntentExecutor(commands, innovation);
+                var executor = new AIIntentExecutor(commands, innovation, realms(), tiles());
                 ai.ExecutePendingIntents(executor);
             });
         }
