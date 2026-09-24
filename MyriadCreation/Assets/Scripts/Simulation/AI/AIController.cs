@@ -140,10 +140,9 @@ namespace CivilizationEvolution.Simulation.AI
         }
 
  /// <summary>日常行为</summary>
-        private void DailyActions(
+        private void SelectDailyIntent(
             Dictionary<int, RealmData> realms,
             TileData[] tiles,
-            EconomyManager economy,
             InnovationTree innovations)
         {
             if (!realms.TryGetValue(realmId, out var realm)) return;
@@ -168,8 +167,7 @@ namespace CivilizationEvolution.Simulation.AI
  // 研究进度
  // 研究推进已迁移到 InnovationResearchSchedule；AI 这里只负责研究选择/意图。
 
- // 经济管理（简化：调整税率）
-            ManageEconomy(realm, tiles);
+ // 经济领域的实际状态推进由 EconomySchedule 负责；AI 不在此处修改国库/税率。
         }
 
  /// <summary>计算研究速率</summary>
