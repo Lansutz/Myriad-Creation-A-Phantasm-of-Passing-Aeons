@@ -2,6 +2,7 @@
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Core.Constants;
+using CivilizationEvolution.Core.Contracts;
 using CivilizationEvolution.Core.Data;
 using CivilizationEvolution.Core.Dto;
 using CivilizationEvolution.Core.Enums;
@@ -173,6 +174,7 @@ namespace CivilizationEvolution.Simulation.WorldState
                 _campManager);
 
             RegisterSettlementCommandHandlers();
+            RegisterDiplomacyCommandHandlers();
             RegisterSimulationSchedules();
         }
 
