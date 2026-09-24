@@ -1,6 +1,6 @@
 using System;
 
-namespace MyriadCreation.World.Anchor
+namespace MyriadCreation.World.Settlement
 {
     public enum BurgType
     {
