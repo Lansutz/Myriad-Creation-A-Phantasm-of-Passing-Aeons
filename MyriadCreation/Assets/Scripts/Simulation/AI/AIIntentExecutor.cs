@@ -1,43 +1,26 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-using CivilizationEvolution.Core.Data;
-using CivilizationEvolution.Core.Dto;
-using CivilizationEvolution.Core.Enums;
-using CivilizationEvolution.Simulation.Characters;
+using CivilizationEvolution.Core.Contracts;
 using CivilizationEvolution.Simulation.Diplomacy;
 using CivilizationEvolution.Simulation.Innovation;
 
 namespace CivilizationEvolution.Simulation.AI
 {
     /// <summary>
-    /// AI 行动的过渡执行边界。
-    /// Controller 只产生 Intent；这里才允许调用具体领域 API/写入领域状态。
-    /// 后续可将各 Intent 分别迁移到 Diplomacy/Economy/Warfare 等领域 Action。
+    /// AI 意图到领域写入契约的过渡适配器。
+    /// 不再直接持有外交/地图/角色状态；具体规则由领域 CommandHandler 执行。
     /// </summary>
     public sealed class AIIntentExecutor
     {
-        private readonly Dictionary<int, RealmData> _realms;
-        private readonly TileData[] _tiles;
-        private readonly DiplomacyManager _diplomacy;
+        private readonly SimulationCommandBus _commands;
         private readonly InnovationTree _innovations;
-        private readonly CharacterManager _characters;
-        private readonly Func<int, int, string, bool> _declareWar;
 
         public AIIntentExecutor(
-            Dictionary<int, RealmData> realms,
-            TileData[] tiles,
-            DiplomacyManager diplomacy,
-            InnovationTree innovations,
-            CharacterManager characters,
-            Func<int, int, string, bool> declareWar)
+            SimulationCommandBus commands,
+            InnovationTree innovations)
         {
-            _realms = realms ?? throw new ArgumentNullException(nameof(realms));
-            _tiles = tiles ?? throw new ArgumentNullException(nameof(tiles));
-            _diplomacy = diplomacy ?? throw new ArgumentNullException(nameof(diplomacy));
+            _commands = commands ?? throw new ArgumentNullException(nameof(commands));
             _innovations = innovations ?? throw new ArgumentNullException(nameof(innovations));
-            _characters = characters;
-            _declareWar = declareWar ?? throw new ArgumentNullException(nameof(declareWar));
         }
 
         public void Execute(IEnumerable<AIIntent> intents)
@@ -52,25 +35,34 @@ namespace CivilizationEvolution.Simulation.AI
                         ExecuteStartResearch(intent);
                         break;
                     case AIIntentType.RaidSettlement:
-                        ExecuteRaid(intent);
+                        _commands.Send(new RaidSettlementCommand(
+                            intent.ActorRealmId,
+                            intent.TargetRealmId,
+                            intent.TargetTileIndex,
+                            intent.RaidType));
                         break;
                     case AIIntentType.DeclareWar:
-                        _declareWar(intent.ActorRealmId, intent.TargetRealmId, "领土扩张");
-                        break;
-                    case AIIntentType.ImproveEconomy:
-                        ExecuteImproveEconomy(intent);
+                        _commands.Send(new DeclareWarCommand(
+                            intent.ActorRealmId,
+                            intent.TargetRealmId,
+                            "领土扩张"));
                         break;
                     case AIIntentType.ProposeAlliance:
-                        _diplomacy.ProposeAlliance(intent.ActorRealmId, intent.TargetRealmId, intent.AllianceType);
+                        _commands.Send(new ProposeAllianceCommand(
+                            intent.ActorRealmId,
+                            intent.TargetRealmId,
+                            intent.AllianceType));
                         break;
                     case AIIntentType.SendGift:
-                        _diplomacy.SendGift(intent.ActorRealmId, intent.TargetRealmId, intent.Amount);
+                        _commands.Send(new SendGiftCommand(
+                            intent.ActorRealmId,
+                            intent.TargetRealmId,
+                            intent.Amount));
                         break;
+                    case AIIntentType.ImproveEconomy:
                     case AIIntentType.ConsolidateRealm:
-                        ExecuteConsolidation(intent);
-                        break;
                     case AIIntentType.MilitaryBuildUp:
-                        ExecuteMilitaryBuildUp(intent);
+                        // 经济/内政类 Intent 暂保留在过渡执行器，待对应领域边界确认后迁移。
                         break;
                 }
             }
@@ -80,57 +72,6 @@ namespace CivilizationEvolution.Simulation.AI
         {
             if (intent.InnovationId != 0)
                 _innovations.StartResearch(intent.ActorRealmId, intent.InnovationId);
-        }
-
-        private void ExecuteRaid(AIIntent intent)
-        {
-            var result = _diplomacy.RaidSettlement(
-                intent.ActorRealmId,
-                intent.TargetRealmId,
-                intent.TargetTileIndex,
-                intent.RaidType,
-                _tiles);
-
-            if (!result.success || intent.RaidType != GameEnums.RaidType.Massacre || _characters == null)
-                return;
-
-            var ruler = _characters.FindRulerOfRealm(intent.ActorRealmId);
-            if (ruler != null)
-                ruler.achievements.massacres++;
-        }
-
-        private void ExecuteImproveEconomy(AIIntent intent)
-        {
-            if (!_realms.TryGetValue(intent.ActorRealmId, out var realm)) return;
-
-            foreach (int idx in realm.coreTiles)
-            {
-                if (idx >= 0 && idx < _tiles.Length && realm.treasury > 50f)
-                {
-                    _tiles[idx].development = Mathf.Min(1f, _tiles[idx].development + 0.01f);
-                    realm.treasury -= 10f;
-                }
-            }
-        }
-
-        private void ExecuteConsolidation(AIIntent intent)
-        {
-            if (!_realms.TryGetValue(intent.ActorRealmId, out var realm)) return;
-
-            foreach (int idx in realm.coreTiles)
-            {
-                if (idx >= 0 && idx < _tiles.Length)
-                {
-                    _tiles[idx].stability = Mathf.Min(100f, _tiles[idx].stability + 1f);
-                    _tiles[idx].order = Mathf.Min(100f, _tiles[idx].order + 0.5f);
-                }
-            }
-        }
-
-        private void ExecuteMilitaryBuildUp(AIIntent intent)
-        {
-            if (_realms.TryGetValue(intent.ActorRealmId, out var realm))
-                realm.treasury = Mathf.Max(0f, realm.treasury - 50f);
         }
     }
 }
