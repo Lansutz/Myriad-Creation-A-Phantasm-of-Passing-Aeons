@@ -24,7 +24,8 @@ namespace CivilizationEvolution.Simulation.AI
             EconomyManager economy,
             InnovationTree innovation,
             CharacterManager characters,
-            Action missionaryTick)
+            Action missionaryTick,
+            Func<int, int, string, bool> declareWar)
         {
             if (scheduler == null) throw new ArgumentNullException(nameof(scheduler));
             if (ai == null) throw new ArgumentNullException(nameof(ai));
@@ -35,12 +36,15 @@ namespace CivilizationEvolution.Simulation.AI
             if (innovation == null) throw new ArgumentNullException(nameof(innovation));
             if (characters == null) throw new ArgumentNullException(nameof(characters));
             if (missionaryTick == null) throw new ArgumentNullException(nameof(missionaryTick));
+            if (declareWar == null) throw new ArgumentNullException(nameof(declareWar));
 
             scheduler.Register(ScheduleId, SimulationCadence.Daily, 28, _ =>
             {
                 missionaryTick();
                 ai.SyncRulers(characters);
                 ai.DailyTick(realms(), tiles(), diplomacy, economy, innovation, characters);
+                var executor = new AIIntentExecutor(realms(), tiles(), diplomacy, innovation, characters, declareWar);
+                ai.ExecutePendingIntents(executor);
             });
         }
     }
