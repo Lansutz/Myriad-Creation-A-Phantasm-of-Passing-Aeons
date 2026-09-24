@@ -147,6 +147,7 @@ namespace CivilizationEvolution.Simulation.WorldState
         private InnovationTree _innovationTree;
         private Chronicle _chronicle;
         private AIManager _aiManager;
+        private AIIntentExecutor _aiIntentExecutor;
         private readonly SimulationEventBus _simulationEvents = new SimulationEventBus();
         private readonly SimulationCommandBus _simulationCommands = new SimulationCommandBus();
         public SimulationCommandBus SimulationCommands => _simulationCommands;
