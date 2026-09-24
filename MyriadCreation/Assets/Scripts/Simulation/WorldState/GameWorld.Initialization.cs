@@ -174,16 +174,7 @@ namespace CivilizationEvolution.Simulation.WorldState
 
             RegisterSettlementCommandHandlers();
             RegisterDiplomacyCommandHandlers();
-            _aiIntentExecutor = new AIIntentExecutor(
-                _simulationCommands,
-                _innovationTree,
-                realms,
-                tiles);
-            _aiIntentExecutor = new AIIntentExecutor(
-                _simulationCommands,
-                _innovationTree,
-                realms,
-                tiles);
+            _aiIntentExecutor = new AIIntentExecutor(_simulationCommands);
             RegisterSimulationSchedules();
         }
 
