@@ -56,6 +56,15 @@ namespace CivilizationEvolution.Simulation.AI
         public AIController GetController(int realmId) =>
             _controllers.TryGetValue(realmId, out var c) ? c : null;
 
+        /// <summary>为革新领域提供 AI 研究速率修正；AI 负责提供偏置，革新领域负责推进研究状态。</summary>
+        public float GetResearchRate(int realmId, RealmData realm, TileData[] tiles)
+        {
+            if (realm == null || tiles == null) return 0f;
+            var controller = GetController(realmId);
+            if (controller == null) return 0f;
+            return controller.GetResearchRate(realm, tiles);
+        }
+
  /// <summary>同步各政权统治者的七维人格到 AI 偏置（人格漂移实时反映到决策）</summary>
         public void SyncRulers(CharacterManager characters)
         {

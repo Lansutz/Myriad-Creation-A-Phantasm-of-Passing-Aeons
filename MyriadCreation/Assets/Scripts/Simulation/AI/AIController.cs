@@ -79,6 +79,12 @@ namespace CivilizationEvolution.Simulation.AI
             }
         }
 
+        /// <summary>供革新领域查询的研究速率；不推进任何革新状态。</summary>
+        public float GetResearchRate(RealmData realm, TileData[] tiles)
+        {
+            return CalculateResearchRate(realm, tiles);
+        }
+
         private int _raidCooldown = 0;
         private const int RaidInterval = 45; // 每 45 天可劫掠一次
 
@@ -160,8 +166,7 @@ namespace CivilizationEvolution.Simulation.AI
             }
 
  // 研究进度
-            float researchRate = CalculateResearchRate(realm, tiles);
-            innovations.DailyTick(realmId, researchRate);
+ // 研究推进已迁移到 InnovationResearchSchedule；AI 这里只负责研究选择/意图。
 
  // 经济管理（简化：调整税率）
             ManageEconomy(realm, tiles);
