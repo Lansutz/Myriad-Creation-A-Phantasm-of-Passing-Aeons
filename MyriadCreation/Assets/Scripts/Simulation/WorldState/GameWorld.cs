@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core;
 using CivilizationEvolution.Core.Constants;
@@ -56,7 +56,7 @@ namespace CivilizationEvolution.Simulation.WorldState
     public partial class GameWorld : MonoBehaviour
     {
         [Header("世界配置（ScriptableObject资产，留空则用默认值）")]
-        [Tooltip("拖入 ScriptableObjects 目录下的 WorldConfig 资产；留空运行时自动创建默认配置")]
+        [Tooltip("拖入 Data 目录下的 WorldConfig 资产；留空运行时自动创建默认配置")]
         public WorldConfig config;
 
         [Header("地图尺寸")]
