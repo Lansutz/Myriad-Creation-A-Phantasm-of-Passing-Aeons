@@ -303,7 +303,7 @@ namespace MyriadCreation.Simulation.Systems
  // 只设置最近的堡垒（或更强的堡垒）
                         if (tiles[ti].fortInfluenceLevel < level || tiles[ti].nearbyFortId == -1)
                         {
-                            tiles[ti].nearbyFortId = burg.burgId;
+                            tiles[ti].nearbyFortId = burg.anchorId;
                             tiles[ti].fortInfluenceLevel = level;
                         }
                     }

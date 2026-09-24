@@ -63,9 +63,9 @@ namespace MyriadCreation.Simulation.Systems
             return SettlementEvolutionSystem.SettleNomadCamp(_world, campId);
         }
 
-        public CampData DegradeBurgToCamp(int burgId, CampType campType = CampType.Military, int ownerRealmId = -1)
+        public CampData DegradeBurgToCamp(int anchorId, CampType campType = CampType.Military, int ownerRealmId = -1)
         {
-            return SettlementEvolutionSystem.DegradeBurgToCamp(_world, burgId, campType, ownerRealmId);
+            return SettlementEvolutionSystem.DegradeBurgToCamp(_world, anchorId, campType, ownerRealmId);
         }
     }
 
@@ -183,8 +183,8 @@ namespace MyriadCreation.Simulation.Systems
             int newBurgId = world.burgs.Count > 0 ? NextBurgId(world) : 1;
             var burg = new SettlementData
             {
-                burgId = newBurgId,
-                burgName = camp.campName,
+                anchorId = newBurgId,
+                settlementName = camp.campName,
                 type = burgType,
                 tileIndex = camp.tileIndex,
                 provinceId = world.tiles[camp.tileIndex].provinceId,
@@ -234,15 +234,15 @@ namespace MyriadCreation.Simulation.Systems
         /// <summary>
         /// 聚落反向降级（城国被游牧征服/严重衰退）：Burg → 营寨。
         /// </summary>
-        public static CampData DegradeBurgToCamp(GameWorld world, int burgId,
+        public static CampData DegradeBurgToCamp(GameWorld world, int anchorId,
             CampType campType = CampType.Military, int ownerRealmId = -1)
         {
-            if (world == null || !world.burgs.TryGetValue(burgId, out var burg)) return null;
+            if (world == null || !world.burgs.TryGetValue(anchorId, out var burg)) return null;
             if (burg.IsRuined) return null;
 
             var camp = world.Camps.EstablishCamp(
                 campType, burg.tileIndex, Mathf.RoundToInt(burg.population),
-                ownerRealmId, -1, burg.burgName + "（降级）");
+                ownerRealmId, -1, burg.settlementName + "（降级）");
             if (camp != null)
             {
                 camp.defense = burg.fortification * 10f;
@@ -250,8 +250,8 @@ namespace MyriadCreation.Simulation.Systems
                 // 移除聚落（但不删除数据，标记为降级）
                 burg.ruinLevel = 2;
                 burg.ruinedDay = world.currentDay;
-                world.burgs[burgId] = burg;
-                Debug.Log($"[SettlementEvolution] 聚落#{burgId}降级为营寨#{camp.campId}");
+                world.burgs[anchorId] = burg;
+                Debug.Log($"[SettlementEvolution] 聚落#{anchorId}降级为营寨#{camp.campId}");
             }
             return camp;
         }

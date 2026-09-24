@@ -63,8 +63,8 @@ namespace MyriadCreation.Simulation.Systems
             _world = world ?? throw new System.ArgumentNullException(nameof(world));
         }
 
-        public string DestroySettlement(int burgId, DestructionMethod method, int attackerRealmId = -1)
-            => SettlementDestructionSystem.DestroySettlement(_world, burgId, method, attackerRealmId);
+        public string DestroySettlement(int anchorId, DestructionMethod method, int attackerRealmId = -1)
+            => SettlementDestructionSystem.DestroySettlement(_world, anchorId, method, attackerRealmId);
 
         public void DailyTickRecovery()
             => SettlementDestructionSystem.DailyTickRecovery(_world);
@@ -84,14 +84,14 @@ namespace MyriadCreation.Simulation.Systems
         /// 执行聚落摧毁。
         /// </summary>
         /// <param name="world">游戏世界</param>
-        /// <param name="burgId">聚落ID</param>
+        /// <param name="anchorId">聚落ID</param>
         /// <param name="method">摧毁手段</param>
         /// <param name="attackerRealmId">攻击者政权ID</param>
         /// <returns>摧毁结果描述（用于事件文本）</returns>
-        public static string DestroySettlement(GameWorld world, int burgId,
+        public static string DestroySettlement(GameWorld world, int anchorId,
             DestructionMethod method, int attackerRealmId = -1)
         {
-            if (world == null || !world.burgs.TryGetValue(burgId, out var burg)) return null;
+            if (world == null || !world.burgs.TryGetValue(anchorId, out var burg)) return null;
             if (burg.IsRuined) return "聚落已是废墟";
 
             // 手段 → 程度映射
@@ -142,11 +142,11 @@ namespace MyriadCreation.Simulation.Systems
                 if (severity == DestructionSeverity.Raze) burg.hasTemple = false;
             }
 
-            Debug.Log($"[Destruction] {burg.burgName} 遭到{method}（{severity}），" +
+            Debug.Log($"[Destruction] {burg.settlementName} 遭到{method}（{severity}），" +
                       $"人口损失{lostPop}（流民{refugeeCount}），发展度降至{burg.development:F1}");
 
-            world.burgs[burgId] = burg;
-            return $"{burg.burgName}遭到{GetMethodName(method)}，{GetSeverityDesc(severity)}，" +
+            world.burgs[anchorId] = burg;
+            return $"{burg.settlementName}遭到{GetMethodName(method)}，{GetSeverityDesc(severity)}，" +
                    $"损失人口{lostPop}，{refugeeCount}人流离失所。{specialEffect}";
         }
 
@@ -275,7 +275,7 @@ namespace MyriadCreation.Simulation.Systems
 
             var refugee = world.MapActors.SpawnActor(
                 MapActorType.Refugee, burg.tileIndex, refugeeCount, new RefugeeAI());
-            refugee.actorName = $"来自{burg.burgName}的流民";
+            refugee.actorName = $"来自{burg.settlementName}的流民";
             refugee.morale = 20f;
             refugee.supplies = 30f;
             return refugeeCount;
@@ -327,7 +327,7 @@ namespace MyriadCreation.Simulation.Systems
                         burg.ruinedDay = -1;
                         burg.recoveryProgress = 0f;
                         burg.fortification = Mathf.Max(burg.fortification, 1f);
-                        Debug.Log($"[Destruction] {burg.burgName} 已从废墟中恢复");
+                        Debug.Log($"[Destruction] {burg.settlementName} 已从废墟中恢复");
                     }
                     world.burgs[kvp.Key] = burg;
                 }

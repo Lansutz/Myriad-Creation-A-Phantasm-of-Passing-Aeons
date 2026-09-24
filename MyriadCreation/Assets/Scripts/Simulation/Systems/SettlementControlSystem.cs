@@ -150,7 +150,7 @@ namespace MyriadCreation.Simulation.Systems
             foreach (var controller in sortedBurgs)
             {
                 if (!controller.IsMajorSettlement) continue;
-                if (controller.controllerBurgId >= 0) continue; // 自己被控制，不再控制别人
+                if (controller.controllerAnchorId >= 0) continue; // 自己被控制，不再控制别人
 
                 int radius = GetInfluenceRadius(controller);
                 int cx = controller.tileIndex % mapWidth;
@@ -169,20 +169,20 @@ namespace MyriadCreation.Simulation.Systems
  // 找这个地块上的聚落
                         foreach (var target in burgs.Values)
                         {
-                            if (target.burgId == controller.burgId) continue;
+                            if (target.anchorId == controller.anchorId) continue;
                             if (target.tileIndex != tileIdx) continue;
-                            if (target.controllerBurgId >= 0) continue; // 已被控制
+                            if (target.controllerAnchorId >= 0) continue; // 已被控制
                             if (tiles[target.tileIndex].ownerRealmId != tiles[controller.tileIndex].ownerRealmId) continue; // 不同政权不控制
 
  // 等级判定：高等级控制低等级，同等级不控制
                             if (target.settlementLevel < controller.settlementLevel)
                             {
  // 建立控制关系（如果还没有）
-                                if (!controller.controlProgress.ContainsKey(target.burgId))
+                                if (!controller.controlProgress.ContainsKey(target.anchorId))
                                 {
-                                    controller.controlProgress[target.burgId] = 0f;
-                                    if (!controller.controlledBurgIds.Contains(target.burgId))
-                                        controller.controlledBurgIds.Add(target.burgId);
+                                    controller.controlProgress[target.anchorId] = 0f;
+                                    if (!controller.controlledAnchorIds.Contains(target.anchorId))
+                                        controller.controlledAnchorIds.Add(target.anchorId);
                                 }
                             }
                         }
@@ -196,12 +196,12 @@ namespace MyriadCreation.Simulation.Systems
         {
             foreach (var controller in burgs.Values)
             {
-                if (controller.controlledBurgIds.Count == 0) continue;
+                if (controller.controlledAnchorIds.Count == 0) continue;
 
  // 宗主是否被敌方占领
                 bool suzerainOccupied = false; // 宗主被占领判定在调用方传入
 
-                foreach (int targetId in controller.controlledBurgIds)
+                foreach (int targetId in controller.controlledAnchorIds)
                 {
                     if (!burgs.ContainsKey(targetId)) continue;
                     if (!controller.controlProgress.ContainsKey(targetId)) continue;
@@ -237,7 +237,7 @@ namespace MyriadCreation.Simulation.Systems
  // 进度归零 → 失去控制
                     if (progress <= 0f)
                     {
-                        target.controllerBurgId = -1;
+                        target.controllerAnchorId = -1;
                         target.isControlStable = false;
                         controller.controlProgress.Remove(targetId);
                     }
@@ -272,7 +272,7 @@ namespace MyriadCreation.Simulation.Systems
         {
             foreach (var controller in burgs.Values)
             {
-                foreach (int targetId in controller.controlledBurgIds)
+                foreach (int targetId in controller.controlledAnchorIds)
                 {
                     if (!burgs.ContainsKey(targetId)) continue;
                     if (!controller.controlProgress.ContainsKey(targetId)) continue;
@@ -280,7 +280,7 @@ namespace MyriadCreation.Simulation.Systems
                     if (controller.controlProgress[targetId] >= ControlCompleteThreshold)
                     {
                         var target = burgs[targetId];
-                        target.controllerBurgId = controller.burgId;
+                        target.controllerAnchorId = controller.anchorId;
                         target.isControlStable = true;
                     }
                 }
@@ -297,8 +297,8 @@ namespace MyriadCreation.Simulation.Systems
  /// <summary>获取聚落的宗主（控制它的高等级聚落）</summary>
         public static SettlementData GetSuzerain(SettlementData burg, Dictionary<int, SettlementData> burgs)
         {
-            if (burg.controllerBurgId < 0) return null;
-            return burgs.GetValueOrDefault(burg.controllerBurgId);
+            if (burg.controllerAnchorId < 0) return null;
+            return burgs.GetValueOrDefault(burg.controllerAnchorId);
         }
 
  /// <summary>获取聚落的税收虹吸修正（下属聚落向宗主缴纳额外税收）</summary>

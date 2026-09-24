@@ -96,7 +96,7 @@ namespace MyriadCreation.World.Anchor
             if (burgs == null || burgs.Count == 0 || tiles == null) return result;
 
  // 1. 收集有效控制点（同政权分组）
-            var controlPointsByRealm = new Dictionary<int, List<(int burgId, Vector2 pos)>>();
+            var controlPointsByRealm = new Dictionary<int, List<(int anchorId, Vector2 pos)>>();
             foreach (var kv in burgs)
             {
                 var burg = kv.Value;
@@ -237,14 +237,14 @@ namespace MyriadCreation.World.Anchor
 
  /// <summary>计算两点之间的连接（中间是否有该政权占领地）</summary>
         private static void CalculateConnections(
-            List<(int burgId, Vector2 pos)> points, TileData[] tiles,
+            List<(int anchorId, Vector2 pos)> points, TileData[] tiles,
             int mapWidth, int mapHeight, int realmId, VirtualControlResult result)
         {
             for (int i = 0; i < points.Count; i++)
                 for (int j = i + 1; j < points.Count; j++)
                 {
                     if (HasOccupiedTileAlongLine(points[i].pos, points[j].pos, tiles, mapWidth, mapHeight, realmId))
-                        result.connections.Add((points[i].burgId, points[j].burgId));
+                        result.connections.Add((points[i].anchorId, points[j].anchorId));
                 }
         }
 

@@ -6,8 +6,8 @@ namespace MyriadCreation.Infrastructure.Save
     [Serializable]
     public class BurgSaveData
     {
-        public int burgId;
-        public string burgName;
+        public int anchorId;
+        public string settlementName;
         public int type;
         public int provinceId;
         public int tileIndex;

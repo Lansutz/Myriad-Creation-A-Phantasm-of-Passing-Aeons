@@ -45,7 +45,7 @@ namespace MyriadCreation.Simulation.Systems
         public int tileIndex;
         public int realmId;
         public int armyId = -1;       // 军队踩踏时的军队ID
-        public int burgId = -1;       // 城市踩踏时的聚落ID
+        public int anchorId = -1;       // 城市踩踏时的聚落ID
         public float severity;         // 严重度 0~1
         public int casualties;         // 伤亡人数
         public int durationDays;       // 持续天数
@@ -190,11 +190,11 @@ namespace MyriadCreation.Simulation.Systems
                 type = StampedeType.UrbanPanic,
                 tileIndex = burg.tileIndex,
                 realmId = tiles[burg.tileIndex].ownerRealmId,
-                burgId = burg.burgId,
+                anchorId = burg.anchorId,
                 severity = Mathf.Clamp01(0.2f + (isUnderSiege ? 0.3f : 0f) + (hasDisaster ? 0.2f : 0f) + (100f - cityStability) / 200f),
                 startDay = currentDay,
                 durationDays = 1,
-                description = $"城市恐慌踩踏：{burg.burgName}人群拥挤导致混乱"
+                description = $"城市恐慌踩踏：{burg.settlementName}人群拥挤导致混乱"
             };
 
  // 计算伤亡

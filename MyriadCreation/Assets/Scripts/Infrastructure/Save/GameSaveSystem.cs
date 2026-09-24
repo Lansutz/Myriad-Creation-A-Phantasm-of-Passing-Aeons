@@ -158,8 +158,8 @@ namespace MyriadCreation.Infrastructure.Save
                 {
                     data.burgs[idx++] = new BurgSaveData
                     {
-                        burgId = b.burgId,
-                        burgName = b.burgName,
+                        anchorId = b.anchorId,
+                        settlementName = b.settlementName,
                         type = (int)b.type,
                         provinceId = b.provinceId,
                         tileIndex = b.tileIndex,
@@ -388,8 +388,8 @@ namespace MyriadCreation.Infrastructure.Save
                 {
                     var burg = new SettlementData
                     {
-                        burgId = b.burgId,
-                        burgName = b.burgName,
+                        anchorId = b.anchorId,
+                        settlementName = b.settlementName,
                         type = (SettlementRole)b.type,
                         provinceId = b.provinceId,
                         tileIndex = b.tileIndex,
@@ -442,7 +442,7 @@ namespace MyriadCreation.Infrastructure.Save
                         }
                     }
 
-                    _world.burgs[b.burgId] = burg;
+                    _world.burgs[b.anchorId] = burg;
                 }
             }
         }

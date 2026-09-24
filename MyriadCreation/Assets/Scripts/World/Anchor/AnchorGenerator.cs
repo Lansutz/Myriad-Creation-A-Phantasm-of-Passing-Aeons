@@ -1,15 +1,18 @@
 using System;
-
 using System.Collections.Generic;
 using MyriadCreation.Core;
 using MyriadCreation.Core.Constants;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Dto;
 using MyriadCreation.Core.Enums;
-
+using MyriadCreation.World.Settlement;
 
 namespace MyriadCreation.World.Anchor
 {
+    /// <summary>
+    /// 锚点生成器：在地图上放置锚点（空间），并初始化对应的聚居点（游戏内容）。
+    /// 返回两个字典：锚点字典（空间）和聚居点字典（内容），通过 anchorId 一一对应。
+    /// </summary>
     public class AnchorGenerator
     {
         private readonly TileData[] _tiles;
@@ -18,15 +21,10 @@ namespace MyriadCreation.World.Anchor
         private readonly Dictionary<int, Province> _provinces;
         private readonly System.Random _rng;
 
- /// <summary>每省最少 Burg 数</summary>
         public const int MinBurgsPerProvince = 1;
- /// <summary>每省最多 Burg 数</summary>
         public const int MaxBurgsPerProvince = 6;
- /// <summary>港口判定：沿海且地块为海岸</summary>
         public const float PortSpawnChance = 0.6f;
- /// <summary>城市判定：省中心且发展度高</summary>
         public const float CitySpawnChance = 0.35f;
- /// <summary>要塞判定：边境省份</summary>
         public const float FortressSpawnChance = 0.25f;
 
         public AnchorGenerator(TileData[] tiles, int width, int height,
@@ -39,11 +37,12 @@ namespace MyriadCreation.World.Anchor
             _rng = new System.Random(seed + 999);
         }
 
- /// 为所有省份生成 Burg
-        public Dictionary<int, SettlementData> Generate()
+        /// <summary>生成锚点+聚居点对。返回 (anchors, settlements)。</summary>
+        public (Dictionary<int, AnchorData> anchors, Dictionary<int, SettlementData> settlements) Generate()
         {
-            var burgs = new Dictionary<int, SettlementData>();
-            int nextBurgId = 0;
+            var anchors = new Dictionary<int, AnchorData>();
+            var settlements = new Dictionary<int, SettlementData>();
+            int nextId = 0;
 
             foreach (var kv in _provinces)
             {
@@ -51,95 +50,97 @@ namespace MyriadCreation.World.Anchor
                 Province province = kv.Value;
                 if (province.memberTiles.Count == 0) continue;
 
- // 1. 省中心 Burg（必有）
                 int centerTile = province.centerTileIndex;
                 if (centerTile < 0 || centerTile >= _tiles.Length)
                     centerTile = province.memberTiles[0];
 
-                var centerBurg = CreateBurg(ref nextBurgId, provinceId, centerTile,
+                var (anchor, settlement) = CreatePair(ref nextId, provinceId, centerTile,
                     IsProvinceCenter(province, centerTile) ? SettlementRole.City : SettlementRole.Town);
-                centerBurg.hasMarket = true;
-                centerBurg.development = 20f + (float)_rng.NextDouble() * 30f;
-                centerBurg.population = 500f + (float)_rng.NextDouble() * 1500f;
-                burgs[centerBurg.burgId] = centerBurg;
+                settlement.hasMarket = true;
+                settlement.development = 20f + (float)_rng.NextDouble() * 30f;
+                settlement.population = 500f + (float)_rng.NextDouble() * 1500f;
+                anchors[anchor.anchorId] = anchor;
+                settlements[settlement.anchorId] = settlement;
 
- // 2. 沿海省份：港口 Burg
                 if (HasCoastalTile(province))
                 {
                     int coastalTile = FindCoastalTile(province);
                     if (coastalTile >= 0 && _rng.NextDouble() < PortSpawnChance)
                     {
-                        var port = CreateBurg(ref nextBurgId, provinceId, coastalTile, SettlementRole.Port);
-                        port.isPort = true;
-                        port.isCoastal = true;
-                        port.hasMarket = true;
-                        port.tradePower = 30f + (float)_rng.NextDouble() * 50f;
-                        port.development = 15f + (float)_rng.NextDouble() * 25f;
-                        port.population = 300f + (float)_rng.NextDouble() * 1000f;
-                        burgs[port.burgId] = port;
+                        var (a, s) = CreatePair(ref nextId, provinceId, coastalTile, SettlementRole.Port);
+                        s.isPort = true;
+                        s.isCoastal = true;
+                        s.hasMarket = true;
+                        s.tradePower = 30f + (float)_rng.NextDouble() * 50f;
+                        s.development = 15f + (float)_rng.NextDouble() * 25f;
+                        s.population = 300f + (float)_rng.NextDouble() * 1000f;
+                        anchors[a.anchorId] = a;
+                        settlements[s.anchorId] = s;
                     }
                 }
 
- // 3. 边境省份：要塞 Burg
                 if (IsBorderProvince(province) && _rng.NextDouble() < FortressSpawnChance)
                 {
                     int borderTile = FindBorderTile(province);
                     if (borderTile >= 0)
                     {
-                        var fort = CreateBurg(ref nextBurgId, provinceId, borderTile, SettlementRole.Fortress);
-                        fort.fortification = 3f + (float)_rng.NextDouble() * 5f;
-                        fort.garrison = 100 + _rng.Next(200);
-                        fort.development = 5f + (float)_rng.NextDouble() * 15f;
-                        burgs[fort.burgId] = fort;
+                        var (a, s) = CreatePair(ref nextId, provinceId, borderTile, SettlementRole.Fortress);
+                        s.fortification = 3f + (float)_rng.NextDouble() * 5f;
+                        s.garrison = 100 + _rng.Next(200);
+                        s.development = 5f + (float)_rng.NextDouble() * 15f;
+                        anchors[a.anchorId] = a;
+                        settlements[s.anchorId] = s;
                     }
                 }
 
- // 4. 大省份：额外村庄 Burg
                 int extraVillages = Math.Min(MaxBurgsPerProvince - 3,
                     province.memberTiles.Count / 40);
                 for (int v = 0; v < extraVillages; v++)
                 {
                     int tile = province.memberTiles[_rng.Next(province.memberTiles.Count)];
-                    if (IsTileOccupiedByBurg(burgs, tile)) continue;
+                    if (IsTileOccupied(anchors, tile)) continue;
                     if (!_tiles[tile].isLand) continue;
 
-                    var village = CreateBurg(ref nextBurgId, provinceId, tile, SettlementRole.Village);
-                    village.development = 2f + (float)_rng.NextDouble() * 10f;
-                    village.population = 50f + (float)_rng.NextDouble() * 300f;
-                    burgs[village.burgId] = village;
+                    var (a, s) = CreatePair(ref nextId, provinceId, tile, SettlementRole.Village);
+                    s.development = 2f + (float)_rng.NextDouble() * 10f;
+                    s.population = 50f + (float)_rng.NextDouble() * 300f;
+                    anchors[a.anchorId] = a;
+                    settlements[s.anchorId] = s;
                 }
             }
 
-            return burgs;
+            return (anchors, settlements);
         }
 
-        private SettlementData CreateBurg(ref int nextId, int provinceId, int tileIndex, SettlementRole type)
+        private (AnchorData, SettlementData) CreatePair(ref int nextId, int provinceId, int tileIndex, SettlementRole type)
         {
             ref TileData tile = ref _tiles[tileIndex];
-            var burg = new SettlementData
+            int id = nextId++;
+
+            var anchor = new AnchorData
             {
-                burgId = nextId++,
-                burgName = GenerateBurgName(tile, type),
-                type = type,
+                anchorId = id,
                 provinceId = provinceId,
                 tileIndex = tileIndex,
                 x = 0.5f,
                 y = 0.5f,
+            };
+
+            var settlement = new SettlementData
+            {
+                anchorId = id,
+                settlementName = GenerateName(tile, type),
                 isCoastal = tile.isCoast,
                 settlementCategory = type == SettlementRole.Fortress ? SettlementCategory.Outpost : SettlementCategory.Burg,
                 constructionProgress = 0f,
                 constructionTier = 1
             };
 
- // 初始化聚落类型学（形态/功能/等级/城形/堡型/升级路线）
-            SettlementTypologySystem.DeriveInitialType(burg, tile, _width, _height);
+            SettlementTypologySystem.DeriveInitialType(settlement, tile, _width, _height);
+            EconomicCompositionSystem.InitializeComposition(settlement, tile);
 
- // 初始化经济成分系统（根据地理条件和物产决定成分比例）
-            EconomicCompositionSystem.InitializeComposition(burg, tile);
-
- // 覆盖：根据BurgType强制形态
-            burg.settlementType = SettlementRoleInferrer.InferSettlementType(type);
-            burg.settlementLevel = type switch
+            settlement.settlementType = SettlementRoleInferrer.InferSettlementType(type);
+            settlement.settlementLevel = type switch
             {
                 SettlementRole.City or SettlementRole.Port or SettlementRole.Capital => SettlementLevel.LevelIII,
                 SettlementRole.Town => SettlementLevel.LevelII,
@@ -147,7 +148,7 @@ namespace MyriadCreation.World.Anchor
                 _ => SettlementLevel.LevelI
             };
 
-            return burg;
+            return (anchor, settlement);
         }
 
         private bool IsProvinceCenter(Province p, int tile) => p.centerTileIndex == tile;
@@ -180,15 +181,14 @@ namespace MyriadCreation.World.Anchor
             return -1;
         }
 
-        private bool IsTileOccupiedByBurg(Dictionary<int, SettlementData> burgs, int tile)
+        private bool IsTileOccupied(Dictionary<int, AnchorData> anchors, int tile)
         {
-            foreach (var b in burgs.Values)
-                if (b.tileIndex == tile) return true;
+            foreach (var a in anchors.Values)
+                if (a.tileIndex == tile) return true;
             return false;
         }
 
- /// <summary>Burg 名称生成（地形特征词 + 通名；对齐省名生成风格）</summary>
-        private string GenerateBurgName(TileData tile, SettlementRole type)
+        private string GenerateName(TileData tile, SettlementRole type)
         {
             string prefix = tile.elevation01 > 0.55f ? "山" : tile.isCoast ? "海" : "原";
             string mid = tile.annualPrecipMm > 900f ? "润" : tile.annualPrecipMm < 300f ? "干" : "丰";

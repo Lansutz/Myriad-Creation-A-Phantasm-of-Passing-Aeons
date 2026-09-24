@@ -93,7 +93,7 @@ namespace MyriadCreation.Simulation.WorldState
  /// <summary>省份（provinceId → Province——地图结构层）</summary>
         [System.NonSerialized]
         public Dictionary<int, Province> provinces = new Dictionary<int, Province>();
- /// <summary>子地块/Burg（burgId → SettlementData——省份内定居点，对齐 CK3 男爵领）</summary>
+ /// <summary>子地块/Burg（anchorId → SettlementData——省份内定居点，对齐 CK3 男爵领）</summary>
         [System.NonSerialized]
         public Dictionary<int, SettlementData> burgs = new Dictionary<int, SettlementData>();
  /// <summary>军队（armyId → Army——战争闭环）</summary>
@@ -306,8 +306,8 @@ namespace MyriadCreation.Simulation.WorldState
 
             var burg = new SettlementData
             {
-                burgId = nextId,
-                burgName = name,
+                anchorId = nextId,
+                settlementName = name,
                 type = SettlementRole.City,
                 provinceId = tile.provinceId,
                 tileIndex = tileIndex,
@@ -316,7 +316,7 @@ namespace MyriadCreation.Simulation.WorldState
             };
             SettlementTypologySystem.DeriveInitialType(burg, tile, mapWidth, mapHeight);
             burg.settlementType = SettlementRoleInferrer.InferSettlementType(burg.type);
-            burgs[burg.burgId] = burg;
+            burgs[burg.anchorId] = burg;
             string founderName = founder != null ? founder.firstName + founder.lastName : "某人";
             _chronicle?.Add("city_founded",
                 $"{founderName} 建立城市 {name}",

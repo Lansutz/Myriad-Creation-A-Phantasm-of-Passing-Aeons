@@ -10,9 +10,9 @@ namespace MyriadCreation.Simulation.Settlement
         public readonly DestructionMethod Method;
         public readonly int AttackerRealmId;
 
-        public DestroySettlementCommand(int burgId, DestructionMethod method, int attackerRealmId = -1)
+        public DestroySettlementCommand(int anchorId, DestructionMethod method, int attackerRealmId = -1)
         {
-            BurgId = burgId;
+            BurgId = anchorId;
             Method = method;
             AttackerRealmId = attackerRealmId;
         }
@@ -52,9 +52,9 @@ namespace MyriadCreation.Simulation.Settlement
         public readonly DestructionMethod Method;
         public readonly int AttackerRealmId;
 
-        public SettlementDestroyedEvent(int burgId, DestructionMethod method, int attackerRealmId)
+        public SettlementDestroyedEvent(int anchorId, DestructionMethod method, int attackerRealmId)
         {
-            BurgId = burgId;
+            BurgId = anchorId;
             Method = method;
             AttackerRealmId = attackerRealmId;
         }

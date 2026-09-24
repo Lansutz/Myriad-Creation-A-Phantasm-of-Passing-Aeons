@@ -385,7 +385,7 @@ namespace MyriadCreation.World.Settlement
                     : CityForm.Circular;
             }
 
-            Debug.Log($"[SettlementTypology] {burg.burgName} 升级到 {burg.settlementLevel}");
+            Debug.Log($"[SettlementTypology] {burg.settlementName} 升级到 {burg.settlementLevel}");
         }
 
  // ===== 形态约束检查 =====
