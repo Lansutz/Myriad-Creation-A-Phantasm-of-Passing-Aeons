@@ -59,7 +59,6 @@ namespace CivilizationEvolution.Simulation.AI
             Dictionary<int, RealmData> realms,
             TileData[] tiles,
             DiplomacyManager diplomacy,
-            EconomyManager economy,
             InnovationTree innovations,
             CivilizationEvolution.Simulation.Characters.CharacterManager characters = null)
         {
@@ -191,22 +190,6 @@ namespace CivilizationEvolution.Simulation.AI
                 rate *= 1f + (totalDevelopment / tileCount);
 
             return rate * personality.researchMultiplier;
-        }
-
- /// <summary>经济管理</summary>
-        private void ManageEconomy(RealmData realm, TileData[] tiles)
-        {
- // 简化AI：根据国库调整税率
-            if (realm.treasury < 100f)
-            {
- // 国库空虚，加税
-                realm.taxSystem.agriculturalTax = Mathf.Min(0.4f, realm.taxSystem.agriculturalTax + 0.01f);
-            }
-            else if (realm.treasury > 5000f)
-            {
- // 国库充裕，减税收买人心
-                realm.taxSystem.agriculturalTax = Mathf.Max(0.05f, realm.taxSystem.agriculturalTax - 0.005f);
-            }
         }
 
  /// <summary>重大决策</summary>
