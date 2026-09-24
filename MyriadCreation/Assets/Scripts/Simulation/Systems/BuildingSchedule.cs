@@ -2,7 +2,7 @@ using System;
 using MyriadCreation.Core.Events;
 using MyriadCreation.Core.Simulation;
 
-namespace MyriadCreation.Simulation.Systems.Building
+namespace MyriadCreation.Simulation.Systems
 {
     public static class BuildingSchedule
     {
