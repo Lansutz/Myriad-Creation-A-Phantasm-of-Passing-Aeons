@@ -6,7 +6,6 @@ using CivilizationEvolution.Simulation.Characters;
 using CivilizationEvolution.Simulation.Diplomacy;
 using CivilizationEvolution.Simulation.Innovation;
 using CivilizationEvolution.Simulation.Politics;
-using CivilizationEvolution.Simulation.Planning;
 using CivilizationEvolution.Simulation.WorldState;
 
 namespace CivilizationEvolution.Simulation.AI
@@ -24,7 +23,6 @@ namespace CivilizationEvolution.Simulation.AI
             InnovationTree innovation,
             CharacterManager characters,
             Action missionaryTick,
-            SimulationCommandBus commands,
             AIIntentExecutor executor)
         {
             if (scheduler == null) throw new ArgumentNullException(nameof(scheduler));
@@ -35,7 +33,6 @@ namespace CivilizationEvolution.Simulation.AI
             if (innovation == null) throw new ArgumentNullException(nameof(innovation));
             if (characters == null) throw new ArgumentNullException(nameof(characters));
             if (missionaryTick == null) throw new ArgumentNullException(nameof(missionaryTick));
-            if (commands == null) throw new ArgumentNullException(nameof(commands));
             if (executor == null) throw new ArgumentNullException(nameof(executor));
 
             scheduler.Register(ScheduleId, SimulationCadence.Daily, 28, _ =>
