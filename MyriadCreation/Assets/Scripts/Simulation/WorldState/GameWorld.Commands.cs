@@ -5,7 +5,6 @@ using CivilizationEvolution.Simulation.Innovation;
 using CivilizationEvolution.Simulation.Politics;
 using CivilizationEvolution.Simulation.Settlement;
 using CivilizationEvolution.Simulation.Warfare;
-using CivilizationEvolution.Simulation.Warfare;
 
 namespace CivilizationEvolution.Simulation.WorldState
 {
