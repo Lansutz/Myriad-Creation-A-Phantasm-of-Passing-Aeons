@@ -258,7 +258,7 @@ namespace MyriadCreation.Simulation.Systems
  /// 敌对堡垒：经过时损耗+速度下降
  /// 己方堡垒：补给+支援加成
         public static void CalculateFortInfluence(TileData[] tiles, int width, int height,
-            Dictionary<int, BurgData> burgs)
+            Dictionary<int, SettlementData> burgs)
         {
  // 先重置所有地块的堡垒影响
             for (int i = 0; i < tiles.Length; i++)
@@ -271,7 +271,7 @@ namespace MyriadCreation.Simulation.Systems
             foreach (var burg in burgs.Values)
             {
                 if (burg.settlementType != SettlementType.Fort &&
-                    burg.type != BurgType.Fortress) continue;
+                    burg.type != SettlementRole.Fortress) continue;
 
                 int fortTile = burg.tileIndex;
                 if (fortTile < 0 || fortTile >= tiles.Length) continue;
@@ -312,7 +312,7 @@ namespace MyriadCreation.Simulation.Systems
         }
 
  /// 获取某地块的堡垒所有者政权ID
-        public static int GetFortOwnerRealmId(TileData[] tiles, Dictionary<int, BurgData> burgs, int tileIndex)
+        public static int GetFortOwnerRealmId(TileData[] tiles, Dictionary<int, SettlementData> burgs, int tileIndex)
         {
             if (tiles[tileIndex].nearbyFortId < 0) return -1;
             if (burgs.TryGetValue(tiles[tileIndex].nearbyFortId, out var burg))

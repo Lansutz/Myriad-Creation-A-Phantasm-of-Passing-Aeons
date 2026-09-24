@@ -162,7 +162,7 @@ namespace MyriadCreation.Simulation.Systems
 
  /// 检查城市恐慌踩踏（围城/灾难/骚乱时）
         public static StampedeEvent CheckUrbanStampede(
-            BurgData burg, TileData[] tiles, bool isUnderSiege, bool hasDisaster,
+            SettlementData burg, TileData[] tiles, bool isUnderSiege, bool hasDisaster,
             float cityStability, int currentDay = 0)
         {
             if (burg == null) return null;
@@ -208,7 +208,7 @@ namespace MyriadCreation.Simulation.Systems
         }
 
  /// <summary>应用城市踩踏效果</summary>
-        private static void ApplyUrbanStampedeEffects(BurgData burg, TileData[] tiles, StampedeEvent stampede)
+        private static void ApplyUrbanStampedeEffects(SettlementData burg, TileData[] tiles, StampedeEvent stampede)
         {
  // 人口减少
             burg.population = Mathf.Max(0f, burg.population - stampede.casualties);

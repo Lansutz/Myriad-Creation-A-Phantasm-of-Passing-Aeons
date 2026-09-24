@@ -53,12 +53,12 @@ namespace MyriadCreation.Simulation.Systems
             SettlementEvolutionSystem.DailyTick(_world);
         }
 
-        public BurgData TryEvolveCampToBurg(CampData camp)
+        public SettlementData TryEvolveCampToBurg(CampData camp)
         {
             return SettlementEvolutionSystem.TryEvolveCampToBurg(_world, camp);
         }
 
-        public BurgData SettleNomadCamp(int campId)
+        public SettlementData SettleNomadCamp(int campId)
         {
             return SettlementEvolutionSystem.SettleNomadCamp(_world, campId);
         }
@@ -82,18 +82,18 @@ namespace MyriadCreation.Simulation.Systems
         public const int FORTIFIED_CAMP_TO_FORT_POP = 100;
 
         /// <summary>
-        /// 由传统 BurgType 推断聚落形态（村镇/城/堡）。
+        /// 由传统 SettlementRole 推断聚落形态（村镇/城/堡）。
         /// Village/Town→Village；City/Port/Capital→City；Fortress→Fort。
         /// </summary>
-        public static SettlementType InferFromBurgType(BurgType burgType)
+        public static SettlementType InferFromBurgType(SettlementRole burgType)
         {
             switch (burgType)
             {
-                case BurgType.Fortress:
+                case SettlementRole.Fortress:
                     return SettlementType.Fort;
-                case BurgType.City:
-                case BurgType.Port:
-                case BurgType.Capital:
+                case SettlementRole.City:
+                case SettlementRole.Port:
+                case SettlementRole.Capital:
                     return SettlementType.City;
                 default:
                     return SettlementType.Village;
@@ -146,7 +146,7 @@ namespace MyriadCreation.Simulation.Systems
         /// <summary>
         /// 营寨/坞堡转化为永久聚落（Burg）。
         /// </summary>
-        public static BurgData TryEvolveCampToBurg(GameWorld world, CampData camp)
+        public static SettlementData TryEvolveCampToBurg(GameWorld world, CampData camp)
         {
             if (world == null || camp == null) return null;
             if (camp.type == CampType.Nomad) return null; // 游牧营地不能直接转化
@@ -157,7 +157,7 @@ namespace MyriadCreation.Simulation.Systems
             // 判定转化形态
             SettlementType targetType;
             SettlementLevel targetLevel;
-            BurgType burgType;
+            SettlementRole burgType;
 
             if (isFortified && camp.defense >= FORT_SETTLEMENT_DEFENSE_THRESHOLD &&
                 camp.population >= FORTIFIED_CAMP_TO_FORT_POP)
@@ -165,14 +165,14 @@ namespace MyriadCreation.Simulation.Systems
                 // 坞堡 → 堡垒
                 targetType = SettlementType.Fort;
                 targetLevel = SettlementLevel.LevelII;
-                burgType = BurgType.Fortress;
+                burgType = SettlementRole.Fortress;
             }
             else if (camp.population >= CAMP_TO_VILLAGE_POP)
             {
                 // 营寨 → 村镇
                 targetType = SettlementType.Village;
                 targetLevel = SettlementLevel.LevelI;
-                burgType = BurgType.Village;
+                burgType = SettlementRole.Village;
             }
             else
             {
@@ -181,7 +181,7 @@ namespace MyriadCreation.Simulation.Systems
 
             // 创建BurgData
             int newBurgId = world.burgs.Count > 0 ? NextBurgId(world) : 1;
-            var burg = new BurgData
+            var burg = new SettlementData
             {
                 burgId = newBurgId,
                 burgName = camp.campName,
@@ -219,7 +219,7 @@ namespace MyriadCreation.Simulation.Systems
         /// <summary>
         /// 游牧营地通过"定居化改革"转化（需要革新条件，由文化/革新系统调用）。
         /// </summary>
-        public static BurgData SettleNomadCamp(GameWorld world, int campId)
+        public static SettlementData SettleNomadCamp(GameWorld world, int campId)
         {
             var camp = world?.Camps?.GetCamp(campId);
             if (camp == null || camp.type != CampType.Nomad) return null;

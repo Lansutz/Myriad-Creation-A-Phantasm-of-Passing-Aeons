@@ -17,7 +17,7 @@ namespace MyriadCreation.Simulation.Generation
     /// <summary>
     /// 世界生成器统一接口（参考 Azgaar FMG 的模块化生成器架构）。
     /// 每个生成器负责一个独立的生成阶段，有明确的输入输出，支持增量重算。
-    /// 数据层（TileData/Province/BurgData）纯数据，生成逻辑在实现类中。
+    /// 数据层（TileData/Province/SettlementData）纯数据，生成逻辑在实现类中。
     /// </summary>
     public interface IWorldGenerator
     {

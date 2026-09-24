@@ -27,7 +27,7 @@ namespace MyriadCreation.World.Settlement
         /// 生成城市区划（当城市达到Ⅳ级都会时调用）
         /// 区划的类型和比例由城市的经济成分决定。
         /// </summary>
-        public static void GenerateDistricts(BurgData burg)
+        public static void GenerateDistricts(SettlementData burg)
         {
             if (burg == null) return;
             if (burg.districtsGenerated) return;
@@ -107,7 +107,7 @@ namespace MyriadCreation.World.Settlement
         /// 更新城市区划（每日调用）
         /// 区划随城市发展缓慢变化
         /// </summary>
-        public static void UpdateDistricts(BurgData burg, float deltaTime)
+        public static void UpdateDistricts(SettlementData burg, float deltaTime)
         {
             if (burg == null || burg.districts == null || burg.districts.Count == 0)
                 return;
@@ -124,7 +124,7 @@ namespace MyriadCreation.World.Settlement
         /// <summary>
         /// 当城市升级时，检查是否需要生成区划
         /// </summary>
-        public static void CheckDistrictGeneration(BurgData burg)
+        public static void CheckDistrictGeneration(SettlementData burg)
         {
             if (burg == null) return;
             if (burg.districtsGenerated) return;
@@ -191,7 +191,7 @@ namespace MyriadCreation.World.Settlement
         /// - 城邑（Ⅲ级）：中等复杂度计算，包括正常的贸易和税收
         /// - 都会（Ⅳ级）和大都会（Ⅴ级）：使用区划系统的复杂计算
         /// </summary>
-        public static DistrictEffects GetDistrictEffects(BurgData burg)
+        public static DistrictEffects GetDistrictEffects(SettlementData burg)
         {
             var effects = new DistrictEffects();
 
@@ -221,7 +221,7 @@ namespace MyriadCreation.World.Settlement
         /// 区划系统的复杂影响计算（都会/大都会）
         /// 每种区划类型有不同的加成效果
         /// </summary>
-        private static void GetDistrictEconomicEffects(BurgData burg, DistrictEffects effects)
+        private static void GetDistrictEconomicEffects(SettlementData burg, DistrictEffects effects)
         {
 
             foreach (var district in burg.districts)
@@ -318,7 +318,7 @@ namespace MyriadCreation.World.Settlement
         /// 城邑（Ⅲ级）的中等复杂度经济影响计算
         /// 包括正常的贸易和税收，经济结构已经比较复杂
         /// </summary>
-        private static void GetCityEconomicEffects(BurgData burg, DistrictEffects effects)
+        private static void GetCityEconomicEffects(SettlementData burg, DistrictEffects effects)
         {
             if (burg.economicComposition == null || burg.economicComposition.Count == 0)
                 return;
@@ -420,7 +420,7 @@ namespace MyriadCreation.World.Settlement
         /// 主要看自然资源（农业/渔业/矿业）和简单加工（手工业）
         /// 贸易和税收很少，因为还没有形成真正的城市经济
         /// </summary>
-        private static void GetVillageEconomicEffects(BurgData burg, DistrictEffects effects)
+        private static void GetVillageEconomicEffects(SettlementData burg, DistrictEffects effects)
         {
             if (burg.economicComposition == null || burg.economicComposition.Count == 0)
                 return;

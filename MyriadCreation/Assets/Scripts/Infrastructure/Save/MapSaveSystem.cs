@@ -262,16 +262,16 @@ namespace MyriadCreation.Infrastructure.Save
                 }
 
  // 恢复子地块
-                _world.burgs = new Dictionary<int, BurgData>();
+                _world.burgs = new Dictionary<int, SettlementData>();
                 if (saveData.burgs != null)
                 {
                     foreach (var b in saveData.burgs)
                     {
-                        var burg = new BurgData
+                        var burg = new SettlementData
                         {
                             burgId = b.burgId,
                             burgName = b.burgName,
-                            type = (BurgType)b.type,
+                            type = (SettlementRole)b.type,
                             provinceId = b.provinceId,
                             tileIndex = b.tileIndex,
                             x = b.x,

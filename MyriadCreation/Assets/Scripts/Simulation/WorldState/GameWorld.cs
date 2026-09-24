@@ -93,9 +93,9 @@ namespace MyriadCreation.Simulation.WorldState
  /// <summary>省份（provinceId → Province——地图结构层）</summary>
         [System.NonSerialized]
         public Dictionary<int, Province> provinces = new Dictionary<int, Province>();
- /// <summary>子地块/Burg（burgId → BurgData——省份内定居点，对齐 CK3 男爵领）</summary>
+ /// <summary>子地块/Burg（burgId → SettlementData——省份内定居点，对齐 CK3 男爵领）</summary>
         [System.NonSerialized]
-        public Dictionary<int, BurgData> burgs = new Dictionary<int, BurgData>();
+        public Dictionary<int, SettlementData> burgs = new Dictionary<int, SettlementData>();
  /// <summary>军队（armyId → Army——战争闭环）</summary>
         [System.NonSerialized]
         public Dictionary<int, Army> armies = new Dictionary<int, Army>();
@@ -279,7 +279,7 @@ namespace MyriadCreation.Simulation.WorldState
  /// 建城（事件接口——君主/政权在地块建城——纪念命名）：
  /// 命名优先=建城者名+城语义后缀[FounderCity——亚历山大城式——
  /// 查建城者文化→语言→城词]——语言缺城词→回退程序化生成
-        public BurgData CreateCity(int realmId, int tileIndex, int founderCharId)
+        public SettlementData CreateCity(int realmId, int tileIndex, int founderCharId)
         {
             if (tileIndex < 0 || tileIndex >= tiles.Length) return null;
             if (!tiles[tileIndex].isLand) return null;
@@ -304,18 +304,18 @@ namespace MyriadCreation.Simulation.WorldState
             if (string.IsNullOrEmpty(name))
                 name = "新市镇";
 
-            var burg = new BurgData
+            var burg = new SettlementData
             {
                 burgId = nextId,
                 burgName = name,
-                type = BurgType.City,
+                type = SettlementRole.City,
                 provinceId = tile.provinceId,
                 tileIndex = tileIndex,
                 x = 0.5f, y = 0.5f,
                 isCoastal = tile.isCoast,
             };
             SettlementTypologySystem.DeriveInitialType(burg, tile, mapWidth, mapHeight);
-            burg.settlementType = BurgTypeInferrer.InferSettlementType(burg.type);
+            burg.settlementType = SettlementRoleInferrer.InferSettlementType(burg.type);
             burgs[burg.burgId] = burg;
             string founderName = founder != null ? founder.firstName + founder.lastName : "某人";
             _chronicle?.Add("city_founded",

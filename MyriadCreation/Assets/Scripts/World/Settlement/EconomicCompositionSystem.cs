@@ -27,7 +27,7 @@ namespace MyriadCreation.World.Settlement
         /// 根据地理条件和物产初始化城市的经济成分
         /// 这是成分系统的核心：地理条件和物产自然决定了城市的经济成分比例。
         /// </summary>
-        public static void InitializeComposition(BurgData burg, TileData tile)
+        public static void InitializeComposition(SettlementData burg, TileData tile)
         {
             if (burg == null) return;
             if (burg.economicInitialized) return;
@@ -145,7 +145,7 @@ namespace MyriadCreation.World.Settlement
         /// 更新城市的经济成分（每日调用）
         /// 成分比例随时间缓慢变化，受贸易、人口、军事、行政、宗教等因素影响
         /// </summary>
-        public static void UpdateComposition(BurgData burg, float deltaTime)
+        public static void UpdateComposition(SettlementData burg, float deltaTime)
         {
             if (burg == null || burg.economicComposition == null || burg.economicComposition.Count == 0)
                 return;
@@ -299,7 +299,7 @@ namespace MyriadCreation.World.Settlement
         /// <summary>
         /// 获取城市经济成分的综合描述（用于Tooltip和UI显示）
         /// </summary>
-        public static string GetCompositionDescription(BurgData burg)
+        public static string GetCompositionDescription(SettlementData burg)
         {
             if (burg == null || burg.economicComposition == null || burg.economicComposition.Count == 0)
                 return "经济成分未知";

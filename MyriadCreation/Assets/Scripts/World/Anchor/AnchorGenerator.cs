@@ -10,7 +10,7 @@ using MyriadCreation.Core.Enums;
 
 namespace MyriadCreation.World.Anchor
 {
-    public class BurgGenerator
+    public class AnchorGenerator
     {
         private readonly TileData[] _tiles;
         private readonly int _width;
@@ -29,7 +29,7 @@ namespace MyriadCreation.World.Anchor
  /// <summary>要塞判定：边境省份</summary>
         public const float FortressSpawnChance = 0.25f;
 
-        public BurgGenerator(TileData[] tiles, int width, int height,
+        public AnchorGenerator(TileData[] tiles, int width, int height,
             Dictionary<int, Province> provinces, int seed)
         {
             _tiles = tiles;
@@ -40,9 +40,9 @@ namespace MyriadCreation.World.Anchor
         }
 
  /// 为所有省份生成 Burg
-        public Dictionary<int, BurgData> Generate()
+        public Dictionary<int, SettlementData> Generate()
         {
-            var burgs = new Dictionary<int, BurgData>();
+            var burgs = new Dictionary<int, SettlementData>();
             int nextBurgId = 0;
 
             foreach (var kv in _provinces)
@@ -57,7 +57,7 @@ namespace MyriadCreation.World.Anchor
                     centerTile = province.memberTiles[0];
 
                 var centerBurg = CreateBurg(ref nextBurgId, provinceId, centerTile,
-                    IsProvinceCenter(province, centerTile) ? BurgType.City : BurgType.Town);
+                    IsProvinceCenter(province, centerTile) ? SettlementRole.City : SettlementRole.Town);
                 centerBurg.hasMarket = true;
                 centerBurg.development = 20f + (float)_rng.NextDouble() * 30f;
                 centerBurg.population = 500f + (float)_rng.NextDouble() * 1500f;
@@ -69,7 +69,7 @@ namespace MyriadCreation.World.Anchor
                     int coastalTile = FindCoastalTile(province);
                     if (coastalTile >= 0 && _rng.NextDouble() < PortSpawnChance)
                     {
-                        var port = CreateBurg(ref nextBurgId, provinceId, coastalTile, BurgType.Port);
+                        var port = CreateBurg(ref nextBurgId, provinceId, coastalTile, SettlementRole.Port);
                         port.isPort = true;
                         port.isCoastal = true;
                         port.hasMarket = true;
@@ -86,7 +86,7 @@ namespace MyriadCreation.World.Anchor
                     int borderTile = FindBorderTile(province);
                     if (borderTile >= 0)
                     {
-                        var fort = CreateBurg(ref nextBurgId, provinceId, borderTile, BurgType.Fortress);
+                        var fort = CreateBurg(ref nextBurgId, provinceId, borderTile, SettlementRole.Fortress);
                         fort.fortification = 3f + (float)_rng.NextDouble() * 5f;
                         fort.garrison = 100 + _rng.Next(200);
                         fort.development = 5f + (float)_rng.NextDouble() * 15f;
@@ -103,7 +103,7 @@ namespace MyriadCreation.World.Anchor
                     if (IsTileOccupiedByBurg(burgs, tile)) continue;
                     if (!_tiles[tile].isLand) continue;
 
-                    var village = CreateBurg(ref nextBurgId, provinceId, tile, BurgType.Village);
+                    var village = CreateBurg(ref nextBurgId, provinceId, tile, SettlementRole.Village);
                     village.development = 2f + (float)_rng.NextDouble() * 10f;
                     village.population = 50f + (float)_rng.NextDouble() * 300f;
                     burgs[village.burgId] = village;
@@ -113,10 +113,10 @@ namespace MyriadCreation.World.Anchor
             return burgs;
         }
 
-        private BurgData CreateBurg(ref int nextId, int provinceId, int tileIndex, BurgType type)
+        private SettlementData CreateBurg(ref int nextId, int provinceId, int tileIndex, SettlementRole type)
         {
             ref TileData tile = ref _tiles[tileIndex];
-            var burg = new BurgData
+            var burg = new SettlementData
             {
                 burgId = nextId++,
                 burgName = GenerateBurgName(tile, type),
@@ -126,7 +126,7 @@ namespace MyriadCreation.World.Anchor
                 x = 0.5f,
                 y = 0.5f,
                 isCoastal = tile.isCoast,
-                settlementCategory = type == BurgType.Fortress ? SettlementCategory.Outpost : SettlementCategory.Burg,
+                settlementCategory = type == SettlementRole.Fortress ? SettlementCategory.Outpost : SettlementCategory.Burg,
                 constructionProgress = 0f,
                 constructionTier = 1
             };
@@ -138,12 +138,12 @@ namespace MyriadCreation.World.Anchor
             EconomicCompositionSystem.InitializeComposition(burg, tile);
 
  // 覆盖：根据BurgType强制形态
-            burg.settlementType = BurgTypeInferrer.InferSettlementType(type);
+            burg.settlementType = SettlementRoleInferrer.InferSettlementType(type);
             burg.settlementLevel = type switch
             {
-                BurgType.City or BurgType.Port or BurgType.Capital => SettlementLevel.LevelIII,
-                BurgType.Town => SettlementLevel.LevelII,
-                BurgType.Fortress => SettlementLevel.LevelII,
+                SettlementRole.City or SettlementRole.Port or SettlementRole.Capital => SettlementLevel.LevelIII,
+                SettlementRole.Town => SettlementLevel.LevelII,
+                SettlementRole.Fortress => SettlementLevel.LevelII,
                 _ => SettlementLevel.LevelI
             };
 
@@ -180,7 +180,7 @@ namespace MyriadCreation.World.Anchor
             return -1;
         }
 
-        private bool IsTileOccupiedByBurg(Dictionary<int, BurgData> burgs, int tile)
+        private bool IsTileOccupiedByBurg(Dictionary<int, SettlementData> burgs, int tile)
         {
             foreach (var b in burgs.Values)
                 if (b.tileIndex == tile) return true;
@@ -188,17 +188,17 @@ namespace MyriadCreation.World.Anchor
         }
 
  /// <summary>Burg 名称生成（地形特征词 + 通名；对齐省名生成风格）</summary>
-        private string GenerateBurgName(TileData tile, BurgType type)
+        private string GenerateBurgName(TileData tile, SettlementRole type)
         {
             string prefix = tile.elevation01 > 0.55f ? "山" : tile.isCoast ? "海" : "原";
             string mid = tile.annualPrecipMm > 900f ? "润" : tile.annualPrecipMm < 300f ? "干" : "丰";
             string suffix = type switch
             {
-                BurgType.City => "城",
-                BurgType.Port => "港",
-                BurgType.Fortress => "寨",
-                BurgType.Town => "镇",
-                BurgType.Capital => "京",
+                SettlementRole.City => "城",
+                SettlementRole.Port => "港",
+                SettlementRole.Fortress => "寨",
+                SettlementRole.Town => "镇",
+                SettlementRole.Capital => "京",
                 _ => "村"
             };
             return prefix + mid + suffix;

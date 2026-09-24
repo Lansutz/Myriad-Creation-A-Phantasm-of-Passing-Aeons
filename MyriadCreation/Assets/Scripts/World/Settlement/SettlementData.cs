@@ -15,18 +15,18 @@ namespace MyriadCreation.World.Settlement
  /// 子地块类型（对齐 CK3 男爵领 / FantasyMapSimulator Burg）
  /// 一个 Province 包含多个 Burg，Burg 是城镇/港口/首都的载体
 
- /// 聚落形态（宏观分类，区别于 BurgType 功能类型）
+ /// 聚落形态（宏观分类，区别于 SettlementRole 功能类型）
  /// 村镇/城/堡 是可缓慢演化的属性，不是永久固化标签
 
  /// 子地块（Burg / 男爵领）
  /// 省份内的可编辑定居点，是人口、贸易、军事的具体载体
- /// 对齐 FantasyMapSimulator: BurgData / BurgsAndStateGenerator / capitalBurgID / IsBurgPortQualified
+ /// 对齐 FantasyMapSimulator: SettlementData / BurgsAndStateGenerator / capitalBurgID / IsBurgPortQualified
     [Serializable]
-    public class BurgData
+    public class SettlementData
     {
         public int burgId;
         public string burgName;
-        public BurgType type;
+        public SettlementRole type;
         public int provinceId;       // 所属省份
         public int tileIndex;        // 所在地块（单元格）
         public float x;              // 地块内精确坐标（0~1，用于像素级定位）
@@ -148,18 +148,18 @@ namespace MyriadCreation.World.Settlement
  /// <summary>显示用名称（含类型前缀）</summary>
         public string DisplayName => type switch
         {
-            BurgType.Capital => $"【首都】{burgName}",
-            BurgType.City => $"【城】{burgName}",
-            BurgType.Port => $"【港】{burgName}",
-            BurgType.Fortress => $"【寨】{burgName}",
-            BurgType.Town => $"【镇】{burgName}",
+            SettlementRole.Capital => $"【首都】{burgName}",
+            SettlementRole.City => $"【城】{burgName}",
+            SettlementRole.Port => $"【港】{burgName}",
+            SettlementRole.Fortress => $"【寨】{burgName}",
+            SettlementRole.Town => $"【镇】{burgName}",
             _ => burgName
         };
 
  /// <summary>是否为主要定居点（城市/港口/首都/要塞）</summary>
         public bool IsMajorSettlement =>
-            type == BurgType.City || type == BurgType.Port ||
-            type == BurgType.Capital || type == BurgType.Fortress;
+            type == SettlementRole.City || type == SettlementRole.Port ||
+            type == SettlementRole.Capital || type == SettlementRole.Fortress;
 
  /// <summary>形态显示名称</summary>
         public string SettlementTypeName => settlementType switch

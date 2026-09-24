@@ -157,7 +157,7 @@ namespace MyriadCreation.Rendering
         private int _cachedVirtualControlFrame = -1;
 
  /// <summary>绘制聚落独立图标（按等级大小+形态形状）</summary>
-        private void DrawSettlementIcon(BurgData burg, int pixelCount)
+        private void DrawSettlementIcon(SettlementData burg, int pixelCount)
         {
             int bx = burg.tileIndex % mapWidth;
             int by = burg.tileIndex / mapWidth;
@@ -170,11 +170,11 @@ namespace MyriadCreation.Rendering
  // 图标颜色根据类型
             Color iconColor = burg.type switch
             {
-                BurgType.Capital => new Color(1f, 0.85f, 0.2f, 1f),
-                BurgType.City => new Color(1f, 1f, 1f, 1f),
-                BurgType.Port => new Color(0.3f, 0.6f, 1f, 1f),
-                BurgType.Fortress => new Color(0.9f, 0.3f, 0.2f, 1f),
-                BurgType.Town => new Color(0.9f, 0.8f, 0.4f, 1f),
+                SettlementRole.Capital => new Color(1f, 0.85f, 0.2f, 1f),
+                SettlementRole.City => new Color(1f, 1f, 1f, 1f),
+                SettlementRole.Port => new Color(0.3f, 0.6f, 1f, 1f),
+                SettlementRole.Fortress => new Color(0.9f, 0.3f, 0.2f, 1f),
+                SettlementRole.Town => new Color(0.9f, 0.8f, 0.4f, 1f),
                 _ => new Color(0.6f, 0.6f, 0.6f, 1f)
             };
 

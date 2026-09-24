@@ -240,11 +240,11 @@ namespace MyriadCreation.Simulation.WorldState
  /// <summary>生成子地块/Burg（省份内定居点：城市/港口/要塞/村庄）</summary>
         private void GenerateBurgs(int seed)
         {
-            var generator = new BurgGenerator(tiles, mapWidth, mapHeight, provinces, seed);
+            var generator = new AnchorGenerator(tiles, mapWidth, mapHeight, provinces, seed);
             burgs = generator.Generate();
             int cityCount=0, portCount=0, fortCount=0, villageCount=0;
             foreach (var b in burgs.Values) {
-                switch (b.type) { case BurgType.City: cityCount++; break; case BurgType.Port: portCount++; break; case BurgType.Fortress: fortCount++; break; default: villageCount++; break; }
+                switch (b.type) { case SettlementRole.City: cityCount++; break; case SettlementRole.Port: portCount++; break; case SettlementRole.Fortress: fortCount++; break; default: villageCount++; break; }
             }
             Debug.Log($"[GameWorld] 子地块生成：{burgs.Count}个（城{cityCount}/港{portCount}/寨{fortCount}/村{villageCount}）");
         }
@@ -318,7 +318,7 @@ namespace MyriadCreation.Simulation.WorldState
             }
 
             int seed = GenConfig.GetActualSeed();
-            var generator = new BurgGenerator(tiles, mapWidth, mapHeight, provinces, seed);
+            var generator = new AnchorGenerator(tiles, mapWidth, mapHeight, provinces, seed);
             burgs = generator.Generate();
 
             Debug.Log($"[GameWorld] 聚落生成完成：{burgs.Count} 个聚落");

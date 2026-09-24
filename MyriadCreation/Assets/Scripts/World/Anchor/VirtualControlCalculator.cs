@@ -87,7 +87,7 @@ namespace MyriadCreation.World.Anchor
 
  /// <summary>计算虚控制范围（渲染用）</summary>
         public static VirtualControlResult Calculate(
-            Dictionary<int, BurgData> burgs,
+            Dictionary<int, SettlementData> burgs,
             TileData[] tiles,
             int mapWidth,
             int mapHeight)

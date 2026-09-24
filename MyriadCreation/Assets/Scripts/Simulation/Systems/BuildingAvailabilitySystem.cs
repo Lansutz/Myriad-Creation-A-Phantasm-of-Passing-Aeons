@@ -465,7 +465,7 @@ namespace MyriadCreation.Simulation.Systems
  // ===== 可用性检查 =====
  /// 检查地块是否满足某建筑的修建条件
         public static BuildingAvailability CheckAvailability(BuildableType type, TileData tile,
-            BurgData existingBurg = null, int techLevel = 0)
+            SettlementData existingBurg = null, int techLevel = 0)
         {
             Initialize();
 
@@ -542,7 +542,7 @@ namespace MyriadCreation.Simulation.Systems
  /// 获取某地块可修建的所有建筑列表（UI过滤接口）
  /// 不符合条件的建筑不在列表中显示
         public static List<BuildableType> GetAvailableBuildings(TileData tile,
-            BurgData existingBurg = null, int techLevel = 0)
+            SettlementData existingBurg = null, int techLevel = 0)
         {
             Initialize();
             var available = new List<BuildableType>();

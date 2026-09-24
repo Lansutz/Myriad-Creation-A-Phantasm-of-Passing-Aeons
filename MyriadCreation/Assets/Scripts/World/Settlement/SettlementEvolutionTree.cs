@@ -105,7 +105,7 @@ namespace MyriadCreation.World.Settlement
         };
 
         /// <summary>获取聚居点当前阶段的名称（根据进化路径和等级）</summary>
-        public static string GetStageName(BurgData burg)
+        public static string GetStageName(SettlementData burg)
         {
             if (burg == null) return "未知";
             if (!PathStages.TryGetValue(burg.upgradePath, out var stages))
@@ -127,7 +127,7 @@ namespace MyriadCreation.World.Settlement
         }
 
         /// <summary>检查聚居点是否达到进化路径的最大等级</summary>
-        public static bool IsAtMaxLevel(BurgData burg)
+        public static bool IsAtMaxLevel(SettlementData burg)
         {
             return burg != null && burg.settlementLevel >= GetMaxLevel(burg.upgradePath);
         }
@@ -138,7 +138,7 @@ namespace MyriadCreation.World.Settlement
         /// 只推导起源方式（自然发展/建城/堡垒/城堡/港口）。
         /// 具体的经济成分由成分系统（EconomicComposition）根据地理条件和物产自然决定。
         /// </summary>
-        public static UpgradePath DeriveEvolutionPath(TileData tile, BurgData burg)
+        public static UpgradePath DeriveEvolutionPath(TileData tile, SettlementData burg)
         {
             // 1. 军事据点 → 堡垒起源
             if (burg.settlementType == SettlementType.Fort)

@@ -11,7 +11,7 @@ namespace MyriadCreation.Simulation.Systems
     /// <summary>聚落领域运行时。负责聚落控制与现有聚落相关日常阶段。</summary>
     public sealed class SettlementSimulationSystem
     {
-        private readonly Dictionary<int, BurgData> _burgs;
+        private readonly Dictionary<int, SettlementData> _burgs;
         private readonly TileData[] _tiles;
         private readonly int _mapWidth;
         private readonly int _mapHeight;
@@ -28,7 +28,7 @@ namespace MyriadCreation.Simulation.Systems
         public LandAbandonmentRuntime AbandonmentRuntime => _abandonmentRuntime;
 
         public SettlementSimulationSystem(
-            Dictionary<int, BurgData> burgs,
+            Dictionary<int, SettlementData> burgs,
             TileData[] tiles,
             int mapWidth,
             int mapHeight,

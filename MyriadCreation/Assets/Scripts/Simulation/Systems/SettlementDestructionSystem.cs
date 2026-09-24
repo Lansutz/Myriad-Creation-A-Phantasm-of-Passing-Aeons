@@ -151,7 +151,7 @@ namespace MyriadCreation.Simulation.Systems
         }
 
         /// <summary>手段映射到程度（部分手段受场景影响）</summary>
-        private static DestructionSeverity MethodToSeverity(DestructionMethod method, BurgData burg)
+        private static DestructionSeverity MethodToSeverity(DestructionMethod method, SettlementData burg)
         {
             switch (method)
             {
@@ -169,7 +169,7 @@ namespace MyriadCreation.Simulation.Systems
         }
 
         /// <summary>等级降级</summary>
-        private static void ApplyLevelDowngrade(BurgData burg, DestructionSeverity severity)
+        private static void ApplyLevelDowngrade(SettlementData burg, DestructionSeverity severity)
         {
             if (severity == DestructionSeverity.Raid) return; // 轻度不变
 
@@ -197,7 +197,7 @@ namespace MyriadCreation.Simulation.Systems
         }
 
         /// <summary>特殊手段效果</summary>
-        private static string ApplyMethodEffect(GameWorld world, BurgData burg,
+        private static string ApplyMethodEffect(GameWorld world, SettlementData burg,
             DestructionMethod method, DestructionSeverity severity, int attackerId, int lostPop)
         {
             switch (method)
@@ -263,7 +263,7 @@ namespace MyriadCreation.Simulation.Systems
         }
 
         /// <summary>摧毁后产生流民MapActor</summary>
-        private static int SpawnRefugeesFromDestruction(GameWorld world, BurgData burg,
+        private static int SpawnRefugeesFromDestruction(GameWorld world, SettlementData burg,
             int lostPop, DestructionSeverity severity)
         {
             if (world.MapActors == null || lostPop <= 0) return 0;
@@ -282,7 +282,7 @@ namespace MyriadCreation.Simulation.Systems
         }
 
         /// <summary>夷平后地块进入弃地状态</summary>
-        private static void AbandonTileAfterRaze(GameWorld world, BurgData burg)
+        private static void AbandonTileAfterRaze(GameWorld world, SettlementData burg)
         {
             if (burg.tileIndex < 0 || burg.tileIndex >= world.tiles.Length) return;
             var tile = world.tiles[burg.tileIndex];

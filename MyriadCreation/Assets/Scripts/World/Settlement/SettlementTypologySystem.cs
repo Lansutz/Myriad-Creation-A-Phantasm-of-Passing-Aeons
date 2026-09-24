@@ -17,7 +17,7 @@ namespace MyriadCreation.World.Settlement
     {
  // ===== 类型推导：根据地块特征推导聚落初始形态 =====
  /// 根据地块特征推导聚落初始类型
-        public static void DeriveInitialType(BurgData burg, TileData tile, int width, int height)
+        public static void DeriveInitialType(SettlementData burg, TileData tile, int width, int height)
         {
             if (burg == null) return;
 
@@ -72,7 +72,7 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>建设度增长（每日调用，由发展度/人口/投资驱动）</summary>
-        public static void UpdateConstructionProgress(BurgData burg, float dailyDevelopmentGain)
+        public static void UpdateConstructionProgress(SettlementData burg, float dailyDevelopmentGain)
         {
             if (burg == null) return;
             if (burg.settlementLevel >= SettlementLevel.LevelV) return; // 最高等级不再增长建设度
@@ -85,7 +85,7 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>检查建设度是否达到升级条件（第5档即满100）</summary>
-        public static bool IsConstructionReady(BurgData burg)
+        public static bool IsConstructionReady(SettlementData burg)
         {
             return burg != null && burg.constructionTier >= 5;
         }
@@ -164,7 +164,7 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>推导主功能</summary>
-        private static SettlementFunction DerivePrimaryFunction(TileData tile, BurgData burg)
+        private static SettlementFunction DerivePrimaryFunction(TileData tile, SettlementData burg)
         {
  // 瓶颈节点 → 渡口/关税/军事
             if (burg.bottleneckType != BottleneckType.None)
@@ -192,7 +192,7 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>推导聚落形态</summary>
-        private static SettlementType DeriveSettlementType(TileData tile, BurgData burg)
+        private static SettlementType DeriveSettlementType(TileData tile, SettlementData burg)
         {
  // 瓶颈+军事功能 → 堡
             if (burg.bottleneckType != BottleneckType.None &&
@@ -213,7 +213,7 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>推导城的形态</summary>
-        private static CityForm DeriveCityForm(TileData tile, BurgData burg)
+        private static CityForm DeriveCityForm(TileData tile, SettlementData burg)
         {
  // 港口城市 → 不规则形态（沿河/沿海城市通常受地形约束，有机生长）
             if (burg.portTier >= PortTier.RiverPort)
@@ -233,7 +233,7 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>推导堡垒亚型</summary>
-        private static FortSubtype DeriveFortSubtype(TileData tile, BurgData burg)
+        private static FortSubtype DeriveFortSubtype(TileData tile, SettlementData burg)
         {
  // 关口堡
             if (burg.bottleneckType == BottleneckType.MountainPass ||
@@ -258,14 +258,14 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>推导升级路线（使用进化树系统，根据起源确定发展路径）</summary>
-        private static UpgradePath DeriveUpgradePath(TileData tile, BurgData burg)
+        private static UpgradePath DeriveUpgradePath(TileData tile, SettlementData burg)
         {
             return SettlementEvolutionTree.DeriveEvolutionPath(tile, burg);
         }
 
  // ===== 升级路线：等级提升检查 =====
  /// 检查聚落是否可以升级到下一等级
-        public static bool CanLevelUp(BurgData burg, out string reason)
+        public static bool CanLevelUp(SettlementData burg, out string reason)
         {
             reason = "";
             SettlementLevel nextLevel = burg.settlementLevel + 1;
@@ -328,7 +328,7 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>推导城市重心（根据功能组合）</summary>
-        public static CityFocus DeriveCityFocus(BurgData burg)
+        public static CityFocus DeriveCityFocus(SettlementData burg)
         {
             if (burg.primaryFunction.HasFlag(SettlementFunction.Military) &&
                 burg.fortSubtype != FortSubtype.ManorFort)
@@ -358,7 +358,7 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>执行升级</summary>
-        public static void PerformLevelUp(BurgData burg)
+        public static void PerformLevelUp(SettlementData burg)
         {
             burg.settlementLevel++;
             burg.evolutionStage = EvolutionStage.Transformed;
@@ -390,7 +390,7 @@ namespace MyriadCreation.World.Settlement
 
  // ===== 形态约束检查 =====
  /// 检查形态-等级约束（软性规则，AI遵循，玩家可突破）
-        public static bool CheckFormLevelConstraint(BurgData burg)
+        public static bool CheckFormLevelConstraint(SettlementData burg)
         {
             return burg.settlementLevel switch
             {
@@ -401,7 +401,7 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>获取形态描述（使用进化树的阶段名称）</summary>
-        public static string GetFullDescription(BurgData burg)
+        public static string GetFullDescription(SettlementData burg)
         {
             string stageName = SettlementEvolutionTree.GetStageName(burg);
             string form = burg.settlementType switch
