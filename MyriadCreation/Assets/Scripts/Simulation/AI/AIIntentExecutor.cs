@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using CivilizationEvolution.Core.Contracts;
 using CivilizationEvolution.Simulation.Diplomacy;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Warfare;
 
 namespace CivilizationEvolution.Simulation.AI
 {
