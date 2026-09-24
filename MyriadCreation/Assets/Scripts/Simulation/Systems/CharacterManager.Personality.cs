@@ -25,7 +25,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.Systems
 {
  /// CharacterManager.Personality —— 心理与人格（压力/恐惧/精神障碍/人格漂移/天赋缺陷）（partial class，与 CharacterSystem.cs 共享字段）
     public partial class CharacterManager

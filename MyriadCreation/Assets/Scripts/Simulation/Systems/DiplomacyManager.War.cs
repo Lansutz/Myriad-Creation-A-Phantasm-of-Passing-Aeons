@@ -22,7 +22,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Diplomacy
+namespace MyriadCreation.Simulation.Systems
 {
  /// DiplomacyManager.War —— 战争与敌对（宣战/战争借口/敌对度/突袭/边境摩擦/和平条约）（partial class，与 DiplomacySystem.cs 共享字段）
     public partial class DiplomacyManager

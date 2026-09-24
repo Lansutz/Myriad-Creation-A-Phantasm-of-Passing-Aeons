@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.Systems
 {
     /// <summary>
     /// 角色知识系统访问层。

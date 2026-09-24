@@ -25,7 +25,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.Systems
 {
  /// CharacterManager.Faith —— 个人信仰（私人信仰/个人信条/信仰分歧/虔诚更新）（partial class，与 CharacterSystem.cs 共享字段）
     public partial class CharacterManager

@@ -25,7 +25,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.Systems
 {
  /// CharacterManager.Family —— 家族与生育（生育/婚姻/亲属查询/家族树/自动生育/纽带）（partial class，与 CharacterSystem.cs 共享字段）
     public partial class CharacterManager

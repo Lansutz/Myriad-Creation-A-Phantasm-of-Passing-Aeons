@@ -22,7 +22,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Diplomacy
+namespace MyriadCreation.Simulation.Systems
 {
  /// DiplomacyManager.Subordination —— 从属关系（朝贡/附庸/附属/保护国/傀儡/共主邦联/独立）（partial class，与 DiplomacySystem.cs 共享字段）
     public partial class DiplomacyManager

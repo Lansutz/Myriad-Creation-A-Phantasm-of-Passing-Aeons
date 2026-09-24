@@ -22,7 +22,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Diplomacy
+namespace MyriadCreation.Simulation.Systems
 {
  /// DiplomacyManager.Actions —— 外交行动（使馆/断交/礼物/侮辱/禁运/军事通行权）（partial class，与 DiplomacySystem.cs 共享字段）
     public partial class DiplomacyManager

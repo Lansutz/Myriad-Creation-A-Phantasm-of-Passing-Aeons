@@ -22,7 +22,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Diplomacy
+namespace MyriadCreation.Simulation.Systems
 {
  /// DiplomacyManager.Alliance —— 同盟（提议/解除/查询）（partial class，与 DiplomacySystem.cs 共享字段）
     public partial class DiplomacyManager
