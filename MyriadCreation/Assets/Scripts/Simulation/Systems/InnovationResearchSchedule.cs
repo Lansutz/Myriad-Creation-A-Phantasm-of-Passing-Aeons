@@ -5,7 +5,7 @@ using MyriadCreation.Core.Data;
 using MyriadCreation.Simulation.AI;
 using MyriadCreation.Simulation.WorldState;
 
-namespace MyriadCreation.Simulation.Innovation
+namespace MyriadCreation.Simulation.Systems
 {
     /// <summary>
     /// 旧式 Realm × Innovation 研究进度的兼容运行时。

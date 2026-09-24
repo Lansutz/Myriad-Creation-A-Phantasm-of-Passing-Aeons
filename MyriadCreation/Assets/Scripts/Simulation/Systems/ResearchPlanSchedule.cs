@@ -1,7 +1,7 @@
 using System;
 using MyriadCreation.Core.Simulation;
 
-namespace MyriadCreation.Simulation.Innovation
+namespace MyriadCreation.Simulation.Systems
 {
     /// <summary>
     /// Research is scheduled as a domain runtime system, not as a GameWorld callback.

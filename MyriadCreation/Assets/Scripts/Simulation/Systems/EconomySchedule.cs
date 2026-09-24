@@ -1,7 +1,7 @@
 using System;
 using MyriadCreation.Core.Simulation;
 
-namespace MyriadCreation.Simulation.Economy
+namespace MyriadCreation.Simulation.Systems
 {
     /// <summary>
     /// Economy-owned scheduler registration. GameWorld composes this module but does not

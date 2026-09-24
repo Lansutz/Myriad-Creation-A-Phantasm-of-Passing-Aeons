@@ -1,17 +1,17 @@
 using System;
 using MyriadCreation.Core.Simulation;
 
-namespace MyriadCreation.Simulation.Population
+namespace MyriadCreation.Simulation.Systems
 {
-    public static class PopulationSchedule
+    public static class CultureSchedule
     {
-        public const string ScheduleId = "population.daily";
+        public const string ScheduleId = "culture-stage.monthly";
 
         public static void Register(ISimulationScheduler scheduler, Action tick)
         {
             if (scheduler == null) throw new ArgumentNullException(nameof(scheduler));
             if (tick == null) throw new ArgumentNullException(nameof(tick));
-            scheduler.Register(ScheduleId, SimulationCadence.Daily, 14, _ => tick());
+            scheduler.Register(ScheduleId, SimulationCadence.Monthly, 22, _ => tick());
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using MyriadCreation.Core.Simulation;
 
-namespace MyriadCreation.Simulation.Disaster
+namespace MyriadCreation.Simulation.Systems
 {
     public static class DisasterSchedule
     {

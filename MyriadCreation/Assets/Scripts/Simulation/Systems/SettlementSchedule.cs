@@ -6,7 +6,7 @@ using MyriadCreation.Simulation.Warfare;
 using MyriadCreation.Simulation.Actors;
 using MyriadCreation.Simulation.WorldState;
 
-namespace MyriadCreation.Simulation.Settlement
+namespace MyriadCreation.Simulation.Systems
 {
     /// <summary>聚落领域运行时。负责聚落控制与现有聚落相关日常阶段。</summary>
     public sealed class SettlementSimulationSystem

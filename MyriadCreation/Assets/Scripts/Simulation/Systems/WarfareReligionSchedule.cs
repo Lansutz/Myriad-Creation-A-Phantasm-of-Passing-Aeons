@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using MyriadCreation.Core.Simulation;
 using MyriadCreation.Core.Data;
 
-namespace MyriadCreation.Simulation.Warfare
+namespace MyriadCreation.Simulation.Systems
 {
     public static class WarfareReligionSchedule
     {

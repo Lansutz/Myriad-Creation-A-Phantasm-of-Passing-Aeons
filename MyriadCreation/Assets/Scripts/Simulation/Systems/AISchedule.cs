@@ -8,7 +8,7 @@ using MyriadCreation.Simulation.Innovation;
 using MyriadCreation.Simulation.Politics;
 using MyriadCreation.Simulation.WorldState;
 
-namespace MyriadCreation.Simulation.AI
+namespace MyriadCreation.Simulation.Systems
 {
     public static class AISchedule
     {
