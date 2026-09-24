@@ -43,13 +43,12 @@ namespace CivilizationEvolution.Simulation.AI
             Dictionary<int, RealmData> realms,
             TileData[] tiles,
             DiplomacyManager diplomacy,
-            EconomyManager economy,
             InnovationTree innovations,
             CivilizationEvolution.Simulation.Characters.CharacterManager characters = null)
         {
             foreach (var controller in _controllers.Values)
             {
-                controller.DailyTick(realms, tiles, diplomacy, economy, innovations, characters);
+                controller.DailyTick(realms, tiles, diplomacy, innovations, characters);
             }
         }
 
