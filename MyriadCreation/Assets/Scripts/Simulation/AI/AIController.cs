@@ -66,7 +66,7 @@ namespace CivilizationEvolution.Simulation.AI
             _decisionTimer++;
 
  // 日常行为
-            DailyActions(realms, tiles, economy, innovations);
+            SelectDailyIntent(realms, tiles, innovations);
 
  // 劫掠机会（低烈度冲突——好战 AI 对敌对政权劫掠——屠城计数）
             TryRaid(realms, tiles, diplomacy, characters);
