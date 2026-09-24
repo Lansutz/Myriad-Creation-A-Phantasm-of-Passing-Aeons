@@ -4,7 +4,6 @@ using CivilizationEvolution.Core.Contracts;
 using CivilizationEvolution.Core.Simulation;
 using CivilizationEvolution.Simulation.Characters;
 using CivilizationEvolution.Simulation.Diplomacy;
-using CivilizationEvolution.Simulation.Economy;
 using CivilizationEvolution.Simulation.Innovation;
 using CivilizationEvolution.Simulation.Politics;
 using CivilizationEvolution.Simulation.Planning;
@@ -22,7 +21,6 @@ namespace CivilizationEvolution.Simulation.AI
             Func<Dictionary<int, RealmData>> realms,
             Func<TileData[]> tiles,
             DiplomacyManager diplomacy,
-            EconomyManager economy,
             InnovationTree innovation,
             CharacterManager characters,
             Action missionaryTick,
@@ -34,7 +32,6 @@ namespace CivilizationEvolution.Simulation.AI
             if (realms == null) throw new ArgumentNullException(nameof(realms));
             if (tiles == null) throw new ArgumentNullException(nameof(tiles));
             if (diplomacy == null) throw new ArgumentNullException(nameof(diplomacy));
-            if (economy == null) throw new ArgumentNullException(nameof(economy));
             if (innovation == null) throw new ArgumentNullException(nameof(innovation));
             if (characters == null) throw new ArgumentNullException(nameof(characters));
             if (missionaryTick == null) throw new ArgumentNullException(nameof(missionaryTick));
@@ -45,7 +42,7 @@ namespace CivilizationEvolution.Simulation.AI
             {
                 missionaryTick();
                 ai.SyncRulers(characters);
-                ai.DailyTick(realms(), tiles(), diplomacy, economy, innovation, characters);
+                ai.DailyTick(realms(), tiles(), diplomacy, innovation, characters);
                 ai.ExecutePendingIntents(executor);
             });
         }
