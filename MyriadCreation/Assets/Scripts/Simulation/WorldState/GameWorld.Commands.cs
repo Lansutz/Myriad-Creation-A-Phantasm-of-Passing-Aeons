@@ -1,6 +1,10 @@
 using CivilizationEvolution.Core.Contracts;
 using CivilizationEvolution.Simulation.Diplomacy;
+using CivilizationEvolution.Simulation.Economy;
+using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Politics;
 using CivilizationEvolution.Simulation.Settlement;
+using CivilizationEvolution.Simulation.Warfare;
 using CivilizationEvolution.Simulation.Warfare;
 
 namespace CivilizationEvolution.Simulation.WorldState
@@ -27,6 +31,17 @@ namespace CivilizationEvolution.Simulation.WorldState
 
             _simulationCommands.Register(
                 new SendGiftCommandHandler(_diplomacyManager));
+            _simulationCommands.Register(
+                new StartInnovationResearchCommandHandler(_innovationTree));
+
+            _simulationCommands.Register(
+                new ImproveRealmEconomyCommandHandler(realms, tiles));
+
+            _simulationCommands.Register(
+                new ConsolidateRealmCommandHandler(realms, tiles));
+
+            _simulationCommands.Register(
+                new MilitaryBuildUpCommandHandler(realms));
         }
 
         private void RegisterSettlementCommandHandlers()
