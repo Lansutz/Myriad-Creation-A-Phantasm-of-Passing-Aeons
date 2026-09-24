@@ -143,6 +143,11 @@ namespace CivilizationEvolution.Simulation.WorldState
  // 政体变迁动力学需要革新树（可行性约束）与编年史（记录节点）
             _diplomacyManager.Chronicle = _chronicle;
             _aiManager = new AIManager();
+            _aiIntentExecutor = new AIIntentExecutor(
+                _simulationCommands,
+                _innovationTree,
+                realms,
+                tiles);
 
             var societyManager = new SocietyManager();
             var factionManager = new FactionManager();
