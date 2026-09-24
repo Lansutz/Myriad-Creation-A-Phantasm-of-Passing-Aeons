@@ -30,6 +30,7 @@ using MyriadCreation.World.Terrain;
 
 
 using MyriadCreation.World;
+using MyriadCreation.World.Anchor;
 namespace MyriadCreation.Infrastructure.Save
 {
  /// 完整游戏存档系统——保存/加载核心游戏状态（地图、时间、政权、编年史）。

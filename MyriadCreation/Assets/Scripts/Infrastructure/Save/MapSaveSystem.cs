@@ -27,6 +27,7 @@ using MyriadCreation.World.Terrain;
 
 using MyriadCreation.World;
 using MyriadCreation.World.Settlement;
+using MyriadCreation.World.Anchor;
 namespace MyriadCreation.Infrastructure.Save
 {
  /// 地图存档数据（可序列化）

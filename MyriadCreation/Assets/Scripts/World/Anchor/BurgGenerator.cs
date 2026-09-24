@@ -8,7 +8,7 @@ using MyriadCreation.Core.Dto;
 using MyriadCreation.Core.Enums;
 
 
-namespace MyriadCreation.World.Settlement
+namespace MyriadCreation.World.Anchor
 {
     public class BurgGenerator
     {

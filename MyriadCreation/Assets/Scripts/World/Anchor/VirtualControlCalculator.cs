@@ -9,7 +9,7 @@ using MyriadCreation.Core.Enums;
 
 
 
-namespace MyriadCreation.World.Settlement
+namespace MyriadCreation.World.Anchor
 {
  /// 三角形（三个控制点索引 + 外接圆）
     public struct ControlTriangle

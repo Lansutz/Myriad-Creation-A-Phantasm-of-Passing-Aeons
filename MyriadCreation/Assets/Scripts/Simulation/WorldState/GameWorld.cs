@@ -52,6 +52,7 @@ using MyriadCreation.World;
 using MyriadCreation.Simulation.Presentation;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
+using MyriadCreation.World.Anchor;
 namespace MyriadCreation.Simulation.WorldState
 {
  /// 游戏世界主类

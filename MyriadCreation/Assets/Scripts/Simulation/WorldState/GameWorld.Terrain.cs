@@ -46,6 +46,7 @@ using MyriadCreation.World.Terrain;
 
 
 using MyriadCreation.World;
+using MyriadCreation.World.Anchor;
 namespace MyriadCreation.Simulation.WorldState
 {
  /// GameWorld.Terrain —— 地形生成与气候水文计算（含脏标记重算）（partial class，与 GameWorld.cs 共享字段与子系统）
