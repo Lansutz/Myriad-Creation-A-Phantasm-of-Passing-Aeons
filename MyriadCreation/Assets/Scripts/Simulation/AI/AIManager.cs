@@ -53,6 +53,15 @@ namespace CivilizationEvolution.Simulation.AI
             }
         }
 
+
+        /// <summary>执行本 Tick 已产生的 AI 意图；决策与领域状态变更分离。</summary>
+        public void ExecutePendingIntents(AIIntentExecutor executor)
+        {
+            if (executor == null) return;
+            foreach (var controller in _controllers.Values)
+                executor.Execute(controller.DrainIntents());
+        }
+
         public AIController GetController(int realmId) =>
             _controllers.TryGetValue(realmId, out var c) ? c : null;
 
