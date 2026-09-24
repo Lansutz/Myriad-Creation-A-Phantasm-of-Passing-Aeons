@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CivilizationEvolution.Core.Contracts;
 using CivilizationEvolution.Core.Data;
+using CivilizationEvolution.Simulation.Diplomacy;
 using CivilizationEvolution.Simulation.Innovation;
 
 namespace CivilizationEvolution.Simulation.AI
@@ -43,26 +44,26 @@ namespace CivilizationEvolution.Simulation.AI
                         ExecuteStartResearch(intent);
                         break;
                     case AIIntentType.RaidSettlement:
-                        _commands.Send(new Diplomacy.RaidSettlementCommand(
+                        _commands.Send(new RaidSettlementCommand(
                             intent.ActorRealmId,
                             intent.TargetRealmId,
                             intent.TargetTileIndex,
                             intent.RaidType));
                         break;
                     case AIIntentType.DeclareWar:
-                        _commands.Send(new Diplomacy.DeclareWarCommand(
+                        _commands.Send(new DeclareWarCommand(
                             intent.ActorRealmId,
                             intent.TargetRealmId,
                             "领土扩张"));
                         break;
                     case AIIntentType.ProposeAlliance:
-                        _commands.Send(new Diplomacy.ProposeAllianceCommand(
+                        _commands.Send(new ProposeAllianceCommand(
                             intent.ActorRealmId,
                             intent.TargetRealmId,
                             intent.AllianceType));
                         break;
                     case AIIntentType.SendGift:
-                        _commands.Send(new Diplomacy.SendGiftCommand(
+                        _commands.Send(new SendGiftCommand(
                             intent.ActorRealmId,
                             intent.TargetRealmId,
                             intent.Amount));
