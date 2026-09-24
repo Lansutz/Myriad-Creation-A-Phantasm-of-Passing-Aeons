@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.Definitions
 {
     /// <summary>
     /// 基本能力（底层、通用的身体素质和心智能力）

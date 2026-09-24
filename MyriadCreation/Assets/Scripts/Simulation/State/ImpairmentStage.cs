@@ -1,4 +1,4 @@
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.State
 {
     /// <summary>
     /// 衰退阶段定义——每个衰退类型有自己的阶段

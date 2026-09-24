@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.State
 {
     [Serializable]
     public struct CharacterRelation

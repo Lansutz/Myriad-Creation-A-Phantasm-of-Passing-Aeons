@@ -23,18 +23,14 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.Definitions
 {
 
 
-    public enum TraitCategory
+    public enum TraitTier
     {
-        Personality,  // 性格
-        Lifestyle,    // 生活方式
-        Education,    // 教育背景
-        Physical,     // 身体特征
-        Mental,       // 心理特征
-        Reputation,   // 声望特质
-        Religious     // 宗教特质
+        Basic,      // 基础特质
+        Complex,    // 复合特质（由基础特质组合）
+        Cultural    // 文化特质（文化专属）
     }
 }

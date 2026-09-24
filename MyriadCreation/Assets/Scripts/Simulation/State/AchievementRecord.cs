@@ -1,4 +1,4 @@
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.State
 {
         [System.Serializable]
         public struct AchievementRecord

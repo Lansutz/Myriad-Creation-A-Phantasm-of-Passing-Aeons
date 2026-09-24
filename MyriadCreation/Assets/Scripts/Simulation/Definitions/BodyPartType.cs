@@ -1,4 +1,4 @@
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.Definitions
 {
     /// <summary>
     /// 宏观身体部位枚举

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.Definitions
 {
     /// <summary>
     /// 衰退定义注册表——根据ID获取对应的衰退定义

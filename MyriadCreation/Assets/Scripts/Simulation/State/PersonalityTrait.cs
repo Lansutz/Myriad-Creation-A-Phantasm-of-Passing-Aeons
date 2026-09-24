@@ -23,7 +23,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.State
 {
     public class PersonalityTrait
     {

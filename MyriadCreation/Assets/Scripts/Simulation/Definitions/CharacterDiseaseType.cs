@@ -1,4 +1,4 @@
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.Definitions
 {
     /// <summary>
     /// 角色疾病类型——按病因和性质分类

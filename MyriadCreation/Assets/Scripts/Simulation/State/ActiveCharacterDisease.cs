@@ -1,4 +1,4 @@
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.State
 {
     /// <summary>
     /// 活跃疾病实例——角色身上正在发生的疾病

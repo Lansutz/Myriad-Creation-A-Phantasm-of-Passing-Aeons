@@ -1,4 +1,4 @@
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.State
 {
     /// <summary>
     /// 活跃的衰退状态实例

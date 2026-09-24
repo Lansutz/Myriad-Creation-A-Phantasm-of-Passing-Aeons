@@ -23,17 +23,17 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.Definitions
 {
-    public enum PersonalityDimension
+    public enum BondType
     {
-        Boldness,       // 大胆（怯懦↔勇猛）
-        Sociability,    // 社交性（孤僻↔合群）
-        Compassion,     // 悲悯（冷酷↔慈悲）
-        Greed,          // 贪婪（慷慨↔贪婪）
-        Honor,          // 荣誉（狡诈↔诚实/重诺）
-        Rationality,    // 理性（冲动/狂热↔冷静理性）
-        Vengefulness,   // 报复（宽恕↔睚眦必报）
-        Piety           // 虔信（无神/愤世↔虔诚信奉）
+        BloodBond,        // 血脉羁绊（跨代血缘的机制化联结）
+        SwornBrotherhood, // 结义兄弟
+        MentorBond,       // 师徒羁绊（师承的机制化纽带，对应 RelationshipType.Mentor/Student）
+        Rivalry,          // 宿怨（敌对纽带·轻度）
+        Romance,          // 爱情羁绊
+        ComradesInArms,   // 战友羁绊
+        OathBond,         // 誓言羁绊
+        Nemesis           // 死敌（敌对纽带·重度）
     }
 }

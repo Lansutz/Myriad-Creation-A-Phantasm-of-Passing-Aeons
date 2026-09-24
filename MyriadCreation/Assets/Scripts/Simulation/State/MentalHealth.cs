@@ -16,7 +16,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.State
 {
  /// 精神疾病（简单版）
  /// 角色级状态机，与传染病系统（人口级）分层：

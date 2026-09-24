@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.Definitions
 {
     /// <summary>
     /// 专精类型（六维专精，0-100）

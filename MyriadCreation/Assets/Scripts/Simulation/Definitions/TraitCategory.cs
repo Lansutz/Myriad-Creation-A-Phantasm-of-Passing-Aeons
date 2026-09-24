@@ -23,19 +23,18 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Characters
+namespace MyriadCreation.Simulation.Definitions
 {
-    public enum CharacterRole
+
+
+    public enum TraitCategory
     {
-        Commoner,      // 平民
-        Noble,         // 贵族
-        Clergy,        // 神职人员
-        Merchant,      // 商人
-        Military,      // 军人
-        Scholar,       // 学者
-        Ruler,         // 统治者
-        Heir,          // 继承人
-        Spouse,        // 配偶
-        Courtier       // 廷臣
+        Personality,  // 性格
+        Lifestyle,    // 生活方式
+        Education,    // 教育背景
+        Physical,     // 身体特征
+        Mental,       // 心理特征
+        Reputation,   // 声望特质
+        Religious     // 宗教特质
     }
 }
