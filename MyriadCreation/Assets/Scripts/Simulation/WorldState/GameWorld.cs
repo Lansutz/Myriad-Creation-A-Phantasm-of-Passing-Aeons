@@ -221,7 +221,7 @@ namespace CivilizationEvolution.Simulation.WorldState
             CivilizationEvolution.Simulation.Characters.SuccessionSchedule.Register(_simulationScheduler, () => CheckRulerSuccessions());
             CivilizationEvolution.Simulation.Thought.ThoughtSchedule.Register(_simulationScheduler, () => _thoughtManager.DailyTick(currentYear));
             CivilizationEvolution.Simulation.AI.AISchedule.Register(
-                _simulationScheduler, _aiManager, () => realms, () => tiles, _diplomacyManager, _economyManager, _innovationTree, _characterManager, MissionaryTick, DeclareWar);
+                _simulationScheduler, _aiManager, () => realms, () => tiles, _diplomacyManager, _economyManager, _innovationTree, _characterManager, MissionaryTick, _simulationCommands);
             CivilizationEvolution.Simulation.Innovation.InnovationResearchSchedule.Register(
                 _simulationScheduler, _innovationTree, _aiManager, () => realms, () => tiles);
             CivilizationEvolution.Simulation.Events.EventSchedule.Register(_simulationScheduler, ProcessEvents);
