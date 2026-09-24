@@ -12,6 +12,7 @@ using MyriadCreation.Simulation.Modding;
 using MyriadCreation.Simulation.Religion;
 using MyriadCreation.Simulation.Society;
 using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.Simulation.Definitions;
 
 
 

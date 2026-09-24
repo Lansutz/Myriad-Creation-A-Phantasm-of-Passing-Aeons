@@ -1,4 +1,4 @@
-namespace MyriadCreation.Simulation.Diplomacy
+namespace MyriadCreation.Simulation.Definitions
 {
 
 

@@ -16,6 +16,8 @@ using MyriadCreation.Simulation.Population;
 using MyriadCreation.Simulation.Society;
 using MyriadCreation.Simulation.Warfare;
 using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.Simulation.Definitions;
+using MyriadCreation.Simulation.State;
 
 
 

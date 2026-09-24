@@ -5,6 +5,7 @@ using UnityEngine;
 using MyriadCreation.Simulation.Politics;
 using MyriadCreation.Simulation.Population;
 using MyriadCreation.Simulation.Society;
+using MyriadCreation.Simulation.Definitions;
 
 
 namespace MyriadCreation.Simulation.Systems

@@ -1,3 +1,5 @@
+using MyriadCreation.Simulation.Definitions;
+
 namespace MyriadCreation.Simulation.Diplomacy
 {
     [System.Serializable]

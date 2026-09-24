@@ -1,7 +1,7 @@
 using System;
 using MyriadCreation.Core.Simulation;
 
-namespace MyriadCreation.Simulation.Events
+namespace MyriadCreation.Simulation.Systems
 {
     public static class EventSchedule
     {

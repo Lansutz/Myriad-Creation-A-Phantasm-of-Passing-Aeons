@@ -20,6 +20,7 @@ using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World;
 using MyriadCreation.Core.Constants;
 using MyriadCreation.Core.Data;
+using MyriadCreation.Simulation.State;
 namespace MyriadCreation.Infrastructure.Save
 {
  /// 存档系统（v2）

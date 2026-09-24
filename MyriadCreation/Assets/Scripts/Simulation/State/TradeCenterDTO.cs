@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 
 using MyriadCreation.Core.Dto;
-namespace MyriadCreation.Simulation.Systems
+namespace MyriadCreation.Simulation.State
 {
     [Serializable]
     public class TradeCenterDTO

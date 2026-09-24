@@ -29,7 +29,7 @@ using MyriadCreation.World.Terrain;
 
 
 
-namespace MyriadCreation.Simulation.Events
+namespace MyriadCreation.Simulation.Definitions
 {
     public enum GameEventType
     {

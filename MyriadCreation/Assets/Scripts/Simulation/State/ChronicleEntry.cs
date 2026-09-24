@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MyriadCreation.Simulation.Events
+namespace MyriadCreation.Simulation.State
 {
     public class ChronicleEntry
     {

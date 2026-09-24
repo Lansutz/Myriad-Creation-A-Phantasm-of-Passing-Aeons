@@ -3,7 +3,7 @@ using MyriadCreation.Simulation.Population;
 
 
 
-namespace MyriadCreation.Simulation.State
+namespace MyriadCreation.Simulation.Presentation
 {
     public static class FactionNames
     {

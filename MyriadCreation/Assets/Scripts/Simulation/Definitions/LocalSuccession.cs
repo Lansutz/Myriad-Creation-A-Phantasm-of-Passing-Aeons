@@ -1,4 +1,4 @@
-namespace MyriadCreation.Simulation.State
+namespace MyriadCreation.Simulation.Definitions
 {
     public enum LocalSuccession
     {

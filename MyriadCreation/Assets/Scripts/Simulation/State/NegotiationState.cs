@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-namespace MyriadCreation.Simulation.Definitions
+namespace MyriadCreation.Simulation.State
 {
         [Serializable]
         public class NegotiationState

@@ -17,7 +17,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Systems
+namespace MyriadCreation.Simulation.Presentation
 {
  /// 阶层 UI 面板文本构建器（纯静态可测，TMP 富文本）
  /// 展示：整体社会概览 + 各阶层详情（人口/满足/忠诚/组织/影响/动荡/支持 + 8维需求条形图 + 主要不满）

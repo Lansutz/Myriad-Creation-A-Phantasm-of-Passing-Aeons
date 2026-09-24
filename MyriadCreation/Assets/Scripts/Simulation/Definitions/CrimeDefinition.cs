@@ -1,4 +1,4 @@
-namespace MyriadCreation.Simulation.State
+namespace MyriadCreation.Simulation.Definitions
 {
     [System.Serializable]
     public struct CrimeDefinition

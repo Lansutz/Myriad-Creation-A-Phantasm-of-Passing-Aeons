@@ -5,7 +5,7 @@ using MyriadCreation.Simulation.Characters;
 
 
 
-namespace MyriadCreation.Simulation.State
+namespace MyriadCreation.Simulation.Definitions
 {
  /// 继承法系统（四轴独立选择）
  /// 轴1 继承范围：限本族 vs 血亲不论姓氏

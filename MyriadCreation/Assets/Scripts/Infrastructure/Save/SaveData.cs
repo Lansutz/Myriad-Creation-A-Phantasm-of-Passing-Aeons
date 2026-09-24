@@ -13,6 +13,7 @@ using MyriadCreation.Simulation.Politics;
 using MyriadCreation.Simulation.Society;
 using MyriadCreation.Core.Data;
 using MyriadCreation.World;
+using MyriadCreation.Simulation.State;
 namespace MyriadCreation.Infrastructure.Save
 {
     [Serializable]

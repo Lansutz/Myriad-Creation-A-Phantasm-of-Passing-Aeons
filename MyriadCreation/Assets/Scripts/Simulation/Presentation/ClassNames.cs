@@ -14,7 +14,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.State
+namespace MyriadCreation.Simulation.Presentation
 {
     public static class ClassNames
     {

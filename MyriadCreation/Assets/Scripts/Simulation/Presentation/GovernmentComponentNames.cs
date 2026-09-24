@@ -1,4 +1,6 @@
-namespace MyriadCreation.Simulation.Systems
+using MyriadCreation.Simulation.Definitions;
+
+namespace MyriadCreation.Simulation.Presentation
 {
     public static class GovernmentComponentNames
     {

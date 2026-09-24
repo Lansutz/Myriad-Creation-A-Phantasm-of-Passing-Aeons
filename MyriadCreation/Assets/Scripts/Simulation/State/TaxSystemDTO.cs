@@ -15,7 +15,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Systems
+namespace MyriadCreation.Simulation.State
 {
     [Serializable]
     public class TaxSystemDTO

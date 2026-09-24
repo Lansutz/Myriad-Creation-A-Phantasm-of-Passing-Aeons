@@ -17,6 +17,7 @@ using MyriadCreation.Simulation.Religion;
 using MyriadCreation.Simulation.Society;
 using MyriadCreation.Simulation.Warfare;
 using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.Simulation.Definitions;
 
 
 
