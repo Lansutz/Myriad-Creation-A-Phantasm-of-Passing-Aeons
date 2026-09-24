@@ -26,7 +26,8 @@ namespace CivilizationEvolution.Simulation.AI
             InnovationTree innovation,
             CharacterManager characters,
             Action missionaryTick,
-            SimulationCommandBus commands)
+            SimulationCommandBus commands,
+            AIIntentExecutor executor)
         {
             if (scheduler == null) throw new ArgumentNullException(nameof(scheduler));
             if (ai == null) throw new ArgumentNullException(nameof(ai));
@@ -38,13 +39,13 @@ namespace CivilizationEvolution.Simulation.AI
             if (characters == null) throw new ArgumentNullException(nameof(characters));
             if (missionaryTick == null) throw new ArgumentNullException(nameof(missionaryTick));
             if (commands == null) throw new ArgumentNullException(nameof(commands));
+            if (executor == null) throw new ArgumentNullException(nameof(executor));
 
             scheduler.Register(ScheduleId, SimulationCadence.Daily, 28, _ =>
             {
                 missionaryTick();
                 ai.SyncRulers(characters);
                 ai.DailyTick(realms(), tiles(), diplomacy, economy, innovation, characters);
-                var executor = new AIIntentExecutor(commands, innovation, realms(), tiles());
                 ai.ExecutePendingIntents(executor);
             });
         }
