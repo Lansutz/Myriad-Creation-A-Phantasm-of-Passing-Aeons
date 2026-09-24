@@ -14,7 +14,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Culture
+namespace MyriadCreation.Simulation.Systems
 {
  /// 地名语义组合引擎（——学《地图上发生的事》更细）：
  /// 词干（地形/人名/族群名）× 语义后缀类 → 地名

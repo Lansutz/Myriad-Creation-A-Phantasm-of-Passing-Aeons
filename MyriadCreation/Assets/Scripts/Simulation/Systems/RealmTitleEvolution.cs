@@ -17,7 +17,7 @@ using MyriadCreation.Simulation.WorldState;
 
 
 
-namespace MyriadCreation.Simulation.Culture
+namespace MyriadCreation.Simulation.Systems
 {
  /// 头衔演化系统（——革新驱动领土化）：
  /// ①头衔期（领土王国革新前）：头衔=个人属格——"某某族群人之王"

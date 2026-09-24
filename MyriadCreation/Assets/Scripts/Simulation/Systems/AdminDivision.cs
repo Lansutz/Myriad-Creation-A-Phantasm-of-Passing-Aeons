@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace MyriadCreation.Simulation.Culture
+namespace MyriadCreation.Simulation.Systems
 {
     public class AdminDivision
     {
