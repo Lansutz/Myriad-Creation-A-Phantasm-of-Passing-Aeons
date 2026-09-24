@@ -4,7 +4,10 @@ using UnityEngine;
 using CivilizationEvolution.Core.Contracts;
 using CivilizationEvolution.Core.Data;
 using CivilizationEvolution.Simulation.Diplomacy;
+using CivilizationEvolution.Simulation.Economy;
 using CivilizationEvolution.Simulation.Innovation;
+using CivilizationEvolution.Simulation.Politics;
+using CivilizationEvolution.Simulation.Warfare;
 
 namespace CivilizationEvolution.Simulation.AI
 {
@@ -41,7 +44,9 @@ namespace CivilizationEvolution.Simulation.AI
                 switch (intent.Type)
                 {
                     case AIIntentType.StartResearch:
-                        ExecuteStartResearch(intent);
+                        _commands.Send(new StartInnovationResearchCommand(
+                            intent.ActorRealmId,
+                            intent.InnovationId));
                         break;
                     case AIIntentType.RaidSettlement:
                         _commands.Send(new RaidSettlementCommand(
@@ -56,6 +61,9 @@ namespace CivilizationEvolution.Simulation.AI
                             intent.TargetRealmId,
                             "领土扩张"));
                         break;
+                    case AIIntentType.ImproveEconomy:
+                        _commands.Send(new ImproveRealmEconomyCommand(intent.ActorRealmId));
+                        break;
                     case AIIntentType.ProposeAlliance:
                         _commands.Send(new ProposeAllianceCommand(
                             intent.ActorRealmId,
@@ -68,57 +76,15 @@ namespace CivilizationEvolution.Simulation.AI
                             intent.TargetRealmId,
                             intent.Amount));
                         break;
-                    case AIIntentType.ImproveEconomy:
-                        ExecuteImproveEconomy(intent);
-                        break;
                     case AIIntentType.ConsolidateRealm:
-                        ExecuteConsolidation(intent);
+                        _commands.Send(new ConsolidateRealmCommand(intent.ActorRealmId));
                         break;
                     case AIIntentType.MilitaryBuildUp:
-                        ExecuteMilitaryBuildUp(intent);
+                        _commands.Send(new MilitaryBuildUpCommand(intent.ActorRealmId));
                         break;
                 }
             }
         }
 
-        private void ExecuteStartResearch(AIIntent intent)
-        {
-            if (intent.InnovationId != 0)
-                _innovations.StartResearch(intent.ActorRealmId, intent.InnovationId);
-        }
-
-        private void ExecuteImproveEconomy(AIIntent intent)
-        {
-            if (!_realms.TryGetValue(intent.ActorRealmId, out var realm)) return;
-
-            foreach (int idx in realm.coreTiles)
-            {
-                if (idx >= 0 && idx < _tiles.Length && realm.treasury > 50f)
-                {
-                    _tiles[idx].development = Mathf.Min(1f, _tiles[idx].development + 0.01f);
-                    realm.treasury -= 10f;
-                }
-            }
-        }
-
-        private void ExecuteConsolidation(AIIntent intent)
-        {
-            if (!_realms.TryGetValue(intent.ActorRealmId, out var realm)) return;
-
-            foreach (int idx in realm.coreTiles)
-            {
-                if (idx >= 0 && idx < _tiles.Length)
-                {
-                    _tiles[idx].stability = Mathf.Min(100f, _tiles[idx].stability + 1f);
-                    _tiles[idx].order = Mathf.Min(100f, _tiles[idx].order + 0.5f);
-                }
-            }
-        }
-
-        private void ExecuteMilitaryBuildUp(AIIntent intent)
-        {
-            if (_realms.TryGetValue(intent.ActorRealmId, out var realm))
-                realm.treasury = Mathf.Max(0f, realm.treasury - 50f);
-        }
     }
 }
