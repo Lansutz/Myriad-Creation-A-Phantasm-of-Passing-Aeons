@@ -126,10 +126,9 @@ namespace MyriadCreation.World.Settlement
         public string SettlementTypeName => settlementType switch
         {
             SettlementType.Village => "村",
-            SettlementType.Town => "镇",
+            SettlementType.Village => "镇",
             SettlementType.City => "城",
             SettlementType.Fort => "堡",
-            SettlementType.Camp => "营地",
             _ => "未知"
         };
     }

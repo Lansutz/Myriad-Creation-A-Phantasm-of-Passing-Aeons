@@ -197,7 +197,7 @@ namespace MyriadCreation.World.Anchor
                 SettlementType.Fort => "寨",
                 SettlementType.City => "城",
                 SettlementType.Village => "村",
-                SettlementType.Town => "镇",
+                SettlementType.Village => "镇",
                 _ => "村"
             };
             return prefix + mid + suffix;

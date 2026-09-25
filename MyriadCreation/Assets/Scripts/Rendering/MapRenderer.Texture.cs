@@ -171,10 +171,9 @@ namespace MyriadCreation.Rendering
             Color iconColor = burg.settlementType switch
             {
                 SettlementType.City => new Color(1f, 0.85f, 0.2f, 1f),
-                SettlementType.Town => new Color(0.95f, 0.85f, 0.5f, 1f),
+                SettlementType.Village => new Color(0.95f, 0.85f, 0.5f, 1f),
                 SettlementType.Village => new Color(0.9f, 0.8f, 0.4f, 1f),
                 SettlementType.Fort => new Color(0.9f, 0.3f, 0.2f, 1f),
-                SettlementType.Camp => new Color(0.5f, 0.8f, 0.5f, 1f),
                 _ => new Color(0.6f, 0.6f, 0.6f, 1f)
             };
 
