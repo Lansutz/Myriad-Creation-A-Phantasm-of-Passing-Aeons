@@ -89,8 +89,8 @@ namespace MyriadCreation.Simulation.Systems
         {
             switch (burgType)
             {
-                case SettlementType.Fort:
-                    return SettlementType.Fort;
+                case SettlementCategory.Outpost:
+                    return SettlementCategory.Outpost;
                 case SettlementType.City:
                     return SettlementType.City;
                 default:
@@ -161,16 +161,16 @@ namespace MyriadCreation.Simulation.Systems
                 camp.population >= FORTIFIED_CAMP_TO_FORT_POP)
             {
                 // 坞堡 → 堡垒
-                targetType = SettlementType.Fort;
+                targetCategory = SettlementCategory.Outpost;
                 targetLevel = SettlementLevel.LevelII;
-                burgType = SettlementType.Fort;
+                burgCategory = SettlementCategory.Outpost;
             }
             else if (camp.population >= CAMP_TO_VILLAGE_POP)
             {
                 // 营寨 → 村镇
-                targetType = SettlementType.Village;
+                targetCategory = SettlementCategory.Burg;
                 targetLevel = SettlementLevel.LevelI;
-                burgType = SettlementType.Village;
+                burgCategory = SettlementCategory.Burg;
             }
             else
             {
@@ -191,7 +191,7 @@ namespace MyriadCreation.Simulation.Systems
                 wealth = camp.supplies * 0.5f,
                 fortification = camp.defense * 0.1f,
                 garrison = camp.population / 5,
-                settlementCategory = targetType == SettlementType.Fort ? SettlementCategory.Outpost : SettlementCategory.Burg,
+                settlementCategory = targetCategory == SettlementCategory.Outpost ? SettlementCategory.Outpost : SettlementCategory.Burg,
                 constructionProgress = 0f,
                 constructionTier = 1,
                 settlementType = targetType,

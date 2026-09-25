@@ -170,10 +170,10 @@ namespace MyriadCreation.Rendering
  // 图标颜色根据类型
             Color iconColor = burg.settlementType switch
             {
-                SettlementType.City => new Color(1f, 0.85f, 0.2f, 1f),
+                SettlementCategory.Burg => new Color(1f, 0.85f, 0.2f, 1f),
                 SettlementType.Village => new Color(0.95f, 0.85f, 0.5f, 1f),
-                SettlementType.Village => new Color(0.9f, 0.8f, 0.4f, 1f),
-                SettlementType.Fort => new Color(0.9f, 0.3f, 0.2f, 1f),
+                SettlementCategory.Burg => new Color(0.9f, 0.8f, 0.4f, 1f),
+                SettlementCategory.Outpost => new Color(0.9f, 0.3f, 0.2f, 1f),
                 _ => new Color(0.6f, 0.6f, 0.6f, 1f)
             };
 
@@ -189,9 +189,9 @@ namespace MyriadCreation.Rendering
                     bool draw = burg.settlementType switch
                     {
  // 城：方形图标
-                        SettlementType.City => true,
+                        SettlementCategory.Burg => true,
  // 堡：菱形/十字图标
-                        SettlementType.Fort => Mathf.Abs(dx) + Mathf.Abs(dy) <= half + 1,
+                        SettlementCategory.Outpost => Mathf.Abs(dx) + Mathf.Abs(dy) <= half + 1,
  // 村镇：圆形图标
                         _ => dx * dx + dy * dy <= half * half + 1
                     };

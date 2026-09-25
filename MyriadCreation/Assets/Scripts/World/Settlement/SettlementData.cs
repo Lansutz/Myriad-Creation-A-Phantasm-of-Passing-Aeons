@@ -119,7 +119,7 @@ namespace MyriadCreation.World.Settlement
         /// <summary>是否为主要聚居点（城市/要塞/大型镇）</summary>
         public bool IsMajorSettlement =>
             settlementType == SettlementType.City ||
-            settlementType == SettlementType.Fort;
+            settlementCategory == SettlementCategory.Outpost;
         public bool IsDamaged => ruinLevel > 0 && ruinLevel < 3;
 
         /// <summary>形态显示名称</summary>

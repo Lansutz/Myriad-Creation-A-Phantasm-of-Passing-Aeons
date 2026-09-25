@@ -247,7 +247,7 @@ namespace MyriadCreation.Simulation.WorldState
             foreach (var s in burgs.Values) s.anchor = anchors[s.anchorId];
             int cityCount=0, portCount=0, fortCount=0, villageCount=0;
             foreach (var b in burgs.Values) {
-                if (b.settlementType == SettlementType.Fort) fortCount++;
+                if (b.settlementCategory == SettlementCategory.Outpost) fortCount++;
                 else if (b.isPort) { cityCount++; portCount++; }
                 else if (b.settlementType == SettlementType.City) cityCount++;
                 else villageCount++;

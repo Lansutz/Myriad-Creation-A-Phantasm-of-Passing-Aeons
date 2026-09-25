@@ -74,7 +74,7 @@ namespace MyriadCreation.World.Settlement
             }
 
             // 根据聚居点类型调整
-            if (burg.settlementType == SettlementType.Fort)
+            if (burg.settlementCategory == SettlementCategory.Outpost)
             {
                 military += 15f;
                 administrative += 3f;

@@ -39,7 +39,7 @@ namespace MyriadCreation.World.Settlement
                 burg.cityForm = DeriveCityForm(tile, burg);
                 burg.fortSubtype = FortSubtype.RoyalCastle; // 默认
             }
-            else if (burg.settlementType == SettlementType.Fort)
+            else if (burg.settlementCategory == SettlementCategory.Outpost)
             {
                 burg.fortSubtype = DeriveFortSubtype(tile, burg);
                 burg.cityForm = CityForm.CitadelCity;
@@ -56,10 +56,10 @@ namespace MyriadCreation.World.Settlement
  // 7. 初始等级
             burg.settlementLevel = SettlementLevel.LevelI;
             burg.evolutionStage = EvolutionStage.Stable;
-            burg.wallLevel = burg.settlementType == SettlementType.Fort ? WallLevel.Palisade : WallLevel.None;
+            burg.wallLevel = burg.settlementCategory == SettlementCategory.Outpost ? WallLevel.Palisade : WallLevel.None;
 
  // 7.5 聚居点分类推导
-            burg.settlementCategory = burg.settlementType == SettlementType.Fort
+            burg.settlementCategory = burg.settlementCategory == SettlementCategory.Outpost
                 ? SettlementCategory.Outpost
                 : SettlementCategory.Burg;
 
@@ -197,7 +197,7 @@ namespace MyriadCreation.World.Settlement
  // 瓶颈+军事功能 → 堡
             if (burg.bottleneckType != BottleneckType.None &&
                 burg.primaryFunction == SettlementFunction.Military)
-                return SettlementType.Fort;
+                settlementCategory = SettlementCategory.Outpost; return SettlementType.Village;
 
  // 港口+商业 → 城
             if (burg.portTier >= PortTier.IntermediatePort &&
@@ -371,7 +371,7 @@ namespace MyriadCreation.World.Settlement
             if (burg.settlementLevel >= SettlementLevel.LevelIII &&
                 burg.wallLevel < WallLevel.StoneWall)
             {
-                burg.wallLevel = burg.settlementType == SettlementType.Fort
+                burg.wallLevel = burg.settlementCategory == SettlementCategory.Outpost
                     ? WallLevel.FortifiedWall
                     : WallLevel.StoneWall;
             }
@@ -380,7 +380,7 @@ namespace MyriadCreation.World.Settlement
             if (burg.settlementLevel >= SettlementLevel.LevelIV &&
                 burg.cityForm == CityForm.WalledTown)
             {
-                burg.cityForm = burg.settlementType == SettlementType.Fort
+                burg.cityForm = burg.settlementCategory == SettlementCategory.Outpost
                     ? CityForm.StarCity
                     : CityForm.Circular;
             }
@@ -408,7 +408,7 @@ namespace MyriadCreation.World.Settlement
             {
                 SettlementType.Village => "村镇",
                 SettlementType.City => "城",
-                SettlementType.Fort => "堡",
+                SettlementCategory.Outpost => "堡",
                 _ => "未知"
             };
 

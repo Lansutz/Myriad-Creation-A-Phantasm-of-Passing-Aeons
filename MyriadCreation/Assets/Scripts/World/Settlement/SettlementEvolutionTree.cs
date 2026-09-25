@@ -141,7 +141,7 @@ namespace MyriadCreation.World.Settlement
         public static UpgradePath DeriveEvolutionPath(TileData tile, SettlementData burg)
         {
             // 1. 军事据点 → 堡垒起源
-            if (burg.settlementType == SettlementType.Fort)
+            if (burg.settlementCategory == SettlementCategory.Outpost)
             {
                 return UpgradePath.FortressGrowth;
             }
