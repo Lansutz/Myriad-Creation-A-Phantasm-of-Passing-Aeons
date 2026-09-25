@@ -82,18 +82,16 @@ namespace MyriadCreation.Simulation.Systems
         public const int FORTIFIED_CAMP_TO_FORT_POP = 100;
 
         /// <summary>
-        /// 由传统 SettlementRole 推断聚落形态（村镇/城/堡）。
+        /// 由传统 SettlementType 推断聚落形态（村镇/城/堡）。
         /// Village/Town→Village；City/Port/Capital→City；Fortress→Fort。
         /// </summary>
-        public static SettlementType InferFromBurgType(SettlementRole burgType)
+        public static SettlementType InferFromBurgType(SettlementType burgType)
         {
             switch (burgType)
             {
-                case SettlementRole.Fortress:
+                case SettlementType.Fort:
                     return SettlementType.Fort;
-                case SettlementRole.City:
-                case SettlementRole.Port:
-                case SettlementRole.Capital:
+                case SettlementType.City:
                     return SettlementType.City;
                 default:
                     return SettlementType.Village;
@@ -157,7 +155,7 @@ namespace MyriadCreation.Simulation.Systems
             // 判定转化形态
             SettlementType targetType;
             SettlementLevel targetLevel;
-            SettlementRole burgType;
+            SettlementType burgType;
 
             if (isFortified && camp.defense >= FORT_SETTLEMENT_DEFENSE_THRESHOLD &&
                 camp.population >= FORTIFIED_CAMP_TO_FORT_POP)
@@ -165,14 +163,14 @@ namespace MyriadCreation.Simulation.Systems
                 // 坞堡 → 堡垒
                 targetType = SettlementType.Fort;
                 targetLevel = SettlementLevel.LevelII;
-                burgType = SettlementRole.Fortress;
+                burgType = SettlementType.Fort;
             }
             else if (camp.population >= CAMP_TO_VILLAGE_POP)
             {
                 // 营寨 → 村镇
                 targetType = SettlementType.Village;
                 targetLevel = SettlementLevel.LevelI;
-                burgType = SettlementRole.Village;
+                burgType = SettlementType.Village;
             }
             else
             {

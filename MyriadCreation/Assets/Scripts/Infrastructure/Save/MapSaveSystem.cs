@@ -127,7 +127,7 @@ namespace MyriadCreation.Infrastructure.Save
                     {
                         anchorId = b.anchorId,
                         settlementName = b.settlementName,
-                        type = (int)b.type,
+                        type = (int)b.settlementType,
                         provinceId = b.provinceId,
                         tileIndex = b.tileIndex,
                         x = b.x,
@@ -271,7 +271,7 @@ namespace MyriadCreation.Infrastructure.Save
                         {
                             anchorId = b.anchorId,
                             settlementName = b.settlementName,
-                            type = (SettlementRole)b.type,
+                            type = (SettlementType)b.settlementType,
                             provinceId = b.provinceId,
                             tileIndex = b.tileIndex,
                             x = b.x,

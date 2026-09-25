@@ -308,14 +308,14 @@ namespace MyriadCreation.Simulation.WorldState
             {
                 anchorId = nextId,
                 settlementName = name,
-                type = SettlementRole.City,
+                type = SettlementType.City,
                 provinceId = tile.provinceId,
                 tileIndex = tileIndex,
                 x = 0.5f, y = 0.5f,
                 isCoastal = tile.isCoast,
             };
             SettlementTypologySystem.DeriveInitialType(burg, tile, mapWidth, mapHeight);
-            burg.settlementType = SettlementRoleInferrer.InferSettlementType(burg.type);
+            burg.settlementType = SettlementTypeInferrer.InferSettlementType(burg.settlementType);
             burgs[burg.anchorId] = burg;
             string founderName = founder != null ? founder.firstName + founder.lastName : "某人";
             _chronicle?.Add("city_founded",

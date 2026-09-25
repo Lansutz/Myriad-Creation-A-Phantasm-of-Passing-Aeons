@@ -116,18 +116,20 @@ namespace MyriadCreation.World.Settlement
 
         public bool IsRuined => ruinLevel >= 3;
 
-        /// <summary>是否为主要聚居点（城市/港口/首都/要塞）</summary>
+        /// <summary>是否为主要聚居点（城市/要塞/大型镇）</summary>
         public bool IsMajorSettlement =>
-            type == SettlementRole.City || type == SettlementRole.Port ||
-            type == SettlementRole.Capital || type == SettlementRole.Fortress;
+            settlementType == SettlementType.City ||
+            settlementType == SettlementType.Fort;
         public bool IsDamaged => ruinLevel > 0 && ruinLevel < 3;
 
         /// <summary>形态显示名称</summary>
         public string SettlementTypeName => settlementType switch
         {
-            SettlementType.Village => "村镇",
+            SettlementType.Village => "村",
+            SettlementType.Town => "镇",
             SettlementType.City => "城",
             SettlementType.Fort => "堡",
+            SettlementType.Camp => "营地",
             _ => "未知"
         };
     }

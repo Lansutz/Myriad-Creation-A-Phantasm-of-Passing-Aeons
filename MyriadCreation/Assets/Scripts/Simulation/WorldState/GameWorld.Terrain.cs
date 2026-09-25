@@ -247,7 +247,10 @@ namespace MyriadCreation.Simulation.WorldState
             foreach (var s in burgs.Values) s.anchor = anchors[s.anchorId];
             int cityCount=0, portCount=0, fortCount=0, villageCount=0;
             foreach (var b in burgs.Values) {
-                switch (b.type) { case SettlementRole.City: cityCount++; break; case SettlementRole.Port: portCount++; break; case SettlementRole.Fortress: fortCount++; break; default: villageCount++; break; }
+                if (b.settlementType == SettlementType.Fort) fortCount++;
+                else if (b.isPort) { cityCount++; portCount++; }
+                else if (b.settlementType == SettlementType.City) cityCount++;
+                else villageCount++;
             }
             Debug.Log($"[GameWorld] 子地块生成：{burgs.Count}个（城{cityCount}/港{portCount}/寨{fortCount}/村{villageCount}）");
         }

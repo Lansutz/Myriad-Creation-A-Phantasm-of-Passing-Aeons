@@ -168,13 +168,13 @@ namespace MyriadCreation.Rendering
             if (mapWidth > 512) iconSize = Mathf.Clamp(iconSize + 1, 3, 7);
 
  // 图标颜色根据类型
-            Color iconColor = burg.type switch
+            Color iconColor = burg.settlementType switch
             {
-                SettlementRole.Capital => new Color(1f, 0.85f, 0.2f, 1f),
-                SettlementRole.City => new Color(1f, 1f, 1f, 1f),
-                SettlementRole.Port => new Color(0.3f, 0.6f, 1f, 1f),
-                SettlementRole.Fortress => new Color(0.9f, 0.3f, 0.2f, 1f),
-                SettlementRole.Town => new Color(0.9f, 0.8f, 0.4f, 1f),
+                SettlementType.City => new Color(1f, 0.85f, 0.2f, 1f),
+                SettlementType.Town => new Color(0.95f, 0.85f, 0.5f, 1f),
+                SettlementType.Village => new Color(0.9f, 0.8f, 0.4f, 1f),
+                SettlementType.Fort => new Color(0.9f, 0.3f, 0.2f, 1f),
+                SettlementType.Camp => new Color(0.5f, 0.8f, 0.5f, 1f),
                 _ => new Color(0.6f, 0.6f, 0.6f, 1f)
             };
 

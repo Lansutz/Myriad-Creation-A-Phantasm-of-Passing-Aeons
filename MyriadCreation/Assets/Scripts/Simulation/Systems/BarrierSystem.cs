@@ -271,7 +271,7 @@ namespace MyriadCreation.Simulation.Systems
             foreach (var burg in burgs.Values)
             {
                 if (burg.settlementType != SettlementType.Fort &&
-                    burg.type != SettlementRole.Fortress) continue;
+                    burg.settlementType != SettlementType.Fort) continue;
 
                 int fortTile = burg.tileIndex;
                 if (fortTile < 0 || fortTile >= tiles.Length) continue;

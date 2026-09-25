@@ -55,7 +55,7 @@ namespace MyriadCreation.World.Anchor
                     centerTile = province.memberTiles[0];
 
                 var (anchor, settlement) = CreatePair(ref nextId, provinceId, centerTile,
-                    IsProvinceCenter(province, centerTile) ? SettlementRole.City : SettlementRole.Town);
+                    IsProvinceCenter(province, centerTile) ? SettlementType.City : SettlementType.Village);
                 settlement.hasMarket = true;
                 settlement.development = 20f + (float)_rng.NextDouble() * 30f;
                 settlement.population = 500f + (float)_rng.NextDouble() * 1500f;
@@ -67,7 +67,7 @@ namespace MyriadCreation.World.Anchor
                     int coastalTile = FindCoastalTile(province);
                     if (coastalTile >= 0 && _rng.NextDouble() < PortSpawnChance)
                     {
-                        var (a, s) = CreatePair(ref nextId, provinceId, coastalTile, SettlementRole.Port);
+                        var (a, s) = CreatePair(ref nextId, provinceId, coastalTile, SettlementType.City);
                         s.isPort = true;
                         s.isCoastal = true;
                         s.hasMarket = true;
@@ -84,7 +84,7 @@ namespace MyriadCreation.World.Anchor
                     int borderTile = FindBorderTile(province);
                     if (borderTile >= 0)
                     {
-                        var (a, s) = CreatePair(ref nextId, provinceId, borderTile, SettlementRole.Fortress);
+                        var (a, s) = CreatePair(ref nextId, provinceId, borderTile, SettlementType.Fort);
                         s.fortification = 3f + (float)_rng.NextDouble() * 5f;
                         s.garrison = 100 + _rng.Next(200);
                         s.development = 5f + (float)_rng.NextDouble() * 15f;
@@ -101,7 +101,7 @@ namespace MyriadCreation.World.Anchor
                     if (IsTileOccupied(anchors, tile)) continue;
                     if (!_tiles[tile].isLand) continue;
 
-                    var (a, s) = CreatePair(ref nextId, provinceId, tile, SettlementRole.Village);
+                    var (a, s) = CreatePair(ref nextId, provinceId, tile, SettlementType.Village);
                     s.development = 2f + (float)_rng.NextDouble() * 10f;
                     s.population = 50f + (float)_rng.NextDouble() * 300f;
                     anchors[a.anchorId] = a;
@@ -112,7 +112,7 @@ namespace MyriadCreation.World.Anchor
             return (anchors, settlements);
         }
 
-        private (AnchorData, SettlementData) CreatePair(ref int nextId, int provinceId, int tileIndex, SettlementRole type)
+        private (AnchorData, SettlementData) CreatePair(ref int nextId, int provinceId, int tileIndex, SettlementType type)
         {
             ref TileData tile = ref _tiles[tileIndex];
             int id = nextId++;
@@ -131,7 +131,7 @@ namespace MyriadCreation.World.Anchor
                 anchorId = id,
                 settlementName = GenerateName(tile, type),
                 isCoastal = tile.isCoast,
-                settlementCategory = type == SettlementRole.Fortress ? SettlementCategory.Outpost : SettlementCategory.Burg,
+                settlementCategory = type == SettlementType.Fort ? SettlementCategory.Outpost : SettlementCategory.Burg,
                 constructionProgress = 0f,
                 constructionTier = 1
             };
@@ -139,12 +139,12 @@ namespace MyriadCreation.World.Anchor
             SettlementTypologySystem.DeriveInitialType(settlement, tile, _width, _height);
             EconomicCompositionSystem.InitializeComposition(settlement, tile);
 
-            settlement.settlementType = SettlementRoleInferrer.InferSettlementType(type);
+            settlement.settlementType = type;
             settlement.settlementLevel = type switch
             {
-                SettlementRole.City or SettlementRole.Port or SettlementRole.Capital => SettlementLevel.LevelIII,
-                SettlementRole.Town => SettlementLevel.LevelII,
-                SettlementRole.Fortress => SettlementLevel.LevelII,
+                SettlementType.City => SettlementLevel.LevelIII,
+                SettlementType.Village => SettlementLevel.LevelII,
+                SettlementType.Fort => SettlementLevel.LevelII,
                 _ => SettlementLevel.LevelI
             };
 
@@ -188,17 +188,16 @@ namespace MyriadCreation.World.Anchor
             return false;
         }
 
-        private string GenerateName(TileData tile, SettlementRole type)
+        private string GenerateName(TileData tile, SettlementType type)
         {
             string prefix = tile.elevation01 > 0.55f ? "山" : tile.isCoast ? "海" : "原";
             string mid = tile.annualPrecipMm > 900f ? "润" : tile.annualPrecipMm < 300f ? "干" : "丰";
             string suffix = type switch
             {
-                SettlementRole.City => "城",
-                SettlementRole.Port => "港",
-                SettlementRole.Fortress => "寨",
-                SettlementRole.Town => "镇",
-                SettlementRole.Capital => "京",
+                SettlementType.Fort => "寨",
+                SettlementType.City => "城",
+                SettlementType.Village => "村",
+                SettlementType.Town => "镇",
                 _ => "村"
             };
             return prefix + mid + suffix;
