@@ -168,12 +168,12 @@ namespace MyriadCreation.Rendering
             if (mapWidth > 512) iconSize = Mathf.Clamp(iconSize + 1, 3, 7);
 
  // 图标颜色根据类型
-            Color iconColor = burg.settlementType switch
+            Color iconColor = burg.settlementCategory switch
             {
-                SettlementCategory.Burg => new Color(1f, 0.85f, 0.2f, 1f),
-                SettlementType.Village => new Color(0.95f, 0.85f, 0.5f, 1f),
-                SettlementCategory.Burg => new Color(0.9f, 0.8f, 0.4f, 1f),
+                SettlementCategory.Burg when burg.settlementType == SettlementType.City => new Color(1f, 0.85f, 0.2f, 1f),
+                SettlementCategory.Burg => new Color(0.95f, 0.85f, 0.5f, 1f),
                 SettlementCategory.Outpost => new Color(0.9f, 0.3f, 0.2f, 1f),
+                SettlementCategory.Camp => new Color(0.6f, 0.6f, 0.6f, 1f),
                 _ => new Color(0.6f, 0.6f, 0.6f, 1f)
             };
 
@@ -186,10 +186,10 @@ namespace MyriadCreation.Rendering
                     if (px < 0 || px >= mapWidth || py < 0 || py >= mapHeight) continue;
 
  // 根据聚落形态决定图标形状
-                    bool draw = burg.settlementType switch
+                    bool draw = burg.settlementCategory switch
                     {
  // 城：方形图标
-                        SettlementCategory.Burg => true,
+                        SettlementCategory.Burg when burg.settlementType == SettlementType.City => true,
  // 堡：菱形/十字图标
                         SettlementCategory.Outpost => Mathf.Abs(dx) + Mathf.Abs(dy) <= half + 1,
  // 村镇：圆形图标
