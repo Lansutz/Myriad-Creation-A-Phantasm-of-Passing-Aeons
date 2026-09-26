@@ -123,12 +123,12 @@ namespace MyriadCreation.World.Settlement
         public bool IsDamaged => ruinLevel > 0 && ruinLevel < 3;
 
         /// <summary>形态显示名称</summary>
-        public string SettlementTypeName => settlementType switch
+        public string SettlementTypeName => settlementCategory switch
         {
-            SettlementType.Village => "村",
-            SettlementType.Village => "镇",
-            SettlementType.City => "城",
-            SettlementType.Fort => "堡",
+            SettlementCategory.Outpost => "堡",
+            SettlementCategory.Camp => "营",
+            SettlementCategory.Burg when settlementType == SettlementType.City => "城",
+            SettlementCategory.Burg => "村镇",
             _ => "未知"
         };
     }
