@@ -34,7 +34,7 @@ namespace MyriadCreation.World.Settlement
             burg.settlementType = DeriveSettlementType(tile, burg);
 
  // 5. 推导城形/堡型
-            if (burg.settlementType == SettlementType.City)
+            if (burg.settlementCategory == SettlementCategory.Burg && burg.settlementType == SettlementType.City)
             {
                 burg.cityForm = DeriveCityForm(tile, burg);
                 burg.fortSubtype = FortSubtype.RoyalCastle; // 默认
@@ -197,7 +197,10 @@ namespace MyriadCreation.World.Settlement
  // 瓶颈+军事功能 → 堡
             if (burg.bottleneckType != BottleneckType.None &&
                 burg.primaryFunction == SettlementFunction.Military)
-                settlementCategory = SettlementCategory.Outpost; return SettlementType.Village;
+            {
+                burg.settlementCategory = SettlementCategory.Outpost;
+                return SettlementType.Village;
+            }
 
  // 港口+商业 → 城
             if (burg.portTier >= PortTier.IntermediatePort &&
@@ -404,11 +407,12 @@ namespace MyriadCreation.World.Settlement
         public static string GetFullDescription(SettlementData burg)
         {
             string stageName = SettlementEvolutionTree.GetStageName(burg);
-            string form = burg.settlementType switch
+            string form = burg.settlementCategory switch
             {
-                SettlementType.Village => "村镇",
-                SettlementType.City => "城",
                 SettlementCategory.Outpost => "堡",
+                SettlementCategory.Camp => "营",
+                SettlementCategory.Burg when burg.settlementType == SettlementType.City => "城",
+                SettlementCategory.Burg => "村镇",
                 _ => "未知"
             };
 
