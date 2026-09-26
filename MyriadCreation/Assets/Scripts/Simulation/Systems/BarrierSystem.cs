@@ -270,8 +270,7 @@ namespace MyriadCreation.Simulation.Systems
  // 遍历所有堡垒类型的Burg
             foreach (var burg in burgs.Values)
             {
-                if (burg.settlementCategory != SettlementCategory.Outpost &&
-                    burg.settlementCategory != SettlementCategory.Outpost) continue;
+                if (burg.settlementCategory != SettlementCategory.Outpost) continue;
 
                 int fortTile = burg.tileIndex;
                 if (fortTile < 0 || fortTile >= tiles.Length) continue;
