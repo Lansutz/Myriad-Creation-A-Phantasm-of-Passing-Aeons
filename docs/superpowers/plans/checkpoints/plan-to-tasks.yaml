@@ -1,0 +1,73 @@
+metadata:
+  generated: "2026-09-27"
+  source_plan: "docs/superpowers/plans/2026-09-27-habitation-site-layered-model-plan.md"
+  target_tasks: "docs/superpowers/plans/2026-09-27-habitation-site-layered-model-plan.md"
+summary:
+  total_plan_items: 6
+  covered_plan_items: 6
+  missing_plan_items: 0
+  coverage_percentage: 100.0
+  total_tasks_generated: 16
+  orphan_tasks: 0
+phases:
+  - phase_id: "Phase-1"
+    phase_name: "Foundational"
+    items:
+      - item_id: "1.1"
+        description: "建立栖居点与设施类型契约"
+        tasks: ["T001", "T002", "T003", "T004"]
+  - phase_id: "Phase-2"
+    phase_name: "Core migration"
+    items:
+      - item_id: "2.1"
+        description: "迁移世界状态与查询入口"
+        tasks: ["T005", "T006"]
+      - item_id: "3.1"
+        description: "实现模式转换规则与营地消散"
+        tasks: ["T007", "T008"]
+      - item_id: "4.1"
+        description: "拆分设施损毁与位点模式转化"
+        tasks: ["T009"]
+  - phase_id: "Phase-3"
+    phase_name: "Persistence and cleanup"
+    items:
+      - item_id: "5.1"
+        description: "更新存档 DTO、读写和术语"
+        tasks: ["T010", "T011", "T012"]
+  - phase_id: "Phase-4"
+    phase_name: "Validation"
+    items:
+      - item_id: "6.1"
+        description: "增加规则验证并完成迁移验收"
+        tasks: ["T013", "T014", "T015", "T016"]
+missing_plan_items: []
+orphan_tasks: []
+upstream_trace:
+  - plan_item: "1.1"
+    source_requirements: ["REQ-001", "REQ-002", "REQ-003", "REQ-004"]
+    tasks: ["T001", "T002", "T003", "T004"]
+    full_trace: "REQ-001,REQ-002,REQ-003,REQ-004 -> 1.1 -> T001,T002,T003,T004"
+  - plan_item: "2.1"
+    source_requirements: ["REQ-001", "REQ-005"]
+    tasks: ["T005", "T006"]
+    full_trace: "REQ-001,REQ-005 -> 2.1 -> T005,T006"
+  - plan_item: "3.1"
+    source_requirements: ["REQ-006", "REQ-007"]
+    tasks: ["T007", "T008"]
+    full_trace: "REQ-006,REQ-007 -> 3.1 -> T007,T008"
+  - plan_item: "4.1"
+    source_requirements: ["REQ-008"]
+    tasks: ["T009"]
+    full_trace: "REQ-008 -> 4.1 -> T009"
+  - plan_item: "5.1"
+    source_requirements: ["REQ-009", "REQ-010"]
+    tasks: ["T010", "T011", "T012"]
+    full_trace: "REQ-009,REQ-010 -> 5.1 -> T010,T011,T012"
+  - plan_item: "6.1"
+    source_requirements: ["REQ-001", "REQ-006", "REQ-007", "REQ-008", "REQ-009", "REQ-010"]
+    tasks: ["T013", "T014", "T015", "T016"]
+    full_trace: "REQ-001,REQ-006,REQ-007,REQ-008,REQ-009,REQ-010 -> 6.1 -> T013,T014,T015,T016"
+validation:
+  passed: true
+  errors: []
+  warnings: []

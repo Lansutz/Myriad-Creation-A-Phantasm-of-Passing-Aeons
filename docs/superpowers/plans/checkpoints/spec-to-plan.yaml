@@ -1,0 +1,56 @@
+metadata:
+  generated: "2026-09-27"
+  source_spec: "docs/superpowers/specs/2026-09-27-habitation-site-layered-model-design.md"
+  target_plan: "docs/superpowers/plans/2026-09-27-habitation-site-layered-model-plan.md"
+summary:
+  total_requirements: 10
+  covered_requirements: 10
+  missing_requirements: 0
+  coverage_percentage: 100.0
+requirements:
+  - req_id: "REQ-001"
+    req_description: "栖居点使用 HabitationSite 作为唯一业务父概念"
+    priority: "P1"
+    plan_mapping: { phase: "Phase-2", phase_name: "Core migration", items: [{ item_id: "1.1", description: "建立类型契约" }, { item_id: "2.1", description: "迁移世界状态与查询入口" }] }
+  - req_id: "REQ-002"
+    req_description: "三种模式使用严格英文和枚举键"
+    priority: "P1"
+    plan_mapping: { phase: "Phase-1", phase_name: "Foundational", items: [{ item_id: "1.1", description: "建立类型契约" }] }
+  - req_id: "REQ-003"
+    req_description: "位点分类、定居发展和设施形制分层"
+    priority: "P1"
+    plan_mapping: { phase: "Phase-1", phase_name: "Foundational", items: [{ item_id: "1.1", description: "建立类型契约" }] }
+  - req_id: "REQ-004"
+    req_description: "城墙形制位于设施 facility_form.wall_shape"
+    priority: "P1"
+    plan_mapping: { phase: "Phase-1", phase_name: "Foundational", items: [{ item_id: "1.1", description: "建立类型契约" }] }
+  - req_id: "REQ-005"
+    req_description: "Anchor 仅保留定位/索引职责"
+    priority: "P1"
+    plan_mapping: { phase: "Phase-2", phase_name: "Core migration", items: [{ item_id: "2.1", description: "迁移世界状态与查询入口" }] }
+  - req_id: "REQ-006"
+    req_description: "合法模式转换保留 site_id"
+    priority: "P1"
+    plan_mapping: { phase: "Phase-2", phase_name: "Core migration", items: [{ item_id: "3.1", description: "实现模式转换规则与营地消散" }] }
+  - req_id: "REQ-007"
+    req_description: "营地可消散，非法路径被拒绝"
+    priority: "P1"
+    plan_mapping: { phase: "Phase-2", phase_name: "Core migration", items: [{ item_id: "3.1", description: "实现模式转换规则与营地消散" }] }
+  - req_id: "REQ-008"
+    req_description: "设施损毁与位点模式转换分离"
+    priority: "P1"
+    plan_mapping: { phase: "Phase-2", phase_name: "Core migration", items: [{ item_id: "4.1", description: "拆分设施损毁与位点模式转化" }] }
+  - req_id: "REQ-009"
+    req_description: "新旧存档字段显式映射"
+    priority: "P1"
+    plan_mapping: { phase: "Phase-3", phase_name: "Persistence and cleanup", items: [{ item_id: "5.1", description: "更新存档 DTO、读写和术语" }] }
+  - req_id: "REQ-010"
+    req_description: "清理 burg/holding/底层 camp 等旧语义"
+    priority: "P1"
+    plan_mapping: { phase: "Phase-3", phase_name: "Persistence and cleanup", items: [{ item_id: "5.1", description: "更新存档 DTO、读写和术语" }] }
+missing_requirements: []
+orphan_plan_items: []
+validation:
+  passed: true
+  errors: []
+  warnings: []
