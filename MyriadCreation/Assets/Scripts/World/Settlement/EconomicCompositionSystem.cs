@@ -27,10 +27,10 @@ namespace MyriadCreation.World.Settlement
         /// 根据地理条件和物产初始化城市的经济成分
         /// 这是成分系统的核心：地理条件和物产自然决定了城市的经济成分比例。
         /// </summary>
-        public static void InitializeComposition(SettlementData burg, TileData tile)
+        public static void InitializeComposition(SettlementData settlement, TileData tile)
         {
-            if (burg == null) return;
-            if (burg.economicInitialized) return;
+            if (settlement == null) return;
+            if (settlement.economicInitialized) return;
 
             var composition = new Dictionary<EconomicSector, float>();
 
@@ -74,13 +74,13 @@ namespace MyriadCreation.World.Settlement
             }
 
             // 根据聚居点类型调整
-            if (burg.settlementCategory == SettlementCategory.Outpost)
+            if (settlement.siteMode == SiteMode.FortifiedOutpost)
             {
                 military += 15f;
                 administrative += 3f;
             }
 
-            if (burg.isCapital)
+            if (settlement.isCapital)
             {
                 administrative += 10f;
                 cultural += 5f;
@@ -88,24 +88,24 @@ namespace MyriadCreation.World.Settlement
                 commerce += 5f;
             }
 
-            if (burg.isPort)
+            if (settlement.isPort)
             {
                 transportation += 10f;
                 commerce += 8f;
                 fishery += 5f;
             }
 
-            if (burg.hasMarket)
+            if (settlement.hasMarket)
             {
                 commerce += 5f;
             }
 
-            if (burg.hasTemple)
+            if (settlement.hasTemple)
             {
                 religious += 5f;
             }
 
-            if (burg.hasUniversity)
+            if (settlement.hasUniversity)
             {
                 cultural += 8f;
             }
@@ -136,21 +136,21 @@ namespace MyriadCreation.World.Settlement
                 composition[EconomicSector.Religious] = 0.1f;
             }
 
-            burg.economicComposition = composition;
-            burg.primarySector = GetPrimarySector(composition);
-            burg.economicInitialized = true;
+            settlement.economicComposition = composition;
+            settlement.primarySector = GetPrimarySector(composition);
+            settlement.economicInitialized = true;
         }
 
         /// <summary>
         /// 更新城市的经济成分（每日调用）
         /// 成分比例随时间缓慢变化，受贸易、人口、军事、行政、宗教等因素影响
         /// </summary>
-        public static void UpdateComposition(SettlementData burg, float deltaTime)
+        public static void UpdateComposition(SettlementData settlement, float deltaTime)
         {
-            if (burg == null || burg.economicComposition == null || burg.economicComposition.Count == 0)
+            if (settlement == null || settlement.economicComposition == null || settlement.economicComposition.Count == 0)
                 return;
 
-            var composition = burg.economicComposition;
+            var composition = settlement.economicComposition;
             var keys = new List<EconomicSector>(composition.Keys);
 
             // 基础变化率（每天变化0.05%，非常缓慢）
@@ -158,7 +158,7 @@ namespace MyriadCreation.World.Settlement
 
             // ===== 因素1：人口规模 =====
             // 人口越多，商业和手工业成分越高（更多的消费需求和劳动力）
-            float populationFactor = Mathf.Clamp01(burg.population / 5000f); // 5000人以上达到最大影响
+            float populationFactor = Mathf.Clamp01(settlement.population / 5000f); // 5000人以上达到最大影响
             if (composition.ContainsKey(EconomicSector.Commerce))
                 composition[EconomicSector.Commerce] += populationFactor * baseChangeRate * 2f;
             if (composition.ContainsKey(EconomicSector.Artisanal))
@@ -166,11 +166,11 @@ namespace MyriadCreation.World.Settlement
 
             // ===== 因素2：贸易和市场 =====
             // 有市场或港口的城市，商业和交通成分越高
-            if (burg.hasMarket || burg.isPort)
+            if (settlement.hasMarket || settlement.isPort)
             {
-                float tradeFactor = burg.hasMarket ? 0.5f : 0f;
-                tradeFactor += burg.isPort ? 0.5f : 0f;
-                tradeFactor += burg.tradePower / 100f;
+                float tradeFactor = settlement.hasMarket ? 0.5f : 0f;
+                tradeFactor += settlement.isPort ? 0.5f : 0f;
+                tradeFactor += settlement.tradePower / 100f;
                 tradeFactor = Mathf.Clamp01(tradeFactor);
 
                 if (composition.ContainsKey(EconomicSector.Commerce))
@@ -181,13 +181,13 @@ namespace MyriadCreation.World.Settlement
 
             // ===== 因素3：军事和防御 =====
             // 有驻军或高防御的城市，军事成分越高
-            float militaryFactor = Mathf.Clamp01(burg.garrison / 500f + burg.fortification / 10f);
+            float militaryFactor = Mathf.Clamp01(settlement.garrison / 500f + settlement.fortification / 10f);
             if (militaryFactor > 0.1f && composition.ContainsKey(EconomicSector.Military))
                 composition[EconomicSector.Military] += militaryFactor * baseChangeRate * 2f;
 
             // ===== 因素4：行政和首都 =====
             // 首都或行政中心，行政成分越高
-            if (burg.isCapital)
+            if (settlement.isCapital)
             {
                 if (composition.ContainsKey(EconomicSector.Administrative))
                     composition[EconomicSector.Administrative] += baseChangeRate * 3f;
@@ -197,7 +197,7 @@ namespace MyriadCreation.World.Settlement
 
             // ===== 因素5：宗教 =====
             // 有宗教建筑的城市，宗教成分越高
-            if (burg.hasTemple)
+            if (settlement.hasTemple)
             {
                 if (composition.ContainsKey(EconomicSector.Religious))
                     composition[EconomicSector.Religious] += baseChangeRate * 2f;
@@ -205,7 +205,7 @@ namespace MyriadCreation.World.Settlement
 
             // ===== 因素6：文化和教育 =====
             // 有大学的城市，文化成分越高
-            if (burg.hasUniversity)
+            if (settlement.hasUniversity)
             {
                 if (composition.ContainsKey(EconomicSector.Cultural))
                     composition[EconomicSector.Cultural] += baseChangeRate * 3f;
@@ -226,7 +226,7 @@ namespace MyriadCreation.World.Settlement
 
             // 重新归一化
             NormalizeComposition(composition);
-            burg.primarySector = GetPrimarySector(composition);
+            settlement.primarySector = GetPrimarySector(composition);
         }
 
         /// <summary>
@@ -299,13 +299,13 @@ namespace MyriadCreation.World.Settlement
         /// <summary>
         /// 获取城市经济成分的综合描述（用于Tooltip和UI显示）
         /// </summary>
-        public static string GetCompositionDescription(SettlementData burg)
+        public static string GetCompositionDescription(SettlementData settlement)
         {
-            if (burg == null || burg.economicComposition == null || burg.economicComposition.Count == 0)
+            if (settlement == null || settlement.economicComposition == null || settlement.economicComposition.Count == 0)
                 return "经济成分未知";
 
             // 按占比排序，取前3个
-            var sorted = new List<KeyValuePair<EconomicSector, float>>(burg.economicComposition);
+            var sorted = new List<KeyValuePair<EconomicSector, float>>(settlement.economicComposition);
             sorted.Sort((a, b) => b.Value.CompareTo(a.Value));
 
             string description = "";

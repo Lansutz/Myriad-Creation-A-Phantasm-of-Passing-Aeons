@@ -33,20 +33,20 @@ namespace MyriadCreation.Simulation.Systems
     /// <summary>聚落控制领域运行时边界。封装状态集合与控制规则入口。</summary>
     public sealed class SettlementControlRuntime
     {
-        private readonly Dictionary<int, SettlementData> _burgs;
+        private readonly Dictionary<int, SettlementData> _settlements;
         private readonly TileData[] _tiles;
         private readonly int _mapWidth;
         private readonly int _mapHeight;
         private readonly Dictionary<int, MyriadCreation.Simulation.Warfare.Army> _armies;
 
         public SettlementControlRuntime(
-            Dictionary<int, SettlementData> burgs,
+            Dictionary<int, SettlementData> settlements,
             TileData[] tiles,
             int mapWidth,
             int mapHeight,
             Dictionary<int, MyriadCreation.Simulation.Warfare.Army> armies)
         {
-            _burgs = burgs ?? throw new ArgumentNullException(nameof(burgs));
+            _settlements = settlements ?? throw new ArgumentNullException(nameof(settlements));
             _tiles = tiles ?? throw new ArgumentNullException(nameof(tiles));
             _mapWidth = mapWidth;
             _mapHeight = mapHeight;
@@ -55,17 +55,17 @@ namespace MyriadCreation.Simulation.Systems
 
         public void DailyTick()
         {
-            SettlementControlSystem.DailyTick(_burgs, _tiles, _mapWidth, _mapHeight, _armies);
+            SettlementControlSystem.DailyTick(_settlements, _tiles, _mapWidth, _mapHeight, _armies);
         }
 
-        public SettlementData GetSuzerain(SettlementData burg)
-            => SettlementControlSystem.GetSuzerain(burg, _burgs);
+        public SettlementData GetSuzerain(SettlementData settlement)
+            => SettlementControlSystem.GetSuzerain(settlement, _settlements);
 
-        public float GetTaxSiphonModifier(SettlementData burg)
-            => SettlementControlSystem.GetTaxSiphonModifier(burg, _burgs);
+        public float GetTaxSiphonModifier(SettlementData settlement)
+            => SettlementControlSystem.GetTaxSiphonModifier(settlement, _settlements);
 
-        public float GetTradeSiphonModifier(SettlementData burg)
-            => SettlementControlSystem.GetTradeSiphonModifier(burg, _burgs);
+        public float GetTradeSiphonModifier(SettlementData settlement)
+            => SettlementControlSystem.GetTradeSiphonModifier(settlement, _settlements);
     }
 
     public static class SettlementControlSystem
@@ -83,38 +83,38 @@ namespace MyriadCreation.Simulation.Systems
 
  /// 每日Tick：更新所有聚落的控制关系和进度
         public static void DailyTick(
-            Dictionary<int, SettlementData> burgs,
+            Dictionary<int, SettlementData> settlements,
             TileData[] tiles,
             int mapWidth,
             int mapHeight,
             Dictionary<int, MyriadCreation.Simulation.Warfare.Army> armies = null)
         {
-            if (burgs == null || burgs.Count == 0) return;
+            if (settlements == null || settlements.Count == 0) return;
 
  // 1. 更新每个聚落的驻扎部队信息
-            UpdateGarrisonInfo(burgs, tiles, armies);
+            UpdateGarrisonInfo(settlements, tiles, armies);
 
  // 2. 扫描控制关系（高等级 → 低等级）
-            ScanControlRelationships(burgs, tiles, mapWidth, mapHeight);
+            ScanControlRelationships(settlements, tiles, mapWidth, mapHeight);
 
  // 3. 更新控制进度
-            UpdateControlProgress(burgs, tiles);
+            UpdateControlProgress(settlements, tiles);
 
  // 4. 检查控制完成/流失
-            CheckControlCompletion(burgs);
+            CheckControlCompletion(settlements);
         }
 
  /// <summary>更新每个聚落的驻扎部队信息</summary>
         private static void UpdateGarrisonInfo(
-            Dictionary<int, SettlementData> burgs,
+            Dictionary<int, SettlementData> settlements,
             TileData[] tiles,
             Dictionary<int, MyriadCreation.Simulation.Warfare.Army> armies)
         {
  // 先重置
-            foreach (var burg in burgs.Values)
+            foreach (var settlement in settlements.Values)
             {
-                burg.garrisonQuantity = burg.garrison; // 用BurgData自带的garrison字段
-                burg.garrisonQuality = 50f; // 默认质量
+                settlement.garrisonQuantity = settlement.garrison; // 用SettlementData自带的garrison字段
+                settlement.garrisonQuality = 50f; // 默认质量
             }
 
  // 如果有军队数据，统计驻扎在聚落地块的军队
@@ -124,12 +124,12 @@ namespace MyriadCreation.Simulation.Systems
                 {
                     if (army.state == MyriadCreation.Core.Enums.GameEnums.CombatState.Dead) continue;
  // 找军队所在地块的聚落
-                    foreach (var burg in burgs.Values)
+                    foreach (var settlement in settlements.Values)
                     {
-                        if (burg.tileIndex == army.currentTileIndex && tiles[burg.tileIndex].ownerRealmId == army.ownerRealmId)
+                        if (settlement.tileIndex == army.currentTileIndex && tiles[settlement.tileIndex].ownerRealmId == army.ownerRealmId)
                         {
-                            burg.garrisonQuantity += (int)army.GetTotalManpower(null); // 简化
-                            burg.garrisonQuality = Mathf.Max(burg.garrisonQuality, army.training);
+                            settlement.garrisonQuantity += (int)army.GetTotalManpower(null); // 简化
+                            settlement.garrisonQuality = Mathf.Max(settlement.garrisonQuality, army.training);
                         }
                     }
                 }
@@ -138,16 +138,16 @@ namespace MyriadCreation.Simulation.Systems
 
  /// <summary>扫描控制关系：高等级聚落控制辐射范围内低等级聚落</summary>
         private static void ScanControlRelationships(
-            Dictionary<int, SettlementData> burgs,
+            Dictionary<int, SettlementData> settlements,
             TileData[] tiles,
             int mapWidth,
             int mapHeight)
         {
  // 按等级从高到低排序，高等级先建立控制
-            var sortedBurgs = new List<SettlementData>(burgs.Values);
-            sortedBurgs.Sort((a, b) => b.settlementLevel.CompareTo(a.settlementLevel));
+            var sortedSettlements = new List<SettlementData>(settlements.Values);
+            sortedSettlements.Sort((a, b) => b.settlementLevel.CompareTo(a.settlementLevel));
 
-            foreach (var controller in sortedBurgs)
+            foreach (var controller in sortedSettlements)
             {
                 if (!controller.IsMajorSettlement) continue;
                 if (controller.controllerAnchorId >= 0) continue; // 自己被控制，不再控制别人
@@ -167,7 +167,7 @@ namespace MyriadCreation.Simulation.Systems
                         int tileIdx = py * mapWidth + px;
 
  // 找这个地块上的聚落
-                        foreach (var target in burgs.Values)
+                        foreach (var target in settlements.Values)
                         {
                             if (target.anchorId == controller.anchorId) continue;
                             if (target.tileIndex != tileIdx) continue;
@@ -192,9 +192,9 @@ namespace MyriadCreation.Simulation.Systems
         }
 
  /// <summary>更新控制进度</summary>
-        private static void UpdateControlProgress(Dictionary<int, SettlementData> burgs, TileData[] tiles)
+        private static void UpdateControlProgress(Dictionary<int, SettlementData> settlements, TileData[] tiles)
         {
-            foreach (var controller in burgs.Values)
+            foreach (var controller in settlements.Values)
             {
                 if (controller.controlledAnchorIds.Count == 0) continue;
 
@@ -203,10 +203,10 @@ namespace MyriadCreation.Simulation.Systems
 
                 foreach (int targetId in controller.controlledAnchorIds)
                 {
-                    if (!burgs.ContainsKey(targetId)) continue;
+                    if (!settlements.ContainsKey(targetId)) continue;
                     if (!controller.controlProgress.ContainsKey(targetId)) continue;
 
-                    var target = burgs[targetId];
+                    var target = settlements[targetId];
                     float progress = controller.controlProgress[targetId];
 
  // 计算控制速度
@@ -268,18 +268,18 @@ namespace MyriadCreation.Simulation.Systems
         }
 
  /// <summary>检查控制完成</summary>
-        private static void CheckControlCompletion(Dictionary<int, SettlementData> burgs)
+        private static void CheckControlCompletion(Dictionary<int, SettlementData> settlements)
         {
-            foreach (var controller in burgs.Values)
+            foreach (var controller in settlements.Values)
             {
                 foreach (int targetId in controller.controlledAnchorIds)
                 {
-                    if (!burgs.ContainsKey(targetId)) continue;
+                    if (!settlements.ContainsKey(targetId)) continue;
                     if (!controller.controlProgress.ContainsKey(targetId)) continue;
 
                     if (controller.controlProgress[targetId] >= ControlCompleteThreshold)
                     {
-                        var target = burgs[targetId];
+                        var target = settlements[targetId];
                         target.controllerAnchorId = controller.anchorId;
                         target.isControlStable = true;
                     }
@@ -288,32 +288,32 @@ namespace MyriadCreation.Simulation.Systems
         }
 
  /// <summary>获取聚落影响力半径（按等级）</summary>
-        public static int GetInfluenceRadius(SettlementData burg)
+        public static int GetInfluenceRadius(SettlementData settlement)
         {
  // Ⅰ=1, Ⅱ=2, Ⅲ=3, Ⅳ=4, Ⅴ=5
-            return Mathf.Clamp((int)burg.settlementLevel, 1, 5);
+            return Mathf.Clamp((int)settlement.settlementLevel, 1, 5);
         }
 
  /// <summary>获取聚落的宗主（控制它的高等级聚落）</summary>
-        public static SettlementData GetSuzerain(SettlementData burg, Dictionary<int, SettlementData> burgs)
+        public static SettlementData GetSuzerain(SettlementData settlement, Dictionary<int, SettlementData> settlements)
         {
-            if (burg.controllerAnchorId < 0) return null;
-            return burgs.GetValueOrDefault(burg.controllerAnchorId);
+            if (settlement.controllerAnchorId < 0) return null;
+            return settlements.GetValueOrDefault(settlement.controllerAnchorId);
         }
 
  /// <summary>获取聚落的税收虹吸修正（下属聚落向宗主缴纳额外税收）</summary>
-        public static float GetTaxSiphonModifier(SettlementData burg, Dictionary<int, SettlementData> burgs)
+        public static float GetTaxSiphonModifier(SettlementData settlement, Dictionary<int, SettlementData> settlements)
         {
-            var suzerain = GetSuzerain(burg, burgs);
+            var suzerain = GetSuzerain(settlement, settlements);
             if (suzerain == null) return 1f;
  // 下属聚落向宗主缴纳10%额外税收
             return 0.9f;
         }
 
  /// <summary>获取聚落的贸易虹吸修正（下属聚落贸易优先经过宗主）</summary>
-        public static float GetTradeSiphonModifier(SettlementData burg, Dictionary<int, SettlementData> burgs)
+        public static float GetTradeSiphonModifier(SettlementData settlement, Dictionary<int, SettlementData> settlements)
         {
-            var suzerain = GetSuzerain(burg, burgs);
+            var suzerain = GetSuzerain(settlement, settlements);
             if (suzerain == null) return 1f;
  // 下属聚落贸易力量20%流向宗主
             return 0.8f;

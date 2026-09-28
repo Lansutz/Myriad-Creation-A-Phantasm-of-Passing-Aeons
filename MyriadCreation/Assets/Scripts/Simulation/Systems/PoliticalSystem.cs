@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 using UnityEngine;
 using MyriadCreation.Core;
@@ -84,8 +84,8 @@ namespace MyriadCreation.Simulation.Systems
             return Mathf.Clamp01(control);
         }
 
- /// 政体改革已统一到七维成分模型——见 GovernmentReform.Reform（按 PolityDimension 改 composition，
- /// 需支撑革新已持有，触发稳定性下降与编年史）。旧的单标签 GovernmentType 枚举与本方法已废弃。
+ /// 政体改革已统一到七维成分模型——见 LawReform.Reform（按 PolityDimension 改 composition，
+ /// 需支撑革新已持有，触发稳定性下降与编年史）。旧的单标签 GovernmentType（已废弃） 枚举与本方法已废弃。
  /// <summary>每日政治Tick</summary>
         public void DailyTick()
         {

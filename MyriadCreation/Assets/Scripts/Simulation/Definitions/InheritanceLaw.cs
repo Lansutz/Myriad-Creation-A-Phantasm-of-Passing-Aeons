@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using MyriadCreation.Simulation.Characters;
@@ -145,7 +145,7 @@ namespace MyriadCreation.Simulation.Definitions
 
  /// <summary>选举王（波兰自由选王/教宗）——注意：选举是产生方式（A1 交接方式表达），
  /// 继承法（世袭内部规则）不含选举；此方法保留作兼容参考，头衔模式已无 Elective</summary>
-        [System.Obsolete("选举是产生方式（A1 交接方式），继承法不含选举——使用 GovernmentComposition 的 supremeSuccession 表达")]
+        [System.Obsolete("选举是产生方式（A1 交接方式），继承法不含选举——使用 LawComposition 的 supremeSuccession 表达")]
         public static InheritanceLaw ElectiveMonarchy() =>
             new InheritanceLaw(InheritanceScope.CognaticKin, InheritanceBranch.EldestLine,
                 InheritanceGender.Equal, InheritanceAge.Seniority,

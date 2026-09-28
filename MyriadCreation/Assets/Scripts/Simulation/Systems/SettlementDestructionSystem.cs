@@ -79,6 +79,8 @@ namespace MyriadCreation.Simulation.Systems
         private static readonly float[] FortLoss = { 0f, 0.40f, 1.00f, 1.00f };
         // 恢复时间（天）：轻度1-3年，中度5-10年，重度20年+
         private static readonly int[] RecoveryDays = { 0, 730, 2555, 7300 };
+        /// <summary>设施修复每日推进量。</summary>
+        private const float FacilityRepairPerDay = 0.5f;
 
         /// <summary>
         /// 执行聚落摧毁。
@@ -91,74 +93,75 @@ namespace MyriadCreation.Simulation.Systems
         public static string DestroySettlement(GameWorld world, int anchorId,
             DestructionMethod method, int attackerRealmId = -1)
         {
-            if (world == null || !world.burgs.TryGetValue(anchorId, out var burg)) return null;
-            if (burg.IsRuined) return "聚落已是废墟";
+            if (world == null || !world.settlements.TryGetValue(anchorId, out var settlement)) return null;
+            if (settlement.IsRuined) return "聚落已是废墟";
 
             // 手段 → 程度映射
-            DestructionSeverity severity = MethodToSeverity(method, burg);
+            DestructionSeverity severity = MethodToSeverity(method, settlement);
 
             // 记录摧毁前状态
-            burg.preRuinLevel = burg.settlementLevel;
-            burg.preRuinType = burg.settlementType;
-            burg.ruinedDay = world.currentDay;
-            burg.ruinLevel = (int)severity;
-            burg.remnantCultureId = burg.provinceId; // 简化：残留标记
-            burg.recoveryProgress = 0f;
+            settlement.preRuinLevel = settlement.settlementLevel;
+            settlement.preRuinForm = settlement.settlementForm;
+            settlement.ruinedDay = world.currentDay;
+            settlement.ruinLevel = (int)severity;
+            settlement.remnantCultureId = settlement.provinceId; // 简化：残留标记
+            settlement.recoveryProgress = 0f;
 
             // 1. 人口损失
             float popLossRatio = PopulationLoss[(int)severity];
-            int lostPop = Mathf.RoundToInt(burg.population * popLossRatio);
-            burg.population -= lostPop;
+            int lostPop = Mathf.RoundToInt(settlement.population * popLossRatio);
+            settlement.population -= lostPop;
 
             // 2. 经济损失
-            burg.development *= (1f - EconomyLoss[(int)severity]);
-            burg.wealth *= (1f - EconomyLoss[(int)severity]);
-            burg.tradePower *= (1f - EconomyLoss[(int)severity] * 0.7f);
+            settlement.development *= (1f - EconomyLoss[(int)severity]);
+            settlement.wealth *= (1f - EconomyLoss[(int)severity]);
+            settlement.tradePower *= (1f - EconomyLoss[(int)severity] * 0.7f);
 
             // 3. 防御损失
-            burg.fortification *= (1f - FortLoss[(int)severity]);
-            burg.garrison = Mathf.Max(0, burg.garrison - Mathf.RoundToInt(burg.garrison * popLossRatio));
+            settlement.fortification *= (1f - FortLoss[(int)severity]);
+            settlement.garrison = Mathf.Max(0, settlement.garrison - Mathf.RoundToInt(settlement.garrison * popLossRatio));
 
             // 4. 等级变化
-            ApplyLevelDowngrade(burg, severity);
+            ApplyLevelDowngrade(settlement, severity);
 
             // 5. 特殊手段效果
-            string specialEffect = ApplyMethodEffect(world, burg, method, severity, attackerRealmId, lostPop);
+            string specialEffect = ApplyMethodEffect(world, settlement, method, severity, attackerRealmId, lostPop);
 
             // 6. 连锁反应：幸存者变为流民
-            int refugeeCount = SpawnRefugeesFromDestruction(world, burg, lostPop, severity);
+            int refugeeCount = SpawnRefugeesFromDestruction(world, settlement, lostPop, severity);
 
             // 7. 重度夷平：地块可能进入弃地状态
             if (severity == DestructionSeverity.Raze)
             {
-                AbandonTileAfterRaze(world, burg);
+                AbandonTileAfterRaze(world, settlement);
             }
 
-            // 8. 市场/大学等设施损毁
+            // 8. 按设施记录局部损毁（设施状态独立于位点模式）
+            ApplyFacilityDamage(settlement, severity);
             if (severity >= DestructionSeverity.Storm)
             {
-                burg.hasMarket = false;
-                burg.hasUniversity = false;
-                if (severity == DestructionSeverity.Raze) burg.hasTemple = false;
+                settlement.hasMarket = false;
+                settlement.hasUniversity = false;
+                if (severity == DestructionSeverity.Raze) settlement.hasTemple = false;
             }
 
-            Debug.Log($"[Destruction] {burg.settlementName} 遭到{method}（{severity}），" +
-                      $"人口损失{lostPop}（流民{refugeeCount}），发展度降至{burg.development:F1}");
+            Debug.Log($"[Destruction] {settlement.settlementName} 遭到{method}（{severity}），" +
+                      $"人口损失{lostPop}（流民{refugeeCount}），发展度降至{settlement.development:F1}");
 
-            world.burgs[anchorId] = burg;
-            return $"{burg.settlementName}遭到{GetMethodName(method)}，{GetSeverityDesc(severity)}，" +
+            world.settlements[anchorId] = settlement;
+            return $"{settlement.settlementName}遭到{GetMethodName(method)}，{GetSeverityDesc(severity)}，" +
                    $"损失人口{lostPop}，{refugeeCount}人流离失所。{specialEffect}";
         }
 
         /// <summary>手段映射到程度（部分手段受场景影响）</summary>
-        private static DestructionSeverity MethodToSeverity(DestructionMethod method, SettlementData burg)
+        private static DestructionSeverity MethodToSeverity(DestructionMethod method, SettlementData settlement)
         {
             switch (method)
             {
                 case DestructionMethod.Plunder: return DestructionSeverity.Raid;
                 case DestructionMethod.Arson:
                     // 纵火：木建筑为主的聚落破坏更重
-                    return burg.wallLevel <= WallLevel.EarthenRampart
+                    return settlement.wallLevel <= WallLevel.EarthenRampart
                         ? DestructionSeverity.Storm : DestructionSeverity.Raid;
                 case DestructionMethod.Dismantle: return DestructionSeverity.Storm;
                 case DestructionMethod.Flood: return DestructionSeverity.Raze;
@@ -168,63 +171,114 @@ namespace MyriadCreation.Simulation.Systems
             }
         }
 
+        /// <summary>
+        /// 按摧毁程度对设施逐个记录损毁。局部损毁只改设施 damageState，
+        /// 不直接改变 site_mode；模式转换只能走 TransitionSystem。
+        /// </summary>
+        public static void ApplyFacilityDamage(SettlementData settlement, DestructionSeverity severity)
+        {
+            foreach (var facility in settlement.facilities)
+            {
+                facility.repairProgress = 0f;
+                switch (severity)
+                {
+                    case DestructionSeverity.Raid:
+                        if (facility.damageState == FacilityDamageState.Intact)
+                            facility.damageState = FacilityDamageState.Damaged;
+                        break;
+                    case DestructionSeverity.Storm:
+                        if (facility.facilityType == FacilityType.Wall
+                            || facility.facilityType == FacilityType.Gate)
+                            facility.damageState = FacilityDamageState.Disabled;
+                        else if (facility.damageState == FacilityDamageState.Intact)
+                            facility.damageState = FacilityDamageState.Damaged;
+                        break;
+                    case DestructionSeverity.Raze:
+                        facility.damageState = FacilityDamageState.Destroyed;
+                        facility.constructionState = ConstructionState.Ruined;
+                        break;
+                }
+            }
+        }
+
+        /// <summary>每日推进设施修复；修复只恢复设施，不自动改位点模式。</summary>
+        public static void RepairFacilities(SettlementData settlement)
+        {
+            foreach (var facility in settlement.facilities)
+            {
+                if (facility.damageState == FacilityDamageState.Intact
+                    || facility.damageState == FacilityDamageState.Destroyed)
+                    continue;
+
+                facility.repairProgress += FacilityRepairPerDay;
+                if (facility.repairProgress >= 100f)
+                {
+                    facility.repairProgress = 0f;
+                    facility.damageState = (FacilityDamageState)((int)facility.damageState - 1);
+                    if (facility.damageState == FacilityDamageState.Intact
+                        && facility.constructionState == ConstructionState.Ruined)
+                        facility.constructionState = ConstructionState.Complete;
+                }
+            }
+        }
+
         /// <summary>等级降级</summary>
-        private static void ApplyLevelDowngrade(SettlementData burg, DestructionSeverity severity)
+        private static void ApplyLevelDowngrade(SettlementData settlement, DestructionSeverity severity)
         {
             if (severity == DestructionSeverity.Raid) return; // 轻度不变
 
             if (severity == DestructionSeverity.Storm)
             {
                 // 中度降1级
-                if (burg.settlementLevel > SettlementLevel.LevelI)
-                    burg.settlementLevel--;
+                if (settlement.settlementLevel > SettlementLevel.LevelI)
+                    settlement.settlementLevel--;
             }
             else // Raze
             {
                 // 重度：降为Ⅰ级聚落或直接变废墟
-                if (burg.population < 50)
+                if (settlement.population < 50)
                 {
                     // 人口几乎灭绝，聚落消失（保留废墟数据）
-                    burg.settlementLevel = SettlementLevel.LevelI;
-                    burg.constructionProgress = 0f; burg.constructionTier = 1;
+                    settlement.settlementLevel = SettlementLevel.LevelI;
+                    settlement.constructionProgress = 0f; settlement.constructionTier = 1;
                 }
                 else
                 {
-                    burg.settlementLevel = SettlementLevel.LevelI;
-                    burg.constructionProgress = Mathf.Max(0f, burg.constructionProgress - 40f); burg.constructionTier = Mathf.Clamp(Mathf.FloorToInt(burg.constructionProgress / 20f) + 1, 1, 5);
+                    settlement.settlementLevel = SettlementLevel.LevelI;
+                    settlement.constructionProgress = Mathf.Max(0f, settlement.constructionProgress - 40f); settlement.constructionTier = Mathf.Clamp(Mathf.FloorToInt(settlement.constructionProgress / 20f) + 1, 1, 5);
                 }
             }
         }
 
         /// <summary>特殊手段效果</summary>
-        private static string ApplyMethodEffect(GameWorld world, SettlementData burg,
+        private static string ApplyMethodEffect(GameWorld world, SettlementData settlement,
             DestructionMethod method, DestructionSeverity severity, int attackerId, int lostPop)
         {
             switch (method)
             {
                 case DestructionMethod.Plunder:
                     // 劫掠获取物资（简化：攻击者财富增加）
-                    float loot = burg.wealth * 0.3f;
+                    float loot = settlement.wealth * 0.3f;
                     return $"劫掠者获得了价值{loot:F0}的物资。";
 
                 case DestructionMethod.Arson:
                     // 纵火可能蔓延到相邻地块（简化：相邻地块发展度略降）
-                    DamageAdjacentTiles(world, burg.tileIndex, 0.05f);
+                    DamageAdjacentTiles(world, settlement.tileIndex, 0.05f);
                     return "大火蔓延到了周边地区。";
 
                 case DestructionMethod.Dismantle:
                     // 拆城获得建材，城防永久降低
-                    burg.wallLevel = WallLevel.None;
+                    settlement.wallLevel = WallLevel.None;
                     return "城墙被系统性拆除，获得大量建材。";
 
                 case DestructionMethod.Flood:
                     // 水淹：地块湿度大增，可能变沼泽
-                    if (burg.tileIndex >= 0 && burg.tileIndex < world.tiles.Length)
+                    if (settlement.tileIndex >= 0 && settlement.tileIndex < world.tiles.Length)
                     {
-                        var tile = world.tiles[burg.tileIndex];
+                        var tile = world.tiles[settlement.tileIndex];
                         tile.soilHumidityPct = Mathf.Min(100f, tile.soilHumidityPct + 40f);
                         tile.development *= 0.5f;
-                        world.tiles[burg.tileIndex] = tile;
+                        world.tiles[settlement.tileIndex] = tile;
                     }
                     return "大水淹没了城区，土地沦为沼泽。";
 
@@ -233,7 +287,7 @@ namespace MyriadCreation.Simulation.Systems
                     return "屠城的消息传开，远近震恐。";
 
                 case DestructionMethod.Raze:
-                    burg.wallLevel = WallLevel.None;
+                    settlement.wallLevel = WallLevel.None;
                     return "城市被彻底夷为平地。";
 
                 default: return "";
@@ -263,7 +317,7 @@ namespace MyriadCreation.Simulation.Systems
         }
 
         /// <summary>摧毁后产生流民MapActor</summary>
-        private static int SpawnRefugeesFromDestruction(GameWorld world, SettlementData burg,
+        private static int SpawnRefugeesFromDestruction(GameWorld world, SettlementData settlement,
             int lostPop, DestructionSeverity severity)
         {
             if (world.MapActors == null || lostPop <= 0) return 0;
@@ -274,21 +328,21 @@ namespace MyriadCreation.Simulation.Systems
             if (refugeeCount < 5) return 0;
 
             var refugee = world.MapActors.SpawnActor(
-                MapActorType.Refugee, burg.tileIndex, refugeeCount, new RefugeeAI());
-            refugee.actorName = $"来自{burg.settlementName}的流民";
+                MapActorType.Refugee, settlement.tileIndex, refugeeCount, new RefugeeAI());
+            refugee.actorName = $"来自{settlement.settlementName}的流民";
             refugee.morale = 20f;
             refugee.supplies = 30f;
             return refugeeCount;
         }
 
         /// <summary>夷平后地块进入弃地状态</summary>
-        private static void AbandonTileAfterRaze(GameWorld world, SettlementData burg)
+        private static void AbandonTileAfterRaze(GameWorld world, SettlementData settlement)
         {
-            if (burg.tileIndex < 0 || burg.tileIndex >= world.tiles.Length) return;
-            var tile = world.tiles[burg.tileIndex];
+            if (settlement.tileIndex < 0 || settlement.tileIndex >= world.tiles.Length) return;
+            var tile = world.tiles[settlement.tileIndex];
             tile.ownerRealmId = -1;
             tile.order = Mathf.Max(0f, tile.order - 30f);
-            world.tiles[burg.tileIndex] = tile;
+            world.tiles[settlement.tileIndex] = tile;
         }
 
         // ===== 废墟恢复 =====
@@ -296,40 +350,41 @@ namespace MyriadCreation.Simulation.Systems
         /// <summary>每日更新废墟恢复（在GameWorld主循环调用）</summary>
         public static void DailyTickRecovery(GameWorld world)
         {
-            if (world == null || world.burgs == null) return;
-            foreach (var kvp in world.burgs)
+            if (world == null || world.settlements == null) return;
+            foreach (var kvp in world.settlements)
             {
-                var burg = kvp.Value;
-                if (burg.ruinLevel <= 0) continue;
+                var settlement = kvp.Value;
+                if (settlement.ruinLevel <= 0) continue;
 
                 // 有人口回流才恢复
-                if (burg.population > 10)
+                if (settlement.population > 10)
                 {
+                    RepairFacilities(settlement);
                     // 恢复速度受人口、发展度影响
-                    float recoveryRate = 0.01f * Mathf.Log10(burg.population + 1);
-                    burg.recoveryProgress += recoveryRate;
+                    float recoveryRate = 0.01f * Mathf.Log10(settlement.population + 1);
+                    settlement.recoveryProgress += recoveryRate;
 
                     // 轻度恢复最快
-                    int requiredDays = RecoveryDays[burg.ruinLevel];
+                    int requiredDays = RecoveryDays[settlement.ruinLevel];
                     float progressPerDay = 100f / Mathf.Max(1, requiredDays);
-                    burg.recoveryProgress += progressPerDay;
+                    settlement.recoveryProgress += progressPerDay;
 
-                    if (burg.recoveryProgress >= 100f)
+                    if (settlement.recoveryProgress >= 100f)
                     {
                         // 恢复完成
-                        if (burg.ruinLevel >= 3)
+                        if (settlement.ruinLevel >= 3)
                         {
                             // 废墟重建：恢复到摧毁前等级的下一级（不会完全恢复到巅峰）
-                            burg.settlementLevel = burg.preRuinLevel;
-                            burg.settlementType = burg.preRuinType;
+                            settlement.settlementLevel = settlement.preRuinLevel;
+                            settlement.settlementForm = settlement.preRuinForm;
                         }
-                        burg.ruinLevel = 0;
-                        burg.ruinedDay = -1;
-                        burg.recoveryProgress = 0f;
-                        burg.fortification = Mathf.Max(burg.fortification, 1f);
-                        Debug.Log($"[Destruction] {burg.settlementName} 已从废墟中恢复");
+                        settlement.ruinLevel = 0;
+                        settlement.ruinedDay = -1;
+                        settlement.recoveryProgress = 0f;
+                        settlement.fortification = Mathf.Max(settlement.fortification, 1f);
+                        Debug.Log($"[Destruction] {settlement.settlementName} 已从废墟中恢复");
                     }
-                    world.burgs[kvp.Key] = burg;
+                    world.settlements[kvp.Key] = settlement;
                 }
             }
         }

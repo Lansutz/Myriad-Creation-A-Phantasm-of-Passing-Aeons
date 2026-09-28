@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Simulation.Innovation;
 using MyriadCreation.Simulation.Definitions;
 
@@ -6,8 +6,8 @@ using MyriadCreation.Simulation.Definitions;
 
 namespace MyriadCreation.Simulation.State
 {
- /// 政体成分 ↔ 支撑革新（政体学的每个部分都有相应的革新）
- /// 每个政体成分（A1 交接/B1 选人/B2 机构/C1 地方产生/C2 职能/央地结构）
+ /// 法律成分 ↔ 支撑革新（政体学的每个部分都有相应的革新）
+ /// 每个法律成分（A1 交接/B1 选人/B2 机构/C1 地方产生/C2 职能/央地结构）
  /// 需要对应革新支撑——未持有则该成分不可用（或研究后解锁）
  /// 数据表式（成分 int → 革新 id 列表）；空表=基础可用
     public static class PolityComponentInnovations
@@ -85,7 +85,7 @@ namespace MyriadCreation.Simulation.State
  /// <summary>邦联制：部落联盟</summary>
         private static readonly List<int> DConfederal = new List<int> { 500 };
 
- /// <summary>维度枚举（政体七维——跨枚举 int 值重叠，必须按维度分表）</summary>
+ /// <summary>维度枚举（法律七维——跨枚举 int 值重叠，必须按维度分表）</summary>
         public enum PolityDimension
         {
             SupremeSuccession,  // A1 最高权力·交接

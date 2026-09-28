@@ -18,10 +18,12 @@ using MyriadCreation.Simulation.Events;
 using MyriadCreation.Simulation.Generation;
 using MyriadCreation.Simulation.Modding;
 using MyriadCreation.Simulation.Politics;
+using MyriadCreation.Simulation.Actors;
 using MyriadCreation.World.Settlement;
 using MyriadCreation.Simulation.Population;
 using MyriadCreation.Simulation.Settlement;
 using MyriadCreation.Simulation.Society;
+using MyriadCreation.World.Anchor;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World.Generation;
 using MyriadCreation.World.Hydrology;
@@ -150,17 +152,24 @@ namespace MyriadCreation.Infrastructure.Save
             }
 
  // 聚落
-            if (_world.burgs != null && _world.burgs.Count > 0)
+            int campCount = _world.Camps?.Count ?? 0;
+            if ((_world.settlements?.Count ?? 0) + campCount > 0)
             {
-                data.burgs = new BurgSaveData[_world.burgs.Count];
+                data.habitation_sites = new HabitationSiteSaveData[(_world.settlements?.Count ?? 0) + campCount];
                 int idx = 0;
-                foreach (var b in _world.burgs.Values)
+                if (_world.settlements != null)
+                foreach (var b in _world.settlements.Values)
                 {
-                    data.burgs[idx++] = new BurgSaveData
+                    data.habitation_sites[idx] = new HabitationSiteSaveData
                     {
-                        anchorId = b.anchorId,
-                        settlementName = b.settlementName,
-                        type = (int)b.settlementType,
+                        site_id = b.siteId,
+                        site_mode = SiteModeKeys.ToKey(b.siteMode),
+                        site_class = b.siteClass,
+                        control_faction = b.controlFaction,
+                        location = new SiteLocationSaveData { x = b.x, y = b.y },
+                        anchor_id = b.anchorId,
+                        site_name = b.settlementName,
+                        legacy_settlement_form = (int)b.settlementForm,
                         provinceId = b.provinceId,
                         tileIndex = b.tileIndex,
                         x = b.x,
@@ -177,7 +186,7 @@ namespace MyriadCreation.Infrastructure.Save
                         hasMarket = b.hasMarket,
                         hasTemple = b.hasTemple,
                         hasUniversity = b.hasUniversity,
-                        settlementCategory = (int)b.settlementCategory,
+                        legacy_site_category = (int)b.settlementCategory,
                         constructionProgress = b.constructionProgress,
                         constructionTier = b.constructionTier,
                         // 经济成分系统
@@ -201,6 +210,30 @@ namespace MyriadCreation.Infrastructure.Save
                                 foundedDate = d.foundedDate
                             }).ToArray() : null
                     };
+                    data.habitation_sites[idx].CaptureModeData(b);
+                    idx++;
+                }
+
+                if (_world.Camps != null)
+                foreach (var camp in _world.Camps.AllCamps)
+                {
+                    var savedCamp = new HabitationSiteSaveData
+                    {
+                        site_id = camp.siteId,
+                        site_mode = SiteModeKeys.ToKey(camp.siteMode),
+                        site_class = camp.siteClass,
+                        control_faction = camp.controlFaction,
+                        location = new SiteLocationSaveData { x = camp.location.x, y = camp.location.y },
+                        anchor_id = camp.anchorId,
+                        site_name = camp.siteName,
+                        provinceId = camp.anchor?.provinceId ?? -1,
+                        tileIndex = camp.tileIndex,
+                        x = camp.location.x,
+                        y = camp.location.y,
+                        population = camp.population
+                    };
+                    savedCamp.CaptureCampData(camp);
+                    data.habitation_sites[idx++] = savedCamp;
                 }
             }
         }
@@ -381,20 +414,95 @@ namespace MyriadCreation.Infrastructure.Save
             }
 
  // 恢复聚落
-            _world.burgs = new Dictionary<int, SettlementData>();
-            if (data.burgs != null)
-            {
-                foreach (var b in data.burgs)
-                {
-                    var burg = new SettlementData
-                    {
-                        anchorId = b.anchorId,
-                        settlementName = b.settlementName,
-                        type = (SettlementType)b.settlementType,
-                        provinceId = b.provinceId,
-                        tileIndex = b.tileIndex,
-                        x = b.x,
-                        y = b.y,
+ _world.anchors = new Dictionary<int, AnchorData>();
+ _world.settlements = new Dictionary<int, SettlementData>();
+ _world.Camps?.Clear();
+ if (data.habitation_sites != null)
+ {
+     var loadedSiteIds = new HashSet<string>(StringComparer.Ordinal);
+     foreach (var b in data.habitation_sites)
+     {
+         b.EnsureCanonicalFields();
+         if (!loadedSiteIds.Add(b.site_id))
+             throw new InvalidOperationException($"Duplicate habitation site UUID '{b.site_id}' in save.");
+         if (!SiteModeKeys.TryParse(b.site_mode, out var loadedMode))
+             throw new InvalidOperationException($"Invalid saved site_mode '{b.site_mode}' for site {b.site_id}.");
+
+         if (b.camp_id > 0)
+         {
+             if (_world.Camps == null)
+                 throw new InvalidOperationException("Camp manager is not initialized while loading habitation sites.");
+             if (!Enum.TryParse(b.camp_type, false, out CampType campType))
+                 throw new InvalidOperationException($"Invalid saved camp type '{b.camp_type}' for site {b.site_id}.");
+
+             AnchorData campAnchor = null;
+             if (b.anchor_id >= 0)
+             {
+                 campAnchor = new AnchorData
+                 {
+                     anchorId = b.anchor_id,
+                     provinceId = b.provinceId,
+                     tileIndex = b.camp_tile_index,
+                     x = b.location.x,
+                     y = b.location.y
+                 };
+                 _world.anchors[b.anchor_id] = campAnchor;
+             }
+
+             var camp = new CampData
+             {
+                 siteId = b.site_id,
+                 siteMode = loadedMode,
+                 siteClass = b.site_class ?? string.Empty,
+                 controlFaction = b.control_faction ?? string.Empty,
+                 location = new SiteLocation { x = b.location.x, y = b.location.y },
+                 anchorId = b.anchor_id,
+                 anchor = campAnchor,
+                 campId = b.camp_id,
+                 type = campType,
+                 tileIndex = b.camp_tile_index,
+                 campName = b.site_name,
+                 population = b.population,
+                 ownerRealmId = b.owner_realm_id,
+                 ownerActorId = b.owner_actor_id,
+                 establishedDay = b.established_day,
+                 defense = b.camp_defense,
+                 supplies = b.camp_supplies,
+                 morale = b.camp_morale,
+                 permanence = b.camp_permanence
+             };
+             b.ApplyModeData(camp);
+             if ((b.camp_attribute_keys == null) != (b.camp_attribute_values == null)
+                 || (b.camp_attribute_keys != null && b.camp_attribute_keys.Length != b.camp_attribute_values.Length))
+                 throw new InvalidOperationException($"Camp attributes are inconsistent for site {b.site_id}.");
+             if (b.camp_attribute_keys != null)
+             {
+                 for (int i = 0; i < b.camp_attribute_keys.Length; i++)
+                     camp.attributes.Add(b.camp_attribute_keys[i], b.camp_attribute_values[i]);
+             }
+             _world.Camps.RestoreCamp(camp);
+             continue;
+         }
+
+         var anchor = new AnchorData
+         {
+             anchorId = b.anchor_id,
+             provinceId = b.provinceId,
+             tileIndex = b.tileIndex,
+             x = b.location.x,
+             y = b.location.y
+         };
+         var settlement = new SettlementData
+         {
+             siteId = b.site_id,
+             siteMode = loadedMode,
+             siteClass = b.site_class ?? string.Empty,
+             controlFaction = b.control_faction ?? string.Empty,
+             location = new SiteLocation { x = b.location.x, y = b.location.y },
+             anchorId = b.anchor_id,
+             anchor = anchor,
+                        settlementName = b.site_name,
+                        settlementForm = (SettlementForm)b.legacy_settlement_form,
                         population = b.population,
                         development = b.development,
                         wealth = b.wealth,
@@ -407,30 +515,31 @@ namespace MyriadCreation.Infrastructure.Save
                         hasMarket = b.hasMarket,
                         hasTemple = b.hasTemple,
                         hasUniversity = b.hasUniversity,
-                        settlementCategory = (SettlementCategory)b.settlementCategory,
                         constructionProgress = b.constructionProgress,
                         constructionTier = b.constructionTier,
                         // 经济成分系统
                         primarySector = (EconomicSector)b.primarySector,
                         economicInitialized = b.economicInitialized
                     };
+                    b.ApplyModeData(settlement);
+                    settlement.SetLegacyCategoryFromSiteMode();
 
                     // 恢复经济成分字典
                     if (b.economicSectors != null && b.economicRatios != null && b.economicSectors.Length == b.economicRatios.Length)
                     {
                         for (int i = 0; i < b.economicSectors.Length; i++)
                         {
-                            burg.economicComposition[(EconomicSector)b.economicSectors[i]] = b.economicRatios[i];
+                            settlement.economicComposition[(EconomicSector)b.economicSectors[i]] = b.economicRatios[i];
                         }
                     }
 
                     // 恢复城市区划
-                    burg.districtsGenerated = b.districtsGenerated;
+                    settlement.districtsGenerated = b.districtsGenerated;
                     if (b.districts != null)
                     {
                         foreach (var d in b.districts)
                         {
-                            burg.districts.Add(new CityDistrict(
+                            settlement.districts.Add(new CityDistrict(
                                 (CityDistrictType)d.districtType,
                                 d.districtName,
                                 d.areaRatio,
@@ -442,7 +551,8 @@ namespace MyriadCreation.Infrastructure.Save
                         }
                     }
 
-                    _world.burgs[b.anchorId] = burg;
+                    _world.anchors[b.anchor_id] = anchor;
+                    _world.settlements[b.anchor_id] = settlement;
                 }
             }
         }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using MyriadCreation.Core;
@@ -143,8 +143,8 @@ namespace MyriadCreation.Simulation.Systems
                 sit.taxPain[cls] = Mathf.Clamp(-impact, 0f, 100f);
             }
 
- // ===== 政治通道（解析政体七维成分）=====
-            sit.politicalAccess = PoliticalAccessAnalyzer.GetAllAccess(realm.composition);
+ // ===== 政治通道（解析法律七维成分）=====
+            sit.politicalAccess = PoliticalAccessAnalyzer.GetAllAccess(realm.laws);
 
  // ===== 货币稳定 =====
             if (realm.currencySystem != null)
@@ -167,7 +167,7 @@ namespace MyriadCreation.Simulation.Systems
             sit.legitimacy = Mathf.Clamp(realm.stability * 0.6f + realm.prestige * 0.4f, 0f, 100f);
 
  // ===== 贵族特权保障：世袭最高权力 + 地方世袭领有 + 贵族免税 =====
-            var comp = realm.composition;
+            var comp = realm.laws;
             float priv = 0.3f;
             if ((SupremeSuccession)comp.supremeSuccession.primary == SupremeSuccession.Hereditary) priv += 0.3f;
             if ((LocalSuccession)comp.localSuccession.primary == LocalSuccession.Hereditary) priv += 0.25f;

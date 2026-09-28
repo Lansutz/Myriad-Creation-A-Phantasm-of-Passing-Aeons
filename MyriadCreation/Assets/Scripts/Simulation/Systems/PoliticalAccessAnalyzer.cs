@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 using UnityEngine;
 using MyriadCreation.Core;
@@ -21,7 +21,7 @@ namespace MyriadCreation.Simulation.Systems
     public static class PoliticalAccessAnalyzer
     {
  /// <summary>计算指定阶层在给定政体下的政治通道 0~1</summary>
-        public static float GetAccess(GameEnums.SocialClass cls, GovernmentComposition comp)
+        public static float GetAccess(GameEnums.SocialClass cls, LawComposition comp)
         {
             if (comp == null) return 0.2f;
 
@@ -84,7 +84,7 @@ namespace MyriadCreation.Simulation.Systems
         }
 
  /// <summary>一次性计算全部阶层的政治通道（情境采集时调用，避免重复解析）</summary>
-        public static Dictionary<GameEnums.SocialClass, float> GetAllAccess(GovernmentComposition comp)
+        public static Dictionary<GameEnums.SocialClass, float> GetAllAccess(LawComposition comp)
         {
             var result = new Dictionary<GameEnums.SocialClass, float>();
             foreach (GameEnums.SocialClass cls in Enum.GetValues(typeof(GameEnums.SocialClass)))

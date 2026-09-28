@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using MyriadCreation.Core;
@@ -22,7 +22,7 @@ namespace MyriadCreation.Simulation.AI
 {
  /// AI决策系统
  /// 负责AI政权的军事、经济、外交、内政决策
- /// 基于政体效果、性格、局势综合判断
+ /// 基于法律效果、性格、局势综合判断
     public class AIDecisionSystem
     {
         private GameWorld _world;
@@ -44,10 +44,10 @@ namespace MyriadCreation.Simulation.AI
             var state = new AIState { realmId = realmId };
             var realm = GetRealm(realmId);
 
- // 基于政体效果初始化AI倾向
-            if (realm != null && realm.composition != null)
+ // 基于法律效果初始化AI倾向
+            if (realm != null && realm.laws != null)
             {
-                var effects = GovernmentEffects.CalculateEffects(realm.composition);
+                var effects = LawEffects.CalculateEffects(realm.laws);
                 state.expansionism = Mathf.Clamp01(0.5f + effects.expansionism);
                 state.aggression = Mathf.Clamp01(0.5f + effects.aggressiveDiplomacy / 20f);
                 state.diplomacyFocus = Mathf.Clamp01(0.5f + effects.allianceDesirability / 20f);

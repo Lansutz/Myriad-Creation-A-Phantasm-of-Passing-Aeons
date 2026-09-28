@@ -110,17 +110,17 @@ MyriadCreation/Assets/Scripts/Infrastructure/Save/
 
 ### Phase 1: Foundational
 
-- [ ] T001 [P] [Plan:1.1] 新增 `MyriadCreation/Assets/Scripts/World/Settlement/HabitationSiteEnums.cs`，定义 `SiteMode` 的 `sedentary_settlement`、`fortified_outpost`、`temporary_encampment` 对应枚举及设施形制枚举。
-- [ ] T002 [P] [Plan:1.1] 新增 `MyriadCreation/Assets/Scripts/World/Settlement/FacilityData.cs`，实现设施身份、类型、施工状态、损毁状态、材料和 `FacilityForm.wall_shape`。
-- [ ] T003 [Plan:1.1] 新增 `MyriadCreation/Assets/Scripts/World/Settlement/HabitationSite.cs`，承载 `site_id`、`site_mode`、位置引用、模式专属数据和 `facilities`，并提供模式数据有效性校验。
-- [ ] T004 [Plan:1.1] 为 `SettlementData` 增加到 `HabitationSite` 的显式迁移映射，禁止以 `SettlementCategory` 的名称直接作为新存档键或新模式契约。
+- [x] T001 [P] [Plan:1.1] 新增 `MyriadCreation/Assets/Scripts/World/Settlement/HabitationSiteEnums.cs`，定义 `SiteMode` 的 `sedentary_settlement`、`fortified_outpost`、`temporary_encampment` 对应枚举及设施形制枚举。
+- [x] T002 [P] [Plan:1.1] 新增 `MyriadCreation/Assets/Scripts/World/Settlement/FacilityData.cs`，实现设施身份、类型、施工状态、损毁状态、材料和 `FacilityForm.wall_shape`。
+- [x] T003 [Plan:1.1] 新增 `MyriadCreation/Assets/Scripts/World/Settlement/HabitationSite.cs`，承载 `site_id`、`site_mode`、位置引用、模式专属数据和 `facilities`，并提供模式数据有效性校验。
+- [x] T004 [Plan:1.1] 为 `SettlementData` 增加到 `HabitationSite` 的显式迁移映射，禁止以 `SettlementCategory` 的名称直接作为新存档键或新模式契约。
 
 ### Phase 2: Core migration
 
-- [ ] T005 [P] [Plan:2.1] 更新 `GameWorld` partial 文件中的栖居点集合和索引，使用 `site_id` 关联 Anchor，并保留 Anchor 的空间查询职责。
+- [x] T005 [P] [Plan:2.1] 更新 `GameWorld` partial 文件中的栖居点集合和索引，使用 `site_id` 关联 Anchor，并保留 Anchor 的空间查询职责。
 - [ ] T006 [P] [Plan:2.1] 更新 `SettlementControlSystem.cs`、`SettlementAISystem.cs`、`SettlementCommands.cs` 和生成流程，改用 `HabitationSite.site_mode` 与统一查询入口。
-- [ ] T007 [Plan:3.1] 新增 `HabitationSiteTransitionSystem.cs`，实现允许转换、禁止转换、历史模式和延迟模式字段。
-- [ ] T008 [Plan:3.1] 将 `CampManager` 的建立、废弃和摧毁路径接入 `temporary_encampment`，在实体消散时同步移除位点集合和 tile camp 引用。
+- [x] T007 [Plan:3.1] 新增 `HabitationSiteTransitionSystem.cs`，实现允许转换、禁止转换、历史模式和延迟模式字段。
+- [x] T008 [Plan:3.1] 将 `CampManager` 的建立、废弃和摧毁路径接入 `temporary_encampment`，在实体消散时同步移除位点集合和 tile camp 引用。
 - [ ] T009 [Plan:4.1] 重构 `SettlementDestructionSystem.cs`，按设施记录局部损毁和修复，禁止用全局 `ruinLevel` 单独决定位点模式。
 
 ### Phase 3: Persistence and cleanup

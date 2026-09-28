@@ -17,77 +17,79 @@ namespace MyriadCreation.World.Settlement
     {
  // ===== 类型推导：根据地块特征推导聚落初始形态 =====
  /// 根据地块特征推导聚落初始类型
-        public static void DeriveInitialType(SettlementData burg, TileData tile, int width, int height)
+        public static void DeriveInitialType(SettlementData settlement, TileData tile, int width, int height)
         {
-            if (burg == null) return;
+            if (settlement == null) return;
 
  // 1. 判定是否为瓶颈节点
-            burg.bottleneckType = DetectBottleneck(tile, width, height);
+            settlement.bottleneckType = DetectBottleneck(tile, width, height);
 
  // 2. 判定港口层级
-            burg.portTier = DetectPortTier(tile);
+            settlement.portTier = DetectPortTier(tile);
 
  // 3. 推导主功能
-            burg.primaryFunction = DerivePrimaryFunction(tile, burg);
+            settlement.primaryFunction = DerivePrimaryFunction(tile, settlement);
 
  // 4. 推导形态（村镇/城/堡）
-            burg.settlementType = DeriveSettlementType(tile, burg);
+            settlement.settlementForm = DeriveSettlementForm(tile, settlement);
 
  // 5. 推导城形/堡型
-            if (burg.settlementType == SettlementType.City)
+            if (settlement.settlementForm == SettlementForm.City)
             {
-                burg.cityForm = DeriveCityForm(tile, burg);
-                burg.fortSubtype = FortSubtype.RoyalCastle; // 默认
+                settlement.cityForm = DeriveCityForm(tile, settlement);
+                settlement.fortSubtype = FortSubtype.RoyalCastle; // 默认
             }
-            else if (burg.settlementCategory == SettlementCategory.Outpost)
+            else if (settlement.siteMode == SiteMode.FortifiedOutpost)
             {
-                burg.fortSubtype = DeriveFortSubtype(tile, burg);
-                burg.cityForm = CityForm.CitadelCity;
+                settlement.fortSubtype = DeriveFortSubtype(tile, settlement);
+                settlement.cityForm = CityForm.CitadelCity;
             }
             else
             {
-                burg.cityForm = CityForm.WalledTown;
-                burg.fortSubtype = FortSubtype.BorderFort;
+                settlement.cityForm = CityForm.WalledTown;
+                settlement.fortSubtype = FortSubtype.BorderFort;
             }
 
  // 6. 推导升级路线
-            burg.upgradePath = DeriveUpgradePath(tile, burg);
+            settlement.upgradePath = DeriveUpgradePath(tile, settlement);
 
  // 7. 初始等级
-            burg.settlementLevel = SettlementLevel.LevelI;
-            burg.evolutionStage = EvolutionStage.Stable;
-            burg.wallLevel = burg.settlementCategory == SettlementCategory.Outpost ? WallLevel.Palisade : WallLevel.None;
+            settlement.settlementLevel = SettlementLevel.LevelI;
+            settlement.evolutionStage = EvolutionStage.Stable;
+            settlement.wallLevel = settlement.siteMode == SiteMode.FortifiedOutpost ? WallLevel.Palisade : WallLevel.None;
 
  // 7.5 聚居点分类推导
-            burg.settlementCategory = burg.settlementCategory == SettlementCategory.Outpost
-                ? SettlementCategory.Outpost
-                : SettlementCategory.Burg;
+            if (settlement.siteMode != SiteMode.SedentarySettlement
+                && settlement.siteMode != SiteMode.FortifiedOutpost)
+                throw new System.InvalidOperationException(
+                    $"Typology cannot classify site mode '{SiteModeKeys.ToKey(settlement.siteMode)}' as a settled site.");
+            settlement.SetLegacyCategoryFromSiteMode();
 
  // 7.6 建设度初始化（每个等级内分五档，0~100，每20一档）
-            burg.constructionProgress = 0f;
-            burg.constructionTier = 1;
+            settlement.constructionProgress = 0f;
+            settlement.constructionTier = 1;
 
  // 8. 城市重心（低级聚落默认均衡，升级后再确定）
-            burg.cityFocus = CityFocus.Balanced;
+            settlement.cityFocus = CityFocus.Balanced;
         }
 
  /// <summary>建设度增长（每日调用，由发展度/人口/投资驱动）</summary>
-        public static void UpdateConstructionProgress(SettlementData burg, float dailyDevelopmentGain)
+        public static void UpdateConstructionProgress(SettlementData settlement, float dailyDevelopmentGain)
         {
-            if (burg == null) return;
-            if (burg.settlementLevel >= SettlementLevel.LevelV) return; // 最高等级不再增长建设度
+            if (settlement == null) return;
+            if (settlement.settlementLevel >= SettlementLevel.LevelV) return; // 最高等级不再增长建设度
 
             // 建设度增长（简化：发展度增益直接转化为建设度，后续可细化）
-            burg.constructionProgress = Mathf.Min(100f, burg.constructionProgress + dailyDevelopmentGain);
+            settlement.constructionProgress = Mathf.Min(100f, settlement.constructionProgress + dailyDevelopmentGain);
 
             // 更新建设度档位（每20一档，1~5档）
-            burg.constructionTier = Mathf.Clamp(Mathf.FloorToInt(burg.constructionProgress / 20f) + 1, 1, 5);
+            settlement.constructionTier = Mathf.Clamp(Mathf.FloorToInt(settlement.constructionProgress / 20f) + 1, 1, 5);
         }
 
  /// <summary>检查建设度是否达到升级条件（第5档即满100）</summary>
-        public static bool IsConstructionReady(SettlementData burg)
+        public static bool IsConstructionReady(SettlementData settlement)
         {
-            return burg != null && burg.constructionTier >= 5;
+            return settlement != null && settlement.constructionTier >= 5;
         }
 
  /// <summary>检测瓶颈节点类型</summary>
@@ -164,19 +166,19 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>推导主功能</summary>
-        private static SettlementFunction DerivePrimaryFunction(TileData tile, SettlementData burg)
+        private static SettlementFunction DerivePrimaryFunction(TileData tile, SettlementData settlement)
         {
  // 瓶颈节点 → 渡口/关税/军事
-            if (burg.bottleneckType != BottleneckType.None)
+            if (settlement.bottleneckType != BottleneckType.None)
             {
-                if (burg.bottleneckType == BottleneckType.StraitCrossing ||
-                    burg.bottleneckType == BottleneckType.RiverFording)
+                if (settlement.bottleneckType == BottleneckType.StraitCrossing ||
+                    settlement.bottleneckType == BottleneckType.RiverFording)
                     return SettlementFunction.Crossing;
                 return SettlementFunction.Military;
             }
 
  // 港口 → 商业
-            if (burg.portTier >= PortTier.IntermediatePort)
+            if (settlement.portTier >= PortTier.IntermediatePort)
                 return SettlementFunction.Commercial;
 
  // 高坡度+山地 → 矿业
@@ -192,31 +194,37 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>推导聚落形态</summary>
-        private static SettlementType DeriveSettlementType(TileData tile, SettlementData burg)
+        private static SettlementForm DeriveSettlementForm(TileData tile, SettlementData settlement)
         {
  // 瓶颈+军事功能 → 堡
-            if (burg.bottleneckType != BottleneckType.None &&
-                burg.primaryFunction == SettlementFunction.Military)
-                settlementCategory = SettlementCategory.Outpost; return SettlementType.Village;
+            if (settlement.bottleneckType != BottleneckType.None &&
+                settlement.primaryFunction == SettlementFunction.Military)
+            {
+                if (!HabitationSiteTransitionSystem.TryTransition(
+                    settlement, SiteMode.FortifiedOutpost, out var failure))
+                    throw new System.InvalidOperationException(
+                        $"Cannot promote site to outpost during typology: {failure}.");
+                return SettlementForm.Village;
+            }
 
  // 港口+商业 → 城
-            if (burg.portTier >= PortTier.IntermediatePort &&
-                burg.primaryFunction == SettlementFunction.Commercial)
-                return SettlementType.City;
+            if (settlement.portTier >= PortTier.IntermediatePort &&
+                settlement.primaryFunction == SettlementFunction.Commercial)
+                return SettlementForm.City;
 
  // 矿业 → 村镇（矿业村镇，后期可升级为城）
-            if (burg.primaryFunction == SettlementFunction.Mining)
-                return SettlementType.Village;
+            if (settlement.primaryFunction == SettlementFunction.Mining)
+                return SettlementForm.Village;
 
  // 默认 → 村镇
-            return SettlementType.Village;
+            return SettlementForm.Village;
         }
 
  /// <summary>推导城的形态</summary>
-        private static CityForm DeriveCityForm(TileData tile, SettlementData burg)
+        private static CityForm DeriveCityForm(TileData tile, SettlementData settlement)
         {
  // 港口城市 → 不规则形态（沿河/沿海城市通常受地形约束，有机生长）
-            if (burg.portTier >= PortTier.RiverPort)
+            if (settlement.portTier >= PortTier.RiverPort)
                 return CityForm.Irregular;
 
  // 山地城市 → 山城
@@ -224,7 +232,7 @@ namespace MyriadCreation.World.Settlement
                 return CityForm.MountainCity;
 
  // 平原+行政 → 方城
-            if (burg.primaryFunction == SettlementFunction.Administrative &&
+            if (settlement.primaryFunction == SettlementFunction.Administrative &&
                 tile.elevation01 < 0.4f)
                 return CityForm.Square;
 
@@ -233,16 +241,16 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>推导堡垒亚型</summary>
-        private static FortSubtype DeriveFortSubtype(TileData tile, SettlementData burg)
+        private static FortSubtype DeriveFortSubtype(TileData tile, SettlementData settlement)
         {
  // 关口堡
-            if (burg.bottleneckType == BottleneckType.MountainPass ||
-                burg.bottleneckType == BottleneckType.CanyonPass)
+            if (settlement.bottleneckType == BottleneckType.MountainPass ||
+                settlement.bottleneckType == BottleneckType.CanyonPass)
                 return FortSubtype.PassFort;
 
  // 河口堡
-            if (burg.bottleneckType == BottleneckType.StraitCrossing ||
-                (burg.portTier >= PortTier.RiverPort && tile.isCoast))
+            if (settlement.bottleneckType == BottleneckType.StraitCrossing ||
+                (settlement.portTier >= PortTier.RiverPort && tile.isCoast))
                 return FortSubtype.EstuaryFort;
 
  // 高地堡
@@ -250,7 +258,7 @@ namespace MyriadCreation.World.Settlement
                 return FortSubtype.HighlandKeep;
 
  // 平原屯堡
-            if (tile.elevation01 < 0.4f && burg.primaryFunction == SettlementFunction.Military)
+            if (tile.elevation01 < 0.4f && settlement.primaryFunction == SettlementFunction.Military)
                 return FortSubtype.PlainGarrison;
 
  // 坞堡庄园（默认内陆）
@@ -258,17 +266,17 @@ namespace MyriadCreation.World.Settlement
         }
 
  /// <summary>推导升级路线（使用进化树系统，根据起源确定发展路径）</summary>
-        private static UpgradePath DeriveUpgradePath(TileData tile, SettlementData burg)
+        private static UpgradePath DeriveUpgradePath(TileData tile, SettlementData settlement)
         {
-            return SettlementEvolutionTree.DeriveEvolutionPath(tile, burg);
+            return SettlementEvolutionTree.DeriveEvolutionPath(tile, settlement);
         }
 
  // ===== 升级路线：等级提升检查 =====
  /// 检查聚落是否可以升级到下一等级
-        public static bool CanLevelUp(SettlementData burg, out string reason)
+        public static bool CanLevelUp(SettlementData settlement, out string reason)
         {
             reason = "";
-            SettlementLevel nextLevel = burg.settlementLevel + 1;
+            SettlementLevel nextLevel = settlement.settlementLevel + 1;
             if (nextLevel > SettlementLevel.LevelV)
             {
                 reason = "已达最高等级";
@@ -276,7 +284,7 @@ namespace MyriadCreation.World.Settlement
             }
 
  // 进化路径最大等级限制（如牧业通常最高Ⅱ级）
-            SettlementLevel pathMaxLevel = SettlementEvolutionTree.GetMaxLevel(burg.upgradePath);
+            SettlementLevel pathMaxLevel = SettlementEvolutionTree.GetMaxLevel(settlement.upgradePath);
             if (nextLevel > pathMaxLevel)
             {
                 reason = $"此发展路径最高只能达到 {pathMaxLevel}";
@@ -284,10 +292,10 @@ namespace MyriadCreation.World.Settlement
             }
 
  // 形态约束：村镇最高到Ⅱ级（集镇），极少数交通要道可到Ⅲ级
-            if (burg.settlementType == SettlementType.Village && nextLevel >= SettlementLevel.LevelIII)
+            if (settlement.settlementForm == SettlementForm.Village && nextLevel >= SettlementLevel.LevelIII)
             {
-                bool isTransportHub = burg.bottleneckType != BottleneckType.None ||
-                                       burg.portTier >= PortTier.IntermediatePort;
+                bool isTransportHub = settlement.bottleneckType != BottleneckType.None ||
+                                       settlement.portTier >= PortTier.IntermediatePort;
                 if (!isTransportHub)
                 {
                     reason = "村镇需先转型为城才能升到Ⅲ级以上";
@@ -296,123 +304,124 @@ namespace MyriadCreation.World.Settlement
             }
 
  // 建设度要求（必须达到当前等级第5档才能升级）
-            if (!IsConstructionReady(burg))
+            if (!IsConstructionReady(settlement))
             {
-                reason = $"建设度不足（需第5档/100，当前第{burg.constructionTier}档/{burg.constructionProgress:0}）";
+                reason = $"建设度不足（需第5档/100，当前第{settlement.constructionTier}档/{settlement.constructionProgress:0}）";
                 return false;
             }
 
  // 人口要求
             float[] popRequirements = { 0f, 500f, 2000f, 8000f, 20000f };
-            if (burg.population < popRequirements[(int)nextLevel])
+            if (settlement.population < popRequirements[(int)nextLevel])
             {
-                reason = $"人口不足（需{popRequirements[(int)nextLevel]:0}，当前{burg.population:0}）";
+                reason = $"人口不足（需{popRequirements[(int)nextLevel]:0}，当前{settlement.population:0}）";
                 return false;
             }
 
  // Ⅲ级以上需要城墙
-            if (nextLevel >= SettlementLevel.LevelIII && burg.wallLevel < WallLevel.EarthenRampart)
+            if (nextLevel >= SettlementLevel.LevelIII && settlement.wallLevel < WallLevel.EarthenRampart)
             {
                 reason = "Ⅲ级以上需要城墙防御";
                 return false;
             }
 
  // Ⅳ级（都会）需要确定城市重心
-            if (nextLevel == SettlementLevel.LevelIV && burg.cityFocus == CityFocus.Balanced)
+            if (nextLevel == SettlementLevel.LevelIV && settlement.cityFocus == CityFocus.Balanced)
             {
  // 自动推导重心
-                burg.cityFocus = DeriveCityFocus(burg);
+                settlement.cityFocus = DeriveCityFocus(settlement);
             }
 
             return true;
         }
 
  /// <summary>推导城市重心（根据功能组合）</summary>
-        public static CityFocus DeriveCityFocus(SettlementData burg)
+        public static CityFocus DeriveCityFocus(SettlementData settlement)
         {
-            if (burg.primaryFunction.HasFlag(SettlementFunction.Military) &&
-                burg.fortSubtype != FortSubtype.ManorFort)
+            if (settlement.primaryFunction.HasFlag(SettlementFunction.Military) &&
+                settlement.fortSubtype != FortSubtype.ManorFort)
                 return CityFocus.Defense;
 
-            if (burg.bottleneckType != BottleneckType.None ||
-                burg.primaryFunction.HasFlag(SettlementFunction.Crossing))
+            if (settlement.bottleneckType != BottleneckType.None ||
+                settlement.primaryFunction.HasFlag(SettlementFunction.Crossing))
                 return CityFocus.Hub;
 
-            if (burg.portTier >= PortTier.DeepWaterPort ||
-                burg.primaryFunction.HasFlag(SettlementFunction.Commercial))
+            if (settlement.portTier >= PortTier.DeepWaterPort ||
+                settlement.primaryFunction.HasFlag(SettlementFunction.Commercial))
                 return CityFocus.Trade;
 
-            if (burg.isCapital || burg.primaryFunction.HasFlag(SettlementFunction.Administrative))
+            if (settlement.isCapital || settlement.primaryFunction.HasFlag(SettlementFunction.Administrative))
                 return CityFocus.Administrative;
 
-            if (burg.hasTemple)
+            if (settlement.hasTemple)
                 return CityFocus.Religious;
 
-            if (burg.hasUniversity)
+            if (settlement.hasUniversity)
                 return CityFocus.Cultural;
 
-            if (burg.primaryFunction.HasFlag(SettlementFunction.Mining))
+            if (settlement.primaryFunction.HasFlag(SettlementFunction.Mining))
                 return CityFocus.Mining;
 
             return CityFocus.Balanced;
         }
 
  /// <summary>执行升级</summary>
-        public static void PerformLevelUp(SettlementData burg)
+        public static void PerformLevelUp(SettlementData settlement)
         {
-            burg.settlementLevel++;
-            burg.evolutionStage = EvolutionStage.Transformed;
+            settlement.settlementLevel++;
+            settlement.evolutionStage = EvolutionStage.Transformed;
 
  // 升级后重置建设度（新等级从第1档开始）
-            burg.constructionProgress = 0f;
-            burg.constructionTier = 1;
+            settlement.constructionProgress = 0f;
+            settlement.constructionTier = 1;
 
  // 升级时提升城墙
-            if (burg.settlementLevel >= SettlementLevel.LevelIII &&
-                burg.wallLevel < WallLevel.StoneWall)
+            if (settlement.settlementLevel >= SettlementLevel.LevelIII &&
+                settlement.wallLevel < WallLevel.StoneWall)
             {
-                burg.wallLevel = burg.settlementCategory == SettlementCategory.Outpost
+                settlement.wallLevel = settlement.siteMode == SiteMode.FortifiedOutpost
                     ? WallLevel.FortifiedWall
                     : WallLevel.StoneWall;
             }
 
  // Ⅳ级以上确定城形
-            if (burg.settlementLevel >= SettlementLevel.LevelIV &&
-                burg.cityForm == CityForm.WalledTown)
+            if (settlement.settlementLevel >= SettlementLevel.LevelIV &&
+                settlement.cityForm == CityForm.WalledTown)
             {
-                burg.cityForm = burg.settlementCategory == SettlementCategory.Outpost
+                settlement.cityForm = settlement.siteMode == SiteMode.FortifiedOutpost
                     ? CityForm.StarCity
                     : CityForm.Circular;
             }
 
-            Debug.Log($"[SettlementTypology] {burg.settlementName} 升级到 {burg.settlementLevel}");
+            Debug.Log($"[SettlementTypology] {settlement.settlementName} 升级到 {settlement.settlementLevel}");
         }
 
  // ===== 形态约束检查 =====
  /// 检查形态-等级约束（软性规则，AI遵循，玩家可突破）
-        public static bool CheckFormLevelConstraint(SettlementData burg)
+        public static bool CheckFormLevelConstraint(SettlementData settlement)
         {
-            return burg.settlementLevel switch
+            return settlement.settlementLevel switch
             {
                 SettlementLevel.LevelIV or SettlementLevel.LevelV =>
-                    burg.settlementType != SettlementType.Village, // 都会不能是村镇形态
+                    settlement.settlementForm != SettlementForm.Village, // 都会不能是村镇形态
                 _ => true
             };
         }
 
  /// <summary>获取形态描述（使用进化树的阶段名称）</summary>
-        public static string GetFullDescription(SettlementData burg)
+        public static string GetFullDescription(SettlementData settlement)
         {
-            string stageName = SettlementEvolutionTree.GetStageName(burg);
-            string form = burg.settlementType switch
+            string stageName = SettlementEvolutionTree.GetStageName(settlement);
+            string form = settlement.siteMode switch
             {
-                SettlementType.Village => "村镇",
-                SettlementType.City => "城",
-                SettlementCategory.Outpost => "堡",
+                SiteMode.SedentarySettlement when settlement.settlementForm == SettlementForm.Village => "村镇",
+                SiteMode.SedentarySettlement when settlement.settlementForm == SettlementForm.City => "城",
+                SiteMode.FortifiedOutpost => "据点",
+                SiteMode.TemporaryEncampment => "营地",
                 _ => "未知"
             };
 
-            return $"{stageName}·{form}·{burg.cityFocus}";
+            return $"{stageName}·{form}·{settlement.cityFocus}";
         }
     }
 }

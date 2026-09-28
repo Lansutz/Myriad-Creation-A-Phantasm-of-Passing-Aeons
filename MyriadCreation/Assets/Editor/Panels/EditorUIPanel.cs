@@ -19,7 +19,7 @@ using MyriadCreation.World.Terrain;
 namespace MyriadCreation.Editor.Panels
 {
  /// 地图编辑器 UI 面板
- /// 代码动态生成浮动工具栏：模式切换、8种工具、画笔大小、省份选择、Burg类型、撤销重做
+ /// 代码动态生成浮动工具栏：模式切换、8种工具、画笔大小、省份选择、Settlement类型、撤销重做
  /// 对齐 FantasyMapSimulator: CustomMapImageLayer / MapBrush / cursorPixelPosition
     public class EditorUIPanel : MonoBehaviour
     {
@@ -35,7 +35,7 @@ namespace MyriadCreation.Editor.Panels
         private Slider _brushSizeSlider;
         private Text _brushSizeText;
         private InputField _provinceInput;
-        private Dropdown _burgTypeDropdown;
+        private Dropdown _settlementPresetDropdown;
         private InputField _saveNameInput;
         private InputField _renameProvinceInput;
         private Button _undoBtn;
@@ -43,7 +43,7 @@ namespace MyriadCreation.Editor.Panels
 
  // ===== 图层开关 =====
         private Button _layerProvinceBordersBtn;
-        private Button _layerBurgMarkersBtn;
+        private Button _layerSettlementMarkersBtn;
         private Button _layerGridBtn;
         private Button _layerVirtualControlBtn;
         private Button _layerInfluenceRadiusBtn;
@@ -56,8 +56,8 @@ namespace MyriadCreation.Editor.Panels
             EditorTool.TerrainPlain,
             EditorTool.ProvincePaint,
             EditorTool.ProvinceErase,
-            EditorTool.BurgPlace,
-            EditorTool.BurgRemove
+            EditorTool.SettlementPlace,
+            EditorTool.SettlementRemove
         };
 
         private static readonly string[] ToolNames =
@@ -230,18 +230,18 @@ namespace MyriadCreation.Editor.Panels
             });
             y -= 34f;
 
- // Burg 类型下拉（Burg放置用）
-            CreateText(_panelRoot.transform, "子地块类型 (放镇用)", 12, TextAnchor.MiddleLeft,
+ // 聚居点预设下拉
+            CreateText(_panelRoot.transform, "聚居点预设", 12, TextAnchor.MiddleLeft,
                 new Vector2(10f, y), new Vector2(contentWidth, 18f)).color = TextDimColor;
             y -= 22f;
-            _burgTypeDropdown = CreateDropdown(_panelRoot.transform,
+            _settlementPresetDropdown = CreateDropdown(_panelRoot.transform,
                 new Vector2(10f, y), new Vector2(contentWidth, 26f),
                 new List<string> { "村庄", "集镇", "城市", "港口", "首都", "要塞" });
-            _burgTypeDropdown.onValueChanged.AddListener(v =>
+            _settlementPresetDropdown.onValueChanged.AddListener(v =>
             {
-                _editor.SelectedBurgType = (BurgType)v;
+                _editor.SelectedSettlementPreset = (SettlementPlacementPreset)v;
             });
-            _burgTypeDropdown.value = 2; // 默认城市
+            _settlementPresetDropdown.value = 2; // 默认城市
             y -= 34f;
 
  // 分隔线
@@ -347,9 +347,9 @@ namespace MyriadCreation.Editor.Panels
             _layerProvinceBordersBtn.onClick.AddListener(() => ToggleLayer(MyriadCreation.Rendering.MapOverlayLayer.ProvinceBorders, _layerProvinceBordersBtn, "省份边界"));
             y -= 26f;
 
-            _layerBurgMarkersBtn = CreateButton(_panelRoot.transform, "聚落标记: 开",
+            _layerSettlementMarkersBtn = CreateButton(_panelRoot.transform, "聚落标记: 开",
                 new Vector2(10f, y), new Vector2(contentWidth, 22f));
-            _layerBurgMarkersBtn.onClick.AddListener(() => ToggleLayer(MyriadCreation.Rendering.MapOverlayLayer.BurgMarkers, _layerBurgMarkersBtn, "聚落标记"));
+            _layerSettlementMarkersBtn.onClick.AddListener(() => ToggleLayer(MyriadCreation.Rendering.MapOverlayLayer.SettlementMarkers, _layerSettlementMarkersBtn, "聚落标记"));
             y -= 26f;
 
             _layerGridBtn = CreateButton(_panelRoot.transform, "网格: 关",

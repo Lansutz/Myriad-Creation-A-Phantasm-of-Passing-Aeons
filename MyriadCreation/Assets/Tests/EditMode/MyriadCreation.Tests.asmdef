@@ -2,7 +2,10 @@
     "name": "MyriadCreation.Tests",
     "rootNamespace": "",
     "references": [
-        "MyriadCreation.Runtime",
+        "MyriadCreation.Core",
+        "MyriadCreation.Infrastructure",
+        "MyriadCreation.Simulation",
+        "MyriadCreation.World",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Unity.TextMeshPro"

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -332,7 +332,7 @@ namespace MyriadCreation.Core.Enums
             }
         }
 
- /// <summary>政体类型已废弃：政体由 GovernmentComposition 七维成分组合表达，
+ /// <summary>政体类型已废弃：政体由 LawComposition 七维成分组合表达，
  /// 粗分类（君主/共和）由 SupremeSuccessionLevel 推导，不再使用单标签枚举。</summary>
  /// <summary>文化阶段</summary>
         public enum CultureStage

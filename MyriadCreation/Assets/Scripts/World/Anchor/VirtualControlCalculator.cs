@@ -72,7 +72,7 @@ namespace MyriadCreation.World.Anchor
 
  /// 三角虚控制范围计算器（渲染层工具）。
  /// 设计原则：
- /// 1. 控制点 = 有主要聚落(Burg)的地块，且属于同一政权
+ /// 1. 控制点 = 有主要聚落(Settlement)的地块，且属于同一政权
  /// 2. 任意三个同政权控制点 → Delaunay 三角剖分
  /// 3. 三点共线/角度太小(＜15°) → 无效，不形成控制
  /// 4. 有效三角形内部 = 虚控制范围（影响力，半透明显示，非实际占领）
@@ -87,27 +87,27 @@ namespace MyriadCreation.World.Anchor
 
  /// <summary>计算虚控制范围（渲染用）</summary>
         public static VirtualControlResult Calculate(
-            Dictionary<int, SettlementData> burgs,
+            Dictionary<int, SettlementData> settlements,
             TileData[] tiles,
             int mapWidth,
             int mapHeight)
         {
             var result = new VirtualControlResult();
-            if (burgs == null || burgs.Count == 0 || tiles == null) return result;
+            if (settlements == null || settlements.Count == 0 || tiles == null) return result;
 
  // 1. 收集有效控制点（同政权分组）
             var controlPointsByRealm = new Dictionary<int, List<(int anchorId, Vector2 pos)>>();
-            foreach (var kv in burgs)
+            foreach (var kv in settlements)
             {
-                var burg = kv.Value;
-                if (!burg.IsMajorSettlement) continue;
-                if (burg.tileIndex < 0 || burg.tileIndex >= tiles.Length) continue;
-                int realmId = tiles[burg.tileIndex].ownerRealmId;
+                var settlement = kv.Value;
+                if (!settlement.IsMajorSettlement) continue;
+                if (settlement.tileIndex < 0 || settlement.tileIndex >= tiles.Length) continue;
+                int realmId = tiles[settlement.tileIndex].ownerRealmId;
                 if (realmId < 0) continue;
                 if (!controlPointsByRealm.ContainsKey(realmId))
                     controlPointsByRealm[realmId] = new List<(int, Vector2)>();
-                int x = burg.tileIndex % mapWidth;
-                int y = burg.tileIndex / mapWidth;
+                int x = settlement.tileIndex % mapWidth;
+                int y = settlement.tileIndex / mapWidth;
                 controlPointsByRealm[realmId].Add((kv.Key, new Vector2(x, y)));
             }
 

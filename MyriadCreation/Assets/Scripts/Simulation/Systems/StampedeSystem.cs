@@ -162,14 +162,14 @@ namespace MyriadCreation.Simulation.Systems
 
  /// 检查城市恐慌踩踏（围城/灾难/骚乱时）
         public static StampedeEvent CheckUrbanStampede(
-            SettlementData burg, TileData[] tiles, bool isUnderSiege, bool hasDisaster,
+            SettlementData settlement, TileData[] tiles, bool isUnderSiege, bool hasDisaster,
             float cityStability, int currentDay = 0)
         {
-            if (burg == null) return null;
+            if (settlement == null) return null;
  // 只有主要聚落（城市）才可能发生大规模踩踏
-            if (!burg.IsMajorSettlement) return null;
+            if (!settlement.IsMajorSettlement) return null;
  // 人口密度阈值
-            if (burg.population < UrbanDensityThreshold) return null;
+            if (settlement.population < UrbanDensityThreshold) return null;
  // 需要触发条件：围城 或 灾难 或 稳定度过低
             if (!isUnderSiege && !hasDisaster && cityStability > 50f) return null;
 
@@ -179,7 +179,7 @@ namespace MyriadCreation.Simulation.Systems
             if (hasDisaster) chance *= 1.5f;
             if (cityStability < 30f) chance *= 1.5f;
  // 人口密度越高概率越高
-            chance *= 0.5f + (burg.population / UrbanDensityThreshold) * 0.5f;
+            chance *= 0.5f + (settlement.population / UrbanDensityThreshold) * 0.5f;
             chance = Mathf.Clamp01(chance);
 
             if (UnityEngine.Random.value > chance) return null;
@@ -188,37 +188,37 @@ namespace MyriadCreation.Simulation.Systems
             var stampede = new StampedeEvent
             {
                 type = StampedeType.UrbanPanic,
-                tileIndex = burg.tileIndex,
-                realmId = tiles[burg.tileIndex].ownerRealmId,
-                anchorId = burg.anchorId,
+                tileIndex = settlement.tileIndex,
+                realmId = tiles[settlement.tileIndex].ownerRealmId,
+                anchorId = settlement.anchorId,
                 severity = Mathf.Clamp01(0.2f + (isUnderSiege ? 0.3f : 0f) + (hasDisaster ? 0.2f : 0f) + (100f - cityStability) / 200f),
                 startDay = currentDay,
                 durationDays = 1,
-                description = $"城市恐慌踩踏：{burg.settlementName}人群拥挤导致混乱"
+                description = $"城市恐慌踩踏：{settlement.settlementName}人群拥挤导致混乱"
             };
 
  // 计算伤亡
             float casualtyRate = UrbanBaseCasualtyRate * stampede.severity;
-            stampede.casualties = Mathf.RoundToInt(burg.population * casualtyRate);
+            stampede.casualties = Mathf.RoundToInt(settlement.population * casualtyRate);
 
  // 应用效果
-            ApplyUrbanStampedeEffects(burg, tiles, stampede);
+            ApplyUrbanStampedeEffects(settlement, tiles, stampede);
 
             return stampede;
         }
 
  /// <summary>应用城市踩踏效果</summary>
-        private static void ApplyUrbanStampedeEffects(SettlementData burg, TileData[] tiles, StampedeEvent stampede)
+        private static void ApplyUrbanStampedeEffects(SettlementData settlement, TileData[] tiles, StampedeEvent stampede)
         {
  // 人口减少
-            burg.population = Mathf.Max(0f, burg.population - stampede.casualties);
+            settlement.population = Mathf.Max(0f, settlement.population - stampede.casualties);
  // 地块稳定度下降
-            if (burg.tileIndex >= 0 && burg.tileIndex < tiles.Length)
+            if (settlement.tileIndex >= 0 && settlement.tileIndex < tiles.Length)
             {
-                tiles[burg.tileIndex].stability = Mathf.Max(0f, tiles[burg.tileIndex].stability - 5f * stampede.severity);
+                tiles[settlement.tileIndex].stability = Mathf.Max(0f, tiles[settlement.tileIndex].stability - 5f * stampede.severity);
             }
  // 发展度轻微下降
-            burg.development = Mathf.Max(0f, burg.development - 1f * stampede.severity);
+            settlement.development = Mathf.Max(0f, settlement.development - 1f * stampede.severity);
         }
 
  /// <summary>获取踩踏事件的描述文本</summary>

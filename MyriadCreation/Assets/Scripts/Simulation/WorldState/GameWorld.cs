@@ -93,9 +93,44 @@ namespace MyriadCreation.Simulation.WorldState
  /// <summary>省份（provinceId → Province——地图结构层）</summary>
         [System.NonSerialized]
         public Dictionary<int, Province> provinces = new Dictionary<int, Province>();
- /// <summary>子地块/Burg（anchorId → SettlementData——省份内定居点，对齐 CK3 男爵领）</summary>
+ /// <summary>空间锚点（anchorId → AnchorData）</summary>
         [System.NonSerialized]
-        public Dictionary<int, SettlementData> burgs = new Dictionary<int, SettlementData>();
+        public Dictionary<int, AnchorData> anchors = new Dictionary<int, AnchorData>();
+ /// <summary>兼容索引（anchorId → SettlementData）；每个记录同时是 HabitationSite。</summary>
+        [System.NonSerialized]
+        public Dictionary<int, SettlementData> settlements = new Dictionary<int, SettlementData>();
+
+        public IEnumerable<HabitationSite> HabitationSites
+        {
+            get
+            {
+                foreach (var settlement in settlements.Values)
+                    yield return settlement;
+                if (_campManager != null)
+                {
+                    foreach (var campSite in _campManager.ActiveHabitationSites)
+                        yield return campSite;
+                }
+            }
+        }
+
+        public bool TryGetHabitationSite(string siteId, out HabitationSite site)
+        {
+            if (!string.IsNullOrEmpty(siteId))
+            {
+                foreach (var habitationSite in HabitationSites)
+                {
+                    if (habitationSite.siteId == siteId)
+                    {
+                        site = habitationSite;
+                        return true;
+                    }
+                }
+            }
+
+            site = null;
+            return false;
+        }
  /// <summary>军队（armyId → Army——战争闭环）</summary>
         [System.NonSerialized]
         public Dictionary<int, Army> armies = new Dictionary<int, Army>();
@@ -287,7 +322,7 @@ namespace MyriadCreation.Simulation.WorldState
             if (tile.ownerRealmId != realmId) return null; // 只能在本政权领地建城
 
             int nextId = 1;
-            foreach (var b in burgs.Keys) if (b >= nextId) nextId = b + 1;
+            foreach (var b in settlements.Keys) if (b >= nextId) nextId = b + 1;
 
             string name = "";
             var founder = _characterManager?.GetCharacter(founderCharId);
@@ -304,24 +339,31 @@ namespace MyriadCreation.Simulation.WorldState
             if (string.IsNullOrEmpty(name))
                 name = "新市镇";
 
-            var burg = new SettlementData
+            var settlement = new SettlementData
             {
                 anchorId = nextId,
+                anchor = new AnchorData
+                {
+                    anchorId = nextId,
+                    provinceId = tile.provinceId,
+                    tileIndex = tileIndex,
+                    x = 0.5f,
+                    y = 0.5f
+                },
                 settlementName = name,
-                type = SettlementType.City,
-                provinceId = tile.provinceId,
-                tileIndex = tileIndex,
-                x = 0.5f, y = 0.5f,
+                siteMode = SiteMode.SedentarySettlement,
+                settlementForm = SettlementForm.City,
                 isCoastal = tile.isCoast,
             };
-            SettlementTypologySystem.DeriveInitialType(burg, tile, mapWidth, mapHeight);
-            burg.settlementType = SettlementTypeInferrer.InferSettlementType(burg.settlementType);
-            burgs[burg.anchorId] = burg;
+            settlement.SetLegacyCategoryFromSiteMode();
+            SettlementTypologySystem.DeriveInitialType(settlement, tile, mapWidth, mapHeight);
+            anchors[nextId] = settlement.anchor;
+            settlements[settlement.anchorId] = settlement;
             string founderName = founder != null ? founder.firstName + founder.lastName : "某人";
             _chronicle?.Add("city_founded",
                 $"{founderName} 建立城市 {name}",
                 major: true, realmId);
-            return burg;
+            return settlement;
         }
 
  /// <summary>获取教统运行时（无则 null）</summary>

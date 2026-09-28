@@ -14,7 +14,7 @@ namespace MyriadCreation.Rendering
  /// <summary>省份边界线</summary>
         ProvinceBorders = 1 << 0,
  /// <summary>聚落标记（首都/城市/港口/要塞/集镇）</summary>
-        BurgMarkers = 1 << 1,
+        SettlementMarkers = 1 << 1,
  /// <summary>网格线（经纬度/地块网格）</summary>
         Grid = 1 << 2,
  /// <summary>军队标记</summary>
@@ -57,7 +57,7 @@ namespace MyriadCreation.Rendering
         [Tooltip("省份边界线")]
         public bool showProvinceBorders = true;
         [Tooltip("聚落标记（首都/城市/港口/要塞/集镇）")]
-        public bool showBurgMarkers = true;
+        public bool showSettlementMarkers = true;
         [Tooltip("网格线（经纬度/地块网格）")]
         public bool showGrid = false;
         [Tooltip("军队标记")]
@@ -78,7 +78,7 @@ namespace MyriadCreation.Rendering
             {
                 MapOverlayLayer mask = MapOverlayLayer.None;
                 if (showProvinceBorders) mask |= MapOverlayLayer.ProvinceBorders;
-                if (showBurgMarkers) mask |= MapOverlayLayer.BurgMarkers;
+                if (showSettlementMarkers) mask |= MapOverlayLayer.SettlementMarkers;
                 if (showGrid) mask |= MapOverlayLayer.Grid;
                 if (showArmyMarkers) mask |= MapOverlayLayer.ArmyMarkers;
                 if (showTradeRoutes) mask |= MapOverlayLayer.TradeRoutes;
@@ -96,7 +96,7 @@ namespace MyriadCreation.Rendering
             switch (layer)
             {
                 case MapOverlayLayer.ProvinceBorders: showProvinceBorders = enabled; break;
-                case MapOverlayLayer.BurgMarkers: showBurgMarkers = enabled; break;
+                case MapOverlayLayer.SettlementMarkers: showSettlementMarkers = enabled; break;
                 case MapOverlayLayer.Grid: showGrid = enabled; break;
                 case MapOverlayLayer.ArmyMarkers: showArmyMarkers = enabled; break;
                 case MapOverlayLayer.TradeRoutes: showTradeRoutes = enabled; break;
@@ -110,7 +110,7 @@ namespace MyriadCreation.Rendering
             showCoastline = true;
             showRivers = true;
             showProvinceBorders = true;
-            showBurgMarkers = true;
+            showSettlementMarkers = true;
             showGrid = false;
             showArmyMarkers = false;
             showTradeRoutes = false;

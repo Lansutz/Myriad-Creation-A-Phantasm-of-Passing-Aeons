@@ -1,12 +1,14 @@
 using System;
+using UnityEngine.Serialization;
 
 using MyriadCreation.World;
+using MyriadCreation.World.Settlement;
 namespace MyriadCreation.Infrastructure.Save
 {
     [Serializable]
     public class MapSaveData
     {
-        public int version = 1;
+        public int version = 3;
         public int mapWidth;
         public int mapHeight;
         public int randomSeed;
@@ -19,6 +21,9 @@ namespace MyriadCreation.Infrastructure.Save
         public ProvinceSaveData[] provinces;
 
  // 子地块数据
-        public BurgSaveData[] burgs;
+        [FormerlySerializedAs("burgs")]
+        [FormerlySerializedAs("settlements")]
+        public HabitationSiteSaveData[] habitation_sites;
+
     }
 }

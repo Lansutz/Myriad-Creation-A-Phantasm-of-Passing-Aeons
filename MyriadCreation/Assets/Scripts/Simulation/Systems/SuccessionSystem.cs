@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using MyriadCreation.Simulation.Characters;
 using MyriadCreation.Simulation.Definitions;
@@ -25,7 +25,7 @@ namespace MyriadCreation.Simulation.Systems
             result.deadRulerId = ruler.characterId; // 死亡统治者（评估用）
 
             result.triggered = true;
-            bool monarchy = SupremeSuccessionLevel.IsMonarchy(realm.composition);
+            bool monarchy = SupremeSuccessionLevel.IsMonarchy(realm.laws);
             var candidates = CollectCandidates(realm, characters, ruler);
 
             CharacterData heir;
@@ -81,7 +81,7 @@ namespace MyriadCreation.Simulation.Systems
  /// <summary>共和制继任：资格过滤（supremeEligibility）后按威望选举</summary>
         private static CharacterData SelectByEligibility(RealmData realm, List<CharacterData> candidates)
         {
-            var eligible = realm.composition.supremeEligibility.Filter(candidates);
+            var eligible = realm.laws.supremeEligibility.Filter(candidates);
             if (eligible == null || eligible.Count == 0) return null;
             eligible.Sort((a, b) => b.prestige.CompareTo(a.prestige));
             return eligible[0];

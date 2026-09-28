@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using MyriadCreation.Core;
@@ -43,7 +43,7 @@ namespace MyriadCreation.Simulation.Systems
     {
         private readonly Dictionary<int, SchoolOfThought> _schools = new Dictionary<int, SchoolOfThought>();
         private readonly Dictionary<int, FaithSystem> _faiths = new Dictionary<int, FaithSystem>();
-        private readonly Dictionary<int, LawSystem> _lawSystems = new Dictionary<int, LawSystem>();
+        private readonly Dictionary<int, JudicialSystem> _judicialSystems = new Dictionary<int, JudicialSystem>();
         private readonly List<IdeologyMovement> _movements = new List<IdeologyMovement>();
         private int _nextSchoolId = 1;
         private int _nextFaithId = 1;
@@ -78,15 +78,15 @@ namespace MyriadCreation.Simulation.Systems
         }
 
  /// <summary>创建法律体系</summary>
-        public LawSystem CreateLawSystem(string name, LawSource source)
+        public JudicialSystem CreateJudicialSystem(string name, LawSource source)
         {
-            var law = new LawSystem
+            var law = new JudicialSystem
             {
-                lawSystemId = _nextLawId++,
-                lawSystemName = name,
+                judicialSystemId = _nextLawId++,
+                judicialSystemName = name,
                 source = source
             };
-            _lawSystems[law.lawSystemId] = law;
+            _judicialSystems[law.judicialSystemId] = law;
             return law;
         }
 
@@ -113,7 +113,7 @@ namespace MyriadCreation.Simulation.Systems
             foreach (var faith in _faiths.Values)
                 faith.DailyTick();
 
-            foreach (var law in _lawSystems.Values)
+            foreach (var law in _judicialSystems.Values)
                 law.DailyTick();
 
             for (int i = _movements.Count - 1; i >= 0; i--)
@@ -127,7 +127,7 @@ namespace MyriadCreation.Simulation.Systems
  // ===== 查询接口 =====
         public SchoolOfThought GetSchool(int id) => _schools.TryGetValue(id, out var s) ? s : null;
         public FaithSystem GetFaith(int id) => _faiths.TryGetValue(id, out var f) ? f : null;
-        public LawSystem GetLawSystem(int id) => _lawSystems.TryGetValue(id, out var l) ? l : null;
+        public JudicialSystem GetJudicialSystem(int id) => _judicialSystems.TryGetValue(id, out var l) ? l : null;
         public IdeologyMovement GetMovement(int id) => _movements.Find(m => m.movementId == id);
 
         public IReadOnlyDictionary<int, SchoolOfThought> GetAllSchools() => _schools;

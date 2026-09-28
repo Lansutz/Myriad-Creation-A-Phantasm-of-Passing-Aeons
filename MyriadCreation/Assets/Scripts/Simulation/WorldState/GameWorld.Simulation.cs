@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using MyriadCreation.Core;
 using MyriadCreation.Core.Constants;
@@ -160,11 +160,11 @@ namespace MyriadCreation.Simulation.WorldState
                 for (int t = 0; t < tiles.Length; t++)
                     if (tiles[t].ownerRealmId == realm.realmId) territory.Add(t);
                 if (territory.Count == 0) continue;
-                var effects = realm.composition != null
-                    ? Politics.GovernmentEffects.CalculateEffects(realm.composition) : null;
+                var effects = realm.laws != null
+                    ? Politics.LawEffects.CalculateEffects(realm.laws) : null;
                 float capacity = effects != null ? effects.administrativeCapacity : 0.5f;
                 realm.adminDivisions = Culture.AdminDivisionSystem.Generate(realm,
-                    realm.composition, capacity, territory);
+                    realm.laws, capacity, territory);
             }
         }
 

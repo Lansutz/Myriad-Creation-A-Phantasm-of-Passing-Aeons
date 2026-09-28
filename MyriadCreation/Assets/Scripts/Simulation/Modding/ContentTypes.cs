@@ -122,8 +122,15 @@ namespace MyriadCreation.Simulation.Modding
         public float rank;
  /// <summary>权重（同级内用哪个头衔——文化/政权默认选择加权）</summary>
         public float weight = 1f;
- /// <summary>语义字段（含义/类别——组合/显示用）</summary>
+ /// <summary>语义字段（人类可读注释——不参与逻辑判断）</summary>
         public string semantic = "";
+ /// <summary>权威来源标签（SemanticAuthority.* 之一或多个——
+ /// 例：[military, religious] = 靠军事+宗教双重权威；
+ /// 罗马皇帝 = [military, religious, dynastic, civic]）</summary>
+        public List<string> authorities = new List<string>();
+ /// <summary>程度/范围修饰标签（SemanticModifier.*——可叠加多层——
+ /// 例：[great, divine] = 伟大+神圣；印度头衔可叠三四层）</summary>
+        public List<string> modifiers = new List<string>();
  /// <summary>文化专属（-1=通用——文化专属头衔优先于通用——模组配置）</summary>
         public int cultureId = -1;
     }

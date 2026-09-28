@@ -2,7 +2,9 @@
     "name": "MyriadCreation.Tests.PlayMode",
     "rootNamespace": "MyriadCreation.Tests",
     "references": [
-        "MyriadCreation.Runtime",
+        "MyriadCreation.Core",
+        "MyriadCreation.Simulation",
+        "MyriadCreation.World",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

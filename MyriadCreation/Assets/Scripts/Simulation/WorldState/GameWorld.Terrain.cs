@@ -75,7 +75,7 @@ namespace MyriadCreation.Simulation.WorldState
 
  // 省份生成（沃罗诺伊+Lloyd 松弛——地图结构层）
             GenerateProvinces(seed);
-            GenerateBurgs(seed);
+            GenerateSettlements(seed);
 
             Debug.Log($"[GameWorld] 球形地形生成完成，陆地{GetLandTileCount()}地块，海洋{GetSeaTileCount()}地块，省份{provinces.Count}个");
         }
@@ -123,9 +123,9 @@ namespace MyriadCreation.Simulation.WorldState
             _worldMapSimulation?.MarkAllTerrainDirty(tiles.Length);
             SimulationScheduler.MarkDirty("world.terrain");
 
- // 生成省份和Burg
+ // 生成省份和Settlement
             GenerateProvinces(seed);
-            GenerateBurgs(seed);
+            GenerateSettlements(seed);
             InitializeDefaultRealms();
 
             Debug.Log($"[GameWorld] 配置化地形生成完成：陆地{GetLandTileCount()}，海洋{GetSeaTileCount()}，省份{provinces.Count}");
@@ -237,22 +237,22 @@ namespace MyriadCreation.Simulation.WorldState
 
 
 
- /// <summary>生成子地块/Burg（省份内定居点：城市/港口/要塞/村庄）</summary>
-        private void GenerateBurgs(int seed)
+ /// <summary>生成子地块/Settlement（省份内定居点：城市/港口/要塞/村庄）</summary>
+        private void GenerateSettlements(int seed)
         {
             var generator = new AnchorGenerator(tiles, mapWidth, mapHeight, provinces, seed);
             var (genAnchors, genSettlements) = generator.Generate();
             anchors = genAnchors;
-            burgs = genSettlements;
-            foreach (var s in burgs.Values) s.anchor = anchors[s.anchorId];
+            settlements = genSettlements;
+            foreach (var s in settlements.Values) s.anchor = anchors[s.anchorId];
             int cityCount=0, portCount=0, fortCount=0, villageCount=0;
-            foreach (var b in burgs.Values) {
+            foreach (var b in settlements.Values) {
                 if (b.settlementCategory == SettlementCategory.Outpost) fortCount++;
                 else if (b.isPort) { cityCount++; portCount++; }
-                else if (b.settlementType == SettlementType.City) cityCount++;
+                else if (b.settlementForm == SettlementForm.City) cityCount++;
                 else villageCount++;
             }
-            Debug.Log($"[GameWorld] 子地块生成：{burgs.Count}个（城{cityCount}/港{portCount}/寨{fortCount}/村{villageCount}）");
+            Debug.Log($"[GameWorld] 子地块生成：{settlements.Count}个（城{cityCount}/港{portCount}/寨{fortCount}/村{villageCount}）");
         }
 
  /// <summary>计算地块基础肥力</summary>
@@ -314,8 +314,8 @@ namespace MyriadCreation.Simulation.WorldState
         }
 
 
-        /// <summary>生成聚落（城市/港口/要塞/村庄，参考 Azgaar FMG burgs-generator）</summary>
-        public void GenerateBurgs()
+        /// <summary>生成聚落（城市/港口/要塞/村庄，参考 Azgaar FMG settlements-generator）</summary>
+        public void GenerateSettlements()
         {
             if (provinces.Count == 0)
             {
@@ -327,10 +327,10 @@ namespace MyriadCreation.Simulation.WorldState
             var generator = new AnchorGenerator(tiles, mapWidth, mapHeight, provinces, seed);
             var (genAnchors, genSettlements) = generator.Generate();
             anchors = genAnchors;
-            burgs = genSettlements;
-            foreach (var s in burgs.Values) s.anchor = anchors[s.anchorId];
+            settlements = genSettlements;
+            foreach (var s in settlements.Values) s.anchor = anchors[s.anchorId];
 
-            Debug.Log($"[GameWorld] 聚落生成完成：{burgs.Count} 个聚落");
+            Debug.Log($"[GameWorld] 聚落生成完成：{settlements.Count} 个聚落");
         }
 
     }

@@ -258,7 +258,7 @@ namespace MyriadCreation.Simulation.Systems
  /// 敌对堡垒：经过时损耗+速度下降
  /// 己方堡垒：补给+支援加成
         public static void CalculateFortInfluence(TileData[] tiles, int width, int height,
-            Dictionary<int, SettlementData> burgs)
+            Dictionary<int, SettlementData> settlements)
         {
  // 先重置所有地块的堡垒影响
             for (int i = 0; i < tiles.Length; i++)
@@ -267,18 +267,17 @@ namespace MyriadCreation.Simulation.Systems
                 tiles[i].fortInfluenceLevel = 0;
             }
 
- // 遍历所有堡垒类型的Burg
-            foreach (var burg in burgs.Values)
+ // 遍历所有堡垒类型的Settlement
+            foreach (var settlement in settlements.Values)
             {
-                if (burg.settlementCategory != SettlementCategory.Outpost &&
-                    burg.settlementCategory != SettlementCategory.Outpost) continue;
+                if (settlement.siteMode != SiteMode.FortifiedOutpost) continue;
 
-                int fortTile = burg.tileIndex;
+                int fortTile = settlement.tileIndex;
                 if (fortTile < 0 || fortTile >= tiles.Length) continue;
 
  // 堡垒等级决定影响半径和强度
-                int radius = FortBaseRadius + (int)burg.settlementLevel;
-                int influenceLevel = Mathf.Clamp(1 + (int)burg.settlementLevel / 2, 1, 3);
+                int radius = FortBaseRadius + (int)settlement.settlementLevel;
+                int influenceLevel = Mathf.Clamp(1 + (int)settlement.settlementLevel / 2, 1, 3);
 
  // 为半径内的地块设置影响（取最近的堡垒）
                 for (int dy = -radius; dy <= radius; dy++)
@@ -303,7 +302,7 @@ namespace MyriadCreation.Simulation.Systems
  // 只设置最近的堡垒（或更强的堡垒）
                         if (tiles[ti].fortInfluenceLevel < level || tiles[ti].nearbyFortId == -1)
                         {
-                            tiles[ti].nearbyFortId = burg.anchorId;
+                            tiles[ti].nearbyFortId = settlement.anchorId;
                             tiles[ti].fortInfluenceLevel = level;
                         }
                     }
@@ -312,11 +311,11 @@ namespace MyriadCreation.Simulation.Systems
         }
 
  /// 获取某地块的堡垒所有者政权ID
-        public static int GetFortOwnerRealmId(TileData[] tiles, Dictionary<int, SettlementData> burgs, int tileIndex)
+        public static int GetFortOwnerRealmId(TileData[] tiles, Dictionary<int, SettlementData> settlements, int tileIndex)
         {
             if (tiles[tileIndex].nearbyFortId < 0) return -1;
-            if (burgs.TryGetValue(tiles[tileIndex].nearbyFortId, out var burg))
-                return tiles[burg.tileIndex].ownerRealmId;
+            if (settlements.TryGetValue(tiles[tileIndex].nearbyFortId, out var settlement))
+                return tiles[settlement.tileIndex].ownerRealmId;
             return -1;
         }
     }

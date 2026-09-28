@@ -13,14 +13,13 @@ using MyriadCreation.Simulation.Modding;
 using MyriadCreation.Simulation.Politics;
 using MyriadCreation.Simulation.Society;
 using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.World.Settlement;
 
 
 namespace MyriadCreation.Simulation.Actors
 {
     /// <summary>
-    /// 营寨类型。
-    /// 军队、盗匪、蛮族、游牧政权都可以建立营寨。
-    /// 营寨是临时/半永久据点，与定居聚落（Burg）区分。
+    /// TemporaryEncampment 的用途细分，不代表独立的栖居点模式。
     /// </summary>
     public enum CampType
     {
@@ -33,25 +32,38 @@ namespace MyriadCreation.Simulation.Actors
     }
 
     /// <summary>
-    /// 营寨数据。
-    /// 与定居聚落（Burg）的区别：
-    /// - 营寨可以快速建立和拆除
-    /// - 营寨不发展经济，主要提供补给和防御
-    /// - 游牧营寨是行国的核心据点，可随季节迁移
-    /// - 长期驻扎的营寨可能演变为聚落
+    /// 迁移期营地数据视图；实例本身继承 HabitationSite。
     /// </summary>
     [System.Serializable]
-    public class CampData
+    public class CampData : HabitationSite
     {
         public int campId;
-        public string campName = "";
-        public CampType type;
+        public string campName
+        {
+            get => siteName;
+            set => siteName = value;
+        }
+
+        private CampType _type;
+        public CampType type
+        {
+            get => _type;
+            set
+            {
+                _type = value;
+                InitializeModeData(siteMode);
+                if (siteMode == SiteMode.TemporaryEncampment)
+                    temporaryEncampmentData.encampmentKind = value.ToString();
+                else if (siteMode == SiteMode.FortifiedOutpost)
+                    fortifiedOutpostData.purpose = value.ToString();
+            }
+        }
+
         public int tileIndex;
         public int ownerRealmId = -1;   // 所属政权（-1=无主，如土匪寨）
         public int ownerActorId = -1;   // 所属MapActor（如游牧部落、土匪帮）
 
         // ===== 规模与防御 =====
-        public int population;          // 驻扎人口
         public float defense = 10f;     // 防御值（影响攻破难度）
         public float supplies = 100f;   // 补给储备
         public float morale = 80f;      // 守军士气
@@ -63,6 +75,12 @@ namespace MyriadCreation.Simulation.Actors
 
         // ===== 自定义属性 =====
         public Dictionary<string, float> attributes = new Dictionary<string, float>();
+
+        public CampData()
+        {
+            siteMode = SiteMode.TemporaryEncampment;
+            InitializeModeData(siteMode);
+        }
 
         /// <summary>每日更新：补给消耗、永久化进度、废弃判定</summary>
         public void Tick(GameWorld world, float deltaDays)
@@ -80,6 +98,7 @@ namespace MyriadCreation.Simulation.Actors
                 if (population <= 0 || morale <= 0)
                 {
                     isAbandoned = true;
+                    population = 0;
                     Debug.Log($"[Camp] 营寨#{campId}({type}) 因补给耗尽被废弃，地块={tileIndex}");
                     return;
                 }
@@ -122,10 +141,35 @@ namespace MyriadCreation.Simulation.Actors
         public IReadOnlyList<CampData> AllCamps => _camps;
         public int Count => _camps.Count;
 
+        public IEnumerable<HabitationSite> ActiveHabitationSites
+        {
+            get
+            {
+                foreach (var camp in _camps)
+                    if (!camp.isAbandoned)
+                        yield return camp;
+            }
+        }
+
         public CampData GetCamp(int campId)
         {
             _campById.TryGetValue(campId, out var camp);
             return camp;
+        }
+
+        public bool TryGetActiveSiteByAnchor(int anchorId, out HabitationSite site)
+        {
+            foreach (var camp in _camps)
+            {
+                if (!camp.isAbandoned && camp.anchorId == anchorId)
+                {
+                    site = camp;
+                    return true;
+                }
+            }
+
+            site = null;
+            return false;
         }
 
         public List<CampData> GetCampsAtTile(int tileIndex)
@@ -174,21 +218,64 @@ namespace MyriadCreation.Simulation.Actors
             return camp;
         }
 
+        public void RestoreCamp(CampData camp)
+        {
+            if (camp == null)
+                throw new System.ArgumentNullException(nameof(camp));
+            if (camp.campId <= 0 || _campById.ContainsKey(camp.campId))
+                throw new System.InvalidOperationException($"Invalid or duplicate camp ID {camp.campId}.");
+            if (!System.Guid.TryParse(camp.siteId, out _))
+                throw new System.InvalidOperationException($"Camp {camp.campId} has an invalid site UUID.");
+            if (camp.tileIndex < 0 || _world.tiles == null || camp.tileIndex >= _world.tiles.Length)
+                throw new System.InvalidOperationException($"Camp {camp.campId} has an invalid tile index.");
+
+            camp.isAbandoned = false;
+            camp.InitializeModeData(camp.siteMode);
+            _camps.Add(camp);
+            _campById.Add(camp.campId, camp);
+            _nextCampId = System.Math.Max(_nextCampId, camp.campId + 1);
+
+            var tile = _world.tiles[camp.tileIndex];
+            tile.campId = camp.campId;
+            _world.tiles[camp.tileIndex] = tile;
+        }
+
         /// <summary>拆除/废弃营寨</summary>
         public void AbandonCamp(int campId)
         {
             if (_campById.TryGetValue(campId, out var camp))
             {
-                camp.isAbandoned = true;
-                // 清除地块关联
-                if (camp.tileIndex >= 0 && camp.tileIndex < _world.tiles.Length)
+                if (camp.siteMode == SiteMode.FortifiedOutpost
+                    && !HabitationSiteTransitionSystem.TryTransition(
+                        (HabitationSite)camp,
+                        SiteMode.TemporaryEncampment,
+                        out var transitionFailure))
                 {
-                    var tile = _world.tiles[camp.tileIndex];
-                    if (tile.campId == campId) tile.campId = -1;
-                    _world.tiles[camp.tileIndex] = tile;
+                    Debug.LogError($"[CampManager] 无法先将据点转为营地再消散：{transitionFailure}");
+                    return;
                 }
+                if (!HabitationSiteTransitionSystem.CanDissolve(camp))
+                {
+                    Debug.LogError($"[CampManager] 只有临时营地可以消散，目标#{campId}模式={SiteModeKeys.ToKey(camp.siteMode)}");
+                    return;
+                }
+
+                RemoveCamp(camp);
                 Debug.Log($"[CampManager] 营寨#{campId}被废弃");
             }
+        }
+
+        public void RemoveTransferredCamp(int campId, string replacementSiteId)
+        {
+            if (!_campById.TryGetValue(campId, out var camp))
+                throw new System.InvalidOperationException($"Camp {campId} does not exist for site transfer.");
+            if (camp.siteId != replacementSiteId)
+                throw new System.InvalidOperationException($"Transferred site ID mismatch for camp {campId}.");
+            if (!_world.TryGetHabitationSite(replacementSiteId, out var replacement)
+                || System.Object.ReferenceEquals(replacement, camp))
+                throw new System.InvalidOperationException($"Replacement habitation site '{replacementSiteId}' is not registered.");
+
+            RemoveCamp(camp);
         }
 
         /// <summary>营寨被摧毁（战斗中攻破）</summary>
@@ -196,7 +283,21 @@ namespace MyriadCreation.Simulation.Actors
         {
             if (_campById.TryGetValue(campId, out var camp))
             {
-                camp.isAbandoned = true;
+                if (camp.siteMode == SiteMode.FortifiedOutpost
+                    && !HabitationSiteTransitionSystem.TryTransition(
+                        (HabitationSite)camp,
+                        SiteMode.TemporaryEncampment,
+                        out var transitionFailure))
+                {
+                    Debug.LogError($"[CampManager] 无法先将被摧毁据点转为营地：{transitionFailure}");
+                    return;
+                }
+                if (!HabitationSiteTransitionSystem.CanDissolve(camp))
+                {
+                    Debug.LogError($"[CampManager] 只有临时营地可以在摧毁后消散，目标#{campId}模式={SiteModeKeys.ToKey(camp.siteMode)}");
+                    return;
+                }
+
                 camp.population = Mathf.Max(0, camp.population / 2); // 半数伤亡
                 // 清除地块关联
                 if (camp.tileIndex >= 0 && camp.tileIndex < _world.tiles.Length)
@@ -206,6 +307,7 @@ namespace MyriadCreation.Simulation.Actors
                     tile.order = Mathf.Max(0f, tile.order - 10f);
                     _world.tiles[camp.tileIndex] = tile;
                 }
+                RemoveCamp(camp);
                 Debug.Log($"[CampManager] 营寨#{campId}被摧毁，攻击者政权={attackerRealmId}");
             }
         }
@@ -217,13 +319,24 @@ namespace MyriadCreation.Simulation.Actors
             {
                 var camp = _camps[i];
                 camp.Tick(_world, deltaDays);
-                // 清理长期废弃的营寨（30天后从列表移除）
-                if (camp.isAbandoned && _world.currentDay - camp.establishedDay > 30)
-                {
-                    _camps.RemoveAt(i);
-                    _campById.Remove(camp.campId);
-                }
+                if (camp.isAbandoned)
+                    RemoveCamp(camp);
             }
+        }
+
+        private void RemoveCamp(CampData camp)
+        {
+            camp.isAbandoned = true;
+            if (camp.tileIndex >= 0 && camp.tileIndex < _world.tiles.Length)
+            {
+                var tile = _world.tiles[camp.tileIndex];
+                if (tile.campId == camp.campId)
+                    tile.campId = -1;
+                _world.tiles[camp.tileIndex] = tile;
+            }
+
+            _camps.Remove(camp);
+            _campById.Remove(camp.campId);
         }
 
         private string GetDefaultCampName(CampType type)
@@ -241,6 +354,16 @@ namespace MyriadCreation.Simulation.Actors
 
         public void Clear()
         {
+            foreach (var camp in _camps)
+            {
+                if (camp.tileIndex < 0 || _world.tiles == null || camp.tileIndex >= _world.tiles.Length)
+                    continue;
+                var tile = _world.tiles[camp.tileIndex];
+                if (tile.campId == camp.campId)
+                    tile.campId = -1;
+                _world.tiles[camp.tileIndex] = tile;
+            }
+
             _camps.Clear();
             _campById.Clear();
             _nextCampId = 1;

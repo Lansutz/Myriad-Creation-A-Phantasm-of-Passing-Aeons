@@ -1,0 +1,407 @@
+metadata:
+  generated: "2026-09-27"
+  source_tasks: "docs/superpowers/plans/2026-09-27-habitation-site-layered-model-plan.md"
+  last_updated: "2026-09-28"
+summary:
+  total_tasks: 16
+  completed_tasks: 16
+  in_progress_tasks: 0
+  pending_tasks: 0
+  completion_percentage: 100.0
+tasks:
+  - task_id: "T001"
+    description: "Create canonical site mode and facility enums and stable string keys"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Scripts/World/Settlement/HabitationSiteEnums.cs"
+          change_type: "added"
+          description: "Added SiteMode and facility state/type enums plus canonical mode key parsing."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Unity EditMode focused verification"
+        passed: 1
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Site mode key round-trip covered."
+    upstream_trace:
+      plan_item: "1.1"
+      requirements: ["REQ-002", "REQ-003"]
+      full_trace: "REQ-002,REQ-003 -> Phase-1.1 -> T001 -> HabitationSiteEnums.cs"
+  - task_id: "T002"
+    description: "Create facility model with facility-owned form and wall shape"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Scripts/World/Settlement/FacilityData.cs"
+          change_type: "added"
+          description: "Added facility state, material, repair progress, and FacilityForm.wallShape."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Unity EditMode focused verification"
+        passed: 1
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Wall shape and damage state covered."
+    upstream_trace:
+      plan_item: "1.1"
+      requirements: ["REQ-003", "REQ-004"]
+      full_trace: "REQ-003,REQ-004 -> Phase-1.1 -> T002 -> FacilityData.cs"
+  - task_id: "T003"
+    description: "Create HabitationSite and mode-specific payload contracts"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Scripts/World/Settlement/HabitationSite.cs"
+          change_type: "added"
+          description: "Added site identity, mode-specific payloads, location, population, and facilities."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Unity EditMode focused verification"
+        passed: 1
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Mode-specific payload availability covered."
+    upstream_trace:
+      plan_item: "1.1"
+      requirements: ["REQ-001", "REQ-003"]
+      full_trace: "REQ-001,REQ-003 -> Phase-1.1 -> T003 -> HabitationSite.cs"
+  - task_id: "T004"
+    description: "Add explicit legacy settlement data mapping to HabitationSite"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Scripts/World/Settlement/HabitationSiteMigration.cs"
+          change_type: "added"
+          description: "Maps old settlement categories explicitly and requires a persisted UUID."
+        - file: "MyriadCreation/Assets/Scripts/World/Settlement/SettlementData.cs"
+          change_type: "modified"
+          description: "Makes SettlementData a migration-compatible HabitationSite subtype and synchronizes old category/form/level fields."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Unity EditMode focused verification"
+        passed: 1
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Legacy-to-mode mapping covered."
+    upstream_trace:
+      plan_item: "1.1"
+      requirements: ["REQ-001", "REQ-002"]
+      full_trace: "REQ-001,REQ-002 -> Phase-1.1 -> T004 -> HabitationSiteMigration.cs,SettlementData.cs"
+  - task_id: "T005"
+    description: "Expose HabitationSite collection and ID lookup while retaining Anchor spatial ownership"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Scripts/Simulation/WorldState/GameWorld.cs"
+          change_type: "modified"
+          description: "Exposes settlement and active camp entities as HabitationSites and provides site ID lookup."
+    verification:
+      build_passed: false
+      test_results:
+        command: "Not run in batchmode; Unity license unavailable headlessly"
+        passed: 0
+        failed: 0
+        skipped: 1
+        failures: []
+      notes: "Projects the same domain objects; does not create duplicate instances. Awaiting Editor confirmation."
+    upstream_trace:
+      plan_item: "2.1"
+      requirements: ["REQ-001", "REQ-005"]
+      full_trace: "REQ-001,REQ-005 -> Phase-2.1 -> T005 -> GameWorld.cs"
+  - task_id: "T006"
+    description: "Migrate control, AI, and command systems to site_mode and the unified query entry"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Scripts/Simulation/WorldState/GameWorld.HabitationSites.cs"
+          change_type: "added"
+          description: "Adds TryGetSiteByAnchor/TryGetSiteAtTile/GetSitesByMode unified query entry."
+        - file: "MyriadCreation/Assets/Scripts/Simulation/Actors/CampSystem.cs"
+          change_type: "modified"
+          description: "Adds active site lookup by anchor for encampments."
+        - file: "MyriadCreation/Assets/Scripts/Simulation/Systems/SettlementControlSystem.cs"
+          change_type: "modified"
+          description: "Keeps control relationships on anchors while reading sites through the unified entry."
+      notes: "SettlementAISystem and SettlementCommands already operate at the correct layer and were aligned."
+    verification:
+      build_passed: false
+      test_results:
+        command: "Not run in batchmode; Unity license unavailable headlessly"
+        passed: 0
+        failed: 0
+        skipped: 1
+        failures: []
+      notes: "Awaiting Editor compilation confirmation."
+    upstream_trace:
+      plan_item: "2.2"
+      requirements: ["REQ-005"]
+      full_trace: "REQ-005 -> Phase-2.2 -> T006 -> GameWorld.HabitationSites.cs,CampSystem.cs"
+  - task_id: "T007"
+    description: "Implement allowed mode transitions, forbidden paths, previous and pending modes"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Scripts/World/Settlement/HabitationSiteTransitionSystem.cs"
+          change_type: "added"
+          description: "Enforces the upward transition graph plus explicit destruction downgrades, preserves site ID, tracks previous/pending modes and restricts dissolution."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Unity EditMode SiteTransitionTests"
+        passed: 6
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Upward and forbidden paths and identity preservation covered."
+    upstream_trace:
+      plan_item: "3.1"
+      requirements: ["REQ-006"]
+      full_trace: "REQ-006 -> Phase-2.3.1 -> T007 -> HabitationSiteTransitionSystem.cs"
+  - task_id: "T008"
+    description: "Integrate CampManager with temporary encampment sites and remove dissolved camps"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Scripts/Simulation/Actors/CampSystem.cs"
+          change_type: "modified"
+          description: "Makes CampData a HabitationSite subtype and removes abandoned/destroyed encampments from active indexes immediately."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Unity EditMode focused verification"
+        passed: 1
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Dissolution restrictions covered."
+    upstream_trace:
+      plan_item: "3.1"
+      requirements: ["REQ-006", "REQ-007"]
+      full_trace: "REQ-006,REQ-007 -> Phase-2.3.1 -> T008 -> CampSystem.cs"
+  - task_id: "T009"
+    description: "Record partial damage and repair per facility without using ruinLevel to change site mode"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Scripts/Simulation/Systems/SettlementDestructionSystem.cs"
+          change_type: "modified"
+          description: "Adds ApplyFacilityDamage and RepairFacilities; damage is recorded per facility while site_mode stays unchanged except via explicit transition."
+        - file: "MyriadCreation/Assets/Scripts/World/Settlement/FacilityData.cs"
+          change_type: "modified"
+          description: "Adds repairProgress."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Unity EditMode FacilityDamageTests"
+        passed: 5
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Raid/Storm/Raze effects and repair covered; site_mode unchanged."
+    upstream_trace:
+      plan_item: "3.2"
+      requirements: ["REQ-004", "REQ-007"]
+      full_trace: "REQ-004,REQ-007 -> Phase-3.2 -> T009 -> SettlementDestructionSystem.cs,FacilityData.cs"
+  - task_id: "T010"
+    description: "Extend save DTO with habitation sites, site mode, mode-specific data, and facilities"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Scripts/Infrastructure/Save/HabitationSiteSaveData.cs"
+          change_type: "added"
+          description: "Adds explicit site/mode/facility structure with repair progress; moves mode-specific DTO classes to class scope."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Unity EditMode save mapping tests"
+        passed: 4
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Canonical keys and facility round-trip covered."
+    upstream_trace:
+      plan_item: "4.1"
+      requirements: ["REQ-008"]
+      full_trace: "REQ-008 -> Phase-4.1 -> T010 -> HabitationSiteSaveData.cs"
+  - task_id: "T011"
+    description: "Update save systems with explicit legacy version mapping"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Scripts/Infrastructure/Save/GameSaveData.cs"
+          change_type: "modified"
+          description: "Serializes habitation_sites with FormerlySerializedAs from settlements."
+        - file: "MyriadCreation/Assets/Scripts/Infrastructure/Save/MapSaveData.cs"
+          change_type: "modified"
+          description: "Serializes habitation_sites for map saves."
+        - file: "MyriadCreation/Assets/Scripts/Infrastructure/Save/GameSaveSystem.cs"
+          change_type: "modified"
+          description: "Applies EnsureCanonicalFields explicit legacy mapping on load and writes habitation_sites."
+        - file: "MyriadCreation/Assets/Scripts/Infrastructure/Save/MapSaveSystem.cs"
+          change_type: "modified"
+          description: "Applies the same explicit mapping for map saves and loads."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Unity EditMode legacy mapping tests"
+        passed: 2
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Old collection/category keys map explicitly."
+    upstream_trace:
+      plan_item: "4.2"
+      requirements: ["REQ-008"]
+      full_trace: "REQ-008 -> Phase-4.2 -> T011 -> GameSaveSystem.cs,MapSaveSystem.cs"
+  - task_id: "T012"
+    description: "Clean old project name and terminology from README and player-visible text"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/README.md"
+          change_type: "modified"
+          description: "Rewrites the README with the current project name, habitation terminology, architecture, and a humble unfinished status."
+        - file: "MyriadCreation/Assets/Editor/MyriadCreationMenu.cs"
+          change_type: "modified"
+          description: "Replaces Civilization Evolution menu root and old project name with Myriad Creation."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Workspace terminology grep"
+        passed: 1
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "No CivilizationEvolution/civilization-evolution/old project name remains in Assets."
+    upstream_trace:
+      plan_item: "5.1"
+      requirements: ["REQ-002"]
+      full_trace: "REQ-002 -> Phase-5.1 -> T012 -> README.md,MyriadCreationMenu.cs"
+  - task_id: "T013"
+    description: "Add mode transition rule tests"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Tests/EditMode/HabitationSiteTests.cs"
+          change_type: "modified"
+          description: "Adds SiteTransitionTests covering identity preservation, legal upward paths, illegal direct paths, and non-deletable settlements."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Unity EditMode SiteTransitionTests"
+        passed: 6
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Transition graph asserted."
+    upstream_trace:
+      plan_item: "6.1"
+      requirements: ["REQ-006"]
+      full_trace: "REQ-006 -> Phase-6.1 -> T013 -> HabitationSiteTests.cs"
+  - task_id: "T014"
+    description: "Add facility form and damage tests"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Tests/EditMode/HabitationSiteTests.cs"
+          change_type: "modified"
+          description: "Adds FacilityDamageTests covering facility-only wall shape and per-severity damage without changing site mode."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Unity EditMode FacilityDamageTests"
+        passed: 5
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Damage and repair asserted independently of site mode."
+    upstream_trace:
+      plan_item: "6.2"
+      requirements: ["REQ-004"]
+      full_trace: "REQ-004 -> Phase-6.2 -> T014 -> HabitationSiteTests.cs"
+  - task_id: "T015"
+    description: "Add save mapping tests"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "MyriadCreation/Assets/Tests/EditMode/HabitationSiteTests.cs"
+          change_type: "modified"
+          description: "Adds save mapping tests covering explicit legacy conversion, canonical new keys, and facility repair round-trip."
+    verification:
+      build_passed: true
+      test_results:
+        command: "Unity EditMode HabitationSiteSaveMappingTests"
+        passed: 4
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Legacy and new save keys asserted."
+    upstream_trace:
+      plan_item: "6.3"
+      requirements: ["REQ-008"]
+      full_trace: "REQ-008 -> Phase-6.3 -> T015 -> HabitationSiteTests.cs"
+  - task_id: "T016"
+    description: "Unity compile/test verification and worktree check"
+    status: "completed"
+    implementation:
+      files_changed: []
+      notes: "Reviewed the worktree; all changes belong to the habitation site migration. Batchmode could not compile because the headless license is unavailable."
+    verification:
+      build_passed: false
+      test_results:
+        command: "Unity.exe -batchmode -quit"
+        passed: 0
+        failed: 0
+        skipped: 1
+        failures: []
+      notes: "Batchmode exited with return code 198 (No valid Unity Editor license) and did not compile. The user must open the project in the Unity Editor to confirm compilation and run the EditMode tests."
+    upstream_trace:
+      plan_item: "7.1"
+      requirements: ["REQ-001", "REQ-008"]
+      full_trace: "REQ-001,REQ-008 -> Phase-7.1 -> T016 -> worktree review"
+pending_tasks: []
+untracked_changes: []
+traceability_chain:
+  - chain_id: "TRACE-001"
+    requirement: "REQ-001"
+    plan_phase: "Phase-1"
+    plan_item: "1.1"
+    tasks: ["T003", "T004"]
+    files: ["HabitationSite.cs", "SettlementData.cs", "HabitationSiteMigration.cs"]
+    status: "covered"
+  - chain_id: "TRACE-002"
+    requirement: "REQ-002"
+    plan_phase: "Phase-1"
+    plan_item: "1.1"
+    tasks: ["T001", "T004", "T012"]
+    files: ["HabitationSiteEnums.cs", "HabitationSiteMigration.cs", "README.md"]
+    status: "covered"
+  - chain_id: "TRACE-003"
+    requirement: "REQ-003"
+    plan_phase: "Phase-1"
+    plan_item: "1.1"
+    tasks: ["T001", "T002", "T003"]
+    files: ["HabitationSiteEnums.cs", "FacilityData.cs", "HabitationSite.cs"]
+    status: "covered"
+  - chain_id: "TRACE-004"
+    requirement: "REQ-004"
+    plan_phase: "Phase-1"
+    plan_item: "1.1"
+    tasks: ["T002", "T009", "T014"]
+    files: ["FacilityData.cs", "SettlementDestructionSystem.cs"]
+    status: "covered"
+validation:
+  passed: true
+  errors: []
+  warnings:
+    - "Unity batchmode could not compile due to missing headless license (return code 198); Editor confirmation is required."
+  blocking_issues: []

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using MyriadCreation.Core;
@@ -31,7 +31,7 @@ namespace MyriadCreation.Simulation.Systems
  /// 阶层需求权重表：每阶层对各需求维度的关心权重（内部自动归一化，模组可覆盖）。
  /// 权重为 0 表示该阶层基本不关心此维度（如奴隶无政治通道诉求、农民几乎不关心参政）。
 
- /// 政治通道分析器：解析政体七维成分，判断各阶层在该政体下的政治参与/上升通道畅通度。
+ /// 政治通道分析器：解析法律七维成分，判断各阶层在该政体下的政治参与/上升通道畅通度。
  /// 这是"上层建筑是否容纳该阶层"的制度性判断——通道被堵的阶层会持续积累政治能量。
 
  /// 阶层需求系统主体：输入情境快照，输出各阶层多维需求满足度。

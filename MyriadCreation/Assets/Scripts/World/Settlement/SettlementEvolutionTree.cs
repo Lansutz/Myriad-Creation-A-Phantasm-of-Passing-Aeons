@@ -105,13 +105,13 @@ namespace MyriadCreation.World.Settlement
         };
 
         /// <summary>获取聚居点当前阶段的名称（根据进化路径和等级）</summary>
-        public static string GetStageName(SettlementData burg)
+        public static string GetStageName(SettlementData settlement)
         {
-            if (burg == null) return "未知";
-            if (!PathStages.TryGetValue(burg.upgradePath, out var stages))
+            if (settlement == null) return "未知";
+            if (!PathStages.TryGetValue(settlement.upgradePath, out var stages))
                 stages = NaturalStages;
 
-            int levelIndex = (int)burg.settlementLevel;
+            int levelIndex = (int)settlement.settlementLevel;
             if (levelIndex < 0) levelIndex = 0;
             if (levelIndex >= stages.Length) levelIndex = stages.Length - 1;
 
@@ -127,9 +127,9 @@ namespace MyriadCreation.World.Settlement
         }
 
         /// <summary>检查聚居点是否达到进化路径的最大等级</summary>
-        public static bool IsAtMaxLevel(SettlementData burg)
+        public static bool IsAtMaxLevel(SettlementData settlement)
         {
-            return burg != null && burg.settlementLevel >= GetMaxLevel(burg.upgradePath);
+            return settlement != null && settlement.settlementLevel >= GetMaxLevel(settlement.upgradePath);
         }
 
         /// <summary>
@@ -138,21 +138,21 @@ namespace MyriadCreation.World.Settlement
         /// 只推导起源方式（自然发展/建城/堡垒/城堡/港口）。
         /// 具体的经济成分由成分系统（EconomicComposition）根据地理条件和物产自然决定。
         /// </summary>
-        public static UpgradePath DeriveEvolutionPath(TileData tile, SettlementData burg)
+        public static UpgradePath DeriveEvolutionPath(TileData tile, SettlementData settlement)
         {
             // 1. 军事据点 → 堡垒起源
-            if (burg.settlementCategory == SettlementCategory.Outpost)
+            if (settlement.siteMode == SiteMode.FortifiedOutpost)
             {
                 return UpgradePath.FortressGrowth;
             }
 
             // 2. 港口 → 港口起源
-            if (burg.portTier >= PortTier.IntermediatePort)
+            if (settlement.portTier >= PortTier.IntermediatePort)
                 return UpgradePath.PortDevelopment;
 
             // 3. 贵族城堡 → 城堡起源（有城堡特征的据点）
-            if (burg.fortSubtype == FortSubtype.RoyalCastle ||
-                burg.fortSubtype == FortSubtype.ManorFort)
+            if (settlement.fortSubtype == FortSubtype.RoyalCastle ||
+                settlement.fortSubtype == FortSubtype.ManorFort)
                 return UpgradePath.CastleGrowth;
 
             // 4. 默认 → 自然发展（正常的定居点发展，经济成分由成分系统决定）

@@ -22,18 +22,29 @@ using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.UI;
 using MyriadCreation.World.Generation;
 using MyriadCreation.World.Hydrology;
+using MyriadCreation.World.Anchor;
 using MyriadCreation.World.Settlement;
 using MyriadCreation.World.Terrain;
 
 
 namespace MyriadCreation.Editor.RenderTools
 {
+    public enum SettlementPlacementPreset
+    {
+        Village,
+        Town,
+        City,
+        Port,
+        Capital,
+        Fortress
+    }
+
  /// 地图编辑器工具类型
  /// 对齐 FantasyMapSimulator: CustomMapImageLayer / MapBrush / cursorPixelPosition / CeilToPixelGrid
 
  /// 地图编辑器
  /// 运行时像素级地图编辑：地形绘制、省份边界调整、子地块放置
- /// 支持画笔大小、撤销/重做、绘制后自动重算省份/海洋/Burg
+ /// 支持画笔大小、撤销/重做、绘制后自动重算省份/海洋/Settlement
     public class MapEditor
     {
         private readonly GameWorld _world;
@@ -44,16 +55,16 @@ namespace MyriadCreation.Editor.RenderTools
         public EditorTool CurrentTool { get; private set; } = EditorTool.None;
         public int BrushSize { get; set; } = 1; // 画笔半径（1=1x1, 2=3x3, 3=5x5）
         public int SelectedProvinceId { get; set; } = -1; // 省份画笔选中的省份ID
-        public BurgType SelectedBurgType { get; set; } = BurgType.City; // 子地块放置类型
+        public SettlementPlacementPreset SelectedSettlementPreset { get; set; } = SettlementPlacementPreset.City;
 
  // ===== 撤销/重做 =====
         private class EditAction
         {
             public string description;
             public List<(int tileIndex, TileData oldData, TileData newData)> tileChanges = new();
-            public List<(int burgId, BurgData oldBurg, BurgData newBurg)> burgChanges = new();
-            public List<int> addedBurgIds = new();
-            public List<int> removedBurgIds = new();
+            public List<(int anchorId, SettlementData oldSettlement, SettlementData newSettlement)> settlementChanges = new();
+            public List<int> addedSettlementAnchorIds = new();
+            public List<int> removedSettlementAnchorIds = new();
         }
         private readonly Stack<EditAction> _undoStack = new Stack<EditAction>();
         private readonly Stack<EditAction> _redoStack = new Stack<EditAction>();
@@ -121,8 +132,9 @@ namespace MyriadCreation.Editor.RenderTools
             _isPainting = false;
 
             if (_currentAction != null &&
-                (_currentAction.tileChanges.Count > 0 || _currentAction.burgChanges.Count > 0 ||
-                 _currentAction.addedBurgIds.Count > 0 || _currentAction.removedBurgIds.Count > 0))
+                (_currentAction.tileChanges.Count > 0 || _currentAction.settlementChanges.Count > 0 ||
+                 _currentAction.addedSettlementAnchorIds.Count > 0 ||
+                 _currentAction.removedSettlementAnchorIds.Count > 0))
             {
                 PushUndo(_currentAction);
                 _redoStack.Clear();
@@ -237,17 +249,17 @@ namespace MyriadCreation.Editor.RenderTools
                     }
                     break;
 
-                case EditorTool.BurgPlace:
- // 只在中心点放置Burg（画笔范围内的第一个陆地地块）
-                    if (tile.isLand && !HasBurgAt(tileIndex))
+                case EditorTool.SettlementPlace:
+ // 只在中心点放置Settlement（画笔范围内的第一个陆地地块）
+                    if (tile.isLand && !HasSettlementAt(tileIndex))
                     {
-                        PlaceBurgAt(tileIndex);
-                        return; // Burg放置不记录tileChange
+                        PlaceSettlementAt(tileIndex);
+                        return; // Settlement放置不记录tileChange
                     }
                     break;
 
-                case EditorTool.BurgRemove:
-                    RemoveBurgAt(tileIndex);
+                case EditorTool.SettlementRemove:
+                    RemoveSettlementAt(tileIndex);
                     return;
             }
 
@@ -257,49 +269,83 @@ namespace MyriadCreation.Editor.RenderTools
             }
         }
 
- // ===== Burg 放置/移除 =====
-        private bool HasBurgAt(int tileIndex)
+ // ===== Settlement 放置/移除 =====
+        private bool HasSettlementAt(int tileIndex)
         {
-            if (_world.burgs == null) return false;
-            foreach (var b in _world.burgs.Values)
+            if (_world.settlements == null) return false;
+            foreach (var b in _world.settlements.Values)
                 if (b.tileIndex == tileIndex) return true;
             return false;
         }
 
-        private void PlaceBurgAt(int tileIndex)
+        private void PlaceSettlementAt(int tileIndex)
         {
-            if (_world.burgs == null) _world.burgs = new Dictionary<int, BurgData>();
+            if (_world.settlements == null) _world.settlements = new Dictionary<int, SettlementData>();
+            if (_world.anchors == null) _world.anchors = new Dictionary<int, AnchorData>();
 
-            int newId = 0;
-            foreach (var k in _world.burgs.Keys) if (k >= newId) newId = k + 1;
+            int newAnchorId = 1;
+            foreach (var id in _world.anchors.Keys)
+                if (id >= newAnchorId) newAnchorId = id + 1;
 
             ref TileData tile = ref _world.tiles[tileIndex];
-            var burg = new BurgData
+            bool isCity = SelectedSettlementPreset == SettlementPlacementPreset.City ||
+                SelectedSettlementPreset == SettlementPlacementPreset.Port ||
+                SelectedSettlementPreset == SettlementPlacementPreset.Capital;
+            bool isFortress = SelectedSettlementPreset == SettlementPlacementPreset.Fortress;
+            bool isPort = SelectedSettlementPreset == SettlementPlacementPreset.Port;
+            var anchor = new AnchorData
             {
-                burgId = newId,
-                burgName = GenerateBurgName(tile, SelectedBurgType),
-                type = SelectedBurgType,
+                anchorId = newAnchorId,
                 provinceId = tile.provinceId,
                 tileIndex = tileIndex,
                 x = 0.5f,
-                y = 0.5f,
+                y = 0.5f
+            };
+            var settlement = new SettlementData
+            {
+                anchorId = newAnchorId,
+                anchor = anchor,
+                settlementName = GenerateSettlementName(tile, SelectedSettlementPreset),
+                settlementCategory = isFortress
+                    ? SettlementCategory.Outpost
+                    : SettlementCategory.PermanentSettlement,
+                settlementForm = isCity ? SettlementForm.City : SettlementForm.Village,
+                settlementLevel = SelectedSettlementPreset switch
+                {
+                    SettlementPlacementPreset.Village => SettlementLevel.LevelI,
+                    SettlementPlacementPreset.Town => SettlementLevel.LevelII,
+                    SettlementPlacementPreset.Fortress => SettlementLevel.LevelII,
+                    _ => SettlementLevel.LevelIII
+                },
+                primaryFunction = SelectedSettlementPreset switch
+                {
+                    SettlementPlacementPreset.Port => SettlementFunction.Port,
+                    SettlementPlacementPreset.Capital => SettlementFunction.Administrative,
+                    SettlementPlacementPreset.Fortress => SettlementFunction.Fortress,
+                    _ => SettlementFunction.None
+                },
+                fortSubtype = isFortress ? FortSubtype.HillFort : default,
+                portTier = isPort ? PortTier.Anchorage : PortTier.None,
+                isCapital = SelectedSettlementPreset == SettlementPlacementPreset.Capital,
                 isCoastal = tile.isCoast,
-                isPort = SelectedBurgType == BurgType.Port,
-                development = SelectedBurgType == BurgType.City ? 30f : 15f,
-                population = SelectedBurgType == BurgType.City ? 1000f : 300f,
-                buildLevel = SelectedBurgType == BurgType.City ? 2 : 1
+                isPort = isPort,
+                development = isCity ? 30f : 15f,
+                population = isCity ? 1000f : 300f,
+                constructionTier = isCity ? 2 : 1
             };
 
-            _world.burgs[newId] = burg;
-            _currentAction.addedBurgIds.Add(newId);
-            Debug.Log($"[MapEditor] 放置子地块: {burg.DisplayName} at tile#{tileIndex}");
+            _world.anchors[newAnchorId] = anchor;
+            _world.settlements[newAnchorId] = settlement;
+            _currentAction.settlementChanges.Add((newAnchorId, null, settlement));
+            _currentAction.addedSettlementAnchorIds.Add(newAnchorId);
+            Debug.Log($"[MapEditor] 放置聚居点: {settlement.settlementName} at tile#{tileIndex}");
         }
 
-        private void RemoveBurgAt(int tileIndex)
+        private void RemoveSettlementAt(int tileIndex)
         {
-            if (_world.burgs == null) return;
+            if (_world.settlements == null) return;
             int? toRemove = null;
-            foreach (var kv in _world.burgs)
+            foreach (var kv in _world.settlements)
             {
                 if (kv.Value.tileIndex == tileIndex)
                 {
@@ -309,11 +355,12 @@ namespace MyriadCreation.Editor.RenderTools
             }
             if (toRemove.HasValue)
             {
-                var burg = _world.burgs[toRemove.Value];
-                _currentAction.burgChanges.Add((toRemove.Value, burg, null));
-                _world.burgs.Remove(toRemove.Value);
-                _currentAction.removedBurgIds.Add(toRemove.Value);
-                Debug.Log($"[MapEditor] 移除子地块: {burg.burgName} (id={toRemove.Value})");
+                var settlement = _world.settlements[toRemove.Value];
+                _currentAction.settlementChanges.Add((toRemove.Value, settlement, null));
+                _world.settlements.Remove(toRemove.Value);
+                _world.anchors.Remove(toRemove.Value);
+                _currentAction.removedSettlementAnchorIds.Add(toRemove.Value);
+                Debug.Log($"[MapEditor] 移除子地块: {settlement.settlementName} (id={toRemove.Value})");
             }
         }
 
@@ -380,26 +427,37 @@ namespace MyriadCreation.Editor.RenderTools
         {
             foreach (var (idx, _, newData) in action.tileChanges)
                 _world.tiles[idx] = newData;
-            foreach (var id in action.addedBurgIds)
+            foreach (var id in action.addedSettlementAnchorIds)
             {
- // 重新添加（从burgChanges中找）
-                foreach (var (bid, burg, _) in action.burgChanges)
-                    if (bid == id && burg != null)
-                        _world.burgs[bid] = burg;
+                foreach (var (anchorId, _, settlement) in action.settlementChanges)
+                {
+                    if (anchorId != id || settlement == null) continue;
+                    _world.settlements[anchorId] = settlement;
+                    _world.anchors[anchorId] = settlement.anchor;
+                }
             }
-            foreach (var id in action.removedBurgIds)
-                _world.burgs.Remove(id);
+            foreach (var id in action.removedSettlementAnchorIds)
+            {
+                _world.settlements.Remove(id);
+                _world.anchors.Remove(id);
+            }
         }
 
         private void ApplyActionReverse(EditAction action)
         {
             foreach (var (idx, oldData, _) in action.tileChanges)
                 _world.tiles[idx] = oldData;
-            foreach (var id in action.addedBurgIds)
-                _world.burgs.Remove(id);
-            foreach (var (bid, burg, _) in action.burgChanges)
-                if (burg != null && action.removedBurgIds.Contains(bid))
-                    _world.burgs[bid] = burg;
+            foreach (var id in action.addedSettlementAnchorIds)
+            {
+                _world.settlements.Remove(id);
+                _world.anchors.Remove(id);
+            }
+            foreach (var (anchorId, settlement, _) in action.settlementChanges)
+            {
+                if (settlement == null || !action.removedSettlementAnchorIds.Contains(anchorId)) continue;
+                _world.settlements[anchorId] = settlement;
+                _world.anchors[anchorId] = settlement.anchor;
+            }
         }
 
         private void PushUndo(EditAction action)
@@ -428,23 +486,23 @@ namespace MyriadCreation.Editor.RenderTools
                 EditorTool.TerrainPlain => "平整",
                 EditorTool.ProvincePaint => $"绘制省份#{SelectedProvinceId}",
                 EditorTool.ProvinceErase => "擦除省份",
-                EditorTool.BurgPlace => $"放置{SelectedBurgType}",
-                EditorTool.BurgRemove => "移除子地块",
+                EditorTool.SettlementPlace => $"放置{SelectedSettlementPreset}",
+                EditorTool.SettlementRemove => "移除聚居点",
                 _ => "编辑"
             };
         }
 
-        private static string GenerateBurgName(TileData tile, BurgType type)
+        private static string GenerateSettlementName(TileData tile, SettlementPlacementPreset preset)
         {
             string prefix = tile.elevation01 > 0.55f ? "山" : tile.isCoast ? "海" : "原";
             string mid = tile.annualPrecipMm > 900f ? "润" : tile.annualPrecipMm < 300f ? "干" : "丰";
-            string suffix = type switch
+            string suffix = preset switch
             {
-                BurgType.City => "城",
-                BurgType.Port => "港",
-                BurgType.Fortress => "寨",
-                BurgType.Town => "镇",
-                BurgType.Capital => "京",
+                SettlementPlacementPreset.City => "城",
+                SettlementPlacementPreset.Port => "港",
+                SettlementPlacementPreset.Fortress => "寨",
+                SettlementPlacementPreset.Town => "镇",
+                SettlementPlacementPreset.Capital => "京",
                 _ => "村"
             };
             return prefix + mid + suffix;

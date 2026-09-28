@@ -21,8 +21,8 @@ namespace MyriadCreation.World.Anchor
         private readonly Dictionary<int, Province> _provinces;
         private readonly System.Random _rng;
 
-        public const int MinBurgsPerProvince = 1;
-        public const int MaxBurgsPerProvince = 6;
+        public const int MinSettlementsPerProvince = 1;
+        public const int MaxSettlementsPerProvince = 6;
         public const float PortSpawnChance = 0.6f;
         public const float CitySpawnChance = 0.35f;
         public const float FortressSpawnChance = 0.25f;
@@ -55,7 +55,7 @@ namespace MyriadCreation.World.Anchor
                     centerTile = province.memberTiles[0];
 
                 var (anchor, settlement) = CreatePair(ref nextId, provinceId, centerTile,
-                    SettlementCategory.Burg, IsProvinceCenter(province, centerTile) ? SettlementType.City : SettlementType.Village);
+                    SiteMode.SedentarySettlement, IsProvinceCenter(province, centerTile) ? SettlementForm.City : SettlementForm.Village);
                 settlement.hasMarket = true;
                 settlement.development = 20f + (float)_rng.NextDouble() * 30f;
                 settlement.population = 500f + (float)_rng.NextDouble() * 1500f;
@@ -67,7 +67,7 @@ namespace MyriadCreation.World.Anchor
                     int coastalTile = FindCoastalTile(province);
                     if (coastalTile >= 0 && _rng.NextDouble() < PortSpawnChance)
                     {
-                        var (a, s) = CreatePair(ref nextId, provinceId, coastalTile, SettlementCategory.Burg, SettlementType.City);
+                        var (a, s) = CreatePair(ref nextId, provinceId, coastalTile, SiteMode.SedentarySettlement, SettlementForm.City);
                         s.isPort = true;
                         s.isCoastal = true;
                         s.hasMarket = true;
@@ -84,7 +84,7 @@ namespace MyriadCreation.World.Anchor
                     int borderTile = FindBorderTile(province);
                     if (borderTile >= 0)
                     {
-                        var (a, s) = CreatePair(ref nextId, provinceId, borderTile, SettlementCategory.Outpost);
+                        var (a, s) = CreatePair(ref nextId, provinceId, borderTile, SiteMode.FortifiedOutpost);
                         s.fortification = 3f + (float)_rng.NextDouble() * 5f;
                         s.garrison = 100 + _rng.Next(200);
                         s.development = 5f + (float)_rng.NextDouble() * 15f;
@@ -93,7 +93,7 @@ namespace MyriadCreation.World.Anchor
                     }
                 }
 
-                int extraVillages = Math.Min(MaxBurgsPerProvince - 3,
+                int extraVillages = Math.Min(MaxSettlementsPerProvince - 3,
                     province.memberTiles.Count / 40);
                 for (int v = 0; v < extraVillages; v++)
                 {
@@ -101,7 +101,7 @@ namespace MyriadCreation.World.Anchor
                     if (IsTileOccupied(anchors, tile)) continue;
                     if (!_tiles[tile].isLand) continue;
 
-                    var (a, s) = CreatePair(ref nextId, provinceId, tile, SettlementCategory.Burg, SettlementType.Village);
+                    var (a, s) = CreatePair(ref nextId, provinceId, tile, SiteMode.SedentarySettlement, SettlementForm.Village);
                     s.development = 2f + (float)_rng.NextDouble() * 10f;
                     s.population = 50f + (float)_rng.NextDouble() * 300f;
                     anchors[a.anchorId] = a;
@@ -112,7 +112,7 @@ namespace MyriadCreation.World.Anchor
             return (anchors, settlements);
         }
 
-        private (AnchorData, SettlementData) CreatePair(ref int nextId, int provinceId, int tileIndex, SettlementCategory category, SettlementType type = SettlementType.Village)
+        private (AnchorData, SettlementData) CreatePair(ref int nextId, int provinceId, int tileIndex, SiteMode mode, SettlementForm type = SettlementForm.Village)
         {
             ref TileData tile = ref _tiles[tileIndex];
             int id = nextId++;
@@ -129,9 +129,9 @@ namespace MyriadCreation.World.Anchor
             var settlement = new SettlementData
             {
                 anchorId = id,
-                settlementName = GenerateName(tile, category, type),
+                settlementName = GenerateName(tile, mode, type),
                 isCoastal = tile.isCoast,
-                settlementCategory = category,
+                siteMode = mode,
                 constructionProgress = 0f,
                 constructionTier = 1
             };
@@ -139,14 +139,15 @@ namespace MyriadCreation.World.Anchor
             SettlementTypologySystem.DeriveInitialType(settlement, tile, _width, _height);
             EconomicCompositionSystem.InitializeComposition(settlement, tile);
 
-            settlement.settlementType = type;
-            settlement.settlementLevel = category switch
+            settlement.settlementForm = type;
+            settlement.settlementLevel = mode switch
             {
-                SettlementCategory.Outpost => SettlementLevel.LevelII,
-                SettlementCategory.Burg when type == SettlementType.City => SettlementLevel.LevelIII,
-                SettlementCategory.Burg => SettlementLevel.LevelII,
+                SiteMode.FortifiedOutpost => SettlementLevel.LevelII,
+                SiteMode.SedentarySettlement when type == SettlementForm.City => SettlementLevel.LevelIII,
+                SiteMode.SedentarySettlement => SettlementLevel.LevelII,
                 _ => SettlementLevel.LevelI
             };
+            settlement.SetLegacyCategoryFromSiteMode();
 
             return (anchor, settlement);
         }
@@ -188,15 +189,15 @@ namespace MyriadCreation.World.Anchor
             return false;
         }
 
-        private string GenerateName(TileData tile, SettlementCategory category, SettlementType type)
+        private string GenerateName(TileData tile, SiteMode mode, SettlementForm type)
         {
             string prefix = tile.elevation01 > 0.55f ? "山" : tile.isCoast ? "海" : "原";
             string mid = tile.annualPrecipMm > 900f ? "润" : tile.annualPrecipMm < 300f ? "干" : "丰";
-            string suffix = category switch
+            string suffix = mode switch
             {
-                SettlementCategory.Outpost => "寨",
-                SettlementCategory.Camp => "营",
-                _ => type == SettlementType.City ? "城" : "村"
+                SiteMode.FortifiedOutpost => "寨",
+                SiteMode.TemporaryEncampment => "营",
+                _ => type == SettlementForm.City ? "城" : "村"
             };
             return prefix + mid + suffix;
         }

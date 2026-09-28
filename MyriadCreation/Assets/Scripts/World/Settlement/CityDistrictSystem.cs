@@ -27,23 +27,23 @@ namespace MyriadCreation.World.Settlement
         /// 生成城市区划（当城市达到Ⅳ级都会时调用）
         /// 区划的类型和比例由城市的经济成分决定。
         /// </summary>
-        public static void GenerateDistricts(SettlementData burg)
+        public static void GenerateDistricts(SettlementData settlement)
         {
-            if (burg == null) return;
-            if (burg.districtsGenerated) return;
+            if (settlement == null) return;
+            if (settlement.districtsGenerated) return;
 
             // 只有Ⅳ级都会/Ⅴ级大都会才会分区划
-            if (burg.settlementLevel < SettlementLevel.LevelIV)
+            if (settlement.settlementLevel < SettlementLevel.LevelIV)
                 return;
 
             var districts = new List<CityDistrict>();
 
             // 根据经济成分生成区划
             // 主要经济成分会形成对应的区划
-            if (burg.economicComposition != null && burg.economicComposition.Count > 0)
+            if (settlement.economicComposition != null && settlement.economicComposition.Count > 0)
             {
                 // 按占比排序
-                var sorted = new List<KeyValuePair<EconomicSector, float>>(burg.economicComposition);
+                var sorted = new List<KeyValuePair<EconomicSector, float>>(settlement.economicComposition);
                 sorted.Sort((a, b) => b.Value.CompareTo(a.Value));
 
                 // 前3个主要成分会形成明确的区划
@@ -69,7 +69,7 @@ namespace MyriadCreation.World.Settlement
                             districtRatio,
                             ratio * 0.8f, // 人口比例略低于面积比例
                             50f + ratio * 30f, // 发展度
-                            ratio * burg.wealth, // 财富
+                            ratio * settlement.wealth, // 财富
                             0f // 创建时间，后续可以设置为游戏内日期
                         );
                         districts.Add(district);
@@ -85,7 +85,7 @@ namespace MyriadCreation.World.Settlement
                         remainingRatio,
                         remainingRatio * 1.2f, // 贫民区人口密度更高
                         30f,
-                        remainingRatio * burg.wealth * 0.3f,
+                        remainingRatio * settlement.wealth * 0.3f,
                         0f
                     );
                     districts.Add(slum);
@@ -94,45 +94,45 @@ namespace MyriadCreation.World.Settlement
             else
             {
                 // 如果没有经济成分数据，生成默认区划
-                districts.Add(new CityDistrict(CityDistrictType.Commercial, "商业区", 0.3f, 0.25f, 60f, burg.wealth * 0.3f, 0f));
-                districts.Add(new CityDistrict(CityDistrictType.Administrative, "行政区", 0.2f, 0.15f, 70f, burg.wealth * 0.2f, 0f));
-                districts.Add(new CityDistrict(CityDistrictType.Slum, "平民区", 0.5f, 0.6f, 30f, burg.wealth * 0.2f, 0f));
+                districts.Add(new CityDistrict(CityDistrictType.Commercial, "商业区", 0.3f, 0.25f, 60f, settlement.wealth * 0.3f, 0f));
+                districts.Add(new CityDistrict(CityDistrictType.Administrative, "行政区", 0.2f, 0.15f, 70f, settlement.wealth * 0.2f, 0f));
+                districts.Add(new CityDistrict(CityDistrictType.Slum, "平民区", 0.5f, 0.6f, 30f, settlement.wealth * 0.2f, 0f));
             }
 
-            burg.districts = districts;
-            burg.districtsGenerated = true;
+            settlement.districts = districts;
+            settlement.districtsGenerated = true;
         }
 
         /// <summary>
         /// 更新城市区划（每日调用）
         /// 区划随城市发展缓慢变化
         /// </summary>
-        public static void UpdateDistricts(SettlementData burg, float deltaTime)
+        public static void UpdateDistricts(SettlementData settlement, float deltaTime)
         {
-            if (burg == null || burg.districts == null || burg.districts.Count == 0)
+            if (settlement == null || settlement.districts == null || settlement.districts.Count == 0)
                 return;
 
             // 简化：区划变化非常缓慢，目前只做微小的发展度增长
-            foreach (var district in burg.districts)
+            foreach (var district in settlement.districts)
             {
                 // 区划发展度缓慢增长
                 district.development = Math.Min(100f, district.development + 0.01f * deltaTime);
-                district.wealth += district.areaRatio * burg.wealth * 0.001f * deltaTime;
+                district.wealth += district.areaRatio * settlement.wealth * 0.001f * deltaTime;
             }
         }
 
         /// <summary>
         /// 当城市升级时，检查是否需要生成区划
         /// </summary>
-        public static void CheckDistrictGeneration(SettlementData burg)
+        public static void CheckDistrictGeneration(SettlementData settlement)
         {
-            if (burg == null) return;
-            if (burg.districtsGenerated) return;
+            if (settlement == null) return;
+            if (settlement.districtsGenerated) return;
 
             // 达到Ⅳ级都会时生成区划
-            if (burg.settlementLevel >= SettlementLevel.LevelIV)
+            if (settlement.settlementLevel >= SettlementLevel.LevelIV)
             {
-                GenerateDistricts(burg);
+                GenerateDistricts(settlement);
             }
         }
 
@@ -191,29 +191,29 @@ namespace MyriadCreation.World.Settlement
         /// - 城邑（Ⅲ级）：中等复杂度计算，包括正常的贸易和税收
         /// - 都会（Ⅳ级）和大都会（Ⅴ级）：使用区划系统的复杂计算
         /// </summary>
-        public static DistrictEffects GetDistrictEffects(SettlementData burg)
+        public static DistrictEffects GetDistrictEffects(SettlementData settlement)
         {
             var effects = new DistrictEffects();
 
-            if (burg == null)
+            if (settlement == null)
                 return effects;
 
             // 都会（Ⅳ级）和大都会（Ⅴ级）：使用区划系统的复杂计算
-            if (burg.districtsGenerated && burg.districts != null && burg.districts.Count > 0)
+            if (settlement.districtsGenerated && settlement.districts != null && settlement.districts.Count > 0)
             {
-                GetDistrictEconomicEffects(burg, effects);
+                GetDistrictEconomicEffects(settlement, effects);
                 return effects;
             }
 
             // 城邑（Ⅲ级）：中等复杂度计算，包括正常的贸易和税收
-            if (burg.settlementLevel == SettlementLevel.LevelIII)
+            if (settlement.settlementLevel == SettlementLevel.LevelIII)
             {
-                GetCityEconomicEffects(burg, effects);
+                GetCityEconomicEffects(settlement, effects);
                 return effects;
             }
 
             // 村落（Ⅰ级）和集镇（Ⅱ级）：极简计算，主要看自然资源和简单加工
-            GetVillageEconomicEffects(burg, effects);
+            GetVillageEconomicEffects(settlement, effects);
             return effects;
         }
 
@@ -221,10 +221,10 @@ namespace MyriadCreation.World.Settlement
         /// 区划系统的复杂影响计算（都会/大都会）
         /// 每种区划类型有不同的加成效果
         /// </summary>
-        private static void GetDistrictEconomicEffects(SettlementData burg, DistrictEffects effects)
+        private static void GetDistrictEconomicEffects(SettlementData settlement, DistrictEffects effects)
         {
 
-            foreach (var district in burg.districts)
+            foreach (var district in settlement.districts)
             {
                 float devFactor = district.development / 100f;
                 float areaFactor = district.areaRatio;
@@ -318,12 +318,12 @@ namespace MyriadCreation.World.Settlement
         /// 城邑（Ⅲ级）的中等复杂度经济影响计算
         /// 包括正常的贸易和税收，经济结构已经比较复杂
         /// </summary>
-        private static void GetCityEconomicEffects(SettlementData burg, DistrictEffects effects)
+        private static void GetCityEconomicEffects(SettlementData settlement, DistrictEffects effects)
         {
-            if (burg.economicComposition == null || burg.economicComposition.Count == 0)
+            if (settlement.economicComposition == null || settlement.economicComposition.Count == 0)
                 return;
 
-            var composition = burg.economicComposition;
+            var composition = settlement.economicComposition;
 
             // 农业：农业产出和粮食储备
             if (composition.ContainsKey(EconomicSector.Agriculture))
@@ -420,12 +420,12 @@ namespace MyriadCreation.World.Settlement
         /// 主要看自然资源（农业/渔业/矿业）和简单加工（手工业）
         /// 贸易和税收很少，因为还没有形成真正的城市经济
         /// </summary>
-        private static void GetVillageEconomicEffects(SettlementData burg, DistrictEffects effects)
+        private static void GetVillageEconomicEffects(SettlementData settlement, DistrictEffects effects)
         {
-            if (burg.economicComposition == null || burg.economicComposition.Count == 0)
+            if (settlement.economicComposition == null || settlement.economicComposition.Count == 0)
                 return;
 
-            var composition = burg.economicComposition;
+            var composition = settlement.economicComposition;
 
             // 农业：农业产出和粮食储备（村落的核心经济）
             if (composition.ContainsKey(EconomicSector.Agriculture))

@@ -1,4 +1,4 @@
-
+﻿
 using System.Collections.Generic;
 using UnityEngine;
 using MyriadCreation.Core;
@@ -37,7 +37,7 @@ namespace MyriadCreation.Simulation.State
  /// <summary>政权主保圣人（CultObject id——须属国教教统内——
  /// 国家庇护/政权标识/加冕礼——国教换主保跟着换）</summary>
         public int statePatronSaintId = -1;
- // 政体：旧单标签 GovernmentType 枚举已废弃，统一由下方 composition 七维成分组合表达； // 粗分类（君主制/共和制）由 SupremeSuccessionLevel.IsMonarchy/IsRepublic 推导。
+ // 政体：旧单标签 GovernmentType（已废弃） 枚举已废弃，统一由下方 composition 七维成分组合表达； // 粗分类（君主制/共和制）由 SupremeSuccessionLevel.IsMonarchy/IsRepublic 推导。
  // 财政
         public float treasury = 1000f;
         public float prestige = 50f;
@@ -84,7 +84,7 @@ namespace MyriadCreation.Simulation.State
         public List<int> vassalIds = new List<int>();
 
  // 政治体制成分（七维：三权力层级×交接/分配 + 央地结构） // 权力交接=世袭时使用 composition.successionLaw（继承法四轴+头衔+领地模式）
-        public GovernmentComposition composition = new GovernmentComposition();
+        public LawComposition laws = new LawComposition();
 
  // ===== 继承法双轨（借鉴《地图上发生的事》inheritance_*_from_civilization） =====
  /// <summary>政权主体文化（GetEffectiveSuccessionLaw 的文化默认查询依赖）</summary>

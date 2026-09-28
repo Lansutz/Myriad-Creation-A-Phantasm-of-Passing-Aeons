@@ -11,7 +11,7 @@ namespace MyriadCreation.Simulation.Systems
     /// <summary>聚落领域运行时。负责聚落控制与现有聚落相关日常阶段。</summary>
     public sealed class SettlementSimulationSystem
     {
-        private readonly Dictionary<int, SettlementData> _burgs;
+        private readonly Dictionary<int, SettlementData> _settlements;
         private readonly TileData[] _tiles;
         private readonly int _mapWidth;
         private readonly int _mapHeight;
@@ -28,7 +28,7 @@ namespace MyriadCreation.Simulation.Systems
         public LandAbandonmentRuntime AbandonmentRuntime => _abandonmentRuntime;
 
         public SettlementSimulationSystem(
-            Dictionary<int, SettlementData> burgs,
+            Dictionary<int, SettlementData> settlements,
             TileData[] tiles,
             int mapWidth,
             int mapHeight,
@@ -37,7 +37,7 @@ namespace MyriadCreation.Simulation.Systems
             MapActorManager mapActors,
             CampManager camps)
         {
-            _burgs = burgs ?? throw new ArgumentNullException(nameof(burgs));
+            _settlements = settlements ?? throw new ArgumentNullException(nameof(settlements));
             _tiles = tiles ?? throw new ArgumentNullException(nameof(tiles));
             _mapWidth = mapWidth;
             _mapHeight = mapHeight;
@@ -47,7 +47,7 @@ namespace MyriadCreation.Simulation.Systems
             _camps = camps ?? throw new ArgumentNullException(nameof(camps));
             _evolutionRuntime = new SettlementEvolutionRuntime(_world);
             _controlRuntime = new SettlementControlRuntime(
-                _burgs, _tiles, _mapWidth, _mapHeight, _armies);
+                _settlements, _tiles, _mapWidth, _mapHeight, _armies);
             _destructionRuntime = new SettlementDestructionRuntime(_world);
             _abandonmentRuntime = new LandAbandonmentRuntime(_world);
         }

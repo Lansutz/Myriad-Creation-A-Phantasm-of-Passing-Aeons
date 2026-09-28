@@ -6,13 +6,13 @@ namespace MyriadCreation.Simulation.Settlement
 {
     public readonly struct DestroySettlementCommand : ISimulationCommand
     {
-        public readonly int BurgId;
+        public readonly int SettlementAnchorId;
         public readonly DestructionMethod Method;
         public readonly int AttackerRealmId;
 
         public DestroySettlementCommand(int anchorId, DestructionMethod method, int attackerRealmId = -1)
         {
-            BurgId = anchorId;
+            SettlementAnchorId = anchorId;
             Method = method;
             AttackerRealmId = attackerRealmId;
         }
@@ -48,13 +48,13 @@ namespace MyriadCreation.Simulation.Settlement
 
     public readonly struct SettlementDestroyedEvent
     {
-        public readonly int BurgId;
+        public readonly int SettlementAnchorId;
         public readonly DestructionMethod Method;
         public readonly int AttackerRealmId;
 
         public SettlementDestroyedEvent(int anchorId, DestructionMethod method, int attackerRealmId)
         {
-            BurgId = anchorId;
+            SettlementAnchorId = anchorId;
             Method = method;
             AttackerRealmId = attackerRealmId;
         }
@@ -111,7 +111,7 @@ namespace MyriadCreation.Simulation.Settlement
         public CommandResult Handle(DestroySettlementCommand command)
         {
             string result = _runtime.DestroySettlement(
-                command.BurgId,
+                command.SettlementAnchorId,
                 command.Method,
                 command.AttackerRealmId);
 
@@ -119,7 +119,7 @@ namespace MyriadCreation.Simulation.Settlement
                 return CommandResult.Failed("settlement_not_found");
 
             _events.Publish(new SettlementDestroyedEvent(
-                command.BurgId,
+                command.SettlementAnchorId,
                 command.Method,
                 command.AttackerRealmId));
 

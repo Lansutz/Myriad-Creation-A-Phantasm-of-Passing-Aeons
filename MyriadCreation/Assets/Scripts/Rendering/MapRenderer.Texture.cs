@@ -92,13 +92,13 @@ namespace MyriadCreation.Rendering
             }
 
  // ===== 聚落独立图标渲染（可选叠加层，按等级大小+形态形状）=====
-            if (_layerConfig.showBurgMarkers && world.burgs != null && world.burgs.Count > 0)
+            if (_layerConfig.showSettlementMarkers && world.settlements != null && world.settlements.Count > 0)
             {
-                foreach (var burg in world.burgs.Values)
+                foreach (var settlement in world.settlements.Values)
                 {
-                    if (!burg.IsMajorSettlement) continue;
-                    if (burg.tileIndex < 0 || burg.tileIndex >= pixelCount) continue;
-                    DrawSettlementIcon(burg, pixelCount);
+                    if (!settlement.IsMajorSettlement) continue;
+                    if (settlement.tileIndex < 0 || settlement.tileIndex >= pixelCount) continue;
+                    DrawSettlementIcon(settlement, pixelCount);
                 }
             }
 
@@ -157,23 +157,23 @@ namespace MyriadCreation.Rendering
         private int _cachedVirtualControlFrame = -1;
 
  /// <summary>绘制聚落独立图标（按等级大小+形态形状）</summary>
-        private void DrawSettlementIcon(SettlementData burg, int pixelCount)
+        private void DrawSettlementIcon(SettlementData settlement, int pixelCount)
         {
-            int bx = burg.tileIndex % mapWidth;
-            int by = burg.tileIndex / mapWidth;
+            int bx = settlement.tileIndex % mapWidth;
+            int by = settlement.tileIndex / mapWidth;
 
  // 图标大小根据等级：Ⅰ=2px, Ⅱ=3px, Ⅲ=4px, Ⅳ=5px, Ⅴ=6px
-            int level = (int)burg.settlementLevel;
+            int level = (int)settlement.settlementLevel;
             int iconSize = Mathf.Clamp(level + 1, 2, 6);
             if (mapWidth > 512) iconSize = Mathf.Clamp(iconSize + 1, 3, 7);
 
  // 图标颜色根据类型
-            Color iconColor = burg.settlementType switch
+            Color iconColor = settlement.siteMode switch
             {
-                SettlementCategory.Burg => new Color(1f, 0.85f, 0.2f, 1f),
-                SettlementType.Village => new Color(0.95f, 0.85f, 0.5f, 1f),
-                SettlementCategory.Burg => new Color(0.9f, 0.8f, 0.4f, 1f),
-                SettlementCategory.Outpost => new Color(0.9f, 0.3f, 0.2f, 1f),
+                SiteMode.SedentarySettlement when settlement.settlementForm == SettlementForm.City
+                    => new Color(1f, 0.85f, 0.2f, 1f),
+                SiteMode.SedentarySettlement => new Color(0.95f, 0.85f, 0.5f, 1f),
+                SiteMode.FortifiedOutpost => new Color(0.9f, 0.3f, 0.2f, 1f),
                 _ => new Color(0.6f, 0.6f, 0.6f, 1f)
             };
 
@@ -186,13 +186,13 @@ namespace MyriadCreation.Rendering
                     if (px < 0 || px >= mapWidth || py < 0 || py >= mapHeight) continue;
 
  // 根据聚落形态决定图标形状
-                    bool draw = burg.settlementType switch
+                    bool draw = settlement.siteMode switch
                     {
- // 城：方形图标
-                        SettlementCategory.Burg => true,
- // 堡：菱形/十字图标
-                        SettlementCategory.Outpost => Mathf.Abs(dx) + Mathf.Abs(dy) <= half + 1,
- // 村镇：圆形图标
+ // 据点：菱形/十字图标
+                        SiteMode.FortifiedOutpost => Mathf.Abs(dx) + Mathf.Abs(dy) <= half + 1,
+ // 城市形态：方形图标
+                        SiteMode.SedentarySettlement when settlement.settlementForm == SettlementForm.City => true,
+ // 定居点与营地：圆形图标
                         _ => dx * dx + dy * dy <= half * half + 1
                     };
 
@@ -215,7 +215,7 @@ namespace MyriadCreation.Rendering
             if (_cachedVirtualControl == null || _cachedVirtualControlFrame != frame)
             {
                 _cachedVirtualControl = VirtualControlCalculator.Calculate(
-                    world.burgs, world.tiles, mapWidth, mapHeight);
+                    world.settlements, world.tiles, mapWidth, mapHeight);
                 _cachedVirtualControlFrame = frame;
             }
 
@@ -238,12 +238,12 @@ namespace MyriadCreation.Rendering
  // 绘制控制点之间的连接线（虚控制线）
             foreach (var (a, b) in _cachedVirtualControl.connections)
             {
-                if (!world.burgs.ContainsKey(a) || !world.burgs.ContainsKey(b)) continue;
-                var burgA = world.burgs[a];
-                var burgB = world.burgs[b];
+                if (!world.settlements.ContainsKey(a) || !world.settlements.ContainsKey(b)) continue;
+                var settlementA = world.settlements[a];
+                var settlementB = world.settlements[b];
                 DrawLineOnTexture(
-                    burgA.tileIndex % mapWidth, burgA.tileIndex / mapWidth,
-                    burgB.tileIndex % mapWidth, burgB.tileIndex / mapWidth,
+                    settlementA.tileIndex % mapWidth, settlementA.tileIndex / mapWidth,
+                    settlementB.tileIndex % mapWidth, settlementB.tileIndex / mapWidth,
                     new Color(1f, 1f, 1f, 0.3f));
             }
         }
@@ -251,20 +251,20 @@ namespace MyriadCreation.Rendering
  /// <summary>绘制聚落辐射范围叠加（半透明圆形）</summary>
         private void DrawInfluenceRadiusOverlay()
         {
-            if (world.burgs == null) return;
+            if (world.settlements == null) return;
 
-            foreach (var burg in world.burgs.Values)
+            foreach (var settlement in world.settlements.Values)
             {
-                if (!burg.IsMajorSettlement) continue;
-                if (burg.tileIndex < 0 || burg.tileIndex >= _pixelBuffer.Length) continue;
+                if (!settlement.IsMajorSettlement) continue;
+                if (settlement.tileIndex < 0 || settlement.tileIndex >= _pixelBuffer.Length) continue;
 
-                int bx = burg.tileIndex % mapWidth;
-                int by = burg.tileIndex / mapWidth;
-                int realmId = world.tiles[burg.tileIndex].ownerRealmId;
+                int bx = settlement.tileIndex % mapWidth;
+                int by = settlement.tileIndex / mapWidth;
+                int realmId = world.tiles[settlement.tileIndex].ownerRealmId;
                 if (realmId < 0) continue;
 
  // 辐射半径根据等级：Ⅰ=1, Ⅱ=2, Ⅲ=3, Ⅳ=4, Ⅴ=5
-                int radius = (int)burg.settlementLevel;
+                int radius = (int)settlement.settlementLevel;
                 radius = Mathf.Clamp(radius, 1, 5);
 
                 Color realmColor = GetRealmColor(realmId);

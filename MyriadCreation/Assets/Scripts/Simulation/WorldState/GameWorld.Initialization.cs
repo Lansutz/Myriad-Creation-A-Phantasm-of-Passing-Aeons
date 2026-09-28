@@ -164,7 +164,7 @@ namespace MyriadCreation.Simulation.WorldState
                 societyCache);
 
             _settlementSimulationSystem = new SettlementSimulationSystem(
-                burgs,
+                settlements,
                 tiles,
                 mapWidth,
                 mapHeight,

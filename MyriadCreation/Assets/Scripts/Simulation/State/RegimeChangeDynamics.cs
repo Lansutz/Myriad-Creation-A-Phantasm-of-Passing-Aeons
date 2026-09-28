@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using MyriadCreation.Core;
@@ -20,7 +20,7 @@ using MyriadCreation.Simulation.Definitions;
 
 namespace MyriadCreation.Simulation.State
 {
- // ===================================================================================== // 政体变迁动力学（Regime Change Dynamics） // ------------------------------------------------------------------------------------- // 理论：历史制度主义（路径依赖+关键节点）+ 唯物史观（上层建筑随经济基础变化，但需偶然事件） // + 斯考切波（旧国家崩溃/精英分裂/底层组织三条件）+ 蒂利（战争-财政制造国家）。 // 核心命题：**条件具备 ≠ 必然变化**。 // ①结构条件：革新/阶层/思想只定义"哪些政体成分可能"（PolityComponentInnovations 硬约束）； // ②结构性张力：现政体与变化了的社会基础错配，只缓慢积累、只提高危机概率，永不自动触发变革； // ③关键节点：继承危机/战败/财政破产/精英分裂/起义/征服/强势改革者等**偶然事件**打开短暂窗口； // ④节点博弈：派系力量对比 × 革新可行性 → 改革/妥协/复辟/停滞/崩溃，结果非决定论。 // 窗口短暂，结束后回到路径依赖（制度自我强化）。 // =====================================================================================
+ // ===================================================================================== // 政体变迁动力学（Regime Change Dynamics） // ------------------------------------------------------------------------------------- // 理论：历史制度主义（路径依赖+关键节点）+ 唯物史观（上层建筑随经济基础变化，但需偶然事件） // + 斯考切波（旧国家崩溃/精英分裂/底层组织三条件）+ 蒂利（战争-财政制造国家）。 // 核心命题：**条件具备 ≠ 必然变化**。 // ①结构条件：革新/阶层/思想只定义"哪些法律成分可能"（PolityComponentInnovations 硬约束）； // ②结构性张力：现政体与变化了的社会基础错配，只缓慢积累、只提高危机概率，永不自动触发变革； // ③关键节点：继承危机/战败/财政破产/精英分裂/起义/征服/强势改革者等**偶然事件**打开短暂窗口； // ④节点博弈：派系力量对比 × 革新可行性 → 改革/妥协/复辟/停滞/崩溃，结果非决定论。 // 窗口短暂，结束后回到路径依赖（制度自我强化）。 // =====================================================================================
  /// <summary>关键节点类型（打开制度流动窗口的偶然事件）</summary>
 
  /// <summary>节点博弈结果</summary>
@@ -208,7 +208,7 @@ namespace MyriadCreation.Simulation.State
             }
             state.compositionEstablishedDay = day; // 新制度进入新的路径依赖
             var outcome = (changed >= 2 || radicalLed) ? JunctureOutcomeType.Reform : JunctureOutcomeType.Compromise;
-            Finish(state, j, outcome, $"按胜派政纲调整 {changed} 个政体维度");
+            Finish(state, j, outcome, $"按胜派政纲调整 {changed} 个法律维度");
         }
 
  /// <summary>选取胜派政纲（激进优先则取激进派，否则改革派，缺则用最不安分阶层反推）</summary>
@@ -226,7 +226,7 @@ namespace MyriadCreation.Simulation.State
         }
 
  /// 按政纲方向，在七维中挑选"现状差距最大且存在革新可行替代"的维度落地改革。
- /// 严格通过 GovernmentReform.Reform（内含 PolityComponentInnovations 可行性检查）。
+ /// 严格通过 LawReform.Reform（内含 PolityComponentInnovations 可行性检查）。
         private int ApplyChangesTowardPlatform(int day, RealmData realm, FactionPlatform platform,
             int maxChanges, RegimeChangeState state)
         {
@@ -235,35 +235,35 @@ namespace MyriadCreation.Simulation.State
  // 开放度 → A1 最高交接（选举系 vs 世袭系）
             AddDimensionCandidate(candidates, realm,
                 PolityComponentInnovations.PolityDimension.SupremeSuccession,
-                realm.composition.supremeSuccession.primary, platform.openness,
+                realm.laws.supremeSuccession.primary, platform.openness,
                 openPositive: new[] { (int)SupremeSuccession.ElectiveRepresentative, (int)SupremeSuccession.ElectiveDirect, (int)SupremeSuccession.Rotation },
                 openNegative: new[] { (int)SupremeSuccession.Hereditary, (int)SupremeSuccession.Divine });
 
  // 开放度 → B2 中央机构（议会 vs 王庭/长老）
             AddDimensionCandidate(candidates, realm,
                 PolityComponentInnovations.PolityDimension.CentralInstitution,
-                realm.composition.centralInstitution.primary, platform.openness,
+                realm.laws.centralInstitution.primary, platform.openness,
                 openPositive: new[] { (int)CentralInstitution.Assembly, (int)CentralInstitution.BureaucraticCore },
                 openNegative: new[] { (int)CentralInstitution.Court, (int)CentralInstitution.EldersCouncil });
 
  // 开放度 → C1 地方交接（选举/考试/城市特许 vs 世袭）
             AddDimensionCandidate(candidates, realm,
                 PolityComponentInnovations.PolityDimension.LocalSuccession,
-                realm.composition.localSuccession.primary, platform.openness,
+                realm.laws.localSuccession.primary, platform.openness,
                 openPositive: new[] { (int)LocalSuccession.Examination, (int)LocalSuccession.Elected, (int)LocalSuccession.CityCharter },
                 openNegative: new[] { (int)LocalSuccession.Hereditary });
 
  // 集权度 → D 央地结构（单一 vs 联邦/邦联）
             AddDimensionCandidate(candidates, realm,
                 PolityComponentInnovations.PolityDimension.SpatialStructure,
-                realm.composition.spatialStructure.primary, platform.centralization,
+                realm.laws.spatialStructure.primary, platform.centralization,
                 openPositive: new[] { (int)SpatialStructure.Unitary },
                 openNegative: new[] { (int)SpatialStructure.Federal, (int)SpatialStructure.Confederal });
 
  // 集权度 → C2 地方职能（直辖 vs 自治）
             AddDimensionCandidate(candidates, realm,
                 PolityComponentInnovations.PolityDimension.LocalScope,
-                realm.composition.localScope.primary, platform.centralization,
+                realm.laws.localScope.primary, platform.centralization,
                 openPositive: new[] { (int)LocalScope.None, (int)LocalScope.FiscalJudicial },
                 openNegative: new[] { (int)LocalScope.FullAutonomy });
 
@@ -278,7 +278,7 @@ namespace MyriadCreation.Simulation.State
  // 革新可行性硬检查（不满足则跳过——这是"结构条件约束可能性空间"）
                 if (!PolityComponentInnovations.IsComponentAvailable(cand.dim, cand.target, _innovations, realm.realmId))
                     continue;
-                if (GovernmentReform.Reform(realm, cand.dim, cand.target, _innovations, _chronicle))
+                if (LawReform.Reform(realm, cand.dim, cand.target, _innovations, _chronicle))
                     changed++;
             }
             return changed;
@@ -303,13 +303,13 @@ namespace MyriadCreation.Simulation.State
 
         private static int GetCurrentComponent(RealmData realm, PolityComponentInnovations.PolityDimension d) => d switch
         {
-            PolityComponentInnovations.PolityDimension.SupremeSuccession => realm.composition.supremeSuccession.primary,
-            PolityComponentInnovations.PolityDimension.SupremeScope => realm.composition.supremeScope.primary,
-            PolityComponentInnovations.PolityDimension.CentralSuccession => realm.composition.centralSuccession.primary,
-            PolityComponentInnovations.PolityDimension.CentralInstitution => realm.composition.centralInstitution.primary,
-            PolityComponentInnovations.PolityDimension.LocalSuccession => realm.composition.localSuccession.primary,
-            PolityComponentInnovations.PolityDimension.LocalScope => realm.composition.localScope.primary,
-            PolityComponentInnovations.PolityDimension.SpatialStructure => realm.composition.spatialStructure.primary,
+            PolityComponentInnovations.PolityDimension.SupremeSuccession => realm.laws.supremeSuccession.primary,
+            PolityComponentInnovations.PolityDimension.SupremeScope => realm.laws.supremeScope.primary,
+            PolityComponentInnovations.PolityDimension.CentralSuccession => realm.laws.centralSuccession.primary,
+            PolityComponentInnovations.PolityDimension.CentralInstitution => realm.laws.centralInstitution.primary,
+            PolityComponentInnovations.PolityDimension.LocalSuccession => realm.laws.localSuccession.primary,
+            PolityComponentInnovations.PolityDimension.LocalScope => realm.laws.localScope.primary,
+            PolityComponentInnovations.PolityDimension.SpatialStructure => realm.laws.spatialStructure.primary,
             _ => -1
         };
 

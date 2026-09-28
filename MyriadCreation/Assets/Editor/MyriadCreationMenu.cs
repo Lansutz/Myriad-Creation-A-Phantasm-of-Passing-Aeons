@@ -40,12 +40,12 @@ using MyriadCreation.World.Terrain;
 namespace MyriadCreation.Editor
 {
     /// <summary>
-    /// 文明演化 · 编辑器一键搭建工具
-    /// 顶部菜单 Civilization Evolution / ...
+    /// Myriad Creation · 编辑器一键搭建工具
+    /// 顶部菜单 Myriad Creation / ...
     /// </summary>
     public static class MyriadCreationMenu
     {
-        private const string MenuRoot = "Civilization Evolution/";
+        private const string MenuRoot = "Myriad Creation/";
         private const string MainScenePath = "Assets/Scenes/Main.unity";
         private const string DefaultConfigPath = "Assets/ScriptableObjects/DefaultWorldConfig.asset";
 
@@ -351,7 +351,7 @@ namespace MyriadCreation.Editor
             title.alignment = TextAlignmentOptions.Center;
             title.GetComponent<LayoutElement>().minHeight = 90;
 
-            var sub = CreateText("MenuSubtitle", menu.transform, "文明演化——架空世界历史模拟", 22);
+            var sub = CreateText("MenuSubtitle", menu.transform, "纷繁的世界——架空世界历史模拟", 22);
             sub.color = new Color32(200, 190, 160, 255);
             sub.alignment = TextAlignmentOptions.Center;
             sub.GetComponent<LayoutElement>().minHeight = 40;

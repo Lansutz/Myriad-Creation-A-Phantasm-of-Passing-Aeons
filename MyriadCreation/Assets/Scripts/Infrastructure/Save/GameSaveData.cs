@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Infrastructure.Audio;
 using MyriadCreation.Simulation.Society;
+using UnityEngine.Serialization;
 
 
 
@@ -15,7 +16,7 @@ namespace MyriadCreation.Infrastructure.Save
     public class GameSaveData
     {
  // ===== 元数据 =====
-        public int version = 2;
+        public int version = 4;
         public string gameVersion = "0.1.0";
         public long saveTimestamp;
         public string saveName;
@@ -33,7 +34,10 @@ namespace MyriadCreation.Infrastructure.Save
  // ===== 地图数据（复用 MapSaveData 的结构）=====
         public TileSaveData[] tiles;
         public ProvinceSaveData[] provinces;
-        public BurgSaveData[] burgs;
+        [FormerlySerializedAs("burgs")]
+        [FormerlySerializedAs("settlements")]
+        public HabitationSiteSaveData[] habitation_sites;
+
 
  // ===== 政权数据（基本信息）=====
         public RealmBasicSaveData[] realms;

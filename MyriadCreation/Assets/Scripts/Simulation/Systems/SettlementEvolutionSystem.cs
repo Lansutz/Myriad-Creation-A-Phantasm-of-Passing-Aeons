@@ -26,13 +26,13 @@ using MyriadCreation.World.Anchor;
 namespace MyriadCreation.Simulation.Systems
 {
     /// <summary>
-    /// 据点演化系统：统一管理 营寨(Camp) → 坞堡(FortifiedCamp) → 聚落(Burg) 的生命周期转化。
+    /// 据点演化系统：统一管理 营寨(Camp) → 坞堡(FortifiedCamp) → 聚落(Settlement) 的生命周期转化。
     ///
     /// 升级路径（拟真）：
     /// - 行军营地 → 驻屯营（驻扎时间长）
     /// - 驻屯营/蛮族营地 → 坞堡（修筑防御工事，defense达到阈值）
     /// - 营寨/坞堡 → 村镇（人口积累+永久化进度满+定居化）
-    /// - 坞堡 → 堡垒（军事化升级，成为Burg的Fort形态）
+    /// - 坞堡 → 堡垒据点（军事化升级为Outpost类别）
     /// - 游牧营地不永久化（逐水草而居，只能通过"定居化改革"转化）
     ///
     /// 反向路径：
@@ -53,9 +53,9 @@ namespace MyriadCreation.Simulation.Systems
             SettlementEvolutionSystem.DailyTick(_world);
         }
 
-        public SettlementData TryEvolveCampToBurg(CampData camp)
+        public SettlementData TryEvolveCampToSettlement(CampData camp)
         {
-            return SettlementEvolutionSystem.TryEvolveCampToBurg(_world, camp);
+            return SettlementEvolutionSystem.TryEvolveCampToSettlement(_world, camp);
         }
 
         public SettlementData SettleNomadCamp(int campId)
@@ -63,9 +63,9 @@ namespace MyriadCreation.Simulation.Systems
             return SettlementEvolutionSystem.SettleNomadCamp(_world, campId);
         }
 
-        public CampData DegradeBurgToCamp(int anchorId, CampType campType = CampType.Military, int ownerRealmId = -1)
+        public CampData DegradeSettlementToCamp(int anchorId, CampType campType = CampType.Military, int ownerRealmId = -1)
         {
-            return SettlementEvolutionSystem.DegradeBurgToCamp(_world, anchorId, campType, ownerRealmId);
+            return SettlementEvolutionSystem.DegradeSettlementToCamp(_world, anchorId, campType, ownerRealmId);
         }
     }
 
@@ -80,24 +80,6 @@ namespace MyriadCreation.Simulation.Systems
         public const int CAMP_TO_VILLAGE_POP = 50;
         /// <summary>坞堡转化为堡垒聚落的最低人口</summary>
         public const int FORTIFIED_CAMP_TO_FORT_POP = 100;
-
-        /// <summary>
-        /// 由传统 SettlementType 推断聚落形态（村镇/城/堡）。
-        /// Village/Town→Village；City/Port/Capital→City；Fortress→Fort。
-        /// </summary>
-        public static SettlementType InferFromBurgType(SettlementType burgType)
-        {
-            switch (burgType)
-            {
-                case SettlementCategory.Outpost:
-                    return SettlementCategory.Outpost;
-                case SettlementType.City:
-                    return SettlementType.City;
-                default:
-                    return SettlementType.Village;
-            }
-        }
-
 
         /// <summary>
         /// 每日检查所有营寨的演化。
@@ -115,7 +97,7 @@ namespace MyriadCreation.Simulation.Systems
                 // 永久化进度在CampData.Tick里已增长，这里检查转化
                 if (camp.CanEvolveToSettlement)
                 {
-                    TryEvolveCampToBurg(world, camp);
+                    TryEvolveCampToSettlement(world, camp);
                 }
             }
         }
@@ -136,15 +118,23 @@ namespace MyriadCreation.Simulation.Systems
             if (camp.defense >= FORTIFIED_CAMP_DEFENSE_THRESHOLD &&
                 camp.attributes != null && !camp.attributes.ContainsKey("isFortified"))
             {
+                if (!HabitationSiteTransitionSystem.TryTransition(
+                    (HabitationSite)camp, SiteMode.FortifiedOutpost, out var transitionFailure))
+                {
+                    Debug.LogError($"[SettlementEvolution] 营地#{camp.campId}无法升级为据点：{transitionFailure}");
+                    return;
+                }
+
+                camp.fortifiedOutpostData.purpose = camp.type.ToString();
                 camp.attributes["isFortified"] = 1f;
-                Debug.Log($"[SettlementEvolution] 营寨#{camp.campId}升级为坞堡（防御={camp.defense:F0}）");
+                Debug.Log($"[SettlementEvolution] 营地#{camp.campId}升级为据点（防御={camp.defense:F0}）");
             }
         }
 
         /// <summary>
-        /// 营寨/坞堡转化为永久聚落（Burg）。
+        /// 营寨/坞堡转化为永久聚落（Settlement）。
         /// </summary>
-        public static SettlementData TryEvolveCampToBurg(GameWorld world, CampData camp)
+        public static SettlementData TryEvolveCampToSettlement(GameWorld world, CampData camp)
         {
             if (world == null || camp == null) return null;
             if (camp.type == CampType.Nomad) return null; // 游牧营地不能直接转化
@@ -153,65 +143,104 @@ namespace MyriadCreation.Simulation.Systems
                 camp.attributes.TryGetValue("isFortified", out float fortified) && fortified > 0f;
 
             // 判定转化形态
-            SettlementType targetType;
+            SettlementForm targetForm;
             SettlementLevel targetLevel;
-            SettlementType burgType;
+            SiteMode targetMode;
 
             if (isFortified && camp.defense >= FORT_SETTLEMENT_DEFENSE_THRESHOLD &&
                 camp.population >= FORTIFIED_CAMP_TO_FORT_POP)
             {
                 // 坞堡 → 堡垒
-                targetCategory = SettlementCategory.Outpost;
+                targetMode = SiteMode.FortifiedOutpost;
                 targetLevel = SettlementLevel.LevelII;
-                burgCategory = SettlementCategory.Outpost;
+                targetForm = SettlementForm.Village;
             }
             else if (camp.population >= CAMP_TO_VILLAGE_POP)
             {
                 // 营寨 → 村镇
-                targetCategory = SettlementCategory.Burg;
+                targetMode = SiteMode.SedentarySettlement;
                 targetLevel = SettlementLevel.LevelI;
-                burgCategory = SettlementCategory.Burg;
+                targetForm = SettlementForm.Village;
             }
             else
             {
                 return null; // 条件不足
             }
 
-            // 创建BurgData
-            int newBurgId = world.burgs.Count > 0 ? NextBurgId(world) : 1;
-            var burg = new SettlementData
+            if (camp.siteMode == SiteMode.TemporaryEncampment &&
+                !HabitationSiteTransitionSystem.TryTransition(
+                    (HabitationSite)camp, SiteMode.FortifiedOutpost, out var outpostFailure))
             {
-                anchorId = newBurgId,
-                settlementName = camp.campName,
-                type = burgType,
-                tileIndex = camp.tileIndex,
+                Debug.LogError($"[SettlementEvolution] 营地#{camp.campId}无法先转为据点：{outpostFailure}");
+                return null;
+            }
+            if (camp.siteMode != SiteMode.FortifiedOutpost)
+            {
+                Debug.LogError($"[SettlementEvolution] 营地#{camp.campId}不处于可演化模式：{SiteModeKeys.ToKey(camp.siteMode)}");
+                return null;
+            }
+            camp.fortifiedOutpostData.purpose = camp.type.ToString();
+
+            world.anchors ??= new Dictionary<int, AnchorData>();
+            int newAnchorId = camp.anchorId >= 0 ? camp.anchorId : NextAnchorId(world);
+            var anchor = camp.anchor ?? new AnchorData
+            {
+                anchorId = newAnchorId,
                 provinceId = world.tiles[camp.tileIndex].provinceId,
+                tileIndex = camp.tileIndex,
+                x = camp.location.x,
+                y = camp.location.y
+            };
+            anchor.anchorId = newAnchorId;
+            anchor.provinceId = world.tiles[camp.tileIndex].provinceId;
+            anchor.tileIndex = camp.tileIndex;
+
+            var settlement = new SettlementData
+            {
+                siteId = camp.siteId,
+                previousSiteMode = camp.previousSiteMode,
+                hasPreviousSiteMode = camp.hasPreviousSiteMode,
+                anchorId = newAnchorId,
+                anchor = anchor,
+                settlementName = camp.campName,
                 population = camp.population,
                 development = camp.permanence * 0.1f,
                 wealth = camp.supplies * 0.5f,
                 fortification = camp.defense * 0.1f,
-                garrison = camp.population / 5,
-                settlementCategory = targetCategory == SettlementCategory.Outpost ? SettlementCategory.Outpost : SettlementCategory.Burg,
+                garrison = Mathf.RoundToInt(camp.population / 5f),
+                siteMode = SiteMode.FortifiedOutpost,
                 constructionProgress = 0f,
                 constructionTier = 1,
-                settlementType = targetType,
-                settlementLevel = targetLevel,
                 settlementEvolution = 100f,
                 settlementStability = 50f,
                 foundingTick = world.currentDay,
                 wallLevel = isFortified ? WallLevel.Palisade : WallLevel.None
             };
+            settlement.fortifiedOutpostData.subtype = camp.fortifiedOutpostData.subtype;
+            settlement.fortifiedOutpostData.purpose = camp.fortifiedOutpostData.purpose;
+            settlement.SetLegacyCategoryFromSiteMode();
 
-            world.burgs[newBurgId] = burg;
+            if (targetMode == SiteMode.SedentarySettlement
+                && !HabitationSiteTransitionSystem.TryTransition(
+                    settlement, SiteMode.SedentarySettlement, out var transitionFailure))
+            {
+                Debug.LogError($"[SettlementEvolution] 无法将栖居点#{settlement.siteId}从据点转为定居点：{transitionFailure}");
+                return null;
+            }
+
+            settlement.settlementForm = targetForm;
+            settlement.settlementLevel = targetLevel;
+            world.anchors[newAnchorId] = anchor;
+            world.settlements[newAnchorId] = settlement;
 
             // 清除营寨
-            world.Camps.AbandonCamp(camp.campId);
+            world.Camps.RemoveTransferredCamp(camp.campId, settlement.siteId);
             var tile = world.tiles[camp.tileIndex];
             tile.campId = -1;
             world.tiles[camp.tileIndex] = tile;
 
-            Debug.Log($"[SettlementEvolution] 营寨#{camp.campId}({camp.type}) 演化为聚落#{newBurgId}({targetType})");
-            return burg;
+            Debug.Log($"[SettlementEvolution] 营寨#{camp.campId}({camp.type}) 演化为聚落#{newAnchorId}({targetForm})");
+            return settlement;
         }
 
         /// <summary>
@@ -226,38 +255,48 @@ namespace MyriadCreation.Simulation.Systems
             // 游牧定居化：直接走营寨→村镇路径
             camp.type = CampType.Military; // 转为军事驻屯类型以通过Nomad检查
             camp.permanence = 100f;
-            return TryEvolveCampToBurg(world, camp);
+            return TryEvolveCampToSettlement(world, camp);
         }
 
         /// <summary>
-        /// 聚落反向降级（城国被游牧征服/严重衰退）：Burg → 营寨。
+        /// 聚落反向降级（城国被游牧征服/严重衰退）：Settlement → 营寨。
         /// </summary>
-        public static CampData DegradeBurgToCamp(GameWorld world, int anchorId,
+        public static CampData DegradeSettlementToCamp(GameWorld world, int anchorId,
             CampType campType = CampType.Military, int ownerRealmId = -1)
         {
-            if (world == null || !world.burgs.TryGetValue(anchorId, out var burg)) return null;
-            if (burg.IsRuined) return null;
+            if (world == null || !world.settlements.TryGetValue(anchorId, out var settlement)) return null;
+            if (settlement.IsRuined) return null;
 
             var camp = world.Camps.EstablishCamp(
-                campType, burg.tileIndex, Mathf.RoundToInt(burg.population),
-                ownerRealmId, -1, burg.settlementName + "（降级）");
+                campType, settlement.tileIndex, Mathf.RoundToInt(settlement.population),
+                ownerRealmId, -1, settlement.settlementName);
             if (camp != null)
             {
-                camp.defense = burg.fortification * 10f;
-                camp.supplies = burg.wealth;
-                // 移除聚落（但不删除数据，标记为降级）
-                burg.ruinLevel = 2;
-                burg.ruinedDay = world.currentDay;
-                world.burgs[anchorId] = burg;
+                if (!HabitationSiteTransitionSystem.TryTransition(
+                    settlement, SiteMode.TemporaryEncampment, out var transitionFailure))
+                {
+                    world.Camps.AbandonCamp(camp.campId);
+                    Debug.LogError($"[SettlementEvolution] 无法将栖居点#{settlement.siteId}降为营地：{transitionFailure}");
+                    return null;
+                }
+
+                camp.siteId = settlement.siteId;
+                camp.anchorId = settlement.anchorId;
+                camp.anchor = settlement.anchor;
+                camp.location.x = settlement.x;
+                camp.location.y = settlement.y;
+                camp.defense = settlement.fortification * 10f;
+                camp.supplies = settlement.wealth;
+                world.settlements.Remove(anchorId);
                 Debug.Log($"[SettlementEvolution] 聚落#{anchorId}降级为营寨#{camp.campId}");
             }
             return camp;
         }
 
-        private static int NextBurgId(GameWorld world)
+        private static int NextAnchorId(GameWorld world)
         {
             int max = 0;
-            foreach (var id in world.burgs.Keys)
+            foreach (var id in world.anchors.Keys)
                 if (id > max) max = id;
             return max + 1;
         }

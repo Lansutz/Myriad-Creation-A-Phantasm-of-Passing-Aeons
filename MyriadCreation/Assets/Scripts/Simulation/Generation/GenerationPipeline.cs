@@ -31,8 +31,8 @@ namespace MyriadCreation.Simulation.Generation
         Biomes = 6,
  /// <summary>省份划分：基于地块的政治边界生成</summary>
         Provinces = 7,
- /// <summary>聚落生成：城市/港口/要塞/村庄（Burg）</summary>
-        Burgs = 8,
+ /// <summary>聚落生成：城市/港口/要塞/村庄（Settlement）</summary>
+        Settlements = 8,
  /// <summary>社会生成：文化/宗教/政权/阶层/人口</summary>
         Society = 9,
  /// <summary>全部完成</summary>
@@ -53,7 +53,7 @@ namespace MyriadCreation.Simulation.Generation
             GenerationStage.Hydrology,
             GenerationStage.Biomes,
             GenerationStage.Provinces,
-            GenerationStage.Burgs,
+            GenerationStage.Settlements,
             GenerationStage.Society,
         };
 
@@ -67,7 +67,7 @@ namespace MyriadCreation.Simulation.Generation
             { GenerationStage.Hydrology, "重算水文" },
             { GenerationStage.Biomes, "划分群系" },
             { GenerationStage.Provinces, "划分省份" },
-            { GenerationStage.Burgs, "生成聚落" },
+            { GenerationStage.Settlements, "生成聚落" },
             { GenerationStage.Society, "生成社会" },
         };
 
@@ -284,8 +284,8 @@ namespace MyriadCreation.Simulation.Generation
                     _world.GenerateProvinces();
                     break;
 
-                case GenerationStage.Burgs:
-                    _world.GenerateBurgs();
+                case GenerationStage.Settlements:
+                    _world.GenerateSettlements();
                     break;
 
                 case GenerationStage.Society:

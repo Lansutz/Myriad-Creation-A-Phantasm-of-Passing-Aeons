@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace MyriadCreation.Simulation.Definitions
@@ -152,7 +152,7 @@ namespace MyriadCreation.Simulation.Definitions
             }
         }
 
- /// 宗教形态是否可用（支撑革新判定——仿政体成分×革新）：
+ /// 宗教形态是否可用（支撑革新判定——仿法律成分×革新）：
  /// requiredInnovations 任一持有即可（OR 语义）；空=基础可用；
  /// innovations null=宽松（不校验）
         public static bool IsAvailable(int religionId, System.Func<int, bool> hasInnovation)

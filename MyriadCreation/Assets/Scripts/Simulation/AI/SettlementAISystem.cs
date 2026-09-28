@@ -39,9 +39,9 @@ namespace MyriadCreation.Simulation.AI
  /// 建筑可用性前置检查（地形/水文/群系限制）
  /// 不符合条件的建筑AI不会建造，UI也不会显示
         private static bool CheckBuildingAvailability(BuildableType type, TileData tile,
-            SettlementData existingBurg = null, int techLevel = 0)
+            SettlementData existingSettlement = null, int techLevel = 0)
         {
-            var result = BuildingAvailabilitySystem.CheckAvailability(type, tile, existingBurg, techLevel);
+            var result = BuildingAvailabilitySystem.CheckAvailability(type, tile, existingSettlement, techLevel);
             return result.available;
         }
 
@@ -339,13 +339,13 @@ namespace MyriadCreation.Simulation.AI
 
  // ===== 港口/渡口（附属设施）AI建造 =====
  /// AI决策：是否在已有聚落升级港口
-        public static AIBuildDecision ShouldUpgradePort(SettlementData burg, float tradeDemand,
+        public static AIBuildDecision ShouldUpgradePort(SettlementData settlement, float tradeDemand,
             float navalNeed, PortTier currentTier)
         {
             var decision = new AIBuildDecision { shouldBuild = false, priority = 0f, reason = "" };
 
  // 必须沿海或沿河
-            if (!burg.isCoastal && !burg.isPort)
+            if (!settlement.isCoastal && !settlement.isPort)
             {
                 decision.reason = "非沿海/沿河聚落";
                 return decision;
@@ -360,7 +360,7 @@ namespace MyriadCreation.Simulation.AI
 
             float demandScore = Mathf.Clamp01(tradeDemand / 100f);
             float navalScore = Mathf.Clamp01(navalNeed / 100f);
-            float existingBonus = burg.portTier != PortTier.None ? 0.2f : 0f;
+            float existingBonus = settlement.portTier != PortTier.None ? 0.2f : 0f;
 
             decision.priority = demandScore * 0.5f + navalScore * 0.3f + existingBonus;
 

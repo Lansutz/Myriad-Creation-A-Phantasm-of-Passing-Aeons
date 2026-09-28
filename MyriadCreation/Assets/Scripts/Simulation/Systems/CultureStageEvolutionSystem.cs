@@ -350,14 +350,14 @@ namespace MyriadCreation.Simulation.Systems
                     && realm.nomadicRange.summerCampTile >= 0;
             }
 
-            if (world.burgs == null) return false;
-            foreach (var burg in world.burgs.Values)
+            if (world.settlements == null) return false;
+            foreach (var settlement in world.settlements.Values)
             {
-                if (burg.IsRuined) continue;
-                if (world.tiles[burg.tileIndex].ownerRealmId != realm.realmId) continue;
+                if (settlement.IsRuined) continue;
+                if (world.tiles[settlement.tileIndex].ownerRealmId != realm.realmId) continue;
                 // 城邑（LevelIII）及以上视为城市中心
-                if (burg.settlementType == SettlementType.City
-                    && burg.settlementLevel >= SettlementLevel.LevelIII)
+                if (settlement.settlementForm == SettlementForm.City
+                    && settlement.settlementLevel >= SettlementLevel.LevelIII)
                     return true;
             }
             return false;

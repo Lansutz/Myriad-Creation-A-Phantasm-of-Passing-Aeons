@@ -1,4 +1,4 @@
-namespace MyriadCreation.Simulation.Definitions
+﻿namespace MyriadCreation.Simulation.Definitions
 {
     public static class SupremeSuccessionLevel
     {
@@ -29,13 +29,13 @@ namespace MyriadCreation.Simulation.Definitions
         public static bool IsRepublic(SupremeSuccession s, SupremeScope scope) => !IsMonarchy(s, scope);
 
  /// <summary>按政体组合推导（主导成分）</summary>
-        public static bool IsMonarchy(GovernmentComposition comp)
+        public static bool IsMonarchy(LawComposition comp)
         {
             return IsMonarchy((SupremeSuccession)comp.supremeSuccession.primary,
                 (SupremeScope)comp.supremeScope.primary);
         }
 
  /// <summary>按政体组合推导是否共和制</summary>
-        public static bool IsRepublic(GovernmentComposition comp) => !IsMonarchy(comp);
+        public static bool IsRepublic(LawComposition comp) => !IsMonarchy(comp);
     }
 }

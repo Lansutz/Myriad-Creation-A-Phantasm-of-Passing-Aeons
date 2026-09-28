@@ -1,0 +1,11 @@
+﻿<Solution>
+  <Project Path="MyriadCreation.Core.csproj" />
+  <Project Path="MyriadCreation.Simulation.csproj" />
+  <Project Path="MyriadCreation.World.csproj" />
+  <Project Path="MyriadCreation.Tests.csproj" />
+  <Project Path="MyriadCreation.UI.csproj" />
+  <Project Path="MyriadCreation.Editor.csproj" />
+  <Project Path="MyriadCreation.Infrastructure.csproj" />
+  <Project Path="MyriadCreation.Rendering.csproj" />
+  <Project Path="MyriadCreation.Tests.PlayMode.csproj" />
+</Solution>

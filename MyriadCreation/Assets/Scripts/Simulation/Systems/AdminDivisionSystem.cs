@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Simulation.Politics;
 using MyriadCreation.Simulation.Population;
 using MyriadCreation.Simulation.Society;
@@ -45,7 +45,7 @@ namespace MyriadCreation.Simulation.Systems
  /// 分封（地方世袭领有）→ 固定 4（宗法树）
  /// 郡县（任命/考试）→ 行政容量弹性 2-5（容量 0-1 分档）
  /// 选举/特许自治 → 2（自治浅结构）
-        public static int GetAdminDepth(GovernmentComposition comp, float administrativeCapacity)
+        public static int GetAdminDepth(LawComposition comp, float administrativeCapacity)
         {
             if (comp == null || comp.localSuccession == null || comp.localSuccession.primary < 0)
                 return 1; // 无地方结构（部落直控）
@@ -70,7 +70,7 @@ namespace MyriadCreation.Simulation.Systems
         }
 
  /// <summary>生成行政区划树（按治理模式深度——地块递归划分）</summary>
-        public static List<AdminDivision> Generate(RealmData realm, GovernmentComposition comp,
+        public static List<AdminDivision> Generate(RealmData realm, LawComposition comp,
             float administrativeCapacity, HashSet<int> territoryTiles)
         {
             var divisions = new List<AdminDivision>();

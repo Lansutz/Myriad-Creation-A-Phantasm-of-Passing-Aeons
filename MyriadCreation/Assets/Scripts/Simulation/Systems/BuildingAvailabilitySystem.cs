@@ -465,7 +465,7 @@ namespace MyriadCreation.Simulation.Systems
  // ===== 可用性检查 =====
  /// 检查地块是否满足某建筑的修建条件
         public static BuildingAvailability CheckAvailability(BuildableType type, TileData tile,
-            SettlementData existingBurg = null, int techLevel = 0)
+            SettlementData existingSettlement = null, int techLevel = 0)
         {
             Initialize();
 
@@ -521,13 +521,13 @@ namespace MyriadCreation.Simulation.Systems
                 failed.Add("需要岛屿");
 
  // 已有聚落检查
-            if (req.requireExistingSettlement && existingBurg == null)
+            if (req.requireExistingSettlement && existingSettlement == null)
                 failed.Add("需要已有聚落");
-            if (existingBurg != null && req.minSettlementLevel > existingBurg.settlementLevel)
+            if (existingSettlement != null && req.minSettlementLevel > existingSettlement.settlementLevel)
                 failed.Add($"聚落等级不足（需≥{req.minSettlementLevel}）");
-            if (existingBurg != null && req.minExistingSettlementLevel > existingBurg.settlementLevel)
+            if (existingSettlement != null && req.minExistingSettlementLevel > existingSettlement.settlementLevel)
                 failed.Add($"已有聚落等级不足（需≥{req.minExistingSettlementLevel}）");
-            if (existingBurg != null && existingBurg.development < req.minDevelopment)
+            if (existingSettlement != null && existingSettlement.development < req.minDevelopment)
                 failed.Add($"发展度不足（需≥{req.minDevelopment:0}）");
 
  // 科技检查
@@ -542,14 +542,14 @@ namespace MyriadCreation.Simulation.Systems
  /// 获取某地块可修建的所有建筑列表（UI过滤接口）
  /// 不符合条件的建筑不在列表中显示
         public static List<BuildableType> GetAvailableBuildings(TileData tile,
-            SettlementData existingBurg = null, int techLevel = 0)
+            SettlementData existingSettlement = null, int techLevel = 0)
         {
             Initialize();
             var available = new List<BuildableType>();
 
             foreach (var type in _requirements.Keys)
             {
-                if (CheckAvailability(type, tile, existingBurg, techLevel).available)
+                if (CheckAvailability(type, tile, existingSettlement, techLevel).available)
                     available.Add(type);
             }
 

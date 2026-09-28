@@ -1,4 +1,4 @@
-
+﻿
 
 using System.Collections.Generic;
 using System;
@@ -24,8 +24,8 @@ namespace MyriadCreation.Simulation.State
     {
         public int realmId;
         public string realmName;
- /// <summary>政体七维成分组合（整体序列化；GovernmentComposition 及其成员类全部 [Serializable]，无 Dictionary）</summary>
-        public GovernmentComposition composition = new GovernmentComposition();
+ /// <summary>法律七维成分组合（整体序列化；LawComposition 及其成员类全部 [Serializable]，无 Dictionary）</summary>
+        public LawComposition laws = new LawComposition();
         public float treasury;
         public float prestige;
         public float stability;
@@ -44,7 +44,7 @@ namespace MyriadCreation.Simulation.State
             {
                 realmId = r.realmId,
                 realmName = r.realmName,
-                composition = r.composition,
+                laws = r.laws,
                 treasury = r.treasury,
                 prestige = r.prestige,
                 stability = r.stability,
@@ -71,7 +71,7 @@ namespace MyriadCreation.Simulation.State
             {
                 realmId = realmId,
                 realmName = realmName,
-                composition = composition,
+                laws = laws,
                 treasury = treasury,
                 prestige = prestige,
                 stability = stability,

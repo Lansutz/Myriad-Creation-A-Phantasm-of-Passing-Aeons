@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using MyriadCreation.Simulation.Politics;
@@ -45,14 +45,14 @@ namespace MyriadCreation.Simulation.Presentation
             sb.AppendLine($"国库：{realm.treasury:F0} | 稳定：{realm.stability:F0} | 集权：{realm.centralization:F2}");
 
  // 政体摘要（成分——最简：交接方式名）
-            if (realm.composition != null)
+            if (realm.laws != null)
             {
-                var comp = realm.composition;
+                var comp = realm.laws;
  // 政体二制（神权制=成分组合[ReligiousCouncil+教阶]——粗显君主/共和）
-                string sov = comp.supremeSovereignty == GovernmentConstraints.SupremeSovereignty.Monarchy
+                string sov = comp.supremeSovereignty == LawConstraints.SupremeSovereignty.Monarchy
                     ? "君主制" : "共和制";
-                string succ = GovernmentConstraints.GetComponentName(
-                    GovernmentConstraints.GovernmentDimension.SupremeSuccession,
+                string succ = LawConstraints.GetComponentName(
+                    LawConstraints.LawDimension.SupremeSuccession,
                     comp.supremeSuccession.primary);
                 sb.AppendLine($"政体：{sov}（交接：{succ}）");
             }

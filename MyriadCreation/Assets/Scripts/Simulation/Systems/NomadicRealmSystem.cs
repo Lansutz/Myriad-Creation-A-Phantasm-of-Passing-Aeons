@@ -144,21 +144,21 @@ namespace MyriadCreation.Simulation.Systems
             if (realm.realmForm != RealmForm.Nomadic || realm.nomadicRange == null) return 0f;
 
             float totalTribute = 0f;
-            foreach (var kvp in world.burgs)
+            foreach (var kvp in world.settlements)
             {
-                var burg = kvp.Value;
-                if (burg.IsRuined) continue;
-                if (!realm.nomadicRange.IsInRange(burg.tileIndex, world.mapWidth, world.mapHeight)) continue;
+                var settlement = kvp.Value;
+                if (settlement.IsRuined) continue;
+                if (!realm.nomadicRange.IsInRange(settlement.tileIndex, world.mapWidth, world.mapHeight)) continue;
                 // 不属于游牧政权的聚落才纳贡
-                var tile = world.tiles[burg.tileIndex];
+                var tile = world.tiles[settlement.tileIndex];
                 if (tile.ownerRealmId == realmId) continue;
 
                 float influence = realm.nomadicRange.GetInfluenceAt(
-                    burg.tileIndex, world.mapWidth, world.mapHeight);
-                float tribute = burg.wealth * 0.05f * influence; // 影响力越高，保护费越多
-                burg.wealth -= tribute;
+                    settlement.tileIndex, world.mapWidth, world.mapHeight);
+                float tribute = settlement.wealth * 0.05f * influence; // 影响力越高，保护费越多
+                settlement.wealth -= tribute;
                 totalTribute += tribute;
-                world.burgs[kvp.Key] = burg;
+                world.settlements[kvp.Key] = settlement;
             }
 
             realm.treasury += totalTribute;

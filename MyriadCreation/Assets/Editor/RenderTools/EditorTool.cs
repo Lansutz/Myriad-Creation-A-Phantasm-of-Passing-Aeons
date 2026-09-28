@@ -9,7 +9,7 @@ namespace MyriadCreation.Editor.RenderTools
         TerrainPlain,   // 地形画笔：平原
         ProvincePaint,  // 省份画笔：绘制省份归属
         ProvinceErase,  // 省份橡皮擦：清除省份归属
-        BurgPlace,      // 子地块放置：在指定位置放置Burg
-        BurgRemove      // 子地块移除
+        SettlementPlace,      // 子地块放置：在指定位置放置Settlement
+        SettlementRemove      // 子地块移除
     }
 }
