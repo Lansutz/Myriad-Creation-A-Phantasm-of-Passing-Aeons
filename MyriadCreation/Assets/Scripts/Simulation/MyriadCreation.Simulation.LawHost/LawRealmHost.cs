@@ -136,6 +136,7 @@ namespace MyriadCreation.Simulation.LawHost
                 {
                     list.Add((realm.realmId, pendingLaw.lawId));
                 }
+                LawCompositionDeriver.Apply(realm.lawState, realm.laws);
             }
             return list;
         }
@@ -186,6 +187,7 @@ namespace MyriadCreation.Simulation.LawHost
             realm.lawState.pendingLaws?.RemoveAll((PendingLaw p) => p != null && p.groupId == groupId);
             realm.lawState.SetActiveLaw(groupId, lawId, day);
             realm.lawState.AddKnownLaw(lawId);
+            LawCompositionDeriver.Apply(realm.lawState, realm.laws);
             return true;
         }
 

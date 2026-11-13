@@ -200,7 +200,9 @@ public sealed class LawContracts : ILawQuery, ILawCommand
 		{
 			return 0;
 		}
-		return LawAndDecreeSystem.TickPendingLaws(realm.lawState, currentDay)?.Count ?? 0;
+		int completed = LawAndDecreeSystem.TickPendingLaws(realm.lawState, currentDay)?.Count ?? 0;
+		LawCompositionDeriver.Apply(realm.lawState, realm.laws);
+		return completed;
 	}
 
 	public void TickDecreeExpiry(int realmId, int currentDay)
