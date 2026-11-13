@@ -128,6 +128,12 @@ namespace MyriadCreation.Content.Modding
         }
 
         [Serializable]
+        private class UnitListWrapper
+        {
+            public List<UnitContentDef> units = new List<UnitContentDef>();
+        }
+
+        [Serializable]
         private class BuildingListWrapper
         {
             public List<BuildingContentDef> buildings = new List<BuildingContentDef>();
@@ -173,6 +179,7 @@ namespace MyriadCreation.Content.Modding
             providerCatalog.Add(new DelegateContentProvider<int, EquipmentDef>("Equipment", LoadEquipmentRoot), new DictionaryContentStore<int, EquipmentDef>(Equipment));
             providerCatalog.Add(new DelegateContentProvider<string, EpithetDef>("Epithet", LoadEpithetRoot), new DictionaryContentStore<string, EpithetDef>(new Dictionary<string, EpithetDef>()));
             providerCatalog.Add(new DelegateContentProvider<int, BuildingContentDef>("Building", LoadBuildingRoot), new DictionaryContentStore<int, BuildingContentDef>(new Dictionary<int, BuildingContentDef>()));
+            providerCatalog.Add(new DelegateContentProvider<int, UnitContentDef>("Unit", LoadUnitRoot), new DictionaryContentStore<int, UnitContentDef>(new Dictionary<int, UnitContentDef>()));
 
             foreach (ContentSource source in ContentSourceCatalog.CreateDefault(streamingAssetsRoot))
             {
@@ -210,6 +217,7 @@ namespace MyriadCreation.Content.Modding
             Equipment.Clear();
             EpithetCatalog.ResetContent();
             BuildingCatalog.ResetContent();
+            UnitCatalog.ResetContent();
         }
 
         // ===== LoadRoot（按 provider 根目录解析）=====
@@ -277,6 +285,28 @@ namespace MyriadCreation.Content.Modding
         {
             string path = Path.Combine(r, "Innovation/Innovations.json");
             if (File.Exists(path)) LoadInnovations(path, t);
+        }
+
+        private void LoadUnitRoot(string r, IContentStore<int, UnitContentDef> t)
+        {
+            string path = Path.Combine(r, "Unit/Units.json");
+            if (File.Exists(path)) LoadUnits(path, t);
+        }
+
+        private static void LoadUnits(string path, IContentStore<int, UnitContentDef> target)
+        {
+            UnitListWrapper wrapper = JsonUtility.FromJson<UnitListWrapper>(File.ReadAllText(path));
+            if (wrapper == null || wrapper.units == null) return;
+            List<UnitContentDef> parsed = new List<UnitContentDef>();
+            foreach (UnitContentDef item in wrapper.units)
+            {
+                if (item != null && item.unitId > 0)
+                {
+                    target.Set(item.unitId, item);
+                    parsed.Add(item);
+                }
+            }
+            UnitCatalog.LoadFromContent(parsed);
         }
 
         private void LoadBuildingRoot(string r, IContentStore<int, BuildingContentDef> t)

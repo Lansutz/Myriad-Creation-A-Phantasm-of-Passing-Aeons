@@ -787,6 +787,14 @@ public partial class GameWorld : MonoBehaviour
 
 	private void InitializeUnitDefs()
 	{
+		if (UnitCatalog.IsLoaded)
+		{
+			foreach (KeyValuePair<int, UnitDef> pair in UnitCatalog.All)
+			{
+				unitDefs[pair.Key] = pair.Value;
+			}
+			return;
+		}
 		AddUnitDef(100, "轻装步兵", GameEnums.UnitArmType.Infantry, 1, 10f, 0f, 8f, 60f, 2f, 1f, 50f, 1f);
 		AddUnitDef(101, "重装步兵", GameEnums.UnitArmType.Infantry, 2, 15f, 0f, 15f, 70f, 1.5f, 1.5f, 80f, 1.5f, 202);
 		AddUnitDef(102, "精锐步兵", GameEnums.UnitArmType.Infantry, 3, 20f, 0f, 22f, 80f, 1.2f, 2f, 120f, 2f, 203);

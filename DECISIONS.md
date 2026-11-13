@@ -652,3 +652,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `BuildingCatalog`：内容加载后由 `BuildingSystem` 构造时复制；未加载时仍走原代码表，保证早期测试/空内容世界可用。`ContentDefinitionIndex` 新增 Building provider，Base→Mods 同 id 覆盖。
 - 测试：29 条齐全且 id 唯一、材料合法；内容转换（类别/工期/材料字典）；内容优先与代码兜底两条路径。
 - 未做：其余 15 张表（单位/商品/灾害/政体门槛/阶层门槛等）逐张外提。
+
+## D79 兵种表外提（P2.4 第三张表）
+
+- 14 条兵种从 `GameWorld.InitializeUnitDefs` 外提到 `StreamingAssets/Base/Unit/Units.json`；`UnitContentDef` 用 `recruitCost[{goodsId,amount}]` 表达字典（`UnitDef.recruitCost/terrainModifiers` 是 `[NonSerialized]`）。
+- 原代码里 `AddUnitDef` 的默认招募成本与 `SetUnitRecruitCosts` 的覆盖在生成 JSON 时合并为最终值，避免读档/加载后出现两套成本。
+- `UnitCatalog` + `ContentDefinitionIndex.Unit` provider：内容优先，未加载时 `GameWorld` 仍走原代码表；Base→Mods 同 id 覆盖。
+- 测试：14 条齐全/唯一/成本合法；类别、成本字典、革新前置转换。
+- 未做：其余 14 张表（商品 57 / 灾害 12 / 政体门槛 35 / 阶层门槛等）。
