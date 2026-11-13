@@ -15,8 +15,11 @@ namespace MyriadCreation.Tests.EditMode
 
             Assert.AreEqual(p1, p2);
             Assert.AreEqual(c1, c2);
-            StringAssert.Contains("|", c1);
+            Assert.AreEqual(3, p1.Split('|').Length, "division|ordinary|shield");
             Assert.AreEqual(3, c1.Split('|').Length);
+            string[] colors = c1.Split('|');
+            Assert.AreNotEqual(Heraldry.Classify(colors[0]), Heraldry.Classify(colors[1]),
+                "底场与主纹章必须一金属一颜色");
         }
 
         [Test]

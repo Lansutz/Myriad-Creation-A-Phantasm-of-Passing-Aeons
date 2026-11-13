@@ -920,3 +920,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 为什么不用参考项目代码：纹章规则可抽象成“确定性符号组合”，参考实现的资源/代码许可不明；这里只借模型。
 - 城市俯视图：当前 `SettlementBlock` 有区划/面积/城墙数据但没有布局坐标；要做得先定义“块→俯视布局”的确定性算法与渲染层，属于独立子项目，暂不硬塞。
 - 验证：`EXIT=0`、`887/889`、零 `error CS`。
+
+## D113 纹章模型对齐 Azgaar/Armoria（MIT）
+
+- 参考 Azgaar FMG（MIT）的纹章数据模型：`division`（perPale/perFess/perBend/perChevron/perCross/perSaltire/perPile/gyronny）、`ordinary`（bend/chevron/cross/saltire/fess/pale/chief/pall/bordure/canton）、盾形与三色。
+- `Heraldry.Generate` 输出 `division|ordinary|shield` + `field|charge|detail`；底场与主纹章遵循“金属不压金属、颜色不压颜色”，`Classify` 暴露金属/颜色/污色分类。
+- 仍不复制其图标/渲染资源；只借符号模型，家族创建/存档字段不变（复用 coaPattern/coaColors）。
+- 城市俯视图：Azgaar 的 `burgs-generator` 生成聚落位置/人口/经济与 SVG 图标，不是街道级俯视布局；因此不按它做“城市俯视图”，需要自研布局。
+- 验证：`EXIT=0`、`887/889`、零 `error CS`。
