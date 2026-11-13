@@ -43,6 +43,12 @@ public class FaithSystem
 
 	public int highPriestCharacterId = -1;
 
+	/// <summary>运行时教义覆盖（optionId）；空 = 沿用内容表 religion 的 selectedDoctrines。合一/改宗写入。</summary>
+	public List<string> doctrineIds = new List<string>();
+
+	/// <summary>共融期限（到此日为止不再升级为敌意/分裂；-1 = 无共融约定）。妥协写入。</summary>
+	public int communionUntilDay = -1;
+
 	public float churchWealth;
 
 	public float churchInfluence;

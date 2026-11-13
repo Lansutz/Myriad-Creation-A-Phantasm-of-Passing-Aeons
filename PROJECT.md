@@ -164,7 +164,8 @@
 - 2026-11-13 **P2.4 商品表外提**：57 条商品进 `Goods.json`，后置标记在生成时合并；`GoodsCatalog` + provider；属性合并收口到 `ApplyGoodsProperties`。新增 `GoodsContentTests` 2 例。验证：`EXIT=0`、`845/847`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：其余 12 张表。
 - 2026-11-13 **P2.2 正统边界/宗派状态**：`ReligionDef` 增正统必备/排除教义；`OrthodoxyEvaluator` + `DenominationStatusRules`；月结把非默认宗派状态写回 `Heterodox/Tolerated/Mainstream`。新增测试 3 例。验证：`EXIT=0`、`848/850`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：合一/妥协/敌意局势阶段。
 - 2026-11-13 **P2.2 宗教局势阶段**：新增 `ReligionStageRules`（合一/脆弱合一/妥协/敌意/分裂，20/40/60/80 分档）；月结按同教最大分歧度定阶段，达分裂阈值自动分出宗派一次。新增阶段测试。验证：`EXIT=0`、`849/851`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：合一/妥协的裁决入口。
-- 待办：P2.2 合一/妥协入口、P2.3 信息传播/Intrigue、P2.4 其余内容表、P2.5 架构 A–F、P2.6 Compute/Apply；**G5 / G6**；内容体检。
+- 2026-11-13 **P2.2 合一/妥协入口**：`FaithSystem.doctrineIds/communionUntilDay` 入档；`TryUnifyReligion/TryCompromiseReligion/TrySchismReligion`；分歧度/正统判定改用有效教义；共融期把阶段封顶在「妥协」。新增 3 例测试。验证：`EXIT=0`、`852/854`（2 个 Explicit 跳过）、零 `error CS`。**P2.2 收口**。
+- 待办：P2.3 信息传播/Intrigue、P2.4 其余 13 张内容表、P2.5 架构 A–F、P2.6 Compute/Apply；**G5 / G6**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。
 - 备注：卡住时先 `Get-Process Unity` + 删 `MyriadCreation\Temp\UnityLockfile` 再重跑 `build.cmd`。

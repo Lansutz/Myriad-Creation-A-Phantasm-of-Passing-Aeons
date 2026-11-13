@@ -101,13 +101,14 @@ public partial class GameWorld
 				{
 					continue;
 				}
-				float divergence = ReligionCatalog.GetDivergence(orthodox, faithDef);
+				IReadOnlyList<string> effectiveDoctrines = FaithDoctrine.GetIds(faith, faithDef);
+				float divergence = ReligionCatalog.GetDivergence(orthodox.selectedDoctrines, effectiveDoctrines);
 				if (divergence > maxDivergence)
 				{
 					maxDivergence = divergence;
 				}
 				violations.Clear();
-				if (OrthodoxyEvaluator.Evaluate(orthodox, faithDef.selectedDoctrines, violations) == OrthodoxyVerdict.OutOfBounds)
+				if (OrthodoxyEvaluator.Evaluate(orthodox, effectiveDoctrines, violations) == OrthodoxyVerdict.OutOfBounds)
 				{
 					violationCount++;
 				}
@@ -166,14 +167,34 @@ public partial class GameWorld
 				{
 					continue;
 				}
-				float divergence = ReligionCatalog.GetDivergence(orthodox, faithDef);
+				IReadOnlyList<string> effectiveDoctrines = FaithDoctrine.GetIds(faith, faithDef);
+				float divergence = ReligionCatalog.GetDivergence(orthodox.selectedDoctrines, effectiveDoctrines);
 				if (divergence > maxDivergence)
 				{
 					maxDivergence = divergence;
 					worst = faith;
 				}
 			}
-			if (worst == null || ReligionStageRules.StageFor(maxDivergence) != ReligionStage.Schism)
+			if (worst == null)
+			{
+				continue;
+			}
+			ReligionStage stage = ReligionStageRules.StageFor(maxDivergence);
+			bool allCommunion = true;
+			for (int i = 0; i < pair.Value.Count; i++)
+			{
+				if (pair.Value[i].communionUntilDay <= currentDay)
+				{
+					allCommunion = false;
+					break;
+				}
+			}
+			// 妥协期：保留分歧但不上敌意/分裂。
+			if (allCommunion && stage > ReligionStage.Compromise)
+			{
+				stage = ReligionStage.Compromise;
+			}
+			if (stage != ReligionStage.Schism)
 			{
 				continue;
 			}
@@ -184,6 +205,126 @@ public partial class GameWorld
 			}
 			CreateDenomination(worst.faithId, worst.faithName + "宗");
 		}
+	}
+
+	/// <summary>
+	/// 合一：同教各 faith 采用同一套教义（取当前最常见的集合，平票取上位 religion 的正统集合），
+	/// 清除共融期限。返回是否执行。
+	/// </summary>
+	public bool TryUnifyReligion(int religionId)
+	{
+		List<FaithSystem> group = FaithsOfReligion(religionId);
+		if (group.Count < 2)
+		{
+			return false;
+		}
+		ReligionDef orthodox = null;
+		ContentResolvers.Religions.TryGet(religionId, out orthodox);
+		Dictionary<string, int> counts = new Dictionary<string, int>();
+		Dictionary<string, List<string>> sets = new Dictionary<string, List<string>>();
+		List<string> best = orthodox?.selectedDoctrines != null ? new List<string>(orthodox.selectedDoctrines) : new List<string>();
+		int bestCount = 0;
+		for (int i = 0; i < group.Count; i++)
+		{
+			ReligionDef faithDef = null;
+			ContentResolvers.Religions.TryGet(group[i].faithId, out faithDef);
+			List<string> ids = new List<string>(FaithDoctrine.GetIds(group[i], faithDef));
+			string key = string.Join("|", ids);
+			counts.TryGetValue(key, out int count);
+			counts[key] = count + 1;
+			sets[key] = ids;
+			if (count + 1 > bestCount)
+			{
+				bestCount = count + 1;
+				best = ids;
+			}
+		}
+		for (int i = 0; i < group.Count; i++)
+		{
+			FaithDoctrine.SetIds(group[i], best);
+			group[i].communionUntilDay = -1;
+		}
+		_chronicle?.Add("religion", "宗教 " + religionId + " 达成合一：诸信仰采用同一教义集合", true);
+		return true;
+	}
+
+	/// <summary>妥协：保留各自教义，但约定共融期内不升级为敌意/分裂。</summary>
+	public bool TryCompromiseReligion(int religionId, int days)
+	{
+		List<FaithSystem> group = FaithsOfReligion(religionId);
+		if (group.Count < 2 || days <= 0)
+		{
+			return false;
+		}
+		int until = currentDay + days;
+		for (int i = 0; i < group.Count; i++)
+		{
+			group[i].communionUntilDay = until;
+		}
+		_chronicle?.Add("religion", "宗教 " + religionId + " 达成妥协：共融至第 " + until + " 日", true);
+		return true;
+	}
+
+	/// <summary>分裂：把当前分歧最大的 faith 分出宗派；返回新宗派 id（失败 -1）。</summary>
+	public int TrySchismReligion(int religionId)
+	{
+		List<FaithSystem> group = FaithsOfReligion(religionId);
+		FaithSystem worst = FindMostDivergentFaith(group);
+		if (worst == null)
+		{
+			return -1;
+		}
+		Denomination current = GetDenomination(worst.denominationId);
+		if (current != null && !current.isDefault)
+		{
+			return -1;
+		}
+		return CreateDenomination(worst.faithId, worst.faithName + "宗");
+	}
+
+	private List<FaithSystem> FaithsOfReligion(int religionId)
+	{
+		List<FaithSystem> group = new List<FaithSystem>();
+		if (_faithSystems == null)
+		{
+			return group;
+		}
+		for (int i = 0; i < _faithSystems.Count; i++)
+		{
+			FaithSystem faith = _faithSystems[i];
+			if (faith != null && faith.religionId == religionId)
+			{
+				group.Add(faith);
+			}
+		}
+		return group;
+	}
+
+	private FaithSystem FindMostDivergentFaith(List<FaithSystem> group)
+	{
+		FaithSystem worst = null;
+		float maxDivergence = 0f;
+		for (int i = 0; i < group.Count; i++)
+		{
+			FaithSystem faith = group[i];
+			ReligionDef faithDef = null;
+			ReligionDef orthodox = null;
+			if (!ContentResolvers.Religions.TryGet(faith.faithId, out faithDef) || faithDef == null)
+			{
+				continue;
+			}
+			if (!ContentResolvers.Religions.TryGet(faith.religionId, out orthodox) || orthodox == null)
+			{
+				continue;
+			}
+			float divergence = ReligionCatalog.GetDivergence(orthodox.selectedDoctrines, FaithDoctrine.GetIds(faith, faithDef));
+			if (divergence > maxDivergence)
+			{
+				maxDivergence = divergence;
+				worst = faith;
+			}
+		}
+		return worst;
 	}
 
 	private int NextDenominationId()

@@ -692,3 +692,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `GameWorld.TickReligionStages`（`faith.stage.monthly`，order 43）：对每个有 ≥2 条 faith 的 religion，取「faith 自身教义 vs 上位 religion 教义」的最大分歧度定阶段；达到分裂阈值时，只把分歧最大的 faith 分出宗派（若它仍挂默认宗派），避免每月重复分裂。
 - 阶段本身是**派生值**，不入档；只有分裂动作写实体（Denomination/faith.denominationId），与既有存档字段一致。
 - 未做：合一（消除分歧）与妥协（保留分歧但维持共融）的裁决入口；当前阶段用于观测与分裂触发，不假装已实现谈判。
+
+## D84 合一/妥协入口与教义覆盖入档（P2.2 收口）
+
+- `FaithSystem` 增 `doctrineIds`（运行时教义覆盖，空=沿用内容表）与 `communionUntilDay`（共融期限）；`FaithDoctrine.GetIds/SetIds` 是唯一读写口径。
+- `ReligionCatalog.GetDivergence(doctrineIdsA, doctrineIdsB)` 重载；分歧度/正统判定改用有效教义集合（覆盖优先），不再直接读内容定义。
+- `GameWorld.TryUnifyReligion`：同教各 faith 采用最常见的教义集合（平票取上位 religion 正统集合），清共融期限；`TryCompromiseReligion`：保留各自教义，设定共融期限；`TrySchismReligion`：显式分出分歧最大的 faith。
+- 局势月结：若同教全部 faith 都在共融期内，阶段最高只到「妥协」，不会升级为敌意/分裂。
+- 入档：`FaithSaveData` 增 `doctrineIds/communionUntilDay`，读档 overlay；旧档默认空/-1，不冲内容口径。
+- 测试：合一后教义一致、妥协写共融期限、DTO 往返。

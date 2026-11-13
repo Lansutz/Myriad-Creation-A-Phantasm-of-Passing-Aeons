@@ -129,6 +129,12 @@ public static class ReligionCatalog
 		{
 			return 0f;
 		}
+		return GetDivergence(a.selectedDoctrines, b.selectedDoctrines);
+	}
+
+	/// <summary>按显式教义集合计算分歧度（运行时覆盖/合一后的口径）。</summary>
+	public static float GetDivergence(IReadOnlyCollection<string> a, IReadOnlyCollection<string> b)
+	{
 		Dictionary<string, DoctrineOptionDef> options = new Dictionary<string, DoctrineOptionDef>();
 		List<DoctrineOptionDef> all = DoctrinePool.GetAllOptions();
 		for (int i = 0; i < all.Count; i++)
@@ -139,7 +145,7 @@ public static class ReligionCatalog
 				options[option.optionId] = option;
 			}
 		}
-		return DoctrineDivergence.Calculate(a.selectedDoctrines, b.selectedDoctrines, options);
+		return DoctrineDivergence.Calculate(a, b, options);
 	}
 
 	public static bool IsAvailable(int religionId, Func<int, bool> hasInnovation)

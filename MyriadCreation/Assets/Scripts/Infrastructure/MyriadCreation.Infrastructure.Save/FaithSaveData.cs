@@ -38,6 +38,12 @@ namespace MyriadCreation.Infrastructure.Save
         public int highPriestCharacterId = -1;
         public int hierarchyLevel;
 
+        /// <summary>运行时教义覆盖（合一/改宗写入）；空数组 = 沿用内容表。</summary>
+        public string[] doctrineIds = new string[0];
+
+        /// <summary>共融期限（妥协写入）；-1 = 无共融约定。</summary>
+        public int communionUntilDay = -1;
+
         public int[] holySiteTileIndices = new int[0];
         public int[] followerCharacterIds = new int[0];
 
@@ -73,6 +79,8 @@ namespace MyriadCreation.Infrastructure.Save
                 tolerance = faith.tolerance,
                 highPriestCharacterId = faith.highPriestCharacterId,
                 hierarchyLevel = faith.hierarchyLevel,
+                doctrineIds = faith.doctrineIds != null ? new List<string>(faith.doctrineIds).ToArray() : new string[0],
+                communionUntilDay = faith.communionUntilDay,
                 holySiteTileIndices = faith.holySiteTileIndices != null
                     ? faith.holySiteTileIndices.ToArray()
                     : new int[0],
@@ -148,6 +156,12 @@ namespace MyriadCreation.Infrastructure.Save
             faith.tolerance = tolerance;
             faith.highPriestCharacterId = highPriestCharacterId;
             faith.hierarchyLevel = hierarchyLevel;
+            if (faith.doctrineIds == null)
+                faith.doctrineIds = new List<string>();
+            faith.doctrineIds.Clear();
+            if (doctrineIds != null)
+                faith.doctrineIds.AddRange(doctrineIds);
+            faith.communionUntilDay = communionUntilDay;
 
             if (faith.holySiteTileIndices == null)
                 faith.holySiteTileIndices = new List<int>();
