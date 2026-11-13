@@ -179,6 +179,7 @@
 - 2026-11-13 **P2.5 B 收口**：音频拆为 `MyriadCreation.Audio`；新增 `ISaveSlotService` 契约 + Infrastructure 实现 + `AppServices.SaveSlots`；UI 面板改走契约。UI asmdef 最终不再引用 App/World/Infrastructure。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**B 完成**。
 - 2026-11-13 **P2.5 A 收口**：19 个存档适配器迁入新 `MyriadCreation.Save.Runtime`；`MyriadCreation.Infrastructure` 程序集删除；Editor/App/Tests 改引 Save.Runtime。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**A/B 完成**。
 - 2026-11-13 **P2.5 E 遗传单源**：子代先由 `GeneticsEngine.Reproduce` 生成 GenomeInstance，再产出 DnaData 兼容快照；缺基因组才回退旧路径。新增测试。验证：`EXIT=0`、`873/875`（2 个 Explicit 跳过）、零 `error CS`。**E 完成**。
+- 2026-11-13 **架构解耦收口**：C 写入口+门禁、E Genome 主路径、F Hosts 程序集反转、P2.6 两相调度；最终 `build` 884/886、`longrun` 1/1 全绿。详见 D111。
 - 2026-11-13 **P2.5 F Host 解耦**：新增 `MyriadCreation.Simulation.Hosts` 程序集（Faith/Culture 契约适配器）经 `SimulationHostRegistry` 反转；Simulation 不再含 `*Host` 文件夹，法律/信仰/文化运行逻辑归入 `Systems/*Runtime`。验证：`EXIT=0`、`884/886`、零 `error CS`。
 - 2026-11-13 **P2.5 F 第一刀**：教义绑定/身份规则移入 `Content.Definitions`，教义快照不再依赖 Simulation。验证：`EXIT=0`、`884/886`、零 `error CS`。
 - 2026-11-13 **P2.6 调度器两相**：`RegisterPhased` + 影响力场迁移（Compute 只读 / Apply 统一写），新增两相顺序测试。验证：`EXIT=0`、`884/886`、零 `error CS`。

@@ -903,3 +903,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 其余 Host 逻辑归入 `Simulation/Systems/{FaithRuntime,CultureRuntime,LawRuntime}`：Simulation 不再有 `*Host` 文件夹；法律运行逻辑仍属仿真层（不是适配器），不入 Hosts 程序集。
 - 空 `FaithContextAdapter`（无调用者）删除；教义快照上一刀已移入 Content。
 - 验证：`EXIT=0`、`884/886`、零 `error CS`。
+
+## D111 架构解耦目标收口（C/E/F/P2.6）
+
+- C：`RealmTreasury/RealmStability` 为唯一写入口，源码门禁阻断直接赋值；`PopulationLedger` 覆盖人口块增删/转移/改身份，迁移增长/饥荒/疾病/传教/文化/劫掠写点，门禁阻断绕过。
+- E：新生/生育/运行时表型以 GenomeInstance 为主，`DnaData` 不再由正常路径生成；`LegacyDnaAdapter` 只出现在 `DnaData` 旧输入转换（旧档/测试），存档本身只存 genome。
+- F：新增 `MyriadCreation.Simulation.Hosts` 程序集承载 Faith/Culture 契约适配器，`SimulationHostRegistry` 反转依赖；Simulation 不再含 `*Host` 文件夹，法律/信仰/文化运行逻辑归入 `Systems/*Runtime`。
+- P2.6：`RegisterPhased` 提供 Compute→Apply 两相（全部 Compute 后统一 Apply），影响力场完成迁移并有顺序测试。
+- 最终验证：`build.cmd` `EXIT=0`、`884/886`（2 个 Explicit 跳过）、零 `error CS`；`longrun` 2 seed×100 年 `1/1` 通过、`EXIT=0`。
