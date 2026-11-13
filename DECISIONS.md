@@ -466,3 +466,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 
 - `GameWorld.CreateArmy(ownerRealmId, -1, tile)` 现在调用 `CharacterManager.FindBestGeneral` 选统帅能力最高者，并把 `commandedArmyId` 写回人物；显式传指挥官时保持原行为。
 - 不做：不新建"将军池/任命系统"；指挥官仍是人物 id，军队仍是唯一军事实体。
+
+## D52 征兵路径：人口→军队，兵种受革新门禁
+
+- `RecruitmentSystem.TryRecruit`：校验政权/兵种/数量；兵种 `requiredInnovations` 全部已掌握且 `InnovationUnlockKind.Unit` 未被未完成革新锁住；按 `count × manpowerCost` 从政权核心/所属地块人口块按每块最多 10% 分摊扣除；按 `UnitDef.recruitCost` 从本区市场扣物资；已有同地块同政权军队则补编，否则新建（自动选将）。
+- 不做：不新增“人力储备”第二本账——人口块就是人力池；财政工资/装备折旧暂未接入，避免预造费率。
+- 影响：P1.4 的 Unit 消费者由征兵入口正式消费，不再是空接。
