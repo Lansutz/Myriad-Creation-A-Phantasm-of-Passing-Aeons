@@ -46,6 +46,35 @@ public class Chronicle
 		return _entries;
 	}
 
+	/// <summary>读档还原：保留原 entryId，并把下一条自增 id 推到最大值之后。</summary>
+	public void RestoreEntries(IEnumerable<ChronicleEntry> entries, int currentTick, int currentYear)
+	{
+		_entries.Clear();
+		_nextEntryId = 1;
+		CurrentTick = currentTick;
+		CurrentYear = currentYear;
+		if (entries != null)
+		{
+			foreach (ChronicleEntry entry in entries)
+			{
+				if (entry == null) continue;
+				var copy = new ChronicleEntry
+				{
+					entryId = entry.entryId,
+					tick = entry.tick,
+					year = entry.year,
+					eventType = entry.eventType,
+					description = entry.description,
+					major = entry.major
+				};
+				if (entry.participants != null) copy.participants.AddRange(entry.participants);
+				_entries.Add(copy);
+				if (copy.entryId >= _nextEntryId) _nextEntryId = copy.entryId + 1;
+			}
+		}
+		while (_entries.Count > MaxEntries) _entries.RemoveAt(0);
+	}
+
 	public List<ChronicleEntry> GetMajorEntries()
 	{
 		List<ChronicleEntry> list = new List<ChronicleEntry>();

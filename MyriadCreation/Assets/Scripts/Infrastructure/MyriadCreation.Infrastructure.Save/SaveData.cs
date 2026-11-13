@@ -72,6 +72,10 @@ namespace MyriadCreation.Infrastructure.Save
         public List<FaithSaveData> faiths;
         public List<MyriadCreation.Save.Contracts.DenominationSaveData> denominations;
 
+        // ===== 编年史与头衔实例（P0.1；旧档为 null，读档保持空表/空注册表）=====
+        public ChronicleSaveData chronicle;
+        public List<TitleInstanceSaveData> titleInstances;
+
  // ===== 角色纽带（SaveVersion 15 起；CharacterManager 私有持有，旧档字段为 null）=====
         public List<CharacterBondSaveData> bonds;
 

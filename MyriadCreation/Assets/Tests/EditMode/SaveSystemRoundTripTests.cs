@@ -8,6 +8,7 @@ using MyriadCreation.Infrastructure.Save;
 using MyriadCreation.Simulation.Economy;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
+using MyriadCreation.Simulation.Politics;
 using MyriadCreation.Simulation.Units;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World;
@@ -38,6 +39,7 @@ namespace MyriadCreation.Tests.EditMode
             CharacterKnowledgeRegistry.Clear();
             RelationRegistry.Clear();
             ContractRegistry.Clear();
+            TitleInstanceRegistry.Clear();
             SaveSystem.DeleteSave(SaveName);
         }
 
@@ -130,6 +132,24 @@ namespace MyriadCreation.Tests.EditMode
             realm.successionLawFromCulture = false;
             realm.senateSeats = 42;
 
+            TitleInstanceRegistry.Clear();
+            var chronicle = world.GetChronicle();
+            chronicle.CurrentTick = 900;
+            chronicle.CurrentYear = 321;
+            int chronicleEntryId = chronicle.Add("roundtrip", "编年史往返", true, realmId).entryId;
+            var title = TitleInstanceRegistry.GetOrCreate("title_save_roundtrip");
+            title.definitionId = "realm_title";
+            title.TransferSenior(realm.monarchId >= 0 ? realm.monarchId : 4242, 77, 66f);
+            title.AddHolding(new TitleHolding
+            {
+                characterId = 7,
+                role = TitleHolderRole.CoRuler,
+                share = 0.25f,
+                sinceDay = 10,
+                endDay = 50,
+                legitimacy = 33f
+            });
+
             var division = new AdminDivision
             {
                 divisionId = 9001,
@@ -216,6 +236,24 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(primaryCultureId, loadedRealm.primaryCultureId, "主体文化");
             Assert.IsFalse(loadedRealm.successionLawFromCulture, "继承法来源");
             Assert.AreEqual(42, loadedRealm.senateSeats, "议会席位");
+
+            var loadedChronicle = loaded.GetChronicle();
+            Assert.AreEqual(900, loadedChronicle.CurrentTick, "编年史 tick");
+            Assert.AreEqual(321, loadedChronicle.CurrentYear, "编年史 year");
+            ChronicleEntry loadedEntry = loadedChronicle.GetEntries().Find(e => e.entryId == chronicleEntryId);
+            Assert.IsNotNull(loadedEntry, "编年史条目应保留原 entryId");
+            Assert.AreEqual("编年史往返", loadedEntry.description, "编年史描述");
+            Assert.IsTrue(loadedEntry.major, "编年史重大标记");
+            CollectionAssert.Contains(loadedEntry.participants, realmId, "编年史参与者");
+
+            Assert.IsTrue(TitleInstanceRegistry.TryGet("title_save_roundtrip", out TitleInstance loadedTitle),
+                "头衔实例应还原");
+            Assert.AreEqual("realm_title", loadedTitle.definitionId, "头衔模板");
+            Assert.AreEqual(2, loadedTitle.holders.Count, "头衔持有数");
+            Assert.AreEqual(TitleHolderRole.Sole, loadedTitle.holders[0].role, "主持有角色");
+            Assert.AreEqual(66f, loadedTitle.holders[0].legitimacy, 0.001f, "主持有合法性");
+            Assert.AreEqual(TitleHolderRole.CoRuler, loadedTitle.holders[1].role, "共治持有角色");
+            Assert.AreEqual(50, loadedTitle.holders[1].endDay, "旧持有结束日");
 
             AdminDivision loadedDivision = null;
             foreach (var d in loadedRealm.adminDivisions)

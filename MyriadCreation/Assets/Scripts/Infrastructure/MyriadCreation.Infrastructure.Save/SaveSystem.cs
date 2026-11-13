@@ -400,6 +400,8 @@ namespace MyriadCreation.Infrastructure.Save
  // 信仰运行态（v15 起；faithName/virtues/sins 等内容定义由 ReligionCatalog 重建，这里只存运行态）
             data.faiths = FaithPersistence.Capture(world);
             data.denominations = DenominationPersistence.Capture(world);
+            data.chronicle = ChroniclePersistence.Capture(world);
+            data.titleInstances = TitlePersistence.Capture();
 
  // 角色/家族/官职 holder/地图单位/角色知识（v11 起；旧档读取时这些字段为 null）
             CapturePersistentEntities(world, data);
@@ -506,6 +508,10 @@ namespace MyriadCreation.Infrastructure.Save
             // 宗派运行态 overlay（v18 起）：必须在 faiths 之后，faith.denominationId
             // 可能指向存档时动态分裂出的宗派；Restore 末尾会按最终归属重建 faithIds。
             DenominationPersistence.Restore(world, data.denominations);
+
+            // 编年史/头衔实例（P0.1）：两者都是运行时静态/对象状态，必须在世界重建后覆盖。
+            ChroniclePersistence.Restore(world, data.chronicle);
+            TitlePersistence.Restore(data.titleInstances);
         }
 
         // ===== 角色/家族/官职/地图单位（SaveVersion 11 起）=====
