@@ -154,7 +154,8 @@
 - 2026-11-13 **P2.4 启动期 mod 校验**：`ContentPackageManifest` 增 `enabled`/`dependencies`；`ContentSourceCatalog` 读 `mod.json` 走 `ContentPackageValidator`，非法或禁用整包跳过，缺清单兼容加载。新增测试。验证：`EXIT=0`、`811/813`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：跨 mod 依赖解析、内容表逐张外提。
 - 2026-11-13 **P2.1 文化融合**：`CultureFusionSystem` 在少数文化占比≤15%、非任何政权主文化、平均整合度≥60 时吸收其人口与最多 2 条兼容传统；`mergedIntoCultureId` 留痕；月结 + 编年史。新增 4 例测试。验证：`EXIT=0`、`815/817`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：文化分裂、融合后颜色重算。
 - 2026-11-13 **P2.1 文化分裂（P2.1 收口）**：`CultureSplitSystem` 对有故土、抗拒同化、占比≥25% 的少数文化派生儿文化（继承语言/族群/传统、颜色偏移、10 年冷却、最多 4 个）；宿主政权人口改挂儿文化。新增 5 例测试。验证：`EXIT=0`、`820/822`（2 个 Explicit 跳过）、零 `error CS`。P2.1 传播/融合/分裂三条链完成。
-- 待办：P2.2 信仰六层/教义参数、P2.3 信息传播/Intrigue、P2.4 内容外提、P2.5 架构 A–F、P2.6 Compute/Apply；**G5 / G6**；内容体检。
+- 2026-11-13 **P2.2 教义 schema（第一刀）**：新增 `DoctrineSchema`（组→域/序、参数注册表、选项校验）；`DoctrineOptionDef` 增 `groupId/kind/level/parameters`；`DoctrinePool` 加载期回填组序并报错非法项；真实 46 条内容全部可归组。新增 5 例测试。验证：`EXIT=0`、`825/827`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：六层运行时创建（分裂/挂靠）、divergence 权重、参数消费点。
+- 待办：P2.2 信仰六层运行时、P2.3 信息传播/Intrigue、P2.4 内容外提、P2.5 架构 A–F、P2.6 Compute/Apply；**G5 / G6**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。
 - 备注：卡住时先 `Get-Process Unity` + 删 `MyriadCreation\Temp\UnityLockfile` 再重跑 `build.cmd`。

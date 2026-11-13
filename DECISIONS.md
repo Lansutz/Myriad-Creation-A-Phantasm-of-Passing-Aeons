@@ -614,3 +614,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 宿主政权内该文化的人口块改挂子文化（复用同化入口，人口守恒）；母文化记 `childCultureIds` 与 `lastSplitDay`。
 - 调度 `culture.split.monthly`（order 41），编年史留痕。分裂、同化、融合三者互斥：整合度高→同化/融合，整合度低且有故土→分裂。
 - **P2.1 收口**：传播、融合、分裂三条链均有执行点与测试；未做：融合后主文化颜色重算（表现层，不影响模拟）。
+
+## D74 教义 schema：组→档、域/序、参数注册表（P2.2 第一刀）
+
+- `DoctrineOptionDef` 增 `groupId/kind/level/parameters`；`DoctrineParameterDef{key,value,source}`。
+- `DoctrineSchema`：组由 optionId 前缀派生（ethics/marriage/funeral/clerical_*/ritual_devotion/sacred_material/theology），每组带 domain 与 kind（sequence/category）；参数键走全局注册表（`marriage.consanguinity_degree`、`marriage.spouse_count`），内容不得自造 key，值必须带 source 或 `TODO_M05`。
+- `DoctrinePool.Load` 回填组与组内序、校验每条选项；未知组/未注册参数/无来源参数记录 `Debug.LogError`，不静默吞掉。`GetGroupIds/GetGroupOptions` 成为消费入口。
+- 测试覆盖：前缀映射、域/序、未注册参数拒绝、已注册+来源通过、无来源拒绝、真实 46 条内容全部可归组。
+- 未做：组→档的 UI 选择、`divergence` 计算按组权重、参数消费点（目前只有声明与校验）。
