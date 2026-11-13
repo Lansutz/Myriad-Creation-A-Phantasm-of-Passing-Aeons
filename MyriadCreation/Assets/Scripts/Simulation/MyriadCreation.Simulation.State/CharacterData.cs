@@ -674,6 +674,7 @@ public class CharacterData
 
 	public void ModifyRelation(int otherId, float opinionDelta, string reason)
 	{
+		relations ??= new Dictionary<int, CharacterRelation>();
 		if (!relations.TryGetValue(otherId, out var value))
 		{
 			value = new CharacterRelation
@@ -683,7 +684,9 @@ public class CharacterData
 			relations[otherId] = value;
 		}
 		value.opinion = Mathf.Clamp(value.opinion + opinionDelta, -200f, 200f);
+		value.history ??= new List<string>();
 		value.history.Add($"{reason}: {opinionDelta}");
+		relations[otherId] = value;
 	}
 
 	public float GetPrestigeCapacity()

@@ -477,3 +477,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 
 - 新增 `NavySchedule`（`navy.daily`，order 16）：每舰队按 `0.05/舰/日` 消耗补给；断补后士气/组织下降，驻港训练缓慢恢复。
 - 未做：海军寻路/海战结算/舰船建造消耗；这些仍属 P1.5 剩余，不硬接空逻辑。
+
+## D54 婚姻入口与人口流程（P1.6 第一批）
+
+- `GameWorld.TryArrangeMarriage` 成为婚姻唯一世界层入口：条件由 `CharacterManager.Marry` 判定；跨政权联姻改善外交关系；编年史留痕。
+- `AutoProcreate` 的未婚配对改为“先收集候选 → 统一 Marry → Procreate”，避免枚举人口列表时改关系/家族集合；Marry 真正进入人口流程。
+- 顺带修复 `CharacterData.ModifyRelation` 对 `relations/history` 为 null 的 NRE（旧档/手工构造关系时会出现）。

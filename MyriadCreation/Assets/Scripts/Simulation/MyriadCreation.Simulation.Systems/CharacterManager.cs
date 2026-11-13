@@ -471,6 +471,8 @@ public class CharacterManager
 				}
 			}
 		}
+		// P1.6：先收集候选，再统一成婚/生育，避免在枚举人口列表时改关系/家族集合。
+		List<(int maleId, int femaleId)> marriages = new List<(int, int)>();
 		foreach (CharacterData item2 in list)
 		{
 			if (item2.spouseId >= 0 || CountChildren(item2.characterId) >= 8)
@@ -481,9 +483,16 @@ public class CharacterManager
 			{
 				if (item3.realmId == item2.realmId && CountChildren(item3.characterId) < 8 && !IsDirectLineage(item2, item3) && Random.value < 0.0004f)
 				{
-					Procreate(item2.characterId, item3.characterId, currentYear);
+					marriages.Add((item2.characterId, item3.characterId));
 					break;
 				}
+			}
+		}
+		foreach ((int maleId, int femaleId) in marriages)
+		{
+			if (Marry(maleId, femaleId))
+			{
+				Procreate(maleId, femaleId, currentYear);
 			}
 		}
 	}

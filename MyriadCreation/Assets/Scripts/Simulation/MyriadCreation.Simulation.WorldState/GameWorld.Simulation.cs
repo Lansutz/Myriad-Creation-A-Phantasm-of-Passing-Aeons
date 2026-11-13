@@ -1524,6 +1524,38 @@ public partial class GameWorld : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// P1.6 婚姻入口：把人物 Marry 接到世界层（关系 + 编年史 + 跨政权联姻外交）。
+	/// 条件仍由 CharacterManager.Marry 判定（成年、异性、非近亲、未婚）。
+	/// </summary>
+	public bool TryArrangeMarriage(int aId, int bId, out string reason)
+	{
+		reason = "";
+		CharacterData a = _characterManager?.GetCharacter(aId);
+		CharacterData b = _characterManager?.GetCharacter(bId);
+		if (a == null || b == null)
+		{
+			reason = "人物不存在";
+			return false;
+		}
+		if (!a.isAlive || !b.isAlive)
+		{
+			reason = "人物已故";
+			return false;
+		}
+		if (!_characterManager.Marry(aId, bId))
+		{
+			reason = "不满足婚姻条件";
+			return false;
+		}
+		if (a.realmId != b.realmId && a.realmId >= 0 && b.realmId >= 0)
+		{
+			_diplomacyManager.ModifyRelation(a.realmId, b.realmId, 10f, "联姻");
+		}
+		_chronicle?.Add("marriage", a.fullName + " 与 " + b.fullName + " 成婚", true, a.realmId, b.realmId);
+		return true;
+	}
+
 	/// <summary>带主体的宣战：先过 ActionGate（能力∧职权），再走原宣战流程。actor 为发起者角色。</summary>
 	public bool DeclareWar(int attackerId, int defenderId, string reason, int actorCharacterId)
 	{
