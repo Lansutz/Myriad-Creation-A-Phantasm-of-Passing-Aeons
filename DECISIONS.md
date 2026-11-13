@@ -488,3 +488,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 
 - `SuccessionSystem.RegentScore` = 威望等级 × 1000 + `CalculateRuleAbility()` × 10 + 年龄；威望只按等级计权，不再用裸点数压过治理能力。
 - 作用面：同家族、行政区、官职、同政权候选四条摄政推举路径统一使用该评分；测试改为跨等级比较（150 vs 10），避免两个同为 Unknown 时把随机能力当成威望差异。
+
+## D56 教义 schema 第一批：optionId → DoctrineBindings（P1.3 WP3）
+
+- 内容层已有 `Doctrines.json` 的 optionId（doctrine_/ethics/ritual/institution/material 前缀），但运行时只有 `Doctrine{name,category,strictness}`，没有可消费的绑定。
+- 新增 `DoctrineBindings`：把选中 optionId 解析成伦理立场（同性/婚外情/巫术：罪行/忌讳/接纳）、离婚（禁止/许可/允许）、葬礼（土/火/天/木乃伊）、神职性别与婚配、和平主义、君权神授。`DoctrineBindingHost.Resolve(ReligionDef)` 是唯一解析入口。
+- 未做：八接线点消费与参数级 schema（group→option→parameter）；本批只落“可被系统读取的绑定快照”，不假装已改行为。

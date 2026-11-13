@@ -137,7 +137,8 @@
 - 2026-11-13 **P1.5 海军写侧**：新增 `NavySchedule`（`navy.daily`），舰队按舰数消耗补给，断补掉士气/组织，驻港训练恢复。新增 `NavyTests` 1 例。验证：`EXIT=0`、`780/782`（1 个 Explicit 跳过）、零 `error CS`。**剩余**：海军寻路/海战/建造与军队标记绘制。
 - 2026-11-13 **P1.6 婚姻入口（第一批）**：新增 `GameWorld.TryArrangeMarriage`（条件复用 `Marry`、跨政权联姻改善关系、编年史）；`AutoProcreate` 未婚配对改为先收集候选再统一成婚/生育，避免集合枚举期间修改。顺带修复 `ModifyRelation` 对空 `relations/history` 的 NRE。新增 `MarriageTests` 3 例。验证：`EXIT=0`、`783/785`（1 个 Explicit 跳过）、零 `error CS`。**剩余**：`CalculateRuleAbility` 门禁、角色/家族面板。
 - 2026-11-13 **P1.6 摄政评分接能力**：`SuccessionSystem.RegentScore` 改为威望等级 × 1000 + `CalculateRuleAbility` × 10 + 年龄，四条摄政推举路径统一；旧测试改为跨威望等级比较。验证：`EXIT=0`、`783/785`（1 个 Explicit 跳过）、零 `error CS`。**P1.6 代码侧剩余**：角色/家族面板。
-- 待办：**P1.5 海军寻路/海战/标记**、**P1.3 教理合并**、**P1.1 毁灭派发方**、P1.4/P1.6 面板、P2.1–P2.6；**G5 / G6**；内容体检。
+- 2026-11-13 **P1.3 教义 schema（WP3 第一批）**：新增 `DoctrineBindings` 与 `DoctrineBindingHost`，把 `Doctrines.json` 的 optionId 解析成伦理/离婚/葬礼/神职性别与婚配/和平主义/君权神授绑定点；未接线消费。顺带把 `PersonalityOpinionDrift` 改为关系边快照枚举，消除同 tick 婚姻/生育导致的集合修改异常。验证：`EXIT=0`、`783/785`（1 个 Explicit 跳过）、零 `error CS`。**剩余**：八接线点消费与参数级 schema。
+- 待办：**P1.3 教义接线点**、**P1.5 海军寻路/海战/标记**、**P1.1 毁灭派发方**、P1.4/P1.6 面板、P2.1–P2.6；**G5 / G6**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。
 - 备注：卡住时先 `Get-Process Unity` + 删 `MyriadCreation\Temp\UnityLockfile` 再重跑 `build.cmd`。

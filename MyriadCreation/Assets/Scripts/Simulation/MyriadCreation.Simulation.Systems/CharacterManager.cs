@@ -689,7 +689,8 @@ public class CharacterManager
 			{
 				continue;
 			}
-			foreach (KeyValuePair<int, CharacterRelation> relation in character.relations)
+			// 快照关系边：同一 tick 内婚姻/生育可能新增关系，不能边枚举边改。
+			foreach (KeyValuePair<int, CharacterRelation> relation in new List<KeyValuePair<int, CharacterRelation>>(character.relations))
 			{
 				CharacterData other = GetCharacter(relation.Key);
 				if (other == null || !other.isAlive)
