@@ -1177,3 +1177,36 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
   5. 生态物种表：Base/Mods 加载、承载/捕猎受体型/繁殖/食性影响（D136 + `EcologySpeciesTests`）。
   6. 最终验证与文档同步：本条。
 - 明确未做（不在 P4 范围）：逐格物种个体/完整食物网、3D 城市模型、远征 UI 入口、旧档沿海鱼群补种。
+
+## D138 默认世界自然基线（P5.0–P5.1）
+
+- **撤回 P4.0 的“开局政权 + 3 名宫廷”前提**：世界生成不再预置政权、君主、配偶、宫廷、官职、国教、高祭司、军队或玩家政权。`P4.0` 的“无征税官则无税”方向保留，但“谁有征收权”改由行政区划与仓储机制决定。
+- `WorldSetupOptions.CreateDefault()` 改为自然基线：`generatePolities=false`、`initialPolityCount=0`、`generateSettlements=true`、`initialSettlementCount=-1`、`generateInitialUnits=false`。聚落是人群，不是国家。
+- `CreateStandard()` 明确为**沙盒预置**：3 个政权、君主+配偶、国教、高祭司=君主、一支军队、`PlayerRealmId=0`；仅供测试/调试，不是默认新游戏。
+- 新增 `StateFormationSystem`（月 tick，优先级 37，规则判定）+ `StateFormationHost`（写入）：无主聚落存在 ≥8 年、人口 ≥200、开发 ≥6、地区仓储 ≥人口 90 天口粮时，自然形成一个政权；每月最多一个，按 `anchorId` 稳定排序。
+- 建国时：领土=聚落地块+最多 2 块同省无主邻地；首领由当地人口产生（`CharacterManager.CreateFoundingLeader`，含家族/配偶）；地方显贵按人口比例产生（1 人/约 120 人，封顶 5，`SeedFoundingNotables`）；`treasury=0`、`stateReligionId=-1`、`stability` 取聚落稳定度、`centralization` 由文化阶段推导。**删除 `ApplyPathBonuses` 的 stability=55/treasury=2000 等硬加成**。
+- 关键前置 bug：`AnchorGenerator.CreatePair` 未把 `SettlementData.anchor` 指向刚创建的 `AnchorData`，导致生成期 `settlement.tileIndex == -1`，初始人口被写进 -1 号地块；城市人口快照为 0，180 天后被当成“人口流失”废弃。现已在 `CreatePair` 中回填 `anchor`，并在 `SeedPopulation` 用聚落开发度把地块开发度抬到 0–1，避免城市按未开发土地产粮。
+- 测试：`NaturalEmergenceTests`（默认世界 0 政权/0 角色/有聚落；够格建国；无剩余/太年轻不建国；官职门槛；配偶/平民不得任官）。验证：`EXIT=0`、`1003/1003`、零 `error CS`。
+
+## D139 官职随制度与人口出现（P5.2）
+
+- 删除世界生成与旧档兜底的 `CreateInitialCourtiers` 调用；`CreateInitialCourtiers` 降为**测试/沙盒显式播种**工具，生产路径不得调用。
+- `OfficeDef` 新增内容门槛：`minTiles/minPopulation/minCentralization/minCultureStage`（0=不限，旧内容/Mods 兼容）；`Offices.json` 为 8 个官职补齐门槛（地方长官 2 地/150 人，宰相 6 地/600 人/中枢 0.25/文化阶段 2 等）。
+- `OfficeSystem.FillVacancies` 增加 `OfficeRealmContext`（实际控制地块、人口、中枢、文化阶段）；`GameWorld.EnsureOfficeHolders` 只在存在空槽时做一次 O(N) 地块扫描构造 context，满编时不扫全图。
+- 候选资格排除 `Ruler/Spouse/Heir/Commoner/Courier`；配偶不再因“有一个活人”自动成为宰相。
+- `InitializeDefaultRealms` 生成后只建立行政区划，不填官职；官职由每日 `offices.daily` 在政权出现后按门槛补缺。
+- 测试：`CourtAndTaxGateTests`（生成后 0 宫廷/0 官职；显式播种后才补缺）、`NaturalEmergenceTests.OfficeThresholds_RequireTerritoryAndPopulation`、`SpouseAndCommoner_AreNotOfficeCandidates`。
+
+## D140 机制化税收（P5.3）
+
+- 删除 `EconomyManager.SettleTaxes` 与 `TaxSystem.CalculateTileTax` 的 `fertility×development×10×人口×秩序×税率` 抽象税基；不再直接往 `realm.treasury` 加“算出来的税额”。
+- 新增 `TaxCollectionSystem`：
+  1. **征收资格**：地区属于某行政区划，且该区划有在世持有人（首都级区划允许君主直领，但只限首都所在地区）；没有行政区划/持有人就没有征收。
+  2. **征实物**：只从地区 `TradeCenter.inventory` 取真实货物；按 `TaxSystem` 类别税率（农业/畜牧/矿业/工艺/奢侈/盐专营）；先扣人口 90 天口粮 `reserveDays`，只征剩余；食用货与非食用货分别处理。
+  3. **运输损耗**：按地区中心到首都的曼哈顿距离 × `transportLossPerTile`（上限 50%），实际入库=征收量×(1−损耗)。
+  4. **货币化**：只有 `CurrencyStage >= MintedCoin` 且当地市场有真实需求时，才把**非食用**货物按 `TradeCenter.GetGoodsPrice` 卖出，销售量受 `localDemand` 限制；所得计入 `RealmTreasury` 并记 `tax` 流水。物物交换阶段不产生货币税。
+  5. **实物流水**：`TaxReceiptLedger` 记录政权/日期/地区/货物/入库量，供 UI 与长跑断言。
+- `PoliticsSimulationSystem` 每日调用 `EconomyManager.CollectTaxes`，法律/法令的征收强度乘子在该结算点消费；不再直接 `RealmTreasury.Add` 抽象税额。
+- 沙盒预置政权从 `MintedCoin` 开始（便于测试/调试货币税）；自然政权仍从 `Barter` 开始。
+- 测试：`TaxSingleSourceTests`（税率单源、高税率多征、无行政区划不征、90 天口粮保护、物物交换无货币/铸币+市场才有货币）、`CourtAndTaxGateTests`（实物从地方仓储进国家仓、移除持有人停征/恢复）、`BudgetReportTests`（真实售货产生 tax 流水）、`LawEffectRuntimeTests`（征收强度乘子按实物量缩放）。
+- 验证：`EXIT=0`、`1003/1003`、零 `error CS`。
