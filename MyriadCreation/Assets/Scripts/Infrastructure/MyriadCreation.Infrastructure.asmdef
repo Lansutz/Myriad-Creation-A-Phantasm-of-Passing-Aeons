@@ -3,9 +3,12 @@
     "rootNamespace": "MyriadCreation.Infrastructure",
     "references": [
         "MyriadCreation.Core",
+        "MyriadCreation.Save.Contracts",
         "MyriadCreation.World",
         "MyriadCreation.Simulation",
-        "MyriadCreation.Rendering"
+        "MyriadCreation.Content",
+        "MyriadCreation.Faith",
+        "MyriadCreation.Culture"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

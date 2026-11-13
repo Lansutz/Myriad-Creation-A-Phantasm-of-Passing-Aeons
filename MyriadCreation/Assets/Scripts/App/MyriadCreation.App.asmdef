@@ -1,0 +1,22 @@
+{
+    "name": "MyriadCreation.App",
+    "rootNamespace": "MyriadCreation.App",
+    "references": [
+        "MyriadCreation.Core",
+        "MyriadCreation.Infrastructure",
+        "UnityEngine.UI",
+        "MyriadCreation.App.Contracts",
+        "MyriadCreation.World",
+        "MyriadCreation.Simulation",
+        "MyriadCreation.Rendering"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

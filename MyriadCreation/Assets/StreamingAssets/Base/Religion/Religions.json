@@ -31,7 +31,8 @@
     {
       "religionId": 104,
       "religionName": "罗马公教会",
-      "parentReligionId": 101,
+      "parentReligionId": 100,
+      "lineageFaithId": 101,
       "schoolParentId": -1,
       "nodeType": 1,
       "hasSuccession": true,
@@ -63,7 +64,8 @@
     {
       "religionId": 105,
       "religionName": "正统大公教会",
-      "parentReligionId": 101,
+      "parentReligionId": 100,
+      "lineageFaithId": 101,
       "schoolParentId": -1,
       "nodeType": 1,
       "hasSuccession": true,
@@ -109,7 +111,8 @@
     {
       "religionId": 120,
       "religionName": "亚历山大科普特正教会",
-      "parentReligionId": 102,
+      "parentReligionId": 100,
+      "lineageFaithId": 102,
       "schoolParentId": 110,
       "nodeType": 1,
       "hasSuccession": true,
@@ -138,7 +141,8 @@
     {
       "religionId": 121,
       "religionName": "安条克叙利亚正教会",
-      "parentReligionId": 102,
+      "parentReligionId": 100,
+      "lineageFaithId": 102,
       "schoolParentId": 111,
       "nodeType": 1,
       "hasSuccession": true,
@@ -167,7 +171,8 @@
     {
       "religionId": 122,
       "religionName": "亚美尼亚宗徒教会",
-      "parentReligionId": 102,
+      "parentReligionId": 100,
+      "lineageFaithId": 102,
       "schoolParentId": 113,
       "nodeType": 1,
       "hasSuccession": true,
@@ -189,7 +194,8 @@
     {
       "religionId": 123,
       "religionName": "埃塞俄比亚正统台瓦西多教会",
-      "parentReligionId": 102,
+      "parentReligionId": 100,
+      "lineageFaithId": 102,
       "schoolParentId": 110,
       "nodeType": 1,
       "hasSuccession": true,
@@ -211,7 +217,8 @@
     {
       "religionId": 124,
       "religionName": "厄立特里亚正统台瓦西多教会",
-      "parentReligionId": 102,
+      "parentReligionId": 100,
+      "lineageFaithId": 102,
       "schoolParentId": 110,
       "nodeType": 1,
       "hasSuccession": true,
@@ -233,7 +240,8 @@
     {
       "religionId": 125,
       "religionName": "玛兰卡正统叙利亚教会",
-      "parentReligionId": 102,
+      "parentReligionId": 100,
+      "lineageFaithId": 102,
       "schoolParentId": 114,
       "nodeType": 1,
       "hasSuccession": true,
@@ -519,7 +527,7 @@
     {
       "religionId": 304,
       "religionName": "法华宗",
-      "parentReligionId": 302,
+      "parentReligionId": 300,
       "schoolParentId": -1,
       "nodeType": 2,
       "hasSuccession": true,
@@ -533,7 +541,7 @@
     {
       "religionId": 305,
       "religionName": "禅宗",
-      "parentReligionId": 302,
+      "parentReligionId": 300,
       "schoolParentId": -1,
       "nodeType": 2,
       "hasSuccession": true,
@@ -547,7 +555,7 @@
     {
       "religionId": 306,
       "religionName": "唯识宗",
-      "parentReligionId": 302,
+      "parentReligionId": 300,
       "schoolParentId": -1,
       "nodeType": 2,
       "hasSuccession": true,
@@ -561,7 +569,8 @@
     {
       "religionId": 307,
       "religionName": "日莲宗",
-      "parentReligionId": 304,
+      "parentReligionId": 300,
+      "parentDenominationId": 304,
       "schoolParentId": -1,
       "nodeType": 2,
       "hasSuccession": true,
@@ -575,7 +584,8 @@
     {
       "religionId": 308,
       "religionName": "灭喜禅",
-      "parentReligionId": 305,
+      "parentReligionId": 300,
+      "parentDenominationId": 305,
       "schoolParentId": -1,
       "nodeType": 2,
       "hasSuccession": true,
@@ -638,8 +648,8 @@
     {
       "religionId": 402,
       "religionName": "谶纬",
-      "parentReligionId": 401,
-      "schoolParentId": -1,
+      "parentReligionId": 400,
+      "schoolParentId": 401,
       "nodeType": 4,
       "hasSuccession": false,
       "rites": [],
@@ -681,7 +691,7 @@
     {
       "religionId": 404,
       "religionName": "正一道",
-      "parentReligionId": 403,
+      "parentReligionId": 400,
       "schoolParentId": -1,
       "nodeType": 2,
       "hasSuccession": true,
@@ -697,7 +707,7 @@
     {
       "religionId": 405,
       "religionName": "全真道",
-      "parentReligionId": 403,
+      "parentReligionId": 400,
       "schoolParentId": -1,
       "nodeType": 2,
       "hasSuccession": true,
@@ -756,7 +766,7 @@
     {
       "religionId": 502,
       "religionName": "帕西派",
-      "parentReligionId": 501,
+      "parentReligionId": 500,
       "schoolParentId": -1,
       "nodeType": 2,
       "hasSuccession": true,

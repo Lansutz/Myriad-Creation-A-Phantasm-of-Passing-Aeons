@@ -1,0 +1,37 @@
+namespace MyriadCreation.World.Settlement
+{
+public enum SettlementBlockSubtype
+{
+	None,
+	WallSegment,
+	Gate,
+	Tower,
+	Moat,
+	Palisade,
+	Earthwork,
+	Keep,
+	Stall,
+	Exchange,
+	Caravanserai,
+	Granary,
+	Depot,
+	Cellar,
+	Forge,
+	Kiln,
+	Loom,
+	WorkshopHall,
+	Pier,
+	Dock,
+	Crane,
+	Customs,
+	Shrine,
+	Library,
+	School,
+	BarracksWing,
+	Mill,
+	Well,
+	Bridge,
+	PostStation,
+	Causeway
+}
+}

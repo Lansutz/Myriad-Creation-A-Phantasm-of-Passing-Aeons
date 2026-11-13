@@ -5,18 +5,17 @@ using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Dto;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Infrastructure.Save;
-using MyriadCreation.Simulation.Culture;
 using MyriadCreation.Simulation.Economy;
 using MyriadCreation.Simulation.Events;
 using MyriadCreation.Simulation.Generation;
 using MyriadCreation.Simulation.Innovation;
-using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.ContentHost;
 using MyriadCreation.Simulation.Politics;
-using MyriadCreation.Simulation.Population;
-using MyriadCreation.Simulation.Religion;
-using MyriadCreation.Simulation.Society;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.UI;
+using MyriadCreation.Simulation.Definitions;
+using MyriadCreation.Simulation.State;
+using MyriadCreation.Simulation.Systems;
 
 
 
@@ -38,7 +37,7 @@ namespace MyriadCreation.Tests
             Assert.IsTrue(ContentRegistry.TryGetInnovation(1025, out var def), "领土王国革新已加载");
             Assert.AreEqual("领土王国", def.innovationName, "革知名");
             Assert.AreEqual(2, def.era, "era2");
-            Assert.IsTrue(def.prerequisites.Contains(500), "前置部落联盟");
+            Assert.IsTrue(def.GetPrerequisiteIds().Contains(500), "前置部落联盟");
         }
 
         [Test]

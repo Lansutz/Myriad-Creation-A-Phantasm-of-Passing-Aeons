@@ -11,15 +11,6 @@ using MyriadCreation.Core.Dto;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Infrastructure.Save;
 using MyriadCreation.Rendering;
-using MyriadCreation.Simulation.Characters;
-using MyriadCreation.Simulation.Economy;
-using MyriadCreation.Simulation.Events;
-using MyriadCreation.Simulation.Generation;
-using MyriadCreation.Simulation.Modding;
-using MyriadCreation.Simulation.Politics;
-using MyriadCreation.Simulation.Population;
-using MyriadCreation.Simulation.Society;
-using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.UI;
 
 
@@ -28,7 +19,6 @@ using MyriadCreation.UI;
 
 
 
-using MyriadCreation.Simulation.Culture;
 namespace MyriadCreation.UI.Common
 {
  /// UIManager.MapMode —— 地图模式切换（分类/子模式/按钮生成/高亮）（partial class，与 UIManager.cs 共享字段与组件引用）

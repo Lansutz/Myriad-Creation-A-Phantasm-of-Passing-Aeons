@@ -1,0 +1,89 @@
+using MyriadCreation.Core.Enums;
+using UnityEngine;
+
+namespace MyriadCreation.Core.Data
+{
+[CreateAssetMenu(fileName = "WorldConfig", menuName = "Myriad Creation/World Config", order = 0)]
+public class WorldConfig : ScriptableObject
+{
+	[Header("地图形状")]
+	[Tooltip("是否左右连通（环绕世界）")]
+	public bool wrapX = true;
+
+	[Tooltip("是否上下连通（完整环面）")]
+	public bool wrapY;
+
+	[Header("海陆参数")]
+	[Range(0f, 1f)]
+	public float seaLevel = 0.5f;
+
+	[Range(0.1f, 0.8f)]
+	public float landAmount = 0.29f;
+
+	[Range(0f, 1f)]
+	public float landFragment = 0.4f;
+
+	[Range(0f, 1f)]
+	public float coastFragment = 0.3f;
+
+	[Range(0f, 1f)]
+	public float oceanBuffer = 0.35f;
+
+	[Range(70f, 90f)]
+	public float planetMaxLat = 90f;
+
+	[Range(280f, 400f)]
+	public float planetTotalLon = 360f;
+
+	[Header("大陆形态")]
+	[Tooltip("大陆尺度（越小大陆越大块）")]
+	[Range(0.5f, 3f)]
+	public float continentScale = 1f;
+
+	[Tooltip("山脉强度（山脊线叠加量）")]
+	[Range(0f, 1f)]
+	public float mountainStrength = 0.6f;
+
+	[Header("气候参数-基础")]
+	public GameEnums.CirculationMode circulationMode = GameEnums.CirculationMode.TripleCell;
+
+	[Range(-30f, 30f)]
+	public float thermalEquatorLat = 7f;
+
+	[Range(0f, 50f)]
+	public float climTropicNorth = 23f;
+
+	[Range(-50f, 0f)]
+	public float climTropicSouth = -23f;
+
+	[Header("气候参数-高级")]
+	[Range(800f, 1600f)]
+	public float stellarIrradiance = 1361f;
+
+	[Range(0f, 1f)]
+	public float seasonIntensity = 0.4f;
+
+	[Range(0.2f, 1.8f)]
+	public float heatTransport = 1f;
+
+	[Range(0f, 1.2f)]
+	public float monsoonStrength = 0.8f;
+
+	[Header("内部物理常量")]
+	[Tooltip("行星反照率")]
+	public float albedo = 0.3f;
+
+	[Tooltip("温室效应增温（摄氏度）")]
+	public float greenhouseFactor = 33f;
+
+	[Tooltip("气温垂直递减率（摄氏度/千米）")]
+	public float lapseRate = 6.5f;
+
+	public static WorldConfig CreateRuntimeInstance()
+	{
+		WorldConfig worldConfig = ScriptableObject.CreateInstance<WorldConfig>();
+		((Object)worldConfig).name = "RuntimeWorldConfig";
+		return worldConfig;
+	}
+}
+}

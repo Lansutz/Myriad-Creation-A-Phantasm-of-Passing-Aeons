@@ -1,0 +1,32 @@
+namespace MyriadCreation.Content.Definitions
+{
+public enum InnovationField
+{
+	Mining,
+	Agriculture,
+	Metallurgy,
+	Construction,
+	Medicine,
+	Machinery,
+	Craft,
+	Transport,
+	Script,
+	Mathematics,
+	Philosophy,
+	NaturalCognition,
+	Theology,
+	MilitaryThought,
+	Governance,
+	Law,
+	Bureaucracy,
+	Economic,
+	MilitaryInstitution,
+	ReligiousInstitution,
+	Education,
+	Ritual,
+	Festival,
+	Folkways,
+	Heritage,
+	SocialThought
+}
+}

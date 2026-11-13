@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 
 using MyriadCreation.UI.Common;
+using MyriadCreation.Infrastructure.Save;
 namespace MyriadCreation.UI.Panels
 {
  /// 存档选择面板——列出 MapSaves 目录下的所有 .json 存档，
@@ -20,11 +21,18 @@ namespace MyriadCreation.UI.Panels
         [SerializeField] private Color itemText = new Color(0.85f, 0.85f, 0.88f, 1f);
         [SerializeField] private Color subText = new Color(0.55f, 0.55f, 0.60f, 1f);
         [SerializeField] private Color lineColor = new Color(0.35f, 0.35f, 0.40f, 1f);
+        [SerializeField] private Color dangerColor = new Color(0.92f, 0.42f, 0.38f, 1f);
+
+        private const string DeleteLabelText = "删除";
+        private const string ConfirmDeleteLabelText = "确认删除";
 
         private GameObject _root;
         private Transform _listContent;
         private Action<string> _onSelectSave;
         private Action _onClose;
+        // 删除二次确认状态：同一条目点两次才真正删除；换条目/刷新/开关面板都会复位。
+        private string _pendingDeleteName;
+        private readonly Dictionary<string, TextMeshProUGUI> _deleteLabels = new Dictionary<string, TextMeshProUGUI>();
 
  /// <summary>构建存档选择面板</summary>
         public void Build(Transform parent, Action<string> onSelectSave, Action onClose)
@@ -94,44 +102,68 @@ namespace MyriadCreation.UI.Panels
             RefreshList();
         }
 
- /// <summary>刷新存档列表</summary>
+        /// <summary>刷新存档列表（以 SaveSystem 的存档目录/命名为唯一事实来源）。</summary>
         public void RefreshList()
         {
+            // 列表重建：删除按钮的二次确认态一并复位。
+            _pendingDeleteName = null;
+            _deleteLabels.Clear();
+
  // 清空旧列表
             for (int i = _listContent.childCount - 1; i >= 0; i--)
                 Destroy(_listContent.GetChild(i).gameObject);
 
-            string saveDir = Path.Combine(Application.persistentDataPath, "MapSaves");
-            if (!Directory.Exists(saveDir))
+            // 旧实现扫 Application.persistentDataPath/MapSaves/*.json（已废弃的 MapSaveSystem 格式），
+            // 当前存档系统写的是 persistentDataPath/Saves/*.sav → 列表永远显示"暂无存档"，
+            // "加载世界"按钮因此看起来点了没反应。统一改用 SaveSystem 公开 API。
+            string saveDir = SaveSystem.GetSaveDirectory();
+            string[] names = SaveSystem.ListSaves();
+            if (names == null || names.Length == 0)
             {
                 ShowEmptyHint("暂无存档");
                 return;
             }
 
-            string[] files = Directory.GetFiles(saveDir, "*.json");
-            if (files == null || files.Length == 0)
-            {
-                ShowEmptyHint("暂无存档");
-                return;
-            }
-
- // 按修改时间倒序
-            Array.Sort(files, (a, b) => File.GetLastWriteTime(b).CompareTo(File.GetLastWriteTime(a)));
+ // 按最近写入时间倒序（含只有 .bak 的待恢复档）
+            Array.Sort(names, (a, b) => GetSaveTimestamp(saveDir, b).CompareTo(GetSaveTimestamp(saveDir, a)));
 
             float itemHeight = 72f;
             float spacing = 8f;
-            float totalHeight = files.Length * (itemHeight + spacing);
+            float totalHeight = names.Length * (itemHeight + spacing);
             _listContent.GetComponent<RectTransform>().sizeDelta = new Vector2(0, totalHeight);
 
-            for (int i = 0; i < files.Length; i++)
+            for (int i = 0; i < names.Length; i++)
             {
-                string fileName = Path.GetFileNameWithoutExtension(files[i]);
-                DateTime modTime = File.GetLastWriteTime(files[i]);
-                long size = new FileInfo(files[i]).Length;
+                string fileName = names[i];
+                DateTime modTime = GetSaveTimestamp(saveDir, fileName);
+                long size = GetSaveFileSize(saveDir, fileName);
 
                 var item = CreateSaveItem(fileName, modTime, size, i, itemHeight, spacing);
                 item.transform.SetParent(_listContent, false);
             }
+        }
+
+        /// <summary>存档文件时间：优先 .sav，其次 .bak（待恢复档）。</summary>
+        private static DateTime GetSaveTimestamp(string dir, string saveName)
+        {
+            DateTime time = DateTime.MinValue;
+            string savPath = Path.Combine(dir, saveName + ".sav");
+            if (File.Exists(savPath)) time = File.GetLastWriteTime(savPath);
+            string bakPath = savPath + ".bak";
+            if (File.Exists(bakPath))
+            {
+                DateTime bakTime = File.GetLastWriteTime(bakPath);
+                if (bakTime > time) time = bakTime;
+            }
+            return time;
+        }
+
+        private static long GetSaveFileSize(string dir, string saveName)
+        {
+            string savPath = Path.Combine(dir, saveName + ".sav");
+            if (File.Exists(savPath)) return new FileInfo(savPath).Length;
+            string bakPath = savPath + ".bak";
+            return File.Exists(bakPath) ? new FileInfo(bakPath).Length : 0;
         }
 
         private void ShowEmptyHint(string text)
@@ -163,6 +195,7 @@ namespace MyriadCreation.UI.Panels
             btn.colors = colors;
             btn.onClick.AddListener(() =>
             {
+                UiSfx.PlayClick();
                 _onSelectSave?.Invoke(fileName);
                 Hide();
             });
@@ -172,7 +205,7 @@ namespace MyriadCreation.UI.Panels
             var nrt = nameObj.GetComponent<RectTransform>();
             nrt.anchorMin = new Vector2(0f, 1f); nrt.anchorMax = new Vector2(1f, 1f);
             nrt.pivot = new Vector2(0f, 1f); nrt.anchoredPosition = new Vector2(16, -10);
-            nrt.sizeDelta = new Vector2(-32, 28);
+            nrt.sizeDelta = new Vector2(-140, 28); // 右侧留出删除按钮空间
             nameObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.TopLeft;
             nameObj.transform.SetParent(itemObj.transform, false);
 
@@ -185,9 +218,34 @@ namespace MyriadCreation.UI.Panels
             var ifrt = infoObj.GetComponent<RectTransform>();
             ifrt.anchorMin = new Vector2(0f, 0f); ifrt.anchorMax = new Vector2(1f, 0f);
             ifrt.pivot = new Vector2(0f, 0f); ifrt.anchoredPosition = new Vector2(16, 10);
-            ifrt.sizeDelta = new Vector2(-32, 20);
+            ifrt.sizeDelta = new Vector2(-140, 20); // 右侧留出删除按钮空间
             infoObj.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.BottomLeft;
             infoObj.transform.SetParent(itemObj.transform, false);
+
+ // 删除按钮（红色小字；点一次进入确认态，再点一次才真正删除）
+            var deleteObj = new GameObject("Delete", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+            deleteObj.GetComponent<Image>().color = new Color(0.30f, 0.12f, 0.12f, 0.85f);
+            var drt = deleteObj.GetComponent<RectTransform>();
+            drt.anchorMin = new Vector2(1f, 0.5f); drt.anchorMax = new Vector2(1f, 0.5f);
+            drt.pivot = new Vector2(1f, 0.5f);
+            drt.anchoredPosition = new Vector2(-16f, 0f);
+            drt.sizeDelta = new Vector2(88f, 34f);
+            var deleteBtn = deleteObj.GetComponent<Button>();
+            var deleteColors = deleteBtn.colors;
+            deleteColors.highlightedColor = new Color(0.55f, 0.18f, 0.18f, 1f);
+            deleteColors.pressedColor = new Color(0.70f, 0.22f, 0.22f, 1f);
+            deleteColors.fadeDuration = 0.08f;
+            deleteBtn.colors = deleteColors;
+            var deleteLabel = CreateText("Label", DeleteLabelText, 14, dangerColor, FontStyles.Bold);
+            deleteLabel.GetComponent<TextMeshProUGUI>().raycastTarget = false;
+            var dlrt = deleteLabel.GetComponent<RectTransform>();
+            dlrt.anchorMin = Vector2.zero; dlrt.anchorMax = Vector2.one;
+            dlrt.offsetMin = Vector2.zero; dlrt.offsetMax = Vector2.zero;
+            deleteLabel.transform.SetParent(deleteObj.transform, false);
+            deleteBtn.onClick.AddListener(() =>
+                OnDeleteClicked(fileName, deleteLabel.GetComponent<TextMeshProUGUI>()));
+            _deleteLabels[fileName] = deleteLabel.GetComponent<TextMeshProUGUI>();
+            deleteObj.transform.SetParent(itemObj.transform, false);
 
  // 底部细线
             var lineObj = new GameObject("Line", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
@@ -205,6 +263,10 @@ namespace MyriadCreation.UI.Panels
         {
             var obj = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
             var tmp = obj.GetComponent<TextMeshProUGUI>();
+            // 运行时动态创建的文本不会走 UIManager 启动时的一次性字体应用，必须显式赋字体，
+            // 否则 TMP 默认字体缺失时存档列表/提示文字不可见。
+            TMP_FontAsset font = TMPFontUtility.GetChineseFont();
+            if (font != null) tmp.font = font;
             tmp.text = text; tmp.fontSize = fontSize; tmp.color = color;
             tmp.fontStyle = style; tmp.alignment = TextAlignmentOptions.Center; tmp.raycastTarget = false;
             return obj;
@@ -230,8 +292,52 @@ namespace MyriadCreation.UI.Panels
             return btnObj;
         }
 
-        public void Show() { if (_root != null) _root.SetActive(true); }
-        public void Hide() { if (_root != null) _root.SetActive(false); }
+        /// <summary>
+        /// 删除按钮点击：第一次点击进入确认态（该按钮文案变为“确认删除”），
+        /// 同一条目再点一次才真正删除；删除失败只 LogWarning，并刷新列表与磁盘状态对齐。
+        /// </summary>
+        private void OnDeleteClicked(string saveName, TextMeshProUGUI label)
+        {
+            if (string.IsNullOrEmpty(saveName)) return;
+
+            if (_pendingDeleteName != saveName)
+            {
+                ResetPendingDelete();
+                _pendingDeleteName = saveName;
+                if (label != null) label.text = ConfirmDeleteLabelText;
+                return;
+            }
+
+            _pendingDeleteName = null;
+            bool deleted = SaveSystem.DeleteSave(saveName);
+            if (!deleted)
+                Debug.LogWarning($"[SaveLoadPanel] 删除存档失败（可能已不存在）: {saveName}");
+
+            // 无论成功与否都刷新：成功移除条目，失败则按磁盘真实状态重建列表。
+            RefreshList();
+        }
+
+        /// <summary>复位删除二次确认态（不影响列表内容）。</summary>
+        private void ResetPendingDelete()
+        {
+            _pendingDeleteName = null;
+            foreach (var pair in _deleteLabels)
+            {
+                if (pair.Value != null) pair.Value.text = DeleteLabelText;
+            }
+        }
+
+        public void Show()
+        {
+            ResetPendingDelete();
+            if (_root != null) _root.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            ResetPendingDelete();
+            if (_root != null) _root.SetActive(false);
+        }
         public bool IsVisible => _root != null && _root.activeSelf;
     }
 }

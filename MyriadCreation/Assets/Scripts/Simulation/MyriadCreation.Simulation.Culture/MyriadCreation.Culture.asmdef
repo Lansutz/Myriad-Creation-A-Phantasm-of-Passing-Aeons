@@ -1,0 +1,17 @@
+{
+    "name": "MyriadCreation.Culture",
+    "rootNamespace": "MyriadCreation.Simulation.Culture",
+    "references": [
+        "MyriadCreation.Core",
+        "MyriadCreation.Content"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

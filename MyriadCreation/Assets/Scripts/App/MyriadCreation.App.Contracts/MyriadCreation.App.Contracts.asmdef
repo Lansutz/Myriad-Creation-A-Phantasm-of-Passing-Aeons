@@ -1,0 +1,16 @@
+{
+    "name": "MyriadCreation.App.Contracts",
+    "rootNamespace": "MyriadCreation.App.Contracts",
+    "references": [
+        "MyriadCreation.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

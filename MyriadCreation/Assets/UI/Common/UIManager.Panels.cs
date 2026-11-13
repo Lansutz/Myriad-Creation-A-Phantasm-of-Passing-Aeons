@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -8,82 +9,28 @@ using MyriadCreation.Core;
 using MyriadCreation.Core.Constants;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Dto;
+using MyriadCreation.Core.Contracts;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Infrastructure.Save;
 using MyriadCreation.Rendering;
-using MyriadCreation.Simulation.Characters;
-using MyriadCreation.Simulation.Economy;
-using MyriadCreation.Simulation.Events;
-using MyriadCreation.Simulation.Generation;
-using MyriadCreation.Simulation.Modding;
-using MyriadCreation.Simulation.Politics;
-using MyriadCreation.Simulation.Population;
-using MyriadCreation.Simulation.Society;
-using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.UI;
-
-
-
-
-
-
-
-using MyriadCreation.Simulation.Religion;
-using MyriadCreation.Simulation.Culture;
 using MyriadCreation.UI.Panels;
+using MyriadCreation.UI.Presentation;
+using MyriadCreation.World;
+using MyriadCreation.Content.Definitions;
+
 namespace MyriadCreation.UI.Common
 {
- /// UIManager.Panels —— 各内容面板（角色/宗教/社会/政权概览/音乐/家族树/设置/顶栏/地块信息）（partial class，与 UIManager.cs 共享字段与组件引用）
-    public partial class UIManager : MonoBehaviour
-    {
-
- /// <summary>更新顶部信息栏</summary>
-        private void UpdateTopBar()
-        {
-            if (world == null) return;
-
-            if (dateText != null)
-            {
- // 时间=已历时长（开局起算——非纪元年第——）
-                int ey = world.currentYear - world.startYear;
-                int ed = world.currentDay - world.startDay;
-                if (ed < 0) { ed += 365; ey -= 1; }
-                dateText.text = ey <= 0 && ed <= 0 ? "开局"
-                    : $"已历 {ey} 年 {ed} 天";
-            }
-
- // 顶栏政权名（当前查看政权——点选跟随——死显示"未选择势力"修复）
-            if (realmNameText != null)
-            {
-                int vr = ViewRealmId;
-                if (world.realms.TryGetValue(vr, out var vrealm))
-                {
-                    bool isPlayer = vr == world.PlayerRealmId;
-                    realmNameText.text = isPlayer ? $"{vrealm.realmName}（本家）" : vrealm.realmName;
-                }
-                else realmNameText.text = "无政权";
-            }
-
- // 顶栏精简：国库/总人口移除（——政权数据进政权界面—— // 同时消除每 0.2s 全遍历地块算总人口的重操作）
- // 地图信息：尺寸 + 地块数 + 省份数
-            if (mapInfoText != null)
-            {
-                int totalTiles = world.tiles.Length;
-                int landTiles = world.GetLandTileCount();
-                int seaTiles = world.GetSeaTileCount();
-                int provinceCount = world.provinces != null ? world.provinces.Count : 0;
-                mapInfoText.text = $"地图 {world.mapWidth}×{world.mapHeight}  地块 {totalTiles}(陆{landTiles}/海{seaTiles})  省份 {provinceCount}";
-            }
-        }
-
-
- /// <summary>更新地块详情</summary>
-        private string GetCultureName(int cultureId)
-        {
-            if (world != null && world.cultures.TryGetValue(cultureId, out var c))
-                return c.cultureName;
-            return cultureId.ToString();
-        }
+public partial class UIManager
+{
+ // ===== 聚落“已知人物”面板（知识视图——只显示观察者已知且当前在该聚落的角色）=====
+        private GameObject settlementPeoplePanel;
+        private Transform settlementPeopleListRoot;
+        private TMPro.TMP_Text settlementPeopleTitle;
+        private UnityEngine.UI.Button settlementPeopleEntryButton;
+        private int settlementPeopleAnchorId = -1;
+        private string settlementPeopleSiteName = "";
+        private int settlementPeopleLookupTile = int.MinValue;
 
 
         private string GetReligionName(int faithId)
@@ -92,83 +39,110 @@ namespace MyriadCreation.UI.Common
             return def != null ? def.religionName : faithId.ToString();
         }
 
-
-        private void UpdateTileInfo()
+ /// <summary>懒创建入口按钮：挂在地块详情面板下沿（不改场景）。</summary>
+        private void EnsureSettlementPeopleEntryButton()
         {
-            if (tileInfoPanel == null || _selectedTile < 0 || world == null) return;
-            if (_selectedTile >= world.tiles.Length) return;
+            if (settlementPeopleEntryButton != null || tileInfoPanel == null) return;
 
-            ref TileData tile = ref world.tiles[_selectedTile];
+            var go = new GameObject("SettlementPeopleBtn", typeof(RectTransform),
+                typeof(CanvasRenderer), typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
+            var rt = (RectTransform)go.transform;
+            rt.SetParent(tileInfoPanel.transform, false);
+            rt.anchorMin = new Vector2(0.5f, 0f);
+            rt.anchorMax = new Vector2(0.5f, 0f);
+            rt.pivot = new Vector2(0.5f, 1f);
+            rt.anchoredPosition = new Vector2(0f, -8f);
+            rt.sizeDelta = new Vector2(210f, 30f);
 
-            if (tileNameText != null)
-            {
- // 标题=归属（CK3 式：点政权领=政权名——点无主=状态）
-                int owner = tile.ownerRealmId;
-                string realmTag;
-                if (owner >= 0 && world.realms.TryGetValue(owner, out var or))
-                    realmTag = or.realmName;
-                else
-                {
-                    bool hasPop = tile.populationBlocks != null && tile.populationBlocks.Count > 0;
-                    realmTag = hasPop ? "无主之地 · 聚落" : "无主之地 · 荒野";
-                }
-                tileNameText.text = $"{realmTag} · 地块 #{_selectedTile}";
-            }
- // 查看政权按钮：仅领地块可用（无主无政权可看——隐藏）
-            if (viewRealmButton != null)
-                viewRealmButton.gameObject.SetActive(tile.ownerRealmId >= 0);
-            if (tileTerrainText != null)
-                tileTerrainText.text = $"高程: {tile.elevation01:F2}\n坡度: {tile.slopeDegree:F1}°\n海陆: {(tile.isLand ? "陆地" : "海洋")}\n海洋分级: {tile.oceanTier}";
-            if (tileClimateText != null)
-                tileClimateText.text = $"年均温: {tile.annualTemp:F1}℃\n年降水: {tile.annualPrecipMm:F0}mm\n湿度: {tile.airHumidityPct:F0}%\n温度带: {tile.climateZone}";
-            if (tileBiomeText != null)
-                tileBiomeText.text = $"群系: {tile.biome}\n肥力: {tile.fertility:F2}";
-            if (tilePopulationText != null)
-            {
-                float pop = 0f;
-                if (tile.populationBlocks != null)
-                    foreach (var pb in tile.populationBlocks)
-                        pop += pb.count;
-                long people = (long)(pop * 50f);
+            go.GetComponent<UnityEngine.UI.Image>().color = new Color32(52, 62, 78, 255);
+            settlementPeopleEntryButton = go.GetComponent<UnityEngine.UI.Button>();
+            settlementPeopleEntryButton.onClick.AddListener(OpenSettlementPeoplePanel);
 
- // 地块归属分级（CK3 式——点任何地块都有准确反馈）： // 有主=政权领地；无主有人=部落/自由聚落；无主无人=荒野
-                int owner = tile.ownerRealmId;
-                if (owner >= 0 && world.realms.TryGetValue(owner, out var ownRealm))
-                {
-                    tilePopulationText.text = $"人口: {people:N0} 人\n所属: {ownRealm.realmName}";
-                }
-                else if (pop > 0f)
-                {
- // 无主聚落（部落/自由民——无人涂色但有人——待征服/演化）
-                    int domCulture = PopulationStats.GetDominantCulture(tile);
-                    string cName = GetCultureName(domCulture);
-                    tilePopulationText.text = $"人口: {people:N0} 人（无主聚落·{cName}）";
-                }
-                else
-                {
-                    tilePopulationText.text = "荒芜之地（无政权·无人烟）";
-                }
-            }
-            if (tileEconomyText != null)
-                tileEconomyText.text = $"法理政权: {tile.ownerRealmId}\n占领政权: {tile.occupyingRealmId}\n道路: {tile.roadLevel}\n连通海域: {tile.seaConnectId}";
+            var textGo = new GameObject("Text", typeof(RectTransform));
+            textGo.transform.SetParent(go.transform, false);
+            var txt = textGo.AddComponent<TMPro.TextMeshProUGUI>();
+            txt.font = TMPFontUtility.GetChineseFont();
+            txt.text = "此聚落人物（已知）";
+            txt.fontSize = 14;
+            txt.alignment = TMPro.TextAlignmentOptions.Center;
+            txt.color = Color.white;
+            var trt = txt.rectTransform;
+            trt.anchorMin = Vector2.zero; trt.anchorMax = Vector2.one;
+            trt.offsetMin = Vector2.zero; trt.offsetMax = Vector2.zero;
         }
 
-
- // ===== 角色面板 =====
- /// <summary>打开角色面板（刷新角色列表并显示第一个）</summary>
-        public void OpenCharacterPanel()
+ /// <summary>懒创建聚落人物面板（代码生成——不改场景文件）。</summary>
+        private void EnsureSettlementPeoplePanel()
         {
-            var cm = world != null ? world.GetCharacterManager() : null;
-            if (cm == null) return;
+            if (settlementPeoplePanel != null) return;
 
-            _characterList.Clear();
-            foreach (var c in cm.GetAllCharacters().Values)
-                _characterList.Add(c.characterId);
-            _characterList.Sort();
-            _charIndex = 0;
+            var parent = transform.parent != null ? transform.parent : transform;
+            var panel = new GameObject("SettlementPeoplePanel", typeof(RectTransform),
+                typeof(CanvasRenderer), typeof(UnityEngine.UI.Image));
+            var rt = (RectTransform)panel.transform;
+            rt.SetParent(parent, false);
+            rt.anchorMin = new Vector2(1f, 0.5f);
+            rt.anchorMax = new Vector2(1f, 0.5f);
+            rt.pivot = new Vector2(1f, 0.5f);
+            rt.anchoredPosition = new Vector2(-560f, 0f);
+            rt.sizeDelta = new Vector2(360f, 460f);
+            panel.GetComponent<UnityEngine.UI.Image>().color = new Color32(20, 26, 33, 240);
 
-            if (characterPanel != null) characterPanel.SetActive(true);
-            UpdateCharacterPanel();
+            var titleGo = new GameObject("Title", typeof(RectTransform));
+            titleGo.transform.SetParent(panel.transform, false);
+            settlementPeopleTitle = titleGo.AddComponent<TMPro.TextMeshProUGUI>();
+            settlementPeopleTitle.font = TMPFontUtility.GetChineseFont();
+            settlementPeopleTitle.fontSize = 16;
+            settlementPeopleTitle.color = UITheme.Accent;
+            settlementPeopleTitle.alignment = TMPro.TextAlignmentOptions.Center;
+            var trt = settlementPeopleTitle.rectTransform;
+            trt.anchorMin = new Vector2(0f, 1f); trt.anchorMax = new Vector2(1f, 1f);
+            trt.pivot = new Vector2(0.5f, 1f);
+            trt.anchoredPosition = new Vector2(0f, -10f);
+            trt.sizeDelta = new Vector2(-20f, 28f);
+
+            var listGo = new GameObject("List", typeof(RectTransform));
+            listGo.transform.SetParent(panel.transform, false);
+            var vlg = listGo.AddComponent<UnityEngine.UI.VerticalLayoutGroup>();
+            vlg.spacing = 6f;
+            vlg.childAlignment = TextAnchor.UpperLeft;
+            vlg.childForceExpandWidth = true;
+            vlg.childForceExpandHeight = false;
+            var lrt = vlg.GetComponent<RectTransform>();
+            lrt.anchorMin = new Vector2(0f, 0f); lrt.anchorMax = new Vector2(1f, 1f);
+            lrt.offsetMin = new Vector2(10f, 50f);
+            lrt.offsetMax = new Vector2(-10f, -40f);
+            settlementPeopleListRoot = listGo.transform;
+
+            var closeGo = new GameObject("CloseBtn", typeof(RectTransform),
+                typeof(CanvasRenderer), typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
+            var crt = (RectTransform)closeGo.transform;
+            crt.SetParent(panel.transform, false);
+            crt.anchorMin = new Vector2(0.5f, 0f); crt.anchorMax = new Vector2(0.5f, 0f);
+            crt.pivot = new Vector2(0.5f, 0f);
+            crt.anchoredPosition = new Vector2(0f, 10f);
+            crt.sizeDelta = new Vector2(120f, 30f);
+            closeGo.GetComponent<UnityEngine.UI.Image>().color = new Color32(80, 44, 44, 255);
+            closeGo.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(CloseSettlementPeoplePanel);
+            var closeTextGo = new GameObject("Text", typeof(RectTransform));
+            closeTextGo.transform.SetParent(closeGo.transform, false);
+            var closeText = closeTextGo.AddComponent<TMPro.TextMeshProUGUI>();
+            closeText.font = TMPFontUtility.GetChineseFont();
+            closeText.text = "关闭";
+            closeText.fontSize = 14;
+            closeText.alignment = TMPro.TextAlignmentOptions.Center;
+            closeText.color = Color.white;
+            var ctrt = closeText.rectTransform;
+            ctrt.anchorMin = Vector2.zero; ctrt.anchorMax = Vector2.one;
+            ctrt.offsetMin = Vector2.zero; ctrt.offsetMax = Vector2.zero;
+
+            settlementPeoplePanel = panel;
+            panel.SetActive(false);
+        }
+
+        private void CloseSettlementPeoplePanel()
+        {
+            if (settlementPeoplePanel != null) settlementPeoplePanel.SetActive(false);
         }
 
 
@@ -176,26 +150,6 @@ namespace MyriadCreation.UI.Common
         public void CloseCharacterPanel()
         {
             if (characterPanel != null) characterPanel.SetActive(false);
-        }
-
-
- /// <summary>打开社会政治面板</summary>
- /// <summary>刷新宗教面板（国教教统信息+支柱+圣人——静态文本生成）</summary>
-        private void RefreshReligionPanel()
-        {
-            if (world == null || religionPanelText == null) return;
-            int viewRealm = ViewRealmId; // 视角政权（点选跟随——非固定玩家）
-            ReligionDef succession = null;
-            FaithSystem faith = null;
-            int patronSaint = -1;
-            if (viewRealm >= 0 && viewRealm < world.realms.Count)
-            {
-                var realm = world.realms[viewRealm];
-                succession = ReligionCatalog.Get(realm.stateReligionId);
-                faith = world.GetFaithSystem(realm.stateReligionId);
-                patronSaint = realm.statePatronSaintId;
-            }
-            religionPanelText.text = ReligionPanelText.Build(succession, faith, patronSaint);
         }
 
 
@@ -259,89 +213,6 @@ namespace MyriadCreation.UI.Common
         }
 
 
- /// <summary>刷新政权总览（_viewRealmId 视角政权——聚合各系统）</summary>
-        private void RefreshOverviewPanel()
-        {
-            if (world == null || overviewText == null) return;
-            int realmId = ViewRealmId;
-            if (!world.realms.TryGetValue(realmId, out var realm))
-            {
-                overviewText.text = RealmOverviewText.Build(null, null);
-                return;
-            }
-            var society = world.GetRealmSociety(realmId);
-            var officeDisplay = BuildOfficeDisplay(world, realm);
-            ReligionDef religion = realm.stateReligionId >= 0
-                ? ReligionCatalog.Get(realm.stateReligionId) : null;
-            string saint = "";
-            if (realm.statePatronSaintId > 0 && religion != null)
-            {
-                foreach (var snt in CanonizationSystem.GetSaints(realm.stateReligionId))
-                    if (snt.saintId == realm.statePatronSaintId) { saint = snt.saintName; break; }
-            }
- // 两态显示：-1=政权总览（含区划树）——≥0=区划详情（下钻页）
-            if (_viewingDivisionId < 0)
-            {
-                overviewText.text = RealmOverviewText.Build(realm, society, officeDisplay,
-                    religion, saint, realmId == world.PlayerRealmId, realm.adminDivisions, -1);
-            }
-            else
-            {
-                var division = FindDivision(realm.adminDivisions, _viewingDivisionId);
-                long pop = -1;
-                if (division != null)
-                {
-                    long sum = 0;
-                    foreach (int t in division.tiles)
-                    {
-                        var tile = t >= 0 && t < world.tiles.Length ? world.tiles[t] : default;
-                        if (tile.populationBlocks != null)
-                            foreach (var pb in tile.populationBlocks) sum += (long)pb.count;
-                    }
-                    pop = sum * 50L;
-                }
-                overviewText.text = RealmDivisionText.Build(division,
-                    realm.adminDivisions, pop, "", realm.realmName);
-            }
-
- // 区划按钮（当前层的直接子区划——下钻入口——动态重建）
-            RefreshDivisionButtons(realm);
- // 返回按钮（详情态显示）
-            if (overviewBackButton != null)
-                overviewBackButton.gameObject.SetActive(_viewingDivisionId >= 0);
-        }
-
-
- /// <summary>动态重建区划按钮（当前查看层[根或区划]的直接子——≤4 个）</summary>
-        private void RefreshDivisionButtons(RealmData realm)
-        {
-            if (divisionButtonsRoot == null) return;
- // 清旧按钮
-            foreach (Transform child in divisionButtonsRoot.transform)
-                Destroy(child.gameObject);
-            if (realm == null || realm.adminDivisions == null) return;
-
-            int parentId = _viewingDivisionId < 0 ? -1 : _viewingDivisionId;
- // 收集直接子
-            var children = new List<AdminDivision>();
-            foreach (var d in realm.adminDivisions)
-                if (d.parentDivisionId == parentId && d.level > 1) children.Add(d);
- // 区划树显示模式：总览态展示层2入口按钮；详情态展示下一层
-            if (_viewingDivisionId < 0)
-            {
-                foreach (var d in realm.adminDivisions)
-                    if (d.level == 2 && !children.Contains(d)) children.Add(d);
-            }
-            foreach (var d in children)
-            {
-                var btn = CreateRuntimeButton(d.name);
-                int captured = d.divisionId;
-                btn.onClick.AddListener(() => OnDivisionClicked(captured));
-                btn.transform.SetParent(divisionButtonsRoot.transform, false);
-            }
-        }
-
-
  /// <summary>运行时按钮（代码构建——区划下钻入口）</summary>
         private UnityEngine.UI.Button CreateRuntimeButton(string label)
         {
@@ -389,21 +260,6 @@ namespace MyriadCreation.UI.Common
         private void CloseSocietyPanel()
         {
             if (societyPanel != null) societyPanel.SetActive(false);
-        }
-
-
- /// <summary>刷新社会政治面板（阶层画像/派系/政体变迁）</summary>
-        private void RefreshSocietyPanel()
-        {
-            if (societyText == null || world == null) return;
-            int realmId = ViewRealmId; // 当前查看政权（点选地块自动跟随——非固定玩家）
-            if (!world.realms.TryGetValue(realmId, out var realm)) return;
-
- // 官职显示组装（officeHolders→文化定制称号+持有者名——OfficeTitle 消费）
-            var officeDisplay = BuildOfficeDisplay(world, realm);
-            societyText.text = SocietyPanelText.Build(realm,
-                world.GetRealmSociety(realmId), world.Factions, world.RegimeDynamics, world.currentDay,
-                officeDisplay);
         }
 
 
@@ -457,97 +313,435 @@ namespace MyriadCreation.UI.Common
             if (familyTreePanel != null) familyTreePanel.SetActive(false);
         }
 
+        // ===== 政府/法律面板入口（task-60：TopBar 动态按钮 + G 快捷键，场景零改动） =====
+        private MyriadCreation.UI.Panels.GovernmentPanel _governmentPanel;
+        private UnityEngine.UI.Button _governmentOpenButton;
+        private int _governmentTopBarPaddingLeft = 16;
+        private int _governmentTopBarPaddingRight = 16;
+        private int _lastGovernmentLayoutWidth = -1;
 
- /// <summary>刷新家族树面板（当前角色分代树状）</summary>
-        private void RefreshFamilyTreePanel()
+        /// <summary>是否正在 TMP 输入框中打字（G 快捷键不打扰输入）。</summary>
+        private static bool IsTypingInInputField()
         {
-            if (familyTreeText == null || world == null) return;
-            var cm = world.GetCharacterManager();
-            if (cm == null) return;
-            if (_characterList.Count == 0) RefreshCharacterList();
-            if (_characterList.Count == 0)
+            var eventSystem = UnityEngine.EventSystems.EventSystem.current;
+            if (eventSystem == null || eventSystem.currentSelectedGameObject == null) return false;
+            return eventSystem.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() != null;
+        }
+
+        /// <summary>懒创建 TopBar 上的「政府」按钮（若场景已有则复用引用；不改场景文件）。</summary>
+        private void EnsureGovernmentButton()
+        {
+            if (_governmentOpenButton != null) return;
+
+            Transform topBar = null;
+            GameObject topBarObj = GameObject.Find("TopBar");
+            if (topBarObj != null) topBar = topBarObj.transform;
+            if (topBar == null && societyOpenButton != null) topBar = societyOpenButton.transform.parent;
+            if (topBar == null && charOpenButton != null) topBar = charOpenButton.transform.parent;
+            if (topBar == null) return; // 顶栏缺失（异常场景）：G 快捷键/公开方法仍可用
+
+            var go = new GameObject("GovernmentOpenButton", typeof(RectTransform),
+                typeof(CanvasRenderer), typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
+            var rt = (RectTransform)go.transform;
+            rt.SetParent(topBar, false);
+            rt.sizeDelta = new Vector2(86f, 30f);
+            go.GetComponent<UnityEngine.UI.Image>().color = new Color32(52, 62, 78, 255);
+            // 顶栏基线内边距记录：窄屏时按基线减 8（16→8），恢复宽屏时还原。
+            UnityEngine.UI.HorizontalLayoutGroup topBarLayout = topBar.GetComponent<UnityEngine.UI.HorizontalLayoutGroup>();
+            if (topBarLayout != null)
             {
-                familyTreeText.text = "（无角色）";
+                _governmentTopBarPaddingLeft = topBarLayout.padding.left;
+                _governmentTopBarPaddingRight = topBarLayout.padding.right;
+            }
+            var layoutElement = go.AddComponent<UnityEngine.UI.LayoutElement>();
+            layoutElement.preferredWidth = 86f;
+            layoutElement.minWidth = 64f;
+            layoutElement.preferredHeight = 30f;
+            layoutElement.minHeight = 30f;
+
+            _governmentOpenButton = go.GetComponent<UnityEngine.UI.Button>();
+            _governmentOpenButton.onClick.AddListener(() => { UiSfx.PlayClick(); ToggleGovernmentPanel(); });
+
+            var textGo = new GameObject("Text", typeof(RectTransform));
+            textGo.transform.SetParent(go.transform, false);
+            var txt = textGo.AddComponent<TMPro.TextMeshProUGUI>();
+            txt.font = TMPFontUtility.GetChineseFont();
+            txt.text = "政府";
+            txt.fontSize = 13;
+            txt.alignment = TMPro.TextAlignmentOptions.Center;
+            txt.color = Color.white;
+            txt.raycastTarget = false;
+            var trt = txt.rectTransform;
+            trt.anchorMin = Vector2.zero;
+            trt.anchorMax = Vector2.one;
+            trt.offsetMin = Vector2.zero;
+            trt.offsetMax = Vector2.zero;
+
+            // 主菜单阶段先隐藏（UIManager.Start 可能早于/晚于 GameManager.Start）；ShowGameUI 时统一显示。
+            _governmentOpenButton.gameObject.SetActive(
+                GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.MainMenu);
+            // 首次按当前屏宽应用宽度/字号/顶栏内边距（窄屏 <1280 缩到 64）。
+            RefreshGovernmentButtonLayout(Screen.width);
+        }
+
+        /// <summary>
+        /// 按屏宽刷新「政府」按钮布局（不越出 TopBar、不与 CharOpenBtn 重叠）：
+        /// ≥1280 宽屏 → 86×30、字号 13、TopBar 左右内边距保持基线；
+        /// &lt;1280 窄屏 → 64×30（minWidth 64）、字号 12、内边距基线减 8（最少 4）。
+        /// TopBar 的 HorizontalLayoutGroup 为 childControlWidth=0 时用 sizeDelta，=1 时用 LayoutElement，
+        /// 两套都同步设置；刷新后强制重建布局，保证同帧可测量。
+        /// </summary>
+        public void RefreshGovernmentButtonLayout(int screenWidth)
+        {
+            if (screenWidth <= 0) screenWidth = Screen.width;
+            _lastGovernmentLayoutWidth = screenWidth;
+            if (_governmentOpenButton == null) return;
+
+            bool narrow = screenWidth > 0 && screenWidth < 1280;
+            float buttonWidth = narrow ? 64f : 86f;
+            var rt = (RectTransform)_governmentOpenButton.transform;
+            rt.sizeDelta = new Vector2(buttonWidth, 30f);
+            var layoutElement = _governmentOpenButton.GetComponent<UnityEngine.UI.LayoutElement>();
+            if (layoutElement != null)
+            {
+                layoutElement.preferredWidth = buttonWidth;
+                layoutElement.minWidth = 64f;
+                layoutElement.preferredHeight = 30f;
+                layoutElement.minHeight = 30f;
+            }
+            TMPro.TMP_Text label = _governmentOpenButton.GetComponentInChildren<TMPro.TMP_Text>(true);
+            if (label != null)
+            {
+                label.fontSize = narrow ? 12 : 13;
+            }
+
+            RectTransform topBar = _governmentOpenButton.transform.parent as RectTransform;
+            if (topBar != null)
+            {
+                UnityEngine.UI.HorizontalLayoutGroup topBarLayout = topBar.GetComponent<UnityEngine.UI.HorizontalLayoutGroup>();
+                if (topBarLayout != null)
+                {
+                    topBarLayout.padding.left = narrow
+                        ? Mathf.Max(4, _governmentTopBarPaddingLeft - 8)
+                        : _governmentTopBarPaddingLeft;
+                    topBarLayout.padding.right = narrow
+                        ? Mathf.Max(4, _governmentTopBarPaddingRight - 8)
+                        : _governmentTopBarPaddingRight;
+                }
+                // 立即重建，便于测试/切屏当帧拿到最终位置与宽度。
+                UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(topBar);
+            }
+        }
+
+        /// <summary>政府/法律面板是否打开（供 ESC 优先级/外部系统查询）。</summary>
+        public bool IsGovernmentPanelOpen => _governmentPanel != null && _governmentPanel.IsOpen;
+
+        /// <summary>关闭政府/法律面板。</summary>
+        public void CloseGovernmentPanel()
+        {
+            if (_governmentPanel != null) _governmentPanel.Hide();
+        }
+
+        /// <summary>切换政府/法律面板（顶部「政府」按钮与 G 快捷键共用）。</summary>
+        public void ToggleGovernmentPanel()
+        {
+            EnsureGovernmentPanel();
+            if (_governmentPanel == null) return;
+            if (_governmentPanel.IsOpen)
+            {
+                _governmentPanel.Hide();
+                return;
+            }
+            OpenGovernmentPanel();
+        }
+
+        // ===== 4d：Legacy 删除后的契约安全兜底（无 view 显示空/不抛） =====
+
+        private void UpdateTileInfo()
+        {
+            if (_worldReadModel == null || _selectedTile < 0)
+            {
+                FillTileTexts("-", "-", "-", "-", "-", "-");
+                if (viewRealmButton != null) viewRealmButton.gameObject.SetActive(false);
                 return;
             }
 
-            _charIndex = (_charIndex + _characterList.Count) % _characterList.Count;
-            familyTreeText.text = cm.BuildFamilyTreeText(_characterList[_charIndex]);
+            TileInfoDto dto = _worldReadModel.GetTileInfo(_selectedTile);
+            if (dto == null)
+            {
+                FillTileTexts("-", "-", "-", "-", "-", "-");
+                if (viewRealmButton != null) viewRealmButton.gameObject.SetActive(false);
+                return;
+            }
+
+            string owner = string.IsNullOrEmpty(dto.ownerRealmName)
+                ? (dto.ownerRealmId >= 0 ? "#" + dto.ownerRealmId : "无主")
+                : dto.ownerRealmName;
+            SetPanelText(tileNameText, owner + " · 地块 #" + dto.tileIndex + " (" + dto.x + "," + dto.y + ")");
+            SetPanelText(tileTerrainText,
+                "地形: " + dto.terrainName + "\n海拔: " + dto.elevation01.ToString("F2") +
+                "\n坡度: " + dto.slopeDegree.ToString("F1") + "°" +
+                "\n海陆: " + (dto.isLand ? "陆地" : "海洋"));
+            SetPanelText(tileClimateText,
+                "年均温: " + dto.annualTemp.ToString("F1") + "℃\n年降水: " + dto.annualPrecipMm.ToString("F0") +
+                "mm\n温度带: " + dto.climateZoneName);
+            SetPanelText(tileBiomeText,
+                "群系: " + dto.biomeName + "\n肥力: " + dto.fertility.ToString("F2"));
+            SetPanelText(tilePopulationText,
+                "人口: " + dto.population.ToString("N0") + "\n发展: " + dto.development.ToString("F2") +
+                "\n稳定: " + dto.stability.ToString("F0"));
+
+            StringBuilder economy = new StringBuilder();
+            economy.Append("省份: ").Append(string.IsNullOrEmpty(dto.provinceName) ? (dto.provinceId >= 0 ? "#" + dto.provinceId : "-") : dto.provinceName);
+            economy.Append("\n聚落: ").Append(dto.settlementAnchorId >= 0 ? dto.settlementName + "（anchor " + dto.settlementAnchorId + "）" : "-");
+            if (dto.resources != null && dto.resources.Count > 0)
+            {
+                economy.Append("\n资源:");
+                foreach (TileResourceDto resource in dto.resources)
+                {
+                    economy.Append("\n- ").Append(resource.goodsName).Append("（丰度 ")
+                        .Append(resource.abundance.ToString("F2")).Append(resource.discovered ? "" : "·未发现")
+                        .Append(resource.developed ? "·已开发" : "").Append("）");
+                }
+            }
+            else
+            {
+                economy.Append("\n资源: -");
+            }
+            SetPanelText(tileEconomyText, economy.ToString());
+            if (viewRealmButton != null) viewRealmButton.gameObject.SetActive(dto.ownerRealmId >= 0);
         }
 
-
- /// <summary>刷新角色列表（角色面板数据源）</summary>
-        private void RefreshCharacterList()
-        {
-            if (world == null) return;
-            var cm = world.GetCharacterManager();
-            if (cm == null) return;
-            _characterList.Clear();
-            foreach (var c in cm.GetCharactersByRealm(world.PlayerRealmId >= 0 ? world.PlayerRealmId : 0))
-                _characterList.Add(c.characterId);
-            if (_characterList.Count > 0)
-                _charIndex = Mathf.Clamp(_charIndex, 0, _characterList.Count - 1);
-        }
-
-
- /// <summary>刷新角色面板（每帧调用，角色数据动态变化）</summary>
         private void UpdateCharacterPanel()
         {
-            var cm = world != null ? world.GetCharacterManager() : null;
-            if (cm == null || _characterList.Count == 0)
+            if (_worldReadModel == null)
             {
-                if (charNameText != null) charNameText.text = "无角色";
+                FillCharacterTexts("-", "-", "-", "-", "-", "-");
+                return;
+            }
+            int characterId = CurrentCharacterId();
+            if (characterId < 0)
+            {
+                FillCharacterTexts("-", "-", "-", "-", "-", "-");
+                return;
+            }
+            CharacterDetailDto dto = _worldReadModel.GetCharacterDetail(characterId);
+            if (dto == null)
+            {
+                FillCharacterTexts("-", "-", "-", "-", "-", "-");
                 return;
             }
 
+            SetPanelText(charNameText, dto.name);
+            string office = string.IsNullOrEmpty(dto.officeName)
+                ? (dto.officeTitleId >= 0 ? "#" + dto.officeTitleId : "-")
+                : dto.officeName;
+            SetPanelText(charStatusText,
+                "年龄 " + dto.age + " · " + (dto.isMale ? "男" : "女") + " · " + (dto.isAlive ? "在世" : "已故") +
+                "\n所属: " + (string.IsNullOrEmpty(dto.realmName) ? "-" : dto.realmName) +
+                "\n角色: " + dto.roleName + " | 官职: " + office);
+            SetPanelText(charStatsText,
+                "武力 " + dto.prowess.ToString("F0") + " | 社交 " + dto.social.ToString("F0") +
+                " | 军事 " + dto.military.ToString("F0") + " | 管理 " + dto.management.ToString("F0") +
+                "\n谋略 " + dto.conspiracy.ToString("F0") + " | 学术 " + dto.scholarship.ToString("F0") +
+                " | 威望 " + dto.prestige.ToString("F0") + " | 健康 " + dto.health.ToString("F0") +
+                "\n压力 " + dto.stress.ToString("F0") + " | 虔诚 " + dto.piety.ToString("F0"));
+            SetPanelText(charPersonalityText, PersonalitySummary(dto));
+            SetPanelText(charDescText, FamilySummary(dto));
+            SetPanelText(charDnaText,
+                "文化: " + (string.IsNullOrEmpty(dto.cultureName) ? "-" : dto.cultureName) +
+                "\n信仰: " + (string.IsNullOrEmpty(dto.faithName) ? "-" : dto.faithName));
+        }
+
+        private void RefreshCharacterList()
+        {
+            if (_characterList == null) return;
+            _characterList.Clear();
+            if (_worldReadModel != null)
+            {
+                var characters = _worldReadModel.GetCharactersInRealm(ViewRealmId);
+                foreach (var c in characters)
+                {
+                    if (c != null) _characterList.Add(c.characterId);
+                }
+            }
+            _characterList.Sort();
+            _charIndex = 0;
+            if (characterPanel != null && characterPanel.activeSelf) UpdateCharacterPanel();
+        }
+
+        private void OpenCharacterPanel()
+        {
+            RefreshCharacterList();
+            if (characterPanel != null) characterPanel.SetActive(true);
+            UpdateCharacterPanel();
+        }
+
+        private void RefreshFamilyTreePanel()
+        {
+            if (familyTreeText == null) return;
+            if (_worldReadModel == null)
+            {
+                familyTreeText.text = "-";
+                return;
+            }
+            int characterId = CurrentCharacterId();
+            CharacterDetailDto dto = characterId >= 0 ? _worldReadModel.GetCharacterDetail(characterId) : null;
+            if (dto == null)
+            {
+                familyTreeText.text = "-";
+                return;
+            }
+            familyTreeText.text = FamilySummary(dto);
+        }
+
+        private int CurrentCharacterId()
+        {
+            if (_characterList == null || _characterList.Count == 0) return -1;
             if (_charIndex < 0) _charIndex = 0;
             if (_charIndex >= _characterList.Count) _charIndex = _characterList.Count - 1;
+            return _characterList[_charIndex];
+        }
 
-            var c = cm.GetCharacter(_characterList[_charIndex]);
-            if (c == null) return;
+        private void FillTileTexts(string name, string terrain, string climate, string biome, string population, string economy)
+        {
+            SetPanelText(tileNameText, name);
+            SetPanelText(tileTerrainText, terrain);
+            SetPanelText(tileClimateText, climate);
+            SetPanelText(tileBiomeText, biome);
+            SetPanelText(tilePopulationText, population);
+            SetPanelText(tileEconomyText, economy);
+        }
 
-            if (charNameText != null)
-                charNameText.text = $"{c.fullName}  {c.age}岁 {(c.isMale ? "男" : "女")}  [{_charIndex + 1}/{_characterList.Count}]";
+        private void FillCharacterTexts(string name, string status, string stats, string personality, string desc, string dna)
+        {
+            SetPanelText(charNameText, name);
+            SetPanelText(charStatusText, status);
+            SetPanelText(charStatsText, stats);
+            SetPanelText(charPersonalityText, personality);
+            SetPanelText(charDescText, desc);
+            SetPanelText(charDnaText, dna);
+        }
 
-            if (charStatusText != null)
+        private static void SetPanelText(TMP_Text target, string value)
+        {
+            if (target != null) target.text = value;
+        }
+
+        private static string FamilySummary(CharacterDetailDto dto)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("父: ").Append(FamilyName(dto.father));
+            sb.Append("\n母: ").Append(FamilyName(dto.mother));
+            sb.Append("\n配偶: ").Append(FamilyName(dto.spouse));
+            sb.Append("\n兄弟姐妹: ");
+            AppendFamilyList(sb, dto.siblings);
+            sb.Append("\n子女: ");
+            AppendFamilyList(sb, dto.children);
+            return sb.ToString();
+        }
+
+        private static string PersonalitySummary(CharacterDetailDto dto)
+        {
+            string personality = string.IsNullOrWhiteSpace(dto.personality) ? "-" : dto.personality;
+            string traits = dto.traits == null || dto.traits.Count == 0
+                ? "-"
+                : string.Join("、", dto.traits);
+            string dynasty = string.IsNullOrWhiteSpace(dto.dynastyName) ? "-" : dto.dynastyName;
+            string family = string.IsNullOrWhiteSpace(dto.familyName) ? "-" : dto.familyName;
+            return "性格: " + personality + "\n特质: " + traits + "\n家族: " + dynasty + " / " + family;
+        }
+
+        private static void AppendFamilyList(StringBuilder sb, IReadOnlyList<FamilyMemberDto> members)
+        {
+            if (members == null || members.Count == 0)
             {
-                string disorder = MentalHealthSystem.GetDisorderName(c);
-                string disorderStr = disorder.Length > 0
-                    ? $"｜<color=#{ColorUtility.ToHtmlStringRGB(UITheme.LogWar)}>患{disorder}</color>" : "";
-                charStatusText.text =
-                    $"政权{c.realmId}｜{(c.isAlive ? "在世" : "已故")}｜威望 Lv{c.prestigeCapacityLevel}{disorderStr}";
+                sb.Append("-");
+                return;
             }
-
-            if (charStatsText != null)
+            for (int i = 0; i < members.Count; i++)
             {
-                charStatsText.text =
-                    $"武力 {c.prowess:F0}    外交 {c.social:F0}    军事经略 {c.military:F0}\n" +
-                    $"管理 {c.management:F0}    谋略 {c.conspiracy:F0}    学识 {c.scholarship:F0}\n" +
-                    $"威望 {c.prestige:F0}/{c.GetPrestigeCapacity():F0}    恶名 {c.notoriety:F0}\n" +
-                    $"健康 {c.health:F0}    压力 {c.stress:F0}    恐惧 {c.dread:F0}    肥胖 {c.obesity:F0}\n" +
-                    $"魅力 {c.charm:F0}    预期寿命 {c.expectedLifespanYears:F0}岁";
-            }
-
-            if (charPersonalityText != null)
-            {
-                charPersonalityText.text =
-                    $"大胆 {c.boldness:F0}    悲悯 {c.compassion:F0}    贪婪 {c.greed:F0}    荣誉 {c.honor:F0}\n" +
-                    $"理性 {c.rationality:F0}    报复 {c.vengefulness:F0}    虔信 {c.piety:F0}";
-            }
-
-            if (charDescText != null)
-                charDescText.text = c.GetPersonalityDescription();
-
-            if (charDnaText != null)
-            {
-                string extra = "";
-                var talentDef = DnaSystem.FindDef(c.dnaExpression.talentId);
-                var defectDef = DnaSystem.FindDef(c.dnaExpression.defectId);
-                if (talentDef != null) extra += $"｜天赋：{talentDef.name}";
-                if (defectDef != null) extra += $"｜隐疾：{defectDef.name}";
-                charDnaText.text = $"外貌：{c.dnaExpression.appearanceTag}{extra}";
+                if (i > 0) sb.Append("、");
+                sb.Append(FamilyName(members[i]));
             }
         }
 
-    }
+        private static string FamilyName(FamilyMemberDto member)
+        {
+            if (member == null) return "-";
+            return member.name + "（" + member.age + "，" + (member.isAlive ? "在世" : "已故") + "）";
+        }
+
+        private void RefreshOverviewPanel()
+        {
+            if (overviewText == null) return;
+            overviewText.text = _worldReadModel != null
+                ? RealmOverviewText.Build(_worldReadModel, ViewRealmId)
+                : "=== 政权总览 ===\n（无数据）";
+        }
+
+        private void RefreshReligionPanel()
+        {
+            if (religionPanelText == null) return;
+            religionPanelText.text = _worldReadModel != null
+                ? ReligionPanelText.Build(_worldReadModel, ViewRealmId, -1)
+                : "=== 宗教 ===\n（无数据）";
+        }
+
+        private void RefreshSocietyPanel()
+        {
+            if (societyText == null) return;
+            societyText.text = _worldReadModel != null
+                ? SocietyPanelText.Build(_worldReadModel, ViewRealmId)
+                : "=== 社会 ===\n（无数据）";
+        }
+
+        private void OpenSettlementPeoplePanel()
+        {
+            EnsureSettlementPeoplePanel();
+            if (settlementPeoplePanel != null) settlementPeoplePanel.SetActive(true);
+            if (settlementPeopleTitle != null) settlementPeopleTitle.text = settlementPeopleSiteName + " · 已知人物 0";
+        }
+
+        private void EnsureGovernmentPanel()
+        {
+            if (_governmentPanel != null) return;
+
+            _governmentPanel = FindAnyObjectByType<MyriadCreation.UI.Panels.GovernmentPanel>(
+                FindObjectsInactive.Include);
+            if (_governmentPanel != null)
+            {
+                ApplyLawServicesToGovernmentPanel();
+                ApplyDecreeCommandToGovernmentPanel();
+                _governmentPanel.SetWorldReadModel(_worldReadModel);
+                return;
+            }
+
+            Canvas canvas = GetComponentInParent<Canvas>();
+            Transform parent = canvas != null
+                ? canvas.transform
+                : (transform.parent != null ? transform.parent : transform);
+            var go = new GameObject("GovernmentPanel", typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+            var hostRt = (RectTransform)go.transform;
+            hostRt.anchorMin = Vector2.zero;
+            hostRt.anchorMax = Vector2.one;
+            hostRt.offsetMin = Vector2.zero;
+            hostRt.offsetMax = Vector2.zero;
+            _governmentPanel = go.AddComponent<MyriadCreation.UI.Panels.GovernmentPanel>();
+            _governmentPanel.Build(null);
+            ApplyLawServicesToGovernmentPanel();
+            ApplyDecreeCommandToGovernmentPanel();
+            _governmentPanel.SetWorldReadModel(_worldReadModel);
+        }
+
+        public void OpenGovernmentPanel()
+        {
+            EnsureGovernmentPanel();
+            if (_governmentPanel == null) return;
+            _governmentPanel.SetWorldReadModel(_worldReadModel);
+            _governmentPanel.Show();
+        }
+
+}
 }

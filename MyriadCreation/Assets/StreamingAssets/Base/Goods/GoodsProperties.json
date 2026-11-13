@@ -1,0 +1,729 @@
+{
+  "entries": [
+    {
+      "goodsId": 0,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 0
+        },
+        {
+          "id": "toughness",
+          "value": 0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "goodsId": 1,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 0
+        },
+        {
+          "id": "toughness",
+          "value": 0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "goodsId": 2,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 0
+        },
+        {
+          "id": "toughness",
+          "value": 0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "goodsId": 3,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 801
+        },
+        {
+          "id": "hardness",
+          "value": 2.0
+        },
+        {
+          "id": "toughness",
+          "value": 1.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 1.0
+        }
+      ]
+    },
+    {
+      "goodsId": 10,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 0
+        },
+        {
+          "id": "toughness",
+          "value": 0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "goodsId": 11,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 0
+        },
+        {
+          "id": "toughness",
+          "value": 1.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 2.0
+        }
+      ]
+    },
+    {
+      "goodsId": 20,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 1.0
+        },
+        {
+          "id": "toughness",
+          "value": 2.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "goodsId": 21,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 1.0
+        },
+        {
+          "id": "toughness",
+          "value": 2.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "goodsId": 22,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 1.0
+        },
+        {
+          "id": "toughness",
+          "value": 2.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "goodsId": 30,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 2.0
+        },
+        {
+          "id": "toughness",
+          "value": 3.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 16.0
+        },
+        {
+          "id": "ductility",
+          "value": 1.0
+        }
+      ]
+    },
+    {
+      "goodsId": 31,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 2.0
+        },
+        {
+          "id": "toughness",
+          "value": 3.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 15.0
+        },
+        {
+          "id": "ductility",
+          "value": 1.0
+        }
+      ]
+    },
+    {
+      "goodsId": 40,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 6.0
+        },
+        {
+          "id": "toughness",
+          "value": 3.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 0.5
+        }
+      ]
+    },
+    {
+      "goodsId": 50,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 1538
+        },
+        {
+          "id": "hardness",
+          "value": 5.5
+        },
+        {
+          "id": "toughness",
+          "value": 2.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 1.0
+        }
+      ]
+    },
+    {
+      "goodsId": 51,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 1085
+        },
+        {
+          "id": "hardness",
+          "value": 3.5
+        },
+        {
+          "id": "toughness",
+          "value": 3.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 1.0
+        }
+      ]
+    },
+    {
+      "goodsId": 54,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 232
+        },
+        {
+          "id": "hardness",
+          "value": 2.5
+        },
+        {
+          "id": "toughness",
+          "value": 1.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 2.0
+        }
+      ]
+    },
+    {
+      "goodsId": 58,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 327
+        },
+        {
+          "id": "hardness",
+          "value": 2.5
+        },
+        {
+          "id": "toughness",
+          "value": 2.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 1.0
+        }
+      ]
+    },
+    {
+      "goodsId": 52,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 1538
+        },
+        {
+          "id": "hardness",
+          "value": 4.5
+        },
+        {
+          "id": "toughness",
+          "value": 7.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 5.0
+        }
+      ]
+    },
+    {
+      "goodsId": 53,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 1085
+        },
+        {
+          "id": "hardness",
+          "value": 3.0
+        },
+        {
+          "id": "toughness",
+          "value": 6.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 7.5
+        }
+      ]
+    },
+    {
+      "goodsId": 55,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 232
+        },
+        {
+          "id": "hardness",
+          "value": 1.5
+        },
+        {
+          "id": "toughness",
+          "value": 2.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 6.0
+        }
+      ]
+    },
+    {
+      "goodsId": 59,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 327
+        },
+        {
+          "id": "hardness",
+          "value": 1.5
+        },
+        {
+          "id": "toughness",
+          "value": 3.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 5.0
+        }
+      ]
+    },
+    {
+      "goodsId": 56,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 950
+        },
+        {
+          "id": "hardness",
+          "value": 4.0
+        },
+        {
+          "id": "toughness",
+          "value": 7.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 5.0
+        }
+      ]
+    },
+    {
+      "goodsId": 57,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 1500
+        },
+        {
+          "id": "hardness",
+          "value": 6.0
+        },
+        {
+          "id": "toughness",
+          "value": 8.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 4.5
+        }
+      ]
+    },
+    {
+      "goodsId": 60,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 1064
+        },
+        {
+          "id": "hardness",
+          "value": 2.5
+        },
+        {
+          "id": "toughness",
+          "value": 6.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 9.0
+        }
+      ]
+    },
+    {
+      "goodsId": 61,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 961
+        },
+        {
+          "id": "hardness",
+          "value": 2.5
+        },
+        {
+          "id": "toughness",
+          "value": 6.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 8.5
+        }
+      ]
+    },
+    {
+      "goodsId": 70,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 5.0
+        },
+        {
+          "id": "toughness",
+          "value": 7.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 3.0
+        }
+      ]
+    },
+    {
+      "goodsId": 71,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 5.0
+        },
+        {
+          "id": "toughness",
+          "value": 8.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 3.0
+        }
+      ]
+    },
+    {
+      "goodsId": 80,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 0
+        },
+        {
+          "id": "toughness",
+          "value": 2.0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 4.0
+        }
+      ]
+    },
+    {
+      "goodsId": 81,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 0
+        },
+        {
+          "id": "toughness",
+          "value": 0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "goodsId": 90,
+      "properties": [
+        {
+          "id": "meltingPoint",
+          "value": 0
+        },
+        {
+          "id": "hardness",
+          "value": 0
+        },
+        {
+          "id": "toughness",
+          "value": 0
+        },
+        {
+          "id": "fuelValue",
+          "value": 0
+        },
+        {
+          "id": "ductility",
+          "value": 0
+        }
+      ]
+    }
+  ]
+}

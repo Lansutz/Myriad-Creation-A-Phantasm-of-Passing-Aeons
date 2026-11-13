@@ -2,387 +2,444 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using MyriadCreation.Core;
-using MyriadCreation.Core.Constants;
-using MyriadCreation.Core.Data;
-using MyriadCreation.Core.Dto;
-using MyriadCreation.Core.Enums;
-using MyriadCreation.Infrastructure.Save;
-using MyriadCreation.Simulation.Economy;
-using MyriadCreation.Simulation.Events;
-using MyriadCreation.Simulation.Generation;
-using MyriadCreation.Simulation.Modding;
-using MyriadCreation.Simulation.Politics;
-using MyriadCreation.Simulation.Population;
-using MyriadCreation.Simulation.Society;
-using MyriadCreation.Simulation.WorldState;
-using MyriadCreation.UI;
-
-
-
-
+using MyriadCreation.Core.Contracts;
 using MyriadCreation.UI.Common;
+
 namespace MyriadCreation.UI.Panels
 {
-    public class GovernmentPanel : MonoBehaviour
-    {
-        [SerializeField] private GameWorld world;
+public partial class GovernmentPanel : MonoBehaviour
+{
         [SerializeField] private int targetRealmId = 0;
         [SerializeField] private GameObject panelRoot;
         [SerializeField] private Transform contentContainer;
         [SerializeField] private bool autoGenerateUI = true;
 
-        private GovernmentComposition _current;
-        private Dictionary<GovernmentConstraints.GovernmentDimension, Dropdown> _dd = new Dictionary<GovernmentConstraints.GovernmentDimension, Dropdown>();
-        private Dictionary<GovernmentConstraints.GovernmentDimension, GameObject> _sub = new Dictionary<GovernmentConstraints.GovernmentDimension, GameObject>();
-        private Text _catText, _sumText, _secCountText;
-        private GameObject _secContainer;
-        private Dropdown _tplDd;
+        private ILawQuery _lawQuery;
+        private ILawCommand _lawCommand;
+        private IDecreeCommand _decreeCommand;
+        private IWorldReadModel _worldReadModel;
 
-        private static readonly GovernmentConstraints.GovernmentDimension[] Order = {
-            GovernmentConstraints.GovernmentDimension.SupremeSovereignty,
-            GovernmentConstraints.GovernmentDimension.SupremeSuccession,
-            GovernmentConstraints.GovernmentDimension.SupremeScope,
-            GovernmentConstraints.GovernmentDimension.CentralExistence,
-            GovernmentConstraints.GovernmentDimension.CentralSuccession,
-            GovernmentConstraints.GovernmentDimension.CentralInstitution,
-            GovernmentConstraints.GovernmentDimension.LocalSuccession,
-            GovernmentConstraints.GovernmentDimension.LocalScope,
-            GovernmentConstraints.GovernmentDimension.SpatialStructure
-        };
+        private Text _status;
+        private static Font _uiFont;
+
+        public ILawQuery LawQuery => _lawQuery;
+        public ILawCommand LawCommand => _lawCommand;
+        public IDecreeCommand DecreeCommand => _decreeCommand;
+
+        /// <summary>注入法律查询/命令（UIManager/GameManager）；无注入时回退 world.LawQuery/LawCommand。</summary>
+        public void SetLawServices(ILawQuery query, ILawCommand command)
+        {
+            _lawQuery = query;
+            _lawCommand = command;
+        }
+
+        /// <summary>4b5b：注入聚合只读视图（realm 名等轻量数据；旧路径由 Legacy fallback）。</summary>
+        public void SetWorldReadModel(IWorldReadModel view)
+        {
+            _worldReadModel = view;
+        }
+
+        public IWorldReadModel WorldReadModel => _worldReadModel;
+
+        /// <summary>4b5b：注入法令下发命令（无注入时 Legacy 回退 world.DecreeCommand）。</summary>
+        public void SetDecreeCommand(IDecreeCommand command)
+        {
+            _decreeCommand = command;
+        }
+
+        /// <summary>面板是否打开（动态 Build 的根遮罩激活；兼容场景内旧引用）。</summary>
+        public bool IsOpen => panelRoot != null && panelRoot.activeSelf;
+
+        private static Font UiFont
+        {
+            get
+            {
+                if (_uiFont == null)
+                {
+                    // 动态面板用中文字体（LegacyRuntime.ttf 无中文字形，会显示方块）。
+                    _uiFont = Resources.Load<Font>("simhei");
+                    if (_uiFont == null)
+                    {
+                        _uiFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                    }
+                }
+                return _uiFont;
+            }
+        }
 
         private void Awake() { if (autoGenerateUI && contentContainer) GenUI(); }
         private void Start() { Init(); }
 
-        public void Init()
+        private void Update()
         {
-            if (!world) world = FindAnyObjectByType<GameWorld>();
-            _current = (world?.realms?.Count > targetRealmId) ? (world.realms[targetRealmId].composition ?? new GovernmentComposition()) : new GovernmentComposition();
-            Refresh();
+            // 打开状态下 ESC 关闭（面板根激活时才拦截，避免影响其它系统）。
+            if (IsOpen && Input.GetKeyDown(KeyCode.Escape))
+            {
+                Hide();
+            }
+        }
+
+        /// <summary>
+        /// 代码动态创建面板（场景零改动）：自建遮罩根/面板/标题/关闭按钮/滚动内容区，
+        /// 设置 panelRoot/contentContainer 引用并生成 UI 骨架；默认隐藏，由 Show() 打开。
+        /// </summary>
+        public void Build(Transform parent)
+        {
+            if (panelRoot != null)
+            {
+                return;
+            }
+            Transform host = parent != null ? parent : transform;
+
+            // 半透明根遮罩（拦截点击，模态）
+            var rootObj = new GameObject("GovernmentRoot", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            rootObj.transform.SetParent(host, false);
+            var rootRt = rootObj.GetComponent<RectTransform>();
+            rootRt.anchorMin = Vector2.zero;
+            rootRt.anchorMax = Vector2.one;
+            rootRt.offsetMin = Vector2.zero;
+            rootRt.offsetMax = Vector2.zero;
+            rootObj.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.6f);
+            panelRoot = rootObj;
+
+            // 面板
+            var panelObj = new GameObject("Panel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            panelObj.transform.SetParent(rootObj.transform, false);
+            var panelRt = panelObj.GetComponent<RectTransform>();
+            panelRt.anchorMin = new Vector2(0.5f, 0.5f);
+            panelRt.anchorMax = new Vector2(0.5f, 0.5f);
+            panelRt.pivot = new Vector2(0.5f, 0.5f);
+            panelRt.anchoredPosition = Vector2.zero;
+            panelRt.sizeDelta = new Vector2(680f, 720f);
+            panelObj.GetComponent<Image>().color = new Color(0.08f, 0.09f, 0.12f, 0.98f);
+
+            // 标题
+            var title = MkText("政府", 22, FontStyle.Bold);
+            title.color = new Color(0.88f, 0.75f, 0.45f, 1f);
+            title.alignment = TextAnchor.MiddleCenter;
+            var titleRt = (RectTransform)title.transform;
+            titleRt.SetParent(panelObj.transform, false);
+            titleRt.anchorMin = new Vector2(0f, 1f);
+            titleRt.anchorMax = new Vector2(1f, 1f);
+            titleRt.pivot = new Vector2(0.5f, 1f);
+            titleRt.anchoredPosition = new Vector2(0f, -14f);
+            titleRt.sizeDelta = new Vector2(-120f, 32f);
+
+            // 关闭按钮
+            var closeButton = MkBtn("关闭", 80f);
+            closeButton.onClick.AddListener(Hide);
+            var closeRt = (RectTransform)closeButton.transform;
+            closeRt.SetParent(panelObj.transform, false);
+            closeRt.anchorMin = new Vector2(1f, 1f);
+            closeRt.anchorMax = new Vector2(1f, 1f);
+            closeRt.pivot = new Vector2(1f, 1f);
+            closeRt.anchoredPosition = new Vector2(-14f, -14f);
+            closeRt.sizeDelta = new Vector2(80f, 32f);
+
+            // 滚动内容区
+            var scrollObj = new GameObject("Scroll", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(ScrollRect));
+            scrollObj.transform.SetParent(panelObj.transform, false);
+            var scrollRt = scrollObj.GetComponent<RectTransform>();
+            scrollRt.anchorMin = Vector2.zero;
+            scrollRt.anchorMax = Vector2.one;
+            scrollRt.offsetMin = new Vector2(18f, 16f);
+            scrollRt.offsetMax = new Vector2(-18f, -56f);
+            scrollObj.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.15f);
+
+            var viewportObj = new GameObject("Viewport", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask));
+            viewportObj.transform.SetParent(scrollObj.transform, false);
+            var viewportRt = viewportObj.GetComponent<RectTransform>();
+            viewportRt.anchorMin = Vector2.zero;
+            viewportRt.anchorMax = Vector2.one;
+            viewportRt.offsetMin = Vector2.zero;
+            viewportRt.offsetMax = Vector2.zero;
+            viewportObj.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.01f);
+            viewportObj.GetComponent<Mask>().showMaskGraphic = false;
+
+            var contentObj = new GameObject("Content", typeof(RectTransform));
+            contentObj.transform.SetParent(viewportObj.transform, false);
+            var contentRt = contentObj.GetComponent<RectTransform>();
+            contentRt.anchorMin = new Vector2(0f, 1f);
+            contentRt.anchorMax = new Vector2(1f, 1f);
+            contentRt.pivot = new Vector2(0.5f, 1f);
+            contentRt.anchoredPosition = Vector2.zero;
+            contentRt.sizeDelta = new Vector2(0f, 0f);
+            var layout = contentObj.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 3f;
+            layout.padding = new RectOffset(10, 10, 8, 8);
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            contentObj.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            contentContainer = contentObj.transform;
+
+            var scroll = scrollObj.GetComponent<ScrollRect>();
+            scroll.viewport = viewportRt;
+            scroll.content = contentRt;
+            scroll.horizontal = false;
+            scroll.vertical = true;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+            scroll.scrollSensitivity = 24f;
+
+            GenUI();
+            panelRoot.SetActive(false);
         }
 
         private void GenUI()
         {
             foreach (Transform c in contentContainer) Destroy(c.gameObject);
-            _dd.Clear(); _sub.Clear();
-            MakeHeader("政体系统", "9维政体组合编辑器");
-            MakeCategory();
-            MakeTemplate();
-            foreach (var d in Order) MakeDim(d);
-            MakeSecondary();
-            MakeSummary();
-            MakeButtons();
+            MakeHeader("政府", "已固化的制度 / 正在生效的法令 / 正在推行的法令");
+            _status = MkText("", 12, FontStyle.Normal);
+            _status.color = new Color(1f, .85f, .55f);
+            _status.transform.SetParent(contentContainer, false);
         }
 
-        private void MakeHeader(string t, string s)
+        private void MakeHeader(string title, string subtitle)
         {
             var o = new GameObject("H"); o.transform.SetParent(contentContainer, false);
             o.AddComponent<VerticalLayoutGroup>().spacing = 2;
-            var t1 = MkText(t, 18, FontStyle.Bold); t1.transform.SetParent(o.transform, false);
-            var t2 = MkText(s, 12, FontStyle.Normal); t2.color = new Color(.7f,.7f,.7f); t2.transform.SetParent(o.transform, false);
+            var t1 = MkText(title, 18, FontStyle.Bold); t1.transform.SetParent(o.transform, false);
+            var t2 = MkText(subtitle, 12, FontStyle.Normal);
+            t2.color = new Color(.7f, .7f, .7f);
+            t2.transform.SetParent(o.transform, false);
+            t2.horizontalOverflow = HorizontalWrapMode.Wrap;
         }
 
-        private void MakeCategory()
+        private void AddSection(string title)
         {
-            var o = new GameObject("Cat"); o.transform.SetParent(contentContainer, false);
-            o.AddComponent<HorizontalLayoutGroup>().spacing = 10;
-            MkText("政体大类:", 14, FontStyle.Bold).transform.SetParent(o.transform, false);
-            _catText = MkText("君主制", 14, FontStyle.Normal); _catText.color = new Color(1f,.8f,.4f); _catText.transform.SetParent(o.transform, false);
+            var header = MkText(title, 15, FontStyle.Bold);
+            header.color = new Color(.85f, .9f, 1f);
+            header.transform.SetParent(contentContainer, false);
         }
 
-        private void MakeTemplate()
+        private void AddLine(string text, Color color)
         {
-            var o = new GameObject("Tpl"); o.transform.SetParent(contentContainer, false);
-            o.AddComponent<HorizontalLayoutGroup>().spacing = 10;
-            MkText("快速模板:", 12, FontStyle.Normal).transform.SetParent(o.transform, false);
-            _tplDd = MkDd(); _tplDd.transform.SetParent(o.transform, false);
-            var opts = new List<string> { "选择模板..." };
-            foreach (var t in GovernmentConstraints.GetTemplates()) opts.Add(t.name);
-            _tplDd.AddOptions(opts);
-            var b = MkBtn("应用", 60); b.transform.SetParent(o.transform, false);
-            b.onClick.AddListener(ApplyTpl);
+            var line = MkText(text, 12, FontStyle.Normal);
+            line.color = color;
+            line.horizontalOverflow = HorizontalWrapMode.Wrap;
+            line.transform.SetParent(contentContainer, false);
         }
 
-        private void MakeDim(GovernmentConstraints.GovernmentDimension d)
+        private void AddAction(string label, string actionText, Action action)
         {
-            var o = new GameObject($"D_{d}"); o.transform.SetParent(contentContainer, false);
-            o.AddComponent<VerticalLayoutGroup>().spacing = 4;
-            var m = new GameObject("M"); m.transform.SetParent(o.transform, false);
-            m.AddComponent<HorizontalLayoutGroup>().spacing = 10;
-            MkText(GovernmentConstraints.GetDimensionName(d)+":", 12, FontStyle.Bold).transform.SetParent(m.transform, false);
-            var dd = MkDd(); dd.transform.SetParent(m.transform, false); _dd[d] = dd;
-            var cap = d;
-            dd.onValueChanged.AddListener(i => OnDim(cap, i));
-            var s = new GameObject("S"); s.transform.SetParent(o.transform, false);
-            var vl = s.AddComponent<VerticalLayoutGroup>(); vl.spacing = 2; vl.padding = new RectOffset(20,0,0,0);
-            _sub[d] = s;
-        }
-
-        private void MakeSecondary()
-        {
-            _secContainer = new GameObject("Sec"); _secContainer.transform.SetParent(contentContainer, false);
-            _secContainer.AddComponent<VerticalLayoutGroup>().spacing = 4;
-            var h = new GameObject("H"); h.transform.SetParent(_secContainer.transform, false);
-            h.AddComponent<HorizontalLayoutGroup>().spacing = 10;
-            MkText("次要成分:", 12, FontStyle.Bold).transform.SetParent(h.transform, false);
-            _secCountText = MkText("0/2", 12, FontStyle.Normal); _secCountText.color = new Color(.7f,.7f,.7f); _secCountText.transform.SetParent(h.transform, false);
-            var add = MkBtn("+ 添加", 80); add.transform.SetParent(h.transform, false);
-            add.onClick.AddListener(AddSec);
-            var l = new GameObject("List"); l.transform.SetParent(_secContainer.transform, false);
-            var vl = l.AddComponent<VerticalLayoutGroup>(); vl.spacing = 2; vl.padding = new RectOffset(20,0,0,0);
-        }
-
-        private void MakeSummary()
-        {
-            var o = new GameObject("Sum"); o.transform.SetParent(contentContainer, false);
-            o.AddComponent<VerticalLayoutGroup>().spacing = 4;
-            MkText("摘要:", 12, FontStyle.Bold).transform.SetParent(o.transform, false);
-            _sumText = MkText("", 11, FontStyle.Normal); _sumText.color = new Color(.8f,.8f,.8f); _sumText.transform.SetParent(o.transform, false);
-        }
-
-        private void MakeButtons()
-        {
-            var o = new GameObject("Btns"); o.transform.SetParent(contentContainer, false);
-            o.AddComponent<HorizontalLayoutGroup>().spacing = 10;
-            var a = MkBtn("应用政体", 120); a.transform.SetParent(o.transform, false); a.onClick.AddListener(Apply);
-            var r = MkBtn("重置", 80); r.transform.SetParent(o.transform, false); r.onClick.AddListener(Reset);
-        }
-
-        private void OnDim(GovernmentConstraints.GovernmentDimension d, int idx)
-        {
-            if (_current == null) return;
-            var opts = GovernmentConstraints.GetAvailableOptions(d, _current);
-            if (idx <= 0 || idx > opts.Count) return;
-            int v = opts[idx - 1];
-            switch (d)
+            var row = new GameObject("R");
+            row.transform.SetParent(contentContainer, false);
+            row.AddComponent<HorizontalLayoutGroup>().spacing = 8;
+            var btn = MkBtn(actionText, 180);
+            btn.transform.SetParent(row.transform, false);
+            btn.onClick.AddListener(() => { UiSfx.PlayClick(); action(); });
+            if (!string.IsNullOrEmpty(label))
             {
-                case GovernmentConstraints.GovernmentDimension.SupremeSovereignty: _current.supremeSovereignty = (GovernmentConstraints.SupremeSovereignty)v; break;
-                case GovernmentConstraints.GovernmentDimension.SupremeSuccession: _current.supremeSuccession.primary = v; break;
-                case GovernmentConstraints.GovernmentDimension.SupremeScope: _current.supremeScope.primary = v; break;
-                case GovernmentConstraints.GovernmentDimension.CentralExistence: _current.centralExistence = (GovernmentConstraints.CentralExistence)v; break;
-                case GovernmentConstraints.GovernmentDimension.CentralSuccession: _current.centralSuccession.primary = v; break;
-                case GovernmentConstraints.GovernmentDimension.CentralInstitution: _current.centralInstitution.primary = v; break;
-                case GovernmentConstraints.GovernmentDimension.LocalSuccession: _current.localSuccession.primary = v; break;
-                case GovernmentConstraints.GovernmentDimension.LocalScope: _current.localScope.primary = v; break;
-                case GovernmentConstraints.GovernmentDimension.SpatialStructure: _current.spatialStructure.primary = v; break;
+                var text = MkText(label, 12, FontStyle.Normal);
+                text.color = new Color(.9f, .9f, .9f);
+                text.horizontalOverflow = HorizontalWrapMode.Wrap;
+                text.transform.SetParent(row.transform, false);
             }
-            if (d == GovernmentConstraints.GovernmentDimension.SupremeSovereignty)
-            {
-                var no = GovernmentConstraints.GetAvailableOptions(GovernmentConstraints.GovernmentDimension.SupremeSuccession, _current);
-                if (no.Count > 0 && !no.Contains(_current.supremeSuccession.primary)) _current.supremeSuccession.primary = no[0];
-                _current.supremeSuccession.secondary.Clear();
-            }
+        }
+
+        public void Init()
+        {
             Refresh();
         }
 
-        private void AddSec()
+        private int ResolveRealmId()
         {
-            if (_current == null) return;
-            int max = GovernmentConstraints.GetMaxSecondaryCount(.5f);
-            if (_current.supremeSuccession.secondary.Count >= max) return;
-            var opts = GovernmentConstraints.GetAvailableOptions(GovernmentConstraints.GovernmentDimension.SupremeSuccession, _current, false);
-            var av = new List<int>();
-            foreach (var o in opts) if (o != _current.supremeSuccession.primary && !_current.supremeSuccession.secondary.Contains(o)) av.Add(o);
-            if (av.Count == 0) return;
-            _current.supremeSuccession.secondary.Add(av[0]);
-            Refresh();
-        }
-
-        private void ApplyTpl()
-        {
-            if (_tplDd == null || _tplDd.value <= 0) return;
-            var tpls = GovernmentConstraints.GetTemplates();
-            int i = _tplDd.value - 1;
-            if (i < 0 || i >= tpls.Count) return;
-            var t = tpls[i];
-            foreach (var kv in t.recommendedPrimary)
+            if (_worldReadModel == null) return -1;
+            if (_worldReadModel.GetRealm(targetRealmId) != null) return targetRealmId;
+            var all = _worldReadModel.GetAllRealms();
+            if (all != null && all.Count > 0 && all[0] != null)
             {
-                switch (kv.Key)
-                {
-                    case GovernmentConstraints.GovernmentDimension.SupremeSovereignty: _current.supremeSovereignty = (GovernmentConstraints.SupremeSovereignty)kv.Value; break;
-                    case GovernmentConstraints.GovernmentDimension.SupremeSuccession: _current.supremeSuccession.primary = kv.Value; break;
-                    case GovernmentConstraints.GovernmentDimension.SupremeScope: _current.supremeScope.primary = kv.Value; break;
-                    case GovernmentConstraints.GovernmentDimension.CentralExistence: _current.centralExistence = (GovernmentConstraints.CentralExistence)kv.Value; break;
-                    case GovernmentConstraints.GovernmentDimension.CentralSuccession: _current.centralSuccession.primary = kv.Value; break;
-                    case GovernmentConstraints.GovernmentDimension.CentralInstitution: _current.centralInstitution.primary = kv.Value; break;
-                    case GovernmentConstraints.GovernmentDimension.LocalSuccession: _current.localSuccession.primary = kv.Value; break;
-                    case GovernmentConstraints.GovernmentDimension.LocalScope: _current.localScope.primary = kv.Value; break;
-                    case GovernmentConstraints.GovernmentDimension.SpatialStructure: _current.spatialStructure.primary = kv.Value; break;
-                }
+                targetRealmId = all[0].realmId;
+                return targetRealmId;
             }
-            _current.titleDistribution = t.recommendedTitleDist;
-            _current.domainDistribution = t.recommendedDomainDist;
-            _current.supremeSuccession.secondary.Clear();
-            Refresh();
+            return -1;
         }
 
-        private void Apply() { if (world?.realms?.Count > targetRealmId) world.realms[targetRealmId].composition = _current; }
-        private void Reset() { _current = new GovernmentComposition(); Refresh(); }
+        private int ResolveRulerId(int realmId)
+        {
+            var ruler = _worldReadModel?.GetRuler(realmId);
+            return ruler != null ? ruler.characterId : -1;
+        }
 
         private void Refresh()
         {
-            foreach (var d in Order) { RefreshDd(d); RefreshSub(d); }
-            RefreshSec();
-            if (_catText) _catText.text = _current.supremeSovereignty == GovernmentConstraints.SupremeSovereignty.Monarchy ? "君主制" : "共和制";
-            if (_sumText)
+            if (contentContainer == null) return;
+            foreach (Transform c in contentContainer)
             {
-                var p = new List<string> { $"归属:{_current.supremeSovereignty}", $"交接:{GovernmentConstraints.GetComponentName(GovernmentConstraints.GovernmentDimension.SupremeSuccession,_current.supremeSuccession.primary)}" };
-                if (_current.supremeSuccession.secondary.Count > 0) { var n = new List<string>(); foreach (var s in _current.supremeSuccession.secondary) n.Add(GovernmentConstraints.GetComponentName(GovernmentConstraints.GovernmentDimension.SupremeSuccession,s)); p.Add($"次要:{string.Join("+",n)}"); }
-                p.Add($"头衔:{_current.titleDistribution}"); p.Add($"领地:{_current.domainDistribution}");
-                p.Add($"中央:{(_current.centralExistence==GovernmentConstraints.CentralExistence.Established?"有常设":"无常设")}");
-                p.Add($"央地:{GovernmentConstraints.GetComponentName(GovernmentConstraints.GovernmentDimension.SpatialStructure,_current.spatialStructure.primary)}");
-                _sumText.text = string.Join(" | ", p);
+                if (_status != null && c.gameObject == _status.gameObject) continue;
+                Destroy(c.gameObject);
+            }
+            if (_worldReadModel == null || LawQuery == null || LawCommand == null)
+            {
+                AddSection("世界未加载");
+                AddLine("世界未加载（无 UI 只读视图/法律契约）", new Color(.7f, .7f, .7f));
+                return;
+            }
+            int realmId = ResolveRealmId();
+            if (realmId < 0)
+            {
+                AddSection("世界未加载");
+                AddLine("当前政权不存在", new Color(.7f, .7f, .7f));
+                return;
+            }
+            int now = _worldReadModel.CurrentDay;
+            LawCommand.EnsureKnownLaws(realmId);
+            LawCommand.TickPendingLaws(realmId, now);
+            LawCommand.TickDecreeExpiry(realmId, now);
+            var view = LawQuery.GetGovernmentView(realmId, now);
+            if (view == null)
+            {
+                AddSection("世界未加载");
+                AddLine("无法读取政府视图", new Color(.7f, .7f, .7f));
+                return;
+            }
+
+            AddSection("已固化的制度");
+            if (view.enactedLaws.Count == 0) AddLine("尚未固化任何制度", new Color(.7f, .7f, .7f));
+            foreach (var item in view.enactedLaws) AddLine(item.label, new Color(.75f, .95f, .75f));
+
+            AddSection("正在生效的法令");
+            if (view.activeDecrees.Count == 0) AddLine("没有生效中的法令", new Color(.7f, .7f, .7f));
+            foreach (var item in view.activeDecrees)
+                AddAction(item.label, "撤销", () => TryRevokeDecree(item.decreeId));
+
+            AddSection("正在推行的法令");
+            if (view.pendingLaws.Count == 0 && view.pendingDecrees.Count == 0)
+                AddLine("没有正在推行的法令", new Color(.7f, .7f, .7f));
+            foreach (var item in view.pendingLaws)
+                AddAction(item.label, "取消", () => TryCancelPendingLaw(item.groupId));
+            foreach (var item in view.pendingDecrees)
+                AddLine(item.label, new Color(.85f, .85f, .7f));
+
+            AddSection("可推行的制度");
+            if (view.proposableLaws.Count == 0)
+                AddLine("没有可推行的制度（需已知、有提案权、满足前置）", new Color(.7f, .7f, .7f));
+            foreach (var item in view.proposableLaws)
+            {
+                var capturedLawId = item.lawId;
+                var capturedLabel = item.label;
+                AddAction("", "推行：" + capturedLabel, () => TryBeginEnactLaw(capturedLawId, capturedLabel));
+            }
+
+            AddSection("可颁布的法令");
+            if (view.enactableDecrees.Count == 0) AddLine("没有可颁布的法令", new Color(.7f, .7f, .7f));
+            foreach (var decree in view.enactableDecrees)
+            {
+                var capturedDecreeId = decree.decreeId;
+                var capturedLabel = decree.label;
+                AddAction("", "颁布：" + capturedLabel, () => TryEnactDecree(capturedDecreeId, capturedLabel));
             }
         }
 
-        private void RefreshDd(GovernmentConstraints.GovernmentDimension d)
+        private void TryBeginEnactLaw(string lawId, string displayName)
         {
-            if (!_dd.ContainsKey(d)) return;
-            var dd = _dd[d]; dd.ClearOptions();
-            var opts = GovernmentConstraints.GetAvailableOptions(d, _current);
-            var ss = new List<string> { "选择..." };
-            foreach (var o in opts) ss.Add(GovernmentConstraints.GetComponentName(d, o));
-            dd.AddOptions(ss);
-            int cur = GetCur(d); int ci = opts.IndexOf(cur); dd.value = ci >= 0 ? ci + 1 : 0;
+            int realmId = ResolveRealmId();
+            if (realmId < 0 || string.IsNullOrEmpty(lawId) || LawCommand == null) return;
+            int now = _worldReadModel.CurrentDay;
+            string reason;
+            bool ok = LawCommand.BeginEnactLaw(realmId, lawId, ResolveRulerId(realmId), now, out reason);
+            if (ok)
+            {
+                int days = -1;
+                foreach (var pending in LawQuery.GetPendingLaws(realmId))
+                {
+                    if (pending.lawId == lawId) { days = pending.remainingDays; break; }
+                }
+                if (_status != null) _status.text = days > 0 ? $"开始推行：{displayName}（{days} 天）" : $"开始推行：{displayName}";
+            }
+            else if (_status != null) _status.text = "无法推行：" + reason;
+            Refresh();
         }
 
-        private int GetCur(GovernmentConstraints.GovernmentDimension d)
+        private void TryCancelPendingLaw(string groupId)
         {
-            switch (d)
-            {
-                case GovernmentConstraints.GovernmentDimension.SupremeSovereignty: return (int)_current.supremeSovereignty;
-                case GovernmentConstraints.GovernmentDimension.SupremeSuccession: return _current.supremeSuccession.primary;
-                case GovernmentConstraints.GovernmentDimension.SupremeScope: return _current.supremeScope.primary;
-                case GovernmentConstraints.GovernmentDimension.CentralExistence: return (int)_current.centralExistence;
-                case GovernmentConstraints.GovernmentDimension.CentralSuccession: return _current.centralSuccession.primary;
-                case GovernmentConstraints.GovernmentDimension.CentralInstitution: return _current.centralInstitution.primary;
-                case GovernmentConstraints.GovernmentDimension.LocalSuccession: return _current.localSuccession.primary;
-                case GovernmentConstraints.GovernmentDimension.LocalScope: return _current.localScope.primary;
-                case GovernmentConstraints.GovernmentDimension.SpatialStructure: return _current.spatialStructure.primary;
-                default: return 0;
-            }
+            int realmId = ResolveRealmId();
+            if (realmId < 0 || LawCommand == null) return;
+            string reason;
+            bool ok = LawCommand.CancelPendingLaw(realmId, groupId, ResolveRulerId(realmId), out reason);
+            if (_status != null) _status.text = ok ? "已取消推行" : "无法取消：" + reason;
+            Refresh();
         }
 
-        private void RefreshSub(GovernmentConstraints.GovernmentDimension d)
+        private void TryRevokeDecree(string decreeId)
         {
-            if (!_sub.ContainsKey(d)) return;
-            var c = _sub[d];
-            foreach (Transform ch in c.transform) Destroy(ch.gameObject);
-            var ag = GovernmentConstraints.GetActiveSubOptionGroups(d, _current);
-            foreach (var g in ag)
-            {
-                var l = MkText($"  {g.groupName}:", 11, FontStyle.Bold); l.color = new Color(.9f,.9f,.7f); l.transform.SetParent(c.transform, false);
-                var dd = MkDd(); dd.transform.SetParent(c.transform, false);
-                var os = new List<string> { "选择..." };
-                foreach (var o in g.options) os.Add(o.name);
-                dd.AddOptions(os);
-            }
-            if (d == GovernmentConstraints.GovernmentDimension.SupremeScope)
-            {
-                var tl = MkText("  头衔分配:", 11, FontStyle.Bold); tl.color = new Color(.9f,.9f,.7f); tl.transform.SetParent(c.transform, false);
-                var td = MkDd(); td.transform.SetParent(c.transform, false);
-                var to = GovernmentConstraints.GetAvailableTitleDistributions(_current);
-                var ts = new List<string> { "选择..." };
-                foreach (var o in to) ts.Add(o.ToString());
-                td.AddOptions(ts); td.value = (int)_current.titleDistribution + 1;
-                td.onValueChanged.AddListener(i => { if (i > 0) _current.titleDistribution = (GovernmentConstraints.TitleDistribution)(i-1); Refresh(); });
-                var dl = MkText("  领地分配:", 11, FontStyle.Bold); dl.color = new Color(.9f,.9f,.7f); dl.transform.SetParent(c.transform, false);
-                var dd2 = MkDd(); dd2.transform.SetParent(c.transform, false);
-                var ds = new List<string> { "选择..." };
-                foreach (GovernmentConstraints.DomainDistribution o in Enum.GetValues(typeof(GovernmentConstraints.DomainDistribution))) ds.Add(o.ToString());
-                dd2.AddOptions(ds); dd2.value = (int)_current.domainDistribution + 1;
-                dd2.onValueChanged.AddListener(i => { if (i > 0) _current.domainDistribution = (GovernmentConstraints.DomainDistribution)(i-1); Refresh(); });
-            }
+            int realmId = ResolveRealmId();
+            if (realmId < 0 || LawCommand == null) return;
+            string reason;
+            bool ok = LawCommand.RevokeDecree(realmId, decreeId, out reason);
+            if (_status != null) _status.text = ok ? $"已撤销法令：{decreeId}" : "没有生效中的该法令";
+            Refresh();
         }
 
-        private void RefreshSec()
+        private void TryEnactDecree(string decreeId, string displayName)
         {
-            if (!_secContainer) return;
-            Transform list = null;
-            foreach (Transform ch in _secContainer.transform) if (ch.name == "List") list = ch;
-            if (list == null) return;
-            foreach (Transform ch in list.transform) Destroy(ch.gameObject);
-            int max = GovernmentConstraints.GetMaxSecondaryCount(.5f);
-            if (_secCountText) _secCountText.text = $"{_current.supremeSuccession.secondary.Count}/{max}";
-            for (int i = 0; i < _current.supremeSuccession.secondary.Count; i++)
+            int realmId = ResolveRealmId();
+            if (realmId < 0 || string.IsNullOrEmpty(decreeId) || LawCommand == null) return;
+            string reason;
+            int now = _worldReadModel.CurrentDay;
+            bool ok = LawCommand.EnactDecree(realmId, decreeId, now, out reason);
+            if (_status != null) _status.text = ok ? $"法令生效：{displayName}" : "无法颁布：" + reason;
+            if (ok && DecreeCommand != null)
             {
-                int ci = i;
-                var row = new GameObject($"S{i}"); row.transform.SetParent(list, false);
-                row.AddComponent<HorizontalLayoutGroup>().spacing = 10;
-                MkText($"  第{i+1}次要:", 11, FontStyle.Normal).transform.SetParent(row.transform, false);
-                var dd = MkDd(); dd.transform.SetParent(row.transform, false);
-                var opts = GovernmentConstraints.GetAvailableOptions(GovernmentConstraints.GovernmentDimension.SupremeSuccession, _current, false);
-                var av = new List<int>(); var ss = new List<string> { "选择..." };
-                foreach (var o in opts) if (o != _current.supremeSuccession.primary && !_current.supremeSuccession.secondary.Contains(o)) { av.Add(o); ss.Add(GovernmentConstraints.GetComponentName(GovernmentConstraints.GovernmentDimension.SupremeSuccession,o)); }
-                int cur = _current.supremeSuccession.secondary[i];
-                if (!av.Contains(cur)) { av.Insert(0,cur); ss.Insert(1,GovernmentConstraints.GetComponentName(GovernmentConstraints.GovernmentDimension.SupremeSuccession,cur)); }
-                dd.AddOptions(ss);
-                int cidx = av.IndexOf(cur); dd.value = cidx >= 0 ? cidx + 1 : 0;
-                dd.onValueChanged.AddListener(idx => { if (idx <= 0) return; _current.supremeSuccession.secondary[ci] = av[idx-1]; Refresh(); });
-                var rm = MkBtn("×", 30); rm.transform.SetParent(row.transform, false);
-                rm.onClick.AddListener(() => { _current.supremeSuccession.secondary.RemoveAt(ci); Refresh(); });
+                int orders = DecreeCommand.IssueDecreeOrders(decreeId, realmId);
+                if (_status != null) _status.text += orders > 0 ? $"；已下发 {orders} 道命令" : "；无下属官员可传递";
             }
+            Refresh();
         }
 
-        private Text MkText(string t, int s, FontStyle st)
+        private Text MkText(string text, int size, FontStyle style)
         {
-            var o = new GameObject("Text"); var txt = o.AddComponent<Text>();
-            txt.text = t; txt.fontSize = s; txt.fontStyle = st; txt.color = Color.white;
-            txt.alignment = TextAnchor.MiddleLeft; txt.horizontalOverflow = HorizontalWrapMode.Overflow; txt.verticalOverflow = VerticalWrapMode.Overflow;
-            if (!txt.font) txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            o.AddComponent<LayoutElement>().minWidth = 100;
+            var go = new GameObject("Text");
+            var txt = go.AddComponent<Text>();
+            txt.text = text; txt.fontSize = size; txt.fontStyle = style; txt.color = Color.white;
+            txt.alignment = TextAnchor.MiddleLeft;
+            txt.horizontalOverflow = HorizontalWrapMode.Overflow;
+            txt.verticalOverflow = VerticalWrapMode.Overflow;
+            if (!txt.font) txt.font = UiFont;
+            go.AddComponent<LayoutElement>().minWidth = 100;
             return txt;
         }
 
-        private Dropdown MkDd()
+        private Button MkBtn(string text, float width)
         {
-            var o = new GameObject("DD"); var dd = o.AddComponent<Dropdown>();
-            var tpl = new GameObject("Tpl"); tpl.transform.SetParent(o.transform, false);
-            var tr = tpl.AddComponent<RectTransform>(); tr.anchorMin = new Vector2(0,0); tr.anchorMax = new Vector2(1,0); tr.pivot = new Vector2(.5f,1); tr.sizeDelta = new Vector2(0,150); tpl.SetActive(false);
-            var vp = new GameObject("VP"); vp.transform.SetParent(tpl.transform, false);
-            var vr = vp.AddComponent<RectTransform>(); vr.anchorMin = Vector2.zero; vr.anchorMax = Vector2.one; vr.offsetMin = Vector2.zero; vr.offsetMax = new Vector2(-18,0);
-            var mk = vp.AddComponent<Mask>(); mk.showMaskGraphic = false; vp.AddComponent<Image>().color = new Color(.2f,.2f,.2f);
-            var ct = new GameObject("CT"); ct.transform.SetParent(vp.transform, false);
-            var cr = ct.AddComponent<RectTransform>(); cr.anchorMin = new Vector2(0,1); cr.anchorMax = new Vector2(1,1); cr.pivot = new Vector2(.5f,1); cr.sizeDelta = new Vector2(0,28);
-            ct.AddComponent<VerticalLayoutGroup>().spacing = 2;
-            var it = new GameObject("Item"); it.transform.SetParent(ct.transform, false);
-            var ir = it.AddComponent<RectTransform>(); ir.anchorMin = new Vector2(0,.5f); ir.anchorMax = new Vector2(1,.5f); ir.sizeDelta = new Vector2(0,28);
-            var tg = it.AddComponent<Toggle>(); tg.isOn = true; it.AddComponent<Image>().color = new Color(.3f,.3f,.3f);
-            var il = new GameObject("Label"); il.transform.SetParent(it.transform, false);
-            var ilr = il.AddComponent<RectTransform>(); ilr.anchorMin = Vector2.zero; ilr.anchorMax = Vector2.one; ilr.offsetMin = new Vector2(10,0); ilr.offsetMax = new Vector2(-10,0);
-            var itxt = il.AddComponent<Text>(); itxt.fontSize = 12; itxt.color = Color.white; itxt.alignment = TextAnchor.MiddleLeft;
-            if (!itxt.font) itxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            tg.targetGraphic = it.GetComponent<Image>();
-            var cols = tg.colors; cols.normalColor = new Color(.3f,.3f,.3f); cols.highlightedColor = new Color(.4f,.4f,.4f); cols.pressedColor = new Color(.5f,.5f,.5f); cols.selectedColor = new Color(.4f,.5f,.7f); tg.colors = cols;
-            dd.template = tr; dd.captionText = MkCap(o); dd.itemText = itxt;
-            dd.options = new List<Dropdown.OptionData>(); dd.AddOptions(new List<string> { "选择..." });
-            o.AddComponent<LayoutElement>().minWidth = 150;
-            return dd;
+            var go = new GameObject("Btn");
+            var btn = go.AddComponent<Button>();
+            go.AddComponent<Image>().color = new Color(.3f, .4f, .6f);
+            var colors = btn.colors;
+            colors.normalColor = new Color(.3f, .4f, .6f);
+            colors.highlightedColor = new Color(.4f, .5f, .7f);
+            colors.pressedColor = new Color(.2f, .3f, .5f);
+            btn.colors = colors;
+            var labelGo = new GameObject("Text");
+            labelGo.transform.SetParent(go.transform, false);
+            var rect = labelGo.AddComponent<RectTransform>();
+            rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero; rect.offsetMax = Vector2.zero;
+            var label = labelGo.AddComponent<Text>();
+            label.text = text; label.fontSize = 12; label.color = Color.white;
+            label.alignment = TextAnchor.MiddleCenter;
+            if (!label.font) label.font = UiFont;
+            var element = go.AddComponent<LayoutElement>();
+            element.minWidth = width; element.minHeight = 28;
+            return btn;
         }
 
-        private Text MkCap(GameObject p)
+        public void Show()
         {
-            var o = new GameObject("Label"); o.transform.SetParent(p.transform, false);
-            var r = o.AddComponent<RectTransform>(); r.anchorMin = Vector2.zero; r.anchorMax = Vector2.one; r.offsetMin = new Vector2(10,0); r.offsetMax = new Vector2(-30,0);
-            var t = o.AddComponent<Text>(); t.fontSize = 12; t.color = Color.white; t.alignment = TextAnchor.MiddleLeft;
-            if (!t.font) t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            return t;
+            if (panelRoot == null) return;
+            if (!panelRoot.activeSelf) UiSfx.PlayOpen();
+            panelRoot.SetActive(true);
+            Init();
         }
 
-        private Button MkBtn(string t, float w)
+        public void Hide()
         {
-            var o = new GameObject("Btn"); var b = o.AddComponent<Button>(); o.AddComponent<Image>().color = new Color(.3f,.4f,.6f);
-            var cols = b.colors; cols.normalColor = new Color(.3f,.4f,.6f); cols.highlightedColor = new Color(.4f,.5f,.7f); cols.pressedColor = new Color(.2f,.3f,.5f); b.colors = cols;
-            var to = new GameObject("Text"); to.transform.SetParent(o.transform, false);
-            var tr = to.AddComponent<RectTransform>(); tr.anchorMin = Vector2.zero; tr.anchorMax = Vector2.one; tr.offsetMin = Vector2.zero; tr.offsetMax = Vector2.zero;
-            var txt = to.AddComponent<Text>(); txt.text = t; txt.fontSize = 12; txt.color = Color.white; txt.alignment = TextAnchor.MiddleCenter;
-            if (!txt.font) txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            var le = o.AddComponent<LayoutElement>(); le.minWidth = w; le.minHeight = 28;
-            return b;
+            if (panelRoot == null || !panelRoot.activeSelf) return;
+            UiSfx.PlayClose();
+            panelRoot.SetActive(false);
         }
 
-        public void Show() { if (panelRoot) panelRoot.SetActive(true); Init(); }
-        public void Hide() { if (panelRoot) panelRoot.SetActive(false); }
         public void Toggle() { if (panelRoot) { if (panelRoot.activeSelf) Hide(); else Show(); } }
-    }
+}
 }

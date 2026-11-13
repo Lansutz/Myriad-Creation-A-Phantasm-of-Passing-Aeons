@@ -3,6 +3,7 @@
     "rootNamespace": "MyriadCreation.EditorTools",
     "references": [
         "MyriadCreation.Core",
+        "MyriadCreation.Content",
         "MyriadCreation.World",
         "MyriadCreation.Simulation",
         "MyriadCreation.Rendering",

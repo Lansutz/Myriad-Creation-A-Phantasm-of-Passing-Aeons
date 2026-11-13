@@ -1,0 +1,1560 @@
+{
+  "groups": [
+    {
+      "groupId": "taxation",
+      "name": "赋税",
+      "order": 10,
+      "description": "",
+      "laws": [
+        {
+          "lawId": "tax_light",
+          "groupId": "taxation",
+          "name": "轻赋",
+          "description": "",
+          "tier": 1,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 0.9,
+            "stabilityPerYear": 2.0,
+            "legitimacyPerYear": 1.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 50.0,
+          "enactmentCostPrestige": 10.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "tax_standard",
+          "groupId": "taxation",
+          "name": "常赋",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.1,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 80.0,
+          "enactmentCostPrestige": 20.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "tax_heavy",
+          "groupId": "taxation",
+          "name": "重赋",
+          "description": "",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.4,
+            "stabilityPerYear": -4.0,
+            "legitimacyPerYear": -2.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 120.0,
+          "enactmentCostPrestige": 30.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 60,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        }
+      ]
+    },
+    {
+      "groupId": "military",
+      "name": "军制",
+      "order": 20,
+      "description": "",
+      "laws": [
+        {
+          "lawId": "militia",
+          "groupId": "military",
+          "name": "民兵",
+          "description": "",
+          "tier": 1,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.2,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 60.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "standing_army",
+          "groupId": "military",
+          "name": "常备军",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              995
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": -2.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.5,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 150.0,
+          "enactmentCostPrestige": 35.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 60,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "feudal_host",
+          "groupId": "military",
+          "name": "封建征召",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              501
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.5,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.2,
+            "unrestPerYear": 0.5
+          },
+          "enactmentCostTreasury": 90.0,
+          "enactmentCostPrestige": 20.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 45,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "mercenary_army",
+          "groupId": "military",
+          "name": "雇佣军",
+          "description": "",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              1003
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.2,
+            "stabilityPerYear": -1.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.6,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 180.0,
+          "enactmentCostPrestige": 40.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 90,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        }
+      ]
+    },
+    {
+      "groupId": "military_organization",
+      "name": "军队编制",
+      "order": 21,
+      "description": "",
+      "laws": [
+        {
+          "lawId": "national_army",
+          "groupId": "military_organization",
+          "name": "国家军",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              995
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.15,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 120.0,
+          "enactmentCostPrestige": 25.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 60,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "city_army",
+          "groupId": "military_organization",
+          "name": "城市军",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              994
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.5,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.05,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 100.0,
+          "enactmentCostPrestige": 20.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 45,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "lords_host",
+          "groupId": "military_organization",
+          "name": "领主军",
+          "description": "",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              501
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": -0.5,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.2,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 140.0,
+          "enactmentCostPrestige": 30.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 75,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        }
+      ]
+    },
+    {
+      "groupId": "privilege",
+      "name": "特权",
+      "order": 30,
+      "description": "",
+      "laws": [
+        {
+          "lawId": "charter_free_city",
+          "groupId": "privilege",
+          "name": "自由市特许",
+          "description": "授予城市自治与贸易特许。",
+          "tier": 1,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 0.95,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 100.0,
+          "enactmentCostPrestige": 10.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 45,
+          "proposalAuthority": 2,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "charter_guild",
+          "groupId": "privilege",
+          "name": "行会特许",
+          "description": "授予行会垄断与自治权。",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 140.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 60,
+          "proposalAuthority": 2,
+          "requiredInstitution": 0
+        }
+      ]
+    },
+    {
+      "groupId": "succession",
+      "name": "继承制度",
+      "order": 40,
+      "description": "",
+      "laws": [
+        {
+          "lawId": "succ_hereditary",
+          "groupId": "succession",
+          "name": "世袭继承",
+          "description": "血统世袭，秩序稳定。",
+          "tier": 1,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 2.0,
+            "legitimacyPerYear": 2.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 60.0,
+          "enactmentCostPrestige": 10.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "succ_elective",
+          "groupId": "succession",
+          "name": "选举继承",
+          "description": "推举产生继承人。",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 1.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 80.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "succ_usurpation",
+          "groupId": "succession",
+          "name": "僭夺继承",
+          "description": "强者得位，秩序动荡。",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": -2.0,
+            "legitimacyPerYear": -2.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 120.0,
+          "enactmentCostPrestige": 25.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 60,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "succ_rotation",
+          "groupId": "succession",
+          "name": "轮座继承",
+          "description": "轮替执政。",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 70.0,
+          "enactmentCostPrestige": 10.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 30,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        }
+      ]
+    },
+    {
+      "groupId": "supreme_scope",
+      "name": "君权范围",
+      "order": 50,
+      "description": "",
+      "laws": [
+        {
+          "lawId": "scope_absolute",
+          "groupId": "supreme_scope",
+          "name": "绝对君权",
+          "description": "君权不受约束。",
+          "tier": 1,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.05,
+            "stabilityPerYear": -1.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 100.0,
+          "enactmentCostPrestige": 20.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "scope_legally_bound",
+          "groupId": "supreme_scope",
+          "name": "法理受限",
+          "description": "君权受法律约束。",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 0.95,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 1.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 90.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "scope_custom_bound",
+          "groupId": "supreme_scope",
+          "name": "惯例约束",
+          "description": "君权受惯例约束。",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 0.95,
+            "stabilityPerYear": 2.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 80.0,
+          "enactmentCostPrestige": 10.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 30,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "scope_consensual",
+          "groupId": "supreme_scope",
+          "name": "共议制约",
+          "description": "重大事务需共议。",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 0.9,
+            "stabilityPerYear": 2.0,
+            "legitimacyPerYear": 2.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 100.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 30,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "scope_divinely_bound",
+          "groupId": "supreme_scope",
+          "name": "神意约束",
+          "description": "君权受神意约束。",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 0.9,
+            "stabilityPerYear": 3.0,
+            "legitimacyPerYear": 2.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 110.0,
+          "enactmentCostPrestige": 20.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 30,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        }
+      ]
+    },
+    {
+      "groupId": "central_succession",
+      "name": "中央继承",
+      "order": 60,
+      "description": "",
+      "laws": [
+        {
+          "lawId": "cent_succ_appointed",
+          "groupId": "central_succession",
+          "name": "上级决断",
+          "description": "",
+          "tier": 1,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 1.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 70.0,
+          "enactmentCostPrestige": 10.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "cent_succ_elected",
+          "groupId": "central_succession",
+          "name": "集体选择",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 2.0,
+            "legitimacyPerYear": 1.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 85.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "cent_succ_examination",
+          "groupId": "central_succession",
+          "name": "客观标准",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.05,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 2.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 90.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "cent_succ_hereditary",
+          "groupId": "central_succession",
+          "name": "血缘世袭",
+          "description": "",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 1.0,
+            "manpowerMultiplier": 1.05,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 110.0,
+          "enactmentCostPrestige": 20.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        }
+      ]
+    },
+    {
+      "groupId": "local_succession",
+      "name": "地方继承",
+      "order": 70,
+      "description": "",
+      "laws": [
+        {
+          "lawId": "local_succ_appointed",
+          "groupId": "local_succession",
+          "name": "地方任命",
+          "description": "",
+          "tier": 1,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 60.0,
+          "enactmentCostPrestige": 10.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "local_succ_elected",
+          "groupId": "local_succession",
+          "name": "地方选举",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 0.95,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 1.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 70.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "local_succ_hereditary",
+          "groupId": "local_succession",
+          "name": "地方世袭",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.05,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 80.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "local_succ_charter",
+          "groupId": "local_succession",
+          "name": "城市特许",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 0.9,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 1.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 90.0,
+          "enactmentCostPrestige": 10.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 30,
+          "proposalAuthority": 2,
+          "requiredInstitution": 0
+        }
+      ]
+    },
+    {
+      "groupId": "local_scope",
+      "name": "地方权限",
+      "order": 80,
+      "description": "",
+      "laws": [
+        {
+          "lawId": "local_scope_full_autonomy",
+          "groupId": "local_scope",
+          "name": "地方自治",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 0.9,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 0.9,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 90.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "local_scope_fiscal_judicial",
+          "groupId": "local_scope",
+          "name": "财政司法自治",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 0.95,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 0.95,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 100.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "local_scope_military_only",
+          "groupId": "local_scope",
+          "name": "仅军事自治",
+          "description": "",
+          "tier": 1,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.05,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.05,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 70.0,
+          "enactmentCostPrestige": 10.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "local_scope_none",
+          "groupId": "local_scope",
+          "name": "中央直辖",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.15,
+            "stabilityPerYear": -1.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.1,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 90.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        }
+      ]
+    },
+    {
+      "groupId": "spatial",
+      "name": "领土结构",
+      "order": 90,
+      "description": "",
+      "laws": [
+        {
+          "lawId": "spatial_unitary",
+          "groupId": "spatial",
+          "name": "单一制",
+          "description": "",
+          "tier": 1,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.05,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.05,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 100.0,
+          "enactmentCostPrestige": 20.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "spatial_federal",
+          "groupId": "spatial",
+          "name": "联邦制",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 0.95,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 1.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 120.0,
+          "enactmentCostPrestige": 25.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 60,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "spatial_confederal",
+          "groupId": "spatial",
+          "name": "邦联制",
+          "description": "",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 0.85,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 0.9,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 140.0,
+          "enactmentCostPrestige": 30.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 90,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        }
+      ]
+    },
+    {
+      "groupId": "military_admin",
+      "name": "军事管理",
+      "order": 21,
+      "description": "",
+      "laws": [
+        {
+          "lawId": "military_discipline",
+          "groupId": "military_admin",
+          "name": "军纪",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              995
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.1,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 80.0,
+          "enactmentCostPrestige": 20.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 45,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "military_logistics",
+          "groupId": "military_admin",
+          "name": "军需",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              997
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.15,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 100.0,
+          "enactmentCostPrestige": 25.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 60,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "military_justice",
+          "groupId": "military_admin",
+          "name": "军法",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              505
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 0.5,
+            "manpowerMultiplier": 1.05,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 90.0,
+          "enactmentCostPrestige": 20.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 45,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "command_hierarchy",
+          "groupId": "military_admin",
+          "name": "指挥体系",
+          "description": "",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              995
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.5,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.25,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 150.0,
+          "enactmentCostPrestige": 35.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 75,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "military_training",
+          "groupId": "military_admin",
+          "name": "军训",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              995
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.1,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 70.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "central_command",
+          "groupId": "military_admin",
+          "name": "中央统一调遣",
+          "description": "",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              995
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.5,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.25,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 150.0,
+          "enactmentCostPrestige": 35.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 75,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "theater_autonomy",
+          "groupId": "military_admin",
+          "name": "战区自主",
+          "description": "",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              960
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.2,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 160.0,
+          "enactmentCostPrestige": 35.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 90,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "frontier_discretion",
+          "groupId": "military_admin",
+          "name": "边将便宜行事",
+          "description": "",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              999
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": -0.5,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.3,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 170.0,
+          "enactmentCostPrestige": 40.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 90,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0
+        }
+      ]
+    },
+    {
+      "groupId": "border",
+      "name": "边境",
+      "order": 22,
+      "description": "",
+      "laws": [
+        {
+          "lawId": "border_garrison",
+          "groupId": "border",
+          "name": "边防驻军",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              999
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.5,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.15,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 110.0,
+          "enactmentCostPrestige": 25.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 60,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "frontier_march",
+          "groupId": "border",
+          "name": "边疆军镇",
+          "description": "",
+          "tier": 3,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              960
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.3,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 160.0,
+          "enactmentCostPrestige": 35.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 90,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "border_trade",
+          "groupId": "border",
+          "name": "边市",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              1008
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.1,
+            "stabilityPerYear": 1.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 90.0,
+          "enactmentCostPrestige": 20.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 45,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "border_pass",
+          "groupId": "border",
+          "name": "关津",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              985
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.5,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.05,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 80.0,
+          "enactmentCostPrestige": 20.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 45,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        },
+        {
+          "lawId": "border_patrol",
+          "groupId": "border",
+          "name": "巡边",
+          "description": "",
+          "tier": 2,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": [
+              999
+            ]
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.1,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 70.0,
+          "enactmentCostPrestige": 15.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": false,
+          "enactmentDays": 45,
+          "proposalAuthority": 1,
+          "requiredInstitution": 0
+        }
+      ]
+    }
+  ],
+  "decrees": [
+    {
+      "decreeId": "decree_tax_relief",
+      "name": "蠲免赋税",
+      "description": "临时减轻赋税，安抚民心。",
+      "requirements": {
+        "minTreasury": 0.0,
+        "minLegitimacy": 40.0,
+        "minCentralization": 0.0,
+        "requiredLawIds": [],
+        "requiredInnovationIds": []
+      },
+      "effects": {
+        "taxMultiplier": 0.7,
+        "stabilityPerYear": 2.0,
+        "legitimacyPerYear": 0.0,
+        "manpowerMultiplier": 1.0,
+        "unrestPerYear": -3.0
+      },
+      "costTreasury": 200.0,
+      "costAuthority": 10.0,
+      "durationDays": 180,
+      "cooldownDays": 540
+    },
+    {
+      "decreeId": "decree_levy",
+      "name": "加征",
+      "description": "临时加征，充实国库，但激化不满。",
+      "requirements": {
+        "minTreasury": 0.0,
+        "minLegitimacy": 30.0,
+        "minCentralization": 0.0,
+        "requiredLawIds": [
+          "tax_heavy"
+        ],
+        "requiredInnovationIds": []
+      },
+      "effects": {
+        "taxMultiplier": 1.5,
+        "stabilityPerYear": -3.0,
+        "legitimacyPerYear": 0.0,
+        "manpowerMultiplier": 1.0,
+        "unrestPerYear": 5.0
+      },
+      "costTreasury": 0.0,
+      "costAuthority": 20.0,
+      "durationDays": 120,
+      "cooldownDays": 720
+    }
+  ]
+}

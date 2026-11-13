@@ -1,0 +1,258 @@
+{
+  "equipment": [
+    {
+      "equipmentId": 1,
+      "equipmentName": "配重式投石机",
+      "category": 3,
+      "tier": 3,
+      "requiredInnovation": 305,
+      "description": "配重式抛射机构解锁的具体攻城器械。"
+    },
+    {
+      "equipmentId": 2,
+      "equipmentName": "火绳枪",
+      "category": 4,
+      "tier": 2,
+      "requiredInnovation": 307,
+      "description": "火绳枪机解锁的具体手持火器。",
+      "requiredInnovationTree": {
+        "kind": 1,
+        "innovationId": 0,
+        "children": [
+          {
+            "kind": 0,
+            "innovationId": 307,
+            "children": []
+          },
+          {
+            "kind": 0,
+            "innovationId": 207,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "equipmentId": 100,
+      "equipmentName": "独木舟",
+      "category": 5,
+      "tier": 1,
+      "requiredInnovation": 400,
+      "description": "独木舟船体；具体船物品。",
+      "hullForm": 2,
+      "propulsion": 1
+    },
+    {
+      "equipmentId": 101,
+      "equipmentName": "横帆船",
+      "category": 5,
+      "tier": 2,
+      "requiredInnovation": 401,
+      "description": "横帆帆装解锁的具体船物品。",
+      "hullForm": 4,
+      "propulsion": 2
+    },
+    {
+      "equipmentId": 200,
+      "equipmentName": "双马战车",
+      "category": 6,
+      "tier": 2,
+      "requiredInnovation": 1013,
+      "description": "双马战车结构解锁的具体车辆。"
+    },
+    {
+      "equipmentId": 102,
+      "equipmentName": "桨帆船",
+      "category": 5,
+      "tier": 2,
+      "requiredInnovation": 402,
+      "description": "由对应革新解锁的具体物品。",
+      "hullForm": 3,
+      "propulsion": 4,
+      "boardingPlatform": true
+    },
+    {
+      "equipmentId": 103,
+      "equipmentName": "磁针罗盘",
+      "category": 7,
+      "tier": 2,
+      "requiredInnovation": 403,
+      "description": "由对应革新解锁的具体物品。"
+    },
+    {
+      "equipmentId": 104,
+      "equipmentName": "纵帆船",
+      "category": 5,
+      "tier": 3,
+      "requiredInnovation": 404,
+      "description": "由对应革新解锁的具体物品。",
+      "hullForm": 4,
+      "propulsion": 3
+    },
+    {
+      "equipmentId": 105,
+      "equipmentName": "远洋货船",
+      "category": 5,
+      "tier": 3,
+      "requiredInnovation": 405,
+      "description": "由对应革新解锁的具体物品。",
+      "hullForm": 4,
+      "propulsion": 2
+    },
+    {
+      "equipmentId": 106,
+      "equipmentName": "炮门战船",
+      "category": 5,
+      "tier": 3,
+      "requiredInnovation": 406,
+      "description": "由对应革新解锁的具体物品。",
+      "hullForm": 4,
+      "propulsion": 2,
+      "batteryLayout": 1
+    },
+    {
+      "equipmentId": 3,
+      "equipmentName": "射石炮",
+      "category": 3,
+      "tier": 3,
+      "requiredInnovation": 308,
+      "description": "射石炮铸造解锁的具体早期攻城火炮；发射石弹，不泛指所有攻城炮。",
+      "requiredInnovationTree": {
+        "kind": 1,
+        "innovationId": 0,
+        "children": [
+          {
+            "kind": 0,
+            "innovationId": 308,
+            "children": []
+          },
+          {
+            "kind": 0,
+            "innovationId": 207,
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "equipmentId": 4,
+      "equipmentName": "青铜戈",
+      "category": 1,
+      "tier": 1,
+      "requiredInnovation": 201,
+      "description": "青铜戈：长柄勾啄兵器。",
+      "weaponFamily": 1,
+      "craftProcess": 2,
+      "processDetail": "范铸"
+    },
+    {
+      "equipmentId": 5,
+      "equipmentName": "铁剑",
+      "category": 1,
+      "tier": 2,
+      "requiredInnovation": 202,
+      "description": "铁剑：铁锻直刃兵器。",
+      "weaponFamily": 3,
+      "craftProcess": 3,
+      "processDetail": "块炼铁锻打"
+    },
+    {
+      "equipmentId": 6,
+      "equipmentName": "皮甲",
+      "category": 2,
+      "tier": 1,
+      "requiredInnovation": 1010,
+      "description": "多层皮革护甲。"
+    },
+    {
+      "equipmentId": 7,
+      "equipmentName": "青铜盔甲",
+      "category": 2,
+      "tier": 2,
+      "requiredInnovation": 1014,
+      "description": "青铜胸甲/护胫。"
+    },
+    {
+      "equipmentId": 8,
+      "equipmentName": "轮车",
+      "category": 6,
+      "tier": 1,
+      "requiredInnovation": 807,
+      "description": "轮车具体车辆。"
+    },
+    {
+      "equipmentId": 9,
+      "equipmentName": "辐条轮战车",
+      "category": 6,
+      "tier": 2,
+      "requiredInnovation": 1012,
+      "description": "辐条轮战车具体车辆。"
+    },
+    {
+      "equipmentId": 107,
+      "equipmentName": "撞角战船",
+      "category": 5,
+      "tier": 2,
+      "requiredInnovation": 1007,
+      "description": "人力桨帆、尖锐撞角战船。",
+      "hullForm": 3,
+      "propulsion": 4,
+      "ramType": 1
+    },
+    {
+      "equipmentId": 10,
+      "equipmentName": "青铜矛",
+      "category": 1,
+      "tier": 1,
+      "requiredInnovation": 201,
+      "weaponFamily": 2,
+      "description": "青铜矛：长柄刺击兵器。",
+      "craftProcess": 2,
+      "processDetail": "范铸"
+    },
+    {
+      "equipmentId": 11,
+      "equipmentName": "青铜剑",
+      "category": 1,
+      "tier": 1,
+      "requiredInnovation": 201,
+      "weaponFamily": 3,
+      "description": "青铜剑：短兵直刃兵器。",
+      "craftProcess": 2,
+      "processDetail": "复合范铸造"
+    },
+    {
+      "equipmentId": 12,
+      "equipmentName": "青铜镞",
+      "category": 1,
+      "tier": 1,
+      "requiredInnovation": 201,
+      "weaponFamily": 0,
+      "description": "青铜镞：箭镞消耗件。",
+      "craftProcess": 2,
+      "processDetail": "范铸"
+    },
+    {
+      "equipmentId": 13,
+      "equipmentName": "铁矛",
+      "category": 1,
+      "tier": 2,
+      "requiredInnovation": 202,
+      "weaponFamily": 2,
+      "description": "铁矛：铁锻长柄刺击兵器。",
+      "craftProcess": 3,
+      "processDetail": "块炼铁锻打"
+    },
+    {
+      "equipmentId": 14,
+      "equipmentName": "铁刀",
+      "category": 1,
+      "tier": 2,
+      "requiredInnovation": 202,
+      "weaponFamily": 4,
+      "description": "铁刀：铁锻单刃刀。",
+      "craftProcess": 3,
+      "processDetail": "块炼铁锻打/折叠"
+    }
+  ]
+}

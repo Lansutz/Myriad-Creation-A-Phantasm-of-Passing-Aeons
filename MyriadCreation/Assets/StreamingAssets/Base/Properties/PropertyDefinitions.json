@@ -1,0 +1,59 @@
+﻿{
+  "properties": [
+    {
+      "id": "meltingPoint",
+      "name": "熔点",
+      "unit": "°C",
+      "kind": "physical",
+      "aggregation": "max",
+      "higherIsBetter": true,
+      "tags": [
+        "thermal"
+      ]
+    },
+    {
+      "id": "hardness",
+      "name": "硬度",
+      "unit": "0-10",
+      "kind": "physical",
+      "aggregation": "max",
+      "higherIsBetter": true,
+      "tags": [
+        "mechanical"
+      ]
+    },
+    {
+      "id": "toughness",
+      "name": "韧性",
+      "unit": "0-10",
+      "kind": "physical",
+      "aggregation": "max",
+      "higherIsBetter": true,
+      "tags": [
+        "mechanical"
+      ]
+    },
+    {
+      "id": "fuelValue",
+      "name": "热值",
+      "unit": "MJ/kg",
+      "kind": "physical",
+      "aggregation": "max",
+      "higherIsBetter": true,
+      "tags": [
+        "energy"
+      ]
+    },
+    {
+      "id": "ductility",
+      "name": "延展性",
+      "unit": "0-10",
+      "kind": "physical",
+      "aggregation": "max",
+      "higherIsBetter": true,
+      "tags": [
+        "mechanical"
+      ]
+    }
+  ]
+}

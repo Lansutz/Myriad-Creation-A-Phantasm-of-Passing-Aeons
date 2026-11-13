@@ -3,8 +3,7 @@
     "rootNamespace": "MyriadCreation.Rendering",
     "references": [
         "MyriadCreation.Core",
-        "MyriadCreation.World",
-        "MyriadCreation.Simulation"
+        "MyriadCreation.Content"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

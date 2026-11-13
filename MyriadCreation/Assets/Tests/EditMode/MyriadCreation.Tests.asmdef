@@ -6,9 +6,19 @@
         "MyriadCreation.Infrastructure",
         "MyriadCreation.Simulation",
         "MyriadCreation.World",
+        "MyriadCreation.Rendering",
+        "MyriadCreation.UI",
+        "MyriadCreation.Editor",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "MyriadCreation.Content",
+        "MyriadCreation.App",
+        "MyriadCreation.App.Contracts",
+        "MyriadCreation.Laws",
+        "MyriadCreation.Faith",
+        "MyriadCreation.Culture",
+        "MyriadCreation.Save.Contracts"
     ],
     "includePlatforms": [
         "Editor"

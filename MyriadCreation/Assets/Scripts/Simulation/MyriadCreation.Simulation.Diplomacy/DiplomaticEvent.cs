@@ -1,0 +1,23 @@
+using System;
+using MyriadCreation.Content.Definitions;
+
+namespace MyriadCreation.Simulation.Diplomacy
+{
+[Serializable]
+public struct DiplomaticEvent
+{
+	public int day;
+
+	public int year;
+
+	public DiplomaticEventType type;
+
+	public string description;
+
+	public float relationChange;
+
+	public float trustChange;
+
+	public float threatChange;
+}
+}

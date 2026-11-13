@@ -1,0 +1,540 @@
+{
+  "artifact": "language-families",
+  "generated_at": "2026-10-27T04:13:13Z",
+  "nodes": [
+    {
+      "id": "afro1255",
+      "level": "family",
+      "macroarea": "Africa;Eurasia",
+      "name": "Afro-Asiatic",
+      "parent": null
+    },
+    {
+      "id": "akka1240",
+      "level": "language",
+      "macroarea": "Eurasia",
+      "name": "Akkadian",
+      "parent": "east2678"
+    },
+    {
+      "id": "angl1264",
+      "level": "family",
+      "macroarea": "Africa;Australia;Eurasia;North America;Papunesia;South America",
+      "name": "Anglo-Frisian",
+      "parent": "nort3175"
+    },
+    {
+      "id": "angl1265",
+      "level": "family",
+      "macroarea": "Africa;Australia;Eurasia;North America;Papunesia;South America",
+      "name": "Anglic",
+      "parent": "angl1264"
+    },
+    {
+      "id": "atla1278",
+      "level": "family",
+      "macroarea": "Africa;North America",
+      "name": "Atlantic-Congo",
+      "parent": null
+    },
+    {
+      "id": "balt1263",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "Balto-Slavic",
+      "parent": "clas1257"
+    },
+    {
+      "id": "bant1294",
+      "level": "family",
+      "macroarea": "Africa",
+      "name": "Bantoid",
+      "parent": "benu1247"
+    },
+    {
+      "id": "benu1247",
+      "level": "family",
+      "macroarea": "Africa;North America",
+      "name": "Benue-Congo",
+      "parent": "volt1241"
+    },
+    {
+      "id": "cast1243",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia;South America",
+      "name": "Castilic",
+      "parent": "west2838"
+    },
+    {
+      "id": "clas1255",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "Classical-Middle-Modern Sinitic",
+      "parent": "sini1245"
+    },
+    {
+      "id": "clas1257",
+      "level": "family",
+      "macroarea": "Africa;Australia;Eurasia;North America;Papunesia;South America",
+      "name": "Classical Indo-European",
+      "parent": "indo1319"
+    },
+    {
+      "id": "coas1317",
+      "level": "family",
+      "macroarea": "Africa",
+      "name": "Coastal NEC Bantu",
+      "parent": "nort3209"
+    },
+    {
+      "id": "comm1245",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "Common Turkic",
+      "parent": "turk1311"
+    },
+    {
+      "id": "cont1248",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia;South America",
+      "name": "Continental Indo-Aryan",
+      "parent": "midd1375"
+    },
+    {
+      "id": "east1426",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "East Slavic",
+      "parent": "slav1255"
+    },
+    {
+      "id": "east2678",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "East Semitic",
+      "parent": "semi1276"
+    },
+    {
+      "id": "east2731",
+      "level": "family",
+      "macroarea": "Africa",
+      "name": "East Bantu",
+      "parent": "narr1281"
+    },
+    {
+      "id": "germ1287",
+      "level": "family",
+      "macroarea": "Africa;Australia;Eurasia;North America;Papunesia;South America",
+      "name": "Germanic",
+      "parent": "clas1257"
+    },
+    {
+      "id": "hind1269",
+      "level": "language",
+      "macroarea": "Eurasia",
+      "name": "Hindi",
+      "parent": "hind1270"
+    },
+    {
+      "id": "hind1270",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia",
+      "name": "Hindustani",
+      "parent": "west2812"
+    },
+    {
+      "id": "impe1234",
+      "level": "family",
+      "macroarea": "Africa;Eurasia;North America;Papunesia;South America",
+      "name": "Imperial Latin",
+      "parent": "lati1263"
+    },
+    {
+      "id": "indo1319",
+      "level": "family",
+      "macroarea": "Africa;Australia;Eurasia;North America;Papunesia;South America",
+      "name": "Indo-European",
+      "parent": null
+    },
+    {
+      "id": "indo1320",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia;South America",
+      "name": "Indo-Iranian",
+      "parent": "clas1257"
+    },
+    {
+      "id": "indo1321",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia;South America",
+      "name": "Indo-Aryan",
+      "parent": "indo1320"
+    },
+    {
+      "id": "indo1322",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia",
+      "name": "Indo-Aryan Central zone",
+      "parent": "shau1239"
+    },
+    {
+      "id": "ital1284",
+      "level": "family",
+      "macroarea": "Africa;Eurasia;North America;Papunesia;South America",
+      "name": "Italic",
+      "parent": "clas1257"
+    },
+    {
+      "id": "ital1285",
+      "level": "family",
+      "macroarea": "Africa;Eurasia;North America;Papunesia;South America",
+      "name": "Italo-Western Romance",
+      "parent": "roma1334"
+    },
+    {
+      "id": "japa1256",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia",
+      "name": "Japanesic",
+      "parent": "japo1237"
+    },
+    {
+      "id": "japa1258",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia",
+      "name": "Japan-Taiwan Japanese",
+      "parent": "japa1256"
+    },
+    {
+      "id": "japo1237",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia",
+      "name": "Japonic",
+      "parent": null
+    },
+    {
+      "id": "late1254",
+      "level": "family",
+      "macroarea": "Africa;Australia;Eurasia;North America;Papunesia;South America",
+      "name": "Later Anglic",
+      "parent": "angl1265"
+    },
+    {
+      "id": "lati1261",
+      "level": "language",
+      "macroarea": "Eurasia",
+      "name": "Latin",
+      "parent": "impe1234"
+    },
+    {
+      "id": "lati1262",
+      "level": "family",
+      "macroarea": "Africa;Eurasia;North America;Papunesia;South America",
+      "name": "Latino-Faliscan",
+      "parent": "ital1284"
+    },
+    {
+      "id": "lati1263",
+      "level": "family",
+      "macroarea": "Africa;Eurasia;North America;Papunesia;South America",
+      "name": "Latinic",
+      "parent": "lati1262"
+    },
+    {
+      "id": "macr1271",
+      "level": "family",
+      "macroarea": "Africa;Australia;Eurasia;North America;Papunesia;South America",
+      "name": "Macro-English",
+      "parent": "merc1242"
+    },
+    {
+      "id": "mand1415",
+      "level": "language",
+      "macroarea": "Eurasia",
+      "name": "Mandarin Chinese",
+      "parent": "mand1471"
+    },
+    {
+      "id": "mand1471",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "Mandarinic",
+      "parent": "nort3155"
+    },
+    {
+      "id": "merc1242",
+      "level": "family",
+      "macroarea": "Africa;Australia;Eurasia;North America;Papunesia;South America",
+      "name": "Middle-Modern English",
+      "parent": "late1254"
+    },
+    {
+      "id": "midd1354",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "Middle-Modern Sinitic",
+      "parent": "clas1255"
+    },
+    {
+      "id": "midd1375",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia;South America",
+      "name": "Middle-Modern Indo-Aryan",
+      "parent": "indo1321"
+    },
+    {
+      "id": "midl1245",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia;South America",
+      "name": "Midlands Indo-Aryan",
+      "parent": "cont1248"
+    },
+    {
+      "id": "momb1256",
+      "level": "family",
+      "macroarea": "Africa",
+      "name": "Mombasa-Lamu-Inland Swahili",
+      "parent": "swah1254"
+    },
+    {
+      "id": "narr1281",
+      "level": "family",
+      "macroarea": "Africa",
+      "name": "Narrow Bantu",
+      "parent": "sout3152"
+    },
+    {
+      "id": "nort3152",
+      "level": "family",
+      "macroarea": "Africa;Australia;Eurasia;North America;Papunesia;South America",
+      "name": "Northwest Germanic",
+      "parent": "germ1287"
+    },
+    {
+      "id": "nort3155",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "Northern Chinese",
+      "parent": "midd1354"
+    },
+    {
+      "id": "nort3175",
+      "level": "family",
+      "macroarea": "Africa;Australia;Eurasia;North America;Papunesia;South America",
+      "name": "North Sea Germanic",
+      "parent": "west2793"
+    },
+    {
+      "id": "nort3203",
+      "level": "family",
+      "macroarea": "Africa",
+      "name": "Northeast Savanna Bantu",
+      "parent": "east2731"
+    },
+    {
+      "id": "nort3209",
+      "level": "family",
+      "macroarea": "Africa",
+      "name": "Northeast Coastal Bantu",
+      "parent": "nort3203"
+    },
+    {
+      "id": "nucl1301",
+      "level": "language",
+      "macroarea": "Eurasia",
+      "name": "Turkish",
+      "parent": "west2406"
+    },
+    {
+      "id": "nucl1643",
+      "level": "language",
+      "macroarea": "Eurasia",
+      "name": "Japanese",
+      "parent": "japa1258"
+    },
+    {
+      "id": "nucl1769",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "Nuclear Oghuz",
+      "parent": "oghu1243"
+    },
+    {
+      "id": "oghu1243",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "Oghuz",
+      "parent": "comm1245"
+    },
+    {
+      "id": "roma1334",
+      "level": "family",
+      "macroarea": "Africa;Eurasia;North America;Papunesia;South America",
+      "name": "Romance",
+      "parent": "impe1234"
+    },
+    {
+      "id": "russ1263",
+      "level": "language",
+      "macroarea": "Eurasia",
+      "name": "Russian",
+      "parent": "east1426"
+    },
+    {
+      "id": "saba1282",
+      "level": "family",
+      "macroarea": "Africa",
+      "name": "Sabaki-Swahili",
+      "parent": "coas1317"
+    },
+    {
+      "id": "semi1276",
+      "level": "family",
+      "macroarea": "Africa;Eurasia",
+      "name": "Semitic",
+      "parent": "afro1255"
+    },
+    {
+      "id": "shau1239",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia;South America",
+      "name": "Shaurasenic",
+      "parent": "midl1245"
+    },
+    {
+      "id": "shif1234",
+      "level": "family",
+      "macroarea": "Africa;Eurasia;North America;Papunesia;South America",
+      "name": "Shifted Western Romance",
+      "parent": "west2813"
+    },
+    {
+      "id": "sini1245",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "Sinitic",
+      "parent": "sino1245"
+    },
+    {
+      "id": "sino1245",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "Sino-Tibetan",
+      "parent": null
+    },
+    {
+      "id": "slav1255",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "Slavic",
+      "parent": "balt1263"
+    },
+    {
+      "id": "sout3152",
+      "level": "family",
+      "macroarea": "Africa",
+      "name": "Southern Bantoid",
+      "parent": "bant1294"
+    },
+    {
+      "id": "sout3183",
+      "level": "family",
+      "macroarea": "Africa;Eurasia;Papunesia;South America",
+      "name": "Southwestern Shifted Romance",
+      "parent": "shif1234"
+    },
+    {
+      "id": "stan1288",
+      "level": "language",
+      "macroarea": "Eurasia",
+      "name": "Spanish",
+      "parent": "cast1243"
+    },
+    {
+      "id": "stan1293",
+      "level": "language",
+      "macroarea": "Africa;Eurasia;South America",
+      "name": "English",
+      "parent": "macr1271"
+    },
+    {
+      "id": "sume1241",
+      "level": "language",
+      "macroarea": "Eurasia",
+      "name": "Sumerian",
+      "parent": null
+    },
+    {
+      "id": "swah1253",
+      "level": "language",
+      "macroarea": "Africa",
+      "name": "Swahili",
+      "parent": "momb1256"
+    },
+    {
+      "id": "swah1254",
+      "level": "family",
+      "macroarea": "Africa",
+      "name": "Swahili (G.40)",
+      "parent": "saba1282"
+    },
+    {
+      "id": "turk1311",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "Turkic",
+      "parent": null
+    },
+    {
+      "id": "volt1241",
+      "level": "family",
+      "macroarea": "Africa;North America",
+      "name": "Volta-Congo",
+      "parent": "atla1278"
+    },
+    {
+      "id": "west2406",
+      "level": "family",
+      "macroarea": "Eurasia",
+      "name": "West Oghuz",
+      "parent": "nucl1769"
+    },
+    {
+      "id": "west2793",
+      "level": "family",
+      "macroarea": "Africa;Australia;Eurasia;North America;Papunesia;South America",
+      "name": "West Germanic",
+      "parent": "nort3152"
+    },
+    {
+      "id": "west2812",
+      "level": "family",
+      "macroarea": "Eurasia;Papunesia",
+      "name": "Western Hindi",
+      "parent": "indo1322"
+    },
+    {
+      "id": "west2813",
+      "level": "family",
+      "macroarea": "Africa;Eurasia;North America;Papunesia;South America",
+      "name": "Western Romance",
+      "parent": "ital1285"
+    },
+    {
+      "id": "west2838",
+      "level": "family",
+      "macroarea": "Africa;Eurasia;Papunesia;South America",
+      "name": "West Ibero-Romance",
+      "parent": "sout3183"
+    }
+  ],
+  "requires": "redistributable",
+  "schema_version": 1,
+  "source": {
+    "dataset": "glottolog",
+    "license": "CC-BY-4.0",
+    "retrieved_at": "2026-10-27T04:11:20Z",
+    "url": "https://glottolog.org/",
+    "version": "5.3"
+  }
+}

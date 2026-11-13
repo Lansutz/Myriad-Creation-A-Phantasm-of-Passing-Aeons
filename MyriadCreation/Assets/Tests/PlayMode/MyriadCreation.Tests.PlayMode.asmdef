@@ -5,8 +5,13 @@
         "MyriadCreation.Core",
         "MyriadCreation.Simulation",
         "MyriadCreation.World",
+        "MyriadCreation.Infrastructure",
+        "MyriadCreation.Rendering",
+        "MyriadCreation.UI",
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "UnityEditor.TestRunner",
+        "Unity.TextMeshPro",
+        "MyriadCreation.App"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -9,11 +9,14 @@ using MyriadCreation.Infrastructure.Save;
 using MyriadCreation.Simulation.Economy;
 using MyriadCreation.Simulation.Events;
 using MyriadCreation.Simulation.Generation;
-using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Content.Modding;
+using MyriadCreation.Simulation.ContentHost;
 using MyriadCreation.Simulation.Politics;
-using MyriadCreation.Simulation.Society;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.UI;
+using MyriadCreation.Simulation.Definitions;
+using MyriadCreation.Simulation.State;
+using MyriadCreation.Simulation.Systems;
 
 
 
@@ -44,11 +47,11 @@ namespace MyriadCreation.Tests
         public void TitleDef_FlexibleRankFields()
         {
             // 头衔位阶（柔性数值——2.0 王/2.4 王上王/1.8 藩王——小数同级微差）
-            var king = new TitleDef { titleId = "title_king", kind = "monarch", rank = 2.0f, weight = 1f };
-            var emperor = new TitleDef { titleId = "title_emperor", kind = "monarch", rank = 3.0f, weight = 1.2f };
-            var vassalKing = new TitleDef { titleId = "title_vassal_king", kind = "monarch", rank = 1.8f };
-            var bure = new TitleDef { titleId = "title_gov", kind = "bureaucratic", rank = 2.2f };
-            var noble = new TitleDef { titleId = "title_duke", kind = "noble", rank = 1.5f };
+            var king = new TitleDef { titleId = "title_king", category = TitleDerivedCategory.Landed, rank = 2.0f, weight = 1f };
+            var emperor = new TitleDef { titleId = "title_emperor", category = TitleDerivedCategory.Landed, rank = 3.0f, weight = 1.2f };
+            var vassalKing = new TitleDef { titleId = "title_vassal_king", category = TitleDerivedCategory.Landed, rank = 1.8f };
+            var bure = new TitleDef { titleId = "title_gov", category = TitleDerivedCategory.Office, rank = 2.2f };
+            var noble = new TitleDef { titleId = "title_duke", category = TitleDerivedCategory.NobleRank, rank = 1.5f };
 
             // 同级区间（1.x 一级/2.x 二级——整数=大等级）
             Assert.AreEqual(2, (int)king.rank, "王=2 级");
@@ -60,9 +63,9 @@ namespace MyriadCreation.Tests
             Assert.Greater(emperor.weight, king.weight, "皇帝权重大于王");
 
             // 类别分离（官僚/贵族/君主——用户定稿分开）
-            Assert.AreEqual("bureaucratic", bure.kind, "官僚类");
-            Assert.AreEqual("noble", noble.kind, "贵族类");
-            Assert.AreEqual("monarch", king.kind, "君主类");
+            Assert.AreEqual(TitleDerivedCategory.Office, bure.category, "官僚类");
+            Assert.AreEqual(TitleDerivedCategory.NobleRank, noble.category, "贵族类");
+            Assert.AreEqual(TitleDerivedCategory.Landed, king.category, "君主类");
         }
     }
 }

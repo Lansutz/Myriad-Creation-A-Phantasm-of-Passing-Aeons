@@ -1,0 +1,39 @@
+namespace MyriadCreation.Content.Definitions
+{
+public enum BodyPartType
+{
+	LeftEye,
+	RightEye,
+	LeftEar,
+	RightEar,
+	Brain,
+	Teeth,
+	Hair,
+	Face,
+	Skull,
+	Heart,
+	LeftLung,
+	RightLung,
+	Abdomen,
+	Spine,
+	Skin,
+	LeftShoulder,
+	LeftArmBone,
+	LeftArmMuscle,
+	LeftHand,
+	RightShoulder,
+	RightArmBone,
+	RightArmMuscle,
+	RightHand,
+	LeftHip,
+	LeftKnee,
+	LeftLegBone,
+	LeftLegMuscle,
+	LeftFoot,
+	RightHip,
+	RightKnee,
+	RightLegBone,
+	RightLegMuscle,
+	RightFoot
+}
+}

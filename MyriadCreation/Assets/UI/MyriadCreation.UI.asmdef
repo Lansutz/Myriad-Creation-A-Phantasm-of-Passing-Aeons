@@ -3,11 +3,14 @@
     "rootNamespace": "MyriadCreation.UI",
     "references": [
         "MyriadCreation.Core",
-        "MyriadCreation.Simulation",
         "MyriadCreation.Rendering",
         "UnityEngine.UI",
         "Unity.TextMeshPro",
-        "MyriadCreation.Infrastructure"
+        "MyriadCreation.Infrastructure",
+        "MyriadCreation.World",
+        "MyriadCreation.Content",
+        "MyriadCreation.App",
+        "MyriadCreation.App.Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

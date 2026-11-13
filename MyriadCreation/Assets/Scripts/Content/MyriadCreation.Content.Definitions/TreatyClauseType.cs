@@ -1,0 +1,32 @@
+namespace MyriadCreation.Content.Definitions
+{
+public enum TreatyClauseType
+{
+	TerritoryCession,
+	WarReparations,
+	PrisonerExchange,
+	TradeRights,
+	NavigationRights,
+	DemilitarizedZone,
+	ArmsLimitation,
+	ReligiousFreedom,
+	MinorityProtection,
+	AllianceCommitment,
+	NonInterference,
+	ArbitrationAgreement,
+	Vassalage,
+	PersonalUnion,
+	ReleasePrisoners,
+	TradePrivileges,
+	Disarmament,
+	Humiliation,
+	Annexation,
+	Independence,
+	BorderDemilitarization,
+	RoyalMarriage,
+	CulturalAssimilation,
+	WarCrimesTrial,
+	ResourceConcession,
+	Truce
+}
+}

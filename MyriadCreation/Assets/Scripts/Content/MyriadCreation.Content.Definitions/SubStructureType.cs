@@ -1,0 +1,35 @@
+namespace MyriadCreation.Content.Definitions
+{
+public enum SubStructureType
+{
+	EyeLens,
+	EyeAqueous,
+	EyeRetina,
+	EyeCornea,
+	EarDrum,
+	EarInner,
+	BrainCognition,
+	BrainVessel,
+	BrainMental,
+	ToothBody,
+	ToothGum,
+	HairFollicle,
+	FaceSkin,
+	SkullBone,
+	HeartMyocardium,
+	HeartValve,
+	HeartCoronary,
+	LungTissue,
+	AbdomenDigestive,
+	AbdomenMetabolic,
+	AbdomenLiverKidney,
+	SpineVertebra,
+	SkinTissue,
+	JointCartilage,
+	JointSynovium,
+	JointLigament,
+	BoneTissue,
+	MuscleFiber,
+	Extremity
+}
+}

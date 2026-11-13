@@ -1,0 +1,17 @@
+{
+    "name": "MyriadCreation.World",
+    "rootNamespace": "MyriadCreation.World",
+    "references": [
+        "MyriadCreation.Core",
+        "MyriadCreation.Save.Contracts"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -11,38 +11,127 @@ using MyriadCreation.Core.Dto;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Infrastructure.Save;
 using MyriadCreation.Rendering;
-using MyriadCreation.Simulation.Characters;
-using MyriadCreation.Simulation.Economy;
-using MyriadCreation.Simulation.Events;
-using MyriadCreation.Simulation.Generation;
-using MyriadCreation.Simulation.Modding;
-using MyriadCreation.Simulation.Politics;
-using MyriadCreation.Simulation.Population;
-using MyriadCreation.Simulation.Society;
-using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.UI;
+using MyriadCreation.Content.Definitions;
+using MyriadCreation.App.Contracts;
+using MyriadCreation.Core.Contracts;
+using MyriadCreation.App.Settings;
 
-
-
-
-
-
-
-using MyriadCreation.Simulation.Culture;
 namespace MyriadCreation.UI.Common
 {
- /// <summary>事件日志分类（决定富文本着色）</summary>
-
- /// UI管理器
- /// 管理游戏内所有UI面板：顶部信息栏、地块详情、政权面板、外交面板、事件日志、Toast提示
-    public partial class UIManager : MonoBehaviour
-    {
- /// <summary>UI管理器单例</summary>
+public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGameUiHost
+{
         public static UIManager Instance { get; private set; }
 
-        [Header("引用")]
-        [SerializeField] private GameWorld world;
         [SerializeField] private MapRenderer mapRenderer;
+
+        private IWorldReadModel _worldReadModel;
+        private IMapStatsView _mapStatsView;
+        private ILawQuery _lawQuery;
+        private ILawCommand _lawCommand;
+        private IDecreeCommand _decreeCommand;
+
+        public IWorldReadModel WorldReadModel => _worldReadModel;
+
+        /// <summary>4d：当前查看政权（无 GameWorld 时用注入 view 的默认 0 兜底）。</summary>
+        public int ViewRealmId => _viewRealmId >= 0 ? _viewRealmId : 0;
+
+        /// <summary>4d：换世界/读档后重绑聚合视图（IGameUiHost 新签名）。</summary>
+        public void BindWorld(IWorldReadModel view)
+        {
+            SetWorldReadModel(view);
+            EnsureGovernmentButton();
+        }
+
+        public void NotifyWorldChanged(IWorldReadModel view)
+        {
+            BindWorld(view);
+        }
+
+        /// <summary>4d：无 view 时顶栏显示 "-"/空，不抛。</summary>
+        private void UpdateTopBar()
+        {
+            var stats = _mapStatsView;
+            if (dateText != null)
+            {
+                if (stats != null)
+                {
+                    int ey = stats.CurrentYear - stats.StartYear;
+                    int ed = stats.CurrentDay - stats.StartDay;
+                    if (ed < 0) { ed += 365; ey -= 1; }
+                    dateText.text = ey <= 0 && ed <= 0 ? "开局" : $"已历 {ey} 年 {ed} 天";
+                }
+                else dateText.text = "-";
+            }
+
+            if (realmNameText != null)
+            {
+                var dto = _worldReadModel?.GetRealm(ViewRealmId);
+                realmNameText.text = dto != null && !string.IsNullOrEmpty(dto.realmName) ? dto.realmName : "-";
+            }
+
+            if (mapInfoText != null)
+            {
+                mapInfoText.text = stats != null
+                    ? $"地图 {stats.MapWidth}×{stats.MapHeight}  地块 {stats.TotalTiles}(陆{stats.LandTiles}/海{stats.SeaTiles})  省份 {stats.ProvinceCount}"
+                    : "-";
+            }
+        }
+
+        // 4d：地图点击选择依赖旧 GameWorld 地块；UI 无地块契约，改为安全空实现。
+        private void HandleMouseClick()
+        {
+        }
+
+        /// <summary>4d：注入聚合视图并刷新相关面板（null 时显示空/不抛）。</summary>
+        public void SetWorldReadModel(IWorldReadModel view)
+        {
+            _worldReadModel = view;
+            _mapStatsView = view;
+            UpdateTopBar();
+            var settlementPanel = FindAnyObjectByType<MyriadCreation.UI.Panels.SettlementDetailPanel>(
+                FindObjectsInactive.Include);
+            if (settlementPanel != null) settlementPanel.SetSettlementQuery(view);
+            if (_governmentPanel != null) _governmentPanel.SetWorldReadModel(view);
+        }
+
+        /// <summary>B8-4a 兼容：注入地图统计视图（null 表示未注入，顶栏显示 "-"）。</summary>
+        public void SetMapStatsView(IMapStatsView view)
+        {
+            _mapStatsView = view;
+            UpdateTopBar();
+        }
+
+        /// <summary>B8-4a：注入法律查询/命令（GovernmentPanel 优先使用；未注入时面板回退 world）。</summary>
+        public void SetLawServices(ILawQuery query, ILawCommand command)
+        {
+            _lawQuery = query;
+            _lawCommand = command;
+            ApplyLawServicesToGovernmentPanel();
+        }
+
+        private void ApplyLawServicesToGovernmentPanel()
+        {
+            if (_governmentPanel != null)
+            {
+                _governmentPanel.SetLawServices(_lawQuery, _lawCommand);
+            }
+        }
+
+        // 4b5b：法令“下发命令”契约注入（GameWorld.IssueDecreeOrders 只保留 Legacy fallback）
+        public void SetDecreeCommand(IDecreeCommand command)
+        {
+            _decreeCommand = command;
+            ApplyDecreeCommandToGovernmentPanel();
+        }
+
+        private void ApplyDecreeCommandToGovernmentPanel()
+        {
+            if (_governmentPanel != null)
+            {
+                _governmentPanel.SetDecreeCommand(_decreeCommand);
+            }
+        }
 
         [Header("顶部信息栏")]
         [SerializeField] private TMP_Text dateText;
@@ -117,6 +206,30 @@ namespace MyriadCreation.UI.Common
         [SerializeField] private Button musicPrevButton;
         [SerializeField] private UnityEngine.UI.Slider musicVolumeSlider;
 
+        [Header("世界生成 Loading")]
+        [SerializeField] private GameObject loadingPanel;
+        [SerializeField] private TMP_Text loadingText;
+
+        public void ShowLoading(string message = "世界生成中…")
+        {
+            if (loadingPanel != null) loadingPanel.SetActive(true);
+            if (loadingText != null) loadingText.text = message;
+        }
+
+        public void SetLoadingProgress(float progress, string message = null)
+        {
+            if (loadingText == null) return;
+            int pct = UnityEngine.Mathf.RoundToInt(UnityEngine.Mathf.Clamp01(progress) * 100f);
+            loadingText.text = string.IsNullOrEmpty(message)
+                ? $"世界生成中… {pct}%"
+                : $"{message} {pct}%";
+        }
+
+        public void HideLoading()
+        {
+            if (loadingPanel != null) loadingPanel.SetActive(false);
+        }
+
         [Header("家族树面板")]
         [SerializeField] private GameObject familyTreePanel;
         [SerializeField] private TMP_Text familyTreeText;
@@ -136,8 +249,6 @@ namespace MyriadCreation.UI.Common
  /// <summary>当前查看政权（视角——默认玩家政权——点选地块自动跟随其
  /// 所属政权——顶栏政权名/社会/宗教面板都以此为准——政权总览入口）</summary>
         private int _viewRealmId = -1;
- /// <summary>查看政权（公开——面板刷新用）</summary>
-        public int ViewRealmId => _viewRealmId >= 0 ? _viewRealmId : (world != null ? world.PlayerRealmId : 0);
  /// <summary>显示所有游戏内UI（进入游戏/地图编辑器时调用）</summary>
         public void ShowGameUI()
         {
@@ -150,12 +261,35 @@ namespace MyriadCreation.UI.Common
             SetGameUIVisible(false);
         }
 
- /// <summary>统一设置游戏内UI可见性</summary>
-        private void SetGameUIVisible(bool visible)
+        /// <summary>聚落详情面板是否打开（IGameUiHost；SceneFlow ESC 栈用，避免 App 直接找 UI 类型）。</summary>
+        public bool IsSettlementDetailOpen
+        {
+            get
+            {
+                var panel = UnityEngine.Object.FindAnyObjectByType<MyriadCreation.UI.Panels.SettlementDetailPanel>(
+                    UnityEngine.FindObjectsInactive.Include);
+                return panel != null && panel.IsOpen;
+            }
+        }
+
+        /// <summary>打开聚落详情（通过 UiFactory 创建/复用，供 IGameUiHost 调用）。</summary>
+        public void OpenSettlementDetail(int anchorId)
+        {
+            var factory = AppServices.UiFactory;
+            var panel = factory != null ? factory.EnsureSettlementDetailUi() : null;
+            panel?.Show(anchorId);
+        }
+
+ /// <summary>统一设置游戏内UI可见性（IGameUiHost 契约实现）。</summary>
+        public void SetGameUIVisible(bool visible)
         {
  // 顶部信息栏（通过文本组件的gameObject控制）
             if (dateText != null) dateText.gameObject.SetActive(visible);
             if (realmNameText != null) realmNameText.gameObject.SetActive(visible);
+ // 顶部整条（标题/日期/角色按钮）——只有各子控件引用，按角色按钮的父级整条开关，
+ // 避免主菜单时残留旧 HUD 文本/按钮盖在动态主菜单下面。
+            if (charOpenButton != null && charOpenButton.transform.parent != null)
+                charOpenButton.transform.parent.gameObject.SetActive(visible);
  // 地块详情面板
             if (tileInfoPanel != null) tileInfoPanel.SetActive(visible);
  // 地图模式栏
@@ -173,6 +307,9 @@ namespace MyriadCreation.UI.Common
             if (speed1Button != null) speed1Button.gameObject.SetActive(visible);
             if (speed2Button != null) speed2Button.gameObject.SetActive(visible);
             if (speed3Button != null) speed3Button.gameObject.SetActive(visible);
+// 政府/法律面板入口（TopBar 动态按钮）与面板本体
+            if (_governmentOpenButton != null) _governmentOpenButton.gameObject.SetActive(visible);
+            if (_governmentPanel != null && !visible) _governmentPanel.Hide();
         }
         private readonly List<string> _eventLog = new List<string>();
         private const int MaxLogEntries = 100;
@@ -184,10 +321,6 @@ namespace MyriadCreation.UI.Common
  // Toast 队列
         private readonly Queue<string> _toastQueue = new Queue<string>();
         private Coroutine _toastRoutine;
- // 地图编辑器UI面板
-        #if UNITY_EDITOR
-        private EditorUIPanel _editorPanel;
-        #endif
 
         [Header("地图信息")]
         [SerializeField] private TMP_Text mapInfoText;
@@ -196,10 +329,18 @@ namespace MyriadCreation.UI.Common
         private float _uiUpdateTimer;
         private const float UiUpdateInterval = 0.2f; // 5 次/秒，足够人眼流畅
 
+        void Awake()
+        {
+            // B3-part2b：UI 在 Awake 注册反向契约，保证 App/SceneFlow 的 Start 阶段就能拿到（Start 顺序不保证）。
+            AppServices.RegisterUiHost(this);
+        }
+
         void Start()
         {
             Instance = this;
+            AppServices.RegisterUiHost(this);
             ApplyChineseFont();
+            TMPFontUtility.ApplyFontChoice(SettingsService.Current.FontChoice);
             InitializeUI();
             AddEventLog("游戏启动", EventLogKind.System);
         }
@@ -215,6 +356,13 @@ namespace MyriadCreation.UI.Common
 
                 void Update()
         {
+ // G：政府/法律面板开关（输入框中打字时不触发；主菜单不响应）
+            if (Input.GetKeyDown(KeyCode.G) && !IsTypingInInputField()
+                && (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.MainMenu))
+            {
+                ToggleGovernmentPanel();
+            }
+
  // 鼠标点击需要实时响应，不节流
             HandleMouseClick();
 
@@ -224,6 +372,11 @@ namespace MyriadCreation.UI.Common
             {
                 _uiUpdateTimer = 0f;
                 UpdateTopBar();
+                // 分辨率变化：重算 TopBar「政府」按钮宽度/字号/内边距（窄屏 <1280 缩到 64）。
+                if (Screen.width != _lastGovernmentLayoutWidth)
+                {
+                    RefreshGovernmentButtonLayout(Screen.width);
+                }
                 UpdateTileInfo();
                 if (characterPanel != null && characterPanel.activeSelf)
                     UpdateCharacterPanel();
@@ -303,38 +456,10 @@ namespace MyriadCreation.UI.Common
             if (familyTreePrevButton != null) familyTreePrevButton.onClick.AddListener(() => { _charIndex--; RefreshFamilyTreePanel(); });
             if (familyTreeNextButton != null) familyTreeNextButton.onClick.AddListener(() => { _charIndex++; RefreshFamilyTreePanel(); });
 
- #if UNITY_EDITOR
- // 地图编辑器UI面板（代码动态生成，无需在Inspector手动搭建）
-            if (mapRenderer != null)
-            {
-                var editorPanelObj = new GameObject("EditorUIPanel");
-                editorPanelObj.transform.SetParent(transform, false);
-                _editorPanel = editorPanelObj.AddComponent<EditorUIPanel>();
-                var editor = mapRenderer.GetMapEditor();
-                _editorPanel.Initialize(mapRenderer, editor);
-                AddEventLog("编辑器UI面板已加载（Tab键显示/隐藏）", EventLogKind.System);
-            }
- #endif
-            Debug.Log("[UIManager] UI初始化完成");
-        }
+// 政府/法律面板入口（TopBar 动态创建「政府」按钮——场景零改动）
+            EnsureGovernmentButton();
 
- /// <summary>处理鼠标点击选中地块</summary>
-        private void HandleMouseClick()
-        {
-            if (Input.GetMouseButtonDown(0) && mapRenderer != null)
-            {
-                int tile = mapRenderer.ScreenToTile(Input.mousePosition);
-                if (tile >= 0)
-                {
-                    _selectedTile = tile;
- // 视角跟随：点地块→查看其所属政权（政权总览数据源）
-                    if (world != null && tile < world.tiles.Length && world.tiles[tile].ownerRealmId >= 0)
-                        _viewRealmId = world.tiles[tile].ownerRealmId;
-                    if (tileInfoPanel != null)
-                        tileInfoPanel.SetActive(true);
-                    AddEventLog($"选中地块 #{tile}");
-                }
-            }
+            Debug.Log("[UIManager] UI初始化完成");
         }
 
  /// <summary>设置游戏速度</summary>
@@ -396,51 +521,6 @@ namespace MyriadCreation.UI.Common
             return list;
         }
 
- /// <summary>查找区划（divisionId）</summary>
-        private static AdminDivision FindDivision(
-            System.Collections.Generic.List<AdminDivision> all, int divisionId)
-        {
-            if (all == null) return null;
-            foreach (var d in all)
-                if (d.divisionId == divisionId) return d;
-            return null;
-        }
-
- /// 组装官职显示（6 官职——文化定制称号[OfficeTitleCatalog]+持有者名——
- /// 政体语境键粗分：君主制 Kingdom/共和制 Republic——无持有者显示空缺）
-        private static Dictionary<int, string> BuildOfficeDisplay(GameWorld world, RealmData realm)
-        {
-            var result = new Dictionary<int, string>();
-            if (world == null || realm == null || realm.officeHolders == null) return result;
-            string polityKey = "Kingdom";
-            if (realm.composition != null &&
-                realm.composition.supremeSovereignty == GovernmentConstraints.SupremeSovereignty.Monarchy)
-                polityKey = "Kingdom";
-            else
-                polityKey = "Republic";
-
-            var cm = world.GetCharacterManager();
-            for (int o = 0; o < 6; o++)
-            {
-                if (!realm.officeHolders.TryGetValue(o, out int holderId)) continue;
-                string officeName = ((OfficialOffice)o).ToString();
- // 文化定制称号（holder 的文化——无则默认）
-                string title = OfficeTitleCatalog.GetDefaultTitleKey(officeName);
-                var holder = cm?.GetCharacter(holderId);
-                if (holder != null)
-                {
-                    var culture = world.cultures.TryGetValue(holder.cultureId, out var cd) ? cd : null;
-                    title = OfficeTitleCatalog.GetTitle(culture, (OfficialOffice)o, polityKey);
-                    result[o] = $"{(int)o + 1}. {title}：{holder.firstName} {holder.lastName}";
-                }
-                else
-                {
-                    result[o] = $"{(int)o + 1}. {title}：空缺";
-                }
-            }
-            return result;
-        }
-
  /// <summary>获取音乐播放器（场景中查找或懒创建）</summary>
         private static MyriadCreation.Infrastructure.Audio.MusicPlayerSystem MusicPlayer()
         {
@@ -467,20 +547,7 @@ namespace MyriadCreation.UI.Common
             if (eventLogPanel != null)
                 eventLogPanel.SetActive(!eventLogPanel.activeSelf);
         }
- /// <summary>切换地图编辑器面板显示/隐藏</summary>
-        #if UNITY_EDITOR
-        public void ToggleEditorPanel()
-        {
-            _editorPanel?.TogglePanel();
-        }
-        #endif
-
- /// <summary>获取地图编辑器面板</summary>
-        #if UNITY_EDITOR
-        public EditorUIPanel GetEditorPanel() => _editorPanel;
-        #endif
-
         public int GetSelectedTile() => _selectedTile;
         public void SetSelectedTile(int tile) => _selectedTile = tile;
-    }
+}
 }

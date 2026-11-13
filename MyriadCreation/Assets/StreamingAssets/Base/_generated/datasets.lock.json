@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "datasets": [
+    {
+      "id": "glottolog",
+      "title": "Glottolog",
+      "version": "5.3",
+      "url": "https://glottolog.org/",
+      "license": "CC-BY-4.0",
+      "distribution": "redistributable",
+      "usage": [
+        "language-families"
+      ],
+      "notes": "裁剪游戏用到的语言节点及其祖先链；不复制全量 languoids。生成器 forge.cli build-languages。"
+    }
+  ]
+}

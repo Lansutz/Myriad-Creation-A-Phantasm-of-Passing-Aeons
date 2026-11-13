@@ -1,11 +1,18 @@
 ﻿<Solution>
-  <Project Path="MyriadCreation.Core.csproj" />
-  <Project Path="MyriadCreation.Simulation.csproj" />
   <Project Path="MyriadCreation.World.csproj" />
+  <Project Path="MyriadCreation.Content.csproj" />
+  <Project Path="MyriadCreation.Simulation.csproj" />
+  <Project Path="MyriadCreation.Core.csproj" />
   <Project Path="MyriadCreation.Tests.csproj" />
   <Project Path="MyriadCreation.UI.csproj" />
-  <Project Path="MyriadCreation.Editor.csproj" />
-  <Project Path="MyriadCreation.Infrastructure.csproj" />
-  <Project Path="MyriadCreation.Rendering.csproj" />
   <Project Path="MyriadCreation.Tests.PlayMode.csproj" />
+  <Project Path="MyriadCreation.Save.Contracts.csproj" />
+  <Project Path="MyriadCreation.Infrastructure.csproj" />
+  <Project Path="MyriadCreation.Laws.csproj" />
+  <Project Path="MyriadCreation.Rendering.csproj" />
+  <Project Path="MyriadCreation.App.csproj" />
+  <Project Path="MyriadCreation.Editor.csproj" />
+  <Project Path="MyriadCreation.Culture.csproj" />
+  <Project Path="MyriadCreation.App.Contracts.csproj" />
+  <Project Path="MyriadCreation.Faith.csproj" />
 </Solution>

@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using NUnit.Framework;
 
 using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Save.Contracts;
 using MyriadCreation.Simulation.Actors;
 using MyriadCreation.Simulation.Systems;
 using MyriadCreation.World.Settlement;
+using MyriadCreation.Core.Enums;
 
 namespace MyriadCreation.Tests.EditMode
 {
@@ -234,7 +236,10 @@ namespace MyriadCreation.Tests.EditMode
             const string legacyJson =
                 "{\"settlements\":[{\"anchorId\":42,\"settlementName\":\"Old camp\",\"settlementCategory\":2,\"x\":0.2,\"y\":0.3}]}";
 
-            var save = UnityEngine.JsonUtility.FromJson<GameSaveData>(legacyJson);
+            // JsonUtility 不认 [FormerlySerializedAs]（实测旧键不会映射），
+            // 所以旧档必须走读档入口 SaveJsonMigration，而不是裸 FromJson。
+            var save = SaveJsonMigration.FromGameSaveJson(legacyJson);
+            Assert.IsNotNull(save, "存档解析");
             Assert.IsNotNull(save.habitation_sites);
             Assert.AreEqual(1, save.habitation_sites.Length);
 

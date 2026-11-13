@@ -1,14 +1,11 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using MyriadCreation.Simulation.Culture;
 using MyriadCreation.Simulation.Politics;
-using MyriadCreation.Simulation.Population;
-using MyriadCreation.Simulation.Religion;
-using MyriadCreation.Simulation.Society;
-
-
-
-
+using MyriadCreation.Simulation.Definitions;
+using MyriadCreation.Simulation.State;
+using MyriadCreation.Simulation.Systems;
+using MyriadCreation.Simulation.Laws;
+using MyriadCreation.Content.Definitions;
 namespace MyriadCreation.Tests
 {
     /// <summary>
@@ -17,9 +14,9 @@ namespace MyriadCreation.Tests
     /// </summary>
     public class AdminDivisionTests
     {
-        private static GovernmentComposition Compose(LocalSuccession mode)
+        private static LawComposition Compose(LocalSuccession mode)
         {
-            var comp = new GovernmentComposition();
+            var comp = new LawComposition();
             comp.localSuccession = new ComponentChoice((int)mode);
             return comp;
         }

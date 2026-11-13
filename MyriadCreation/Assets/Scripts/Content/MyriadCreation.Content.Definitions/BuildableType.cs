@@ -1,0 +1,36 @@
+namespace MyriadCreation.Content.Definitions
+{
+public enum BuildableType
+{
+	Barrier,
+	Fortress,
+	MountainCity,
+	WaterCity,
+	StarCity,
+	CitadelCity,
+	PlannedCity,
+	DeepWaterPort,
+	RiverPort,
+	ImperialPort,
+	Ferry,
+	PostStation,
+	Watchtower,
+	Granary,
+	Market,
+	Temple,
+	University,
+	Workshop,
+	Mine,
+	SaltWorks,
+	Fishery,
+	Shipyard,
+	Barracks,
+	Arsenal,
+	Aqueduct,
+	Sewer,
+	Bathhouse,
+	Library,
+	Observatory,
+	Lighthouse
+}
+}

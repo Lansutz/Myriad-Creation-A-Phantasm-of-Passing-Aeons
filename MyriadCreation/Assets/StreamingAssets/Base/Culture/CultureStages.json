@@ -1,0 +1,59 @@
+{
+  "stages": [
+    {
+      "stage": 0,
+      "key": "Band",
+      "name": "游群",
+      "minPopulation": 0,
+      "nextPopulation": 100,
+      "order": 0,
+      "requiredSocialStratification": 0.0,
+      "requiredSpecialization": 0.0,
+      "requiresUrbanCenter": false
+    },
+    {
+      "stage": 1,
+      "key": "Tribe",
+      "name": "部落",
+      "minPopulation": 100,
+      "nextPopulation": 1000,
+      "order": 1,
+      "requiredSocialStratification": 0.2,
+      "requiredSpecialization": 0.0,
+      "requiresUrbanCenter": false
+    },
+    {
+      "stage": 2,
+      "key": "Chiefdom",
+      "name": "酋邦",
+      "minPopulation": 1000,
+      "nextPopulation": 5000,
+      "order": 2,
+      "requiredSocialStratification": 0.5,
+      "requiredSpecialization": 0.3,
+      "requiresUrbanCenter": false
+    },
+    {
+      "stage": 3,
+      "key": "EthnicGroup",
+      "name": "族群",
+      "minPopulation": 5000,
+      "nextPopulation": 10000,
+      "order": 3,
+      "requiredSocialStratification": 0.7,
+      "requiredSpecialization": 0.5,
+      "requiresUrbanCenter": true
+    },
+    {
+      "stage": 4,
+      "key": "HighCivilization",
+      "name": "高级文明",
+      "minPopulation": 10000,
+      "nextPopulation": -1,
+      "order": 4,
+      "requiredSocialStratification": 0.0,
+      "requiredSpecialization": 0.0,
+      "requiresUrbanCenter": false
+    }
+  ]
+}

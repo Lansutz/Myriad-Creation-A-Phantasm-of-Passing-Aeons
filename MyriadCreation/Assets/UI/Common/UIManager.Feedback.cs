@@ -11,16 +11,8 @@ using MyriadCreation.Core.Dto;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Infrastructure.Save;
 using MyriadCreation.Rendering;
-using MyriadCreation.Simulation.Characters;
-using MyriadCreation.Simulation.Economy;
-using MyriadCreation.Simulation.Events;
-using MyriadCreation.Simulation.Generation;
-using MyriadCreation.Simulation.Modding;
-using MyriadCreation.Simulation.Politics;
-using MyriadCreation.Simulation.Population;
-using MyriadCreation.Simulation.Society;
-using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.UI;
+using MyriadCreation.Content.Definitions;
 
 
 
@@ -28,7 +20,6 @@ using MyriadCreation.UI;
 
 
 
-using MyriadCreation.Simulation.Culture;
 namespace MyriadCreation.UI.Common
 {
  /// UIManager.Feedback —— 用户反馈（事件日志/Toast通知/确认对话框）（partial class，与 UIManager.cs 共享字段与组件引用）
@@ -38,7 +29,7 @@ namespace MyriadCreation.UI.Common
  /// <summary>添加事件日志（按类型着色）</summary>
         public void AddEventLog(string message, EventLogKind kind = EventLogKind.Info)
         {
-            string timestamp = world != null ? $"[{world.currentYear}年{world.currentDay}天] " : "";
+            string timestamp = _worldReadModel != null ? $"[{_worldReadModel.CurrentYear}年{_worldReadModel.CurrentDay}天] " : "";
             Color color = kind switch
             {
                 EventLogKind.System => UITheme.LogSystem,

@@ -2,17 +2,19 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using MyriadCreation.Core.Events;
+using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Contracts;
-using MyriadCreation.Core.Simulation;
-using MyriadCreation.Simulation.Modding;
+using MyriadCreation.Simulation.Scheduling;
+using MyriadCreation.Content.Modding;
+using MyriadCreation.Simulation.ContentHost;
 using MyriadCreation.Simulation.Economy;
-using MyriadCreation.Simulation.Disaster;
 using MyriadCreation.Simulation.AI;
-using MyriadCreation.Simulation.Characters;
 using MyriadCreation.Simulation.Planning;
 using MyriadCreation.Simulation.Diplomacy;
-using MyriadCreation.Simulation.Society.Building;
-using MyriadCreation.Simulation.Planning;
+using MyriadCreation.Simulation.Definitions;
+using MyriadCreation.Simulation.State;
+using MyriadCreation.Simulation.Systems;
+using MyriadCreation.Content.Definitions;
 
 namespace MyriadCreation.Tests.EditMode
 {
@@ -208,7 +210,7 @@ namespace MyriadCreation.Tests.EditMode
             scheduler.Register("daily", SimulationCadence.Daily, 10, _ => order.Add("daily"));
             scheduler.Register("weekly", SimulationCadence.Weekly, 15, _ => order.Add("weekly"));
 
-            scheduler.Tick(30, 1);
+            scheduler.Tick(210, 1, 1);
 
             CollectionAssert.AreEqual(new[] { "daily", "weekly", "monthly" }, order);
         }
@@ -281,10 +283,10 @@ namespace MyriadCreation.Tests.EditMode
             var bus = new SimulationCommandBus();
             bus.Register(new TestCommandHandler());
             var result = bus.Send(new TestCommand(7));
-            Assert.IsTrue(result.success);
-            Assert.AreEqual("handled", result.code);
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual("handled", result.Code);
             Assert.IsTrue(bus.Unregister<TestCommand>());
-            Assert.IsFalse(bus.Send(new TestCommand(8)).success);
+            Assert.IsFalse(bus.Send(new TestCommand(8)).Success);
         }
 
         [Test]
@@ -357,16 +359,16 @@ namespace MyriadCreation.Tests.EditMode
 
         private sealed class TestCommandHandler : ISimulationCommandHandler<TestCommand>
         {
-            public CommandResult Handle(TestCommand command) => CommandResult.Success("handled");
+            public CommandResult Handle(TestCommand command) => CommandResult.Succeeded("handled");
         }
 
-        private readonly struct TestQuery : ISimulationQuery<int>
+        private readonly struct TestQuery : MyriadCreation.Core.Contracts.ISimulationQuery<int>
         {
             public readonly int value;
             public TestQuery(int value) { this.value = value; }
         }
 
-        private sealed class TestQueryHandler : ISimulationQueryHandler<TestQuery, int>
+        private sealed class TestQueryHandler : MyriadCreation.Core.Contracts.ISimulationQueryHandler<TestQuery, int>
         {
             public int Handle(TestQuery query) => query.value + 35;
         }
