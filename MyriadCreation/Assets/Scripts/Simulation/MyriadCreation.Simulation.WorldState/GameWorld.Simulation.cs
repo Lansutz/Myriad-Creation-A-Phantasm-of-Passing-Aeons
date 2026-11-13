@@ -892,6 +892,11 @@ public partial class GameWorld : MonoBehaviour
 				_chronicle?.Add("culture", (parentName ?? ("#" + parentId)) + " 分出 " + (childName ?? ("#" + childId)), true, realmId);
 			});
 		});
+		// 教派状态：正统越界/分歧度月结，结果写 Denomination.status。
+		_simulationScheduler.Register("faith.orthodoxy.monthly", SimulationCadence.Monthly, 42, (SimulationTickContext _) =>
+		{
+			TickDenominationStatuses();
+		});
 		// 文化融合：少数文化被主文化吸收，主文化吸收其可兼容传统。
 		_simulationScheduler.Register("culture.fusion.monthly", SimulationCadence.Monthly, 40, (SimulationTickContext _) =>
 		{

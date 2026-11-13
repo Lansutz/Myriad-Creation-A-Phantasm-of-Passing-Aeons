@@ -676,3 +676,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `ContentDefinitionIndex.Goods` provider 允许 0 键（小麦）；内容优先、代码兜底；Base→Mods 覆盖。
 - 测试：57 条齐全/唯一/自然丰度合法；自然标记与默认群系转换。
 - 未做：其余 12 张表。
+
+## D82 正统边界与宗派状态（P2.2 第四刀）
+
+- `ReligionDef` 增 `orthodoxyTenets/orthodoxyExclusions`（可选；空=未声明边界）。
+- `OrthodoxyEvaluator`：候选 faith 的教义必须包含全部必备项、不得包含排除项；未声明边界返回 `Unspecified`，不自动判异端（failMode=block）。
+- `DenominationStatusRules`：声明性越界 → `Heterodox`（优先于分歧度）；未越界但分歧度 ≥30 → `Tolerated`；否则 `Mainstream`。阈值标 `TODO_M05`。
+- `GameWorld.TickDenominationStatuses`（`faith.orthodoxy.monthly`，order 42）：对每个非默认宗派，取成员 faith 与其上位 religion 的分歧度/越界数，写回 `Denomination.status` 并留编年史。
+- 测试：未声明边界、缺必备、含排除、合规；状态三档判定。
+- 未做：合一/妥协/敌意的局势阶段与自动分裂（需要宗教局势状态机与玩家/机构裁决入口）。

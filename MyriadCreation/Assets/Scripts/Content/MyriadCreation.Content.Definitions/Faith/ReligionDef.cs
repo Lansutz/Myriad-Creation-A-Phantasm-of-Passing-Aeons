@@ -59,6 +59,12 @@ public class ReligionDef
 
 	public List<string> selectedDoctrines = new List<string>();
 
+	/// <summary>正统必备教义 optionId；为空表示该 religion 未声明正统边界（不判异端）。</summary>
+	public List<string> orthodoxyTenets = new List<string>();
+
+	/// <summary>明确排除的教义 optionId；出现即越界。</summary>
+	public List<string> orthodoxyExclusions = new List<string>();
+
 	public List<int> requiredInnovations = new List<int>();
 
 	public List<string> rites = new List<string>();
