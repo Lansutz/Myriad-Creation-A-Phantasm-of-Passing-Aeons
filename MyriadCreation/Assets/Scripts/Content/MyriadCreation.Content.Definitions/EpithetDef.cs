@@ -1,5 +1,8 @@
+using System;
+
 namespace MyriadCreation.Content.Definitions
 {
+[Serializable]
 public class EpithetDef
 {
 	public string id;

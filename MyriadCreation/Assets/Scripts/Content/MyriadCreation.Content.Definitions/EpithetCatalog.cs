@@ -18,6 +18,30 @@ public static class EpithetCatalog
 		}
 	}
 
+	/// <summary>P2.4：内容表加载（Base→Mods 顺序调用，同 id 后者覆盖）；无内容时仍用代码兜底表。</summary>
+	public static void LoadFromContent(IReadOnlyList<EpithetDef> defs)
+	{
+		_defs ??= new Dictionary<string, EpithetDef>();
+		if (defs == null)
+		{
+			return;
+		}
+		for (int i = 0; i < defs.Count; i++)
+		{
+			EpithetDef def = defs[i];
+			if (def != null && !string.IsNullOrEmpty(def.id))
+			{
+				_defs[def.id] = def;
+			}
+		}
+	}
+
+	/// <summary>内容重置（世界重载）：下次 All 重新走代码兜底，随后再由内容覆盖。</summary>
+	public static void ResetContent()
+	{
+		_defs = null;
+	}
+
 	public static EpithetDef Get(string id)
 	{
 		if (!All.TryGetValue(id, out var value))

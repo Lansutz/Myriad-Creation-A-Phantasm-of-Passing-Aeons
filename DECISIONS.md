@@ -637,3 +637,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 权重目前统一（TODO_M05）；等内容给出按域权重后再替换，不在此处硬编码。
 - 测试覆盖：同集=0、两组中一组不同=50、sequence 档距、category 部分重合按并集、单边缺组=100。
 - 未做：正统边界（orthodoxy.tenetIds/exclusions）与异端阈值判定；本批只统一「分歧度怎么算」。
+
+## D77 计划类型收口 + 绰号表外提（§5.1 冲突 1 / P2.4）
+
+- `PlanType` 的 `Trade/Diplomacy/Migration/Military` 加 `[Obsolete]` 标注：保留枚举值只为存档 int 序号稳定（Unity 枚举序连锁），明确「不得使用」；全库已无引用。§5.1 冲突 1 的「两种口径并存」由此消除。
+- 绰号表 81 条从 `EpithetCatalog` 代码表外提到 `StreamingAssets/Base/Epithet/Epithets.json`；`EpithetDef` 标 `[Serializable]`，`ContentDefinitionIndex` 新增 `Epithet` provider 与加载器，Base→Mods 同 id 覆盖。
+- `EpithetCatalog.LoadFromContent/ResetContent`：内容加载后覆盖；无内容时仍走代码兜底，避免早期测试/空内容世界拿不到数据。
+- 测试：81 条齐全且 id 唯一、枚举合法；代码兜底仍可用；内容覆盖优先生效。
+- 未做：其余 17 张表的外提（逐张排期，机制同上）。

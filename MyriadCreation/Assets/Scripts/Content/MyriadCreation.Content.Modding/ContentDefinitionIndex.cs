@@ -128,6 +128,12 @@ namespace MyriadCreation.Content.Modding
         }
 
         [Serializable]
+        private class EpithetListWrapper
+        {
+            public List<EpithetDef> epithets = new List<EpithetDef>();
+        }
+
+        [Serializable]
         private class DoctrineListWrapper
         {
             public List<DoctrineOptionDef> doctrines = new List<DoctrineOptionDef>();
@@ -159,6 +165,7 @@ namespace MyriadCreation.Content.Modding
             providerCatalog.Add(new DelegateContentProvider<string, DoctrineOptionDef>("Doctrine", LoadDoctrineRoot), new DictionaryContentStore<string, DoctrineOptionDef>(Doctrines));
             providerCatalog.Add(new DelegateContentProvider<string, TitleDef>("Title", LoadTitleRoot), new DictionaryContentStore<string, TitleDef>(Titles));
             providerCatalog.Add(new DelegateContentProvider<int, EquipmentDef>("Equipment", LoadEquipmentRoot), new DictionaryContentStore<int, EquipmentDef>(Equipment));
+            providerCatalog.Add(new DelegateContentProvider<string, EpithetDef>("Epithet", LoadEpithetRoot), new DictionaryContentStore<string, EpithetDef>(new Dictionary<string, EpithetDef>()));
 
             foreach (ContentSource source in ContentSourceCatalog.CreateDefault(streamingAssetsRoot))
             {
@@ -194,6 +201,7 @@ namespace MyriadCreation.Content.Modding
             Doctrines.Clear();
             Titles.Clear();
             Equipment.Clear();
+            EpithetCatalog.ResetContent();
         }
 
         // ===== LoadRoot（按 provider 根目录解析）=====
@@ -261,6 +269,28 @@ namespace MyriadCreation.Content.Modding
         {
             string path = Path.Combine(r, "Innovation/Innovations.json");
             if (File.Exists(path)) LoadInnovations(path, t);
+        }
+
+        private void LoadEpithetRoot(string r, IContentStore<string, EpithetDef> t)
+        {
+            string path = Path.Combine(r, "Epithet/Epithets.json");
+            if (File.Exists(path)) LoadEpithets(path, t);
+        }
+
+        private static void LoadEpithets(string path, IContentStore<string, EpithetDef> target)
+        {
+            EpithetListWrapper wrapper = JsonUtility.FromJson<EpithetListWrapper>(File.ReadAllText(path));
+            if (wrapper == null || wrapper.epithets == null) return;
+            List<EpithetDef> parsed = new List<EpithetDef>();
+            foreach (EpithetDef item in wrapper.epithets)
+            {
+                if (item != null && !string.IsNullOrEmpty(item.id))
+                {
+                    target.Set(item.id, item);
+                    parsed.Add(item);
+                }
+            }
+            EpithetCatalog.LoadFromContent(parsed);
         }
 
         private void LoadReligionRoot(string r, IContentStore<int, ReligionDef> t)
