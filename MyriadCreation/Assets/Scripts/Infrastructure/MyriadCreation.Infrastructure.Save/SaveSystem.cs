@@ -410,6 +410,8 @@ namespace MyriadCreation.Infrastructure.Save
                 data.diplomaticSubordinations = diplomacy.CaptureSubordinations();
             }
 
+            data.plans = world.Plans.CapturePlans();
+
  // 角色/家族/官职 holder/地图单位/角色知识（v11 起；旧档读取时这些字段为 null）
             CapturePersistentEntities(world, data);
             return data;
@@ -522,6 +524,9 @@ namespace MyriadCreation.Infrastructure.Save
 
             // 外交四表（P0.1）：旧档 null 表示缺段，保留 InitializeSubsystems 的初始化关系。
             world.GetDiplomacyManager()?.RestoreDiplomacy(data.diplomaticRelations, data.diplomaticSubordinations);
+
+            // 计划运行态（P0.1）：旧档 null 保持空表，不重建未计划的工程。
+            world.Plans.RestorePlans(data.plans, world.currentDay);
         }
 
         // ===== 角色/家族/官职/地图单位（SaveVersion 11 起）=====

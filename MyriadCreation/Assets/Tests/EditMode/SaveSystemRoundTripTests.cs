@@ -3,12 +3,14 @@ using System.IO;
 using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Core.Constants;
+using MyriadCreation.Core.Contracts;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Infrastructure.Save;
 using MyriadCreation.Simulation.Economy;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
+using MyriadCreation.Simulation.Planning;
 using MyriadCreation.Simulation.Politics;
 using MyriadCreation.Simulation.Units;
 using MyriadCreation.Simulation.WorldState;
@@ -204,6 +206,24 @@ namespace MyriadCreation.Tests.EditMode
             subordination.tributeRatio = 0.125f;
             subordination.autonomy = 0.4f;
 
+            var plan = world.Plans.CreatePlan(PlanType.Research, realmId, 600, 100,
+                "研究计划", "测试计划", 30f, "roundtrip", "innovation");
+            Assert.IsTrue(world.Plans.AcceptPlan(plan.planId), "前置：计划应接受");
+            Assert.IsTrue(world.Plans.BeginPreparation(plan.planId), "前置：计划应进入准备");
+            Assert.IsTrue(world.Plans.BeginExecution(plan.planId), "前置：计划应进入执行");
+            plan.ownerId = realmId;
+            plan.progress = 0.35f;
+            plan.elapsedDays = 7f;
+            plan.lastStateChangeDay = 100;
+            plan.participants.Add(new PlanParticipant(4242, "scholar"));
+            plan.requirements.Add(new PlanRequirement("manpower", 12f));
+            plan.activity.Set("study", "study_def", "executing");
+            plan.currentActivity = "study";
+            plan.waitCondition = new SimulationWaitCondition("has_library", "需要图书馆", true);
+            plan.isWaiting = true;
+            plan.resultCode = "partial";
+            plan.resultSummary = "测试中间态";
+
             var division = new AdminDivision
             {
                 divisionId = 9001,
@@ -331,6 +351,28 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(0.4f, loadedSubordination.autonomy, 0.001f, "自治度");
             Assert.IsTrue(ReferenceEquals(loadedRelation.subordination, loadedSubordination),
                 "关系与从属表应指向同一对象");
+
+            Assert.AreEqual(77, loaded.Plans.CurrentDay, "计划系统当前日");
+            Assert.IsTrue(loaded.Plans.TryGetPlan(plan.planId, out Plan loadedPlan), "计划应还原");
+            Assert.AreEqual(PlanType.Research, loadedPlan.type, "计划类型");
+            Assert.AreEqual(PlanState.Executing, loadedPlan.state, "计划状态");
+            Assert.AreEqual(PlanPhase.Execution, loadedPlan.phase, "计划阶段");
+            Assert.AreEqual(realmId, loadedPlan.ownerId, "计划 owner");
+            Assert.AreEqual(0.35f, loadedPlan.progress, 0.001f, "计划进度");
+            Assert.AreEqual(7f, loadedPlan.elapsedDays, 0.001f, "计划已历天数");
+            Assert.AreEqual(100, loadedPlan.lastStateChangeDay, "计划状态变更日");
+            Assert.AreEqual(1, loadedPlan.participants.Count, "计划参与者");
+            Assert.AreEqual(4242, loadedPlan.participants[0].characterId, "参与者 id");
+            Assert.AreEqual("scholar", loadedPlan.participants[0].role, "参与者角色");
+            Assert.AreEqual(1, loadedPlan.requirements.Count, "计划需求");
+            Assert.AreEqual("manpower", loadedPlan.requirements[0].key, "需求键");
+            Assert.AreEqual(12f, loadedPlan.requirements[0].amount, 0.001f, "需求量");
+            Assert.AreEqual("study", loadedPlan.currentActivity, "当前活动");
+            Assert.AreEqual("study_def", loadedPlan.activity.definitionId, "活动定义");
+            Assert.AreEqual("has_library", loadedPlan.waitCondition.ConditionId, "等待条件");
+            Assert.IsTrue(loadedPlan.isWaiting, "等待标记");
+            Assert.AreEqual("partial", loadedPlan.resultCode, "结果码");
+            Assert.AreEqual("测试中间态", loadedPlan.resultSummary, "结果摘要");
 
             AdminDivision loadedDivision = null;
             foreach (var d in loadedRealm.adminDivisions)

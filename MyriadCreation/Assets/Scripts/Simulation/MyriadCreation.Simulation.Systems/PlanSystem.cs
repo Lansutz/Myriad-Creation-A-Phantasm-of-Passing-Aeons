@@ -303,6 +303,92 @@ public sealed class PlanSystem
 		}
 	}
 
+	public List<PlanSaveData> CapturePlans()
+	{
+		var result = new List<PlanSaveData>(_plans.Count);
+		foreach (Plan plan in _plans.Values)
+		{
+			if (plan == null) continue;
+			var dto = new PlanSaveData
+			{
+				planId = plan.planId,
+				type = (int)plan.type,
+				state = (int)plan.state,
+				phase = (int)plan.phase,
+				initiatorId = plan.initiatorId,
+				ownerId = plan.ownerId,
+				targetId = plan.targetId,
+				targetKind = plan.targetKind ?? string.Empty,
+				purpose = plan.purpose ?? string.Empty,
+				title = plan.title ?? string.Empty,
+				description = plan.description ?? string.Empty,
+				progress = plan.progress,
+				elapsedDays = plan.elapsedDays,
+				estimatedDays = plan.estimatedDays,
+				createdDay = plan.createdDay,
+				lastStateChangeDay = plan.lastStateChangeDay,
+				currentActivity = plan.currentActivity ?? string.Empty,
+				activityId = plan.activity?.activityId ?? string.Empty,
+				activityDefinitionId = plan.activity?.definitionId ?? string.Empty,
+				activityStateCode = plan.activity?.stateCode ?? string.Empty,
+				waitConditionId = plan.waitCondition.ConditionId ?? string.Empty,
+				waitConditionDescription = plan.waitCondition.Description ?? string.Empty,
+				waitConditionPollOnSchedule = plan.waitCondition.PollOnSchedule,
+				isWaiting = plan.isWaiting,
+				resultCode = plan.resultCode ?? string.Empty,
+				resultSummary = plan.resultSummary ?? string.Empty
+			};
+			if (plan.participants != null) dto.participants.AddRange(plan.participants);
+			if (plan.requirements != null) dto.requirements.AddRange(plan.requirements);
+			result.Add(dto);
+		}
+		result.Sort((a, b) => a.planId.CompareTo(b.planId));
+		return result;
+	}
+
+	/// <summary>读档还原计划；saved 为 null 表示旧档缺段，保持当前空表。</summary>
+	public void RestorePlans(List<PlanSaveData> saved, int currentDay)
+	{
+		_currentDay = currentDay;
+		if (saved == null) return;
+
+		_plans.Clear();
+		_activePlanIds.Clear();
+		_nextPlanId = 1;
+		foreach (PlanSaveData dto in saved)
+		{
+			if (dto == null || dto.planId <= 0) continue;
+			var plan = new Plan(dto.planId, (PlanType)dto.type, dto.initiatorId, dto.targetId, dto.createdDay)
+			{
+				state = (PlanState)dto.state,
+				phase = (PlanPhase)dto.phase,
+				ownerId = dto.ownerId,
+				targetKind = dto.targetKind ?? string.Empty,
+				purpose = dto.purpose ?? string.Empty,
+				title = dto.title ?? string.Empty,
+				description = dto.description ?? string.Empty,
+				progress = dto.progress,
+				elapsedDays = dto.elapsedDays,
+				estimatedDays = dto.estimatedDays,
+				lastStateChangeDay = dto.lastStateChangeDay,
+				currentActivity = dto.currentActivity ?? string.Empty,
+				isWaiting = dto.isWaiting,
+				resultCode = dto.resultCode ?? string.Empty,
+				resultSummary = dto.resultSummary ?? string.Empty
+			};
+			if (dto.participants != null) plan.participants.AddRange(dto.participants);
+			if (dto.requirements != null) plan.requirements.AddRange(dto.requirements);
+			plan.activity.Set(dto.activityId, dto.activityDefinitionId, dto.activityStateCode);
+			plan.waitCondition = new SimulationWaitCondition(
+				dto.waitConditionId, dto.waitConditionDescription, dto.waitConditionPollOnSchedule);
+
+			_plans[plan.planId] = plan;
+			if (plan.state == PlanState.Preparing || plan.state == PlanState.Executing)
+				_activePlanIds.Add(plan.planId);
+			if (plan.planId >= _nextPlanId) _nextPlanId = plan.planId + 1;
+		}
+	}
+
 	public List<Plan> GetPlans(PlanType? type = null, PlanState? state = null)
 	{
 		List<Plan> list = new List<Plan>();

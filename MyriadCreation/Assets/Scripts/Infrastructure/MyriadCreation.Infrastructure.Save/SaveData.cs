@@ -16,6 +16,7 @@ using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.Faith;
 using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.Planning;
 using MyriadCreation.Content.Definitions;
 namespace MyriadCreation.Infrastructure.Save
 {
@@ -79,6 +80,9 @@ namespace MyriadCreation.Infrastructure.Save
         // ===== 外交关系/从属（P0.1；旧档为 null，读档保留初始化关系）=====
         public List<DiplomaticRelation> diplomaticRelations;
         public List<Subordination> diplomaticSubordinations;
+
+        // ===== 计划运行态（P0.1；旧档为 null，读档保持空计划表）=====
+        public List<PlanSaveData> plans;
 
  // ===== 角色纽带（SaveVersion 15 起；CharacterManager 私有持有，旧档字段为 null）=====
         public List<CharacterBondSaveData> bonds;
