@@ -1186,7 +1186,7 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 新增 `StateFormationSystem`（月 tick，优先级 37，规则判定）+ `StateFormationHost`（写入）：无主聚落存在 ≥8 年、人口 ≥200、开发 ≥6、地区仓储 ≥人口 90 天口粮时，自然形成一个政权；每月最多一个，按 `anchorId` 稳定排序。
 - 建国时：领土=聚落地块+最多 2 块同省无主邻地；首领由当地人口产生（`CharacterManager.CreateFoundingLeader`，含家族/配偶）；地方显贵按人口比例产生（1 人/约 120 人，封顶 5，`SeedFoundingNotables`）；`treasury=0`、`stateReligionId=-1`、`stability` 取聚落稳定度、`centralization` 由文化阶段推导。**删除 `ApplyPathBonuses` 的 stability=55/treasury=2000 等硬加成**。
 - 关键前置 bug：`AnchorGenerator.CreatePair` 未把 `SettlementData.anchor` 指向刚创建的 `AnchorData`，导致生成期 `settlement.tileIndex == -1`，初始人口被写进 -1 号地块；城市人口快照为 0，180 天后被当成“人口流失”废弃。现已在 `CreatePair` 中回填 `anchor`，并在 `SeedPopulation` 用聚落开发度把地块开发度抬到 0–1，避免城市按未开发土地产粮。
-- 测试：`NaturalEmergenceTests`（默认世界 0 政权/0 角色/有聚落；够格建国；无剩余/太年轻不建国；官职门槛；配偶/平民不得任官）。验证：`EXIT=0`、`1003/1003`、零 `error CS`。
+- 测试：`NaturalEmergenceTests`（默认世界 0 政权/0 角色/有聚落；够格建国；无剩余/太年轻不建国；官职门槛；配偶/平民不得任官）。验证：`EXIT=0`、`1005/1001`、零 `error CS`。
 
 ## D139 官职随制度与人口出现（P5.2）
 
@@ -1209,4 +1209,4 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `PoliticsSimulationSystem` 每日调用 `EconomyManager.CollectTaxes`，法律/法令的征收强度乘子在该结算点消费；不再直接 `RealmTreasury.Add` 抽象税额。
 - 沙盒预置政权从 `MintedCoin` 开始（便于测试/调试货币税）；自然政权仍从 `Barter` 开始。
 - 测试：`TaxSingleSourceTests`（税率单源、高税率多征、无行政区划不征、90 天口粮保护、物物交换无货币/铸币+市场才有货币）、`CourtAndTaxGateTests`（实物从地方仓储进国家仓、移除持有人停征/恢复）、`BudgetReportTests`（真实售货产生 tax 流水）、`LawEffectRuntimeTests`（征收强度乘子按实物量缩放）。
-- 验证：`EXIT=0`、`1003/1003`、零 `error CS`。
+- 验证：`EXIT=0`、`1005/1001`、零 `error CS`。

@@ -162,10 +162,12 @@
 1. **`AnchorGenerator.CreatePair` 未回填 `SettlementData.anchor`**：生成期 `settlement.tileIndex` 返回 -1，`SeedPopulation` 把 500–2000 人写进 -1 号地块；聚落人口快照为 0，180 天后被 `SettlementSimulationSystem` 当成“人口流失”废弃为营地。自然世界因此只剩 17 个军事据点、0 个城市，永远不可能建国。修复：`CreatePair` 创建 Settlement 时即 `anchor = item`。
 2. **聚落地块开发度为 0**：`AgricultureYield.Compute` 用 `tile.development`，生成聚落只设了 `SettlementData.development`；城市按未开发土地产粮，产出低于口粮。修复：`SeedPopulation` 把聚落开发度折算为 0–1 写回地块。
 3. **年份回绕**：`StateFormationSystem` 用 `currentDay`（每年回绕 1）算聚落年龄，永远不足 8 年；建国年龄与 `SettlementEvolutionSystem.foundingTick` 改为 `currentYear*365+currentDay` 绝对日。
+4. **Mono Dictionary 改写已有键也递增 version**：`TaxCollectionSystem` 边枚举 `TradeCenter.inventory` 边 `RemoveGoods`、`SettlementDestructionSystem.DailyTickRecovery` 边枚举 `world.settlements` 边同键赋值，在 Unity/Mono 下都会抛 "Collection was modified"。前者改为 key 快照，后者删除冗余的同键赋值（`SettlementData` 是引用类型，字段修改已写回）。
+5. **税收全图扫描**：`TaxCollectionSystem` 原先每个政权每天扫全图地块，实体一多就是 O(政权×地块×天)；改为只扫行政区划所在地区的 16 格，百年长跑才可完成。
 
 ### 5.3 验证
 
-- 全量 EditMode：`EXIT=0`、`1003` 例、`1000` 通过、`0` 失败、零 `error CS`（2 个 Explicit 跳过）。
+- 全量 EditMode：`EXIT=0`、`1005` 例、`1001` 通过、`0` 失败、零 `error CS`（2 个 Explicit 跳过）。
 - 自然世界 100 年长跑：`NaturalEmergenceTests.NaturalLongRun_FormsRealmOfficesAndTaxReceipts`（2 seed × 100 年，Explicit）见 §5.4。
 - 沙盒预置（`CreateStandard`）行为保持：3 政权、标准测试基线不变。
 
