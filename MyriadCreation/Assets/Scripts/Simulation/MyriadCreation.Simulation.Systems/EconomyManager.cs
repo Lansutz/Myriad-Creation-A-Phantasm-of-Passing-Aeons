@@ -154,11 +154,20 @@ public class EconomyManager
 			for (int i = regionStart; i < regionEnd && i < _tiles.Length; i++)
 			{
 				TileData tile = _tiles[i];
-				if (!tile.exists || !tile.isLand || tile.resources == null) continue;
-				foreach (TileResource resource in tile.resources)
+				if (!tile.exists || !tile.isLand) continue;
+				if (tile.resources != null)
 				{
-					if (!resource.discovered || !resource.developed || resource.IsDepleted) continue;
-					float accepted = tradeCenter.AddGoodsReturningAccepted(resource.goodsId, resource.EffectiveOutput);
+					foreach (TileResource resource in tile.resources)
+					{
+						if (!resource.discovered || !resource.developed || resource.IsDepleted) continue;
+						float accepted = tradeCenter.AddGoodsReturningAccepted(resource.goodsId, resource.EffectiveOutput);
+						if (accepted > 0f) produced++;
+					}
+				}
+				float cropYield = AgricultureYield.Compute(tile);
+				if (cropYield > 0f)
+				{
+					float accepted = tradeCenter.AddGoodsReturningAccepted(AgricultureYield.FoodGoodsId, cropYield);
 					if (accepted > 0f) produced++;
 				}
 			}

@@ -180,6 +180,8 @@
 - 2026-11-13 **P2.5 A 收口**：19 个存档适配器迁入新 `MyriadCreation.Save.Runtime`；`MyriadCreation.Infrastructure` 程序集删除；Editor/App/Tests 改引 Save.Runtime。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**A/B 完成**。
 - 2026-11-13 **P2.5 E 遗传单源**：子代先由 `GeneticsEngine.Reproduce` 生成 GenomeInstance，再产出 DnaData 兼容快照；缺基因组才回退旧路径。新增测试。验证：`EXIT=0`、`873/875`（2 个 Explicit 跳过）、零 `error CS`。**E 完成**。
 - 2026-11-13 **NPP 生态模型**：移植 Earth Simulator 的 Miami NPP，TileData 落盘，承载力按 NPP 缩放。新增 2 例测试。验证：`EXIT=0`、`889/891`、零 `error CS`。
+- 2026-11-13 **群系资源表**：新增 `Biome/BiomeResources.json`（90 群系×自然资源概率/丰度）与 `BiomeResourceCatalog`；`ResourceGenerator` 查表优先、缺表回退 `GoodsDef.originBiomes`。
+- 2026-11-13 **P3.0 农业—食物链**：`AgricultureYield` 由耕作者×肥力×NPP×开发度推导作物产出，写入地区库存并与口粮/饥荒衔接；修复 `resources==null` 地块不产粮的门禁错误。新增 `AgricultureYieldTests` 7 例，缺粮夹具改贫瘠地。详见 D116。验证：`EXIT=0`、`896/898`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **纹章模型对齐 Azgaar/Armoria**：division/ordinary/盾形 + 纹章金属/颜色规则，家族纹章确定性生成。验证：`EXIT=0`、`887/889`、零 `error CS`。
 - 2026-11-13 **程序化家族纹章**：`Heraldry` 确定性生成 pattern+三色，家族创建/旧档补齐，`FamilySaveData` 往返。新增 3 例测试。验证：`EXIT=0`、`887/889`、零 `error CS`。
 - 2026-11-13 **架构解耦收口**：C 写入口+门禁、E Genome 主路径、F Hosts 程序集反转、P2.6 两相调度；最终 `build` 884/886、`longrun` 1/1 全绿。详见 D111。

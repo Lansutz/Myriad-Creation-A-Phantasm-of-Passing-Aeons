@@ -943,3 +943,14 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 政权旗帜同样不是普遍存在：早期大多数政权只有**军旗**，现代意义上的“国旗”出现很晚且意义不同。规划中的 `BannerKind` 分 `None / MilitaryBanner / HouseholdBanner / StateFlag`；StateFlag 需民族主义/印刷/革命类革新与相应政体，不能给所有政权发国旗。
 - 参考项目的旗帜生成（TTHTOM `flag_profile`）只用于有旗帜的政体，且先做军旗/家旗层，不把现代国旗当默认。
 - 验证：`EXIT=0`、`889/891`、零 `error CS`；纹章改为按文化开关。
+
+## D116 农业—食物链（P3.0）
+
+- 产出由**耕作者 × 肥力 × NPP × 开发度**推导（`AgricultureYield`），不读繁荣度等抽象字段：`farmers * 0.03 * (0.2+0.8*fertility) * (0.5+0.5*npp) * (0.7+0.3*development)`。
+- 只有 `SocialClass.Peasant` 计入耕作者；土地贫瘠（`fertility<=0.02`）、非陆地、未存在地块产出为 0，不得凭空产粮。旧档 `npp=0` 回退中性值 0.5，保持旧口径可玩。
+- 作物写入地区 `TradeCenter` 的 `goodsId=0`（粮食），与既有口粮消费/饥荒处罚共用一条库存链，不另开“农业产出”字段。
+- `ProduceResources` 修正：自然资源与农业分开门禁。此前 `resources==null` 会跳过整块地，导致无矿无木的地块永远不产粮。
+- 校准：100 农民、肥力 0.6、NPP 0.5、开发 0.1 → 约 1.12/日，扣 100 人口粮 1.0 后略有盈余；肥力降到 0.5（旱年）→ 0.81/日，库存见底并触发饥荒轻罚。系数是校准值，调整需同时更新 `AgricultureYieldTests` 的方向断言（不断言具体数值）。
+- 已知未做：食物篮子仍只吃 `goodsId=0`（肉/鱼/稻谷不参与口粮），季节/灾害只通过肥力间接影响；留待 P3.2 生态与灾害联动。
+- 测试：`AgricultureYieldTests` 7 例（纯函数方向、NPP 旧档回退、入账守恒、旱灾饥荒、容量约束）；`EconomyConservationTests` 的缺粮夹具改为贫瘠地（`fertility=0`），避免农业自给掩盖饥荒前提。
+- 验证：`EXIT=0`、`896/898`（2 个 Explicit 跳过）、零 `error CS`。

@@ -284,6 +284,10 @@ namespace MyriadCreation.Tests.EditMode
 
         // ---------- 3. 城市缺粮后果 ----------
 
+        /// <summary>
+        /// 贫瘠地块上的城市：fertility=0 表示本地无法耕作，粮食只能靠库存/贸易输入。
+        /// 若给肥力，P3.0 农业产出会自给，这组“缺粮后果”用例就失去前提。
+        /// </summary>
         private static TileData[] NewSingleCityWorld()
         {
             return new[]
@@ -296,7 +300,7 @@ namespace MyriadCreation.Tests.EditMode
                     tileIndex = 0,
                     stability = 60f,
                     order = 40f,
-                    fertility = 1f,
+                    fertility = 0f,
                     development = 1f,
                     buildingLevels = new int[2],
                     populationBlocks = new List<PopulationBlock>
