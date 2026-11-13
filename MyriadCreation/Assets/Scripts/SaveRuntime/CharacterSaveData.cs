@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.Definitions;
@@ -532,6 +532,7 @@ namespace MyriadCreation.Infrastructure.Save
                 // 旧 dna 兼容层：留空，靠 GetGenome 从 genome 派生。
                 dna = null
             };
+            c.genome = GenomeMigration.Upgrade(c.genome);
             if (ownedTitles != null) c.ownedTitles.AddRange(ownedTitles);
             if (personalTenets != null) c.personalTenets.AddRange(personalTenets);
             if (bodyMarks != null) c.bodyMarks.AddRange(bodyMarks);

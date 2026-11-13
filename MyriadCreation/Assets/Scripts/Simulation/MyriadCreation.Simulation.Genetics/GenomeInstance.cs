@@ -20,6 +20,9 @@ public class GenomeInstance
 
 	public int generation;
 
+	/// <summary>基因组结构版本（D6）：旧档缺省 0，读档时按当前基因组位点数补齐。</summary>
+	public int genomeVersion;
+
 	public int ploidy = 2;
 
 	public int PaternalAt(int locus)

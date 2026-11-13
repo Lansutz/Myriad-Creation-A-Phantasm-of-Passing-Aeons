@@ -269,7 +269,7 @@ public class CharacterData
 	{
 		if (genome != null)
 		{
-			return genome;
+			return GenomeMigration.Upgrade(genome);
 		}
 		genome = ((dna != null) ? dna.GetGenome(race, isMale) : GeneticsEngine.CreateFounder(GeneticsCatalog.ResolveGenome(race?.GetGenomeId()), isMale ? GeneticSex.Male : GeneticSex.Female, new System.Random(characterId * 397 + age)));
 		return genome;

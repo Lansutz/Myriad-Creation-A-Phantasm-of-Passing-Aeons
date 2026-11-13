@@ -197,6 +197,7 @@
 - 2026-11-13 **D2 身体/体表/代谢位点**：`AlleleTraitEffect` 增离散通道；`BodyPlan/Integument/Metabolic` 表型由基因型纯函数推导；人类默认基因组扩到 16 位点，缺位点回退中性。新增 5 例测试。详见 D127。验证：`EXIT=0`、`950/952`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **D3 表型→机制**：角爪体型→个人战力、隔热耐温→寒热健康损耗、翼型→军队斥候范围；食性→口粮因人口块无物种字段暂缓（记欠账）。新增 7 例测试。详见 D128。验证：`EXIT=0`、`956/958`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **D4/D5 物种目录与瓦伊凡**：`GeneticsCatalog.FindSpeciesForGenome`；`Base/Genetics/Genomes.json`、`Species.json` 落地瓦伊凡/地龙，翼角鳞尾食性全由位点推导，代码无物种特判；隔离矩阵按内容声明。新增 5 例测试。详见 D129。验证：`EXIT=0`、`961/963`（2 个 Explicit 跳过）、零 `error CS`。
+- 2026-11-13 **D6 基因组迁移**：`GenomeInstance.genomeVersion` + `GenomeMigration.Upgrade`，旧档短数组按中性等位基因补齐，读档/GetGenome 两条路径都覆盖；新增 6 例测试。详见 D130。验证：`EXIT=0`、`967/969`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **官职调度降频**：`offices.daily` → `offices.monthly`（俸禄按 deltaDays 折算），避免百年人物表增长后每天全量扫人。
 - 2026-11-13 **纹章模型对齐 Azgaar/Armoria**：division/ordinary/盾形 + 纹章金属/颜色规则，家族纹章确定性生成。验证：`EXIT=0`、`887/889`、零 `error CS`。
 - 2026-11-13 **程序化家族纹章**：`Heraldry` 确定性生成 pattern+三色，家族创建/旧档补齐，`FamilySaveData` 往返。新增 3 例测试。验证：`EXIT=0`、`887/889`、零 `error CS`。

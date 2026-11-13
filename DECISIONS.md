@@ -1093,3 +1093,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 复杂度：物种查询 O(物种数)（内容规模小），表型 O(位点)；无 tick 开销。
 - 测试：`SpeciesWyvernTests` 5 例（内容加载、瓦伊凡表型、地龙反证、隔离矩阵、按基因组反查物种）。
 - 验证：`EXIT=0`、`961/963`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D130 旧 GenomeInstance 结构迁移（D6）
+
+- `GenomeInstance` 增 `genomeVersion`（旧档缺省 0）；`GenomeMigration.CurrentVersion = 2`。
+- `GenomeMigration.Upgrade`：读档/取基因组时就地补齐到当前基因组位点数；旧位点原样保留，新位点优先取**中性等位基因**（加性 0，离散 none/skin/biped/short），没有中性项才取 `defaultFrequency` 最高者；并列取索引最小，保证确定性。
+- 接线：`CharacterSaveData.ToCharacter()` 在还原后调用一次；`CharacterData.GetGenome` 对运行时旧实例也调用，避免绕过存档路径的旧数据漏迁移。
+- 复杂度 O(位点数)，只在读档/首次取基因组时发生；已补齐实例直接返回，不重复分配。
+- 测试：`GenomeMigrationTests` 6 例（补齐长度、旧位点保留、新位点中性、幂等、JSON 往返、迁移后可繁殖、GetGenome 路径）。
+- 验证：`EXIT=0`、`967/969`（2 个 Explicit 跳过）、零 `error CS`。
