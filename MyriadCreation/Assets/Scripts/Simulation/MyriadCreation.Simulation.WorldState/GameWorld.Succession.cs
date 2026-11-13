@@ -373,6 +373,7 @@ public partial class GameWorld : MonoBehaviour
 	private void TickLawEffectsYearly()
 	{
 		LawEffectRuntime.ApplyYearlyIfNewYear(realms?.Values, GetRealmSociety, currentYear, currentDay, ref _lastLawEffectsYear);
+		LawLifecycleSystem.YearlyTick(realms?.Values);
 	}
 }
 }

@@ -443,3 +443,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 评分沿用现有 `ClassNeedsSystem` 的阶级满足度作为底分（8 维需求已实现），再叠加位置修正：阶层的上下位置、身份（Royalty/Noble/Clergy/Citizen/Freedman/Foreigner/Outlaw）、职业（农/工/商/学/兵/官/祭/矿/水手/牧/医/师/力役）。修正解释为社会位置与职业风险，不是抽象货币。
 - 身份/职业仍按位均分人口；每桶记录 `needsSatisfaction`，每轴记录按人口加权的 `axisSatisfaction`；四轴合计仍与人口块总量守恒。
 - `SocialAxisWeights` 提供四轴权重（默认均分，可配）；`GetSocialAxisUnrest` = 100 − 加权满足度。改权重 → unrest 改变且同权重可复现，满足 D25 验收③。
+
+## D48 法律生命周期写入方（P1.3 第一批）
+
+- 阶段：`Active → Consolidated（连续 20 年）→ Fundamentalized（连续 50 年 + legitimacy ≥ 70 + 该组无 pending）`；换法时 `SetActiveLaw` 把旧法记入 `repealedLawIds`、年限清零、阶段回 Active。
+- 写入方：`LawRealmHost.BeginEnactLaw` 标 Pending；`LawLifecycleSystem.YearlyTick` 由年度法律效果调度调用；`Fundamentalized` 同时写入 `fundamentalizedLawIds`（普通法律/法令不能覆盖）。
+- 不做：暂不接革新门槛（LawDef 无 requiredInnovations 字段）；教理合并（WP3）与八接线点仍属 P1.3 剩余。

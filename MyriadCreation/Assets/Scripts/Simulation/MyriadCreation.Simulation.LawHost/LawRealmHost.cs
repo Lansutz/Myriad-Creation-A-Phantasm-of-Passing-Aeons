@@ -115,6 +115,14 @@ namespace MyriadCreation.Simulation.LawHost
             };
             lawState.pendingLaws ??= new List<PendingLaw>();
             lawState.pendingLaws.Add(pendingLaw);
+            LawGroupState groupState = lawState.groups?.Find(g => g != null && g.groupId == law.groupId);
+            if (groupState == null)
+            {
+                groupState = new LawGroupState { groupId = law.groupId };
+                lawState.groups ??= new List<LawGroupState>();
+                lawState.groups.Add(groupState);
+            }
+            groupState.stage = LegalNormStage.Pending;
             return pendingLaw;
         }
 

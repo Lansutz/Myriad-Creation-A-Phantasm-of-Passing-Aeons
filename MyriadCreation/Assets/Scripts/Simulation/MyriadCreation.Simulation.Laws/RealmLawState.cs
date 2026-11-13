@@ -60,8 +60,18 @@ public class RealmLawState
 			};
 			groups.Add(lawGroupState);
 		}
+		if (!string.IsNullOrEmpty(lawGroupState.activeLawId) && lawGroupState.activeLawId != lawId)
+		{
+			lawGroupState.repealedLawIds ??= new List<string>();
+			if (!lawGroupState.repealedLawIds.Contains(lawGroupState.activeLawId))
+			{
+				lawGroupState.repealedLawIds.Add(lawGroupState.activeLawId);
+			}
+		}
 		lawGroupState.activeLawId = lawId;
 		lawGroupState.enactedDay = day;
+		lawGroupState.yearsActive = 0;
+		lawGroupState.stage = LegalNormStage.Active;
 	}
 
 	/// <summary>法律是否在政权已知集中。</summary>
