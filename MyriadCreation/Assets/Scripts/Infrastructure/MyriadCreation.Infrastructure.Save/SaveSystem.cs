@@ -366,6 +366,7 @@ namespace MyriadCreation.Infrastructure.Save
                 currentDay = world.currentDay,
                 currentSeason = world.currentSeason,
                 randomSeed = world.randomSeed,
+                playerRealmId = world.PlayerRealmId,
                 tiles = world.tiles,
                 races = new List<RaceDTO>(),
                 cultures = new List<CultureData>(),
@@ -412,6 +413,7 @@ namespace MyriadCreation.Infrastructure.Save
             world.currentYear = data.currentYear;
             world.currentDay = data.currentDay;
             world.currentSeason = data.currentSeason;
+            world.PlayerRealmId = data.playerRealmId;
             world.tiles = data.tiles;
             world.SetupOptions = data.setupOptions ?? MyriadCreation.World.Generation.WorldSetupOptions.CreateDefault();
 

@@ -116,7 +116,19 @@ namespace MyriadCreation.Tests.EditMode
             army.moveTargetTile = modifiedTile;
             army.moveProgress = 0.25f;
 
-            world.realms[realmId].treasury = 12345f;
+            world.PlayerRealmId = realmId;
+            var realm = world.realms[realmId];
+            realm.treasury = 12345f;
+            realm.primaryTitleKey = "title_roundtrip";
+            realm.heirId = realm.monarchId >= 0 ? realm.monarchId : 4242;
+            realm.realmForm = RealmForm.Nomadic;
+            realm.nomadicSubtype = NomadicSubtype.Steppe;
+            int primaryCultureId = -1;
+            foreach (int cultureId in world.cultures.Keys) { primaryCultureId = cultureId; break; }
+            Assert.GreaterOrEqual(primaryCultureId, 0, "前置：应有文化");
+            realm.primaryCultureId = primaryCultureId;
+            realm.successionLawFromCulture = false;
+            realm.senateSeats = 42;
 
             var division = new AdminDivision
             {
@@ -194,8 +206,16 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(modifiedTile, loadedArmy.moveTargetTile, "军队行军目标");
             Assert.AreEqual(0.25f, loadedArmy.moveProgress, 0.001f, "军队行军进度");
 
+            Assert.AreEqual(realmId, loaded.PlayerRealmId, "玩家政权");
             Assert.IsTrue(loaded.realms.TryGetValue(realmId, out var loadedRealm), "政权应还原");
             Assert.AreEqual(12345f, loadedRealm.treasury, 0.01f, "国库");
+            Assert.AreEqual("title_roundtrip", loadedRealm.primaryTitleKey, "主头衔");
+            Assert.AreEqual(realm.heirId, loadedRealm.heirId, "继承人");
+            Assert.AreEqual(RealmForm.Nomadic, loadedRealm.realmForm, "政权形态");
+            Assert.AreEqual(NomadicSubtype.Steppe, loadedRealm.nomadicSubtype, "游牧亚型");
+            Assert.AreEqual(primaryCultureId, loadedRealm.primaryCultureId, "主体文化");
+            Assert.IsFalse(loadedRealm.successionLawFromCulture, "继承法来源");
+            Assert.AreEqual(42, loadedRealm.senateSeats, "议会席位");
 
             AdminDivision loadedDivision = null;
             foreach (var d in loadedRealm.adminDivisions)

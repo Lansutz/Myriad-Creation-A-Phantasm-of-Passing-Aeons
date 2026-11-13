@@ -32,6 +32,7 @@ namespace MyriadCreation.Infrastructure.Save
         public int currentDay;
         public int currentSeason;
         public int randomSeed; // 世界生成 seed（SaveVersion 16 起；旧档缺省 0 → 读档回退默认 42）
+        public int playerRealmId = -1; // 玩家当前政权；旧档缺省 -1 = 未指定
 
  // 核心数据（TileData/CultureData/GoodsDef/TradeRoute 无字典，可直接序列化）
         public TileData[] tiles;

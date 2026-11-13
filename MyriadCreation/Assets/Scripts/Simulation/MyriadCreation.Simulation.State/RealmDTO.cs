@@ -15,6 +15,20 @@ public class RealmDTO
 
 	public string realmName;
 
+	public string primaryTitleKey = "";
+
+	public int heirId = -1;
+
+	public RealmForm realmForm;
+
+	public NomadicSubtype nomadicSubtype;
+
+	public int primaryCultureId = -1;
+
+	public bool successionLawFromCulture = true;
+
+	public int senateSeats;
+
 	public LawComposition laws = new LawComposition();
 
 	public RealmLawState lawState = new RealmLawState();
@@ -76,6 +90,13 @@ public class RealmDTO
 		{
 			realmId = r.realmId,
 			realmName = r.realmName,
+			primaryTitleKey = r.primaryTitleKey,
+			heirId = r.heirId,
+			realmForm = r.realmForm,
+			nomadicSubtype = r.nomadicSubtype,
+			primaryCultureId = r.primaryCultureId,
+			successionLawFromCulture = r.successionLawFromCulture,
+			senateSeats = r.senateSeats,
 			laws = r.laws,
 			lawState = r.lawState,
 			decreeState = r.decreeState,
@@ -133,6 +154,13 @@ public class RealmDTO
 		{
 			realmId = realmId,
 			realmName = realmName,
+			primaryTitleKey = primaryTitleKey,
+			heirId = heirId,
+			realmForm = realmForm,
+			nomadicSubtype = nomadicSubtype,
+			primaryCultureId = primaryCultureId,
+			successionLawFromCulture = successionLawFromCulture,
+			senateSeats = senateSeats,
 			laws = laws,
 			lawState = lawState,
 			decreeState = decreeState,
