@@ -127,7 +127,8 @@
 - 2026-11-13 **国库单源（P1.2 第二批）**：`TreasuryLedger.TryPayNational` 改为货币只扣 `realm.treasury`、粮草仍扣 `vault`；vault 货币物产降为储备，不再作为第二本可支付余额。新增 `TreasurySingleSourceTests` 3 例（付款扣国库、vault 富余不能补国库、粮草扣货物），并更新旧 `ProvisioningLedgerTests` 的口径断言。验证：`EXIT=0`、`760/761`（1 个 Explicit 跳过）、零 `error CS`。**剩余**：收支表与四轴需求报告。
 - 2026-11-13 **P1.1 聚落生命周期收口（第一批）**：`SettlementData.abandonmentPressureDays` 入档；`settlement-typology.daily` 对"人口 < 50、无守军、无驻军"累积 180 天后降为营地；人口/守军恢复清零。修复两个真实 bug：① 聚落子系统持有的是生成前旧字典（`settlements = item2` 重新赋值导致模拟/生产/生命周期空转），改为 `AdoptSettlements` 就地替换；② 营地降级用错转移 API，改走 `TryDowngradeDueToDestruction`。新增 `SettlementLifecycleTests` 3 例。验证：`EXIT=0`、`763/764`（1 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **P1.2 收支报告（只读）**：`TreasuryLedger` 增加运行时流水记录（上限 2000 条、不入档），`GameWorld.GetRealmBudgetReport` 按窗口聚合收入/支出/净额与分项；税收入已接，支出待命令/军费逐步接入。新增 `BudgetReportTests` 2 例（税入进报告、支出与窗口过滤）。验证：`EXIT=0`、`765/766`（1 个 Explicit 跳过）、零 `error CS`。
-- 待办：**P1.2 四轴需求报告**、**P1.1 毁灭派发方（依赖 P1.5 战争占领）**、P1.3–P1.6 / P2.1–P2.6；**G5 信仰生成器 / G6 流式加载+预加载**；内容体检。
+- 2026-11-13 **P1.2 四轴人口报告（D25 前半）**：新增 `SocialAxisReportSystem` 与 `GameWorld.GetSocialAxisReports`，阶级/阶层/身份/职业各出一套；身份/职业按位均分，四轴人口合计与人口块总量守恒。新增 `SocialAxisReportTests`（四轴齐全 + 守恒）。验证：`EXIT=0`、`766/767`（1 个 Explicit 跳过）、零 `error CS`。**剩余**：四轴需求评分与政权 unrest 权重。
+- 待办：**P1.2 四轴需求评分与 unrest 权重**、**P1.1 毁灭派发方（依赖 P1.5 战争占领）**、P1.3–P1.6 / P2.1–P2.6；**G5 信仰生成器 / G6 流式加载+预加载**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。
 - 备注：卡住时先 `Get-Process Unity` + 删 `MyriadCreation\Temp\UnityLockfile` 再重跑 `build.cmd`。

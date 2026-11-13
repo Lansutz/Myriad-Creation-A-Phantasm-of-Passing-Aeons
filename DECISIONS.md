@@ -431,3 +431,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 机制：`TreasuryLedger` 增加运行时流水（`Record/GetHistory/ClearHistory`，上限 2000 条，不入档）；`GameWorld.GetRealmBudgetReport(realmId, windowDays)` 只读聚合窗口内的收入/支出/净额与分项。
 - 已接：税收入（`PoliticsSimulationSystem` 每日入账时记录）。支出随命令/军费/建筑维护逐步接入，不预造费率；报告不得写任何模拟状态。
 - 不做：不新建第二套账本；`realm.treasury` 仍是唯一货币余额（D43）。
+
+## D46 四轴人口报告先落地，需求评分后接
+
+- 轴：阶级（`EconomicClass`）、阶层（`SocialStratum`）、身份（由 legacy `socialClass` 映射的 `SocialIdentityFlags`）、职业（`OccupationFlags`）。
+- 归桶：阶级/阶层各计 1 次；身份/职业是位标志，按位展开并把该块人口按位数均分，保证四轴人口合计与人口块总量相等（守恒断言）。
+- 已做：`SocialAxisReportSystem` + `GameWorld.GetSocialAxisReports` 只读报告。未做：四轴需求评分与政权 unrest 权重（D25 后半），不假装已接。
