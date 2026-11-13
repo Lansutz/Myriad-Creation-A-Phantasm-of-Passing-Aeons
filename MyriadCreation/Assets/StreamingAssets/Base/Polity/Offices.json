@@ -6,14 +6,19 @@
       "name": "地方长官",
       "nameKey": "office_Governor",
       "rank": 3,
-      "modules": ["taxation", "judiciary"],
-      "appointmentOrder": ["ruler"],
+      "modules": [
+        "taxation",
+        "judiciary"
+      ],
+      "appointmentOrder": [
+        "ruler"
+      ],
       "candidateRoyal": "any",
       "candidateGender": "any",
       "termYears": 5,
       "salary": 40.0,
       "dismissalResistance": 20.0,
-      "minTiles": 2,
+      "minTiles": 1,
       "minPopulation": 150.0,
       "minCentralization": 0.05,
       "minCultureStage": 0,
@@ -25,8 +30,12 @@
       "name": "区长官",
       "nameKey": "office_DistrictGovernor",
       "rank": 4,
-      "modules": ["taxation"],
-      "appointmentOrder": ["ruler"],
+      "modules": [
+        "taxation"
+      ],
+      "appointmentOrder": [
+        "ruler"
+      ],
       "candidateRoyal": "any",
       "candidateGender": "any",
       "termYears": 5,
@@ -44,8 +53,14 @@
       "name": "宰相",
       "nameKey": "office_Chancellor",
       "rank": 1,
-      "modules": ["law_proposal", "personnel"],
-      "appointmentOrder": ["ruler", "council"],
+      "modules": [
+        "law_proposal",
+        "personnel"
+      ],
+      "appointmentOrder": [
+        "ruler",
+        "council"
+      ],
       "candidateRoyal": "any",
       "candidateGender": "any",
       "termYears": 0,
@@ -63,8 +78,13 @@
       "name": "司库",
       "nameKey": "office_Steward",
       "rank": 2,
-      "modules": ["taxation", "personnel"],
-      "appointmentOrder": ["ruler"],
+      "modules": [
+        "taxation",
+        "personnel"
+      ],
+      "appointmentOrder": [
+        "ruler"
+      ],
       "candidateRoyal": "any",
       "candidateGender": "any",
       "termYears": 0,
@@ -82,8 +102,12 @@
       "name": "统军官",
       "nameKey": "office_Marshal",
       "rank": 2,
-      "modules": ["military_command"],
-      "appointmentOrder": ["ruler"],
+      "modules": [
+        "military_command"
+      ],
+      "appointmentOrder": [
+        "ruler"
+      ],
       "candidateRoyal": "any",
       "candidateGender": "any",
       "termYears": 0,
@@ -101,8 +125,12 @@
       "name": "元帅",
       "nameKey": "office_WarCommander",
       "rank": 2,
-      "modules": ["military_command"],
-      "appointmentOrder": ["ruler"],
+      "modules": [
+        "military_command"
+      ],
+      "appointmentOrder": [
+        "ruler"
+      ],
       "candidateRoyal": "any",
       "candidateGender": "any",
       "termYears": 0,
@@ -120,8 +148,13 @@
       "name": "审判官",
       "nameKey": "office_Judge",
       "rank": 3,
-      "modules": ["judiciary"],
-      "appointmentOrder": ["ruler", "election"],
+      "modules": [
+        "judiciary"
+      ],
+      "appointmentOrder": [
+        "ruler",
+        "election"
+      ],
       "candidateRoyal": "non_royal",
       "candidateGender": "any",
       "termYears": 5,
@@ -139,8 +172,12 @@
       "name": "宫廷学士",
       "nameKey": "office_CourtScholar",
       "rank": 4,
-      "modules": ["diplomacy"],
-      "appointmentOrder": ["ruler"],
+      "modules": [
+        "diplomacy"
+      ],
+      "appointmentOrder": [
+        "ruler"
+      ],
       "candidateRoyal": "any",
       "candidateGender": "any",
       "termYears": 0,

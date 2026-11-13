@@ -134,7 +134,7 @@ public static class SettlementEvolutionSystem
 			constructionTier = 1,
 			settlementEvolution = 100f,
 			settlementStability = 50f,
-			foundingTick = world.currentDay,
+			foundingTick = world.currentYear * 365 + world.currentDay,
 			fortificationLevel = (flag ? FortificationLevels.Palisade : FortificationLevels.None)
 		};
 		settlementData.fortifiedOutpostData.purpose = camp.fortifiedOutpostData.purpose;

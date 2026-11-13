@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.World.Settlement;
 using MyriadCreation.Core.Enums;
+using UnityEngine;
+using Random = System.Random;
 
 namespace MyriadCreation.World.Anchor
 {
@@ -128,6 +130,9 @@ public class AnchorGenerator
 			return;
 		}
 		TileData tile = _tiles[tileIndex];
+		// 聚落意味着土地已被开垦：把聚落开发度折算成地块开发度（0-1），
+		// 否则人口 500+ 的城市仍按未开发土地产粮，会因产出低于口粮而被饥荒拖死。
+		tile.development = Mathf.Max(tile.development, Mathf.Clamp01(settlement.development / 50f));
 		tile.populationBlocks ??= new List<PopulationBlock>();
 		tile.populationBlocks.Add(new PopulationBlock
 		{
@@ -162,7 +167,10 @@ public class AnchorGenerator
 			constructionProgress = 0f,
 			constructionTier = 1,
 			// 初始社会秩序是“无人扰动”的中性值，不是加成；后续由事件/政治 tick 改变。
-			settlementStability = 50f
+			settlementStability = 50f,
+			// 生成期 SeedPopulation 需要 settlement.tileIndex；它由 anchor 派生，
+			// 不能等 GameWorld.AdoptSettlements 之后再补，否则初始人口会写进 -1 号地块。
+			anchor = item
 		};
 		SettlementTypologySystem.DeriveInitialType(settlementData, reference, _width, _height);
 		EconomicCompositionSystem.InitializeComposition(settlementData, reference);

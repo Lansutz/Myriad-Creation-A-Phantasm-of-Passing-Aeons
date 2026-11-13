@@ -50,34 +50,29 @@ public static class TaxCollectionSystem
 		HashSet<int> authorizedRegions = ResolveAuthorizedRegions(realm, characters, tiles);
 		if (authorizedRegions.Count == 0) return result;
 
-		Dictionary<int, List<int>> ownedByRegion = new Dictionary<int, List<int>>();
-		Dictionary<int, int> landByRegion = new Dictionary<int, int>();
-		for (int i = 0; i < tiles.Length; i++)
-		{
-			if (!tiles[i].exists || !tiles[i].isLand) continue;
-			int regionId = tiles[i].regionId;
-			landByRegion.TryGetValue(regionId, out int land);
-			landByRegion[regionId] = land + 1;
-			if (tiles[i].ownerRealmId != realm.realmId) continue;
-			if (!ownedByRegion.TryGetValue(regionId, out List<int> owned))
-			{
-				owned = new List<int>();
-				ownedByRegion[regionId] = owned;
-			}
-			owned.Add(i);
-		}
-
 		int capitalTile = ResolveCapitalTile(realm, characters);
 		foreach (int regionId in authorizedRegions)
 		{
-			if (!ownedByRegion.TryGetValue(regionId, out List<int> ownedTiles) || ownedTiles.Count == 0) continue;
 			if (!centers.TryGetValue(regionId, out TradeCenter center) || center?.inventory == null) continue;
-			int landCount = Mathf.Max(1, landByRegion.GetValueOrDefault(regionId, ownedTiles.Count));
-			float ownedFraction = Mathf.Clamp01((float)ownedTiles.Count / landCount);
+			// 只扫本地区 16 格（与 EconomyManager 的地区编码一致），不按政权全图扫描：
+			// 否则 64 个政权 × 全图地块 × 36500 天会把百年长跑拖死。
+			int regionStart = Mathf.Max(0, regionId) * 16;
+			int regionEnd = Mathf.Min(tiles.Length, regionStart + 16);
+			int landCount = 0;
+			int ownedCount = 0;
+			float population = 0f;
+			for (int i = regionStart; i < regionEnd; i++)
+			{
+				if (!tiles[i].exists || !tiles[i].isLand) continue;
+				landCount++;
+				if (tiles[i].ownerRealmId != realm.realmId) continue;
+				ownedCount++;
+				population += PopulationLedger.Total(tiles[i]);
+			}
+			if (ownedCount == 0) continue;
+			float ownedFraction = Mathf.Clamp01((float)ownedCount / Mathf.Max(1, landCount));
 			if (ownedFraction <= 0f) continue;
 
-			float population = 0f;
-			foreach (int tileIndex in ownedTiles) population += PopulationLedger.Total(tiles[tileIndex]);
 			float edibleStock = EdibleStock(center, goodsDefs);
 			float edibleReserve = Mathf.Min(edibleStock, population * PersonFoodPerDay * Mathf.Max(1, tax.reserveDays));
 			float taxableEdibleShare = edibleStock <= 0f ? 0f : Mathf.Clamp01((edibleStock - edibleReserve) / edibleStock);
@@ -86,6 +81,8 @@ public static class TaxCollectionSystem
 			float kept = 1f - loss;
 			bool collectedAny = false;
 
+			// Unity/Mono 的 Dictionary 在改写已有键时也可能递增 version，不能边枚举边改；
+			// 先取 key 快照，再逐项结算。
 			List<int> goodsIds = new List<int>(center.inventory.Keys);
 			foreach (int goodsId in goodsIds)
 			{

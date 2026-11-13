@@ -76,7 +76,7 @@ public static class OfficeCatalog
 				id = "governor", slot = 0, name = "地方长官", nameKey = "office_Governor", rank = 3,
 				modules = new[] { "taxation", "judiciary" }, appointmentOrder = new[] { "ruler" },
 				termYears = 5, salary = 40f, dismissalResistance = 20f,
-				minTiles = 2, minPopulation = 150f, minCentralization = 0.05f
+				minTiles = 1, minPopulation = 150f, minCentralization = 0.05f
 			},
 			new OfficeDef
 			{

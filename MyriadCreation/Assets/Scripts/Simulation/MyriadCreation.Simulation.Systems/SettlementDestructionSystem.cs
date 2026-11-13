@@ -307,7 +307,8 @@ public static class SettlementDestructionSystem
 				value.fortification = Mathf.Max(value.fortification, 1f);
 				Debug.Log((object)("[Destruction] " + value.settlementName + " 已从废墟中恢复"));
 			}
-			world.settlements[settlement.Key] = value;
+			// SettlementData 是引用类型，字段修改已经写回；不要再对字典同键赋值——
+			// Unity/Mono 的 Dictionary 在改写已有键时也可能递增 version，导致 foreach 抛异常。
 		}
 	}
 

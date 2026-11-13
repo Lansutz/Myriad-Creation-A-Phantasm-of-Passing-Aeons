@@ -15,8 +15,8 @@ namespace MyriadCreation.Simulation.Systems
 /// </summary>
 public static class StateFormationSystem
 {
-	/// <summary>上限只防止极端地图无限建国；不是经济/政治门槛。</summary>
-	public const int MaxRealms = 64;
+	/// <summary>世界尺度上限：防止小地图无限建国，也给长跑一个可预期的实体规模；不是经济/政治门槛。</summary>
+	public const int MaxRealms = 16;
 
 	/// <summary>聚落至少存在这么多年，才谈得上形成政权（避免开局即国家）。</summary>
 	public const int MinSettlementAgeYears = 8;
@@ -54,7 +54,9 @@ public static class StateFormationSystem
 		TileData tile = world.tiles[settlement.tileIndex];
 		if (!tile.exists || !tile.isLand || tile.ownerRealmId >= 0) return false;
 
-		int ageDays = world.currentDay - settlement.foundingTick;
+		// foundingTick 用绝对日（year*365+day），不能用 currentDay（它每年回绕到 1）。
+		int absoluteDay = world.currentYear * 365 + world.currentDay;
+		int ageDays = absoluteDay - settlement.foundingTick;
 		if (ageDays < MinSettlementAgeYears * 365) return false;
 
 		float population = Mathf.Max(settlement.population, PopulationLedger.Total(tile));
@@ -79,7 +81,6 @@ public static class StateFormationSystem
 			if (pair.Value <= 0f) continue;
 			if (!world.goodsDefs.TryGetValue(pair.Key, out GoodsDef def)) continue;
 			bool edible = def.edible || def.category == MyriadCreation.Core.Enums.GameEnums.GoodsCategory.Crop
-				|| def.category == MyriadCreation.Core.Enums.GameEnums.GoodsCategory.Food
 				|| def.category == MyriadCreation.Core.Enums.GameEnums.GoodsCategory.Livestock;
 			if (!edible) continue;
 			float nutrition = def.nutrition <= 0f ? 1f : def.nutrition;
