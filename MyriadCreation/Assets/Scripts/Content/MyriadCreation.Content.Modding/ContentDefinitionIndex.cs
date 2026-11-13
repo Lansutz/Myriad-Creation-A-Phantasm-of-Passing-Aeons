@@ -128,6 +128,12 @@ namespace MyriadCreation.Content.Modding
         }
 
         [Serializable]
+        private class DisasterListWrapper
+        {
+            public List<DisasterContentDef> disasters = new List<DisasterContentDef>();
+        }
+
+        [Serializable]
         private class UnitListWrapper
         {
             public List<UnitContentDef> units = new List<UnitContentDef>();
@@ -180,6 +186,7 @@ namespace MyriadCreation.Content.Modding
             providerCatalog.Add(new DelegateContentProvider<string, EpithetDef>("Epithet", LoadEpithetRoot), new DictionaryContentStore<string, EpithetDef>(new Dictionary<string, EpithetDef>()));
             providerCatalog.Add(new DelegateContentProvider<int, BuildingContentDef>("Building", LoadBuildingRoot), new DictionaryContentStore<int, BuildingContentDef>(new Dictionary<int, BuildingContentDef>()));
             providerCatalog.Add(new DelegateContentProvider<int, UnitContentDef>("Unit", LoadUnitRoot), new DictionaryContentStore<int, UnitContentDef>(new Dictionary<int, UnitContentDef>()));
+            providerCatalog.Add(new DelegateContentProvider<int, DisasterContentDef>("Disaster", LoadDisasterRoot), new DictionaryContentStore<int, DisasterContentDef>(new Dictionary<int, DisasterContentDef>(), allowDefaultKey: true));
 
             foreach (ContentSource source in ContentSourceCatalog.CreateDefault(streamingAssetsRoot))
             {
@@ -218,6 +225,7 @@ namespace MyriadCreation.Content.Modding
             EpithetCatalog.ResetContent();
             BuildingCatalog.ResetContent();
             UnitCatalog.ResetContent();
+            DisasterCatalog.ResetContent();
         }
 
         // ===== LoadRoot（按 provider 根目录解析）=====
@@ -285,6 +293,28 @@ namespace MyriadCreation.Content.Modding
         {
             string path = Path.Combine(r, "Innovation/Innovations.json");
             if (File.Exists(path)) LoadInnovations(path, t);
+        }
+
+        private void LoadDisasterRoot(string r, IContentStore<int, DisasterContentDef> t)
+        {
+            string path = Path.Combine(r, "Disaster/Disasters.json");
+            if (File.Exists(path)) LoadDisasters(path, t);
+        }
+
+        private static void LoadDisasters(string path, IContentStore<int, DisasterContentDef> target)
+        {
+            DisasterListWrapper wrapper = JsonUtility.FromJson<DisasterListWrapper>(File.ReadAllText(path));
+            if (wrapper == null || wrapper.disasters == null) return;
+            List<DisasterContentDef> parsed = new List<DisasterContentDef>();
+            foreach (DisasterContentDef item in wrapper.disasters)
+            {
+                if (item != null)
+                {
+                    target.Set(item.type, item);
+                    parsed.Add(item);
+                }
+            }
+            DisasterCatalog.LoadFromContent(parsed);
         }
 
         private void LoadUnitRoot(string r, IContentStore<int, UnitContentDef> t)

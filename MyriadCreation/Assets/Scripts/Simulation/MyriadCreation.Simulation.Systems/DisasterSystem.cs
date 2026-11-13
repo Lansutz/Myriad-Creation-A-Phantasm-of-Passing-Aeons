@@ -31,6 +31,14 @@ public class DisasterSystem
 
 	private void InitializeDisasterDefs()
 	{
+		if (DisasterCatalog.IsLoaded)
+		{
+			foreach (KeyValuePair<DisasterType, DisasterDef> pair in DisasterCatalog.All)
+			{
+				_disasterDefs[pair.Key] = pair.Value;
+			}
+			return;
+		}
 		_disasterDefs[DisasterType.Drought] = new DisasterDef
 		{
 			type = DisasterType.Drought,

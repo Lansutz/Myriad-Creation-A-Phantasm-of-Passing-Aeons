@@ -660,3 +660,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `UnitCatalog` + `ContentDefinitionIndex.Unit` provider：内容优先，未加载时 `GameWorld` 仍走原代码表；Base→Mods 同 id 覆盖。
 - 测试：14 条齐全/唯一/成本合法；类别、成本字典、革新前置转换。
 - 未做：其余 14 张表（商品 57 / 灾害 12 / 政体门槛 35 / 阶层门槛等）。
+
+## D80 灾害表外提（P2.4 第四张表）
+
+- 12 条灾害从 `DisasterSystem.InitializeDisasterDefs` 外提到 `StreamingAssets/Base/Disaster/Disasters.json`；`DisasterContentDef` 用 int 传枚举，`DisasterCatalog` 转回 `DisasterDef`。
+- 时长钳制：`min ≥ 1`、`max ≥ min`（内容写 0 时不会产生负时长或反向区间）。
+- `DisasterCatalog` + `ContentDefinitionIndex.Disaster` provider（该表合法使用 0 作为 Drought 键，store 显式允许默认键）；内容优先、代码兜底。
+- 测试：12 条齐全/类型唯一/区间合法；转换与钳制。
+- 未做：其余 13 张表。
