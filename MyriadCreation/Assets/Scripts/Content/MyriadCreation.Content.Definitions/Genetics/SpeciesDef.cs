@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MyriadCreation.Simulation.Genetics
+namespace MyriadCreation.Content.Definitions
 {
 [Serializable]
 public class SpeciesDef

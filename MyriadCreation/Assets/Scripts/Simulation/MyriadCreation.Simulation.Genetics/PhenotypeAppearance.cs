@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using MyriadCreation.Content.Definitions;
 using UnityEngine;
 
 namespace MyriadCreation.Simulation.Genetics

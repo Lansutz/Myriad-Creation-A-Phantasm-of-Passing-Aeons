@@ -1,4 +1,4 @@
-namespace MyriadCreation.Simulation.Genetics
+﻿namespace MyriadCreation.Content.Definitions
 {
 public enum AppearanceChannel
 {

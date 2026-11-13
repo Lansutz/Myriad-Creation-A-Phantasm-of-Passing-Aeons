@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -46,7 +46,7 @@ public sealed class DelegateContentProvider<TKey, TValue> : IContentProvider<TKe
 		{
 			yield break;
 		}
-		if (Directory.Exists(Path.Combine(root, "Culture")) || File.Exists(Path.Combine(root, "Race", "RaceDefs.json")) || File.Exists(Path.Combine(root, "Innovation", "Innovations.json")) || File.Exists(Path.Combine(root, "Religion", "Religions.json")))
+		if (Directory.Exists(Path.Combine(root, "Culture")) || File.Exists(Path.Combine(root, "Race", "RaceDefs.json")) || File.Exists(Path.Combine(root, "Innovation", "Innovations.json")) || File.Exists(Path.Combine(root, "Religion", "Religions.json")) || File.Exists(Path.Combine(root, "Genetics", "Genomes.json")))
 		{
 			yield return root;
 			yield break;

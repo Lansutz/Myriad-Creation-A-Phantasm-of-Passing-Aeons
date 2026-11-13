@@ -1050,3 +1050,14 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
   - 法律 Host 再拆：P2.5 已按 Hosts 程序集反转，继续拆没有新消费者。
 - `Exploration`（P3.3 剩余）：S19 已提供知识层，但还缺“远征实体/路线”这一过程载体；现在立项只能空转，继续按 D32/D99 暂不启用，等航海/远征系统。
 - 验证：`EXIT=0`、`942/944`（2 个 Explicit 跳过）、零 `error CS`（本地化改动后复跑）。
+
+## D126 基因组/物种内容化（D1）
+
+- 纯定义（`GenomeDef/GenomeLocusDef/AlleleDef/AlleleTraitEffect/AppearanceStyleDef/AppearanceChannel/PigmentDef/SpeciesDef/SpeciesCategory/ReproductiveIsolation/SexChromosomeSystemDef/SexDeterminationSystem/GeneticInheritance/GeneticsContentPack`）从 `Simulation.Genetics` 迁入 `Content.Definitions/Genetics`：定义属内容层，引擎/目录留在 Simulation，符合既有程序集边界。
+- `ContentDefinitionIndex` 新增 `Genome`/`Species` 两个 provider（`Base/Genetics/Genomes.json`、`Species.json`），Base 打底、Mods 按 id 覆盖；物种引用不存在基因组（且非内置 `genome_human`）时剔除并告警，不拖垮整包。
+- `ContentRegistry` 只做桥接：把 `_definitions.Genomes/Species` 注册进 `GeneticsCatalog`，不另存一份定义。
+- 修复 provider store 未接属性字典的 bug：`Offices/Genomes/Species` 之前写入临时字典，导致 `OfficeCatalog` 实际一直走内置兜底；现在内容表真正生效。
+- `ContentPackageLayout` 支持 `Genetics` 目录；`DelegateContentProvider` 把 `Genetics/Genomes.json` 视为内容根标记（否则只有 Genetics 的 mod 会被当成“多包目录”拆错）。
+- 复杂度：内容只在初始化读一次，运行期查字典 O(1)；无 tick 开销。
+- 测试：`GeneticsContentIndexTests` 3 例（加载、Mod 覆盖、坏引用剔除）；既有 Offices/GOODS 内容测试保持全绿。
+- 验证：`EXIT=0`、`945/947`（2 个 Explicit 跳过）、零 `error CS`。

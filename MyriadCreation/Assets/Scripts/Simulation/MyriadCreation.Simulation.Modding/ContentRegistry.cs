@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using MyriadCreation.Simulation.State;
@@ -6,6 +6,7 @@ using MyriadCreation.World.Biome;
 using UnityEngine;
 using MyriadCreation.Simulation.Faith;
 using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.Genetics;
 using MyriadCreation.Content.Definitions;
 using Random = System.Random;
 
@@ -94,6 +95,10 @@ public static class ContentRegistry
 				ContentRuntime.LoadRuntime(streamingAssetsPath, Cultures, Races, Biomes);
 				_definitions.Initialize(streamingAssetsPath, new ContentDefinitionIndex.InnovationFallbackGroups(
 					DiscoveryGroups.Merchant, DiscoveryGroups.Scholar, DiscoveryGroups.Artisan));
+				// 纯定义由 Content 侧解析；Simulation 只把定义注册进遗传目录（单一真源仍在 ContentIndex）。
+				GeneticsCatalog.ResetDefaults();
+				foreach (GenomeDef genomeDef in _definitions.Genomes.Values) GeneticsCatalog.RegisterGenome(genomeDef);
+				foreach (SpeciesDef speciesDef in _definitions.Species.Values) GeneticsCatalog.RegisterSpecies(speciesDef);
 			}
 			Ethos = _definitions.Ethos;
 			Heritages = _definitions.Heritages;

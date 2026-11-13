@@ -1,3 +1,4 @@
+﻿using MyriadCreation.Content.Definitions;
 namespace MyriadCreation.Simulation.Genetics
 {
 public struct HybridizationResult

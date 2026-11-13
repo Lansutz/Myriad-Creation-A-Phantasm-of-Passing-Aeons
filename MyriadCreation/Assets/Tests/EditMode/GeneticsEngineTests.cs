@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using MyriadCreation.Content.Definitions;
 using MyriadCreation.Simulation.Genetics;
 
 namespace MyriadCreation.Tests.EditMode

@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace MyriadCreation.Simulation.Genetics
+namespace MyriadCreation.Content.Definitions
 {
 [Serializable]
 public class AlleleTraitEffect

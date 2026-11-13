@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using MyriadCreation.Content.Definitions;
@@ -50,6 +50,8 @@ namespace MyriadCreation.Content.Modding
         public Dictionary<string, TitleDef> Titles { get; } = new Dictionary<string, TitleDef>();
         public Dictionary<int, EquipmentDef> Equipment { get; } = new Dictionary<int, EquipmentDef>();
         public Dictionary<int, OfficeDef> Offices { get; } = new Dictionary<int, OfficeDef>();
+        public Dictionary<string, GenomeDef> Genomes { get; } = new Dictionary<string, GenomeDef>();
+        public Dictionary<string, SpeciesDef> Species { get; } = new Dictionary<string, SpeciesDef>();
 
         public bool IsInitialized { get; private set; }
 
@@ -170,6 +172,18 @@ namespace MyriadCreation.Content.Modding
             public List<OfficeDef> offices = new List<OfficeDef>();
         }
 
+        [Serializable]
+        private class GenomeListWrapper
+        {
+            public List<GenomeDef> genomes = new List<GenomeDef>();
+        }
+
+        [Serializable]
+        private class SpeciesListWrapper
+        {
+            public List<SpeciesDef> species = new List<SpeciesDef>();
+        }
+
         /// <summary>
         /// 按 ContentSourceCatalog（Base→Mods 优先级）解析全部纯定义；root 为空/不存在/坏 JSON 安全（沿用原 provider 的 try/catch 行为）。
         /// </summary>
@@ -201,7 +215,9 @@ namespace MyriadCreation.Content.Modding
             providerCatalog.Add(new DelegateContentProvider<int, UnitContentDef>("Unit", LoadUnitRoot), new DictionaryContentStore<int, UnitContentDef>(new Dictionary<int, UnitContentDef>()));
             providerCatalog.Add(new DelegateContentProvider<int, DisasterContentDef>("Disaster", LoadDisasterRoot), new DictionaryContentStore<int, DisasterContentDef>(new Dictionary<int, DisasterContentDef>(), allowDefaultKey: true));
             providerCatalog.Add(new DelegateContentProvider<int, GoodsContentDef>("Goods", LoadGoodsRoot), new DictionaryContentStore<int, GoodsContentDef>(new Dictionary<int, GoodsContentDef>(), allowDefaultKey: true));
-            providerCatalog.Add(new DelegateContentProvider<int, OfficeDef>("Office", LoadOfficeRoot), new DictionaryContentStore<int, OfficeDef>(new Dictionary<int, OfficeDef>()));
+            providerCatalog.Add(new DelegateContentProvider<int, OfficeDef>("Office", LoadOfficeRoot), new DictionaryContentStore<int, OfficeDef>(Offices));
+            providerCatalog.Add(new DelegateContentProvider<string, GenomeDef>("Genome", LoadGenomeRoot), new DictionaryContentStore<string, GenomeDef>(Genomes));
+            providerCatalog.Add(new DelegateContentProvider<string, SpeciesDef>("Species", LoadSpeciesRoot), new DictionaryContentStore<string, SpeciesDef>(Species));
 
             foreach (ContentSource source in ContentSourceCatalog.CreateDefault(streamingAssetsRoot))
             {
@@ -213,6 +229,7 @@ namespace MyriadCreation.Content.Modding
 
             // 官职表在全部来源合并后统一刷新：Base 打底、Mods 按 slot 覆盖，避免整表被某个来源清空。
             OfficeCatalog.LoadFromContent(Offices.Values);
+            ValidateGenetics();
 
             IsInitialized = true;
         }
@@ -247,6 +264,8 @@ namespace MyriadCreation.Content.Modding
             GoodsCatalog.ResetContent();
             Offices.Clear();
             OfficeCatalog.ResetContent();
+            Genomes.Clear();
+            Species.Clear();
         }
 
         // ===== LoadRoot（按 provider 根目录解析）=====
@@ -397,6 +416,55 @@ namespace MyriadCreation.Content.Modding
                 if (item != null && item.slot >= 0 && !string.IsNullOrEmpty(item.id))
                 {
                     target.Set(item.slot, item);
+                }
+            }
+        }
+
+        /// <summary>物种必须引用存在（或内置兜底）的基因组；坏引用剔除并告警，不拖垮整包。</summary>
+        private void ValidateGenetics()
+        {
+            List<string> badSpecies = new List<string>();
+            foreach (KeyValuePair<string, SpeciesDef> pair in Species)
+            {
+                SpeciesDef species = pair.Value;
+                if (species == null) continue;
+                if (!string.IsNullOrEmpty(species.genomeId)
+                    && (Genomes.ContainsKey(species.genomeId) || species.genomeId == "genome_human"))
+                {
+                    continue;
+                }
+                badSpecies.Add(pair.Key);
+                Debug.LogWarning("[ContentDefinitionIndex] 物种 " + pair.Key + " 引用不存在的基因组 " + species.genomeId + "，已跳过");
+            }
+            for (int i = 0; i < badSpecies.Count; i++) Species.Remove(badSpecies[i]);
+        }
+
+        private void LoadGenomeRoot(string r, IContentStore<string, GenomeDef> t)
+        {
+            string path = Path.Combine(r, "Genetics/Genomes.json");
+            if (!File.Exists(path)) return;
+            GenomeListWrapper wrapper = JsonUtility.FromJson<GenomeListWrapper>(File.ReadAllText(path));
+            if (wrapper?.genomes == null) return;
+            foreach (GenomeDef genome in wrapper.genomes)
+            {
+                if (genome != null && !string.IsNullOrEmpty(genome.genomeId))
+                {
+                    t.Set(genome.genomeId, genome);
+                }
+            }
+        }
+
+        private void LoadSpeciesRoot(string r, IContentStore<string, SpeciesDef> t)
+        {
+            string path = Path.Combine(r, "Genetics/Species.json");
+            if (!File.Exists(path)) return;
+            SpeciesListWrapper wrapper = JsonUtility.FromJson<SpeciesListWrapper>(File.ReadAllText(path));
+            if (wrapper?.species == null) return;
+            foreach (SpeciesDef species in wrapper.species)
+            {
+                if (species != null && !string.IsNullOrEmpty(species.speciesId))
+                {
+                    t.Set(species.speciesId, species);
                 }
             }
         }

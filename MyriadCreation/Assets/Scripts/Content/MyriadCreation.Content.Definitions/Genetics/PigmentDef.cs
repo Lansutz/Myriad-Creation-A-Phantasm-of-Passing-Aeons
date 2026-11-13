@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using UnityEngine;
 
-namespace MyriadCreation.Simulation.Genetics
+namespace MyriadCreation.Content.Definitions
 {
 [Serializable]
 public class PigmentDef
