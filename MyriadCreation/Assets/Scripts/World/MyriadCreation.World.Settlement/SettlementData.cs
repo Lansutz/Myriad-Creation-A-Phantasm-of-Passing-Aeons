@@ -141,6 +141,9 @@ public class SettlementData : HabitationSite, ISerializationCallbackReceiver
 
 	public float recoveryProgress;
 
+	/// <summary>连续低人口/无守军/无驻军的日数；达到阈值后废弃为营地（P1.1 废弃端口）。</summary>
+	public int abandonmentPressureDays;
+
 	public int remnantCultureId = -1;
 
 	public int remnantFaithId = -1;

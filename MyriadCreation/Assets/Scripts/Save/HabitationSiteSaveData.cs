@@ -59,6 +59,8 @@ namespace MyriadCreation.Save.Contracts
         public bool hasUniversity;
         public float constructionProgress;
         public int constructionTier;
+        /// <summary>聚落废弃压力累计天数（P1.1）；旧档缺字段为 0。</summary>
+        public int abandonmentPressureDays;
 
         // ===== 经济 =====
         public int[] economicSectors;

@@ -1046,6 +1046,20 @@ public partial class GameWorld : MonoBehaviour
 		return settlementData;
 	}
 
+	/// <summary>诊断/测试用：立即跑一次聚落类型学日结（等级推进 + 废弃压力）。</summary>
+	public int SettlementTypologyTickCount => _settlementSimulationSystem?.TypologyTickCount ?? -1;
+
+	public int SettlementTypologySettlementCount => _settlementSimulationSystem?.TypologySettlementCount ?? -1;
+
+	public int SettlementTypologySedentaryCount => _settlementSimulationSystem?.TypologySedentaryCount ?? -1;
+
+	public bool SettlementTypologyHasSettlement(int anchorId) => _settlementSimulationSystem?.HasSettlement(anchorId) ?? false;
+
+	public void RunSettlementTypologyNow()
+	{
+		_settlementSimulationSystem?.TypologyDailyTick(default);
+	}
+
 	public bool CreateHolySite(int faithId, int tileIndex)
 	{
 		if (tileIndex < 0 || tileIndex >= tiles.Length)

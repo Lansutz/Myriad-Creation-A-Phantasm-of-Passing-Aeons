@@ -187,7 +187,7 @@ public static class SettlementEvolutionSystem
 		CampData campData = world.Camps.EstablishCamp(campType, value.tileIndex, Mathf.RoundToInt(value.population), ownerRealmId, -1, value.settlementName);
 		if (campData != null)
 		{
-			if (!HabitationSiteTransitionSystem.TryTransition(value, SiteMode.TemporaryEncampment, out var failure))
+			if (!HabitationSiteTransitionSystem.TryDowngradeDueToDestruction(value, SiteMode.TemporaryEncampment, out var failure))
 			{
 				world.Camps.AbandonCamp(campData.campId);
 				Debug.LogError((object)$"[SettlementEvolution] 无法将栖居点#{value.siteId}降为营地：{failure}");

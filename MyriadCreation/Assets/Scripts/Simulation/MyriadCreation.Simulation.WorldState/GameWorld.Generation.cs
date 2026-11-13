@@ -424,19 +424,34 @@ public partial class GameWorld : MonoBehaviour
 		Debug.Log((object)$"[GameWorld] 省份生成：{num}地块/省 → {provinces.Count}省");
 	}
 
+	private void AdoptSettlements(Dictionary<int, SettlementData> generated)
+	{
+		// 子系统在 InitializeWorld 时已持有 settlements 字典引用；这里必须就地替换，
+		// 不能重新赋值，否则聚落模拟/生产/生命周期会继续操作一张空表。
+		settlements.Clear();
+		if (generated == null)
+		{
+			return;
+		}
+		foreach (KeyValuePair<int, SettlementData> pair in generated)
+		{
+			settlements[pair.Key] = pair.Value;
+		}
+	}
+
 	private void GenerateSettlements(int seed)
 	{
 		if (!SetupOptions.generateSettlements || SetupOptions.initialSettlementCount == 0)
 		{
 			anchors = new Dictionary<int, AnchorData>();
-			settlements = new Dictionary<int, SettlementData>();
+			settlements.Clear();
 			return;
 		}
 		(Dictionary<int, AnchorData> anchors, Dictionary<int, SettlementData> settlements) tuple = new AnchorGenerator(tiles, mapWidth, mapHeight, provinces, seed).Generate();
 		Dictionary<int, AnchorData> item = tuple.anchors;
 		Dictionary<int, SettlementData> item2 = tuple.settlements;
 		anchors = item;
-		settlements = item2;
+		AdoptSettlements(item2);
 		foreach (SettlementData value in settlements.Values)
 		{
 			value.anchor = anchors[value.anchorId];
@@ -461,7 +476,7 @@ public partial class GameWorld : MonoBehaviour
 				dictionary2[item3] = settlements[item3];
 			}
 			anchors = dictionary;
-			settlements = dictionary2;
+			AdoptSettlements(dictionary2);
 		}
 		int num = 0;
 		int num2 = 0;
@@ -563,7 +578,7 @@ public partial class GameWorld : MonoBehaviour
 		Dictionary<int, AnchorData> item = tuple.anchors;
 		Dictionary<int, SettlementData> item2 = tuple.settlements;
 		anchors = item;
-		settlements = item2;
+		AdoptSettlements(item2);
 		foreach (SettlementData value in settlements.Values)
 		{
 			value.anchor = anchors[value.anchorId];

@@ -419,3 +419,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 事实：`TreasuryLedger.TryPayNational` 曾在有货币物产时花 `currencySystem.vault` 并回写 `realm.treasury`，无货币物产时又花 `realm.treasury`，形成"货币两本账"；UI/AI 直接读 treasury，付款却可能扣 vault。
 - 裁决：**货币唯一可支付余额是 `realm.treasury`**；`currencySystem.vault` 只存货物（粮草、货币物产作为储备），不是第二本可支付余额。`TryPayNational` 只扣 treasury 的 money 与 vault 的 food；付款失败回滚 treasury。`ReconcileNationalCurrency` 保留作旧档迁移，不再在每次付款时镜像。
 - 影响：vault 富裕不能覆盖国库赤字；储备与预算分离，后续收支表分别展示"货币余额/货物储备"。
+
+## D44 聚落表就地替换：子系统持有引用，生成期不得重新赋值
+
+- 事实：`GameWorld.InitializeSubsystems` 在 `InitializeWorld` 阶段构造 `SettlementSimulationSystem` 并持有 `settlements` 字典引用；`GenerateSettlements` 之后用 `settlements = item2` 重新赋值，导致聚落模拟/生产/生命周期一直在操作旧空表（长跑看似正常，实际这些系统空转）。
+- 裁决：生成期一律 **就地 Clear + 填充** 现有字典（`AdoptSettlements`），不得替换字段引用；同理适用于任何在子系统构造后才生成、且被子系统持有引用的容器。
+- 附带修正：营地降级必须走 `TryDowngradeDueToDestruction`，`TryTransition` 对 Sedentary→TemporaryEncampment 是禁止转移。
