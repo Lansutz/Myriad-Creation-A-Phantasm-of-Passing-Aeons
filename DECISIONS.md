@@ -750,3 +750,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 查询路径改为读 `SettlementInfluenceSystem.LastField`：未到日结/未结算时返回 false，不再重算、不再写状态。
 - 测试：Apply 写 anchor、空输入不抛、Calculate 不写 anchor。
 - 未做：调度器全局两相 API（当前只有该重量级系统需要，先落在系统内部；无消费者的通用抽象不提前建）。
+
+## D91 mod 依赖排序（P2.4 F5 收口）
+
+- `ContentSourceCatalog` 先读各 mod 的 `mod.json`，按 `dependencies[].packageId` 做稳定拓扑排序：被依赖者先加载、优先级更低。
+- 缺依赖只告警并忽略该边（不让缺件 mod 静默改变加载顺序）；依赖成环告警后按目录名顺序兜底，不中断启动。
+- 无清单/平铺布局兼容路径保持原样；`enabled=false`/非法清单仍在排序前剔除。
+- 测试：A 依赖 B → B 先加载；既有布局/校验测试不变。
+- 未做：跨 mod 内容冲突的细粒度诊断（同 id 覆盖仍是“后者胜”）。

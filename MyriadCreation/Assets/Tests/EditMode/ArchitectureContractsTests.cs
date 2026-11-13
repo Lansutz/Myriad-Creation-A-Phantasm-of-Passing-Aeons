@@ -133,6 +133,32 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
+        public void ContentSourceCatalog_OrdersModsByDependencies()
+        {
+            LogAssert.ignoreFailingMessages = true;
+            string root = Path.Combine(Path.GetTempPath(), "myriad_mods_" + System.Guid.NewGuid().ToString("N"));
+            string mods = Path.Combine(root, "Mods");
+            Directory.CreateDirectory(Path.Combine(mods, "A"));
+            Directory.CreateDirectory(Path.Combine(mods, "B"));
+            File.WriteAllText(Path.Combine(mods, "A", "mod.json"),
+                "{ \"formatVersion\": \"1\", \"packageId\": \"pkg.a\", \"displayName\": \"A\", \"dependencies\": [\"pkg.b\"] }");
+            File.WriteAllText(Path.Combine(mods, "B", "mod.json"),
+                "{ \"formatVersion\": \"1\", \"packageId\": \"pkg.b\", \"displayName\": \"B\" }");
+            try
+            {
+                var sources = ContentSourceCatalog.CreateDefault(root);
+                var modIds = sources.Where(s => s.kind == ContentSourceKind.Mod).Select(s => s.id).ToList();
+                Assert.AreEqual("B", modIds[0], "被依赖的 mod 先加载");
+                Assert.AreEqual("A", modIds[1]);
+            }
+            finally
+            {
+                LogAssert.ignoreFailingMessages = false;
+                Directory.Delete(root, true);
+            }
+        }
+
+        [Test]
         public void ContentAuthoringWorkspace_PreservesCanonicalRuntimeFiles()
         {
             var workspace = new ContentAuthoringWorkspace();
