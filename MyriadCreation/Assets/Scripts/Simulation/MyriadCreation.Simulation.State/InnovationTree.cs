@@ -452,6 +452,56 @@ public class InnovationTree
 		return false;
 	}
 
+	public bool IsUnlockReferenced(InnovationUnlockKind kind, string key)
+	{
+		if (string.IsNullOrEmpty(key))
+		{
+			return false;
+		}
+		foreach (InnovationDef def in _innovations.Values)
+		{
+			if (def?.unlockRefs == null)
+			{
+				continue;
+			}
+			foreach (InnovationUnlock unlock in def.unlockRefs)
+			{
+				if (unlock != null && unlock.kind == kind && unlock.key == key)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public bool IsUnlockGranted(int realmId, InnovationUnlockKind kind, string key)
+	{
+		if (!IsUnlockReferenced(kind, key))
+		{
+			return true;
+		}
+		if (!_realmInnovations.TryGetValue(realmId, out HashSet<int> owned))
+		{
+			return false;
+		}
+		foreach (int innovationId in owned)
+		{
+			if (!_innovations.TryGetValue(innovationId, out InnovationDef def) || def?.unlockRefs == null)
+			{
+				continue;
+			}
+			foreach (InnovationUnlock unlock in def.unlockRefs)
+			{
+				if (unlock != null && unlock.kind == kind && unlock.key == key)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	/// <summary>写入已完成革新（事件/测试/调试用），并触发完成事件。</summary>
 	public bool GrantInnovation(int realmId, int innovationId)
 	{

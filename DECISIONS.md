@@ -453,5 +453,5 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 ## D49 革新 unlockRefs 第一消费者：建筑门禁
 
 - `InnovationTree` 新增 `IsUnlockReferenced/IsUnlockGranted/GrantInnovation`：只有**已完成的革新**（`_realmInnovations`）才算解锁；未被任何革新引用的内容不设门槛，避免把全部既有建筑一刀切锁死。
-- 消费者：`BuildingSystem.StartBuildingInternal` 在扣款前校验 `InnovationUnlockKind.Building`；`GameWorld` 在构造 `InnovationTree` 后注入 `BuildingSystem.Innovations`。`SettlementProduction.TryCraft` 校验 `InnovationUnlockKind.Recipe`（输出物 id），未引用配方不设门槛。
+- 消费者：`BuildingSystem.StartBuildingInternal` 在扣款前校验 `InnovationUnlockKind.Building`；`GameWorld` 在构造 `InnovationTree` 后注入 `BuildingSystem.Innovations`。`SettlementProduction.TryCraft` 校验 `InnovationUnlockKind.Recipe`（输出物 id），未引用配方不设门槛。`LawContracts.BeginEnactLaw` 校验 `InnovationUnlockKind.Law`（法律 key），未引用法律不设门槛。
 - 其余消费者（Recipe/Law/Unit/Equipment）按同一 API 后续接入，不另造映射表。

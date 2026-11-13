@@ -68,6 +68,25 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
+        public void ReferencedLawKey_RequiresGrantedInnovation()
+        {
+            var world = NewWorld();
+            RealmData realm = FirstRealm(world);
+            world.Innovations.RegisterInnovation(new InnovationDef
+            {
+                innovationId = 9003,
+                unlockRefs = new List<InnovationUnlock> { InnovationUnlock.Keyed(InnovationUnlockKind.Law, "test_law") }
+            });
+
+            Assert.IsFalse(world.Innovations.IsUnlockGranted(realm.realmId, InnovationUnlockKind.Law, "test_law"));
+            Assert.IsTrue(world.Innovations.IsUnlockGranted(realm.realmId, InnovationUnlockKind.Law, "other_law"),
+                "未被引用的法律不设门槛");
+
+            world.Innovations.GrantInnovation(realm.realmId, 9003);
+            Assert.IsTrue(world.Innovations.IsUnlockGranted(realm.realmId, InnovationUnlockKind.Law, "test_law"));
+        }
+
+        [Test]
         public void ReferencedRecipe_RequiresGrantedInnovation()
         {
             GoodsRecipe recipe = null;

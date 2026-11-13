@@ -228,6 +228,11 @@ public sealed class LawContracts : ILawQuery, ILawCommand
 			reason = "法律不存在：" + lawId;
 			return false;
 		}
+		if (_world?.Innovations != null && !_world.Innovations.IsUnlockGranted(realmId, MyriadCreation.Content.Definitions.InnovationUnlockKind.Law, lawId))
+		{
+			reason = "该法律尚未由革新解锁";
+			return false;
+		}
 		return LawRealmHost.BeginEnactLaw(realm, law, proposerCharacterId, currentDay, OwnedInnovationIds(realmId), out reason) != null;
 	}
 
