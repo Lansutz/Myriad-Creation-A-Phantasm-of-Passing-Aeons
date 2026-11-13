@@ -14,6 +14,9 @@ public class EconomyManager
 	/// <summary>肉类货号（P3.2 狩猎产出；与 Goods.json 的 1 号对齐，不新建货号）。</summary>
 	private const int MeatGoodsId = 1;
 
+	/// <summary>鱼类货号（P4.3 捕鱼产出；与 Goods.json 的 2 号对齐）。</summary>
+	private const int FishGoodsId = 2;
+
 	private readonly TileData[] _tiles;
 
 	private readonly Dictionary<int, TradeCenter> _tradeCenters;
@@ -181,6 +184,12 @@ public class EconomyManager
 				if (meatYield > 0f)
 				{
 					float accepted = tradeCenter.AddGoodsReturningAccepted(MeatGoodsId, meatYield);
+					if (accepted > 0f) produced++;
+				}
+				float fishYield = EcosystemSystem.HarvestFish(ref tile, days);
+				if (fishYield > 0f)
+				{
+					float accepted = tradeCenter.AddGoodsReturningAccepted(FishGoodsId, fishYield);
 					if (accepted > 0f) produced++;
 				}
 			}

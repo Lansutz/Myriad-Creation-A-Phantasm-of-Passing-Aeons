@@ -851,7 +851,7 @@ public partial class GameWorld : MonoBehaviour
 		// 生态演替：每月推进植被与野生群落（聚合口径），确定性、无随机。
 		_simulationScheduler.Register("ecology.succession.monthly", SimulationCadence.Monthly, 45, (SimulationTickContext ctx) =>
 		{
-			EcosystemSystem.Tick(tiles, ctx.deltaDays);
+			EcosystemSystem.Tick(tiles, ctx.deltaDays, ctx.year);
 		});
 		_simulationScheduler.Register("justice.daily", SimulationCadence.Daily, 27, (SimulationTickContext _) =>
 		{

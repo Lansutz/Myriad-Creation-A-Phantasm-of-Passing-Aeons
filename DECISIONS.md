@@ -1144,3 +1144,13 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 复杂度：布局 O(B log B)，纹理 O(W×H)，缓存 O(1)；缓存淘汰时销毁旧纹理。
 - 测试：`CityViewTests` 4 例（纹理确定性、缓存命中/淘汰、面板注册+空态、有区块标题/渲染）。
 - 验证：`EXIT=0`、`981/983`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D135 渔业、火灾、放牧反馈（P4.3）
+
+- `TileData.fishStock`（沿海 0–1）：生成时沿海给 0.8；`EcosystemSystem` 月度向 `0.8×(1−0.5×人口压力)` 恢复；`HarvestFish` 按人口需求捕捞，产量与鱼群扣减同源；`EconomyManager.ProduceResources` 写入 2 号货（鱼），与狩猎/农业共用库存链。
+- `TileData.livestock`（0–1）：月度向 `min(1, 人口/800)` 趋近；放牧压力按 `MaxGrazingShare=0.3` 压低目标植被；无新阶层/新系统。
+- 火灾：`ShouldBurn` 只对“陆地、植被≥0.7、年降水<500mm、年均温≥20°C”的地块按 `tileIndex×year` 确定性 hash 判定；`Burn` 烧掉植被/野生/牲畜；`EcosystemSystem.Tick` 在演替后处理，随后按非火灾年恢复。阈值是模型常量，不是平衡加成。
+- 复杂度：捕鱼/火灾都在既有月度 O(N) 循环内；每个地块 O(1)。
+- 旧档：新字段缺省 0，沿海旧档鱼群为 0（需一次生成/事件补种；不影响存档读取）。
+- 测试：`EcologyExtensionTests` 5 例（沿海捕鱼、鱼群恢复、放牧压低植被、火灾确定性/恢复、字段往返）。
+- 验证：`EXIT=0`、`986/988`（2 个 Explicit 跳过）、零 `error CS`。

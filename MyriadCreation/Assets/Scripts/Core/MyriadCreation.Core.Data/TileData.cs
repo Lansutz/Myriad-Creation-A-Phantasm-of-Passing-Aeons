@@ -98,6 +98,12 @@ public struct TileData
 	/// <summary>野生草食动物密度 0–1（聚合口径；随植被与人口压力变化）。</summary>
 	public float wildlife;
 
+	/// <summary>沿海鱼群 0–1（P4.3；只在 isCoast 地块有效，捕捞与恢复同源）。</summary>
+	public float fishStock;
+
+	/// <summary>放牧压力 0–1（P4.3；随人口变化，压低植被目标）。</summary>
+	public float livestock;
+
 	public float development;
 
 	public float stability;

@@ -233,6 +233,7 @@ public class PlanetTerrainGenerator
 			{
 				reference.vegetation = reference.npp;
 				reference.wildlife = reference.npp * 0.4f;
+				if (reference.isCoast) reference.fishStock = 0.8f;
 			}
 		});
 		Debug.Log((object)$"[PlanetTerrainGenerator] 生成完成，陆地{CountLand(tiles)}地块，海洋{num - CountLand(tiles)}地块");
