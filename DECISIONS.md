@@ -1038,3 +1038,15 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 未做：消息伪造/延迟传播、秘密与把柄、被察觉后的反向密谋；这些需要独立信息传播层，暂不硬造。
 - 测试：`IntriguePlanTests` 4 例（未知目标不立项、目标死亡失败、无守卫完成、有守卫失败）。
 - 验证：`EXIT=0`、`941/943`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D125 P3.6 内容/本地化/架构尾巴（本轮）
+
+- 本地化：官职名新增 `office_Judge`、`office_CourtScholar`（en / zh-Hans / zh-Hant）；其他语言没有官职块时走 `Localization.Get(key, fallback)` 回退内容名，不硬填未翻译文案。
+- 内容：官职表 `Polity/Offices.json`、群系资源 `Biome/BiomeResources.json`、商品口粮资格 `Goods.json` 已走内容层；徽章/旗帜条件当前在代码中（`BannerSystem`），因为它们是规则而不是可枚举内容，等政体/革新 schema 稳定后再外提为表。
+- 存档：新增字段全部可选（`officeAppointedDays`、`bannerKind/bannerPattern/bannerColors`、`realmKnowledge`），旧档缺省值有明确语义（终身、无旗、全未知），不需要新 SaveVersion。
+- 架构尾巴明确不做（有理由）：
+  - `RealmData` 字段全面私有化：当前大量 Host/UI 只读访问，收益主要是封装，风险是跨 20+ 文件的机械改动；留给后续专门批次。
+  - `DnaData` 删除：仍有旧档迁移输入，保留为兼容入口。
+  - 法律 Host 再拆：P2.5 已按 Hosts 程序集反转，继续拆没有新消费者。
+- `Exploration`（P3.3 剩余）：S19 已提供知识层，但还缺“远征实体/路线”这一过程载体；现在立项只能空转，继续按 D32/D99 暂不启用，等航海/远征系统。
+- 验证：`EXIT=0`、`942/944`（2 个 Explicit 跳过）、零 `error CS`（本地化改动后复跑）。

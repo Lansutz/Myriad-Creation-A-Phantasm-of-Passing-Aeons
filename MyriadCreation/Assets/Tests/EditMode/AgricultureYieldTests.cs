@@ -144,6 +144,31 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
+        public void TwoYearDroughtChain_InventoryDrainsAndFamineFollows()
+        {
+            TileData[] tiles = { NewTile(0.6f, 0.5f, 0.1f, 100) };
+            var center = new TradeCenter { regionId = 0, inventoryCapacity = 10000f };
+            EconomyManager economy = NewEconomy(tiles, new Dictionary<int, TradeCenter> { { 0, center } });
+
+            for (int day = 0; day < 365; day++) economy.DailyTick();
+            float stockAfterGoodYear = center.inventory.GetValueOrDefault(0);
+            Assert.Greater(stockAfterGoodYear, 1f, "正常年份应积累余粮");
+
+            tiles[0].fertility = 0.2f; // 旱年：肥力大幅下降，产出低于口粮需求
+            float stabilityBeforeDrought = tiles[0].stability;
+            bool famineObserved = false;
+            for (int day = 0; day < 365; day++)
+            {
+                economy.DailyTick();
+                if (tiles[0].stability < stabilityBeforeDrought) famineObserved = true;
+            }
+
+            Assert.IsTrue(famineObserved, "旱年减产应最终吃穿库存并触发饥荒（稳定度下降）");
+            Assert.AreEqual(0f, center.inventory.GetValueOrDefault(0), 0.001f, "旱年结束时库存应被吃空");
+            Assert.Less(tiles[0].stability, stabilityBeforeDrought, "饥荒必须留下稳定度后果");
+        }
+
+        [Test]
         public void Production_DoesNotBypassInventoryCapacity()
         {
             TileData[] tiles = { NewTile(1f, 1f, 1f, 1000) };
