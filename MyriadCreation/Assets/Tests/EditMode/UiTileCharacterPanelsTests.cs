@@ -298,55 +298,33 @@ namespace MyriadCreation.Tests.EditMode
             _created.Add(uiGo);
             var ui = uiGo.AddComponent<UIManager>();
             var tileName = CreateText();
-            var charName = CreateText();
-            var charPersonality = CreateText();
             SetField(ui, "tileNameText", tileName);
-            SetField(ui, "charNameText", charName);
-            SetField(ui, "charPersonalityText", charPersonality);
             ui.SetSelectedTile(TargetTile);
 
             Assert.DoesNotThrow(() => Invoke(ui, "UpdateTileInfo"));
             Assert.AreEqual("-", tileName.text);
-            Assert.DoesNotThrow(() => Invoke(ui, "UpdateCharacterPanel"));
-            Assert.AreEqual("-", charName.text);
-            Assert.AreEqual("-", charPersonality.text);
-            Assert.DoesNotThrow(() => Invoke(ui, "RefreshCharacterList"));
             Assert.DoesNotThrow(() => Invoke(ui, "OpenCharacterPanel"));
         }
 
         [Test]
-        public void UIManager_WithView_UsesTileAndCharacterDto()
+        public void UIManager_WithView_UsesTileDto()
         {
             var uiGo = new GameObject("UiTileCharacterUIManagerView");
             _created.Add(uiGo);
             var ui = uiGo.AddComponent<UIManager>();
             var tileName = CreateText();
             var tileTerrain = CreateText();
-            var charName = CreateText();
-            var charStatus = CreateText();
-            var charPersonality = CreateText();
             var tileEconomy = CreateText();
             SetField(ui, "tileNameText", tileName);
             SetField(ui, "tileTerrainText", tileTerrain);
             SetField(ui, "tileEconomyText", tileEconomy);
             SetField(ui, "_viewRealmId", RealmId);
-            SetField(ui, "charNameText", charName);
-            SetField(ui, "charStatusText", charStatus);
-            SetField(ui, "charPersonalityText", charPersonality);
             ui.SetWorldReadModel(_model);
             ui.SetSelectedTile(TargetTile);
 
             Assert.DoesNotThrow(() => Invoke(ui, "UpdateTileInfo"));
             StringAssert.Contains("Test Realm", tileName.text);
             StringAssert.Contains("Test Town", tileEconomy.text);
-
-            Assert.DoesNotThrow(() => Invoke(ui, "RefreshCharacterList"));
-            Assert.DoesNotThrow(() => Invoke(ui, "OpenCharacterPanel"));
-            Assert.DoesNotThrow(() => Invoke(ui, "UpdateCharacterPanel"));
-            Assert.AreEqual("Target Hero", charName.text);
-            StringAssert.Contains("统治者", charStatus.text);
-            StringAssert.Contains("勇敢", charPersonality.text);
-            StringAssert.DoesNotContain("契约未提供", charPersonality.text);
         }
     }
 }

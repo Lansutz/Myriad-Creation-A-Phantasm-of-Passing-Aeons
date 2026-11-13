@@ -173,16 +173,12 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
         private bool _modeSubOpen = false; // 子模式展开态
 
         [Header("角色面板")]
-        [SerializeField] private GameObject characterPanel;
         // P1.6：角色面板由 CharacterPanelView 单文件负责，管理器只注册与转调。
         private CharacterPanelView _characterPanelView;
         private FamilyTreePanelView _familyTreeView;
         private InnovationPanelView _innovationView;
         public UiPanelRegistry Panels { get; } = new UiPanelRegistry();
         [SerializeField] private Button charOpenButton;
-        [SerializeField] private Button charPrevButton;
-        [SerializeField] private Button charNextButton;
-        [SerializeField] private Button charCloseButton;
 
         [Header("社会政治面板")]
         [SerializeField] private GameObject societyPanel;
@@ -239,18 +235,6 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
         }
 
         [Header("家族树面板")]
-        [SerializeField] private GameObject familyTreePanel;
-        [SerializeField] private TMP_Text familyTreeText;
-        [SerializeField] private Button familyTreeOpenButton;
-        [SerializeField] private Button familyTreeCloseButton;
-        [SerializeField] private Button familyTreePrevButton;
-        [SerializeField] private Button familyTreeNextButton;
-        [SerializeField] private TMP_Text charNameText;
-        [SerializeField] private TMP_Text charStatusText;
-        [SerializeField] private TMP_Text charStatsText;
-        [SerializeField] private TMP_Text charPersonalityText;
-        [SerializeField] private TMP_Text charDescText;
-        [SerializeField] private TMP_Text charDnaText;
 
  // 选中的地块
         private int _selectedTile = -1;
@@ -304,7 +288,6 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
             if (mapModeBar != null) mapModeBar.SetActive(visible);
             if (mapModePanel != null) mapModePanel.SetActive(visible);
  // 角色面板
-            if (characterPanel != null) characterPanel.SetActive(false); // 面板默认关闭，由按钮控制
  // 社会/宗教面板
             if (societyPanel != null) societyPanel.SetActive(false);
             if (religionPanel != null) religionPanel.SetActive(false);
@@ -323,8 +306,6 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
         private const int MaxLogEntries = 100;
 
  // 角色面板状态
-        private readonly List<int> _characterList = new List<int>();
-        private int _charIndex = 0;
 
  // Toast 队列
         private readonly Queue<string> _toastQueue = new Queue<string>();
@@ -441,16 +422,12 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
                     RefreshGovernmentButtonLayout(Screen.width);
                 }
                 UpdateTileInfo();
-                if (characterPanel != null && characterPanel.activeSelf)
-                    UpdateCharacterPanel();
                 if (religionPanel != null && religionPanel.activeSelf)
                     RefreshReligionPanel();
                 if (societyPanel != null && societyPanel.activeSelf)
                     RefreshSocietyPanel();
                 if (musicPanel != null && musicPanel.activeSelf)
                     RefreshMusicPanel();
-                if (familyTreePanel != null && familyTreePanel.activeSelf)
-                    RefreshFamilyTreePanel();
             }
         }
 
@@ -487,9 +464,6 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
 
  // 角色面板按钮
             if (charOpenButton != null) charOpenButton.onClick.AddListener(OpenCharacterPanel);
-            if (charPrevButton != null) charPrevButton.onClick.AddListener(PrevCharacter);
-            if (charNextButton != null) charNextButton.onClick.AddListener(NextCharacter);
-            if (charCloseButton != null) charCloseButton.onClick.AddListener(CloseCharacterPanel);
 
  // 社会政治面板按钮
             if (societyOpenButton != null) societyOpenButton.onClick.AddListener(OpenSocietyPanel);
@@ -514,10 +488,6 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
             }
 
  // 家族树面板按钮
-            if (familyTreeOpenButton != null) familyTreeOpenButton.onClick.AddListener(OpenFamilyTreePanel);
-            if (familyTreeCloseButton != null) familyTreeCloseButton.onClick.AddListener(CloseFamilyTreePanel);
-            if (familyTreePrevButton != null) familyTreePrevButton.onClick.AddListener(PrevFamilyMember);
-            if (familyTreeNextButton != null) familyTreeNextButton.onClick.AddListener(NextFamilyMember);
 
 // 政府/法律面板入口（TopBar 动态创建「政府」按钮——场景零改动）
             EnsureGovernmentButton();

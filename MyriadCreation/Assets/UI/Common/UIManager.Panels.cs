@@ -149,29 +149,16 @@ public partial class UIManager
         public void CloseCharacterPanel()
         {
             if (_characterPanelView != null) _characterPanelView.Hide();
-            if (characterPanel != null) characterPanel.SetActive(false);
         }
 
         private void PrevCharacter()
         {
-            if (_characterPanelView != null)
-            {
-                _characterPanelView.Prev();
-                return;
-            }
-            _charIndex--;
-            UpdateCharacterPanel();
+            if (_characterPanelView != null) _characterPanelView.Prev();
         }
 
         private void NextCharacter()
         {
-            if (_characterPanelView != null)
-            {
-                _characterPanelView.Next();
-                return;
-            }
-            _charIndex++;
-            UpdateCharacterPanel();
+            if (_characterPanelView != null) _characterPanelView.Next();
         }
 
 
@@ -323,15 +310,12 @@ public partial class UIManager
  /// <summary>打开家族树面板</summary>
         private void OpenFamilyTreePanel()
         {
-            if (_familyTreeView != null)
+            if (_familyTreeView == null)
             {
-                _familyTreeView.SetViewRealm(ViewRealmId);
-                _familyTreeView.Show();
                 return;
             }
-            RefreshCharacterList();
-            if (familyTreePanel != null) familyTreePanel.SetActive(true);
-            RefreshFamilyTreePanel();
+            _familyTreeView.SetViewRealm(ViewRealmId);
+            _familyTreeView.Show();
         }
 
 
@@ -339,29 +323,16 @@ public partial class UIManager
         private void CloseFamilyTreePanel()
         {
             if (_familyTreeView != null) _familyTreeView.Hide();
-            if (familyTreePanel != null) familyTreePanel.SetActive(false);
         }
 
         private void PrevFamilyMember()
         {
-            if (_familyTreeView != null)
-            {
-                _familyTreeView.Prev();
-                return;
-            }
-            _charIndex--;
-            RefreshFamilyTreePanel();
+            if (_familyTreeView != null) _familyTreeView.Prev();
         }
 
         private void NextFamilyMember()
         {
-            if (_familyTreeView != null)
-            {
-                _familyTreeView.Next();
-                return;
-            }
-            _charIndex++;
-            RefreshFamilyTreePanel();
+            if (_familyTreeView != null) _familyTreeView.Next();
         }
 
         // ===== 政府/法律面板入口（task-60：TopBar 动态按钮 + G 快捷键，场景零改动） =====
@@ -563,101 +534,14 @@ public partial class UIManager
             if (viewRealmButton != null) viewRealmButton.gameObject.SetActive(dto.ownerRealmId >= 0);
         }
 
-        private void UpdateCharacterPanel()
-        {
-            if (_worldReadModel == null)
-            {
-                FillCharacterTexts("-", "-", "-", "-", "-", "-");
-                return;
-            }
-            int characterId = CurrentCharacterId();
-            if (characterId < 0)
-            {
-                FillCharacterTexts("-", "-", "-", "-", "-", "-");
-                return;
-            }
-            CharacterDetailDto dto = _worldReadModel.GetCharacterDetail(characterId);
-            if (dto == null)
-            {
-                FillCharacterTexts("-", "-", "-", "-", "-", "-");
-                return;
-            }
-
-            SetPanelText(charNameText, dto.name);
-            string office = string.IsNullOrEmpty(dto.officeName)
-                ? (dto.officeTitleId >= 0 ? "#" + dto.officeTitleId : "-")
-                : dto.officeName;
-            SetPanelText(charStatusText,
-                "年龄 " + dto.age + " · " + (dto.isMale ? "男" : "女") + " · " + (dto.isAlive ? "在世" : "已故") +
-                "\n所属: " + (string.IsNullOrEmpty(dto.realmName) ? "-" : dto.realmName) +
-                "\n角色: " + dto.roleName + " | 官职: " + office);
-            SetPanelText(charStatsText,
-                "武力 " + dto.prowess.ToString("F0") + " | 社交 " + dto.social.ToString("F0") +
-                " | 军事 " + dto.military.ToString("F0") + " | 管理 " + dto.management.ToString("F0") +
-                "\n谋略 " + dto.conspiracy.ToString("F0") + " | 学术 " + dto.scholarship.ToString("F0") +
-                " | 威望 " + dto.prestige.ToString("F0") + " | 健康 " + dto.health.ToString("F0") +
-                "\n压力 " + dto.stress.ToString("F0") + " | 虔诚 " + dto.piety.ToString("F0"));
-            SetPanelText(charPersonalityText, PersonalitySummary(dto));
-            SetPanelText(charDescText, FamilySummary(dto));
-            SetPanelText(charDnaText,
-                "文化: " + (string.IsNullOrEmpty(dto.cultureName) ? "-" : dto.cultureName) +
-                "\n信仰: " + (string.IsNullOrEmpty(dto.faithName) ? "-" : dto.faithName));
-        }
-
-        private void RefreshCharacterList()
-        {
-            if (_characterList == null) return;
-            _characterList.Clear();
-            if (_worldReadModel != null)
-            {
-                var characters = _worldReadModel.GetCharactersInRealm(ViewRealmId);
-                foreach (var c in characters)
-                {
-                    if (c != null) _characterList.Add(c.characterId);
-                }
-            }
-            _characterList.Sort();
-            _charIndex = 0;
-            if (characterPanel != null && characterPanel.activeSelf) UpdateCharacterPanel();
-        }
-
         private void OpenCharacterPanel()
         {
-            if (_characterPanelView != null)
+            if (_characterPanelView == null)
             {
-                _characterPanelView.SetViewRealm(ViewRealmId);
-                _characterPanelView.Show();
                 return;
             }
-            RefreshCharacterList();
-            if (characterPanel != null) characterPanel.SetActive(true);
-            UpdateCharacterPanel();
-        }
-
-        private void RefreshFamilyTreePanel()
-        {
-            if (familyTreeText == null) return;
-            if (_worldReadModel == null)
-            {
-                familyTreeText.text = "-";
-                return;
-            }
-            int characterId = CurrentCharacterId();
-            CharacterDetailDto dto = characterId >= 0 ? _worldReadModel.GetCharacterDetail(characterId) : null;
-            if (dto == null)
-            {
-                familyTreeText.text = "-";
-                return;
-            }
-            familyTreeText.text = FamilySummary(dto);
-        }
-
-        private int CurrentCharacterId()
-        {
-            if (_characterList == null || _characterList.Count == 0) return -1;
-            if (_charIndex < 0) _charIndex = 0;
-            if (_charIndex >= _characterList.Count) _charIndex = _characterList.Count - 1;
-            return _characterList[_charIndex];
+            _characterPanelView.SetViewRealm(ViewRealmId);
+            _characterPanelView.Show();
         }
 
         private void FillTileTexts(string name, string terrain, string climate, string biome, string population, string economy)
@@ -670,63 +554,9 @@ public partial class UIManager
             SetPanelText(tileEconomyText, economy);
         }
 
-        private void FillCharacterTexts(string name, string status, string stats, string personality, string desc, string dna)
-        {
-            SetPanelText(charNameText, name);
-            SetPanelText(charStatusText, status);
-            SetPanelText(charStatsText, stats);
-            SetPanelText(charPersonalityText, personality);
-            SetPanelText(charDescText, desc);
-            SetPanelText(charDnaText, dna);
-        }
-
         private static void SetPanelText(TMP_Text target, string value)
         {
             if (target != null) target.text = value;
-        }
-
-        private static string FamilySummary(CharacterDetailDto dto)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("父: ").Append(FamilyName(dto.father));
-            sb.Append("\n母: ").Append(FamilyName(dto.mother));
-            sb.Append("\n配偶: ").Append(FamilyName(dto.spouse));
-            sb.Append("\n兄弟姐妹: ");
-            AppendFamilyList(sb, dto.siblings);
-            sb.Append("\n子女: ");
-            AppendFamilyList(sb, dto.children);
-            return sb.ToString();
-        }
-
-        private static string PersonalitySummary(CharacterDetailDto dto)
-        {
-            string personality = string.IsNullOrWhiteSpace(dto.personality) ? "-" : dto.personality;
-            string traits = dto.traits == null || dto.traits.Count == 0
-                ? "-"
-                : string.Join("、", dto.traits);
-            string dynasty = string.IsNullOrWhiteSpace(dto.dynastyName) ? "-" : dto.dynastyName;
-            string family = string.IsNullOrWhiteSpace(dto.familyName) ? "-" : dto.familyName;
-            return "性格: " + personality + "\n特质: " + traits + "\n家族: " + dynasty + " / " + family;
-        }
-
-        private static void AppendFamilyList(StringBuilder sb, IReadOnlyList<FamilyMemberDto> members)
-        {
-            if (members == null || members.Count == 0)
-            {
-                sb.Append("-");
-                return;
-            }
-            for (int i = 0; i < members.Count; i++)
-            {
-                if (i > 0) sb.Append("、");
-                sb.Append(FamilyName(members[i]));
-            }
-        }
-
-        private static string FamilyName(FamilyMemberDto member)
-        {
-            if (member == null) return "-";
-            return member.name + "（" + member.age + "，" + (member.isAlive ? "在世" : "已故") + "）";
         }
 
         private void RefreshOverviewPanel()

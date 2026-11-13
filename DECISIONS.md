@@ -846,3 +846,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 新增 `RealmMutationGatewayTests`：扫描 `Scripts/Simulation/**/*.cs`，禁止 `realm.treasury/stability` 的直接赋值（报告 DTO、TileData、LawEffect 中间量等已知非 RealmData 目标除外）。以后新增绕过会红。
 - 字段本身仍为 public（存档 DTO/大量读点），但写入路径已单源；把字段私有化需要同时改 RealmDTO 映射与读点，留作 C 的下一步。
 - 验证：`EXIT=0`、`877/879`、零 `error CS`。
+
+## D104 删除 UIManager 旧角色/家族面板双源（一个 UI 一个文件）
+
+- `UIManager` 删除 `characterPanel/familyTreePanel/charNameText...familyTreeText` 等场景绑定字段与 `_characterList/_charIndex`，删除 `UpdateCharacterPanel/RefreshCharacterList/RefreshFamilyTreePanel/CurrentCharacterId/FillCharacterTexts/FamilySummary/PersonalitySummary` 旧实现。
+- 角色/家族面板唯一实现为 `CharacterPanelView`/`FamilyTreePanelView`（已注册到 `UiPanelRegistry`）；UIManager 只保留打开/关闭/翻页的薄转调与 `charOpenButton` 入口（顶栏按钮仍可用）。
+- 测试改为只验证 UIManager 的地块面板；角色面板由 `CharacterPanelViewTests` 覆盖。场景 YAML 中的旧字段名变为未知键，Unity 忽略，不再有第二套渲染路径。
+- 验证：`EXIT=0`、`877/879`、零 `error CS`。
