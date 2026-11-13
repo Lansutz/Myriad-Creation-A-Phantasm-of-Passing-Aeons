@@ -629,3 +629,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `GameWorld.AttachFaithToDenomination(faithId, denominationId)`：分裂后邀请同教 faith 挂靠的唯一入口；跨教拒绝。
 - 宗派 id 从现有正 id 递增；默认宗派的负 id 段不受影响。成员关系沿用 `RebuildDenominationMembership`，不维护第二份列表。
 - 未做：分歧度触发的自动分裂/合一/妥协判定（需要 divergence 计算与正统边界），本批只给「分裂/挂靠」的写入口。
+
+## D76 教义分歧度按「组」计算（P2.2 第三刀）
+
+- 新增 `DoctrineDivergence.Calculate(a, b, options)`：按组比较；`sequence` 组取组内档位距离（分母为该组全局最大 level，不是本次选中项的最大值），`category` 组取集合距离（1 − 交集/并集）；两边都缺的组不计入分母；结果 0–100。
+- `ReligionCatalog.GetDivergence` 改为委托该函数，删除旧的「每项差 30 × pillar 权重 × 非 doctrine 0.8」口径——旧口径把偏离度算成选项计数的加权和，无法表达「两档相距多远」。
+- 权重目前统一（TODO_M05）；等内容给出按域权重后再替换，不在此处硬编码。
+- 测试覆盖：同集=0、两组中一组不同=50、sequence 档距、category 部分重合按并集、单边缺组=100。
+- 未做：正统边界（orthodoxy.tenetIds/exclusions）与异端阈值判定；本批只统一「分歧度怎么算」。

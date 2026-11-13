@@ -71,6 +71,11 @@ public static class DoctrinePool
 		return list;
 	}
 
+	public static List<DoctrineOptionDef> GetAllOptions()
+	{
+		return new List<DoctrineOptionDef>(_options.Values);
+	}
+
 	public static IReadOnlyList<string> GetGroupIds()
 	{
 		return new List<string>(_byGroup.Keys);

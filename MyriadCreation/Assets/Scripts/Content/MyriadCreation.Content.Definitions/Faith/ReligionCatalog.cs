@@ -129,46 +129,17 @@ public static class ReligionCatalog
 		{
 			return 0f;
 		}
-		if (a.selectedDoctrines.Count == 0 || b.selectedDoctrines.Count == 0)
+		Dictionary<string, DoctrineOptionDef> options = new Dictionary<string, DoctrineOptionDef>();
+		List<DoctrineOptionDef> all = DoctrinePool.GetAllOptions();
+		for (int i = 0; i < all.Count; i++)
 		{
-			return 0f;
-		}
-		float num = CalcOneWayDivergence(a, b);
-		float num2 = CalcOneWayDivergence(b, a);
-		return Mathf.Min(100f, (num + num2) * 0.5f);
-	}
-
-	private static float CalcOneWayDivergence(ReligionDef from, ReligionDef to)
-	{
-		float num = 0f;
-		foreach (string selectedDoctrine in from.selectedDoctrines)
-		{
-			if (!to.selectedDoctrines.Contains(selectedDoctrine))
+			DoctrineOptionDef option = all[i];
+			if (option != null && !string.IsNullOrEmpty(option.optionId))
 			{
-				DoctrineOptionDef doctrineOptionDef = DoctrinePool.Get(selectedDoctrine);
-				if (doctrineOptionDef != null)
-				{
-					float pillarWeight = GetPillarWeight(doctrineOptionDef.pillar);
-					num += 30f * pillarWeight * ((doctrineOptionDef.pillar == "doctrine") ? 1f : 0.8f);
-				}
+				options[option.optionId] = option;
 			}
 		}
-		return num;
-	}
-
-	private static float GetPillarWeight(string pillar)
-	{
-		return pillar switch
-		{
-			"doctrine" => 0.3f, 
-			"ritual" => 0.2f, 
-			"ethics" => 0.15f, 
-			"institution" => 0.15f, 
-			"myth" => 0.1f, 
-			"experience" => 0.05f, 
-			"material" => 0.05f, 
-			_ => 0.1f, 
-		};
+		return DoctrineDivergence.Calculate(a.selectedDoctrines, b.selectedDoctrines, options);
 	}
 
 	public static bool IsAvailable(int religionId, Func<int, bool> hasInnovation)

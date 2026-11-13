@@ -156,7 +156,8 @@
 - 2026-11-13 **P2.1 文化分裂（P2.1 收口）**：`CultureSplitSystem` 对有故土、抗拒同化、占比≥25% 的少数文化派生儿文化（继承语言/族群/传统、颜色偏移、10 年冷却、最多 4 个）；宿主政权人口改挂儿文化。新增 5 例测试。验证：`EXIT=0`、`820/822`（2 个 Explicit 跳过）、零 `error CS`。P2.1 传播/融合/分裂三条链完成。
 - 2026-11-13 **P2.2 教义 schema（第一刀）**：新增 `DoctrineSchema`（组→域/序、参数注册表、选项校验）；`DoctrineOptionDef` 增 `groupId/kind/level/parameters`；`DoctrinePool` 加载期回填组序并报错非法项；真实 46 条内容全部可归组。新增 5 例测试。验证：`EXIT=0`、`825/827`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：六层运行时创建（分裂/挂靠）、divergence 权重、参数消费点。
 - 2026-11-13 **P2.2 宗派运行时创建/挂靠**：新增 `GameWorld.CreateDenomination/AttachFaithToDenomination`（同教校验、成员重算、编年史）；宗派 id 正段递增，默认宗派负 id 段不变。新增 `FaithSchismTests` 3 例。验证：`EXIT=0`、`828/830`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：divergence 计算与合一/妥协/分裂判定。
-- 待办：P2.2 divergence/教派判定、P2.3 信息传播/Intrigue、P2.4 内容外提、P2.5 架构 A–F、P2.6 Compute/Apply；**G5 / G6**；内容体检。
+- 2026-11-13 **P2.2 分歧度按组计算**：新增 `DoctrineDivergence`（sequence 档距 / category 集合距离），`ReligionCatalog.GetDivergence` 委托它并删除旧加权口径；测试覆盖 5 种情形。验证：`EXIT=0`、`833/835`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：正统边界与异端阈值、合一/妥协阶段。
+- 待办：P2.2 正统边界/教派阶段、P2.3 信息传播/Intrigue、P2.4 内容外提、P2.5 架构 A–F、P2.6 Compute/Apply；**G5 / G6**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。
 - 备注：卡住时先 `Get-Process Unity` + 删 `MyriadCreation\Temp\UnityLockfile` 再重跑 `build.cmd`。
