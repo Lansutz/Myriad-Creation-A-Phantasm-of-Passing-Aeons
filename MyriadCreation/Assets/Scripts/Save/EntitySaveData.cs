@@ -36,6 +36,7 @@ namespace MyriadCreation.Save.Contracts
     {
         public int observerRealmId;
         public int characterId;
+        public int characterRealmId = -1;
         public int knownSettlementAnchorId = -1;
         public int lastSeenDay;
         public string source = "";

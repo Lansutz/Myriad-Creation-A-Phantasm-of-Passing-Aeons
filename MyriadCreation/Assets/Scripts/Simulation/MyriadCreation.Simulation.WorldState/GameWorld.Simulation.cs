@@ -877,6 +877,11 @@ public partial class GameWorld : MonoBehaviour
 		{
 			EnsureFaithLeadership();
 		});
+		// 信息滞后：非本政权人物超过 3 年无接触则从"已知"移除。
+		_simulationScheduler.Register("knowledge.decay.monthly", SimulationCadence.Monthly, 44, (SimulationTickContext _) =>
+		{
+			CharacterKnowledgeRegistry.PruneStale(currentDay, 1095);
+		});
 		// 文化传播：人口块向政权主文化同化，进度取既有阻力公式。
 		_simulationScheduler.Register("culture.transmission.monthly", SimulationCadence.Monthly, 39, (SimulationTickContext _) =>
 		{

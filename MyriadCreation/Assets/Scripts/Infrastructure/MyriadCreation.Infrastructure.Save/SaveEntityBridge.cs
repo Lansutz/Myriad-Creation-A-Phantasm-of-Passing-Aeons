@@ -138,6 +138,7 @@ namespace MyriadCreation.Infrastructure.Save
                 {
                     observerRealmId = info.observerRealmId,
                     characterId = info.characterId,
+                    characterRealmId = info.characterRealmId,
                     knownSettlementAnchorId = info.knownSettlementAnchorId,
                     lastSeenDay = info.lastSeenDay,
                     source = info.source ?? ""

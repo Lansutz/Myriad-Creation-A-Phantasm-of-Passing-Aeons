@@ -725,3 +725,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `LawEffects` 的局部 `e.stability` 是算法中间量（非 RealmData），保持原样。
 - 测试：两端钳制、Set、Drift。
 - 未做：population 入口（人口块是单一真源，写点分散在迁移/生育/征兵，需按场景逐个收口）。
+
+## D88 信息滞后：已知人物的过期遗忘（P2.3 第一刀）
+
+- `KnownCharacterInfo` 增 `characterRealmId`（Learn 时写当前所属政权；旧档 -1 保守保留）；显式参数less构造器避免结构体字段初始化报错。
+- `CharacterKnowledgeRegistry.PruneStale(currentDay, maxAgeDays)`：只清「非本政权且超过期限无接触」的条目；本政权人物永远在视野内，不因时间被遗忘。
+- `GameWorld` 月结 `knowledge.decay.monthly`（order 44），期限 3 年（1095 天，TODO_M05）。
+- 存档：`KnownCharacterSaveData` 增 `characterRealmId`；读档经 `Learn` 按当前人物归属重建，不依赖旧值。
+- 测试：外邦过期被遗忘、本政权保留、近期外邦保留、旧档未知归属保守保留。
+- 未做：Intrigue（WP5）——计划本身要求先有 S19 地图知识；当前只有角色知识，不硬造密谋系统。
