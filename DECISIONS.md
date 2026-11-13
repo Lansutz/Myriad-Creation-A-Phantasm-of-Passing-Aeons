@@ -1027,3 +1027,14 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 城市俯视图：`CityLayoutGenerator` 只产布局数据（`CityLayoutPlan`：100×100 画布、按 `areaRatio` 的竖条街区、道路间隙、城墙外环），按 `blockId` 稳定排序，确定性、不存档、读档重算；渲染层后续把矩形光栅化成 Sprite。空聚落返回空布局，不抛异常。
 - 未做：旗帜/城市布局的实际 Sprite 渲染与 UI 入口；`StateFlag` 的政体条件目前只有“定居”，共和/宪章政体细分等政体系统补齐后再收紧。
 - 验证：`EXIT=0`、`937/939`（2 个 Explicit 跳过）、零 `error CS`（含 `BannerSystemTests` 6 例、`CityLayoutTests` 5 例）。
+
+## D124 密谋计划复活（P3.5 第二刀）
+
+- D98 的触发条件（S19 有写入/查询入口并入档）已满足；`PlanType.Intrigue` 重新启用，不是新建第二套情报系统。
+- `IntriguePlanSystem`：立项要求目标人物在世、目标地块在发起政权的地图知识内；否则返回 null（信息不足不能凭空阴谋）。计划带 initiator 参与者，预计 30 日。
+- 执行：目标死亡 → `target_dead` 失败；目标离开已知区域 → `target_lost` 失败；目标地块有军队 → `guarded` 失败；否则完成并写编年史。进度判定放在执行器内、先于 PlanSystem 的“progress≥1 自动完成”，避免有守卫也被自动判成功。
+- 不引入“阴谋成功率”随机数或能力值加成：结果只由可观察条件（目标存活/知识/守卫）决定。
+- AI 调用者：每 365 日（按 realmId 错峰）对“目标地块已知”的他国君主发起一次；没有已知目标就不行动。
+- 未做：消息伪造/延迟传播、秘密与把柄、被察觉后的反向密谋；这些需要独立信息传播层，暂不硬造。
+- 测试：`IntriguePlanTests` 4 例（未知目标不立项、目标死亡失败、无守卫完成、有守卫失败）。
+- 验证：`EXIT=0`、`941/943`（2 个 Explicit 跳过）、零 `error CS`。

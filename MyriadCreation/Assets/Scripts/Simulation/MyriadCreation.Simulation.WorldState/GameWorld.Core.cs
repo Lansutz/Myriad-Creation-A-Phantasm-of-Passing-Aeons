@@ -330,6 +330,15 @@ public partial class GameWorld : MonoBehaviour
 		return new ResearchPlanSystem(this, Plans);
 	}
 
+	private IntriguePlanSystem _intriguePlanSystem;
+
+	public IntriguePlanSystem IntriguePlans => _intriguePlanSystem ?? (_intriguePlanSystem = new IntriguePlanSystem(this, Plans));
+
+	public Plan CreateIntriguePlan(int realmId, int initiatorCharacterId, int targetCharacterId)
+	{
+		return IntriguePlans.CreatePlan(realmId, initiatorCharacterId, targetCharacterId);
+	}
+
 	private ConstructionPlanSystem CreateConstructionPlanSystem()
 	{
 		return new ConstructionPlanSystem(this, Plans, _buildingSystem);

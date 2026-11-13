@@ -40,6 +40,11 @@ public class AIController
 
 	private int _buildCooldown = -1;
 
+	/// <summary>密谋决策间隔（日）。</summary>
+	private const int IntrigueInterval = 365;
+
+	private int _intrigueCooldown = -1;
+
 	public AIController(int realmId, AIPersonality personality)
 	{
 		this.realmId = realmId;
@@ -53,6 +58,7 @@ public class AIController
 		SelectDailyIntent(realms, tiles, innovations, _pendingIntents, world);
 		TryRaid(realms, tiles, diplomacy, characters, _pendingIntents);
 		TryPlanConstruction(realms, tiles, diplomacy, world);
+		TryPlanIntrigue(realms, world);
 		if (_decisionTimer >= 30f)
 		{
 			_decisionTimer = 0f;
@@ -111,6 +117,31 @@ public class AIController
 		}
 		if (bestTile < 0) return;
 		world.CreateConstructionPlan(realmId, realm.GetSupremeRulerId(), bestTile, buildingId);
+	}
+
+	/// <summary>
+	/// 密谋的生产调用者（P3.5）：只对“目标地块已在地图知识内”的敌对/他国君主立项；
+	/// 信息不足时不做，避免凭空阴谋。
+	/// </summary>
+	private void TryPlanIntrigue(Dictionary<int, RealmData> realms, GameWorld world)
+	{
+		if (_intrigueCooldown < 0) _intrigueCooldown = Mathf.Abs(realmId) % IntrigueInterval;
+		_intrigueCooldown++;
+		if (_intrigueCooldown < IntrigueInterval) return;
+		_intrigueCooldown = 0;
+		if (world?.Characters == null || realms == null || !realms.TryGetValue(realmId, out RealmData realm) || realm == null) return;
+		CharacterData plotter = world.Characters.GetCharacter(realm.GetSupremeRulerId());
+		if (plotter == null || !plotter.isAlive) return;
+
+		foreach (RealmData other in realms.Values)
+		{
+			if (other == null || other.realmId == realmId) continue;
+			CharacterData target = world.Characters.GetCharacter(other.GetSupremeRulerId());
+			if (target == null || !target.isAlive) continue;
+			if (!world.Knowledge.IsKnown(realmId, target.currentTile)) continue;
+			world.CreateIntriguePlan(realmId, plotter.characterId, target.characterId);
+			return;
+		}
 	}
 
 	private static float PopulationOf(TileData tile)

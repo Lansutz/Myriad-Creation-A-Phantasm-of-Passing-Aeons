@@ -189,6 +189,7 @@
 - 2026-11-13 **P3.3 建造令调用者**：AI 每 180 日按战/财政选建筑并走 `ConstructionPlanSystem`；修 `GetAvailableInnovations` 的 null 排序与 `preferredDomains` 未初始化崩溃。新增 2 例测试。详见 D121。验证：`EXIT=0`、`926/928`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **S19 地图知识**：`MapKnowledge` 每政权位图，所有权/军队斥候写入、Base64 存档、坏段安全；为 Intrigue 前置。新增 5 例测试。详见 D122。验证：`EXIT=0`、`926/928`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **P3.4 旗帜与城市布局**：`BannerKind` 四态（无旗/军旗/家旗/国族旗）按君主、纹章习俗、民族主义革新条件化；`CityLayoutGenerator` 按区块面积确定性切分俯视布局（不存档、读档重算）。新增 `BannerSystemTests` 6 例、`CityLayoutTests` 5 例。详见 D123。验证：`EXIT=0`、`937/939`（2 个 Explicit 跳过）、零 `error CS`。
+- 2026-11-13 **P3.5 密谋复活**：`IntriguePlanSystem` 以 S19 知识为立项前提；目标死亡/失联/有守卫分别失败，AI 每 365 日发起一次。新增 `IntriguePlanTests` 4 例。详见 D124。验证：`EXIT=0`、`941/943`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **官职调度降频**：`offices.daily` → `offices.monthly`（俸禄按 deltaDays 折算），避免百年人物表增长后每天全量扫人。
 - 2026-11-13 **纹章模型对齐 Azgaar/Armoria**：division/ordinary/盾形 + 纹章金属/颜色规则，家族纹章确定性生成。验证：`EXIT=0`、`887/889`、零 `error CS`。
 - 2026-11-13 **程序化家族纹章**：`Heraldry` 确定性生成 pattern+三色，家族创建/旧档补齐，`FamilySaveData` 往返。新增 3 例测试。验证：`EXIT=0`、`887/889`、零 `error CS`。
