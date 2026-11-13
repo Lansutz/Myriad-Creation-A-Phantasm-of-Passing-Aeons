@@ -26,6 +26,10 @@ public class RealmData
 	[NonSerialized]
 	public Dictionary<int, int> officeHolders = new Dictionary<int, int>();
 
+	/// <summary>各槽位的任命绝对日（year*365+day）；0/缺省视为旧档终身任职。随 RealmOfficeSaveData 入档。</summary>
+	[NonSerialized]
+	public Dictionary<int, int> officeAppointedDays = new Dictionary<int, int>();
+
 	public List<AdminDivision> adminDivisions = new List<AdminDivision>();
 
 	public int statePatronSaintId = -1;

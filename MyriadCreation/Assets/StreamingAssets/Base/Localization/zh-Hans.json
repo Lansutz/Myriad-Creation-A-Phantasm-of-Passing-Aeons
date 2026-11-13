@@ -1,4 +1,4 @@
-{
+﻿{
   "entries": [
     {
       "key": "ethos_endurance_name",
@@ -432,6 +432,15 @@
       "key": "office_WarCommander",
       "value": "元帅"
     },
+    {
+      "key": "office_Judge",
+      "value": "审判官"
+    },
+    {
+      "key": "office_CourtScholar",
+      "value": "宫廷学士"
+    },
+
     {
       "key": "office_laethis_gov_kingdom",
       "value": "河谷都护"

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Save.Contracts;
 using MyriadCreation.Simulation.Actors;
@@ -384,6 +384,8 @@ namespace MyriadCreation.Infrastructure.Save
         public int stateReligionId = -1;
         public int statePatronSaintId = -1;
         public List<IntPairEntry> officeHolders = new List<IntPairEntry>();
+        /// <summary>任命日（P3.1）；旧档缺省为空 = 终身任职，不误判任期到期。</summary>
+        public List<IntPairEntry> officeAppointedDays = new List<IntPairEntry>();
 
         public static RealmOfficeSaveData FromRealm(RealmData r)
         {
@@ -398,6 +400,8 @@ namespace MyriadCreation.Infrastructure.Save
             };
             if (r.officeHolders != null)
                 foreach (var kv in r.officeHolders) dto.officeHolders.Add(new IntPairEntry(kv.Key, kv.Value));
+            if (r.officeAppointedDays != null)
+                foreach (var kv in r.officeAppointedDays) dto.officeAppointedDays.Add(new IntPairEntry(kv.Key, kv.Value));
             return dto;
         }
 
@@ -413,6 +417,10 @@ namespace MyriadCreation.Infrastructure.Save
             r.officeHolders.Clear();
             if (officeHolders != null)
                 foreach (var e in officeHolders) r.officeHolders[e.key] = e.value;
+            if (r.officeAppointedDays == null) r.officeAppointedDays = new Dictionary<int, int>();
+            r.officeAppointedDays.Clear();
+            if (officeAppointedDays != null)
+                foreach (var e in officeAppointedDays) r.officeAppointedDays[e.key] = e.value;
         }
     }
 

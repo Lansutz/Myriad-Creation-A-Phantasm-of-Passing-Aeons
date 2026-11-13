@@ -49,7 +49,7 @@ public sealed class CharacterDetailQueryAdapter : ICharacterDetailQuery
 			{
 				_world.cultures.TryGetValue(realm.primaryCultureId, out culture);
 			}
-			officeName = OfficeTitleCatalog.GetTitle(culture, (OfficialOffice)officeTitleId, "Kingdom");
+			officeName = OfficeTitleCatalog.GetTitleForSlot(culture, officeTitleId, "Kingdom");
 		}
 
 		CharacterDetailDto dto = new CharacterDetailDto

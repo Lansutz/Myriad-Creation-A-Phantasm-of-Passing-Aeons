@@ -954,3 +954,14 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 已知未做：食物篮子仍只吃 `goodsId=0`（肉/鱼/稻谷不参与口粮），季节/灾害只通过肥力间接影响；留待 P3.2 生态与灾害联动。
 - 测试：`AgricultureYieldTests` 7 例（纯函数方向、NPP 旧档回退、入账守恒、旱灾饥荒、容量约束）；`EconomyConservationTests` 的缺粮夹具改为贫瘠地（`fertility=0`），避免农业自给掩盖饥荒前提。
 - 验证：`EXIT=0`、`896/898`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D117 官职内容表与运行（P3.1 第一批）
+
+- 参考 TTHTOM `polity_profile.central_offices` 的字段形态（rank/modules/appointment_order/candidate_gender/candidate_royal/term_years/salary/dismissal_resistance），只借 schema 与“职务=模块集合”的思路，不复制其内容/代码。
+- 内容表：`StreamingAssets/Base/Polity/Offices.json`，8 槽位。`slot 0-5` 与旧 `OfficialOffice` 枚举顺序严格对齐（Governor/DistrictGovernor/Chancellor/Steward/Marshal/WarCommander），旧档整数键无需迁移即可读；新增 `6 审判官`、`7 宫廷学士`。
+- `OfficeCatalog`：内容优先，Base 打底、Mods 按 slot 覆盖（在全部来源合并后统一刷新）；缺内容时回退内置六职，保证测试/工具环境可运行。重复加载整表替换，不静默合并两套口径。
+- `OfficeSystem` 只做四件事：按内容表补缺（出身/性别过滤、角色优先序、同分按 characterId 稳定决胜）、任期到期/死亡离任、俸禄按日折算从国库支出（国库不足不付、不透支）、按模块查询在职官员。
+- 存档：`RealmData.officeAppointedDays` + `RealmOfficeSaveData.officeAppointedDays`。旧档缺省为空 = 终身任职，避免“读档后所有官员同时到期”。
+- 调度：`offices.daily`（优先级 26）每日补缺 + 任期检查 + 俸禄；战争结束仍保留即时补缺。
+- 已知未做（下一批）：模块尚未接到提案/审案/征税/任免；`appointmentOrder` 的 `council` 目前只作为候选顺序标记，尚未强制议事会通过；罢免阻力只入表、未接罢免动作。
+- 验证：`EXIT=0`、`906/908`（2 个 Explicit 跳过）、零 `error CS`；新增 `OfficeSystemTests` 10 例。

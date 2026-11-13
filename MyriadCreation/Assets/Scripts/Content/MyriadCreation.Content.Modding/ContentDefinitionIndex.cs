@@ -49,6 +49,7 @@ namespace MyriadCreation.Content.Modding
         public Dictionary<string, DoctrineOptionDef> Doctrines { get; } = new Dictionary<string, DoctrineOptionDef>();
         public Dictionary<string, TitleDef> Titles { get; } = new Dictionary<string, TitleDef>();
         public Dictionary<int, EquipmentDef> Equipment { get; } = new Dictionary<int, EquipmentDef>();
+        public Dictionary<int, OfficeDef> Offices { get; } = new Dictionary<int, OfficeDef>();
 
         public bool IsInitialized { get; private set; }
 
@@ -163,6 +164,12 @@ namespace MyriadCreation.Content.Modding
             public List<DoctrineOptionDef> doctrines = new List<DoctrineOptionDef>();
         }
 
+        [Serializable]
+        private class OfficeListWrapper
+        {
+            public List<OfficeDef> offices = new List<OfficeDef>();
+        }
+
         /// <summary>
         /// 按 ContentSourceCatalog（Base→Mods 优先级）解析全部纯定义；root 为空/不存在/坏 JSON 安全（沿用原 provider 的 try/catch 行为）。
         /// </summary>
@@ -194,6 +201,7 @@ namespace MyriadCreation.Content.Modding
             providerCatalog.Add(new DelegateContentProvider<int, UnitContentDef>("Unit", LoadUnitRoot), new DictionaryContentStore<int, UnitContentDef>(new Dictionary<int, UnitContentDef>()));
             providerCatalog.Add(new DelegateContentProvider<int, DisasterContentDef>("Disaster", LoadDisasterRoot), new DictionaryContentStore<int, DisasterContentDef>(new Dictionary<int, DisasterContentDef>(), allowDefaultKey: true));
             providerCatalog.Add(new DelegateContentProvider<int, GoodsContentDef>("Goods", LoadGoodsRoot), new DictionaryContentStore<int, GoodsContentDef>(new Dictionary<int, GoodsContentDef>(), allowDefaultKey: true));
+            providerCatalog.Add(new DelegateContentProvider<int, OfficeDef>("Office", LoadOfficeRoot), new DictionaryContentStore<int, OfficeDef>(new Dictionary<int, OfficeDef>()));
 
             foreach (ContentSource source in ContentSourceCatalog.CreateDefault(streamingAssetsRoot))
             {
@@ -202,6 +210,9 @@ namespace MyriadCreation.Content.Modding
                     providerCatalog.Load(source);
                 }
             }
+
+            // 官职表在全部来源合并后统一刷新：Base 打底、Mods 按 slot 覆盖，避免整表被某个来源清空。
+            OfficeCatalog.LoadFromContent(Offices.Values);
 
             IsInitialized = true;
         }
@@ -234,6 +245,8 @@ namespace MyriadCreation.Content.Modding
             UnitCatalog.ResetContent();
             DisasterCatalog.ResetContent();
             GoodsCatalog.ResetContent();
+            Offices.Clear();
+            OfficeCatalog.ResetContent();
         }
 
         // ===== LoadRoot（按 provider 根目录解析）=====
@@ -367,6 +380,25 @@ namespace MyriadCreation.Content.Modding
                 }
             }
             UnitCatalog.LoadFromContent(parsed);
+        }
+
+        private void LoadOfficeRoot(string r, IContentStore<int, OfficeDef> t)
+        {
+            string path = Path.Combine(r, "Polity/Offices.json");
+            if (File.Exists(path)) LoadOffices(path, t);
+        }
+
+        private static void LoadOffices(string path, IContentStore<int, OfficeDef> target)
+        {
+            OfficeListWrapper wrapper = JsonUtility.FromJson<OfficeListWrapper>(File.ReadAllText(path));
+            if (wrapper == null || wrapper.offices == null) return;
+            foreach (OfficeDef item in wrapper.offices)
+            {
+                if (item != null && item.slot >= 0 && !string.IsNullOrEmpty(item.id))
+                {
+                    target.Set(item.slot, item);
+                }
+            }
         }
 
         private void LoadBuildingRoot(string r, IContentStore<int, BuildingContentDef> t)

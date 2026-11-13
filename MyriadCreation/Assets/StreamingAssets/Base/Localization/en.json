@@ -1,4 +1,4 @@
-{
+﻿{
   "entries": [
     {
       "key": "ethos_endurance_name",
@@ -432,6 +432,15 @@
       "key": "office_WarCommander",
       "value": "War Commander"
     },
+    {
+      "key": "office_Judge",
+      "value": "Judge"
+    },
+    {
+      "key": "office_CourtScholar",
+      "value": "Court Scholar"
+    },
+
     {
       "key": "office_laethis_gov_kingdom",
       "value": "Valley Warden"

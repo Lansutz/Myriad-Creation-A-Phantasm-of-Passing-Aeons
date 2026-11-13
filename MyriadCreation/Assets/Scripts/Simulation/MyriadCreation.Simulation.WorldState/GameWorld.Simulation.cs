@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -297,79 +297,14 @@ public partial class GameWorld : MonoBehaviour
 
 	private void EnsureOfficeHolders()
 	{
-		if (_characterManager == null)
-		{
-			return;
-		}
+		if (_characterManager == null) return;
+		int absoluteDay = OfficeSystem.AbsoluteDay(currentYear, currentDay);
 		for (int i = 0; i < realms.Count; i++)
 		{
 			RealmData realmData = realms[i];
-			if (realmData == null)
-			{
-				continue;
-			}
-			int supremeRulerId = realmData.GetSupremeRulerId();
-			HashSet<int> hashSet = new HashSet<int>();
-			for (int j = 0; j < 6; j++)
-			{
-				if (realmData.officeHolders.TryGetValue(j, out var value) && value >= 0)
-				{
-					CharacterData character = _characterManager.GetCharacter(value);
-					if (character == null || !character.isAlive)
-					{
-						realmData.officeHolders[j] = -1;
-						TitleInstanceRegistry.GetOrCreate("realm_" + realmData.realmId + "_office_" + j)?.EndActiveHoldings(currentDay);
-					}
-					else
-					{
-						hashSet.Add(value);
-					}
-				}
-			}
-			for (int k = 0; k < 6; k++)
-			{
-				if (realmData.officeHolders.ContainsKey(k) && realmData.officeHolders[k] >= 0)
-				{
-					continue;
-				}
-				List<CharacterData> charactersByRealm = _characterManager.GetCharactersByRealm(realmData.realmId);
-				CharacterData characterData = null;
-				foreach (CharacterData item in charactersByRealm)
-				{
-					if (item != null && item.characterId != supremeRulerId && item.isAlive && !hashSet.Contains(item.characterId) && (item.role == CharacterRole.Noble || item.role == CharacterRole.Military || item.role == CharacterRole.Scholar))
-					{
-						characterData = item;
-						break;
-					}
-				}
-				if (characterData == null)
-				{
-					foreach (CharacterData item2 in charactersByRealm)
-					{
-						if (item2 != null && item2.characterId != supremeRulerId && item2.isAlive && !hashSet.Contains(item2.characterId))
-						{
-							characterData = item2;
-							break;
-						}
-					}
-				}
-				if (characterData != null)
-				{
-					realmData.officeHolders[k] = characterData.characterId;
-					TitleInstance officeInstance = TitleInstanceRegistry.GetOrCreate("realm_" + realmData.realmId + "_office_" + k);
-					if (officeInstance != null && (officeInstance.GetSeniorHolder(currentDay)?.characterId ?? -1) != characterData.characterId)
-					{
-						officeInstance.TransferSenior(characterData.characterId, currentDay);
-					}
-					hashSet.Add(characterData.characterId);
-					characterData.aiCategory = CharacterAICategory.Official;
-				}
-				else
-				{
-					realmData.officeHolders[k] = -1;
-					TitleInstanceRegistry.GetOrCreate("realm_" + realmData.realmId + "_office_" + k)?.EndActiveHoldings(currentDay);
-				}
-			}
+			if (realmData == null) continue;
+			OfficeSystem.VacateExpired(realmData, _characterManager, absoluteDay);
+			OfficeSystem.FillVacancies(realmData, _characterManager, absoluteDay);
 		}
 	}
 
@@ -868,6 +803,18 @@ public partial class GameWorld : MonoBehaviour
 		ThoughtSchedule.Register(_simulationScheduler, () =>
 		{
 			_thoughtManager.DailyTick(currentYear);
+		});
+		// 官职：每日补缺/任期到期，并按日折算俸禄（国库不足则本日不付）。
+		_simulationScheduler.Register("offices.daily", SimulationCadence.Daily, 26, (SimulationTickContext ctx) =>
+		{
+			EnsureOfficeHolders();
+			if (_characterManager != null)
+			{
+				for (int i = 0; i < realms.Count; i++)
+				{
+					if (realms[i] != null) OfficeSystem.PaySalaries(realms[i], _characterManager, ctx.deltaDays);
+				}
+			}
 		});
 		_simulationScheduler.Register("justice.daily", SimulationCadence.Daily, 27, (SimulationTickContext _) =>
 		{
