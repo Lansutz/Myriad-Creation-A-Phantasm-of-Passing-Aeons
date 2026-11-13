@@ -837,6 +837,7 @@ public partial class GameWorld : MonoBehaviour
 		{
 			TickLawEffectsYearly();
 		});
+		ArmySchedule.Register(_simulationScheduler, armies, unitDefs, tiles, _seaLandGenerator, TryOccupyByArmy);
 		SettlementSchedule.Register(_simulationScheduler, _settlementSimulationSystem);
 		CultureSchedule.Register(_simulationScheduler, MonthlyCultureStageEvolution);
 		DiplomacySchedule.Register(_simulationScheduler, _diplomacyManager, () => currentDay);
@@ -885,6 +886,21 @@ public partial class GameWorld : MonoBehaviour
 		if (currentDay % 30 == 0)
 		{
 			CultureStageEvolutionHost.MonthlyTick(this);
+		}
+	}
+
+	/// <summary>P1.5：军队进入交战方领土后标记军事占领（所有权仍由和约决定）。</summary>
+	private void TryOccupyByArmy(Army army)
+	{
+		if (army == null || tiles == null || army.currentTileIndex < 0 || army.currentTileIndex >= tiles.Length)
+		{
+			return;
+		}
+		ref TileData tile = ref tiles[army.currentTileIndex];
+		int owner = tile.ownerRealmId;
+		if (owner >= 0 && owner != army.ownerRealmId && tile.isLand && _diplomacyManager.AreAtWar(army.ownerRealmId, owner))
+		{
+			_politicalManager.OccupyTile(army.currentTileIndex, army.ownerRealmId);
 		}
 	}
 

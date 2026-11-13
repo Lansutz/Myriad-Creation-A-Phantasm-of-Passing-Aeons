@@ -455,3 +455,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `InnovationTree` 新增 `IsUnlockReferenced/IsUnlockGranted/GrantInnovation`：只有**已完成的革新**（`_realmInnovations`）才算解锁；未被任何革新引用的内容不设门槛，避免把全部既有建筑一刀切锁死。
 - 消费者：`BuildingSystem.StartBuildingInternal` 在扣款前校验 `InnovationUnlockKind.Building`；`GameWorld` 在构造 `InnovationTree` 后注入 `BuildingSystem.Innovations`。`SettlementProduction.TryCraft` 校验 `InnovationUnlockKind.Recipe`（输出物 id），未引用配方不设门槛。`LawContracts.BeginEnactLaw` 校验 `InnovationUnlockKind.Law`（法律 key），未引用法律不设门槛。`InnovationTree.AreItemInnovationsMet` 校验 `InnovationUnlockKind.Equipment`；Unit 消费者要等 P1.5 征兵路径落地后再接。
 - 其余消费者（Recipe/Law/Unit/Equipment）按同一 API 后续接入，不另造映射表。
+
+## D50 军队日结与军事占领（P1.5 第一批）
+
+- `Army.DailyTick` 之前从未注册进调度（军队不行军、不耗补）；新增 `ArmySchedule`（`army.daily`，order 15，在战斗日结之前）统一推进补给/组织/训练/行军。
+- 行军后 `GameWorld.TryOccupyByArmy`：进入交战方领土时调用 `PoliticalManager.OccupyTile` 标记 `occupyingRealmId`；**所有权仍由和约决定**，占领只是军事状态，避免与外交割让两套写入口。
+- 未做：征兵路径（依赖人力/物资/财政）、海军写侧、军队标记绘制；这些仍是 P1.5 剩余。

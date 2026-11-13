@@ -131,7 +131,8 @@
 - 2026-11-13 **P1.2 四轴需求评分 + unrest 权重（D25 后半）**：四轴桶在阶级需求满足度上叠加阶层/身份/职业位置修正；`SocialAxisWeights` 可配，`GetSocialAxisUnrest` = 100 − 加权满足度；新增权重变化可复现测试。验证：`EXIT=0`、`767/768`（1 个 Explicit 跳过）、零 `error CS`。**P1.2 至此收口**。
 - 2026-11-13 **P1.3 法律生命周期写入方（第一批）**：`LawGroupState` 增加 `yearsActive/repealedLawIds`；`SetActiveLaw` 换法记废除并重置；`BeginEnactLaw` 标 Pending；新增 `LawLifecycleSystem.YearlyTick`，20 年成习、50 年 + legitimacy≥70 + 无 pending 根本化并写 `fundamentalizedLawIds`。新增 `LawLifecycleTests` 3 例。验证：`EXIT=0`、`770/771`（1 个 Explicit 跳过）、零 `error CS`。**剩余**：教理合并（WP3）与八接线点。
 - 2026-11-13 **P1.4 革新解锁第一消费者（建筑）**：`InnovationTree` 增加 `IsUnlockReferenced/IsUnlockGranted/GrantInnovation`；未引用内容不设门槛，已引用内容必须由已完成革新解锁；`BuildingSystem` 扣款前校验，`GameWorld` 注入革新树。新增 `InnovationUnlockTests` 3 例（未被引用建筑可用、被引用建筑门禁、被引用配方门禁）。验证：`EXIT=0`、`772/773`（1 个 Explicit 跳过）、零 `error CS`。**剩余**：Unit 消费者（依赖 P1.5 征兵路径）与革新面板。
-- 待办：**P1.3 教理合并/接线点**、**P1.1 毁灭派发方（依赖 P1.5）**、P1.4 其余消费者、P1.5–P1.6 / P2.1–P2.6；**G5 信仰生成器 / G6 流式加载+预加载**；内容体检。
+- 2026-11-13 **P1.5 军队日结 + 军事占领（第一批）**：新增 `ArmySchedule`（`army.daily`，before 战斗）推进补给/组织/训练/行军；`GameWorld.TryOccupyByArmy` 在进入交战方领土时标记 `occupyingRealmId`，所有权仍由和约决定。新增 `ArmyMovementTests`。验证：`EXIT=0`、`775/777`（1 个 Explicit 跳过）、零 `error CS`。**剩余**：征兵、海军写侧、军队标记绘制。
+- 待办：**P1.5 征兵/海军/标记**、**P1.3 教理合并**、**P1.1 毁灭派发方（依赖 P1.5 占领）**、P1.4 面板、P1.6 / P2.1–P2.6；**G5 / G6**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。
 - 备注：卡住时先 `Get-Process Unity` + 删 `MyriadCreation\Temp\UnityLockfile` 再重跑 `build.cmd`。
