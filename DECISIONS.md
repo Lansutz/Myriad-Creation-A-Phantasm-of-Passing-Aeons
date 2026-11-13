@@ -584,3 +584,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 
 - P1.1–P1.6 的代码项均已落地；葬礼按 D64 明确暂缓（无仪式系统），海军海战/舰船建造不属于 P1.5 计划的「海军写侧」，留到 P2 统一裁决。
 - 进入 P2：文化分裂/融合、信仰六层与教义参数 schema、信息传播/Intrigue、内容外提与 Mods、架构 A–F 与双源清理、Compute/Apply 两段式。
+
+## D70 Mods 布局：一级子目录即一个 mod（P2.4 F5 第一刀）
+
+- 事实：`StreamingAssets/Mods/` 下已有 `Dna/DnaDefs.json`（标准 mod 布局：mod 根内再放 `Dna/` 等目录），但 `ContentSourceCatalog` 把整个 `Mods/` 当成一个源，按 `Mods/Dna/DnaDefs.json` 之外的标准路径查找会落空 ⇒ **该 mod 实际从未被加载**。
+- 裁决：`Mods/` 的一级子目录各算一个 mod 源，按目录名稳定排序后给 100、101… 优先级；没有子目录时才退回“整个 Mods 根 = 单个平铺 mod”兼容旧布局。
+- 覆盖仍走既有 provider 链（Base→mods 优先级）：同 id 后者覆盖前者，不新增平行内容库。
+- 未做：启动期包校验器（F5 后半）、`mod.json` 清单/依赖/启用开关；当前布局不读清单。

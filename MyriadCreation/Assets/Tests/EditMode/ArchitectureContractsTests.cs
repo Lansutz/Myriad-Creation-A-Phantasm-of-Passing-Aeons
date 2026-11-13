@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using MyriadCreation.Core.Events;
@@ -15,6 +16,7 @@ using MyriadCreation.Simulation.Definitions;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Content.Definitions;
+using UnityEngine;
 
 namespace MyriadCreation.Tests.EditMode
 {
@@ -62,11 +64,39 @@ namespace MyriadCreation.Tests.EditMode
         [Test]
         public void ContentSourceCatalog_OrdersBaseBeforeMod()
         {
-            var sources = ContentSourceCatalog.CreateDefault("StreamingAssets");
-            Assert.AreEqual(2, sources.Count);
+            var sources = ContentSourceCatalog.CreateDefault(Path.Combine(Application.dataPath, "StreamingAssets"));
+            Assert.GreaterOrEqual(sources.Count, 2, "Base + 至少一个 Mods 源");
             Assert.AreEqual(ContentSourceKind.Base, sources[0].kind);
-            Assert.AreEqual(ContentSourceKind.Mod, sources[1].kind);
-            Assert.Less(sources[0].priority, sources[1].priority);
+            for (int i = 0; i < sources.Count; i++)
+            {
+                if (i > 0)
+                {
+                    Assert.AreEqual(ContentSourceKind.Mod, sources[i].kind);
+                    Assert.Less(sources[i - 1].priority, sources[i].priority);
+                }
+            }
+        }
+
+        [Test]
+        public void ContentSourceCatalog_TreatsEachModSubfolderAsSource()
+        {
+            string root = Path.Combine(Path.GetTempPath(), "myriad_mods_" + System.Guid.NewGuid().ToString("N"));
+            string mods = Path.Combine(root, "Mods");
+            Directory.CreateDirectory(Path.Combine(mods, "B"));
+            Directory.CreateDirectory(Path.Combine(mods, "A"));
+            try
+            {
+                var sources = ContentSourceCatalog.CreateDefault(root);
+                Assert.AreEqual(3, sources.Count);
+                Assert.AreEqual("A", sources[1].id, "mod 目录按名称稳定排序");
+                Assert.AreEqual("B", sources[2].id);
+                Assert.AreEqual(Path.Combine(mods, "A"), sources[1].rootPath);
+                Assert.Less(sources[1].priority, sources[2].priority);
+            }
+            finally
+            {
+                Directory.Delete(root, true);
+            }
         }
 
         [Test]
