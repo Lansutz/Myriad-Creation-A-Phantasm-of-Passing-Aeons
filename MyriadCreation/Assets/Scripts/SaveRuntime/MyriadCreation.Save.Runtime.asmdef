@@ -1,12 +1,12 @@
 {
-    "name": "MyriadCreation.Infrastructure",
-    "rootNamespace": "MyriadCreation.Infrastructure",
+    "name": "MyriadCreation.Save.Runtime",
+    "rootNamespace": "MyriadCreation.Infrastructure.Save",
     "references": [
         "MyriadCreation.Core",
         "MyriadCreation.Save.Contracts",
+        "MyriadCreation.Content",
         "MyriadCreation.World",
         "MyriadCreation.Simulation",
-        "MyriadCreation.Content",
         "MyriadCreation.Faith",
         "MyriadCreation.Culture",
         "MyriadCreation.Audio"

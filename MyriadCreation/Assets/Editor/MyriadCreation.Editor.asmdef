@@ -8,9 +8,9 @@
         "MyriadCreation.Simulation",
         "MyriadCreation.Rendering",
         "MyriadCreation.UI",
-        "MyriadCreation.Infrastructure",
         "UnityEngine.UI",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "MyriadCreation.Save.Runtime"
     ],
     "includePlatforms": [
         "Editor"

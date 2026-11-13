@@ -7,10 +7,10 @@
   <Project Path="MyriadCreation.UI.csproj" />
   <Project Path="MyriadCreation.Tests.PlayMode.csproj" />
   <Project Path="MyriadCreation.Save.Contracts.csproj" />
-  <Project Path="MyriadCreation.Infrastructure.csproj" />
   <Project Path="MyriadCreation.Laws.csproj" />
   <Project Path="MyriadCreation.Settings.csproj" />
   <Project Path="MyriadCreation.Rendering.csproj" />
+  <Project Path="MyriadCreation.Save.Runtime.csproj" />
   <Project Path="MyriadCreation.App.csproj" />
   <Project Path="MyriadCreation.Editor.csproj" />
   <Project Path="MyriadCreation.Culture.csproj" />

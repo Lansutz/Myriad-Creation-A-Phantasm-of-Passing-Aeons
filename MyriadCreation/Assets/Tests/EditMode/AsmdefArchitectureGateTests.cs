@@ -39,6 +39,7 @@ namespace MyriadCreation.Tests.EditMode
             { "MyriadCreation.Simulation", 4 },
             { "MyriadCreation.Rendering", 5 },
             { "MyriadCreation.Infrastructure", 5 },
+            { "MyriadCreation.Save.Runtime", 5 },
             // App.Contracts 与 App 同层（契约程序集）；供 App/UI 使用，Rendering 不再引用。
             { "MyriadCreation.App.Contracts", 6 },
             { "MyriadCreation.UI", 6 },

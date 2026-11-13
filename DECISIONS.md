@@ -788,3 +788,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - UI asmdef 最终 references：Core / Content / Rendering / App.Contracts / Save.Contracts / Settings / Audio / UI / TextMeshPro——不再引用 App、World、Infrastructure。
 - 架构门禁保持：UI 不得引用 Simulation 家族；App 装配 UI。
 - 未做：`SaveSystem` 的读/写仍由 App 层（Bootstrap/GameManager）直接调用；若以后玩家侧也要读写入口，再扩契约。
+
+## D96 存档运行时独立，删除 Infrastructure 程序集（P2.5 A 收口）
+
+- 19 个 `Infrastructure.Save` 文件整体迁入新 `MyriadCreation.Save.Runtime`（引用 Core/Save.Contracts/Content/World/Simulation/Faith/Culture/Audio）；命名空间保持 `MyriadCreation.Infrastructure.Save`，调用方无需改 using。
+- `MyriadCreation.Infrastructure` 程序集随之删除（音频已拆到 Audio、设置已拆到 Settings、存档运行时已拆到 Save.Runtime）；Editor/App/两个测试程序集把引用换成 `Save.Runtime`。
+- 判据达成：UI 不引 Infrastructure；App/Editor/Tests 只通过 Save.Runtime 访问存档实现；Core/Save.Contracts 保持为契约层。
+- 架构门禁新增 `Save.Runtime` 分层位（与 Rendering/Infrastructure 同层）。
+- 未做：`SaveSystem` 仍是静态入口；若要多平台后端，再在 `Save.Contracts` 上加读写契约。

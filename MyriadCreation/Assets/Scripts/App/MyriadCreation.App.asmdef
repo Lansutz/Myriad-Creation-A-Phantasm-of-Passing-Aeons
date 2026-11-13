@@ -3,7 +3,6 @@
     "rootNamespace": "MyriadCreation.App",
     "references": [
         "MyriadCreation.Core",
-        "MyriadCreation.Infrastructure",
         "UnityEngine.UI",
         "MyriadCreation.App.Contracts",
         "MyriadCreation.World",
@@ -11,7 +10,8 @@
         "MyriadCreation.Rendering",
         "MyriadCreation.Settings",
         "MyriadCreation.UI",
-        "MyriadCreation.Save.Contracts"
+        "MyriadCreation.Save.Contracts",
+        "MyriadCreation.Save.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

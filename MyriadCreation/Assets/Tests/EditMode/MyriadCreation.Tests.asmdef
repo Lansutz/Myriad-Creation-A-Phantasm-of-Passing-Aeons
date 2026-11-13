@@ -3,7 +3,6 @@
     "rootNamespace": "",
     "references": [
         "MyriadCreation.Core",
-        "MyriadCreation.Infrastructure",
         "MyriadCreation.Simulation",
         "MyriadCreation.World",
         "MyriadCreation.Rendering",
@@ -20,7 +19,8 @@
         "MyriadCreation.Culture",
         "MyriadCreation.Save.Contracts",
         "MyriadCreation.Settings",
-        "MyriadCreation.Audio"
+        "MyriadCreation.Audio",
+        "MyriadCreation.Save.Runtime"
     ],
     "includePlatforms": [
         "Editor"

@@ -5,7 +5,6 @@
         "MyriadCreation.Core",
         "MyriadCreation.Simulation",
         "MyriadCreation.World",
-        "MyriadCreation.Infrastructure",
         "MyriadCreation.Rendering",
         "MyriadCreation.UI",
         "UnityEngine.TestRunner",
@@ -13,7 +12,8 @@
         "Unity.TextMeshPro",
         "MyriadCreation.App",
         "MyriadCreation.Settings",
-        "MyriadCreation.Audio"
+        "MyriadCreation.Audio",
+        "MyriadCreation.Save.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
