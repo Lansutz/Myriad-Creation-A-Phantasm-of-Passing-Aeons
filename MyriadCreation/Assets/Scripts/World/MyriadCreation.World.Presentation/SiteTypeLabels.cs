@@ -1,8 +1,7 @@
 using MyriadCreation.World.Settlement;
-using MyriadCreation.Content.Definitions;
 using MyriadCreation.Core.Enums;
 
-namespace MyriadCreation.UI.Presentation
+namespace MyriadCreation.World.Presentation
 {
 public static class SiteTypeLabels
 {

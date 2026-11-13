@@ -4,11 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+using MyriadCreation.Core.Contracts;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.UI.Common;
 using MyriadCreation.App.Settings;
-using MyriadCreation.World.Generation;
 using MyriadCreation.App.Contracts;
 namespace MyriadCreation.UI.Panels
 {
@@ -212,24 +212,15 @@ namespace MyriadCreation.UI.Panels
  /// </summary>
         private void OnQuickStart()
         {
-            var bootstrap = FindAnyObjectByType<Bootstrap>();
-            if (bootstrap == null)
+            var flow = AppServices.AppFlow;
+            if (flow == null)
             {
-                Debug.LogError("[MainMenuUI] Bootstrap 不存在，无法开始游戏");
+                Debug.LogError("[MainMenuUI] AppFlow 未注册，无法开始游戏");
                 return;
             }
             Hide();
-            var flow = SceneFlowController.Instance;
-            if (flow != null)
-            {
-                // 先切链路状态再异步生成：点下立即离开主菜单；生成在 coroutine 中跑，不阻塞主线程。
-                flow.EnterWorldGeneration();
-                flow.GenerateWorldWithLoading(WorldSetupOptions.CreateDefault());
-            }
-            else
-            {
-                bootstrap.StartNewGameAsyncWithOptions(WorldSetupOptions.CreateDefault());
-            }
+            // 走应用流程契约：内部负责切状态与 loading 异步生成，UI 不再引用 App 具体类型。
+            flow.StartNewGame(new NewGameRequestDto());
         }
 
  /// <summary>创建世界 → 打开自定义世界参数面板（政权/聚落/单位数量）。</summary>
@@ -320,36 +311,26 @@ namespace MyriadCreation.UI.Panels
             int polity = ParseCount(_polityInput, 0, 12);
             int settlement = ParseCount(_settlementInput, -1, 1000);
             int unit = ParseCount(_unitInput, 0, 1000);
-            var options = new WorldSetupOptions
+            var request = new NewGameRequestDto
             {
-                initialContent = InitialContentMode.Custom,
+                contentMode = NewGameRequestDto.ContentModeCustom,
                 generatePolities = polity > 0,
                 generateSettlements = settlement != 0,
                 generateInitialUnits = unit > 0,
                 initialPolityCount = polity,
                 initialSettlementCount = settlement,
                 initialUnitCount = unit,
-                spawnRates = new SandboxSpawnRates { enableNaturalSpawning = _naturalSpawning },
+                enableNaturalSpawning = _naturalSpawning,
             };
-            var bootstrap = FindAnyObjectByType<Bootstrap>();
-            if (bootstrap == null)
+            var flow = AppServices.AppFlow;
+            if (flow == null)
             {
-                Debug.LogError("[MainMenuUI] Bootstrap 不存在，无法生成世界");
+                Debug.LogError("[MainMenuUI] AppFlow 未注册，无法生成世界");
                 return;
             }
             Hide();
-            var flow = SceneFlowController.Instance;
-            if (flow != null)
-            {
-                // 异步 + loading：同步 StartNewGame 会在主线程生成 1024×512 世界（数十万地块+省份），
-                // 点击后长时间假死 = 用户感知的"点了没反应"。
-                flow.EnterWorldGeneration();
-                flow.GenerateWorldWithLoading(options);
-            }
-            else
-            {
-                bootstrap.StartNewGameAsyncWithOptions(options);
-            }
+            // 异步 + loading 由 AppFlow 实现负责，避免 UI 依赖 App 具体类型。
+            flow.StartNewGame(request);
         }
 
         private static int ParseCount(TMPro.TMP_InputField input, int min, int max)
@@ -384,22 +365,20 @@ namespace MyriadCreation.UI.Panels
             if (ui != null) ui.ShowLoading("读取存档…");
             yield return null; // 让 loading 面板先渲染出来，避免同步读档期间黑屏假死
 
-            var bootstrap = FindAnyObjectByType<Bootstrap>();
-            if (bootstrap == null)
+            var session = AppServices.GameSession;
+            if (session == null)
             {
-                Debug.LogError("[MainMenuUI] Bootstrap 不存在，无法加载存档");
+                Debug.LogError("[MainMenuUI] GameSession 未注册，无法加载存档");
                 if (ui != null) ui.HideLoading();
                 yield break;
             }
 
-            bootstrap.LoadGame(saveName);
+            session.LoadGame(saveName);
 
-            GameManager gm = GameManager.Instance;
-            bool loaded = gm != null && gm.IsPlaying && gm.CurrentState != GameState.MainMenu;
+            bool loaded = session.IsPlaying && session.CurrentState != GameState.MainMenu;
             if (loaded)
             {
-                var flow = SceneFlowController.Instance;
-                if (flow != null) flow.EnterMapEditorWithSave(saveName);
+                AppServices.AppFlow?.EnterMapEditorWithSave(saveName);
                 Hide();
             }
             else

@@ -413,14 +413,14 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
         {
  // G：政府/法律面板开关（输入框中打字时不触发；主菜单不响应）
             if (Input.GetKeyDown(KeyCode.G) && !IsTypingInInputField()
-                && (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.MainMenu))
+                && (AppServices.GameSession == null || AppServices.GameSession.CurrentState != GameState.MainMenu))
             {
                 ToggleGovernmentPanel();
             }
 
  // P1.6：面板各有独立文件与注册表；这里只给一个键盘入口（不依赖场景缺失的按钮）。
             if (!IsTypingInInputField()
-                && (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.MainMenu))
+                && (AppServices.GameSession == null || AppServices.GameSession.CurrentState != GameState.MainMenu))
             {
                 if (Input.GetKeyDown(KeyCode.C)) OpenCharacterPanel();
                 else if (Input.GetKeyDown(KeyCode.F)) OpenFamilyTreePanel();
@@ -529,8 +529,7 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
  /// <summary>设置游戏速度</summary>
         private void SetGameSpeed(float speed)
         {
-            if (GameManager.Instance != null)
-                GameManager.Instance.SetGameSpeed(speed);
+            AppServices.GameSession?.SetGameSpeed(speed);
             AddEventLog($"游戏速度: {(speed == 0 ? "暂停" : speed + "x")}", EventLogKind.System);
         }
 

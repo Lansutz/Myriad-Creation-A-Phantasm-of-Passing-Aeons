@@ -7,7 +7,6 @@ using MyriadCreation.Core.Data;
 using MyriadCreation.UI.Common;
 using MyriadCreation.UI.Presentation;
 using MyriadCreation.App.Settings;
-using MyriadCreation.World.Settlement;
 using MyriadCreation.App.Contracts;
 using MyriadCreation.Core.Enums;
 

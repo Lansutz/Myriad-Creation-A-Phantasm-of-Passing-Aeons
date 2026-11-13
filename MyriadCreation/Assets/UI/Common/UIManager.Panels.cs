@@ -1,3 +1,4 @@
+using MyriadCreation.App.Contracts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +17,6 @@ using MyriadCreation.Rendering;
 using MyriadCreation.UI;
 using MyriadCreation.UI.Panels;
 using MyriadCreation.UI.Presentation;
-using MyriadCreation.World;
 using MyriadCreation.Content.Definitions;
 
 namespace MyriadCreation.UI.Common
@@ -431,7 +431,7 @@ public partial class UIManager
 
             // 主菜单阶段先隐藏（UIManager.Start 可能早于/晚于 GameManager.Start）；ShowGameUI 时统一显示。
             _governmentOpenButton.gameObject.SetActive(
-                GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.MainMenu);
+                AppServices.GameSession == null || AppServices.GameSession.CurrentState != GameState.MainMenu);
             // 首次按当前屏宽应用宽度/字号/顶栏内边距（窄屏 <1280 缩到 64）。
             RefreshGovernmentButtonLayout(Screen.width);
         }

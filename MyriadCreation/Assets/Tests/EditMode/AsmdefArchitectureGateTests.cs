@@ -41,8 +41,8 @@ namespace MyriadCreation.Tests.EditMode
             { "MyriadCreation.Infrastructure", 5 },
             // App.Contracts 与 App 同层（契约程序集）；供 App/UI 使用，Rendering 不再引用。
             { "MyriadCreation.App.Contracts", 6 },
-            { "MyriadCreation.App", 6 },
-            { "MyriadCreation.UI", 7 },
+            { "MyriadCreation.UI", 6 },
+            { "MyriadCreation.App", 7 },
         };
 
         // 显式豁免清单：测试/编辑器允许引用运行时全家；运行时程序集不得反向引用它们。
@@ -260,22 +260,23 @@ namespace MyriadCreation.Tests.EditMode
             }
         }
 
+        /// <summary>P2.5 B：App 装配 UI（App -> UI），UI 不得反向引用 App。</summary>
         private static void CheckAppBoundary(Dictionary<string, AsmdefInfo> asmdefs, List<string> violations)
         {
             var app = Require(asmdefs, AppName, violations);
-            if (app.References.Contains(UiName))
+            if (!app.References.Contains(UiName))
             {
-                violations.Add("App 不得引用 UI：" + AppName + " -> " + UiName + "（" + PathOf(app) + "）");
+                violations.Add("App 必须引用 UI（App 装配 UI）：" + AppName + " 的 references 缺少 " + UiName + "（" + PathOf(app) + "）");
             }
         }
 
-        /// <summary>B8-final-gate：UI 必引 App，且不得引 Simulation/Laws/Faith/Culture（防回退）。</summary>
+        /// <summary>P2.5 B：UI 不得引用 App，且不得引 Simulation/Laws/Faith/Culture（防回退）。</summary>
         private static void CheckUiBoundary(Dictionary<string, AsmdefInfo> asmdefs, List<string> violations)
         {
             var ui = Require(asmdefs, UiName, violations);
-            if (!ui.References.Contains(AppName))
+            if (ui.References.Contains(AppName))
             {
-                violations.Add("UI 必须引用 App：" + UiName + " 的 references 缺少 " + AppName + "（" + PathOf(ui) + "）");
+                violations.Add("UI 不得引用 App：" + UiName + " -> " + AppName + "（" + PathOf(ui) + "）");
             }
             foreach (string forbidden in UiForbiddenFamily)
             {
@@ -340,7 +341,7 @@ namespace MyriadCreation.Tests.EditMode
             CheckOrder(violations, "MyriadCreation.Simulation", "MyriadCreation.Infrastructure");
             CheckOrder(violations, "MyriadCreation.Rendering", "MyriadCreation.App");
             CheckOrder(violations, "MyriadCreation.Infrastructure", "MyriadCreation.App");
-            CheckOrder(violations, "MyriadCreation.App", "MyriadCreation.UI");
+            CheckOrder(violations, "MyriadCreation.UI", "MyriadCreation.App");
 
             foreach (var source in asmdefs.Values)
             {

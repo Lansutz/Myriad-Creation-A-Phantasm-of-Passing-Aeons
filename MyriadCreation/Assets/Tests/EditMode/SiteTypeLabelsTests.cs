@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using MyriadCreation.UI.Presentation;
+using MyriadCreation.World.Presentation;
 using MyriadCreation.Simulation.Actors;
 using MyriadCreation.World.Settlement;
 using MyriadCreation.Core.Enums;

@@ -772,3 +772,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 新增 `MyriadCreation.Settings` 程序集（引用 Core + Infrastructure），把 `SettingsModel/SettingsService` 从 App 移出；App、UI、两个测试程序集都显式引用它。
 - 目的：UI 对 App 的依赖只剩 `Bootstrap/SceneFlowController/GameManager`（下一步改用 `AppServices` 契约），设置不再需要 App。
 - 未做：UI 真正去掉 `MyriadCreation.App` 引用；UI 仍引用 Infrastructure（Save/Audio）与 World（SettlementData 标签），这两项留给 B 的后续步骤。
+
+## D94 UI 去 App/World 依赖（P2.5 B 主刀）
+
+- 方向反转：UI 不再引用 `MyriadCreation.App` 或 `MyriadCreation.World`；App 引用 UI（App 装配 UI）。架构门禁同步改为「App 必引 UI、UI 不得引 App」，层序 UI(rank6) < App(rank7)。
+- `MainMenuUI` 去掉 `Bootstrap/SceneFlowController/GameManager/WorldSetupOptions`：开新档/自定义世界改走 `AppServices.AppFlow.StartNewGame(NewGameRequestDto)`；读档走 `AppServices.GameSession.LoadGame`；自定义模式用 `NewGameRequestDto.ContentModeCustom` 常量。
+- `UIManager`/`UIManager.Panels` 的 GameManager 访问改 `AppServices.GameSession`。
+- `SiteTypeLabels` 移到 World 程序集（`MyriadCreation.World.Presentation`），UI 不再因一个标签文件依赖 World；SettlementDetailPanel 删除未使用的 World using。
+- 未做：UI 仍引用 Infrastructure（SaveSystem/SfxPlayer）；Save/Audio 需要契约化后才能去掉。B 剩余这一项。

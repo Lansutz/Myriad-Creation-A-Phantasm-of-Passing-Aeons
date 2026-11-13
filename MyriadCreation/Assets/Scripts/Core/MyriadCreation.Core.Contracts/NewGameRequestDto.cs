@@ -19,6 +19,9 @@ namespace MyriadCreation.Core.Contracts
         /// <summary>初始内容模式 sentinel：表示未指定/使用默认内容模式。</summary>
         public const int DefaultContentModeSentinel = -1;
 
+        /// <summary>InitialContentMode.Custom 的值；UI 不引用 World 程序集时用它表达自定义世界。</summary>
+        public const int ContentModeCustom = 4;
+
         /// <summary>地图宽/高；<see cref="DefaultMapSizeSentinel"/> 表示使用会话默认尺寸。</summary>
         public int mapWidth = DefaultMapSizeSentinel;
         public int mapHeight = DefaultMapSizeSentinel;

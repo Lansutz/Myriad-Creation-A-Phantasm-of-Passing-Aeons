@@ -9,7 +9,8 @@
         "MyriadCreation.World",
         "MyriadCreation.Simulation",
         "MyriadCreation.Rendering",
-        "MyriadCreation.Settings"
+        "MyriadCreation.Settings",
+        "MyriadCreation.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

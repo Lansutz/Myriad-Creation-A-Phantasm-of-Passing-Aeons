@@ -175,7 +175,8 @@
 - 2026-11-13 **P2.4 mod 依赖排序**：`ContentSourceCatalog` 按 `dependencies[].packageId` 稳定拓扑排序，缺依赖/环告警兜底。新增依赖顺序测试。验证：`EXIT=0`、`870/872`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **P2.4 经济原型外提**：11 条名称/描述/偏好进 `EconomicalArchetypes.json`，`All` 内容优先/代码兜底。新增 2 例测试。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。内容表累计 8/18。
 - 2026-11-13 **P2.5 B 第一步 + 仓库修复**：`*.app` 忽略规则曾吞掉整个 App 源码目录，已加例外并入库（19 文件）；新增 `MyriadCreation.Settings` 程序集承载 `SettingsModel/Service`，App/UI/测试显式引用。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。
-- 待办：P2.3 Intrigue（前置 S19）、P2.5 B 后续（UI 去 App/Infrastructure/World）+ A/F + population 入口、P2.6 其余性能项；**G5 / G6**；内容体检。
+- 2026-11-13 **P2.5 B 主刀**：UI 去掉 `MyriadCreation.App`/`MyriadCreation.World` 引用；MainMenu 改走 `AppServices.AppFlow/GameSession` + `NewGameRequestDto`；SiteTypeLabels 移入 World；App 改为引用 UI；架构门禁同步反转。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：UI 仍引用 Infrastructure（Save/Audio）。
+- 待办：P2.3 Intrigue（前置 S19）、P2.5 UI 去 Infrastructure + A/F + population 入口、P2.6 其余性能项；**G5 / G6**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。
 - 备注：卡住时先 `Get-Process Unity` + 删 `MyriadCreation\Temp\UnityLockfile` 再重跑 `build.cmd`。
