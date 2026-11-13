@@ -91,40 +91,12 @@ public static class CultureTransmissionSystem
 		return converted;
 	}
 
-	/// <summary>换文化：优先并入同属性人口块（种族/信仰/阶级/职业一致），否则原位改写。文化融合复用同一入口。</summary>
+	/// <summary>换文化：交给 PopulationLedger 合并同属性块，人口守恒。</summary>
 	internal static void ConvertBlock(List<PopulationBlock> blocks, int index, int targetCultureId)
 	{
-		PopulationBlock converted = blocks[index];
-		converted.cultureId = targetCultureId;
-		converted.culturePenetration = PenetrationThreshold;
-		for (int j = 0; j < blocks.Count; j++)
-		{
-			if (j == index)
-			{
-				continue;
-			}
-			PopulationBlock other = blocks[j];
-			if (other.cultureId != targetCultureId || !SamePopulation(other, converted))
-			{
-				continue;
-			}
-			other.count += converted.count;
-			blocks[j] = other;
-			blocks.RemoveAt(index);
-			return;
-		}
-		blocks[index] = converted;
+		PopulationLedger.ChangeCulture(blocks, index, targetCultureId, PenetrationThreshold);
 	}
 
-	private static bool SamePopulation(PopulationBlock a, PopulationBlock b)
-	{
-		return a.raceId == b.raceId
-			&& a.faithId == b.faithId
-			&& a.socialClass == b.socialClass
-			&& a.profession == b.profession
-			&& a.economicClass == b.economicClass
-			&& a.stratum == b.stratum
-			&& a.occupations == b.occupations;
-	}
+
 }
 }

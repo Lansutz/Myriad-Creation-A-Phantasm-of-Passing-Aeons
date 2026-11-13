@@ -859,3 +859,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `MapSaveData`/`SaveJsonMigration` 无生产调用者（`SaveSystem` 只读 `SaveData`），删除两者；`HabitationSiteSaveData` 的规范键测试改用测试内 DTO，保留字段契约断言。
 - 旧 `settlements/burgs` JSON 迁移路径实际已不可达（活档入口不读 GameSaveData/MapSaveData），删除后不再维护第二套地图 DTO。
 - 验证：`EXIT=0`、`876/878`、零 `error CS`。
+
+## D106 PopulationLedger：人口块写点单源（P2.5 C）
+
+- 新增 `PopulationLedger`（Core.Data）：Ensure/Total/AddCount/Add/Scale/RemoveFromIndex/SplitToNewBlock/ChangeCulture/ChangeFaith/Prune；同属性合并、人口守恒。
+- 迁移：MapActor 增减人口、文化同化/融合/分裂、传教改宗（缩放与拆分）、疾病减员、饥荒减员、劫掠屠杀、人口增长；`CultureTransmissionSystem.ConvertBlock` 变薄包装。
+- 阶梯再平衡 `SocialDifferentiation` 仍保留自身 deposit/withdraw（它是按阶层重分配的算法内部量），在门禁中显式豁免并注明。
+- 新增 `PopulationMutationGatewayTests`：扫描 `.count *=/+=/-=`，除 `PopulationLedger` 与 `SocialDifferentiation` 外禁止直接改人口。
+- 测试：合并/守恒、拆分、改文化合并、减员与碎片清理。
+- 验证：`EXIT=0`、`882/884`、零 `error CS`。

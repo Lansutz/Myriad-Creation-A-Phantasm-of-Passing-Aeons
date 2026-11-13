@@ -87,7 +87,7 @@ public partial class GameWorld : MonoBehaviour
 							float num2 = Mathf.Clamp01((overloadRatio - 1.1f) / 0.9f);
 							num *= 1f - num2;
 						}
-						populationBlock.count *= 1f + num * (float)daysPerTick;
+						PopulationLedger.Scale(tiles[i].populationBlocks, j, 1f + num * (float)daysPerTick);
 					}
 					float num3 = CalculateSatisfactionDelta(i, populationBlock);
 					populationBlock.satisfaction = Mathf.Clamp(populationBlock.satisfaction + num3, 0f, 100f);

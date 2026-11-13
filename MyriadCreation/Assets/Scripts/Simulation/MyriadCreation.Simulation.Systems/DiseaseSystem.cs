@@ -169,9 +169,8 @@ public class DiseaseSystem
 				}
 				PopulationBlock value = _tiles[affectedTile].populationBlocks[i];
 				float num5 = Mathf.Min(value.count * 0.1f, num4);
-				value.count -= num5;
+				PopulationLedger.RemoveFromIndex(_tiles[affectedTile].populationBlocks, i, num5);
 				num4 -= num5;
-				_tiles[affectedTile].populationBlocks[i] = value;
 			}
 		}
 	}

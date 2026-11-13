@@ -49,9 +49,7 @@ public static class MissionarySystem
 		{
 			if (tile.populationBlocks[i].faithId == missionaryFaithId)
 			{
-				PopulationBlock value = tile.populationBlocks[i];
-				value.count *= 1.05f;
-				tile.populationBlocks[i] = value;
+				PopulationLedger.Scale(tile.populationBlocks, i, 1.05f);
 				return true;
 			}
 		}
@@ -62,15 +60,11 @@ public static class MissionarySystem
 			if (value2.faithId == dominantFaith && value2.count > 5f)
 			{
 				float num = value2.count * 0.03f;
-				value2.count -= num;
-				tile.populationBlocks[j] = value2;
-				tile.populationBlocks.Add(new PopulationBlock
-				{
-					count = num,
-					cultureId = ((cultureId >= 0) ? cultureId : value2.cultureId),
-					faithId = missionaryFaithId,
-					socialClass = value2.socialClass
-				});
+				PopulationBlock template = value2;
+				template.count = num;
+				template.cultureId = ((cultureId >= 0) ? cultureId : value2.cultureId);
+				template.faithId = missionaryFaithId;
+				PopulationLedger.SplitToNewBlock(tile.populationBlocks, j, num, template);
 				return true;
 			}
 		}

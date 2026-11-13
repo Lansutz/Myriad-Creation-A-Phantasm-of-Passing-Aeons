@@ -956,9 +956,7 @@ public class DiplomacyManager
 			{
 				for (int i = 0; i < tileData.populationBlocks.Count; i++)
 				{
-					PopulationBlock value = tileData.populationBlocks[i];
-					value.count *= 0.7f;
-					tileData.populationBlocks[i] = value;
+					PopulationLedger.Scale(tileData.populationBlocks, i, 0.7f);
 				}
 			}
 		}

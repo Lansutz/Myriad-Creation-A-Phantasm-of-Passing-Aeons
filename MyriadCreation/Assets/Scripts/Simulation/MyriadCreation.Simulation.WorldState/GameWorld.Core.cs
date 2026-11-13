@@ -424,9 +424,9 @@ public partial class GameWorld : MonoBehaviour
 			for (int i = 0; i < tiles[evt.tileIndex].populationBlocks.Count; i++)
 			{
 				PopulationBlock value = tiles[evt.tileIndex].populationBlocks[i];
-				value.count *= 0.95f;
 				value.satisfaction = Mathf.Max(0f, value.satisfaction - 20f);
 				tiles[evt.tileIndex].populationBlocks[i] = value;
+				PopulationLedger.Scale(tiles[evt.tileIndex].populationBlocks, i, 0.95f);
 			}
 			tiles[evt.tileIndex].stability = Mathf.Max(0f, tiles[evt.tileIndex].stability - 10f);
 			// 不逐条 Debug.Log：编辑器下每条都抓栈，长跑时会成为 events.daily 的主要成本。

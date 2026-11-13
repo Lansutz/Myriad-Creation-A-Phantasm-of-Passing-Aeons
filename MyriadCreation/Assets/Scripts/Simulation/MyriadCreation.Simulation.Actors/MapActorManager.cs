@@ -308,49 +308,7 @@ public class MapActorManager
 
 	public static void AddPopulationToTile(ref TileData tile, int amount)
 	{
-		if (amount == 0)
-		{
-			return;
-		}
-		if (tile.populationBlocks == null)
-		{
-			tile.populationBlocks = new List<PopulationBlock>();
-		}
-		if (amount > 0)
-		{
-			if (tile.populationBlocks.Count > 0)
-			{
-				PopulationBlock value = tile.populationBlocks[0];
-				value.count += amount;
-				tile.populationBlocks[0] = value;
-			}
-			else
-			{
-				tile.populationBlocks.Add(new PopulationBlock
-				{
-					count = amount
-				});
-			}
-			return;
-		}
-		int num = -amount;
-		int num2 = tile.populationBlocks.Count - 1;
-		while (num2 >= 0 && num > 0)
-		{
-			PopulationBlock value2 = tile.populationBlocks[num2];
-			if (value2.count <= (float)num)
-			{
-				num -= Mathf.RoundToInt(value2.count);
-				tile.populationBlocks.RemoveAt(num2);
-			}
-			else
-			{
-				value2.count -= num;
-				tile.populationBlocks[num2] = value2;
-				num = 0;
-			}
-			num2--;
-		}
+		PopulationLedger.AddCount(ref tile, amount);
 	}
 
 	public void Clear()
