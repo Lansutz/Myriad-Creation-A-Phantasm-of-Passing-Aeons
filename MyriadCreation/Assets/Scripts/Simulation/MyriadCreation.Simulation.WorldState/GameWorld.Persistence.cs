@@ -66,6 +66,7 @@ public partial class GameWorld : MonoBehaviour
 		InitializeUnitDefs();
 		InitializeFaithSystems();
 		EnsureAIControllers();
+		BuildPreloadPlan();
 		Debug.Log((object)$"[GameWorld] 读档运行时补齐完成：{unitDefs.Count} 兵种 / {_faithSystems.Count} 教统 / {_aiManager?.GetAllControllers().Count ?? 0} 个 AI");
 	}
 

@@ -11,6 +11,7 @@ namespace MyriadCreation.Simulation.WorldState
         public void RunDiagnosticDays(int days)
         {
             if (days <= 0) return;
+            RunPreloadNow();
             for (int i = 0; i < days; i++)
             {
                 AdvanceTime();

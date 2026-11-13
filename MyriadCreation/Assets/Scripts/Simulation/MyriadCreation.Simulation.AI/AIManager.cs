@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
@@ -18,11 +19,20 @@ public class AIManager
 		return aIController;
 	}
 
+	/// <summary>首次 AI 日结耗时（毫秒）；-1 表示尚未跑过。用于预加载/首帧验收。</summary>
+	public float FirstTickMs { get; private set; } = -1f;
+
 	public void DailyTick(Dictionary<int, RealmData> realms, TileData[] tiles, DiplomacyManager diplomacy, InnovationTree innovations, CharacterManager characters = null, GameWorld world = null)
 	{
+		bool measureFirst = FirstTickMs < 0f;
+		long start = measureFirst ? Stopwatch.GetTimestamp() : 0L;
 		foreach (AIController value in _controllers.Values)
 		{
 			value.DailyTick(realms, tiles, diplomacy, innovations, characters, world);
+		}
+		if (measureFirst)
+		{
+			FirstTickMs = (float)((Stopwatch.GetTimestamp() - start) * 1000.0 / Stopwatch.Frequency);
 		}
 	}
 

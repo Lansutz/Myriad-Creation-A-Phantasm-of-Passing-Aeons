@@ -1303,6 +1303,7 @@ public partial class GameWorld : MonoBehaviour
 
 	private void Update()
 	{
+		TickPreload();
 		_tickTimer += Time.deltaTime;
 		if (_tickTimer >= tickInterval)
 		{
