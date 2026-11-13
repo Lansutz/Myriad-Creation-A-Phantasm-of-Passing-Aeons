@@ -13,6 +13,8 @@ public static class SettlementSchedule
 
 	public const string AbandonmentScheduleId = "settlement-abandonment.daily";
 
+	public const string ProductionScheduleId = "settlement-production.daily";
+
 	public const string MapActorsScheduleId = "settlement.map-actors.daily";
 
 	public const string CampsScheduleId = "settlement.camps.daily";
@@ -33,6 +35,7 @@ public static class SettlementSchedule
 		scheduler.Register("settlement-evolution.daily", SimulationCadence.Daily, 19, system.EvolutionDailyTick);
 		scheduler.Register("settlement-recovery.daily", SimulationCadence.Daily, 20, system.RecoveryDailyTick);
 		scheduler.Register("settlement-abandonment.daily", SimulationCadence.Daily, 21, system.AbandonmentDailyTick);
+		scheduler.Register("settlement-production.daily", SimulationCadence.Daily, 22, system.ProductionDailyTick);
 	}
 }
 }

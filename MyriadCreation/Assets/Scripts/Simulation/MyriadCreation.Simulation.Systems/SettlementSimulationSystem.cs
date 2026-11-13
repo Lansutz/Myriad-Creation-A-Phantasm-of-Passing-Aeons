@@ -35,6 +35,8 @@ public sealed class SettlementSimulationSystem
 
 	private readonly LandAbandonmentRuntime _abandonmentRuntime;
 
+	private readonly SettlementProductionRuntime _productionRuntime;
+
 	public SettlementDestructionRuntime DestructionRuntime => _destructionRuntime;
 
 	public LandAbandonmentRuntime AbandonmentRuntime => _abandonmentRuntime;
@@ -53,6 +55,7 @@ public sealed class SettlementSimulationSystem
 		_controlRuntime = new SettlementControlRuntime(_settlements, _tiles, _mapWidth, _mapHeight, _armies, _world.unitDefs);
 		_destructionRuntime = new SettlementDestructionRuntime(_world);
 		_abandonmentRuntime = new LandAbandonmentRuntime(_world);
+		_productionRuntime = new SettlementProductionRuntime(_settlements, _tiles, _world);
 	}
 
 	public void ControlDailyTick(SimulationTickContext context)
@@ -83,6 +86,11 @@ public sealed class SettlementSimulationSystem
 	public void AbandonmentDailyTick(SimulationTickContext context)
 	{
 		_abandonmentRuntime.DailyCheckBanditSpawn();
+	}
+
+	public void ProductionDailyTick(SimulationTickContext context)
+	{
+		_productionRuntime.DailyTick();
 	}
 }
 }
