@@ -38,6 +38,10 @@ public sealed class ResearchPlanSystem
 
 	public InnovationKnowledgeSystem Knowledge => _knowledge;
 
+	public InnovationKnowledgeSaveData CaptureKnowledge() => _knowledge.CaptureState();
+
+	public void RestoreKnowledge(InnovationKnowledgeSaveData saved) => _knowledge.RestoreState(saved);
+
 	public ResearchPlanSystem(GameWorld world, PlanSystem plans)
 	{
 		_world = world ?? throw new ArgumentNullException("world");

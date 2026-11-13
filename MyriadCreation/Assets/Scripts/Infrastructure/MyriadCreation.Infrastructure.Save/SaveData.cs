@@ -18,6 +18,7 @@ using MyriadCreation.Simulation.Faith;
 using MyriadCreation.Simulation.Culture;
 using MyriadCreation.Simulation.Planning;
 using MyriadCreation.Simulation.AI;
+using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Content.Definitions;
 namespace MyriadCreation.Infrastructure.Save
 {
@@ -87,6 +88,9 @@ namespace MyriadCreation.Infrastructure.Save
 
         // ===== AI 长期决策状态（P0.1；旧档为 null，保留 EnsureAIControllers 的默认人格）=====
         public List<AIControllerSaveData> aiControllers;
+
+        // ===== 角色级革新掌握/练习（P0.1；旧档为 null，读档从零掌握开始）=====
+        public InnovationKnowledgeSaveData innovationKnowledge;
 
  // ===== 角色纽带（SaveVersion 15 起；CharacterManager 私有持有，旧档字段为 null）=====
         public List<CharacterBondSaveData> bonds;

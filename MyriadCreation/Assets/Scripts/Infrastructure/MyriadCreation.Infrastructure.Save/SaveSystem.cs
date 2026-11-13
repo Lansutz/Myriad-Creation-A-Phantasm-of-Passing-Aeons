@@ -396,6 +396,7 @@ namespace MyriadCreation.Infrastructure.Save
 
  // 革新/科技树运行时状态（v14 起；读档后科技不再清零）
             data.innovations = world.Innovations != null ? world.Innovations.CaptureState() : null;
+            data.innovationKnowledge = world.ResearchPlans?.CaptureKnowledge();
 
  // 信仰运行态（v15 起；faithName/virtues/sins 等内容定义由 ReligionCatalog 重建，这里只存运行态）
             data.faiths = FaithPersistence.Capture(world);
@@ -477,6 +478,7 @@ namespace MyriadCreation.Infrastructure.Save
             composition.ApplySetupOptions();
             // 革新/科技树状态：子系统已持有 InnovationTree 实例，就地还原。
             world.Innovations?.RestoreState(data.innovations);
+            world.ResearchPlans?.RestoreKnowledge(data.innovationKnowledge);
             // 省份/聚落/营地：子系统已捕获这些字典实例，必须就地填充后再恢复实体
             // （地图单位/角色要引用聚落锚点，顺序不能反）。
             SettlementPersistence.RestoreProvinces(world, data.provinces);

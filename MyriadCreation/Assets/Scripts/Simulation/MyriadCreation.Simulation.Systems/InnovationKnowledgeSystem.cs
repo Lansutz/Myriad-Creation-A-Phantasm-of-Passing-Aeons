@@ -133,6 +133,65 @@ public sealed class InnovationKnowledgeSystem
 		return false;
 	}
 
+	public InnovationKnowledgeSaveData CaptureState()
+	{
+		var result = new InnovationKnowledgeSaveData();
+		foreach (KeyValuePair<int, Dictionary<int, byte>> character in _masteryByCharacter)
+		{
+			if (character.Value == null) continue;
+			foreach (KeyValuePair<int, byte> mastery in character.Value)
+			{
+				result.masteries.Add(new InnovationMasteryEntry
+				{
+					characterId = character.Key,
+					innovationId = mastery.Key,
+					level = mastery.Value
+				});
+			}
+		}
+		result.masteries.Sort((a, b) =>
+		{
+			int byCharacter = a.characterId.CompareTo(b.characterId);
+			return byCharacter != 0 ? byCharacter : a.innovationId.CompareTo(b.innovationId);
+		});
+		foreach (KeyValuePair<string, float> practice in _practiceByCharacterInnovation)
+		{
+			result.practices.Add(new InnovationPracticeEntry { key = practice.Key, amount = practice.Value });
+		}
+		result.practices.Sort((a, b) => string.CompareOrdinal(a.key, b.key));
+		return result;
+	}
+
+	public void RestoreState(InnovationKnowledgeSaveData saved)
+	{
+		_masteryByCharacter.Clear();
+		_practiceByCharacterInnovation.Clear();
+		if (saved == null) return;
+		if (saved.masteries != null)
+		{
+			foreach (InnovationMasteryEntry entry in saved.masteries)
+			{
+				if (entry == null || entry.characterId < 0 || entry.innovationId <= 0) continue;
+				int level = Math.Max(MinMastery, Math.Min(MasteryLevel3, entry.level));
+				if (level <= 0) continue;
+				if (!_masteryByCharacter.TryGetValue(entry.characterId, out Dictionary<int, byte> character))
+				{
+					character = new Dictionary<int, byte>();
+					_masteryByCharacter[entry.characterId] = character;
+				}
+				character[entry.innovationId] = (byte)level;
+			}
+		}
+		if (saved.practices != null)
+		{
+			foreach (InnovationPracticeEntry entry in saved.practices)
+			{
+				if (entry == null || string.IsNullOrEmpty(entry.key) || entry.amount <= 0f) continue;
+				_practiceByCharacterInnovation[entry.key] = entry.amount;
+			}
+		}
+	}
+
 	private static string MakeKey(int characterId, int innovationId)
 	{
 		return characterId + "_" + innovationId;

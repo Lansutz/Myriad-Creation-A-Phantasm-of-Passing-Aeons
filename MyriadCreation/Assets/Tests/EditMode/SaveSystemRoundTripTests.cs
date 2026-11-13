@@ -251,6 +251,10 @@ namespace MyriadCreation.Tests.EditMode
                 raidCooldown = 9
             });
 
+            InnovationKnowledgeSystem knowledge = world.ResearchPlans.Knowledge;
+            Assert.IsTrue(knowledge.SetMastery(4242, 101, 2), "前置：革新掌握应写入");
+            Assert.AreEqual(3.5f, knowledge.RecordPractice(4242, 101, 3.5f), 0.001f, "前置：练习量应写入");
+
             var division = new AdminDivision
             {
                 divisionId = 9001,
@@ -411,6 +415,10 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(modifiedTile, loadedAI.TargetTileIndex, "AI 目标地块");
             Assert.AreEqual(9, loadedAI.RaidCooldown, "AI 掠袭冷却");
             Assert.AreEqual(1, loadedAI.personality.preferredDomains.Count, "AI 偏好领域");
+
+            InnovationKnowledgeSystem loadedKnowledge = loaded.ResearchPlans.Knowledge;
+            Assert.AreEqual(2, loadedKnowledge.GetMastery(4242, 101), "革新掌握等级");
+            Assert.AreEqual(3.5f, loadedKnowledge.GetPractice(4242, 101), 0.001f, "革新练习量");
 
             AdminDivision loadedDivision = null;
             foreach (var d in loadedRealm.adminDivisions)
