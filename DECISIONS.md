@@ -517,3 +517,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 
 - `IsDoctrineShunned` 与 `ApplyShunnedStigma`：当伦理绑定为 `Shunned` 时，同政权、同信仰、在世的成年人（最多 12 人）对该行为人的好感下降 5，并写编年史；不入罪、不走司法。
 - `TryTrialDoctrineCrime` 在非罪行分支调用它：Crime 走司法，Shunned 走社会排斥，Accepted/未指定无反应。三条口径互斥，避免“忌讳”只是空标签。
+
+## D61 删除 legacy GameSaveSystem（P2.5 双源清理第一步）
+
+- 事实：`GameSaveSystem` 已标 `[Obsolete]`、未接游戏循环，全库无引用；唯一残留是 `SaveJsonMigration` 仍用 `GameSaveData` 读旧档。
+- 裁决：删除 `GameSaveSystem.cs`（约 700 行的第二套写/读路径），保留 `GameSaveData` 仅作旧档迁移 DTO；新档一律走 `SaveSystem + SaveData`。
+- 下一步：把 `GameSaveData` 的字段并进 `SaveData` 后删除迁移 DTO；本轮不硬删，避免旧档不可读。
