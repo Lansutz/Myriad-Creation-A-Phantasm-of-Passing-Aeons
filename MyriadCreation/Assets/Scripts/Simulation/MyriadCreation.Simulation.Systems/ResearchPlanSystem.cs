@@ -310,7 +310,12 @@ public sealed class ResearchPlanSystem
 			return false;
 		}
 		_world.Innovations.DailyTick(data.realmId, Mathf.Max(1f, innovation.researchCost));
-		return _world.Innovations.HasInnovation(data.realmId, data.innovationId);
+		bool completed = _world.Innovations.HasInnovation(data.realmId, data.innovationId);
+		if (completed && data.characterId >= 0)
+		{
+			Learn(data.characterId, data.innovationId, 1);
+		}
+		return completed;
 	}
 }
 }
