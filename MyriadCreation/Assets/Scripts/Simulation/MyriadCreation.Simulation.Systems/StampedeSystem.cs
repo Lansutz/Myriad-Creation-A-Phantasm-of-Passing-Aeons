@@ -154,7 +154,9 @@ public static class StampedeSystem
 
 	private static void ApplyUrbanStampedeEffects(SettlementData settlement, TileData[] tiles, StampedeEvent stampede)
 	{
-		settlement.population = Mathf.Max(0f, settlement.population - (float)stampede.casualties);
+		// D40：伤亡落在人口块上，快照只做同步估计（下一次人口日结会按块重算）。
+		SettlementPopulationSystem.ApplyCasualtiesToTile(tiles, settlement.tileIndex, stampede.casualties);
+		settlement.derivedPopulation = Mathf.Max(0f, settlement.derivedPopulation - (float)stampede.casualties);
 		if (settlement.tileIndex >= 0 && settlement.tileIndex < tiles.Length)
 		{
 			tiles[settlement.tileIndex].stability = Mathf.Max(0f, tiles[settlement.tileIndex].stability - 5f * stampede.severity);

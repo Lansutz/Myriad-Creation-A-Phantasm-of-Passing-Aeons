@@ -426,7 +426,7 @@ public class DiplomacyManager
 		}
 		if (_realms.TryGetValue(attackerId, out var value))
 		{
-			value.prestige = Mathf.Max(0f, value.prestige - tuple.Item1);
+			// 威望是等级/声望容量，不是可花费点数；宣战代价落在稳定度（及后续议事关系）上。
 			value.stability = Mathf.Max(0f, value.stability - tuple.Item2);
 			MovementControlSystem.OnWarDeclared(value, defenderId);
 		}
@@ -588,8 +588,7 @@ public class DiplomacyManager
 		{
 			return;
 		}
-		float num = 30f + rel.trust * 0.3f;
-		realmData.prestige = Mathf.Max(0f, realmData.prestige - num);
+		// 不扣威望点数：威望是等级门槛；突袭的政治后果由稳定度与关系承担。
 		float num2 = 15f + Mathf.Abs(rel.relation) * 0.1f;
 		realmData.stability = Mathf.Max(0f, realmData.stability - num2);
 		foreach (int key in _realms.Keys)
@@ -610,7 +609,7 @@ public class DiplomacyManager
 		{
 			realmData2.stability = Mathf.Min(100f, realmData2.stability + 10f);
 		}
-		Chronicle?.Add("diplomacy", $"{_realms[attackerId].realmName} 因不宣而战损失 {num:F0} 名声、{num2:F0} 稳定度", false, attackerId, defenderId);
+		Chronicle?.Add("diplomacy", $"{_realms[attackerId].realmName} 不宣而战：稳定度下降 {num2:F0}，各国关系恶化", false, attackerId, defenderId);
 	}
 
 	public string GetHostilityDescription(int realmA, int realmB)

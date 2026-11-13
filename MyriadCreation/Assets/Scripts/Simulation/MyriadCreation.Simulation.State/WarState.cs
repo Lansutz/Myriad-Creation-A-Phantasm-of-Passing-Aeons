@@ -39,6 +39,23 @@ public class WarState
 
 	public int warGoalRevisionCount;
 
+	/// <summary>宣战前是否开过战争议事；false 表示统治者单方面决定。</summary>
+	public bool councilConsulted;
+
+	public bool councilOverridden;
+
+	public bool councilSkipped;
+
+	public int councilSupporters;
+
+	public int councilOpponents;
+
+	public float councilApproval;
+
+	public int lastWarGoalRevisionSupporters;
+
+	public int lastWarGoalRevisionOpponents;
+
 	public WarState(int warId, int attackerId, int defenderId, int startDay)
 	{
 		this.warId = warId;

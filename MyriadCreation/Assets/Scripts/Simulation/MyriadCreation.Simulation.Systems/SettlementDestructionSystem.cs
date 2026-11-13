@@ -40,7 +40,8 @@ public static class SettlementDestructionSystem
 		value.recoveryProgress = 0f;
 		float num = PopulationLoss[(int)destructionSeverity];
 		int num2 = Mathf.RoundToInt(value.population * num);
-		value.population -= num2;
+		// D40：人口损失落到地块人口块，聚落快照由聚合重算。
+		SettlementPopulationSystem.ApplyCasualties(world, value, num2);
 		value.development *= 1f - EconomyLoss[(int)destructionSeverity];
 		value.wealth *= 1f - EconomyLoss[(int)destructionSeverity];
 		value.tradePower *= 1f - EconomyLoss[(int)destructionSeverity] * 0.7f;

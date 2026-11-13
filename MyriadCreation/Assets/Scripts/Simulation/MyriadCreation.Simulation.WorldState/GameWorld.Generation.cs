@@ -167,6 +167,7 @@ public partial class GameWorld : MonoBehaviour
 		ResourceGenerator.GenerateAll(this, seed);
 		GenerateInitialUnits(seed);
 		ClearInitialTerrainDirty();
+		SettlementPopulationSystem.RecomputeAll(this);
 		BuildPreloadPlan();
 		Debug.Log((object)$"[GameWorld] 地形生成完成（{SetupOptions.initialContent}），陆地{GetLandTileCount()}地块，海洋{GetSeaTileCount()}地块，省份{provinces.Count}个");
 	}
@@ -384,6 +385,7 @@ public partial class GameWorld : MonoBehaviour
 		ResourceGenerator.GenerateAll(this, seed);
 		GenerateInitialUnits(seed);
 		ClearInitialTerrainDirty();
+		SettlementPopulationSystem.RecomputeAll(this);
 		BuildPreloadPlan();
 		Debug.Log((object)$"[GameWorld] 配置化地形生成完成（{SetupOptions.initialContent}）：陆地{GetLandTileCount()}，海洋{GetSeaTileCount()}，省份{provinces.Count}");
 	}

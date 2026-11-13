@@ -130,6 +130,8 @@ public partial class GameWorld : MonoBehaviour
 		{
 			EnqueueEvent(result);
 		}
+		// D40：人口块变动后重算聚落派生快照（唯一权威仍是地块人口块）。
+		SettlementPopulationSystem.RecomputeAll(this);
 	}
 
 	private float CalculateSatisfactionDelta(int tileIndex, PopulationBlock pb)
@@ -1079,11 +1081,23 @@ public partial class GameWorld : MonoBehaviour
 
 	private bool DeclareWarCore(int attackerId, int defenderId, string reason)
 	{
+		WarRules rules = _diplomacyManager.WarRules ?? WarRules.Default();
+		CouncilConsultationResult council = CouncilConsultationSystem.Consult(this, attackerId, null);
+		if (!ResolveCouncilDecision(council, WarDecisionMode.ConsultAndAbide))
+		{
+			return false;
+		}
+		ApplyCouncilConsequences(realms[attackerId], council, WarDecisionMode.ConsultAndAbide, rules);
 		if (!_diplomacyManager.DeclareWar(attackerId, defenderId, reason))
 		{
 			return false;
 		}
-		CreateWarState(attackerId, defenderId, reason);
+		WarState warState = CreateWarState(attackerId, defenderId, reason);
+		warState.councilConsulted = council.hasCouncil;
+		warState.councilSkipped = !council.hasCouncil;
+		warState.councilSupporters = council.supporters;
+		warState.councilOpponents = council.opponents;
+		warState.councilApproval = council.approval;
 		_chronicle?.Add("war", realms[attackerId].realmName + " 对 " + realms[defenderId].realmName + " 宣战：" + reason, true, attackerId, defenderId);
 		return true;
 	}
@@ -1126,13 +1140,16 @@ public partial class GameWorld : MonoBehaviour
 		return warState;
 	}
 
-	/// <summary>带宣战理由与战争目标的正式宣战。CB / 目标同时写入战争运行态与外交投影。</summary>
-	public bool DeclareWarWithJustification(int attackerId, int defenderId, CasusBelli casusBelli, WarGoal warGoal, string reason = "")
+	/// <summary>
+	/// 带宣战理由与战争目标的正式宣战。CB / 目标同时写入战争运行态与外交投影。
+	/// 默认先开战争议事：多数反对则作罢；`ConsultAndOverride` 强推、`SkipConsultation` 绕过议事都产生政治代价。
+	/// </summary>
+	public bool DeclareWarWithJustification(int attackerId, int defenderId, CasusBelli casusBelli, WarGoal warGoal, string reason = "", WarDecisionMode mode = WarDecisionMode.ConsultAndAbide)
 	{
-		return DeclareWarWithJustification(attackerId, defenderId, casusBelli, warGoal, reason, ResolveSupremeRulerId(attackerId));
+		return DeclareWarWithJustification(attackerId, defenderId, casusBelli, warGoal, reason, ResolveSupremeRulerId(attackerId), mode);
 	}
 
-	private bool DeclareWarWithJustification(int attackerId, int defenderId, CasusBelli casusBelli, WarGoal warGoal, string reason, int actorCharacterId)
+	private bool DeclareWarWithJustification(int attackerId, int defenderId, CasusBelli casusBelli, WarGoal warGoal, string reason, int actorCharacterId, WarDecisionMode mode)
 	{
 		if (attackerId < 0 || attackerId >= realms.Count)
 		{
@@ -1148,9 +1165,9 @@ public partial class GameWorld : MonoBehaviour
 		{
 			casusBelli = null;
 		}
+		WarRules rules = _diplomacyManager.WarRules ?? WarRules.Default();
 		if (warGoal != null)
 		{
-			WarRules rules = _diplomacyManager.WarRules ?? WarRules.Default();
 			if (casusBelli != null && !WarJustificationSystem.GetSupportedWarGoals(casusBelli.type).Contains(warGoal.type))
 			{
 				return false;
@@ -1165,12 +1182,24 @@ public partial class GameWorld : MonoBehaviour
 			}
 			ApplyWarAimPoliticalCost(realms[attackerId], rules, tierGap, escalation: true);
 		}
+		CouncilConsultationResult council = CouncilConsultationSystem.Consult(this, attackerId, warGoal);
+		if (!ResolveCouncilDecision(council, mode))
+		{
+			return false;
+		}
+		ApplyCouncilConsequences(realms[attackerId], council, mode, rules);
 		if (!_diplomacyManager.DeclareWarWithJustification(attackerId, defenderId, casusBelli, warGoal, reason))
 		{
 			return false;
 		}
 		List<WarGoal> warGoals = (warGoal != null) ? new List<WarGoal> { warGoal } : null;
-		CreateWarState(attackerId, defenderId, string.IsNullOrEmpty(reason) ? (casusBelli != null ? WarJustificationSystem.GetCBDescription(casusBelli.type) : "无借口宣战") : reason, casusBelli, warGoals);
+		WarState warState = CreateWarState(attackerId, defenderId, string.IsNullOrEmpty(reason) ? (casusBelli != null ? WarJustificationSystem.GetCBDescription(casusBelli.type) : "无借口宣战") : reason, casusBelli, warGoals);
+		warState.councilConsulted = mode != WarDecisionMode.SkipConsultation && council.hasCouncil;
+		warState.councilSkipped = mode == WarDecisionMode.SkipConsultation || !council.hasCouncil;
+		warState.councilOverridden = mode == WarDecisionMode.ConsultAndOverride && council.hasCouncil && !council.MajoritySupport;
+		warState.councilSupporters = council.supporters;
+		warState.councilOpponents = council.opponents;
+		warState.councilApproval = council.approval;
 		return true;
 	}
 
@@ -1179,7 +1208,7 @@ public partial class GameWorld : MonoBehaviour
 	/// 且必须满足接壤/目标类型约束；威望只看等级门槛，不扣点数。
 	/// 等级不足时只有在政权仍稳、中央仍有权威时才能强推，代价落在稳定度、不安与廷臣好感上。
 	/// </summary>
-	public bool ReviseWarGoal(int warId, WarGoal proposedGoal)
+	public bool ReviseWarGoal(int warId, WarGoal proposedGoal, WarDecisionMode mode = WarDecisionMode.ConsultAndAbide)
 	{
 		WarState war = _wars.Find((WarState w) => w.warId == warId);
 		if (war == null || war.ended || proposedGoal == null)
@@ -1207,6 +1236,14 @@ public partial class GameWorld : MonoBehaviour
 		{
 			return false;
 		}
+		CouncilConsultationResult council = CouncilConsultationSystem.Consult(this, war.attackerId, proposedGoal);
+		if (!ResolveCouncilDecision(council, mode))
+		{
+			return false;
+		}
+		ApplyCouncilConsequences(attacker, council, mode, rules);
+		war.lastWarGoalRevisionSupporters = council.supporters;
+		war.lastWarGoalRevisionOpponents = council.opponents;
 		ApplyWarAimPoliticalCost(attacker, rules, tierGap, escalation);
 		proposedGoal.attackerRealmId = war.attackerId;
 		proposedGoal.defenderRealmId = war.defenderId;
@@ -1391,6 +1428,68 @@ public partial class GameWorld : MonoBehaviour
 				relation.opinion = Mathf.Clamp(relation.opinion - amount, -200f, 200f);
 				holder.relations[rulerId] = relation;
 			}
+		}
+	}
+
+	/// <summary>议事裁决：跳过议事直接放行；有议事时，少数总统帅可强推，多数反对且选择遵从则作罢。</summary>
+	private static bool ResolveCouncilDecision(CouncilConsultationResult council, WarDecisionMode mode)
+	{
+		if (mode == WarDecisionMode.SkipConsultation || !council.hasCouncil)
+		{
+			return true;
+		}
+		return council.MajoritySupport || mode == WarDecisionMode.ConsultAndOverride;
+	}
+
+	/// <summary>
+	/// 不协商/强推的代价：不是扣抽象点数，而是议事成员对统治者的好感、政权稳定度与不安。
+	/// 协商通过不额外收费；没有议事成员时按"无人背书"处理。
+	/// </summary>
+	private void ApplyCouncilConsequences(RealmData realm, CouncilConsultationResult council, WarDecisionMode mode, WarRules rules)
+	{
+		if (realm == null)
+		{
+			return;
+		}
+		bool unilateral = mode == WarDecisionMode.SkipConsultation || !council.hasCouncil;
+		bool overridden = mode == WarDecisionMode.ConsultAndOverride && council.hasCouncil && !council.MajoritySupport;
+		float opinionPenalty;
+		float stabilityCost;
+		float unrestCost;
+		if (unilateral)
+		{
+			opinionPenalty = rules.warCouncilSkipOpinionPenalty;
+			stabilityCost = rules.warCouncilSkipStabilityCost;
+			unrestCost = rules.warCouncilSkipUnrestCost;
+		}
+		else if (overridden)
+		{
+			opinionPenalty = rules.warCouncilOverrideOpinionPenalty;
+			stabilityCost = rules.warCouncilOverrideStabilityCost;
+			unrestCost = rules.warCouncilOverrideUnrestCost;
+		}
+		else
+		{
+			return;
+		}
+		realm.stability = Mathf.Max(0f, realm.stability - stabilityCost);
+		realm.unrest = Mathf.Min(100f, realm.unrest + unrestCost);
+		if (opinionPenalty <= 0f || council.memberIds == null || _characterManager == null)
+		{
+			return;
+		}
+		int rulerId = realm.GetSupremeRulerId();
+		foreach (int memberId in council.memberIds)
+		{
+			CharacterData member = _characterManager.GetCharacter(memberId);
+			if (member == null || member.relations == null || !member.relations.TryGetValue(rulerId, out CharacterRelation relation))
+			{
+				continue;
+			}
+			bool opponent = council.opponentIds != null && council.opponentIds.Contains(memberId);
+			float amount = opinionPenalty * (opponent ? 1f : 0.5f);
+			relation.opinion = Mathf.Clamp(relation.opinion - amount, -200f, 200f);
+			member.relations[rulerId] = relation;
 		}
 	}
 

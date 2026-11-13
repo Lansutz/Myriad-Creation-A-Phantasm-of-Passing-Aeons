@@ -47,6 +47,26 @@ public class SettlementData : HabitationSite, ISerializationCallbackReceiver
 
 	public bool hasUniversity;
 
+	/// <summary>
+	/// 人口派生快照（D40）：唯一权威是 `TileData.populationBlocks`，由
+	/// `SettlementPopulationSystem` 每日按"自身地块 + 受控锚点地块"聚合写入。
+	/// 运行期伤亡必须改人口块，不得只改这个快照。
+	/// </summary>
+	public float derivedPopulation;
+
+	/// <summary>对外的聚落人口读点；隐藏基类标量，避免第二套人口继续被读写。</summary>
+	public new float population
+	{
+		get
+		{
+			return derivedPopulation;
+		}
+		set
+		{
+			derivedPopulation = value;
+		}
+	}
+
 	[SerializeField]
 	[FormerlySerializedAs("settlementCategory")]
 	private SettlementCategory _legacySettlementCategory;

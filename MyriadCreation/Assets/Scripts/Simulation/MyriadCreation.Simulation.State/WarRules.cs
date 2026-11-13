@@ -68,6 +68,20 @@ public class WarRules
 
 	public float warGoalForceMinCentralization = 0.5f;
 
+	/// <summary>绕过议事（不协商）的政治代价：廷臣好感、稳定度、不安。</summary>
+	public float warCouncilSkipOpinionPenalty = 6f;
+
+	public float warCouncilSkipStabilityCost = 2f;
+
+	public float warCouncilSkipUnrestCost = 3f;
+
+	/// <summary>议事多数反对仍强推的代价（比不协商更重：既没共识又压过反对）。</summary>
+	public float warCouncilOverrideOpinionPenalty = 9f;
+
+	public float warCouncilOverrideStabilityCost = 4f;
+
+	public float warCouncilOverrideUnrestCost = 5f;
+
 	public int GetTruceUntilDay(int currentDay, int years)
 	{
 		return currentDay + years * 365;

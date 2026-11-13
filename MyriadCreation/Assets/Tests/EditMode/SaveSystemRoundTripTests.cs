@@ -98,7 +98,22 @@ namespace MyriadCreation.Tests.EditMode
             province.provinceName = "测试省";
             province.centerTileIndex = modifiedTile;
 
-            settlement.population = 4321f;
+            // D40：人口权威是地块人口块；聚落人口只是聚合快照。
+            var populationTile = world.tiles[settlement.tileIndex];
+            populationTile.populationBlocks = new List<PopulationBlock>
+            {
+                new PopulationBlock
+                {
+                    count = 4321f,
+                    raceId = 0,
+                    cultureId = -1,
+                    faithId = -1,
+                    socialClass = GameEnums.SocialClass.Peasant,
+                    satisfaction = 60f
+                }
+            };
+            world.tiles[settlement.tileIndex] = populationTile;
+            SettlementPopulationSystem.Recompute(world, settlement);
             settlement.wealth = 987f;
             settlement.garrison = 654;
             settlement.constructionTier = 4;

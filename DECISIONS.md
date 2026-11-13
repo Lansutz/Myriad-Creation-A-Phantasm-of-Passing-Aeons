@@ -393,3 +393,17 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 事实：全库无 `Preload/Warmup` 生产代码；`ContentRegistry.Initialize` 同步加载，`EnsureAIControllers` 按政权懒创建，`PrepareLoadedWorld` 读档补齐。
 - 裁决：新增 `PreloadService`（或等价组合根步骤）预热内容表、AI 控制器/决策上下文、常用查询索引；重计算放后台/分帧，主线程只做 Apply；带预算与取消，不阻塞首帧。AI 预热“上下文”，不预生成不可复现的决策。
 - 验收：首年可玩时间、首次 AI tick 延迟、长跑中重复构建缓存次数三项可观测。
+
+## D40 人口单源：地块人口块为权威，聚落人口是派生快照
+
+- 事实：`TileData.populationBlocks` 随 `TileData` 入档（`SaveData.tiles`），`PopulationTick` 每日增长/满意度/饥荒都作用在块上；`HabitationSite.population` 是独立标量，`SettlementData` 继承它，运行期还有 `SettlementDestructionSystem`、`StampedeSystem` 直接增减该标量，形成第二套人口。
+- 裁决：**人口唯一权威是 `TileData.populationBlocks`**。`SettlementData.population` 改为派生快照（`derivedPopulation`），由 `SettlementPopulationSystem` 每日聚合：自身地块 + `anchor.controlledAnchorIds` 对应聚落的地块，按地块索引去重；不递归展开从属聚落的受控锚点，避免重复计数。
+- 写入口：运行期伤亡/毁灭必须改人口块（按聚落聚合人口比例分摊），不得只改快照；快照只允许**持久化恢复**与**生成期初始值**写入。读点一次性切换（计划 A），不留第三套人口。
+- 失效条件：聚落聚合范围内没有人口块时快照为 0，不回落旧标量；等级推进/毁灭/废弃判据统一读派生快照。
+
+## D41 战争议事：宣战与改目标先协商，绕过协商有政治代价
+
+- 机制：`CouncilConsultationSystem` 在宣战/改目标前召集议事成员——优先在职官员；早期没有官职时由同政权有身份人物充任。成员立场由**性格（胆量/贪婪/同情/荣誉）+ 对统治者的好感 + 目标激进程度 + 政权稳定度/不安**决定，输出支持/反对/弃权与批准度。
+- 决策模式：`ConsultAndAbide`（默认，议事多数反对就作罢）、`ConsultAndOverride`（强推）、`SkipConsultation`（不协商）。协商通过不额外收费；强推或不协商的代价落在**议事成员对统治者的好感、稳定度、不安**，不是扣威望点数。
+- 记录：`WarState` 保存 `councilConsulted/councilSkipped/councilOverridden/councilSupporters/councilOpponents/councilApproval` 与改目标时的支持/反对数；编年史留痕。
+- 与 D40 一致：所有代价必须能解释为人的反应或政权的政治状态，不用抽象货币替代协商。

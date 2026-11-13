@@ -148,6 +148,8 @@ public static class SettlementEvolutionSystem
 		settlementData.settlementLevel = settlementLevel;
 		world.anchors[num] = anchorData;
 		world.settlements[num] = settlementData;
+		// D40：营地人口转入地块人口块，聚落人口改为派生聚合。
+		SettlementPopulationSystem.AddPopulation(world, settlementData, camp.population);
 		world.Camps.RemoveTransferredCamp(camp.campId, settlementData.siteId);
 		TileData tileData = world.tiles[camp.tileIndex];
 		tileData.campId = -1;
