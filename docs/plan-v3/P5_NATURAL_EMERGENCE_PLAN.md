@@ -145,3 +145,33 @@
 | 30+ 测试依赖 `CreateStandard` | 保留沙盒预设行为，不改测试基线；新增自然世界测试单独建世界 |
 | 旧档宫廷/官职被清空 | 只删“生成时自动补”，不删读档恢复；读档恢复逻辑保持 |
 | 性能回退 | 税收按地区结算，官职只在空槽扫人；长跑对比 tick 预算 |
+
+---
+
+## 5. 实施记录（2026-11-14）
+
+### 5.1 已落地
+
+- **P5.0**：`WorldSetupOptions.CreateDefault()` = 自然基线（聚落开、政权关）；`CreateStandard()` 明确为沙盒预置；新增 `WorldSetupOptionsTests.Default_HasSettlementsButNoPolitiesOrUnits` 与 `NaturalEmergenceTests.DefaultWorld_HasSettlementsButNoPolitiesCharactersOrOffices`。
+- **P5.1**：`StateFormationSystem`（月 tick 37）+ `StateFormationHost`；建国条件为“无主聚落 ≥8 年、人口 ≥200、开发 ≥6、地区仓储 ≥90 天口粮”；建国写入首领/家族/地方显贵/领土；`ApplyPathBonuses` 删除；`FormRealmFromActor` 改为零货币/零威望 + 首领/编年史，不再送硬加成。
+- **P5.2**：`CreateInitialCourtiers` 从生产路径移除；`OfficeDef` 增四类门槛并在 `Offices.json` 落地；`FillVacancies` 用 `OfficeRealmContext` 判定；配偶/继承人/平民/信使不进入候选池；生成结束不再填官。
+- **P5.3**：`SettleTaxes`/`CalculateTileTax` 删除；`TaxCollectionSystem` 按行政区划持有人、地区仓储、90 天口粮、距离损耗、铸币阶段与市场需求的顺序结算；`TaxReceiptLedger` 记实物流水；`PoliticsSimulationSystem` 只调用 `CollectTaxes`。
+
+### 5.2 施工中发现并修复的前置 bug
+
+1. **`AnchorGenerator.CreatePair` 未回填 `SettlementData.anchor`**：生成期 `settlement.tileIndex` 返回 -1，`SeedPopulation` 把 500–2000 人写进 -1 号地块；聚落人口快照为 0，180 天后被 `SettlementSimulationSystem` 当成“人口流失”废弃为营地。自然世界因此只剩 17 个军事据点、0 个城市，永远不可能建国。修复：`CreatePair` 创建 Settlement 时即 `anchor = item`。
+2. **聚落地块开发度为 0**：`AgricultureYield.Compute` 用 `tile.development`，生成聚落只设了 `SettlementData.development`；城市按未开发土地产粮，产出低于口粮。修复：`SeedPopulation` 把聚落开发度折算为 0–1 写回地块。
+3. **年份回绕**：`StateFormationSystem` 用 `currentDay`（每年回绕 1）算聚落年龄，永远不足 8 年；建国年龄与 `SettlementEvolutionSystem.foundingTick` 改为 `currentYear*365+currentDay` 绝对日。
+
+### 5.3 验证
+
+- 全量 EditMode：`EXIT=0`、`1003` 例、`1000` 通过、`0` 失败、零 `error CS`（2 个 Explicit 跳过）。
+- 自然世界 100 年长跑：`NaturalEmergenceTests.NaturalLongRun_FormsRealmOfficesAndTaxReceipts`（2 seed × 100 年，Explicit）见 §5.4。
+- 沙盒预置（`CreateStandard`）行为保持：3 政权、标准测试基线不变。
+
+### 5.4 遗留（不在 P5 收口范围）
+
+- 营地补给仍无来源（`CampData.Tick` 只消耗、不采集），营地→聚落路径实际难以自然发生；本轮自然建国走生成聚落，营地路径待补“采集/仓储”机制。
+- `SandboxSpawnSystem.TrySeedPopulation` 仍是“随机地块凭空造人”，应改为从人口过载地块迁移。
+- `PoliticsSimulationSystem` 的稳定度向 `50+centralization×20` 回归、`RaceData` 常数、聚落财富只减不增，仍是 D16 违反清单，另立里程碑。
+- 货币化只做到“铸币阶段 + 市场真实需求卖非食用货物”；铸币/纸币发行、汇率、在途运输队列未做。
