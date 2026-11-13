@@ -564,3 +564,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 阻力高于上限时进度每月回落 3（接触减少），不产生反向同化。
 - 调度：`culture.transmission.monthly`（order 39），月结一次，不逐日扫描。
 - 未做：文化**分裂**（需要运行时新建文化 id/命名/子文化登记）与**融合**（两个文化合并为一个新文化）；本批只开「传播/同化」一条可验证链。
+
+## D67 一个 UI 一个文件，注册进管理器（P1.6 UI 口径）
+
+- 用户裁决：**每个 UI 面板只由一个文件负责**（构建/数据/交互都在该文件），管理器不再为每个面板持有一大组 `[SerializeField]` 字段与私有方法；面板构建后注册到管理器。
+- 新增 `IUserInterfacePanel`（PanelId/IsOpen/Build/Show/Hide）与 `UiPanelRegistry`（Register/TryGet/Get/HideAll）；`UIManager.Panels` 是唯一注册表。
+- 第一个落地：`CharacterPanelView`（新文件）——自建标题栏/正文/翻页/关闭，只读 `ICharacterQuery + ICharacterDetailQuery`（不引用 Simulation 家族），支持窄契约注入以便测试；`UIManager` 启动时创建并注册，`OpenCharacterPanel`/翻页/关闭优先转调它。
+- 旧场景字段 `characterPanel` 保留为回退（当前场景值为 `fileID: 0`，即面板对象已缺失）；EditMode 里未构建视图时仍走旧路径，既有测试不变。
+- 后续：家族树、革新面板按同一模式各建一个文件并注册；完成后再删除旧字段/旧方法。

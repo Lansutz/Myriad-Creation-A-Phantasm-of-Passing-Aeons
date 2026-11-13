@@ -148,7 +148,8 @@
 - 2026-11-13 **P1.3 教职接线**：新增 `DoctrineIdentityRules` 作为教职性别/独身/君权神授的唯一判定；`GameWorld.FaithLeadership` 月结校验宗教领袖（君权神授=君主兼任，其余按虔信遴选，男性专属跳过女性，独身档跳过已婚）；`TryArrangeMarriage` 拒绝独身教职婚配。新增 `DoctrineIdentityRulesTests` 6 例。验证：`EXIT=0`、`798/800`（2 个 Explicit 跳过）、零 `error CS`。**葬礼**：内容可解析但无仪式系统，按 D64 明确暂缓，不硬接数值加成。
 - 2026-11-13 **P1.5 军队地图标记**：新增 `MapArmyInfo`/`IMapArmyView` 契约与 `ArmyMarkerLayer`（程序化箭头、按政权配色、交战/围城/溃退覆盖色、跟随行军、受 `showArmyMarkers` 开关控制）；`MapWorldViewAdapter` 投影 `GameWorld.armies` 并跳过阵亡军队。新增适配器测试。验证：`EXIT=0`、`799/801`（2 个 Explicit 跳过）、零 `error CS`。**P1.5 代码侧完成**；剩余：舰队标记、海战结算、舰船建造。
 - 2026-11-13 **P2.1 文化传播/同化**：新增 `CultureTransmissionSystem`，用既有 `CultureTransition` 阻力公式推进 `culturePenetration`，满 100 换文化并合并同属性人口块；`culture.transmission.monthly` 月结。新增 `CultureTransmissionTests` 3 例。验证：`EXIT=0`、`802/804`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：文化分裂、文化融合。
-- 待办：文化分裂/融合、海战/舰队标记、P1.4/P1.6 面板、P2.2–P2.6；**G5 / G6**；内容体检。
+- 2026-11-13 **P1.6 角色面板（一 UI 一文件 + 注册表）**：新增 `IUserInterfacePanel`/`UiPanelRegistry`；`CharacterPanelView` 单文件自建面板并只读角色查询契约；`UIManager` 启动时创建并注册，开关/翻页/关闭优先转调。新增 `CharacterPanelViewTests` 3 例。验证：`EXIT=0`、`805/807`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：家族树面板、革新面板。
+- 待办：家族树/革新面板、文化分裂/融合、海战/舰队标记、P2.2–P2.6；**G5 / G6**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。
 - 备注：卡住时先 `Get-Process Unity` + 删 `MyriadCreation\Temp\UnityLockfile` 再重跑 `build.cmd`。

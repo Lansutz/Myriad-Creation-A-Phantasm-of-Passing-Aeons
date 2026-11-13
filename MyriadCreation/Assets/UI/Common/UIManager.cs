@@ -16,6 +16,7 @@ using MyriadCreation.Content.Definitions;
 using MyriadCreation.App.Contracts;
 using MyriadCreation.Core.Contracts;
 using MyriadCreation.App.Settings;
+using MyriadCreation.UI.Panels;
 
 namespace MyriadCreation.UI.Common
 {
@@ -93,6 +94,7 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
                 FindObjectsInactive.Include);
             if (settlementPanel != null) settlementPanel.SetSettlementQuery(view);
             if (_governmentPanel != null) _governmentPanel.SetWorldReadModel(view);
+            if (_characterPanelView != null) _characterPanelView.SetWorldReadModel(view);
         }
 
         /// <summary>B8-4a 兼容：注入地图统计视图（null 表示未注入，顶栏显示 "-"）。</summary>
@@ -171,6 +173,9 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
 
         [Header("角色面板")]
         [SerializeField] private GameObject characterPanel;
+        // P1.6：角色面板由 CharacterPanelView 单文件负责，管理器只注册与转调。
+        private CharacterPanelView _characterPanelView;
+        public UiPanelRegistry Panels { get; } = new UiPanelRegistry();
         [SerializeField] private Button charOpenButton;
         [SerializeField] private Button charPrevButton;
         [SerializeField] private Button charNextButton;
@@ -342,7 +347,25 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
             ApplyChineseFont();
             TMPFontUtility.ApplyFontChoice(SettingsService.Current.FontChoice);
             InitializeUI();
+            RegisterRuntimePanels();
             AddEventLog("游戏启动", EventLogKind.System);
+        }
+
+        /// <summary>P1.6：每个面板一个文件，构建后注册到本管理器；管理器不再为面板持有大组字段。</summary>
+        private void RegisterRuntimePanels()
+        {
+            if (_characterPanelView != null)
+            {
+                return;
+            }
+            var go = new GameObject("CharacterPanelView");
+            go.transform.SetParent(transform, false);
+            _characterPanelView = go.AddComponent<CharacterPanelView>();
+            _characterPanelView.Build(go.transform);
+            _characterPanelView.SetWorldReadModel(_worldReadModel);
+            _characterPanelView.SetViewRealm(ViewRealmId);
+            Panels.Register(_characterPanelView);
+            TMPFontUtility.ApplyFontChoice(SettingsService.Current.FontChoice);
         }
 
  /// 应用中文字体（simhei 黑体——内置 LegacyRuntime 字体不含中文，缺字体则 UI 显示方块）
@@ -424,8 +447,8 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
 
  // 角色面板按钮
             if (charOpenButton != null) charOpenButton.onClick.AddListener(OpenCharacterPanel);
-            if (charPrevButton != null) charPrevButton.onClick.AddListener(() => { _charIndex--; UpdateCharacterPanel(); });
-            if (charNextButton != null) charNextButton.onClick.AddListener(() => { _charIndex++; UpdateCharacterPanel(); });
+            if (charPrevButton != null) charPrevButton.onClick.AddListener(PrevCharacter);
+            if (charNextButton != null) charNextButton.onClick.AddListener(NextCharacter);
             if (charCloseButton != null) charCloseButton.onClick.AddListener(CloseCharacterPanel);
 
  // 社会政治面板按钮

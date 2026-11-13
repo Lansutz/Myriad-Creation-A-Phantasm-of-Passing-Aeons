@@ -149,7 +149,30 @@ public partial class UIManager
  /// <summary>关闭角色面板</summary>
         public void CloseCharacterPanel()
         {
+            if (_characterPanelView != null) _characterPanelView.Hide();
             if (characterPanel != null) characterPanel.SetActive(false);
+        }
+
+        private void PrevCharacter()
+        {
+            if (_characterPanelView != null)
+            {
+                _characterPanelView.Prev();
+                return;
+            }
+            _charIndex--;
+            UpdateCharacterPanel();
+        }
+
+        private void NextCharacter()
+        {
+            if (_characterPanelView != null)
+            {
+                _characterPanelView.Next();
+                return;
+            }
+            _charIndex++;
+            UpdateCharacterPanel();
         }
 
 
@@ -572,6 +595,12 @@ public partial class UIManager
 
         private void OpenCharacterPanel()
         {
+            if (_characterPanelView != null)
+            {
+                _characterPanelView.SetViewRealm(ViewRealmId);
+                _characterPanelView.Show();
+                return;
+            }
             RefreshCharacterList();
             if (characterPanel != null) characterPanel.SetActive(true);
             UpdateCharacterPanel();
