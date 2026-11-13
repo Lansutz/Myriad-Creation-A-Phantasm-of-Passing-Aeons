@@ -179,6 +179,7 @@
 - 2026-11-13 **P2.5 B 收口**：音频拆为 `MyriadCreation.Audio`；新增 `ISaveSlotService` 契约 + Infrastructure 实现 + `AppServices.SaveSlots`；UI 面板改走契约。UI asmdef 最终不再引用 App/World/Infrastructure。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**B 完成**。
 - 2026-11-13 **P2.5 A 收口**：19 个存档适配器迁入新 `MyriadCreation.Save.Runtime`；`MyriadCreation.Infrastructure` 程序集删除；Editor/App/Tests 改引 Save.Runtime。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**A/B 完成**。
 - 2026-11-13 **P2.5 E 遗传单源**：子代先由 `GeneticsEngine.Reproduce` 生成 GenomeInstance，再产出 DnaData 兼容快照；缺基因组才回退旧路径。新增测试。验证：`EXIT=0`、`873/875`（2 个 Explicit 跳过）、零 `error CS`。**E 完成**。
+- 2026-11-13 **P2.5 E 遗传主路径**：新生/生育直接以 GenomeInstance 生成，表型与魅力由基因组推导，移除正常路径的 DnaData 往返；适配器只剩旧 DnaData/迁移入口。验证：`EXIT=0`、`882/884`、零 `error CS`。
 - 2026-11-13 **P2.5 C 人口写点单源**：新增 `PopulationLedger`，迁移人口增长/饥荒/疾病/传教/文化转换/劫掠等写点，新增源码门禁禁止绕过。验证：`EXIT=0`、`882/884`、零 `error CS`。
 - 2026-11-13 **删除 legacy 地图存档 DTO**：`MapSaveData`/`SaveJsonMigration` 无生产调用者，删除；规范键测试改用测试 DTO。验证：`EXIT=0`、`876/878`、零 `error CS`。
 - 2026-11-13 **UI 旧面板双源清理**：删除 UIManager 旧角色/家族字段与实现，唯一路径为 `CharacterPanelView/FamilyTreePanelView`；测试改为地块-only。验证：`EXIT=0`、`877/879`、零 `error CS`。

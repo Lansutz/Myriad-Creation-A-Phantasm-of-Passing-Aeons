@@ -164,10 +164,8 @@ public class CharacterManager
 		GenomeInstance genome2 = character2.GetGenome(raceData2);
 		bool flag = Random.value < 0.5f;
 		GenomeInstance genomeInstance = DnaSystem.InheritGenome(genome, genome2, raceData ?? raceData2, flag, num);
-		DnaData dna = LegacyDnaAdapter.ToLegacyData(genomeInstance, GeneticsCatalog.ResolveGenome((raceData ?? raceData2)?.GetGenomeId()));
 		string firstName = GenerateName(cultureId, (!flag) ? 1 : 0);
-		CharacterData characterData = CreateCharacter(firstName, character.lastName, 0, flag, cultureId, raceId, faithId, CharacterRole.Commoner, dna, fatherId, motherId, expressionRace);
-		characterData.genome = genomeInstance;
+		CharacterData characterData = CreateCharacter(firstName, character.lastName, 0, flag, cultureId, raceId, faithId, CharacterRole.Commoner, null, fatherId, motherId, expressionRace, null, genomeInstance);
 		if (character.familyId >= 0)
 		{
 			characterData.familyId = character.familyId;
@@ -782,40 +780,52 @@ public class CharacterManager
 		return null;
 	}
 
-	public CharacterData CreateCharacter(string firstName, string lastName, int age, bool isMale, int cultureId, int raceId, int faithId, CharacterRole role, DnaData dna = null, int fatherId = -1, int motherId = -1, RaceData expressionRace = null, CharacterTemplateDef template = null)
+	public CharacterData CreateCharacter(string firstName, string lastName, int age, bool isMale, int cultureId, int raceId, int faithId, CharacterRole role, DnaData dna = null, int fatherId = -1, int motherId = -1, RaceData expressionRace = null, CharacterTemplateDef template = null, GenomeInstance genomeOverride = null)
 	{
-		GenomeInstance childGenome = null;
-		if (dna == null && (fatherId >= 0 || motherId >= 0))
+		GenomeInstance childGenome = genomeOverride;
+		RaceData raceDataForGenome = ResolveRace(raceId);
+		GenomeDef genomeDefForChild = GeneticsCatalog.ResolveGenome(raceDataForGenome?.GetGenomeId());
+		if (dna != null)
+		{
+			// 旧档/旧调用方传入的 DnaData：一次性转成 GenomeInstance，之后不再以 dna 为源。
+			childGenome = dna.ToGenomeInstance(raceDataForGenome, isMale);
+		}
+		if (childGenome == null && (fatherId >= 0 || motherId >= 0))
 		{
 			CharacterData characterData = ((fatherId >= 0) ? GetCharacter(fatherId) : null);
 			CharacterData characterData2 = ((motherId >= 0) ? GetCharacter(motherId) : null);
 			if (characterData != null || characterData2 != null)
 			{
-				// E：GenomeInstance 是真源；DnaData 只作为既有消费者（表型/魅力/疾病）的兼容快照。
-				GenomeDef genomeDef = GeneticsCatalog.ResolveGenome(ResolveRace(raceId)?.GetGenomeId());
 				GenomeInstance fatherGenome = characterData?.GetGenome(ResolveRace(characterData.raceId));
 				GenomeInstance motherGenome = characterData2?.GetGenome(ResolveRace(characterData2.raceId));
-				if (genomeDef != null && (fatherGenome != null || motherGenome != null))
+				if (genomeDefForChild != null && (fatherGenome != null || motherGenome != null))
 				{
 					var geneticsRng = new System.Random(_nextCharacterId * 397 + age * 17 + (isMale ? 1 : 0));
 					childGenome = GeneticsEngine.Reproduce(
-						genomeDef, fatherGenome, motherGenome,
+						genomeDefForChild, fatherGenome, motherGenome,
 						isMale ? GeneticSex.Male : GeneticSex.Female,
 						geneticsRng);
-					dna = LegacyDnaAdapter.ToLegacyData(childGenome, genomeDef);
-				}
-				if (dna == null)
-				{
-					// 内容缺基因组时的兜底：沿用旧 DnaData 遗传，避免直接生成无基因人物。
-					float inbreeding = DnaSystem.CalculateInbreeding(characterData, characterData2, _characters);
-					dna = DnaSystem.Inherit(characterData?.dna, characterData2?.dna, ResolveRace(raceId), inbreeding);
 				}
 			}
 		}
-		if (dna == null)
+		if (childGenome == null)
 		{
-			dna = DnaSystem.GenerateRandom(ResolveRace(raceId));
+			if (genomeDefForChild != null)
+			{
+				childGenome = GeneticsEngine.CreateFounder(
+					genomeDefForChild,
+					isMale ? GeneticSex.Male : GeneticSex.Female,
+					new System.Random(_nextCharacterId * 397 + age * 17));
+			}
+			else
+			{
+				// 内容缺基因组：保留旧 DnaData 生成，避免无基因人物；这是兼容路径，不是主路径。
+				dna = DnaSystem.GenerateRandom(raceDataForGenome);
+				childGenome = dna.ToGenomeInstance(raceDataForGenome, isMale);
+			}
 		}
+		// 运行态不再保留 DnaData：表型/魅力/疾病均由 genome 推导。
+		dna = null;
 		CharacterData characterData3 = new CharacterData
 		{
 			characterId = _nextCharacterId++,
@@ -832,11 +842,11 @@ public class CharacterManager
 			aiCategory = CharacterAISelector.CategoryForRole(role),
 			fatherId = fatherId,
 			motherId = motherId,
-			dna = dna,
+			dna = null,
 			genome = childGenome
 		};
 		RaceData raceData = expressionRace ?? ResolveRace(raceId);
-		DnaExpression expr = (characterData3.dnaExpression = DnaSystem.ComputeExpression(dna, raceData));
+		DnaExpression expr = (characterData3.dnaExpression = DnaSystem.ComputeExpression(childGenome, raceData));
 		characterData3.bodyParts = BodyPartSystem.InitializeBodyParts();
 		characterData3.expectedLifespanYears = Mathf.Clamp((raceData?.lifespanBaseYears ?? 75f) + expr.longevityOffsetYears, 20f, 150f);
 		characterData3.individualResistance = Mathf.Clamp((raceData?.resistanceBaseline ?? 50f) + expr.resistanceOffset, 0f, 100f);
@@ -858,13 +868,13 @@ public class CharacterManager
 		ApplyTalentDefectEffect(characterData3, expr);
 		InitializePersonality(characterData3, fatherId, motherId);
 		float num3;
-		if (characterData3.dna != null && characterData3.dna.GetLocus(DnaLocus.Appearance).IsHomozygousDominant)
+		if (DnaSystem.IsAppearanceHomozygous(childGenome, raceData))
 		{
 			num3 = 5f;
 		}
 		else
 		{
-			num3 = ((characterData3.dna != null && characterData3.dna.GetLocus(DnaLocus.Appearance).IsHeterozygous) ? 2f : (-3f));
+			num3 = -3f;
 		}
 		characterData3.charm = Mathf.Clamp(50f + num3 + Random.Range(-10f, 10f), 0f, 100f);
 		if (template != null)

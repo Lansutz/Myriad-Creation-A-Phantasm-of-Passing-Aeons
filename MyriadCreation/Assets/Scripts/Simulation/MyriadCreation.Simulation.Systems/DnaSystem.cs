@@ -260,6 +260,65 @@ public static class DnaSystem
 		return dnaData;
 	}
 
+	/// <summary>
+	/// 由 GenomeInstance 直接推导表型（P2.5 E）：不再依赖 DnaData 的位点对。
+	/// 分数映射沿用“显性≈正、杂合≈中等、隐性≈负”的方向，但不再每次随机抽幅度。
+	/// </summary>
+	public static DnaExpression ComputeExpression(GenomeInstance genome, RaceData race)
+	{
+		DnaExpression expr = default;
+		if (genome == null)
+		{
+			return expr;
+		}
+		GenomeDef def = GeneticsCatalog.ResolveGenome(race?.GetGenomeId());
+		PhenotypeResult phenotype = GeneticsEngine.ComputePhenotype(def, genome);
+		expr.longevityOffsetYears = OffsetFromScore(phenotype.GetTrait("lifespan"), race?.lifespanRangeYears ?? 15f);
+		expr.intelligenceOffset = OffsetFromScore(phenotype.GetTrait("intelligence"), 15f);
+		expr.martialOffset = OffsetFromScore(phenotype.GetTrait("martial"), 15f);
+		expr.resistanceOffset = OffsetFromScore(phenotype.GetTrait("resistance"), 15f);
+
+		int seed = 0;
+		for (int i = 0; i < genome.paternalAlleles.Length; i++) seed = seed * 31 + genome.paternalAlleles[i];
+		for (int i = 0; i < genome.maternalAlleles.Length; i++) seed = seed * 31 + genome.maternalAlleles[i];
+		seed = Math.Abs(seed);
+		float talentScore = phenotype.GetTrait("talent");
+		IReadOnlyList<TalentDefectDef> talents = GetTalentDefs();
+		IReadOnlyList<TalentDefectDef> defects = GetDefectDefs();
+		if (talentScore >= 1.5f && talents.Count > 0)
+		{
+			expr.talentId = talents[seed % talents.Count].id;
+		}
+		else if (talentScore <= 0.5f && defects.Count > 0)
+		{
+			expr.defectId = defects[seed % defects.Count].id;
+		}
+		else
+		{
+			expr.carriesDefect = talentScore > 0.5f;
+		}
+		return expr;
+	}
+
+	/// <summary>外观位点是否纯合（魅力的旧加成来源），由基因组直接判断。</summary>
+	public static bool IsAppearanceHomozygous(GenomeInstance genome, RaceData race)
+	{
+		if (genome == null)
+		{
+			return false;
+		}
+		GenomeDef def = GeneticsCatalog.ResolveGenome(race?.GetGenomeId());
+		int index = def?.loci?.FindIndex(l => l.locusId == "appearance") ?? -1;
+		return index >= 0 && genome.PaternalAt(index) == genome.MaternalAt(index);
+	}
+
+	private static float OffsetFromScore(float score, float range)
+	{
+		if (score >= 1.5f) return range * 0.9f;
+		if (score >= 0.5f) return range * 0.45f;
+		return -range * 0.75f;
+	}
+
 	public static DnaExpression ComputeExpression(DnaData dna, RaceData race)
 	{
 		DnaExpression expr = default;

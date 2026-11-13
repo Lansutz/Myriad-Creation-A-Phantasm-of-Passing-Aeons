@@ -868,3 +868,13 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 新增 `PopulationMutationGatewayTests`：扫描 `.count *=/+=/-=`，除 `PopulationLedger` 与 `SocialDifferentiation` 外禁止直接改人口。
 - 测试：合并/守恒、拆分、改文化合并、减员与碎片清理。
 - 验证：`EXIT=0`、`882/884`、零 `error CS`。
+
+## D107 GenomeInstance 成为运行时遗传主路径（P2.5 E）
+
+- `CreateCharacter` 新增 `genomeOverride`；父母生育/新生直接使用 GenomeInstance，不再生成 DnaData；表型由 `DnaSystem.ComputeExpression(genome, race)` 推导（显性/杂合/隐性方向保留，幅度不再每次随机）。
+- 魅力加成改由 `DnaSystem.IsAppearanceHomozygous(genome, race)` 判断，不再读 DnaData 位点。
+- `Procreate` 直接把子代 genome 传回 `CreateCharacter`，去掉“genome→dna→genome”的往返。
+- `LegacyDnaAdapter` 现在只出现在 `DnaData.GetGenome`（旧 DnaData 输入/旧档迁移）与显式 `dna` 参数兼容路径；正常新生/读档不写 DnaData（存档本来就只存 genome）。
+- 测试更新：子代仅有 GenomeInstance，`dna == null`。
+- 未做：彻底删除 `DnaData` 类型（旧测试/迁移入口仍用），以及 `DnaSystem` 旧随机表达式（保留作兼容）。
+- 验证：`EXIT=0`、`882/884`、零 `error CS`。

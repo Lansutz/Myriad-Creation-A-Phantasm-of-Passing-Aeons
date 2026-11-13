@@ -6,11 +6,11 @@ using MyriadCreation.Simulation.Systems;
 
 namespace MyriadCreation.Tests.EditMode
 {
-    /// <summary>P2.5 E：子代以 GenomeInstance 为真源生成，DnaData 只是兼容快照。</summary>
+    /// <summary>P2.5 E：子代以 GenomeInstance 为唯一运行时遗传真源，不再保留 DnaData。</summary>
     public class GenomeInheritanceTests
     {
         [Test]
-        public void ChildOfTwoParents_GetsGenomeAndLegacySnapshot()
+        public void ChildOfTwoParents_GetsGenomeOnly()
         {
             var manager = new CharacterManager();
             CharacterData father = manager.CreateCharacter("父", "测", 30, true, 0, 0, 0, CharacterRole.Noble);
@@ -21,9 +21,8 @@ namespace MyriadCreation.Tests.EditMode
                 null, father.characterId, mother.characterId);
 
             Assert.IsNotNull(child.genome, "子代必须有 GenomeInstance");
-            Assert.IsNotNull(child.dna, "兼容消费者仍需要 DnaData 快照");
+            Assert.IsNull(child.dna, "运行时不再保留 DnaData");
             Assert.AreNotEqual(-1, child.genome.genomeId);
-            Assert.AreEqual(6, child.dna.loci.Count);
         }
     }
 }
