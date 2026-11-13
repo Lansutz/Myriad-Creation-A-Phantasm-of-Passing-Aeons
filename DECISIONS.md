@@ -796,3 +796,21 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 判据达成：UI 不引 Infrastructure；App/Editor/Tests 只通过 Save.Runtime 访问存档实现；Core/Save.Contracts 保持为契约层。
 - 架构门禁新增 `Save.Runtime` 分层位（与 Rendering/Infrastructure 同层）。
 - 未做：`SaveSystem` 仍是静态入口；若要多平台后端，再在 `Save.Contracts` 上加读写契约。
+
+## D97 P2.5 F（Host 适配层移出 sim.asmdef）本轮作废，理由与替代
+
+- 现状：`LawHost/FaithHost/CultureHost/ContentHost` 都是**适配器**，直接持有 `GameWorld/RealmData/CharacterManager` 等 Simulation.State/WorldState 类型；把它们移到独立程序集的前提是先把这些类型抽成契约（约 30 个文件、跨 4 个子系统），否则只是把循环依赖换个 asmdef。
+- 裁决：F 本轮**作废**，维持同一程序集内的 Host 分层；已完成的是更外层的解耦（A：Infrastructure 删除、B：UI 去 App/World/Infrastructure、Save.Contracts/Audio/Settings 独立）。F 的触发条件写死为「当 C 的状态封装把 RealmData/GameWorld 收成查询+命令后，再按 `IFaithContext` 的模式抽契约」。
+- 这不是“没做”，而是拒绝在没有契约消费者时新增一层空抽象（宪章原则 5/单一真源）。
+
+## D98 P2.3 Intrigue 本轮作废（前置缺失）
+
+- 计划自己写明：WP5 Intrigue 须先有 **S19 地图知识**（谁知道哪块地/哪条路）。当前只有角色知识（`CharacterKnowledgeRegistry`），没有地图知识层。
+- 已交付的信息传播部分：角色知识的过期遗忘（D88）。Intrigue 的密谋链、命令延迟、消息伪造在 S19 落地前不硬造。
+- 触发条件：S19 地图知识入档并有查询/写入入口后，再开 WP5。
+
+## D99 P2.6 调度器全局两相作废；P2.4 剩余表清点
+
+- 调度器级 `Compute → Apply` 两相：当前唯一需要「先读场、再整批写」的重量级系统是影响力（已按系统内部拆分并缓存，D90）；其余系统是单相增量写。无第二个消费者时引入全局两相 API 只会增加锁步复杂度。
+- 数值纪律不变：新增阈值均标 `TODO_M05`（教派状态 30/局势 20-40-60-80/信息遗忘 1095 天/教义参数）。
+- P2.4 清点：计划点名的平表已外提 8 张（绰号 81、建筑 29、单位 14、商品 57、灾害 12、建造门槛 30、特质 108、经济原型 11）；法律表原已是 JSON；其余“表”是逐类 switch/枚举映射/流程顺序（如 PersonalityDimensions、DnaLocus、GenerationStage），不是可编辑内容，不外提。
