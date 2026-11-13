@@ -492,7 +492,10 @@ public class EconomyManager
 			{
 				if (_goodsDefs.TryGetValue(item, out var value) && value.hasShelfLife)
 				{
-					value2.inventory[item] *= 0.999f;
+					float lossPerDay = value.shelfLifeDays > 0f
+						? 1f / value.shelfLifeDays
+						: Mathf.Max(0f, value.spoilagePerDay);
+					value2.inventory[item] *= Mathf.Max(0f, 1f - Mathf.Clamp01(lossPerDay));
 					if (value2.inventory[item] < 0.01f)
 					{
 						value2.inventory.Remove(item);

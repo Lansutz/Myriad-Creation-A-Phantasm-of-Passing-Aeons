@@ -69,6 +69,33 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(100f, center.GetTotalInventory(), 0.001f, "返回 false 时也只收下剩余容量，不得超容");
         }
 
+        [Test]
+        public void ShelfLife_UsesShelfLifeDays_PerDay()
+        {
+            var goods = DefaultGoods();
+            goods[1] = new GoodsDef
+            {
+                goodsId = 1,
+                goodsName = "肉类",
+                category = GameEnums.GoodsCategory.Food,
+                baseValue = 2f,
+                weight = 0.15f,
+                hasShelfLife = true,
+                shelfLifeDays = 10f
+            };
+            var tiles = new TileData[16];
+            for (int i = 0; i < tiles.Length; i++)
+                tiles[i] = new TileData { tileIndex = i, exists = true, isLand = true, regionId = 0, buildingLevels = new int[6] };
+            var center = new TradeCenter { regionId = 0, inventoryCapacity = 1000f };
+            center.inventory[1] = 100f;
+            var centers = new Dictionary<int, TradeCenter> { { 0, center } };
+            var economy = new EconomyManager(tiles, centers, goods, new CurrencySystem(), new TaxSystem());
+
+            economy.DailyTick();
+
+            Assert.AreEqual(90f, center.inventory[1], 0.01f, "shelfLifeDays=10 时每日应损耗 10%");
+        }
+
         // ---------- 2. 商队结算守恒 ----------
 
         [Test]
