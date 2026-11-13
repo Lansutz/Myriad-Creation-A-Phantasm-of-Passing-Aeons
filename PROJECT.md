@@ -178,7 +178,8 @@
 - 2026-11-13 **P2.5 B 主刀**：UI 去掉 `MyriadCreation.App`/`MyriadCreation.World` 引用；MainMenu 改走 `AppServices.AppFlow/GameSession` + `NewGameRequestDto`；SiteTypeLabels 移入 World；App 改为引用 UI；架构门禁同步反转。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：UI 仍引用 Infrastructure（Save/Audio）。
 - 2026-11-13 **P2.5 B 收口**：音频拆为 `MyriadCreation.Audio`；新增 `ISaveSlotService` 契约 + Infrastructure 实现 + `AppServices.SaveSlots`；UI 面板改走契约。UI asmdef 最终不再引用 App/World/Infrastructure。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**B 完成**。
 - 2026-11-13 **P2.5 A 收口**：19 个存档适配器迁入新 `MyriadCreation.Save.Runtime`；`MyriadCreation.Infrastructure` 程序集删除；Editor/App/Tests 改引 Save.Runtime。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**A/B 完成**。
-- 待办：P2.3 Intrigue（前置 S19）、P2.5 F（Host 适配层）+ population 入口、P2.6 其余性能项；**G5 / G6**；内容体检。
+- 2026-11-13 **P2.5 E 遗传单源**：子代先由 `GeneticsEngine.Reproduce` 生成 GenomeInstance，再产出 DnaData 兼容快照；缺基因组才回退旧路径。新增测试。验证：`EXIT=0`、`873/875`（2 个 Explicit 跳过）、零 `error CS`。**E 完成**。
+- 待办：最终长跑复验与收口报告（F/Intrigue/调度器两相已按 D97–D99 作废）。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。
 - 备注：卡住时先 `Get-Process Unity` + 删 `MyriadCreation\Temp\UnityLockfile` 再重跑 `build.cmd`。

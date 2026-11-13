@@ -784,14 +784,32 @@ public class CharacterManager
 
 	public CharacterData CreateCharacter(string firstName, string lastName, int age, bool isMale, int cultureId, int raceId, int faithId, CharacterRole role, DnaData dna = null, int fatherId = -1, int motherId = -1, RaceData expressionRace = null, CharacterTemplateDef template = null)
 	{
+		GenomeInstance childGenome = null;
 		if (dna == null && (fatherId >= 0 || motherId >= 0))
 		{
 			CharacterData characterData = ((fatherId >= 0) ? GetCharacter(fatherId) : null);
 			CharacterData characterData2 = ((motherId >= 0) ? GetCharacter(motherId) : null);
 			if (characterData != null || characterData2 != null)
 			{
-				float inbreeding = DnaSystem.CalculateInbreeding(characterData, characterData2, _characters);
-				dna = DnaSystem.Inherit(characterData?.dna, characterData2?.dna, ResolveRace(raceId), inbreeding);
+				// E：GenomeInstance 是真源；DnaData 只作为既有消费者（表型/魅力/疾病）的兼容快照。
+				GenomeDef genomeDef = GeneticsCatalog.ResolveGenome(ResolveRace(raceId)?.GetGenomeId());
+				GenomeInstance fatherGenome = characterData?.GetGenome(ResolveRace(characterData.raceId));
+				GenomeInstance motherGenome = characterData2?.GetGenome(ResolveRace(characterData2.raceId));
+				if (genomeDef != null && (fatherGenome != null || motherGenome != null))
+				{
+					var geneticsRng = new System.Random(_nextCharacterId * 397 + age * 17 + (isMale ? 1 : 0));
+					childGenome = GeneticsEngine.Reproduce(
+						genomeDef, fatherGenome, motherGenome,
+						isMale ? GeneticSex.Male : GeneticSex.Female,
+						geneticsRng);
+					dna = LegacyDnaAdapter.ToLegacyData(childGenome, genomeDef);
+				}
+				if (dna == null)
+				{
+					// 内容缺基因组时的兜底：沿用旧 DnaData 遗传，避免直接生成无基因人物。
+					float inbreeding = DnaSystem.CalculateInbreeding(characterData, characterData2, _characters);
+					dna = DnaSystem.Inherit(characterData?.dna, characterData2?.dna, ResolveRace(raceId), inbreeding);
+				}
 			}
 		}
 		if (dna == null)
@@ -814,7 +832,8 @@ public class CharacterManager
 			aiCategory = CharacterAISelector.CategoryForRole(role),
 			fatherId = fatherId,
 			motherId = motherId,
-			dna = dna
+			dna = dna,
+			genome = childGenome
 		};
 		RaceData raceData = expressionRace ?? ResolveRace(raceId);
 		DnaExpression expr = (characterData3.dnaExpression = DnaSystem.ComputeExpression(dna, raceData));

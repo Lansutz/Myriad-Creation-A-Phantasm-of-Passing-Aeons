@@ -814,3 +814,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 调度器级 `Compute → Apply` 两相：当前唯一需要「先读场、再整批写」的重量级系统是影响力（已按系统内部拆分并缓存，D90）；其余系统是单相增量写。无第二个消费者时引入全局两相 API 只会增加锁步复杂度。
 - 数值纪律不变：新增阈值均标 `TODO_M05`（教派状态 30/局势 20-40-60-80/信息遗忘 1095 天/教义参数）。
 - P2.4 清点：计划点名的平表已外提 8 张（绰号 81、建筑 29、单位 14、商品 57、灾害 12、建造门槛 30、特质 108、经济原型 11）；法律表原已是 JSON；其余“表”是逐类 switch/枚举映射/流程顺序（如 PersonalityDimensions、DnaLocus、GenerationStage），不是可编辑内容，不外提。
+
+## D100 遗传双轨收口：GenomeInstance 为真源（P2.5 E）
+
+- `CharacterManager.CreateCharacter` 有父母时先走 `GeneticsEngine.Reproduce`（父/母 GenomeInstance + 指定子代性别，确定性 System.Random 种子）生成子代基因组，再用 `LegacyDnaAdapter.ToLegacyData` 产出 `DnaData` 兼容快照；子代对象同时写 `genome` 与 `dna`。
+- 内容缺基因组/父母基因组不可得时才回退旧 `DnaSystem.Inherit`，保证不会生成无基因人物；`GetGenome` 仍能把旧档 DnaData 懒转成 GenomeInstance，旧档可读。
+- 表型/魅力/疾病等既有消费者继续读 DnaData 快照，行为不变；新代码可只读 genome。
+- 测试：双亲子代同时有 genome 与 6 座 DnaData 位点。
+- 未做：彻底删除 DnaData 字段（它仍是存档 DTO 与大量消费者的输入；删除需同批改存档与表型链，风险大于收益）。
