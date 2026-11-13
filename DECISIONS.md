@@ -709,3 +709,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 未迁移：外交赔款等必须允许负余额的路径仍可用 `Spend`；`DiplomacyManager` 的内部转账下一批再收口。
 - 测试：余额不足不扣款、足额扣款、`Spend` 允许负余额、Add/Set。
 - 未做：`stability`/`population` 的同类入口；字段仍未私有化（存档直接序列化，收紧需 DTO 配合）。
+
+## D86 特质表外提（P2.4 第六张表）
+
+- 108 条人格特质从 `PersonalityTraitDatabase` 的外提为 `StreamingAssets/Base/Trait/Traits.json`；`TraitContentLoader` 懒加载并转回 `PersonalityTrait`（枚举越界回落到 0，坏档不抛）。
+- `PersonalityTraitDatabase.All` 改为属性：内容表可用时返回内容表，否则回退代码兜底数组；所有既有消费者（按数组用）无需改调用点。
+- 测试：108 条齐全/唯一/枚举合法；加载器字段与修正值（`brave_1` 武力 +1、冲突 `craven_1`）。
+- 未做：其余内容表；代码兜底表暂保留（删表需先确认真实内容加载在全部入口都发生）。

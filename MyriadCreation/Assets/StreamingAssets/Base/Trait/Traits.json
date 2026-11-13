@@ -1,0 +1,2296 @@
+{
+  "traits": [
+    {
+      "traitId": "brave_1",
+      "traitName": "勇气",
+      "description": "大胆——当周围大多数人退缩时，却愿意迎难而上的意志",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 1.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 1.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "craven_1",
+        "craven_2",
+        "craven_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "brave_2",
+      "traitName": "勇敢",
+      "description": "大胆——勇气是宫闱轶事中不可或缺的；战斗以其名字被铭记",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 2.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 2.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "craven_1",
+        "craven_2",
+        "craven_3"
+      ],
+      "requiredTraits": [
+        "brave_1"
+      ]
+    },
+    {
+      "traitId": "brave_3",
+      "traitName": "无畏",
+      "description": "大胆——迎战险境，如同他人追求爱人一般；战场上罕有人能望其项背",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 3.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 3.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "craven_1",
+        "craven_2",
+        "craven_3"
+      ],
+      "requiredTraits": [
+        "brave_2"
+      ]
+    },
+    {
+      "traitId": "craven_1",
+      "traitName": "慎重",
+      "description": "小心——对风险、危险与对抗的回避，在压力下呼声愈高",
+      "category": 0,
+      "tier": 0,
+      "martialMod": -1.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 1.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "brave_1",
+        "brave_2",
+        "brave_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "craven_2",
+      "traitName": "谨慎",
+      "description": "小心——慎重是出了名的；战事都安排给别人去统领",
+      "category": 0,
+      "tier": 0,
+      "martialMod": -2.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 2.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "brave_1",
+        "brave_2",
+        "brave_3"
+      ],
+      "requiredTraits": [
+        "craven_1"
+      ]
+    },
+    {
+      "traitId": "craven_3",
+      "traitName": "怯懦",
+      "description": "小心——无论如何都不肯冒险；领地因此蒙受了无数种隐而未显的损失",
+      "category": 0,
+      "tier": 0,
+      "martialMod": -3.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 3.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "brave_1",
+        "brave_2",
+        "brave_3"
+      ],
+      "requiredTraits": [
+        "craven_2"
+      ]
+    },
+    {
+      "traitId": "compassionate_1",
+      "traitName": "同情心",
+      "description": "善良——向有需要之人伸出援手，不计回报",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 1.0,
+      "conflictingTraits": [
+        "callous_1",
+        "callous_2",
+        "callous_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "compassionate_2",
+      "traitName": "慈悲",
+      "description": "善良——仁慈成了此地景象；灾荒年月，郡中穷苦人上门求助",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 2.0,
+      "conflictingTraits": [
+        "callous_1",
+        "callous_2",
+        "callous_3"
+      ],
+      "requiredTraits": [
+        "compassionate_1"
+      ]
+    },
+    {
+      "traitId": "compassionate_3",
+      "traitName": "圣母般",
+      "description": "善良——施予之多，已超出府中所能承受；大门向所有来者敞开",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 3.0,
+      "conflictingTraits": [
+        "callous_1",
+        "callous_2",
+        "callous_3"
+      ],
+      "requiredTraits": [
+        "compassionate_2"
+      ]
+    },
+    {
+      "traitId": "callous_1",
+      "traitName": "冷漠",
+      "description": "疏离——对不直接关系到自己的痛苦十分冷淡",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 1.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 1.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "compassionate_1",
+        "compassionate_2",
+        "compassionate_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "callous_2",
+      "traitName": "无情",
+      "description": "疏离——漠然在每次觐见中都明明白白；泪水无法打动他们",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 2.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 2.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "compassionate_1",
+        "compassionate_2",
+        "compassionate_3"
+      ],
+      "requiredTraits": [
+        "callous_1"
+      ]
+    },
+    {
+      "traitId": "callous_3",
+      "traitName": "铁石心肠",
+      "description": "疏离——已全然不再假装置身于仁慈；死刑令的签署也懒得多看一眼名字",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 3.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 3.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "compassionate_1",
+        "compassionate_2",
+        "compassionate_3"
+      ],
+      "requiredTraits": [
+        "callous_2"
+      ]
+    },
+    {
+      "traitId": "greedy_1",
+      "traitName": "贪念",
+      "description": "精打细算——对钱币与财物的抓攫，随着每笔交易愈发沉重",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -1.0,
+      "stewardshipMod": 1.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "generous_1",
+        "generous_2",
+        "generous_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "greedy_2",
+      "traitName": "贪婪",
+      "description": "精打细算——对财富的追逐形塑着每次觐见；礼物在收下之前先被称量",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -2.0,
+      "stewardshipMod": 2.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "generous_1",
+        "generous_2",
+        "generous_3"
+      ],
+      "requiredTraits": [
+        "greedy_1"
+      ]
+    },
+    {
+      "traitId": "greedy_3",
+      "traitName": "贪得无厌",
+      "description": "精打细算——已将国库榨干却浑然不觉；友谊本身也成了一桩交易",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -3.0,
+      "stewardshipMod": 3.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "generous_1",
+        "generous_2",
+        "generous_3"
+      ],
+      "requiredTraits": [
+        "greedy_2"
+      ]
+    },
+    {
+      "traitId": "generous_1",
+      "traitName": "慷慨",
+      "description": "乐善——对黄金、礼物与恩惠的洒脱之手，以及不求回报施予",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": -1.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "greedy_1",
+        "greedy_2",
+        "greedy_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "generous_2",
+      "traitName": "好施",
+      "description": "乐善——赈济在本地教堂里被称颂；上门的请愿者们很少空手而归",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": -2.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "greedy_1",
+        "greedy_2",
+        "greedy_3"
+      ],
+      "requiredTraits": [
+        "generous_1"
+      ]
+    },
+    {
+      "traitId": "generous_3",
+      "traitName": "博施",
+      "description": "乐善——不顾一切劝诫，施予无度；国库是拿来尊荣旁人的手段",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": -3.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "greedy_1",
+        "greedy_2",
+        "greedy_3"
+      ],
+      "requiredTraits": [
+        "generous_2"
+      ]
+    },
+    {
+      "traitId": "honest_1",
+      "traitName": "诚信",
+      "description": "直率——拒绝粉饰真相，即使礼节或自身利益要求如此",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": -1.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "deceitful_1",
+        "deceitful_2",
+        "deceitful_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "honest_2",
+      "traitName": "诚实",
+      "description": "直率——以诚实的品格在宫廷中著称；对手们畏惧他那些毫不留情的质问",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": -2.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "deceitful_1",
+        "deceitful_2",
+        "deceitful_3"
+      ],
+      "requiredTraits": [
+        "honest_1"
+      ]
+    },
+    {
+      "traitId": "honest_3",
+      "traitName": "坦率无隐",
+      "description": "直率——即使出于体面，也无法掩饰其坦率；君王们曾被当面指出过自己的过失",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": -3.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "deceitful_1",
+        "deceitful_2",
+        "deceitful_3"
+      ],
+      "requiredTraits": [
+        "honest_2"
+      ]
+    },
+    {
+      "traitId": "deceitful_1",
+      "traitName": "狡诈",
+      "description": "机灵——对谎言、半真半假的话和恰到好处的沉默驾轻就熟",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 2.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "honest_1",
+        "honest_2",
+        "honest_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "deceitful_2",
+      "traitName": "狡猾",
+      "description": "机灵——诡计多端的名声并非空穴来风；协议必被细读，誓言也需证人衡量",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 3.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "honest_1",
+        "honest_2",
+        "honest_3"
+      ],
+      "requiredTraits": [
+        "deceitful_1"
+      ]
+    },
+    {
+      "traitId": "deceitful_3",
+      "traitName": "背信弃义",
+      "description": "机灵——既不能托付密封的信件，也不能指望他信守承诺；每句话都像棋盘上的一步棋",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 4.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "honest_1",
+        "honest_2",
+        "honest_3"
+      ],
+      "requiredTraits": [
+        "deceitful_2"
+      ]
+    },
+    {
+      "traitId": "calm_1",
+      "traitName": "平和",
+      "description": "从容——一种沉稳的性情，即使面对挑衅也能保持泰然自若",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 1.0,
+      "learningMod": 1.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "wrathful_1",
+        "wrathful_2",
+        "wrathful_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "calm_2",
+      "traitName": "冷静",
+      "description": "从容——沉着是御前会议的定海神针；是房间里紧张气氛的逐渐降温",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 2.0,
+      "learningMod": 2.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "wrathful_1",
+        "wrathful_2",
+        "wrathful_3"
+      ],
+      "requiredTraits": [
+        "calm_1"
+      ]
+    },
+    {
+      "traitId": "calm_3",
+      "traitName": "心如止水",
+      "description": "从容——面对足以击垮他人的消息仍岿然不动；战祸、瘟疫与背叛递到同一张平静的面孔前",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 3.0,
+      "learningMod": 3.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "wrathful_1",
+        "wrathful_2",
+        "wrathful_3"
+      ],
+      "requiredTraits": [
+        "calm_2"
+      ]
+    },
+    {
+      "traitId": "wrathful_1",
+      "traitName": "怒火",
+      "description": "性急——一腔过于易燃又冷却太慢的脾气，在宫廷日常事务上留下焦痕",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 1.0,
+      "diplomacyMod": -1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "calm_1",
+        "calm_2",
+        "calm_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "wrathful_2",
+      "traitName": "易怒",
+      "description": "性急——怒气在廷中无人不知；仆从们步步小心，所受的轻蔑也鲜少被遗忘",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 2.0,
+      "diplomacyMod": -2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "calm_1",
+        "calm_2",
+        "calm_3"
+      ],
+      "requiredTraits": [
+        "wrathful_1"
+      ]
+    },
+    {
+      "traitId": "wrathful_3",
+      "traitName": "狂怒",
+      "description": "性急——暴怒已是低声相传的传奇；就连忠勇之士也学会了辨识风暴前的沉寂",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 3.0,
+      "diplomacyMod": -3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "calm_1",
+        "calm_2",
+        "calm_3"
+      ],
+      "requiredTraits": [
+        "wrathful_2"
+      ]
+    },
+    {
+      "traitId": "zealous_1",
+      "traitName": "热枕",
+      "description": "虔诚——对信仰怀有炽烈的确信，不容妥协，也几乎不能容忍怀疑",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 1.0,
+      "warfareMod": 1.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "cynical_1",
+        "cynical_2",
+        "cynical_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "zealous_2",
+      "traitName": "狂热",
+      "description": "虔诚——虔诚是整个家府的界碑；每逢瞻礼教堂必满，谈话也常绕回教义",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 2.0,
+      "warfareMod": 2.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "cynical_1",
+        "cynical_2",
+        "cynical_3"
+      ],
+      "requiredTraits": [
+        "zealous_1"
+      ]
+    },
+    {
+      "traitId": "zealous_3",
+      "traitName": "盲信",
+      "description": "虔诚——信仰炽烈，不容半分妥协；异端绝不容忍，即便是多年盟友也要按教义问答衡量",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 3.0,
+      "warfareMod": 3.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "cynical_1",
+        "cynical_2",
+        "cynical_3"
+      ],
+      "requiredTraits": [
+        "zealous_2"
+      ]
+    },
+    {
+      "traitId": "cynical_1",
+      "traitName": "犬儒主义",
+      "description": "不轻信——对崇高目的抱有怀疑，并私下把每一种动机都解读为更卑劣的东西",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 1.0,
+      "learningMod": -1.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "zealous_1",
+        "zealous_2",
+        "zealous_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "cynical_2",
+      "traitName": "愤世嫉俗",
+      "description": "不轻信——怀疑态度早已为人所知；神职人员害怕他的提问，誓言换来的只是淡淡一笑",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 2.0,
+      "learningMod": -2.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "zealous_1",
+        "zealous_2",
+        "zealous_3"
+      ],
+      "requiredTraits": [
+        "cynical_1"
+      ]
+    },
+    {
+      "traitId": "cynical_3",
+      "traitName": "虚无",
+      "description": "不轻信——看不到欲望与私利之外的任何目的；信仰仪式也像忍受四季更替一样耐着性子遵守",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 3.0,
+      "learningMod": -3.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "zealous_1",
+        "zealous_2",
+        "zealous_3"
+      ],
+      "requiredTraits": [
+        "cynical_2"
+      ]
+    },
+    {
+      "traitId": "ambitious_1",
+      "traitName": "野心",
+      "description": "渴望上进——一种不甘于现状，渴望更高职位、头衔或声望的追求",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": -1.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 1.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "content_1",
+        "content_2",
+        "content_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "ambitious_2",
+      "traitName": "野心勃勃",
+      "description": "渴望上进——野心明眼人都看得出来；权衡联盟时看重影响范围，安排婚姻时看重机会",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": -2.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 2.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "content_1",
+        "content_2",
+        "content_3"
+      ],
+      "requiredTraits": [
+        "ambitious_1"
+      ]
+    },
+    {
+      "traitId": "ambitious_3",
+      "traitName": "利欲熏心",
+      "description": "渴望上进——全然受晋身高位之念所役使；每一场筵席、征战、恩惠皆被用作向上攀爬的阶梯",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": -3.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 3.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "content_1",
+        "content_2",
+        "content_3"
+      ],
+      "requiredTraits": [
+        "ambitious_2"
+      ]
+    },
+    {
+      "traitId": "content_1",
+      "traitName": "满足感",
+      "description": "满意——安然承受自身的命数，不再向门第或命运索取已被赐予之外的东西",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": 1.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": -1.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "ambitious_1",
+        "ambitious_2",
+        "ambitious_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "content_2",
+      "traitName": "知足",
+      "description": "满意——知足之名远近皆知；凡有晋身之邀皆谢而辞之；账册所计不过来岁收支",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": 2.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": -2.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "ambitious_1",
+        "ambitious_2",
+        "ambitious_3"
+      ],
+      "requiredTraits": [
+        "content_1"
+      ]
+    },
+    {
+      "traitId": "content_3",
+      "traitName": "安于现状",
+      "description": "满意——任凭何等诱引，亦不能使其动念求荣；帝国在其周遭兴亡更替，心神仍安放于旧日炉火之前",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": 3.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": -3.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "ambitious_1",
+        "ambitious_2",
+        "ambitious_3"
+      ],
+      "requiredTraits": [
+        "content_2"
+      ]
+    },
+    {
+      "traitId": "diligent_1",
+      "traitName": "勤勉",
+      "description": "尽责——不论心境与阴晴，对工作恒久不懈的投入",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 1.0,
+      "intrigueMod": 0.0,
+      "learningMod": 1.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "lazy_1",
+        "lazy_2",
+        "lazy_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "diligent_2",
+      "traitName": "勤恳",
+      "description": "尽责——勤恳是宫廷的动力；无一事被遗忘，无一份请愿不被答复",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 2.0,
+      "intrigueMod": 0.0,
+      "learningMod": 2.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "lazy_1",
+        "lazy_2",
+        "lazy_3"
+      ],
+      "requiredTraits": [
+        "diligent_1"
+      ]
+    },
+    {
+      "traitId": "diligent_3",
+      "traitName": "宵衣旰食",
+      "description": "尽责——每夜劳作到超出所有合理时刻，劝也劝不住；城堡其余角落早已沉寂，房厅灯火依旧亮着",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 3.0,
+      "intrigueMod": 0.0,
+      "learningMod": 3.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "lazy_1",
+        "lazy_2",
+        "lazy_3"
+      ],
+      "requiredTraits": [
+        "diligent_2"
+      ]
+    },
+    {
+      "traitId": "lazy_1",
+      "traitName": "惰性",
+      "description": "闲散——当他人之手可代劳时，自己便不愿起身、决断或劳作",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": -1.0,
+      "intrigueMod": 1.0,
+      "learningMod": -1.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "diligent_1",
+        "diligent_2",
+        "diligent_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "lazy_2",
+      "traitName": "懒惰",
+      "description": "闲散——厌劳人尽皆知；臣属们学会了将决议拟好大半再呈上",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": -2.0,
+      "intrigueMod": 2.0,
+      "learningMod": -2.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "diligent_1",
+        "diligent_2",
+        "diligent_3"
+      ],
+      "requiredTraits": [
+        "lazy_1"
+      ]
+    },
+    {
+      "traitId": "lazy_3",
+      "traitName": "怠惰成性",
+      "description": "闲散——已数月未签一纸谕令；信使候在门口，案头积满了灰，封地全赖旁人勉力维系",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": -3.0,
+      "intrigueMod": 3.0,
+      "learningMod": -3.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "diligent_1",
+        "diligent_2",
+        "diligent_3"
+      ],
+      "requiredTraits": [
+        "lazy_2"
+      ]
+    },
+    {
+      "traitId": "patient_1",
+      "traitName": "耐性",
+      "description": "宽忍——情愿等待、忍耐，让事态顺其自身的节奏展开",
+      "category": 0,
+      "tier": 0,
+      "martialMod": -1.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 1.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "impatient_1",
+        "impatient_2",
+        "impatient_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "patient_2",
+      "traitName": "耐心",
+      "description": "宽忍——耐心是治理的工具；指望速速作答的对手，往往被审慎节奏弄得狼狈不堪",
+      "category": 0,
+      "tier": 0,
+      "martialMod": -2.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 2.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "impatient_1",
+        "impatient_2",
+        "impatient_3"
+      ],
+      "requiredTraits": [
+        "patient_1"
+      ]
+    },
+    {
+      "traitId": "patient_3",
+      "traitName": "坚忍",
+      "description": "宽忍——之所以能比一切都更持久——无论是恩怨、争执，还是对手的寿命——仅仅是因为拒绝被催促",
+      "category": 0,
+      "tier": 0,
+      "martialMod": -3.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 3.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "impatient_1",
+        "impatient_2",
+        "impatient_3"
+      ],
+      "requiredTraits": [
+        "patient_2"
+      ]
+    },
+    {
+      "traitId": "impatient_1",
+      "traitName": "不耐烦",
+      "description": "毛躁——一股迫切的去行动、决断，或是在别人还没把话说完前就打断对方的冲动",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 1.0,
+      "diplomacyMod": -1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 1.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "patient_1",
+        "patient_2",
+        "patient_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "impatient_2",
+      "traitName": "急躁",
+      "description": "毛躁——急躁推动着整个宫廷的节奏；臣属们学会了简明扼要地呈报问题",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 2.0,
+      "diplomacyMod": -2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 2.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "patient_1",
+        "patient_2",
+        "patient_3"
+      ],
+      "requiredTraits": [
+        "impatient_1"
+      ]
+    },
+    {
+      "traitId": "impatient_3",
+      "traitName": "草率",
+      "description": "毛躁——无法忍受漫长的审议；御前会议头一轮反对还没说完，决断便已做出，事后犹豫已为时已晚",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 3.0,
+      "diplomacyMod": -3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 3.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "patient_1",
+        "patient_2",
+        "patient_3"
+      ],
+      "requiredTraits": [
+        "impatient_2"
+      ]
+    },
+    {
+      "traitId": "arrogant_1",
+      "traitName": "傲慢",
+      "description": "自负——对自身价值的高估，渗入到与各个层级的每一次互动中",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 1.0,
+      "diplomacyMod": -1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": -1.0,
+      "conflictingTraits": [
+        "humble_1",
+        "humble_2",
+        "humble_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "arrogant_2",
+      "traitName": "狂妄",
+      "description": "自负——傲慢在每次觐见中都显露无遗；对地位较低者态度冷淡，对地位相当者通过言辞提醒安分守己",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 2.0,
+      "diplomacyMod": -2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": -2.0,
+      "conflictingTraits": [
+        "humble_1",
+        "humble_2",
+        "humble_3"
+      ],
+      "requiredTraits": [
+        "arrogant_1"
+      ]
+    },
+    {
+      "traitId": "arrogant_3",
+      "traitName": "目中无人",
+      "description": "自负——将自己凌驾于所有人之上；就连宣誓效忠的领主也必须毕恭毕敬，任何轻慢之举绝不容忍",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 3.0,
+      "diplomacyMod": -3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": -3.0,
+      "conflictingTraits": [
+        "humble_1",
+        "humble_2",
+        "humble_3"
+      ],
+      "requiredTraits": [
+        "arrogant_2"
+      ]
+    },
+    {
+      "traitId": "humble_1",
+      "traitName": "谦卑",
+      "description": "谦逊——对赞誉与褒奖安之若素地推却，哪怕那是应得的",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 1.0,
+      "warfareMod": 0.0,
+      "charmMod": 1.0,
+      "conflictingTraits": [
+        "arrogant_1",
+        "arrogant_2",
+        "arrogant_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "humble_2",
+      "traitName": "谦卑",
+      "description": "谦逊——谦逊广受称道；请愿者面对的是一个不拘礼节的倾听者，胜利功劳全数归于旁人",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 2.0,
+      "warfareMod": 0.0,
+      "charmMod": 2.0,
+      "conflictingTraits": [
+        "arrogant_1",
+        "arrogant_2",
+        "arrogant_3"
+      ],
+      "requiredTraits": [
+        "humble_1"
+      ]
+    },
+    {
+      "traitId": "humble_3",
+      "traitName": "深藏若虚",
+      "description": "谦逊——无人能劝其接受荣耀；以其自身名义竖立的雕像至今蒙尘，编年史家只能在他人催促下动笔",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 3.0,
+      "warfareMod": 0.0,
+      "charmMod": 3.0,
+      "conflictingTraits": [
+        "arrogant_1",
+        "arrogant_2",
+        "arrogant_3"
+      ],
+      "requiredTraits": [
+        "humble_2"
+      ]
+    },
+    {
+      "traitId": "paranoid_1",
+      "traitName": "疑心",
+      "description": "警觉——将世间视作仇敌环伺，每阵沉默都读作密谋",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 1.0,
+      "learningMod": 1.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "trusting_1",
+        "trusting_2",
+        "trusting_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "paranoid_2",
+      "traitName": "多疑",
+      "description": "警觉——疑心已经影响到城堡的日常运转；食物要先经人试尝，信件要读上两遍",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 2.0,
+      "learningMod": 2.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "trusting_1",
+        "trusting_2",
+        "trusting_3"
+      ],
+      "requiredTraits": [
+        "paranoid_1"
+      ]
+    },
+    {
+      "traitId": "paranoid_3",
+      "traitName": "疑神疑鬼",
+      "description": "警觉——在每一道阴影中都窥见阴谋；卫兵增至三倍，廷臣们不敢两两低语，最真诚的朋友也不再被信任",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 3.0,
+      "learningMod": 3.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "trusting_1",
+        "trusting_2",
+        "trusting_3"
+      ],
+      "requiredTraits": [
+        "paranoid_2"
+      ]
+    },
+    {
+      "traitId": "trusting_1",
+      "traitName": "相信度",
+      "description": "坦诚——相信他人的善言与善意，即使证据本不该如此薄弱",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": -1.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 1.0,
+      "conflictingTraits": [
+        "paranoid_1",
+        "paranoid_2",
+        "paranoid_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "trusting_2",
+      "traitName": "轻信他人",
+      "description": "坦诚——坦诚广为人知；顾问们被给予很大的自由，针对亲近伙伴的指控往往被挥手遗忘",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": -2.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 2.0,
+      "conflictingTraits": [
+        "paranoid_1",
+        "paranoid_2",
+        "paranoid_3"
+      ],
+      "requiredTraits": [
+        "trusting_1"
+      ]
+    },
+    {
+      "traitId": "trusting_3",
+      "traitName": "天真",
+      "description": "坦诚——对他人的信任已经成了领地承受不起的弱点；廷臣们公然利用这一点，只有核心忠臣还在保护他",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": -3.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 3.0,
+      "conflictingTraits": [
+        "paranoid_1",
+        "paranoid_2",
+        "paranoid_3"
+      ],
+      "requiredTraits": [
+        "trusting_2"
+      ]
+    },
+    {
+      "traitId": "gregarious_1",
+      "traitName": "社交能力",
+      "description": "善交际——对陪伴、交谈和热闹大厅里那份温暖的向往",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": 1.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 1.0,
+      "conflictingTraits": [
+        "shy_1",
+        "shy_2",
+        "shy_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "gregarious_2",
+      "traitName": "合群",
+      "description": "善交际——热衷于待客，塑造了整个家庭的氛围；城堡里几乎总是宾客盈门",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": 2.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 2.0,
+      "conflictingTraits": [
+        "shy_1",
+        "shy_2",
+        "shy_3"
+      ],
+      "requiredTraits": [
+        "gregarious_1"
+      ]
+    },
+    {
+      "traitId": "gregarious_3",
+      "traitName": "热情洋溢",
+      "description": "善交际——无法忍受空荡荡的大厅；这里总是盛宴不断，屋檐下总有来客，寂静对他来说像外语一样陌生",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": 3.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 3.0,
+      "conflictingTraits": [
+        "shy_1",
+        "shy_2",
+        "shy_3"
+      ],
+      "requiredTraits": [
+        "gregarious_2"
+      ]
+    },
+    {
+      "traitId": "shy_1",
+      "traitName": "羞涩",
+      "description": "腼腆——对陌生人的注视和拥挤厅堂的压迫感到的不适",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 1.0,
+      "learningMod": 1.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "gregarious_1",
+        "gregarious_2",
+        "gregarious_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "shy_2",
+      "traitName": "害羞",
+      "description": "腼腆——缄默是宫廷里流传的评价；求见者会被委婉地指导如何接近他",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 2.0,
+      "learningMod": 2.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "gregarious_1",
+        "gregarious_2",
+        "gregarious_3"
+      ],
+      "requiredTraits": [
+        "shy_1"
+      ]
+    },
+    {
+      "traitId": "shy_3",
+      "traitName": "孤僻",
+      "description": "腼腆——可以完全避开人群，只要条件允许；书信代替了演讲，安静房间里一位访客便足以度过一天",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 3.0,
+      "learningMod": 3.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "gregarious_1",
+        "gregarious_2",
+        "gregarious_3"
+      ],
+      "requiredTraits": [
+        "shy_2"
+      ]
+    },
+    {
+      "traitId": "vengeful_1",
+      "traitName": "报复欲",
+      "description": "记仇——对被冒犯记忆悠长，讨还公道的耐心更持久，不论其间相隔多少年",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 1.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 1.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "forgiving_1",
+        "forgiving_2",
+        "forgiving_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "vengeful_2",
+      "traitName": "有仇必报",
+      "description": "记仇——仇怨远近皆知；旧敌恐惧自己落入其掌握的一天，微小的怠慢时机一到也会得到回应",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 2.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 2.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "forgiving_1",
+        "forgiving_2",
+        "forgiving_3"
+      ],
+      "requiredTraits": [
+        "vengeful_1"
+      ]
+    },
+    {
+      "traitId": "vengeful_3",
+      "traitName": "睚眦必报",
+      "description": "记仇——将数十年前的侮辱都已讨还，据称保有一整本未了仇怨的账簿；伸手可及范围内没有仇敌能安生度日",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 3.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 3.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "forgiving_1",
+        "forgiving_2",
+        "forgiving_3"
+      ],
+      "requiredTraits": [
+        "vengeful_2"
+      ]
+    },
+    {
+      "traitId": "forgiving_1",
+      "traitName": "宽容心",
+      "description": "宽宥——愿意放下怨怼，让昨日的过错留在昨日",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 1.0,
+      "conflictingTraits": [
+        "vengeful_1",
+        "vengeful_2",
+        "vengeful_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "forgiving_2",
+      "traitName": "宽恕",
+      "description": "宽宥——宽大为怀是宫廷中有名一幕；请愿者来时旧已有罪却已被饶恕，一场叛乱都能以归还头衔结束",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 2.0,
+      "conflictingTraits": [
+        "vengeful_1",
+        "vengeful_2",
+        "vengeful_3"
+      ],
+      "requiredTraits": [
+        "forgiving_1"
+      ]
+    },
+    {
+      "traitId": "forgiving_3",
+      "traitName": "宽宏大量",
+      "description": "宽宥——几乎本能地宽恕他人；即便是重大的背叛，也会以归还土地和一顿安静的饭食作为回应",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 3.0,
+      "conflictingTraits": [
+        "vengeful_1",
+        "vengeful_2",
+        "vengeful_3"
+      ],
+      "requiredTraits": [
+        "forgiving_2"
+      ]
+    },
+    {
+      "traitId": "lustful_1",
+      "traitName": "色欲",
+      "description": "轻媚——对肉体欢愉的贪求，渗入每一次凝视与每一句挑逗之中",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 1.0,
+      "conflictingTraits": [
+        "chaste_1",
+        "chaste_2",
+        "chaste_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "lustful_2",
+      "traitName": "好色",
+      "description": "轻媚——好色之名传遍宫廷；情人的名单比臣属的名册还长，婚誓不过是一纸建议",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 2.0,
+      "conflictingTraits": [
+        "chaste_1",
+        "chaste_2",
+        "chaste_3"
+      ],
+      "requiredTraits": [
+        "lustful_1"
+      ]
+    },
+    {
+      "traitId": "lustful_3",
+      "traitName": "荒淫",
+      "description": "轻媚——已将床笫之事抬升到国策的高度；使节来朝先被引至内室，联姻的意义只剩洞房那一夜",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 3.0,
+      "conflictingTraits": [
+        "chaste_1",
+        "chaste_2",
+        "chaste_3"
+      ],
+      "requiredTraits": [
+        "lustful_2"
+      ]
+    },
+    {
+      "traitId": "chaste_1",
+      "traitName": "贞洁",
+      "description": "矜持——对肉体欲望的克制，以及对忠诚与纯洁之德的珍视",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 1.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "lustful_1",
+        "lustful_2",
+        "lustful_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "chaste_2",
+      "traitName": "守贞",
+      "description": "矜持——守贞之名远近皆知；宫廷里不见暧昧的眼色，婚誓被视作不可触碰的圣约",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 2.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "lustful_1",
+        "lustful_2",
+        "lustful_3"
+      ],
+      "requiredTraits": [
+        "chaste_1"
+      ]
+    },
+    {
+      "traitId": "chaste_3",
+      "traitName": "禁欲",
+      "description": "矜持——已将肉体视作灵魂的牢笼；宫廷里连夫妻间的温存都被视作堕落，独身成了唯一的圣洁",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 3.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "lustful_1",
+        "lustful_2",
+        "lustful_3"
+      ],
+      "requiredTraits": [
+        "chaste_2"
+      ]
+    },
+    {
+      "traitId": "gluttonous_1",
+      "traitName": "贪吃",
+      "description": "饕客——对美食与佳酿的过度热爱，餐桌成了一天中最重要的场合",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": -1.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "temperate_1",
+        "temperate_2",
+        "temperate_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "gluttonous_2",
+      "traitName": "暴食",
+      "description": "饕客——暴食是宫廷里的笑谈也是传奇；宴席从正午持续到深夜，国库的一半填进了厨房",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": -2.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "temperate_1",
+        "temperate_2",
+        "temperate_3"
+      ],
+      "requiredTraits": [
+        "gluttonous_1"
+      ]
+    },
+    {
+      "traitId": "gluttonous_3",
+      "traitName": "无餍",
+      "description": "饕客——已将吃升华为一种仪式；御厨比宰相更有权势，饥荒之年宫廷的宴席依旧如山",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": -3.0,
+      "intrigueMod": 0.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "temperate_1",
+        "temperate_2",
+        "temperate_3"
+      ],
+      "requiredTraits": [
+        "gluttonous_2"
+      ]
+    },
+    {
+      "traitId": "temperate_1",
+      "traitName": "节制",
+      "description": "有度——对饮食与享乐的克制，凡事适可而止的生活态度",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 1.0,
+      "intrigueMod": 0.0,
+      "learningMod": 1.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "gluttonous_1",
+        "gluttonous_2",
+        "gluttonous_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "temperate_2",
+      "traitName": "克己",
+      "description": "有度——克己是宫廷的典范；宴席上从不贪杯，饮食简单到让御厨觉得受了侮辱",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 2.0,
+      "intrigueMod": 0.0,
+      "learningMod": 2.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "gluttonous_1",
+        "gluttonous_2",
+        "gluttonous_3"
+      ],
+      "requiredTraits": [
+        "temperate_1"
+      ]
+    },
+    {
+      "traitId": "temperate_3",
+      "traitName": "绝嗜",
+      "description": "有度——已将一切口腹之欲视作软弱；清水与粗面包是唯一的餐食，奢华的宴席令其作呕",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 0.0,
+      "stewardshipMod": 3.0,
+      "intrigueMod": 0.0,
+      "learningMod": 3.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "gluttonous_1",
+        "gluttonous_2",
+        "gluttonous_3"
+      ],
+      "requiredTraits": [
+        "temperate_2"
+      ]
+    },
+    {
+      "traitId": "arbitrary_1",
+      "traitName": "无常",
+      "description": "随性——治事不循法度，唯凭一时喜怒；所下裁断亦随当日心境而屈伸",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -1.0,
+      "stewardshipMod": -1.0,
+      "intrigueMod": 1.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "just_1",
+        "just_2",
+        "just_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "arbitrary_2",
+      "traitName": "专断",
+      "description": "随性——裁决是每日的赌局；请愿者得细究他们的情绪如同钻研法规，管家悄悄记录明日又可能被推翻的事项",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -2.0,
+      "stewardshipMod": -2.0,
+      "intrigueMod": 2.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "just_1",
+        "just_2",
+        "just_3"
+      ],
+      "requiredTraits": [
+        "arbitrary_1"
+      ]
+    },
+    {
+      "traitId": "arbitrary_3",
+      "traitName": "独裁专制",
+      "description": "随性——治事全凭喜怒；昨日所赐赦免，明日或成绞索；廷中官吏无人敢信一纸令谕，除非墨迹已干过两回",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -3.0,
+      "stewardshipMod": -3.0,
+      "intrigueMod": 3.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "just_1",
+        "just_2",
+        "just_3"
+      ],
+      "requiredTraits": [
+        "arbitrary_2"
+      ]
+    },
+    {
+      "traitId": "just_1",
+      "traitName": "公正",
+      "description": "公道——对正义的坚持，无论出于法律还是良知，即使付出代价也不动摇",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 1.0,
+      "stewardshipMod": 1.0,
+      "intrigueMod": 0.0,
+      "learningMod": 1.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "arbitrary_1",
+        "arbitrary_2",
+        "arbitrary_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "just_2",
+      "traitName": "正直",
+      "description": "公道——公正已成为其领地的一大特点；请愿者甚至从邻近的土地前来，编年史家记下了那些不利于领主亲族的裁决",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 2.0,
+      "stewardshipMod": 2.0,
+      "intrigueMod": 0.0,
+      "learningMod": 2.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "arbitrary_1",
+        "arbitrary_2",
+        "arbitrary_3"
+      ],
+      "requiredTraits": [
+        "just_1"
+      ]
+    },
+    {
+      "traitId": "just_3",
+      "traitName": "大义凛然",
+      "description": "公道——建立起了跨越疆界的声誉；诸王会就公义之事向他请教，甚至连死敌也承认他裁断公平",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": 3.0,
+      "stewardshipMod": 3.0,
+      "intrigueMod": 0.0,
+      "learningMod": 3.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "arbitrary_1",
+        "arbitrary_2",
+        "arbitrary_3"
+      ],
+      "requiredTraits": [
+        "just_2"
+      ]
+    },
+    {
+      "traitId": "sadistic_1",
+      "traitName": "施虐",
+      "description": "残忍——一种从他人的痛苦中获得的快感，只要当天无事打扰便会主动去寻求",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 1.0,
+      "diplomacyMod": -1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 1.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "compassionate_1",
+        "compassionate_2",
+        "compassionate_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "sadistic_2",
+      "traitName": "虐待狂",
+      "description": "残忍——残忍是众所周知的；仆人们在进入房间前都会做好心理准备，囚犯的命运被精心策划、乐在其中地安排",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 2.0,
+      "diplomacyMod": -2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 2.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "compassionate_1",
+        "compassionate_2",
+        "compassionate_3"
+      ],
+      "requiredTraits": [
+        "sadistic_1"
+      ]
+    },
+    {
+      "traitId": "sadistic_3",
+      "traitName": "悖逆常伦",
+      "description": "残忍——纯粹从他人的痛苦中得到快乐；造访地牢乃是自愿，处刑的场面不止被容忍，更经其亲手布置",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 3.0,
+      "diplomacyMod": -3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 3.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "compassionate_1",
+        "compassionate_2",
+        "compassionate_3"
+      ],
+      "requiredTraits": [
+        "sadistic_2"
+      ]
+    },
+    {
+      "traitId": "stubborn_1",
+      "traitName": "固执",
+      "description": "坚决——一旦采取立场便拒不退让，不论风向如何转变",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 1.0,
+      "diplomacyMod": -1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 1.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "fickle_1",
+        "fickle_2",
+        "fickle_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "stubborn_2",
+      "traitName": "顽固",
+      "description": "坚决——固执是御前会议的特点；幕僚们晓得定下的立场无法撼动，对手们也据此制定策略",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 2.0,
+      "diplomacyMod": -2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 2.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "fickle_1",
+        "fickle_2",
+        "fickle_3"
+      ],
+      "requiredTraits": [
+        "stubborn_1"
+      ]
+    },
+    {
+      "traitId": "stubborn_3",
+      "traitName": "冥顽不化",
+      "description": "坚决——不能被道理、证据或白纸黑字的错误所说动；整个领地会随他们一道坠下悬崖，在此之前绝不肯承认踏错了一步",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 3.0,
+      "diplomacyMod": -3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 0.0,
+      "learningMod": 3.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "fickle_1",
+        "fickle_2",
+        "fickle_3"
+      ],
+      "requiredTraits": [
+        "stubborn_2"
+      ]
+    },
+    {
+      "traitId": "fickle_1",
+      "traitName": "易变无定",
+      "description": "优柔寡断——偏好、忠诚和意图的摇摆不定，鲜少决定能维持过一周",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -1.0,
+      "stewardshipMod": -1.0,
+      "intrigueMod": 1.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "stubborn_1",
+        "stubborn_2",
+        "stubborn_3"
+      ],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "fickle_2",
+      "traitName": "善变",
+      "description": "优柔寡断——反复广受谈论；廷臣学会了绝不在确认今日旨意之前执行昨日的命令，条约的阅览也总瞄着下一次重谈",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -2.0,
+      "stewardshipMod": -2.0,
+      "intrigueMod": 2.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "stubborn_1",
+        "stubborn_2",
+        "stubborn_3"
+      ],
+      "requiredTraits": [
+        "fickle_1"
+      ]
+    },
+    {
+      "traitId": "fickle_3",
+      "traitName": "反复无常",
+      "description": "优柔寡断——完全不受任何定见支配；宴席中途联盟便告瓦解，臣属的任免在同一个呼吸间颁布又收回",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -3.0,
+      "stewardshipMod": -3.0,
+      "intrigueMod": 3.0,
+      "learningMod": 0.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [
+        "stubborn_1",
+        "stubborn_2",
+        "stubborn_3"
+      ],
+      "requiredTraits": [
+        "fickle_2"
+      ]
+    },
+    {
+      "traitId": "eccentric_1",
+      "traitName": "怪癖",
+      "description": "奇特——在衣装、习俗和言谈上偏爱异乎寻常，使之有别于常礼",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -1.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 1.0,
+      "learningMod": 1.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [],
+      "requiredTraits": []
+    },
+    {
+      "traitId": "eccentric_2",
+      "traitName": "古怪",
+      "description": "奇特——怪癖是宫廷中公开的特色；访客事先会得到警告，家宅也早已不再有非议",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -2.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 2.0,
+      "learningMod": 2.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [],
+      "requiredTraits": [
+        "eccentric_1"
+      ]
+    },
+    {
+      "traitId": "eccentric_3",
+      "traitName": "荒诞不经",
+      "description": "奇特——已全然偏离常俗；学者远道来研究他们，宫廷礼仪围绕着他们的习惯被重写，来访使节在归途上仍津津有味地复述他们的故事",
+      "category": 0,
+      "tier": 0,
+      "martialMod": 0.0,
+      "diplomacyMod": -3.0,
+      "stewardshipMod": 0.0,
+      "intrigueMod": 3.0,
+      "learningMod": 3.0,
+      "warfareMod": 0.0,
+      "charmMod": 0.0,
+      "conflictingTraits": [],
+      "requiredTraits": [
+        "eccentric_2"
+      ]
+    }
+  ]
+}

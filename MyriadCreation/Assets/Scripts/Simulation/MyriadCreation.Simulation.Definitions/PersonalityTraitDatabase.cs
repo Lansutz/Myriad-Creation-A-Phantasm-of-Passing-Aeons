@@ -6,7 +6,8 @@ namespace MyriadCreation.Simulation.Definitions
 {
 public static class PersonalityTraitDatabase
 {
-	public static readonly PersonalityTrait[] All = new PersonalityTrait[108]
+	/// <summary>代码兜底表；内容表存在时 All 返回 TraitContentLoader 的结果（P2.4）。</summary>
+	private static readonly PersonalityTrait[] Fallback = new PersonalityTrait[108]
 	{
 		new PersonalityTrait
 		{
@@ -1209,6 +1210,10 @@ public static class PersonalityTraitDatabase
 			requiredTraits = new List<string> { "eccentric_2" }
 		}
 	};
+
+	private static PersonalityTrait[] _all;
+
+	public static PersonalityTrait[] All => _all ??= TraitContentLoader.EnsureLoaded() ? TraitContentLoader.Traits : Fallback;
 
 	public static PersonalityTrait Get(string traitId)
 	{
