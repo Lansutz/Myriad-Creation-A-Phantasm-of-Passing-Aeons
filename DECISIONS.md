@@ -358,3 +358,34 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 
 
 
+
+## D35 V3 优先，但以现有代码为事实
+
+- 仓库当前没有独立 V3 总纲文件；`docs/plan-v3/` 是本轮 V3 计划集，`SYSTEM_MASTER_PLAN.md` 正文仍是 V2 内容。两者冲突时不默认“V3 全对”。
+- 裁决顺序：**现有代码事实 > V3 方向 > V2 证据**。V3 更新时按 V3 排期；V2 有更实的 `file:line` 审计时保留为证据；代码与两者都不符时登记欠账，不在计划里假装已实现。
+- 影响：后续施工项必须同时标注“V3 意图 / 代码现状 / 迁移动作”，不能只引用计划文字。
+
+## D36 建筑/设施的“容纳人物”落在 SettlementBlock，不落在 FacilityData
+
+- 事实：`FacilityData` 只有 `facilityType/constructionState/material/repairProgress`（`World/Settlement/FacilityData.cs:6-21`），`FacilityType` 只有墙/门/壕/栅/土垒/其他（`FacilityType.cs:3-11`）；`SettlementBlock` 已有 `buildingDefId/kind/subtype/level`（`SettlementBlock.cs:19-60`）；人物只有 `currentSettlementAnchorId/currentTile`（`CharacterLocationService.cs:9-17`）。
+- 裁决：**容纳人物的是建筑实例 `SettlementBlock`，不是墙体 `FacilityData`**。新增通用 `Containment`：`capacity`、`occupantCharacterIds[]`、`accessPolicy`、`containmentKind`；人物补 `currentBlockId`。领主地牢是建筑的 `kind/subtype` 或 `containmentKind`，不是新的 `FacilityType`。
+- 不做什么：不把“地牢”硬编码成 `FacilityType.Dungeon`；不把 `FacilityData` 变成人物容器；不新建平行“监狱系统”。
+
+## D37 接敌先做探测/接触层，战斗只在接触后结算
+
+- 事实：`CombatManager.DailyTick` 只在 `value2.currentTileIndex == value.currentTileIndex` 时开战（`CombatManager.cs:209`）；`Army` 无视野/探测字段（`Army.cs:14-77`）；`UnitRole.Scout` 已有枚举但未参与地图探测。
+- 裁决：先有 **Detection/Contact**，后有 Battle。探测以**斥候可达范围**为主（地形/天气/道路/兵力修正），不是全知视野；双方接触后才进入 `Encounter`，再由现有 `CombatManager.ResolveBattle` 结算。遭遇/会战不强制硬类型，用 `EncounterKind` 标签 + 变量：地形、天气、士气、组织、补给、训练、指挥官、工事、侦察/突袭。
+- 影响：`Army`/`MapActor` 补探测字段；`CombatManager` 的“同地块即战”改为“接触后同地块或追击战”；AI 用接触结果选目标，不做全图敌情全知。
+
+## D38 战争分三层：战略 WarState / 战役 Campaign-Front / 战斗 Battle；CB、目标、条约三分
+
+- 事实：`WarState` 只有分数/胜负（`WarState.cs:3-53`），不存 `CasusBelli`/`WarGoal`；CB 与目标在 `DiplomaticRelation.casusBelliList/activeWarGoals`；`DeclareWarWithJustification` 存在于 `DiplomacyManager.cs:388`，但 `GameWorld` 的生产宣战只走 `DeclareWarCore`（`GameWorld.Simulation.cs:1044-1051`），后者创建 `WarState`；正式战争与“敌对行为/劫掠”是两条链。
+- 裁决：**战略层** `WarState/WarPlan` 承载参战方、宣战理由、战争目标、时间；**战役层** `Campaign/Front` 承载方向、兵力、补给线、目标地块；**战斗层** `Battle/Encounter` 只负责一次接触的结算。`CasusBelli`=为什么可打，`WarGoal`=打什么，`Treaty`=怎么结束；三者不得混写。
+- 规则：正式宣战（含无 CB 的突袭）也必须创建 `WarState`，并把 CB/目标挂上；`DeclareWarWithJustification` 不得再有“改了外交关系但没有 WarState”的死路径。不新增 `PlanType.Military`（D32）。
+- 优化：战争相关查询按参战方/战区索引，禁止每军队×每战争×全军队笛卡尔积。
+
+## D39 预加载/AI 预热作为性能工作流，不新建玩法系统
+
+- 事实：全库无 `Preload/Warmup` 生产代码；`ContentRegistry.Initialize` 同步加载，`EnsureAIControllers` 按政权懒创建，`PrepareLoadedWorld` 读档补齐。
+- 裁决：新增 `PreloadService`（或等价组合根步骤）预热内容表、AI 控制器/决策上下文、常用查询索引；重计算放后台/分帧，主线程只做 Apply；带预算与取消，不阻塞首帧。AI 预热“上下文”，不预生成不可复现的决策。
+- 验收：首年可玩时间、首次 AI tick 延迟、长跑中重复构建缓存次数三项可观测。
