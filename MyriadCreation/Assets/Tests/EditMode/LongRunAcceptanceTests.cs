@@ -8,6 +8,7 @@ using UnityEngine;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Infrastructure.Save;
 using MyriadCreation.Simulation.Actors;
+using MyriadCreation.Simulation.Scheduling;
 using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.Units;
 using MyriadCreation.Simulation.WorldState;
@@ -83,8 +84,21 @@ namespace MyriadCreation.Tests.EditMode
             string file = Path.Combine(dir, "m05-longrun-test.csv");
             File.WriteAllLines(file, lines, Encoding.UTF8);
 
+            var hotspotLines = new List<string> { "id,avg_ms,interval_days,order,lane" };
+            var timings = world.SimulationScheduler.GetTimings();
+            foreach (SimulationTimingEntry timing in timings)
+            {
+                hotspotLines.Add(string.Format(CultureInfo.InvariantCulture,
+                    "{0},{1:F4},{2},{3},{4}",
+                    timing.id, timing.avgMs, timing.intervalDays, timing.order, timing.lane));
+            }
+            string hotspotFile = Path.Combine(dir, "m05-hotspots-test.csv");
+            File.WriteAllLines(hotspotFile, hotspotLines, Encoding.UTF8);
+
             Assert.IsTrue(File.Exists(file), "M0.5 指标 CSV 应导出");
+            Assert.IsTrue(File.Exists(hotspotFile), "M0.5 热点 CSV 应导出");
             Assert.AreEqual(31, lines.Count, "30 天应有表头 + 30 行");
+            Assert.Greater(timings.Count, 0, "应有调度项耗时记录");
             Assert.Less(maxMs, 5000d, "小世界单日 tick 不应超过 5s（宽松上限，仅拦卡死）");
             Assert.IsTrue(world.currentDay != startDay || world.currentYear != startYear,
                 "长跑后世界时间必须推进");

@@ -4,6 +4,15 @@ using MyriadCreation.Content.Definitions;
 
 namespace MyriadCreation.Simulation.Scheduling
 {
+public sealed class SimulationTimingEntry
+{
+	public string id;
+	public double avgMs;
+	public int intervalDays;
+	public int order;
+	public int lane;
+}
+
 public sealed class SimulationScheduler : ISimulationScheduler
 {
 	private sealed class Entry
@@ -32,6 +41,24 @@ public sealed class SimulationScheduler : ISimulationScheduler
 	public int Count => _entries.Count;
 
 	public int PendingCount => _pending.Count;
+
+	public List<SimulationTimingEntry> GetTimings()
+	{
+		var result = new List<SimulationTimingEntry>(_entries.Count);
+		foreach (Entry entry in _entries.Values)
+		{
+			result.Add(new SimulationTimingEntry
+			{
+				id = entry.id,
+				avgMs = entry.avgMs,
+				intervalDays = entry.intervalDays,
+				order = entry.order,
+				lane = (int)entry.lane
+			});
+		}
+		result.Sort((a, b) => b.avgMs.CompareTo(a.avgMs));
+		return result;
+	}
 
 	public SimulationDirtySet Dirty => _dirty;
 

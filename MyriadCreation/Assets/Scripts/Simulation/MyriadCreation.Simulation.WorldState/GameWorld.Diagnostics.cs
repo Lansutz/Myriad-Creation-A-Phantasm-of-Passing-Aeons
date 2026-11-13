@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace MyriadCreation.Simulation.WorldState
 {
     public partial class GameWorld
@@ -12,7 +14,9 @@ namespace MyriadCreation.Simulation.WorldState
             for (int i = 0; i < days; i++)
             {
                 AdvanceTime();
-                SimulationScheduler.Tick(currentDay, currentYear, daysPerTick);
+                var tickClock = Stopwatch.StartNew();
+                SimulationScheduler.TickBudgeted(currentDay, currentYear, daysPerTick, float.MaxValue,
+                    () => tickClock.Elapsed.TotalSeconds, out _, out _);
             }
         }
     }
