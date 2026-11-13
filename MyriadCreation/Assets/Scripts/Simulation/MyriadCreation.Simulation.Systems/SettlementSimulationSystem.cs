@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.Scheduling;
 using MyriadCreation.Simulation.Actors;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World.Settlement;
+using UnityEngine;
 
 namespace MyriadCreation.Simulation.Systems
 {
@@ -86,6 +88,29 @@ public sealed class SettlementSimulationSystem
 	public void AbandonmentDailyTick(SimulationTickContext context)
 	{
 		_abandonmentRuntime.DailyCheckBanditSpawn();
+	}
+
+
+	public void TypologyDailyTick(SimulationTickContext context)
+	{
+		foreach (SettlementData settlement in _settlements.Values)
+		{
+			if (settlement == null || settlement.IsRuined || settlement.siteMode != SiteMode.SedentarySettlement)
+			{
+				continue;
+			}
+			float gain = 0.02f + Mathf.Clamp(settlement.population / 5000f, 0f, 1f) * 0.08f;
+			SettlementTypologySystem.UpdateConstructionProgress(settlement, gain * context.deltaDays);
+			if (!SettlementTypologySystem.IsConstructionReady(settlement))
+			{
+				continue;
+			}
+			if (SettlementTypologySystem.CanLevelUp(settlement, out _))
+			{
+				SettlementTypologySystem.PerformLevelUp(settlement);
+				_world.GetChronicle()?.Add("settlement_level", settlement.settlementName + " 升为 " + settlement.settlementLevel, true);
+			}
+		}
 	}
 
 	public void ProductionDailyTick(SimulationTickContext context)

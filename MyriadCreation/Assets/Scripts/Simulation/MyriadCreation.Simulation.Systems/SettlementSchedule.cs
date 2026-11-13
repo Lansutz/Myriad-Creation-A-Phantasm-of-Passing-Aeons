@@ -19,6 +19,8 @@ public static class SettlementSchedule
 
 	public const string CampsScheduleId = "settlement.camps.daily";
 
+	public const string TypologyScheduleId = "settlement-typology.daily";
+
 	public static void Register(SimulationScheduler scheduler, SettlementSimulationSystem system)
 	{
 		if (scheduler == null)
@@ -36,6 +38,7 @@ public static class SettlementSchedule
 		scheduler.Register("settlement-recovery.daily", SimulationCadence.Daily, 20, system.RecoveryDailyTick);
 		scheduler.Register("settlement-abandonment.daily", SimulationCadence.Daily, 21, system.AbandonmentDailyTick);
 		scheduler.Register("settlement-production.daily", SimulationCadence.Daily, 22, system.ProductionDailyTick);
+		scheduler.Register("settlement-typology.daily", SimulationCadence.Daily, 23, system.TypologyDailyTick);
 	}
 }
 }

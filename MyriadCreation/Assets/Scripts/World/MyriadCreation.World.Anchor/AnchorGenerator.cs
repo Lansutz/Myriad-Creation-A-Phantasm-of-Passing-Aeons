@@ -60,7 +60,7 @@ public class AnchorGenerator
 			SettlementData item2 = tuple.Item2;
 			item2.hasMarket = true;
 			item2.development = 20f + (float)_rng.NextDouble() * 30f;
-			item2.population = 500f + (float)_rng.NextDouble() * 1500f;
+			SeedPopulation(item2, 500f + (float)_rng.NextDouble() * 1500f);
 			dictionary[item.anchorId] = item;
 			dictionary2[item2.anchorId] = item2;
 			if (HasCoastalTile(value))
@@ -76,7 +76,7 @@ public class AnchorGenerator
 					item4.hasMarket = true;
 					item4.tradePower = 30f + (float)_rng.NextDouble() * 50f;
 					item4.development = 15f + (float)_rng.NextDouble() * 25f;
-					item4.population = 300f + (float)_rng.NextDouble() * 1000f;
+					SeedPopulation(item4, 300f + (float)_rng.NextDouble() * 1000f);
 					dictionary[item3.anchorId] = item3;
 					dictionary2[item4.anchorId] = item4;
 				}
@@ -106,13 +106,39 @@ public class AnchorGenerator
 					AnchorData item7 = tuple4.Item1;
 					SettlementData item8 = tuple4.Item2;
 					item8.development = 2f + (float)_rng.NextDouble() * 10f;
-					item8.population = 50f + (float)_rng.NextDouble() * 300f;
+					SeedPopulation(item8, 50f + (float)_rng.NextDouble() * 300f);
 					dictionary[item7.anchorId] = item7;
 					dictionary2[item8.anchorId] = item8;
 				}
 			}
 		}
 		return (anchors: dictionary, settlements: dictionary2);
+	}
+
+	/// <summary>生成期把聚落初始人口写进地块人口块（D40：地块块是唯一权威）。</summary>
+	private void SeedPopulation(SettlementData settlement, float amount)
+	{
+		if (settlement == null || amount <= 0f)
+		{
+			return;
+		}
+		int tileIndex = settlement.tileIndex;
+		if (tileIndex < 0 || tileIndex >= _tiles.Length)
+		{
+			return;
+		}
+		TileData tile = _tiles[tileIndex];
+		tile.populationBlocks ??= new List<PopulationBlock>();
+		tile.populationBlocks.Add(new PopulationBlock
+		{
+			count = amount,
+			raceId = 0,
+			cultureId = -1,
+			faithId = -1,
+			socialClass = GameEnums.SocialClass.Peasant,
+			satisfaction = 60f
+		});
+		_tiles[tileIndex] = tile;
 	}
 
 	private (AnchorData, SettlementData) CreatePair(ref int nextId, int provinceId, int tileIndex, SiteMode mode, SettlementForm type = SettlementForm.Village)
