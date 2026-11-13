@@ -148,6 +148,34 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
+        public void Mutation_CanFlipDiscreteAllele()
+        {
+            GenomeDef genome = new GenomeDef
+            {
+                genomeId = "genome_mut",
+                loci = new List<GenomeLocusDef>
+                {
+                    new GenomeLocusDef
+                    {
+                        locusId = "wing",
+                        mutationRatePerGeneration = 1f,
+                        alleles = new List<AlleleDef>
+                        {
+                            new AlleleDef { alleleId = "w1", symbol = "A", defaultFrequency = 0.5f, effects = new List<AlleleTraitEffect> { new AlleleTraitEffect { discreteTraitId = "wingType", discreteValue = "membrane" } } },
+                            new AlleleDef { alleleId = "w2", symbol = "a", defaultFrequency = 0.5f, effects = new List<AlleleTraitEffect> { new AlleleTraitEffect { discreteTraitId = "wingType", discreteValue = "none" } } }
+                        }
+                    }
+                }
+            };
+            GenomeInstance father = GeneticsEngine.CreateFounder(genome, GeneticSex.Male, new System.Random(1));
+            GenomeInstance mother = GeneticsEngine.CreateFounder(genome, GeneticSex.Female, new System.Random(2));
+
+            GenomeInstance child = GeneticsEngine.Reproduce(genome, father, mother, GeneticSex.Female, new System.Random(3), allowMutation: true);
+
+            Assert.AreNotEqual(father.PaternalAt(0), child.PaternalAt(0), "突变率 1 时子代等位基因应翻转（双等位基因位点）");
+        }
+
+        [Test]
         public void FoundationAndReproduction_KeepDiscreteAlleles()
         {
             GenomeDef genome = Genome();

@@ -873,6 +873,7 @@ public class CharacterManager
 		if (genomeDefForChild != null && childGenome != null)
 		{
 			PhenotypeResult bodyPhenotype = GeneticsEngine.ComputePhenotype(genomeDefForChild, childGenome);
+			characterData3.SetPhenotypeCache(bodyPhenotype);
 			characterData3.prowess = Mathf.Clamp(characterData3.prowess + PhenotypeMechanics.ProwessBonus(bodyPhenotype), 0f, 100f);
 		}
 		characterData3.social = SpecialtyDerivation.Derive(SpecialtyType.Social, characterData3.basicAbilities, trainingBaseline);

@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using MyriadCreation.Content.Definitions;
+using MyriadCreation.Infrastructure.Save;
 using MyriadCreation.Simulation.Genetics;
 using MyriadCreation.Simulation.State;
 using UnityEngine;
@@ -99,6 +100,19 @@ namespace MyriadCreation.Tests.EditMode
                 new System.Random(11), allowMutation: false);
 
             Assert.AreEqual(genome.loci.Count, child.paternalAlleles.Length, "迁移后的实例可继续繁殖");
+        }
+
+        [Test]
+        public void CharacterSaveRoundTrip_UpgradesLegacyGenome()
+        {
+            var character = new CharacterData { characterId = 9, genome = LegacyHuman() };
+
+            CharacterSaveData dto = CharacterSaveData.FromCharacter(character);
+            CharacterData restored = dto.ToCharacter();
+
+            Assert.AreEqual(GeneticsCatalog.GetDefaultHumanGenome().loci.Count, restored.genome.paternalAlleles.Length,
+                "角色存档往返应完成旧基因组补齐");
+            Assert.AreEqual(GenomeMigration.CurrentVersion, restored.genome.genomeVersion);
         }
 
         [Test]

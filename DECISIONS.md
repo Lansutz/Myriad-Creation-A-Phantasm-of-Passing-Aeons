@@ -1102,3 +1102,16 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 复杂度 O(位点数)，只在读档/首次取基因组时发生；已补齐实例直接返回，不重复分配。
 - 测试：`GenomeMigrationTests` 6 例（补齐长度、旧位点保留、新位点中性、幂等、JSON 往返、迁移后可繁殖、GetGenome 路径）。
 - 验证：`EXIT=0`、`967/969`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D131 DNA/物种目标收口（D7）
+
+- 表型缓存：`CharacterData.GetCachedPhenotype` 在基因组不变时只推导一次，`DailyTick` 的寒热结算与机制查询共用；`SetPhenotypeCache` 在创建角色时复用已算表型，`GetGenome` 迁移/替换基因组时清空缓存。避免百年长跑里“每人每天重算 16 位点”的分配与 CPU 浪费。
+- 最终验证：`build` 971 例、969 通过、0 失败、零 `error CS`（2 例 Explicit 跳过）；`longrun` 2 seed×100 年 `1/1`、`EXIT=0`。
+- 交付范围对照 `DNA_SPECIES_PLAN.md §4`：
+  1. 基因组/物种内容表可加载、Mod 覆盖、坏引用剔除 — D126/D129；
+  2. 新位点可遗传/突变/推导表型 — D127 + 突变测试；
+  3. 三条机制接线 — D128（战力/寒热/斥候）；
+  4. 瓦伊凡纯 JSON、无物种特判 — D129；
+  5. 旧档迁移、可繁殖、存档往返 — D130；
+  6. 文档与最终验证 — 本条。
+- 未做（明确欠账）：食性→口粮结构（人口块无物种字段）；逐格物种丰度/食物网；3D/DNA 直接建模。

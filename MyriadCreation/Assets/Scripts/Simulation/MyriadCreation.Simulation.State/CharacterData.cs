@@ -105,6 +105,10 @@ public class CharacterData
 
 	public GenomeInstance genome;
 
+	/// <summary>表型缓存（D3）：基因组在角色生命周期内不变，避免每日重复推导；基因组变化时清空。</summary>
+	[NonSerialized]
+	private PhenotypeResult _phenotypeCache;
+
 	public PhenotypeAppearance appearance;
 
 	public float expectedLifespanYears = 75f;
@@ -265,10 +269,23 @@ public class CharacterData
 		SyncIdentityFromLegacy();
 	}
 
+	/// <summary>取缓存表型；基因组不变时只算一次（D3 机制查询与每日健康结算共用）。</summary>
+	public PhenotypeResult GetCachedPhenotype()
+	{
+		if (_phenotypeCache == null) _phenotypeCache = PhenotypeMechanics.PhenotypeOf(this);
+		return _phenotypeCache;
+	}
+
+	public void SetPhenotypeCache(PhenotypeResult phenotype)
+	{
+		_phenotypeCache = phenotype;
+	}
+
 	public GenomeInstance GetGenome(RaceData race = null)
 	{
 		if (genome != null)
 		{
+			_phenotypeCache = null;
 			return GenomeMigration.Upgrade(genome);
 		}
 		genome = ((dna != null) ? dna.GetGenome(race, isMale) : GeneticsEngine.CreateFounder(GeneticsCatalog.ResolveGenome(race?.GetGenomeId()), isMale ? GeneticSex.Male : GeneticSex.Female, new System.Random(characterId * 397 + age)));
@@ -350,7 +367,7 @@ public class CharacterData
 		float num4 = ((obesity > 70f) ? 1.5f : 1f);
 		health = Mathf.Clamp(health - num3 * 0.01f * num4, 0f, 100f);
 		// D3：寒热损耗由表型（耐温/隔热）决定，而不是全物种统一。
-		health = Mathf.Clamp(health - PhenotypeMechanics.TemperatureHealthPenalty(PhenotypeMechanics.PhenotypeOf(this), ambientTempC), 0f, 100f);
+		health = Mathf.Clamp(health - PhenotypeMechanics.TemperatureHealthPenalty(GetCachedPhenotype(), ambientTempC), 0f, 100f);
 		MentalDisorderDef def = MentalHealthSystem.GetDef(mentalDisorderId);
 		float num5 = ((def != null) ? (0.05f * def.stressDecayMult) : 0.05f);
 		stress = Mathf.Max(0f, stress - ((stress > 60f) ? 0.01f : num5));

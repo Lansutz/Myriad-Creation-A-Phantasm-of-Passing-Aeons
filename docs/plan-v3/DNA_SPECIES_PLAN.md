@@ -115,3 +115,16 @@
 4. 瓦伊凡样例完全由 JSON 生成，代码无物种特判。
 5. 旧档 `GenomeInstance` 迁移后表型稳定、可繁殖、存档往返。
 6. `build` 全绿、`longrun` 2×100 年通过、`DECISIONS/PROJECT` 同步。
+
+---
+
+## 5. 施工状态（2026-11-14）
+
+| 阶段 | 状态 | 证据 |
+|---|---|---|
+| D1 内容化 | 完成 | `ContentDefinitionIndex` Genome/Species provider；纯定义迁入 `Content.Definitions/Genetics`；Mods 覆盖与坏引用测试（D126） |
+| D2 位点/表型 | 完成 | `body_plan/integument/metabolism`；结构化表型；人类 16 位点；`BodyPhenotypeTests`（D127） |
+| D3 机制接线 | 完成（3/3） | 角爪体型→战力、隔热耐温→健康、翼型→斥候（D128）；食性→口粮暂缓（人口块无物种字段） |
+| D4/D5 物种与瓦伊凡 | 完成 | `FindSpeciesForGenome`、隔离矩阵、`Genomes.json/Species.json` 瓦伊凡/地龙，无物种特判（D129） |
+| D6 旧档迁移 | 完成 | `genomeVersion` + `GenomeMigration.Upgrade`，读档/GetGenome 双路径（D130） |
+| D7 收口 | 完成 | 最终 `build` 971/969、零 `error CS`；`longrun` 2 seed×100 年通过；DECISIONS D126–D131 / PROJECT 同步 |
