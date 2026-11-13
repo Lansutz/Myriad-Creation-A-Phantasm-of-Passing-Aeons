@@ -535,3 +535,15 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 新增 `NavyMovementSystem`：用 `PathfindingSystem(isNavy=true)` 规划海路，每日推进一格；路径含起点时剥掉，终点清空回 Idle。
 - `NavySchedule` 在补给日结后调用 `MoveTick`；不写陆军路径、不共享 Army.MovePath。
 - 未做：海战结算、舰船建造消耗；海军仍不是陆军子类。
+
+## D64 教职接线：性别/独身/君权神授的单一判定（P1.3 WP3 第五点）
+
+- 新增 `DoctrineIdentityRules`（FaithHost）：`CanHoldReligiousOffice(bindings, isMale)`、`CanMarry(bindings, SocialIdentityFlags)`、`RequiresCelibacy`、`IsSacredKingship`。教职性别、教职婚姻、君权神授只在这一处判定，供任官/婚配/宗教领袖遴选共用；这就是计划里「教理性别/婚姻与 M5 人格效力合并为一个 handler」的落点。
+- `GameWorld.FaithLeadership`（`faith.leadership.monthly`，order 38）：
+  - 君权神授 → 宗教领袖恒为该信仰覆盖政权的君主（结构性规则，不是加成）。
+  - 其余信仰 → 从信奉该信仰的政权里按虔信遴选，学者优先、贵族次之；教职性别为男性专属时跳过女性；独身档跳过已婚者。
+  - 只有现任领袖死亡/违规才换人，月结一次，不做每日全量扫描。
+- `TryArrangeMarriage` 增加独身门禁：在任宗教领袖所属信仰要求独身时，婚配直接拒绝并给出理由；平民不受教职婚姻教义影响。
+- 未接：教职任免的玩家入口（官职 0–5 仍无语义定义）；`Shunned` 之外的人格效力（法律适用按身份的差异）仍属 M5 剩余。
+- 葬礼：`DoctrineBindings.funeral` 已可解析，但当前没有遗体/仪式/纪念物系统，唯一可接的只有抽象加成，违反宪章原则 5（机制优先于数值）。裁决：**内容就绪、消费者暂缓**，待仪式/节期系统落地后再接线；不假装已完成。
+

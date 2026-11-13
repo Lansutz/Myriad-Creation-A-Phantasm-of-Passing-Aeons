@@ -872,6 +872,11 @@ public partial class GameWorld : MonoBehaviour
 		{
 			TickDecreeOrders();
 		});
+		// 教职接线：宗教领袖死亡/违规才更替，月结一次即可。
+		_simulationScheduler.Register("faith.leadership.monthly", SimulationCadence.Monthly, 38, (SimulationTickContext _) =>
+		{
+			EnsureFaithLeadership();
+		});
 		if (_sandboxSpawnSystem == null)
 		{
 			_sandboxSpawnSystem = new SandboxSpawnSystem(this);
@@ -1605,6 +1610,11 @@ public partial class GameWorld : MonoBehaviour
 		if (!a.isAlive || !b.isAlive)
 		{
 			reason = "人物已故";
+			return false;
+		}
+		if (IsCelibateReligiousLeader(aId) || IsCelibateReligiousLeader(bId))
+		{
+			reason = "教职独身，不可婚配";
 			return false;
 		}
 		bool allowSameSex = false;
