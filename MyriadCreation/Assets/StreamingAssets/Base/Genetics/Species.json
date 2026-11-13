@@ -1,0 +1,65 @@
+{
+  "species": [
+    {
+      "speciesId": "species_human",
+      "name": "人类",
+      "category": 0,
+      "genomeId": "genome_human",
+      "bodySize": 1.0,
+      "lifespanYears": 75.0,
+      "reproductionRate": 1.0,
+      "dietHerbivore": 0.8,
+      "dietCarnivore": 0.2,
+      "habitatTempMinC": -20.0,
+      "habitatTempMaxC": 45.0,
+      "habitatHumidityMinPct": 0.0,
+      "habitatHumidityMaxPct": 100.0,
+      "behaviorTags": [
+        "social",
+        "tool_user"
+      ],
+      "reproductiveIsolation": 0
+    },
+    {
+      "speciesId": "species_wyvern",
+      "name": "瓦伊凡",
+      "category": 1,
+      "genomeId": "genome_wyvern",
+      "bodySize": 1.8,
+      "lifespanYears": 90.0,
+      "reproductionRate": 0.5,
+      "dietHerbivore": 0.0,
+      "dietCarnivore": 1.0,
+      "habitatTempMinC": -20.0,
+      "habitatTempMaxC": 50.0,
+      "habitatHumidityMinPct": 0.0,
+      "habitatHumidityMaxPct": 100.0,
+      "behaviorTags": [
+        "carnivore",
+        "flyer",
+        "solitary"
+      ],
+      "reproductiveIsolation": 1
+    },
+    {
+      "speciesId": "species_drake",
+      "name": "地龙",
+      "category": 1,
+      "genomeId": "genome_drake",
+      "bodySize": 1.4,
+      "lifespanYears": 70.0,
+      "reproductionRate": 0.7,
+      "dietHerbivore": 0.0,
+      "dietCarnivore": 0.9,
+      "habitatTempMinC": -15.0,
+      "habitatTempMaxC": 48.0,
+      "habitatHumidityMinPct": 0.0,
+      "habitatHumidityMaxPct": 100.0,
+      "behaviorTags": [
+        "carnivore",
+        "ground"
+      ],
+      "reproductiveIsolation": 2
+    }
+  ]
+}

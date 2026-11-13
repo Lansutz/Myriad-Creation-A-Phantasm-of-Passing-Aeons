@@ -1,0 +1,644 @@
+{
+  "genomes": [
+    {
+      "genomeId": "genome_wyvern",
+      "speciesId": "species_wyvern",
+      "chromosomeCount": 4,
+      "sexSystem": {
+        "system": 0
+      },
+      "loci": [
+        {
+          "locusId": "wing",
+          "chromosome": 0,
+          "mapPositionCm": 0,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "wing_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "discreteTraitId": "wingType",
+                  "discreteValue": "membrane"
+                }
+              ]
+            },
+            {
+              "alleleId": "wing_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "discreteTraitId": "wingType",
+                  "discreteValue": "none"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "horn",
+          "chromosome": 0,
+          "mapPositionCm": 10,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "horn_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "discreteTraitId": "hornType",
+                  "discreteValue": "keratin"
+                }
+              ]
+            },
+            {
+              "alleleId": "horn_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "discreteTraitId": "hornType",
+                  "discreteValue": "none"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "tail",
+          "chromosome": 1,
+          "mapPositionCm": 0,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "tail_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "discreteTraitId": "tailType",
+                  "discreteValue": "long"
+                }
+              ]
+            },
+            {
+              "alleleId": "tail_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "discreteTraitId": "tailType",
+                  "discreteValue": "short"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "posture",
+          "chromosome": 1,
+          "mapPositionCm": 10,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "posture_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "discreteTraitId": "posture",
+                  "discreteValue": "quadruped"
+                }
+              ]
+            },
+            {
+              "alleleId": "posture_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "discreteTraitId": "posture",
+                  "discreteValue": "biped"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "skin",
+          "chromosome": 2,
+          "mapPositionCm": 0,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "skin_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "discreteTraitId": "skinType",
+                  "discreteValue": "scale"
+                }
+              ]
+            },
+            {
+              "alleleId": "skin_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "discreteTraitId": "skinType",
+                  "discreteValue": "skin"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "insulation",
+          "chromosome": 2,
+          "mapPositionCm": 10,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "insulation_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "traitId": "insulation",
+                  "additiveEffect": 0.2
+                }
+              ]
+            },
+            {
+              "alleleId": "insulation_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "traitId": "insulation",
+                  "additiveEffect": 0.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "armor",
+          "chromosome": 2,
+          "mapPositionCm": 20,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "armor_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "traitId": "naturalArmor",
+                  "additiveEffect": 0.4
+                }
+              ]
+            },
+            {
+              "alleleId": "armor_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "traitId": "naturalArmor",
+                  "additiveEffect": 0.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "size",
+          "chromosome": 3,
+          "mapPositionCm": 0,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "size_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "traitId": "size",
+                  "additiveEffect": 0.4
+                }
+              ]
+            },
+            {
+              "alleleId": "size_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "traitId": "size",
+                  "additiveEffect": 0.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "diet",
+          "chromosome": 3,
+          "mapPositionCm": 10,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "diet_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "traitId": "dietCarnivore",
+                  "additiveEffect": 0.25
+                }
+              ]
+            },
+            {
+              "alleleId": "diet_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "traitId": "dietCarnivore",
+                  "additiveEffect": 0.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "temp",
+          "chromosome": 3,
+          "mapPositionCm": 20,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "temp_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "traitId": "tempToleranceC",
+                  "additiveEffect": 2.5
+                }
+              ]
+            },
+            {
+              "alleleId": "temp_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "traitId": "tempToleranceC",
+                  "additiveEffect": 0.0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "genomeId": "genome_drake",
+      "speciesId": "species_drake",
+      "chromosomeCount": 4,
+      "sexSystem": {
+        "system": 0
+      },
+      "loci": [
+        {
+          "locusId": "wing",
+          "chromosome": 0,
+          "mapPositionCm": 0,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "wing_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "discreteTraitId": "wingType",
+                  "discreteValue": "none"
+                }
+              ]
+            },
+            {
+              "alleleId": "wing_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "discreteTraitId": "wingType",
+                  "discreteValue": "none"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "horn",
+          "chromosome": 0,
+          "mapPositionCm": 10,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "horn_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "discreteTraitId": "hornType",
+                  "discreteValue": "keratin"
+                }
+              ]
+            },
+            {
+              "alleleId": "horn_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "discreteTraitId": "hornType",
+                  "discreteValue": "none"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "tail",
+          "chromosome": 1,
+          "mapPositionCm": 0,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "tail_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "discreteTraitId": "tailType",
+                  "discreteValue": "long"
+                }
+              ]
+            },
+            {
+              "alleleId": "tail_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "discreteTraitId": "tailType",
+                  "discreteValue": "short"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "posture",
+          "chromosome": 1,
+          "mapPositionCm": 10,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "posture_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "discreteTraitId": "posture",
+                  "discreteValue": "quadruped"
+                }
+              ]
+            },
+            {
+              "alleleId": "posture_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "discreteTraitId": "posture",
+                  "discreteValue": "biped"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "skin",
+          "chromosome": 2,
+          "mapPositionCm": 0,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "skin_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "discreteTraitId": "skinType",
+                  "discreteValue": "scale"
+                }
+              ]
+            },
+            {
+              "alleleId": "skin_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "discreteTraitId": "skinType",
+                  "discreteValue": "skin"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "insulation",
+          "chromosome": 2,
+          "mapPositionCm": 10,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "insulation_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "traitId": "insulation",
+                  "additiveEffect": 0.15
+                }
+              ]
+            },
+            {
+              "alleleId": "insulation_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "traitId": "insulation",
+                  "additiveEffect": 0.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "armor",
+          "chromosome": 2,
+          "mapPositionCm": 20,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "armor_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "traitId": "naturalArmor",
+                  "additiveEffect": 0.35
+                }
+              ]
+            },
+            {
+              "alleleId": "armor_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "traitId": "naturalArmor",
+                  "additiveEffect": 0.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "size",
+          "chromosome": 3,
+          "mapPositionCm": 0,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "size_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "traitId": "size",
+                  "additiveEffect": 0.2
+                }
+              ]
+            },
+            {
+              "alleleId": "size_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "traitId": "size",
+                  "additiveEffect": 0.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "diet",
+          "chromosome": 3,
+          "mapPositionCm": 10,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "diet_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "traitId": "dietCarnivore",
+                  "additiveEffect": 0.2
+                }
+              ]
+            },
+            {
+              "alleleId": "diet_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "traitId": "dietCarnivore",
+                  "additiveEffect": 0.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "locusId": "temp",
+          "chromosome": 3,
+          "mapPositionCm": 20,
+          "inheritance": 0,
+          "mutationRatePerGeneration": 0.0001,
+          "alleles": [
+            {
+              "alleleId": "temp_plus",
+              "symbol": "A",
+              "defaultFrequency": 1.0,
+              "effects": [
+                {
+                  "traitId": "tempToleranceC",
+                  "additiveEffect": 1.5
+                }
+              ]
+            },
+            {
+              "alleleId": "temp_minus",
+              "symbol": "a",
+              "defaultFrequency": 0.0,
+              "effects": [
+                {
+                  "traitId": "tempToleranceC",
+                  "additiveEffect": 0.0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

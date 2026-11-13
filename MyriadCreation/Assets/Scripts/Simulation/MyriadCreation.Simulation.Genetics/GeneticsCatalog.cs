@@ -84,6 +84,18 @@ public static class GeneticsCatalog
 		return false;
 	}
 
+	/// <summary>由基因组反查物种（内容表/内置兜底）；无匹配返回 null。</summary>
+	public static SpeciesDef FindSpeciesForGenome(string genomeId)
+	{
+		if (string.IsNullOrEmpty(genomeId)) return null;
+		foreach (SpeciesDef species in _speciesOverrides.Values)
+		{
+			if (species != null && species.genomeId == genomeId) return species;
+		}
+		if (genomeId == DefaultGenomeId) return GetDefaultSpecies();
+		return null;
+	}
+
 	public static GenomeDef ResolveGenome(string genomeId)
 	{
 		if (TryGetGenome(genomeId, out var genome))

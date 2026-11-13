@@ -1081,3 +1081,15 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **食性 → 口粮结构暂缓**：人口块没有物种字段（只有阶层），若按“统治种族食性”硬接会把全体人口当成一个物种。等人口块带物种归属后再做，先记欠账；本轮三条机制已满足验收。
 - 测试：`PhenotypeMechanicsTests` 7 例（中性无加成、角爪体型加战力、隔热寒暑双向、翼型斥候、具翼指挥官实际扩大范围、酷暑实际掉血）。
 - 验证：`EXIT=0`、`956/958`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D129 物种目录与纯内容驱动的瓦伊凡（D4/D5）
+
+- `GeneticsCatalog.FindSpeciesForGenome`：由基因组反查物种（内容覆盖优先，`genome_human` 回退内置人类）；物种目录继续用 `GeneticsCatalog` 的注册表，不新建第二套。
+- 生殖隔离沿用 `GeneticCompatibility.Evaluate`：同种可育 → 先判定；任一方 `reproductiveIsolation != None` 则跨种不可育；否则按父/母渗入率取较小值。内容表里的 `reproductiveIsolation` 是唯一开关。
+- 新增真实内容：
+  - `Base/Genetics/Genomes.json`：`genome_wyvern`（膜翼/角质角/长尾/四足/鳞皮/隔热/护甲/体型/肉食/耐温）与 `genome_drake`（无翼、角/鳞/长尾的近缘地龙），全部 10 个位点、固定等位基因频率。
+  - `Base/Genetics/Species.json`：人类/瓦伊凡/地龙；瓦伊凡与地龙声明生殖隔离，跨种不可育。
+- 代码没有任何 `wyvern`/`drake` 特判：翼、角、皮、尾、食性全部由基因组位点推导；`SpeciesWyvernTests` 用地龙反证“同属龙类但无翼位点优势等位基因就不会飞”。
+- 复杂度：物种查询 O(物种数)（内容规模小），表型 O(位点)；无 tick 开销。
+- 测试：`SpeciesWyvernTests` 5 例（内容加载、瓦伊凡表型、地龙反证、隔离矩阵、按基因组反查物种）。
+- 验证：`EXIT=0`、`961/963`（2 个 Explicit 跳过）、零 `error CS`。
