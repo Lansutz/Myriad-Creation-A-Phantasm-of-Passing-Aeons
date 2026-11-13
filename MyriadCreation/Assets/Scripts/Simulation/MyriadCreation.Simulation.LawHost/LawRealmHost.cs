@@ -102,7 +102,7 @@ namespace MyriadCreation.Simulation.LawHost
                 return null;
             }
             int num = Math.Max(1, law.enactmentDays);
-            realm.treasury = Math.Max(0f, realm.treasury - law.enactmentCostTreasury);
+            RealmTreasury.Set(realm, Math.Max(0f, realm.treasury - law.enactmentCostTreasury));
             realm.prestige = Math.Max(0f, realm.prestige - law.enactmentCostPrestige);
             PendingLaw pendingLaw = new PendingLaw
             {

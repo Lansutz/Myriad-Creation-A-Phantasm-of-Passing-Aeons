@@ -171,7 +171,7 @@ public class AIDecisionSystem
 		if (realm.stability < 50f)
 		{
 			_ = realm.taxSystem;
-			realm.treasury = Mathf.Max(0f, realm.treasury - 50f);
+			RealmTreasury.Set(realm, Mathf.Max(0f, realm.treasury - 50f));
 			RealmStability.Adjust(realm, 5f);
 		}
 		if (state.economyFocus > 0.6f)

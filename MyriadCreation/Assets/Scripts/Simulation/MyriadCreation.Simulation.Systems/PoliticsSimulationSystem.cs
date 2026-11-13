@@ -85,7 +85,7 @@ public sealed class PoliticsSimulationSystem
 		{
 			// 法律/法令税收乘子在税收结算点消费（旧法/法令到期后乘子随 TickDecreeExpiry / 法律 pending 自然回落）
 			float num = _economyManager.SettleTaxes(value4.realmId, LawEffectRuntime.GetTaxMultiplier(value4, context.day));
-			value4.treasury += num;
+			RealmTreasury.Add(value4, num);
 			TreasuryLedger.Record(value4.realmId, context.year * 365 + context.day, num, "tax");
 		}
 		Dictionary<int, float> dictionary = new Dictionary<int, float>(_realms.Count);

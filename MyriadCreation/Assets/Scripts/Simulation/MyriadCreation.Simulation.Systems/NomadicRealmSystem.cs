@@ -77,7 +77,7 @@ public static class NomadicRealmSystem
 				world.settlements[settlement.Key] = value2;
 			}
 		}
-		value.treasury += num;
+		RealmTreasury.Add(value, num);
 		return num;
 	}
 

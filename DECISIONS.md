@@ -839,3 +839,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `SaveJsonMigration` 只保留地图旧键迁移（`FromMapSaveJson`），删除 `FromGameSaveJson`；测试改用 `MapSaveData`。活存档唯一路径仍是 `SaveSystem + SaveData`。
 - `DefaultLawCatalog.ResetLawIndex` 在内容重载/重置时清空 lawId 索引，避免用旧定义做人格效力/豁免判定。
 - 验证：`EXIT=0`、`876/878`、零 `error CS`。
+
+## D103 货币/稳定度写点全量收口 + 门禁
+
+- 剩余直接写点全部改走 `RealmTreasury`/`RealmStability`：AI 补贴、文化建国加成、法律推行扣款、外交赔款/赠款、游牧收入、政治收入、政体更替稳定度。
+- 新增 `RealmMutationGatewayTests`：扫描 `Scripts/Simulation/**/*.cs`，禁止 `realm.treasury/stability` 的直接赋值（报告 DTO、TileData、LawEffect 中间量等已知非 RealmData 目标除外）。以后新增绕过会红。
+- 字段本身仍为 public（存档 DTO/大量读点），但写入路径已单源；把字段私有化需要同时改 RealmDTO 映射与读点，留作 C 的下一步。
+- 验证：`EXIT=0`、`877/879`、零 `error CS`。

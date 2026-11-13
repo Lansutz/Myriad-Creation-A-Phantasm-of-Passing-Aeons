@@ -79,16 +79,16 @@ public static class CultureStageEvolutionHost
 		switch (path)
 		{
 		case StateFormationPath.AgrarianSettlement:
-			realm.stability = 55f;
+			RealmStability.Set(realm, 55f);
 			break;
 		case StateFormationPath.NomadicConquest:
 			realm.centralization = 0.7f;
 			break;
 		case StateFormationPath.TradeControl:
-			realm.treasury = 2000f;
+			RealmTreasury.Set(realm, 2000f);
 			break;
 		case StateFormationPath.ReligiousUnification:
-			realm.stability = 60f;
+			RealmStability.Set(realm, 60f);
 			break;
 		case StateFormationPath.MilitaryLeague:
 			realm.centralization = 0.3f;

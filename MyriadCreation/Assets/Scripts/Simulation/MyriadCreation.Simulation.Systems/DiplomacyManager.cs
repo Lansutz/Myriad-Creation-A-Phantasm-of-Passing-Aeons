@@ -60,7 +60,7 @@ public class DiplomacyManager
 		{
 			return false;
 		}
-		_realms[fromId].treasury -= amount;
+		RealmTreasury.Spend(_realms[fromId], amount);
 		float num = Mathf.Min(20f, amount / 100f);
 		ModifyRelation(fromId, toId, num, $"赠送礼物 {amount}");
 		ModifyTrust(fromId, toId, num * 0.5f);
@@ -590,7 +590,7 @@ public class DiplomacyManager
 		}
 		// 不扣威望点数：威望是等级门槛；突袭的政治后果由稳定度与关系承担。
 		float num2 = 15f + Mathf.Abs(rel.relation) * 0.1f;
-		realmData.stability = Mathf.Max(0f, realmData.stability - num2);
+		RealmStability.Adjust(realmData, -num2);
 		foreach (int key in _realms.Keys)
 		{
 			if (key != attackerId && key != defenderId)
@@ -607,7 +607,7 @@ public class DiplomacyManager
 		RealmData realmData2 = (_realms.ContainsKey(defenderId) ? _realms[defenderId] : null);
 		if (realmData2 != null)
 		{
-			realmData2.stability = Mathf.Min(100f, realmData2.stability + 10f);
+			RealmStability.Adjust(realmData2, 10f);
 		}
 		Chronicle?.Add("diplomacy", $"{_realms[attackerId].realmName} 不宣而战：稳定度下降 {num2:F0}，各国关系恶化", false, attackerId, defenderId);
 	}
@@ -1042,8 +1042,8 @@ public class DiplomacyManager
 			if (subordination.isActive && _realms.TryGetValue(subordination.vassalId, out var value) && _realms.TryGetValue(subordination.suzerainId, out var value2))
 			{
 				float num2 = value.treasury * subordination.tributeRatio / 365f;
-				value.treasury -= num2;
-				value2.treasury += num2;
+				RealmTreasury.Spend(value, num2);
+				RealmTreasury.Add(value2, num2);
 			}
 		}
 	}

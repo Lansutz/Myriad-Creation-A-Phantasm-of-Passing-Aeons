@@ -107,7 +107,7 @@ public class LawSystem
 				_cachedEffects[realmId] = lawEffectData;
 				_lastFingerprint[realmId] = Fingerprint(newComposition);
 				ApplyLawEffects(realmData, lawEffectData);
-				realmData.stability = Mathf.Clamp(realmData.stability - 20f, 0f, 100f);
+				RealmStability.Adjust(realmData, -20f);
 				Debug.Log((object)("[LawSystem] 政权 " + realmData.realmName + " 法律手动变更"));
 			}
 		}

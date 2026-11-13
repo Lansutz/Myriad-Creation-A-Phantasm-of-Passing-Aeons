@@ -179,6 +179,7 @@
 - 2026-11-13 **P2.5 B 收口**：音频拆为 `MyriadCreation.Audio`；新增 `ISaveSlotService` 契约 + Infrastructure 实现 + `AppServices.SaveSlots`；UI 面板改走契约。UI asmdef 最终不再引用 App/World/Infrastructure。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**B 完成**。
 - 2026-11-13 **P2.5 A 收口**：19 个存档适配器迁入新 `MyriadCreation.Save.Runtime`；`MyriadCreation.Infrastructure` 程序集删除；Editor/App/Tests 改引 Save.Runtime。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**A/B 完成**。
 - 2026-11-13 **P2.5 E 遗传单源**：子代先由 `GeneticsEngine.Reproduce` 生成 GenomeInstance，再产出 DnaData 兼容快照；缺基因组才回退旧路径。新增测试。验证：`EXIT=0`、`873/875`（2 个 Explicit 跳过）、零 `error CS`。**E 完成**。
+- 2026-11-13 **P2.5 C 写点收口**：货币/稳定度剩余直接写点全部改走 `RealmTreasury/RealmStability`，新增架构门禁扫描禁止绕过。验证：`EXIT=0`、`877/879`、零 `error CS`。
 - 2026-11-13 **存档双源清理**：删除 legacy `GameSaveData`（无生产路径），头衔/编年史 DTO 移入 `SaveData`；`SaveJsonMigration` 只留地图旧键迁移；法律索引随内容重载失效。验证：`EXIT=0`、`876/878`、零 `error CS`。
 - 2026-11-13 **M5 法律人格效力**：`LawDef.appliesTo/exemptIdentities` + `LawApplicability` + `CharacterIdentity` + `HasLegalExemption`；`privilege` 组新增 `clergy_forum`，推行后教士不受世俗审判。新增 `LawApplicabilityTests` 3 例，法律 JSON 对拍更新。验证：`EXIT=0`、`876/878`（2 个 Explicit 跳过）、零 `error CS`。§5.1 冲突 2 收口。
 - 2026-11-13 **长跑复验**：法律人格效力改动后重跑 `longrun`（2 seed × 100 年），`1/1` 通过、`EXIT=0`。F/Intrigue/调度器两相已按 D97–D99 作废。
