@@ -324,6 +324,12 @@ public partial class UIManager
  /// <summary>打开家族树面板</summary>
         private void OpenFamilyTreePanel()
         {
+            if (_familyTreeView != null)
+            {
+                _familyTreeView.SetViewRealm(ViewRealmId);
+                _familyTreeView.Show();
+                return;
+            }
             RefreshCharacterList();
             if (familyTreePanel != null) familyTreePanel.SetActive(true);
             RefreshFamilyTreePanel();
@@ -333,7 +339,30 @@ public partial class UIManager
  /// <summary>关闭家族树面板</summary>
         private void CloseFamilyTreePanel()
         {
+            if (_familyTreeView != null) _familyTreeView.Hide();
             if (familyTreePanel != null) familyTreePanel.SetActive(false);
+        }
+
+        private void PrevFamilyMember()
+        {
+            if (_familyTreeView != null)
+            {
+                _familyTreeView.Prev();
+                return;
+            }
+            _charIndex--;
+            RefreshFamilyTreePanel();
+        }
+
+        private void NextFamilyMember()
+        {
+            if (_familyTreeView != null)
+            {
+                _familyTreeView.Next();
+                return;
+            }
+            _charIndex++;
+            RefreshFamilyTreePanel();
         }
 
         // ===== 政府/法律面板入口（task-60：TopBar 动态按钮 + G 快捷键，场景零改动） =====

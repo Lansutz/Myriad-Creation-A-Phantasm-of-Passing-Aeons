@@ -572,3 +572,15 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 第一个落地：`CharacterPanelView`（新文件）——自建标题栏/正文/翻页/关闭，只读 `ICharacterQuery + ICharacterDetailQuery`（不引用 Simulation 家族），支持窄契约注入以便测试；`UIManager` 启动时创建并注册，`OpenCharacterPanel`/翻页/关闭优先转调它。
 - 旧场景字段 `characterPanel` 保留为回退（当前场景值为 `fileID: 0`，即面板对象已缺失）；EditMode 里未构建视图时仍走旧路径，既有测试不变。
 - 后续：家族树、革新面板按同一模式各建一个文件并注册；完成后再删除旧字段/旧方法。
+
+## D68 家族树/革新面板同模式落地（P1.6 / P1.4 UI）
+
+- `FamilyTreePanelView`：单文件自建面板，只读 `ICharacterQuery + ICharacterDetailQuery`，展示王朝/家族/父母/配偶/兄弟姐妹/子女与生死状态，支持翻页；注册为 `family_tree`。
+- `InnovationPanelView`：单文件自建面板，只读 `IInnovationQuery`，展示已研究数与名称、可研究项与前置名称；注册为 `innovation`；只展示，不改研究状态。
+- `UIManager` 启动时构建并注册两者；`SetWorldReadModel` 统一传播。场景里 `familyTreeOpenButton` 为 `fileID: 0`，革新面板原本无入口，因此补 `C/F/I` 三个键盘入口（输入框聚焦与主菜单时不响应），不新造顶栏按钮。
+- 共用构建骨架抽到 `UiPanelBuilder`（Rect/Text/Button 重复劳动），面板内容与交互仍各自一个文件负责。
+
+## D69 P1 施工面收口
+
+- P1.1–P1.6 的代码项均已落地；葬礼按 D64 明确暂缓（无仪式系统），海军海战/舰船建造不属于 P1.5 计划的「海军写侧」，留到 P2 统一裁决。
+- 进入 P2：文化分裂/融合、信仰六层与教义参数 schema、信息传播/Intrigue、内容外提与 Mods、架构 A–F 与双源清理、Compute/Apply 两段式。

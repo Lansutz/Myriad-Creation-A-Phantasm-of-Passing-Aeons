@@ -264,48 +264,17 @@ public sealed class CharacterPanelView : MonoBehaviour, IUserInterfacePanel
 
 	private static void SetText(TMP_Text target, string value)
 	{
-		if (target != null)
-		{
-			target.text = value;
-		}
+		UiPanelBuilder.SetText(target, value);
 	}
 
 	private static TextMeshProUGUI CreateText(Transform parent, string name, float fontSize, FontStyles style, TextAlignmentOptions alignment)
 	{
-		var go = new GameObject(name, typeof(RectTransform));
-		go.transform.SetParent(parent, false);
-		var text = go.AddComponent<TextMeshProUGUI>();
-		text.fontSize = fontSize;
-		text.fontStyle = style;
-		text.alignment = alignment;
-		text.color = Color.white;
-		text.raycastTarget = false;
-		return text;
+		return UiPanelBuilder.CreateText(parent, name, fontSize, style, alignment);
 	}
 
 	private static Button CreateButton(Transform parent, string label, Vector2 size, Vector2 anchor, Vector2 position, UnityAction onClick)
 	{
-		var go = new GameObject("Button_" + label, typeof(RectTransform), typeof(Image), typeof(Button));
-		go.transform.SetParent(parent, false);
-		RectTransform rect = (RectTransform)go.transform;
-		rect.anchorMin = anchor;
-		rect.anchorMax = anchor;
-		rect.pivot = anchor;
-		rect.sizeDelta = size;
-		rect.anchoredPosition = position;
-		go.GetComponent<Image>().color = ButtonColor;
-
-		var button = go.GetComponent<Button>();
-		button.onClick.AddListener(onClick);
-
-		TextMeshProUGUI text = CreateText(go.transform, "Label", 18f, FontStyles.Bold, TextAlignmentOptions.Center);
-		RectTransform textRect = text.rectTransform;
-		textRect.anchorMin = Vector2.zero;
-		textRect.anchorMax = Vector2.one;
-		textRect.offsetMin = Vector2.zero;
-		textRect.offsetMax = Vector2.zero;
-		text.text = label;
-		return button;
+		return UiPanelBuilder.CreateButton(parent, label, size, anchor, position, onClick, ButtonColor);
 	}
 
 	private static void SetRect(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax, Vector2 pivot, Vector2 anchoredPosition, Vector2 sizeDelta, Vector2 offset)

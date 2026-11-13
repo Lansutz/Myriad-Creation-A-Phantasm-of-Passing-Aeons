@@ -95,6 +95,8 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
             if (settlementPanel != null) settlementPanel.SetSettlementQuery(view);
             if (_governmentPanel != null) _governmentPanel.SetWorldReadModel(view);
             if (_characterPanelView != null) _characterPanelView.SetWorldReadModel(view);
+            if (_familyTreeView != null) _familyTreeView.SetQueries(view, view);
+            if (_innovationView != null) _innovationView.SetInnovationQuery(view);
         }
 
         /// <summary>B8-4a 兼容：注入地图统计视图（null 表示未注入，顶栏显示 "-"）。</summary>
@@ -175,6 +177,8 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
         [SerializeField] private GameObject characterPanel;
         // P1.6：角色面板由 CharacterPanelView 单文件负责，管理器只注册与转调。
         private CharacterPanelView _characterPanelView;
+        private FamilyTreePanelView _familyTreeView;
+        private InnovationPanelView _innovationView;
         public UiPanelRegistry Panels { get; } = new UiPanelRegistry();
         [SerializeField] private Button charOpenButton;
         [SerializeField] private Button charPrevButton;
@@ -365,7 +369,35 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
             _characterPanelView.SetWorldReadModel(_worldReadModel);
             _characterPanelView.SetViewRealm(ViewRealmId);
             Panels.Register(_characterPanelView);
+
+            var familyGo = new GameObject("FamilyTreePanelView");
+            familyGo.transform.SetParent(transform, false);
+            _familyTreeView = familyGo.AddComponent<FamilyTreePanelView>();
+            _familyTreeView.Build(familyGo.transform);
+            _familyTreeView.SetQueries(_worldReadModel, _worldReadModel);
+            _familyTreeView.SetViewRealm(ViewRealmId);
+            Panels.Register(_familyTreeView);
+
+            var innovationGo = new GameObject("InnovationPanelView");
+            innovationGo.transform.SetParent(transform, false);
+            _innovationView = innovationGo.AddComponent<InnovationPanelView>();
+            _innovationView.Build(innovationGo.transform);
+            _innovationView.SetInnovationQuery(_worldReadModel);
+            _innovationView.SetViewRealm(ViewRealmId);
+            Panels.Register(_innovationView);
+
             TMPFontUtility.ApplyFontChoice(SettingsService.Current.FontChoice);
+        }
+
+        /// <summary>革新面板入口；面板未注册时静默忽略。</summary>
+        public void OpenInnovationPanel()
+        {
+            if (_innovationView == null)
+            {
+                return;
+            }
+            _innovationView.SetViewRealm(ViewRealmId);
+            _innovationView.Show();
         }
 
  /// 应用中文字体（simhei 黑体——内置 LegacyRuntime 字体不含中文，缺字体则 UI 显示方块）
@@ -384,6 +416,15 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
                 && (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.MainMenu))
             {
                 ToggleGovernmentPanel();
+            }
+
+ // P1.6：面板各有独立文件与注册表；这里只给一个键盘入口（不依赖场景缺失的按钮）。
+            if (!IsTypingInInputField()
+                && (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.MainMenu))
+            {
+                if (Input.GetKeyDown(KeyCode.C)) OpenCharacterPanel();
+                else if (Input.GetKeyDown(KeyCode.F)) OpenFamilyTreePanel();
+                else if (Input.GetKeyDown(KeyCode.I)) OpenInnovationPanel();
             }
 
  // 鼠标点击需要实时响应，不节流
@@ -476,8 +517,8 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
  // 家族树面板按钮
             if (familyTreeOpenButton != null) familyTreeOpenButton.onClick.AddListener(OpenFamilyTreePanel);
             if (familyTreeCloseButton != null) familyTreeCloseButton.onClick.AddListener(CloseFamilyTreePanel);
-            if (familyTreePrevButton != null) familyTreePrevButton.onClick.AddListener(() => { _charIndex--; RefreshFamilyTreePanel(); });
-            if (familyTreeNextButton != null) familyTreeNextButton.onClick.AddListener(() => { _charIndex++; RefreshFamilyTreePanel(); });
+            if (familyTreePrevButton != null) familyTreePrevButton.onClick.AddListener(PrevFamilyMember);
+            if (familyTreeNextButton != null) familyTreeNextButton.onClick.AddListener(NextFamilyMember);
 
 // 政府/法律面板入口（TopBar 动态创建「政府」按钮——场景零改动）
             EnsureGovernmentButton();
