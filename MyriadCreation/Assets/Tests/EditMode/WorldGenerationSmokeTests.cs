@@ -98,6 +98,12 @@ namespace MyriadCreation.Tests.EditMode
                 if (faith != null && faith.highPriestCharacterId >= 0) hasHighPriest = true;
             }
             Assert.IsTrue(hasHighPriest, "至少一个国教应有大祭司生产者");
+            Assert.GreaterOrEqual(world.armies.Count, world.realms.Count, "每个有君主的政权应有开局军队");
+            foreach (var army in world.armies.Values)
+            {
+                Assert.GreaterOrEqual(army.commanderId, 0, "开局军队应有指挥官");
+                Assert.Greater(army.unitCounts.Count, 0, "开局军队应有兵力");
+            }
         }
 
         [Test]

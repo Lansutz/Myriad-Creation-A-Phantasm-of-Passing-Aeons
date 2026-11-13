@@ -130,6 +130,19 @@ public partial class GameWorld : MonoBehaviour
 				faith.highPriestCharacterId = realm.monarchId;
 			}
 		}
+		foreach (RealmData realm in realms.Values)
+		{
+			if (realm == null || realm.monarchId < 0 || realm.coreTiles.Count == 0) continue;
+			int musterTile = -1;
+			foreach (int tile in realm.coreTiles)
+			{
+				musterTile = tile;
+				break;
+			}
+			if (musterTile < 0) continue;
+			Army army = CreateArmy(realm.realmId, realm.monarchId, musterTile);
+			army.unitCounts[100] = 1f;
+		}
 		if (PlayerRealmId < 0 && num > 0)
 		{
 			PlayerRealmId = 0;
