@@ -21,7 +21,7 @@ public sealed class LawCatalogFile
 
 /// <summary>
 /// 法律定义内容加载器（"定义是定义，脚本是脚本"）：从 StreamingAssets JSON 读取法律/法令定义。
-/// JSON 是**唯一完整内容来源**（9 组/32 法/2 法令）；首次访问 DefaultLawCatalog 时懒加载一次
+/// JSON 是**唯一完整内容来源**（12 组/50 法/2 法令）；首次访问 DefaultLawCatalog 时懒加载一次
 /// （启动/读档第一次取目录即触发）。文件缺失或解析失败时自动回退 DefaultLawCatalog 的
 /// **最小回退集**（taxation/military 核心法 + 1 法令），保证无 JSON 的旧环境/旧档仍可启动并给出明确告警。
 /// 只读取定义数据，不改变法律逻辑/存档语义；mod 可通过修改 Base/Laws/Laws.json 覆盖默认目录。

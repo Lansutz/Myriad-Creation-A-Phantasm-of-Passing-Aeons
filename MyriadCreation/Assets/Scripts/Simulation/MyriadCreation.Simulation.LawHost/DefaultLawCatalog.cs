@@ -9,7 +9,7 @@ public static class DefaultLawCatalog
 	/// <summary>
 	/// 法律组定义（唯一内容来源：StreamingAssets/Base/Laws/Laws.json，经 LawContentLoader 懒加载）。
 	/// 文件缺失/损坏时返回 <see cref="CreateDefaultGroups"/> 的**最小回退集**（仅 taxation/military 核心法），
-	/// 保证法律系统仍可启动；完整 9 组/32 法目录不再硬编码在生产代码里（JSON 是唯一权威来源）。
+	/// 保证法律系统仍可启动；完整 12 组/50 法目录不再硬编码在生产代码里（JSON 是唯一权威来源）。
 	/// 返回深拷贝，调用方可安全修改。
 	/// </summary>
 	public static List<LawGroupDef> CreateGroups()
@@ -24,7 +24,7 @@ public static class DefaultLawCatalog
 	/// <summary>
 	/// JSON 缺失/损坏时的最小回退法律组：只保留 taxation（3 条）与 military（2 条）核心法律，
 	/// 覆盖开局/政变映射最常引用的 lawId（tax_light/tax_standard/tax_heavy/militia/standing_army）。
-	/// 这不是完整目录：完整 9 组/32 法请修复 StreamingAssets/Base/Laws/Laws.json。
+	/// 这不是完整目录：完整 12 组/50 法请修复 StreamingAssets/Base/Laws/Laws.json。
 	/// </summary>
 	private static Dictionary<string, LawDef> _lawIndex;
 
