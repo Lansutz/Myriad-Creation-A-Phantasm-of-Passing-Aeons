@@ -826,6 +826,15 @@ public partial class GameWorld : MonoBehaviour
 				if (realms[i] != null) BannerSystem.Ensure(realms[i], _characterManager, _innovationTree);
 			}
 		});
+		// 远征（P4.1）：每日推进路线、补给、拦截与知识揭示；计划层只读远征状态。
+		_simulationScheduler.Register("expeditions.daily", SimulationCadence.Daily, 29, (SimulationTickContext _) =>
+		{
+			if (expeditions == null) return;
+			foreach (Expedition expedition in expeditions.Values)
+			{
+				ExpeditionSystem.Tick(expedition, tiles, mapWidth, mapHeight, Knowledge, armies, _chronicle);
+			}
+		});
 		// 地图知识（S19）：军队按斥候范围揭示；所有权地块在生成时已播种。
 		_simulationScheduler.Register("knowledge.scouts.monthly", SimulationCadence.Monthly, 30, (SimulationTickContext _) =>
 		{

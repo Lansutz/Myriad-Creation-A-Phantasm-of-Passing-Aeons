@@ -69,6 +69,9 @@ namespace MyriadCreation.Infrastructure.Save
  // ===== 军队实体（SaveVersion 13 起；地图单位视图由军队重新派生，不入档）=====
         public List<ArmySaveData> armies;
 
+        // ===== 远征实体（P4.1；旧档为 null，读档保持空表）=====
+        public List<ExpeditionSaveData> expeditions;
+
  // ===== 革新/科技树运行时状态（SaveVersion 14 起；革新定义本身来自内容包）=====
         public InnovationTreeSaveData innovations;
 

@@ -1123,3 +1123,14 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 恢复 `taxation` 硬门禁：`PoliticsSimulationSystem` 查 `OfficeSystem.HasModuleHolder(..., taxation)`；无征税官时 `EconomyManager.SettleTaxes(..., hasCollector:false)` 返回 0，不是税率归零。
 - 测试适配：战争/议事测试改用 `WarDecisionMode.SkipConsultation` 隔离议事变量；`CouncilConsultationTests` 在构造议事会前清空自动填充的官职，避免人数漂移。
 - 验证：`EXIT=0`、`973/975`（2 个 Explicit 跳过）、零 `error CS`；`longrun` 2 seed×100 年 `1/1`、`EXIT=0`（税收硬门禁未摧毁经济）。
+
+## D133 远征实体与探索计划（P4.1）
+
+- 新增 `Expedition`（Simulation.State）：owner/leader/home/current/route/cursor/supplies/state/failReason；路线在立项时用八向 BFS 一次算好，运行期只推进 cursor，不每日重算寻路。
+- `ExpeditionSystem`：每日扣 0.2 补给、移动一格、按 `RevealRadius=1` 揭示地图知识；补给耗尽 → `supplies` 失败；同格有他国军队 → `intercepted` 失败；抵达终点 → Completed；失败/完成都写编年史。
+- `ExplorationPlanSystem`：立项要求领队在世、目标为陆地、BFS 有路；创建远征并把 `plan.targetId` 指向远征 id；进度由 `routeCursor/route.Count` 驱动，远征失败/完成映射为计划 Fail/Complete。
+- 调度：`expeditions.daily`（优先级 29，早于计划 30）；`GameWorld.expeditions` 字典 + 自增 id。
+- 存档：`ExpeditionSaveData`/`ExpeditionPersistence`，`SaveData.expeditions`；旧档为 null 时保持空表；读档恢复 id 计数。
+- 复杂度：路线 BFS O(N) 仅在立项时；每日 O(远征数×1)；知识揭示 O(r²)。
+- 测试：`ExpeditionTests` 4 例（立项+完成+知识揭示、补给失败、拦截失败、DTO 往返）。
+- 验证：`EXIT=0`、`977/979`（2 个 Explicit 跳过）、零 `error CS`。

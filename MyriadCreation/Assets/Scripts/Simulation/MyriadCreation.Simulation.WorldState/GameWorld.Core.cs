@@ -108,6 +108,27 @@ public partial class GameWorld : MonoBehaviour
 	[NonSerialized]
 	public Dictionary<int, Army> armies = new Dictionary<int, Army>();
 
+	/// <summary>远征实体（P4.1）：地图知识的过程载体；由远征调度推进。</summary>
+	public Dictionary<int, Expedition> expeditions = new Dictionary<int, Expedition>();
+
+	private int _nextExpeditionId = 1;
+
+	public int NextExpeditionId() => _nextExpeditionId++;
+
+	public void SetNextExpeditionId(int next)
+	{
+		_nextExpeditionId = Math.Max(_nextExpeditionId, next);
+	}
+
+	private ExplorationPlanSystem _explorationPlanSystem;
+
+	public ExplorationPlanSystem ExplorationPlans => _explorationPlanSystem ?? (_explorationPlanSystem = new ExplorationPlanSystem(this, Plans));
+
+	public Plan CreateExplorationPlan(int realmId, int leaderCharacterId, int targetTile)
+	{
+		return ExplorationPlans.CreatePlan(realmId, leaderCharacterId, targetTile);
+	}
+
 	public Dictionary<int, Navy> navies = new Dictionary<int, Navy>();
 
 	private readonly List<WarState> _wars = new List<WarState>();

@@ -394,6 +394,7 @@ namespace MyriadCreation.Infrastructure.Save
 
  // 军队实体（v13 起；军队编制/士气/补给/行军路径不再读档蒸发）
             data.armies = ArmyPersistence.CaptureArmies(world);
+            data.expeditions = ExpeditionPersistence.Capture(world);
 
  // 革新/科技树运行时状态（v14 起；读档后科技不再清零）
             data.innovations = world.Innovations != null ? world.Innovations.CaptureState() : null;
@@ -490,6 +491,8 @@ namespace MyriadCreation.Infrastructure.Save
             // 军队实体（v13）：就地还原军队字典，并把自增 ID 推进到存档最大值之后，
             // 避免读档后新建军队/战争与旧实体撞 ID。
             int nextArmyId = ArmyPersistence.RestoreArmies(world, data.armies);
+            int nextExpeditionId = ExpeditionPersistence.Restore(world, data.expeditions);
+            world.SetNextExpeditionId(nextExpeditionId);
             int nextNavyId = NavyPersistence.RestoreNavies(world, data.navies);
             int nextWarId = 1;
             if (data.wars != null)
