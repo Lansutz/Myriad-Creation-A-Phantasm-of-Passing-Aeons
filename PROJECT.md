@@ -171,7 +171,8 @@
 - 2026-11-13 **P2.5 C stability 单一入口**：新增 `RealmStability`（Adjust/Set/Drift，统一 0–100），迁移 AI/法律效果/政体改革/政权更替/外交赔款/战争议事/政治回归 7 类写点。新增 `RealmStabilityTests` 3 例。验证：`EXIT=0`、`861/863`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **P2.3 信息滞后**：`CharacterKnowledgeRegistry.PruneStale` 月结遗忘非本政权、超 3 年无接触的人物；本政权人物不遗忘。`KnownCharacterInfo` 增 `characterRealmId` 并入档。新增 `KnowledgeDecayTests` 3 例。验证：`EXIT=0`、`864/866`（2 个 Explicit 跳过）、零 `error CS`。**Intrigue 仍等 S19 地图知识**。
 - 2026-11-13 **P2.4 建造门槛外提**：30 条 `BuildableType` 门槛进 `BuildableTypes.json`，新增 `BuildableRequirementLoader`，内容优先/代码兜底。新增 2 例测试。验证：`EXIT=0`、`866/868`（2 个 Explicit 跳过）、零 `error CS`。**长跑回归**：2 seed × 100 年 `longrun` 通过（1/1，260s）。内容表累计 7/18。
-- 待办：P2.3 Intrigue（前置 S19）、P2.4 其余零散常量表、P2.5 architecture A/B/F + population 入口、P2.6 Compute/Apply；**G5 / G6**；内容体检。
+- 2026-11-13 **P2.6 影响力场 Compute/Apply**：`Calculate` 改纯读、新增 `Apply` 写 anchor、`UpdateControlTiers` 日结两步锁步并缓存 `LastField`；查询路径不再重算/写状态。新增 3 例测试。验证：`EXIT=0`、`869/871`（2 个 Explicit 跳过）、零 `error CS`。
+- 待办：P2.3 Intrigue（前置 S19）、P2.4 其余零散常量表、P2.5 architecture A/B/F + population 入口、P2.6 其余性能项；**G5 / G6**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。
 - 备注：卡住时先 `Get-Process Unity` + 删 `MyriadCreation\Temp\UnityLockfile` 再重跑 `build.cmd`。

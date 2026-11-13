@@ -369,7 +369,7 @@ public sealed class MapWorldViewAdapter : IMapWorldView, IMapSettlementView, IMa
 		{
 			return false;
 		}
-		InfluenceField field = SettlementInfluenceSystem.Calculate(_world.settlements, _world.tiles, _mapWidth, _mapHeight);
+		InfluenceField field = SettlementInfluenceSystem.LastField;
 		if (field?.tierByTile == null || field.sourceAnchorByTile == null)
 		{
 			return false;

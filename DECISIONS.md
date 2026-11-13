@@ -742,3 +742,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 测试：30 条齐全/唯一/区间合法；关隘形态（瓶颈、6 个群系、坡度 5–40）转换正确。
 - 长跑回归：`longrun.cmd` 2 seed × 100 年通过（1/1，260s），新加的月结系统未造成超时。
 - 未做：其余零散常量表（多为逐类 switch/权重，不是可外提的平表）。
+
+## D90 影响力场 Compute/Apply 分离（P2.6 第一刀）
+
+- 事实：`SettlementInfluenceSystem.Calculate` 原先在计算过程中直接写 `anchor.influenceTier`；`MapWorldViewAdapter.TryGetInfluenceOverlay`（查询路径）每次调用都**整场重算**，既昂贵又写模拟状态。
+- 拆分：`Calculate` 只产 `InfluenceField`（纯读）；新增 `Apply(settlements, field)` 只写 anchor 等级；`UpdateControlTiers` 日结按「Calculate → Apply → 缓存」锁步执行。
+- 查询路径改为读 `SettlementInfluenceSystem.LastField`：未到日结/未结算时返回 false，不再重算、不再写状态。
+- 测试：Apply 写 anchor、空输入不抛、Calculate 不写 anchor。
+- 未做：调度器全局两相 API（当前只有该重量级系统需要，先落在系统内部；无消费者的通用抽象不提前建）。

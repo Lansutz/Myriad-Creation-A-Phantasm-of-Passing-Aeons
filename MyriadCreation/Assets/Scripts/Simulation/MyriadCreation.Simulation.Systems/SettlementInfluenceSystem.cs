@@ -126,10 +126,6 @@ public static class SettlementInfluenceSystem
 					{
 						influenceField.tiersBySettlement[controlledAnchorId] = influenceTier;
 					}
-					if (value.anchor != null)
-					{
-						value.anchor.influenceTier = (int)influenceTier;
-					}
 				}
 			}
 			for (int num3 = 0; num3 < array.Length; num3++)
@@ -148,11 +144,37 @@ public static class SettlementInfluenceSystem
 		return influenceField;
 	}
 
+	private static InfluenceField _lastField;
+
+	/// <summary>最近一次日结算出的影响力场（只读快照）；查询路径不得重算或写状态（P2.6）。</summary>
+	public static InfluenceField LastField => _lastField;
+
+	/// <summary>日结：先算场（纯读），再整批写回 anchor 影响力等级；两步锁步执行。</summary>
 	public static void UpdateControlTiers(Dictionary<int, SettlementData> settlements, TileData[] tiles, int mapWidth, int mapHeight, InfluenceSettings settings = null)
 	{
-		if (settlements != null && settlements.Count != 0)
+		if (settlements == null || settlements.Count == 0)
 		{
-			Calculate(settlements, tiles, mapWidth, mapHeight, settings);
+			_lastField = null;
+			return;
+		}
+		InfluenceField field = Calculate(settlements, tiles, mapWidth, mapHeight, settings);
+		Apply(settlements, field);
+		_lastField = field;
+	}
+
+	/// <summary>Apply 相：只写模拟状态，不重新计算。</summary>
+	public static void Apply(Dictionary<int, SettlementData> settlements, InfluenceField field)
+	{
+		if (settlements == null || field?.tiersBySettlement == null)
+		{
+			return;
+		}
+		foreach (KeyValuePair<int, InfluenceTier> pair in field.tiersBySettlement)
+		{
+			if (settlements.TryGetValue(pair.Key, out SettlementData settlement) && settlement?.anchor != null)
+			{
+				settlement.anchor.influenceTier = (int)pair.Value;
+			}
 		}
 	}
 
