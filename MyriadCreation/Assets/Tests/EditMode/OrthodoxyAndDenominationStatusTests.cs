@@ -37,6 +37,16 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
+        public void ReligionStage_UsesDivergenceBands()
+        {
+            Assert.AreEqual(ReligionStage.Unity, ReligionStageRules.StageFor(19f));
+            Assert.AreEqual(ReligionStage.FragileUnity, ReligionStageRules.StageFor(20f));
+            Assert.AreEqual(ReligionStage.Compromise, ReligionStageRules.StageFor(40f));
+            Assert.AreEqual(ReligionStage.Hostility, ReligionStageRules.StageFor(60f));
+            Assert.AreEqual(ReligionStage.Schism, ReligionStageRules.StageFor(80f));
+        }
+
+        [Test]
         public void Status_DeclaredViolationIsHeterodox_ElseDivergenceDecides()
         {
             Assert.AreEqual(DenominationStatus.Heterodox, DenominationStatusRules.Evaluate(0f, 1));

@@ -892,6 +892,11 @@ public partial class GameWorld : MonoBehaviour
 				_chronicle?.Add("culture", (parentName ?? ("#" + parentId)) + " 分出 " + (childName ?? ("#" + childId)), true, realmId);
 			});
 		});
+		// 宗教局势：同教诸 faith 的分歧度决定阶段；达分裂阈值自动分出宗派。
+		_simulationScheduler.Register("faith.stage.monthly", SimulationCadence.Monthly, 43, (SimulationTickContext _) =>
+		{
+			TickReligionStages();
+		});
 		// 教派状态：正统越界/分歧度月结，结果写 Denomination.status。
 		_simulationScheduler.Register("faith.orthodoxy.monthly", SimulationCadence.Monthly, 42, (SimulationTickContext _) =>
 		{

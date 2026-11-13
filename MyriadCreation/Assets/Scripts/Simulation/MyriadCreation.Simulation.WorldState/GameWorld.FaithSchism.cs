@@ -122,6 +122,70 @@ public partial class GameWorld
 		}
 	}
 
+	/// <summary>
+	/// P2.2 宗教局势月结：同一 religion 下诸 faith 的最大分歧度决定阶段；
+	/// 达到分裂阈值时，把分歧最大的 faith 分出宗派（只在该 faith 仍挂默认宗派时触发一次）。
+	/// </summary>
+	private void TickReligionStages()
+	{
+		if (_faithSystems == null || _faithSystems.Count == 0)
+		{
+			return;
+		}
+		Dictionary<int, List<FaithSystem>> byReligion = new Dictionary<int, List<FaithSystem>>();
+		for (int i = 0; i < _faithSystems.Count; i++)
+		{
+			FaithSystem faith = _faithSystems[i];
+			if (faith == null || faith.religionId < 0)
+			{
+				continue;
+			}
+			if (!byReligion.TryGetValue(faith.religionId, out List<FaithSystem> list))
+			{
+				list = new List<FaithSystem>();
+				byReligion[faith.religionId] = list;
+			}
+			list.Add(faith);
+		}
+		foreach (KeyValuePair<int, List<FaithSystem>> pair in byReligion)
+		{
+			if (pair.Value.Count < 2)
+			{
+				continue;
+			}
+			float maxDivergence = 0f;
+			FaithSystem worst = null;
+			for (int i = 0; i < pair.Value.Count; i++)
+			{
+				FaithSystem faith = pair.Value[i];
+				if (!ContentResolvers.Religions.TryGet(faith.faithId, out ReligionDef faithDef) || faithDef == null)
+				{
+					continue;
+				}
+				if (!ContentResolvers.Religions.TryGet(faith.religionId, out ReligionDef orthodox) || orthodox == null)
+				{
+					continue;
+				}
+				float divergence = ReligionCatalog.GetDivergence(orthodox, faithDef);
+				if (divergence > maxDivergence)
+				{
+					maxDivergence = divergence;
+					worst = faith;
+				}
+			}
+			if (worst == null || ReligionStageRules.StageFor(maxDivergence) != ReligionStage.Schism)
+			{
+				continue;
+			}
+			Denomination current = GetDenomination(worst.denominationId);
+			if (current != null && !current.isDefault)
+			{
+				continue;
+			}
+			CreateDenomination(worst.faithId, worst.faithName + "宗");
+		}
+	}
+
 	private int NextDenominationId()
 	{
 		int next = 1;

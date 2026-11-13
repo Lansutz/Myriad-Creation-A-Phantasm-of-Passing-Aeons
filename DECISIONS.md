@@ -685,3 +685,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `GameWorld.TickDenominationStatuses`（`faith.orthodoxy.monthly`，order 42）：对每个非默认宗派，取成员 faith 与其上位 religion 的分歧度/越界数，写回 `Denomination.status` 并留编年史。
 - 测试：未声明边界、缺必备、含排除、合规；状态三档判定。
 - 未做：合一/妥协/敌意的局势阶段与自动分裂（需要宗教局势状态机与玩家/机构裁决入口）。
+
+## D83 宗教局势阶段（P2.2 第五刀）
+
+- `ReligionStage`：合一/脆弱的合一/妥协/敌意/分裂；`ReligionStageRules.StageFor(divergence)` 按 20/40/60/80 分档（TODO_M05）。
+- `GameWorld.TickReligionStages`（`faith.stage.monthly`，order 43）：对每个有 ≥2 条 faith 的 religion，取「faith 自身教义 vs 上位 religion 教义」的最大分歧度定阶段；达到分裂阈值时，只把分歧最大的 faith 分出宗派（若它仍挂默认宗派），避免每月重复分裂。
+- 阶段本身是**派生值**，不入档；只有分裂动作写实体（Denomination/faith.denominationId），与既有存档字段一致。
+- 未做：合一（消除分歧）与妥协（保留分歧但维持共融）的裁决入口；当前阶段用于观测与分裂触发，不假装已实现谈判。
