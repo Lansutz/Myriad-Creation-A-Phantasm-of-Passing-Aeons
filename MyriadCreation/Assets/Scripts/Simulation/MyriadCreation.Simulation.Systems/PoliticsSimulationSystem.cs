@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using MyriadCreation.Simulation.Laws;
 using System.Collections.Generic;
 using MyriadCreation.Core.Data;

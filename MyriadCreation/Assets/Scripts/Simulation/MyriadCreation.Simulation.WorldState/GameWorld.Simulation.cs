@@ -1864,7 +1864,8 @@ public partial class GameWorld : MonoBehaviour
 			return default;
 		}
 		realms.TryGetValue(realmId, out var value);
-		TrialResult result = orCreateJudicialSystem.TrialCrime(crime, suspectCharacterId, realmId, value);
+		bool hasJudge = OfficeSystem.HasModuleHolder(value, OfficeSystem.ModuleJudiciary, _characterManager, out _);
+		TrialResult result = orCreateJudicialSystem.TrialCrime(crime, suspectCharacterId, realmId, value, hasJudge);
 		if (_chronicle != null && result.verdict != VerdictType.Dismissed)
 		{
 			string eventType = ((result.verdict == VerdictType.Guilty) ? "crime_guilty" : "crime_acquitted");

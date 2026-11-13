@@ -132,7 +132,6 @@ public static class OfficeSystem
 			CharacterData candidate = pool[i];
 			if (candidate == null || seated.Contains(candidate.characterId)) continue;
 			if (!IsEligible(candidate, ruler, def)) continue;
-			if (candidate.role == CharacterRole.Spouse) continue;
 			float score = election
 				? candidate.prestige
 				: RolePriority(candidate.role);

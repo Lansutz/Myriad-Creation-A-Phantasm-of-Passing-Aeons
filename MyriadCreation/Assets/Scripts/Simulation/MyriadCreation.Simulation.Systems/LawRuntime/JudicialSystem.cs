@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Simulation.State;
 using UnityEngine;
@@ -61,9 +61,17 @@ public class JudicialSystem
 		return false;
 	}
 
-	public TrialResult TrialCrime(CrimeType crime, int suspectCharacterId, int realmId, RealmData realm)
+	/// <summary>
+	/// 审案：hasJudge=false 表示政权没有持 judiciary 职权的在职官员——法庭不成立，案件驳回（不是判无罪）。
+	/// </summary>
+	public TrialResult TrialCrime(CrimeType crime, int suspectCharacterId, int realmId, RealmData realm, bool hasJudge = true)
 	{
 		TrialResult result = default;
+		if (!hasJudge)
+		{
+			result.verdict = VerdictType.Dismissed;
+			return result;
+		}
 		if (!CrimeRegistry.TryGet(crime, out var definition))
 		{
 			result.verdict = VerdictType.Dismissed;

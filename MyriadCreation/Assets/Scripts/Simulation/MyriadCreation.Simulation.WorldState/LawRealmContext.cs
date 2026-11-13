@@ -1,3 +1,4 @@
+using MyriadCreation.Content.Definitions;
 using MyriadCreation.Core.Contracts;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
@@ -41,7 +42,18 @@ namespace MyriadCreation.Simulation.WorldState
             {
                 foreach (var officeHolder in _realm.officeHolders)
                 {
-                    if (officeHolder.Value == characterId)
+                    if (officeHolder.Value != characterId)
+                    {
+                        continue;
+                    }
+                    // 职权由内容表的模块决定：持 law_proposal 的官职才能推中央机构法。
+                    // 一个角色可能同时挂多个槽位，必须看完全部槽位再判否。
+                    // 表中不存在的旧槽位维持旧行为（任一官职），避免旧档/旧内容卡死。
+                    if (!OfficeCatalog.TryGet(officeHolder.Key, out OfficeDef office))
+                    {
+                        return true;
+                    }
+                    if (OfficeSystem.HasModule(office, OfficeSystem.ModuleLawProposal))
                     {
                         return true;
                     }

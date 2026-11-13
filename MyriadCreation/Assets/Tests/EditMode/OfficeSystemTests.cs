@@ -227,6 +227,29 @@ namespace MyriadCreation.Tests.EditMode
             Assert.IsFalse(OfficeSystem.HasModuleHolder(realm, OfficeSystem.ModuleJudiciary, manager, out _), "无人持 judiciary 时不得凭空有审判权");
         }
 
+        [Test]
+        public void LawContext_CentralOfficeProposalFollowsModule()
+        {
+            var realm = new RealmData { realmId = 0 };
+            realm.officeHolders[1] = 200; // 区长官：只有 taxation
+            realm.officeHolders[2] = 300; // 宰相：law_proposal
+            var context = new MyriadCreation.Simulation.WorldState.LawRealmContext(realm);
+
+            Assert.IsFalse(context.IsCentralOfficeHolder(200), "持 taxation 的区长官不能推中央机构法");
+            Assert.IsTrue(context.IsCentralOfficeHolder(300), "持 law_proposal 的宰相可以推中央机构法");
+        }
+
+        [Test]
+        public void Judiciary_WithoutJudgeDismissesInsteadOfTrying()
+        {
+            var judicial = new MyriadCreation.Simulation.LawHost.JudicialSystem();
+            var result = judicial.TrialCrime(
+                MyriadCreation.Simulation.Laws.CrimeType.Witchcraft, 1, 0, new RealmData(), hasJudge: false);
+
+            Assert.AreEqual(MyriadCreation.Simulation.Laws.VerdictType.Dismissed, result.verdict,
+                "没有持 judiciary 职权的官员时，法庭不成立：案件驳回，而不是判无罪");
+        }
+
         // ---------- 5. 存档往返 ----------
 
         [Test]

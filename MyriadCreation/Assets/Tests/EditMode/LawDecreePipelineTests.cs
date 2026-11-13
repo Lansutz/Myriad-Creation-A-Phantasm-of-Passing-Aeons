@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using MyriadCreation.Simulation.Laws;
 using MyriadCreation.Simulation.State;
@@ -166,7 +166,9 @@ namespace MyriadCreation.Tests.EditMode
             Assert.IsFalse(LawRealmHost.CanPropose(realm, 100, militia, out reason), "无官职者不可推中央机构法");
             StringAssert.Contains("中央机构", reason);
             realm.officeHolders[1] = 200;
-            Assert.IsTrue(LawRealmHost.CanPropose(realm, 200, militia, out _), "中央机构 holder 可提案");
+            Assert.IsFalse(LawRealmHost.CanPropose(realm, 200, militia, out _), "区长官无 law_proposal 模块，不能推中央机构法");
+            realm.officeHolders[2] = 200;
+            Assert.IsTrue(LawRealmHost.CanPropose(realm, 200, militia, out _), "持 law_proposal 的宰相可提案");
 
             // 机构不匹配
             var assemblyLaw = new LawDef
@@ -339,8 +341,8 @@ namespace MyriadCreation.Tests.EditMode
             Assert.IsFalse(view.proposableLaws.Exists(i => i.law.lawId == "militia"), "首脑无权推行中央机构法");
             Assert.IsFalse(view.proposableLaws.Exists(i => i.law.lawId == "charter_free_city"), "首脑无权推行特许法");
 
-            // 首脑同时持有中央官职 + 特许 → 候选出现（机构匹配 BureaucraticCore）
-            realm.officeHolders[1] = 100;
+            // 首脑同时持有中央官职（持 law_proposal 的宰相）+ 特许 → 候选出现（机构匹配 BureaucraticCore）
+            realm.officeHolders[2] = 100;
             Assert.IsTrue(LawRealmHost.GrantCharter(realm, 100));
             var viewAuthorized = LawDecreeViewBuilder.Build(realm, DefaultLawCatalog.CreateGroups(), DefaultLawCatalog.CreateDecrees(), 10, null);
             Assert.IsTrue(viewAuthorized.proposableLaws.Exists(i => i.law.lawId == "militia"), "中央机构 holder 的首脑可推行中央机构法");

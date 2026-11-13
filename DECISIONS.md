@@ -965,3 +965,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 调度：`offices.daily`（优先级 26）每日补缺 + 任期检查 + 俸禄；战争结束仍保留即时补缺。
 - 已知未做（下一批）：模块尚未接到提案/审案/征税/任免；`appointmentOrder` 的 `council` 目前只作为候选顺序标记，尚未强制议事会通过；罢免阻力只入表、未接罢免动作。
 - 验证：`EXIT=0`、`906/908`（2 个 Explicit 跳过）、零 `error CS`；新增 `OfficeSystemTests` 10 例。
+
+## D118 官职职权接线（P3.1 第二批）
+
+- **提案权**：`LawRealmContext.IsCentralOfficeHolder` 改为查内容表模块——只有持 `law_proposal` 的官职（默认宰相）能推中央机构法；一个角色可能同时挂多个槽位，必须看完全部槽位再判否。表中不存在的旧槽位保持“任一官职”旧行为。
+- **审案权**：`JudicialSystem.TrialCrime` 增加 `hasJudge`；政权没有持 `judiciary` 的在职官员时案件 `Dismissed`（法庭不成立），不是判无罪。GameWorld 调用点传入模块查询结果。
+- **征税没有做硬门禁**：世界生成只给每个政权君主+配偶，若把“无 taxation 官员=无税收”接上，前十几年国库收入为 0，会直接摧毁现有经济与长跑。现有 `TaxSystem` 的税率/税基链保持不变；`taxation` 模块先作为“征收者身份/任免资格”的内容声明，等宫廷人物供给（P3.3/P3.6）补上再收紧。这是有意保留的欠账，不是遗漏。
+- **任免/罢免**：`dismissalResistance` 只入表，尚未接动作层；`personnel` 模块待与 `ActionIds.AppointTitle` 一起接。
+- 测试适配：`LawDecreePipelineTests` 的“中央机构 holder 可提案”改用槽位 2（宰相）；新增“区长官无 law_proposal 不能提案”“无审判官时驳回案件”两例。
+- 验证：`EXIT=0`、`908/910`（2 个 Explicit 跳过）、零 `error CS`。
