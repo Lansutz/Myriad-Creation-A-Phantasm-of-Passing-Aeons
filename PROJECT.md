@@ -193,7 +193,7 @@
 | # | 冲突 | 状态 | 证据 |
 |---|---|---|---|
 | 1 | D32 删四类 Plan vs「一律用 Plan」 | 已收口 | `PlanType` 四值标 `[Obsolete]`，全库零引用（D77） |
-| 2 | 教理性别/婚姻 vs M5 人格效力 | 合并项已落一半 | `DoctrineIdentityRules` 统一教职/婚配判定（D64）；法律按身份的适用（人格效力）仍是 M5 欠账，无消费者，未硬造 |
+| 2 | 教理性别/婚姻 vs M5 人格效力 | 已收口 | `DoctrineIdentityRules`（D64）+ `LawApplicability/CharacterIdentity` 与司法豁免（D101）；同一套身份旗标供两处使用 |
 | 3 | 入口口径（授权 vs 面板） | 按 D33 执行 | 新面板只有查询（角色/家族/革新），无新增微操面板 |
 | 4 | denomination 必挂 vs 可选 | 按 D29 执行 | 生成期为每个 religion 合成 `isDefault=true` 默认宗派；faith 挂靠链有日志兜底（`GameWorld.Core`） |
 | 5 | 15 vs 16 asmdef | 以实测为准 | P2.5 后实测 **18** 个 asmdef（新增 Settings/Audio/Save.Runtime，删除 Infrastructure）；不再有“15/16”口径 |
@@ -209,4 +209,4 @@
 6. **架构判据** — `Rendering/Laws/Faith/Culture/Save.Contracts/Settings/Audio` 可独立编译；`Infrastructure` 已删除，存档实现归 `Save.Runtime`；`UI` 不再引用 App/World/Infrastructure；App 装配 UI。判据达成。
 7. **迁移已落地** — 旧总纲在 `docs/archive/2026-11-11_superseded/`，不再作为现行；V2 为唯一现行总纲。
 
-**结论**：§5.1 清零（第 2 条剩余项归属 M5）；§6 七条全部满足。P2.5 A–E 完成（F 按 D97 作废并写明触发条件）、P2.3 信息滞后完成（Intrigue 按 D98 作废）、P2.6 影响力两相完成（调度器全局两相按 D99 作废）、P2.4 计划点名平表全部外提（其余按 D99 清点）。
+**结论**：§5.1 清零（第 2 条由 D101 收口）；§6 七条全部满足。P2.5 A–E 完成（F 按 D97 作废并写明触发条件）、P2.3 信息滞后完成（Intrigue 按 D98 作废）、P2.6 影响力两相完成（调度器全局两相按 D99 作废）、P2.4 计划点名平表全部外提（其余按 D99 清点）。
