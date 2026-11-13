@@ -7,6 +7,7 @@ using MyriadCreation.Core.Contracts;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Simulation.AI;
 using MyriadCreation.Simulation.Economy;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
@@ -224,6 +225,32 @@ namespace MyriadCreation.Tests.EditMode
             plan.resultCode = "partial";
             plan.resultSummary = "测试中间态";
 
+            var aiManager = world.GetAIManager();
+            Assert.IsNotNull(aiManager, "前置：AI 管理器应存在");
+            AIController aiController = aiManager.GetController(realmId) ?? aiManager.CreateController(realmId);
+            aiController.RestoreState(new AIControllerSaveData
+            {
+                realmId = realmId,
+                personality = new AIPersonality
+                {
+                    personalityName = "测试AI",
+                    expansionBias = 0.7f,
+                    economicBias = 0.2f,
+                    diplomaticBias = 0.3f,
+                    militaryBias = 0.4f,
+                    aggression = 0.6f,
+                    riskTolerance = 0.5f,
+                    researchMultiplier = 1.2f,
+                    preferredDomains = new List<InnovationDomain> { (InnovationDomain)0 },
+                    fixedArchetype = true
+                },
+                decisionTimer = 12.5f,
+                currentGoal = (int)AIGoal.ExpandTerritory,
+                targetRealmId = otherRealmId,
+                targetTileIndex = modifiedTile,
+                raidCooldown = 9
+            });
+
             var division = new AdminDivision
             {
                 divisionId = 9001,
@@ -373,6 +400,17 @@ namespace MyriadCreation.Tests.EditMode
             Assert.IsTrue(loadedPlan.isWaiting, "等待标记");
             Assert.AreEqual("partial", loadedPlan.resultCode, "结果码");
             Assert.AreEqual("测试中间态", loadedPlan.resultSummary, "结果摘要");
+
+            AIController loadedAI = loaded.GetAIManager()?.GetController(realmId);
+            Assert.IsNotNull(loadedAI, "AI 控制器应还原");
+            Assert.AreEqual("测试AI", loadedAI.personality.personalityName, "AI 人格名");
+            Assert.AreEqual(0.7f, loadedAI.personality.expansionBias, 0.001f, "AI 扩张偏好");
+            Assert.AreEqual(12.5f, loadedAI.DecisionTimer, 0.001f, "AI 决策计时");
+            Assert.AreEqual(AIGoal.ExpandTerritory, loadedAI.GetCurrentGoal(), "AI 当前目标");
+            Assert.AreEqual(otherRealmId, loadedAI.GetTargetRealm(), "AI 目标政权");
+            Assert.AreEqual(modifiedTile, loadedAI.TargetTileIndex, "AI 目标地块");
+            Assert.AreEqual(9, loadedAI.RaidCooldown, "AI 掠袭冷却");
+            Assert.AreEqual(1, loadedAI.personality.preferredDomains.Count, "AI 偏好领域");
 
             AdminDivision loadedDivision = null;
             foreach (var d in loadedRealm.adminDivisions)

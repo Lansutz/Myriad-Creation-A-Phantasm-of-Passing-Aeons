@@ -73,5 +73,26 @@ public class AIManager
 	{
 		return _controllers;
 	}
+
+	public List<AIControllerSaveData> CaptureState()
+	{
+		var result = new List<AIControllerSaveData>(_controllers.Count);
+		foreach (AIController controller in _controllers.Values)
+			if (controller != null) result.Add(controller.CaptureState());
+		result.Sort((a, b) => a.realmId.CompareTo(b.realmId));
+		return result;
+	}
+
+	public void RestoreState(List<AIControllerSaveData> saved)
+	{
+		if (saved == null) return;
+		foreach (AIControllerSaveData dto in saved)
+		{
+			if (dto == null) continue;
+			AIController controller = GetController(dto.realmId);
+			if (controller == null) controller = CreateController(dto.realmId);
+			controller.RestoreState(dto);
+		}
+	}
 }
 }

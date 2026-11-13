@@ -17,6 +17,7 @@ using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.Faith;
 using MyriadCreation.Simulation.Culture;
 using MyriadCreation.Simulation.Planning;
+using MyriadCreation.Simulation.AI;
 using MyriadCreation.Content.Definitions;
 namespace MyriadCreation.Infrastructure.Save
 {
@@ -83,6 +84,9 @@ namespace MyriadCreation.Infrastructure.Save
 
         // ===== 计划运行态（P0.1；旧档为 null，读档保持空计划表）=====
         public List<PlanSaveData> plans;
+
+        // ===== AI 长期决策状态（P0.1；旧档为 null，保留 EnsureAIControllers 的默认人格）=====
+        public List<AIControllerSaveData> aiControllers;
 
  // ===== 角色纽带（SaveVersion 15 起；CharacterManager 私有持有，旧档字段为 null）=====
         public List<CharacterBondSaveData> bonds;

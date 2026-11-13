@@ -360,6 +360,40 @@ public class AIController
 		return _targetRealmId;
 	}
 
+	public float DecisionTimer => _decisionTimer;
+
+	public int TargetTileIndex => _targetTileIndex;
+
+	public int RaidCooldown => _raidCooldown;
+
+	public AIControllerSaveData CaptureState()
+	{
+		return new AIControllerSaveData
+		{
+			realmId = realmId,
+			personality = personality,
+			decisionTimer = _decisionTimer,
+			currentGoal = (int)_currentGoal,
+			targetRealmId = _targetRealmId,
+			targetTileIndex = _targetTileIndex,
+			raidCooldown = _raidCooldown
+		};
+	}
+
+	public void RestoreState(AIControllerSaveData saved)
+	{
+		if (saved == null) return;
+		realmId = saved.realmId;
+		personality = saved.personality;
+		if (personality.preferredDomains == null) personality.preferredDomains = new List<InnovationDomain>();
+		_decisionTimer = saved.decisionTimer;
+		_currentGoal = (AIGoal)saved.currentGoal;
+		_targetRealmId = saved.targetRealmId;
+		_targetTileIndex = saved.targetTileIndex;
+		_raidCooldown = saved.raidCooldown;
+		_pendingIntents.Clear();
+	}
+
 	public void SyncPersonality(CharacterData ruler)
 	{
 		if (ruler != null && !personality.fixedArchetype)

@@ -411,6 +411,7 @@ namespace MyriadCreation.Infrastructure.Save
             }
 
             data.plans = world.Plans.CapturePlans();
+            data.aiControllers = world.GetAIManager()?.CaptureState();
 
  // 角色/家族/官职 holder/地图单位/角色知识（v11 起；旧档读取时这些字段为 null）
             CapturePersistentEntities(world, data);
@@ -527,6 +528,9 @@ namespace MyriadCreation.Infrastructure.Save
 
             // 计划运行态（P0.1）：旧档 null 保持空表，不重建未计划的工程。
             world.Plans.RestorePlans(data.plans, world.currentDay);
+
+            // AI 长期决策（P0.1）：PrepareLoadedWorld 已按政权补齐控制器，这里覆盖人格与决策状态。
+            world.GetAIManager()?.RestoreState(data.aiControllers);
         }
 
         // ===== 角色/家族/官职/地图单位（SaveVersion 11 起）=====
