@@ -1,0 +1,114 @@
+{
+  "archetypes": [
+    {
+      "archetype": 0,
+      "displayName": "均衡之主",
+      "description": "无明显战略倾向，行事中庸",
+      "warBias": 0.0,
+      "buildBias": 0.0,
+      "faithBias": 0.0,
+      "schemeBias": 0.0,
+      "diplomacyBias": 0.0
+    },
+    {
+      "archetype": 1,
+      "displayName": "好战之君",
+      "description": "崇尚武力，以战争扩张为第一要务",
+      "warBias": 0.8,
+      "buildBias": -0.2,
+      "faithBias": 0.1,
+      "schemeBias": 0.1,
+      "diplomacyBias": -0.2
+    },
+    {
+      "archetype": 2,
+      "displayName": "谨慎之主",
+      "description": "谋定后动，偏好防御与巩固",
+      "warBias": -0.3,
+      "buildBias": 0.3,
+      "faithBias": 0.1,
+      "schemeBias": 0.1,
+      "diplomacyBias": 0.2
+    },
+    {
+      "archetype": 3,
+      "displayName": "繁荣缔造者",
+      "description": "专注经济建设与领地开发",
+      "warBias": -0.2,
+      "buildBias": 0.8,
+      "faithBias": 0.0,
+      "schemeBias": 0.0,
+      "diplomacyBias": 0.2
+    },
+    {
+      "archetype": 4,
+      "displayName": "虔信营建者",
+      "description": "以信仰为名兴建宗教建筑与转化",
+      "warBias": -0.1,
+      "buildBias": 0.4,
+      "faithBias": 0.8,
+      "schemeBias": -0.1,
+      "diplomacyBias": 0.1
+    },
+    {
+      "archetype": 5,
+      "displayName": "征服者",
+      "description": "为征服而生，永不满足于现有疆土",
+      "warBias": 1.0,
+      "buildBias": -0.3,
+      "faithBias": 0.2,
+      "schemeBias": 0.2,
+      "diplomacyBias": -0.3
+    },
+    {
+      "archetype": 6,
+      "displayName": "不可预测者",
+      "description": "行事乖张，令人难以捉摸",
+      "warBias": 0.3,
+      "buildBias": 0.0,
+      "faithBias": 0.0,
+      "schemeBias": 0.3,
+      "diplomacyBias": -0.2
+    },
+    {
+      "archetype": 7,
+      "displayName": "行政巨匠",
+      "description": "崇尚法治与行政效率，精于吏治",
+      "warBias": -0.2,
+      "buildBias": 0.4,
+      "faithBias": 0.1,
+      "schemeBias": 0.0,
+      "diplomacyBias": 0.3
+    },
+    {
+      "archetype": 8,
+      "displayName": "阴谋大师",
+      "description": "在阴影中操纵一切，偏好暗杀与勒索",
+      "warBias": 0.1,
+      "buildBias": 0.0,
+      "faithBias": 0.0,
+      "schemeBias": 0.9,
+      "diplomacyBias": -0.1
+    },
+    {
+      "archetype": 9,
+      "displayName": "文化赞助人",
+      "description": "推崇文化艺术，以软实力教化四方",
+      "warBias": -0.2,
+      "buildBias": 0.5,
+      "faithBias": 0.2,
+      "schemeBias": 0.0,
+      "diplomacyBias": 0.4
+    },
+    {
+      "archetype": 10,
+      "displayName": "不敬神的改革者",
+      "description": "漠视宗教权威，推动世俗化与制度改革",
+      "warBias": 0.1,
+      "buildBias": 0.3,
+      "faithBias": -0.8,
+      "schemeBias": 0.2,
+      "diplomacyBias": 0.1
+    }
+  ]
+}

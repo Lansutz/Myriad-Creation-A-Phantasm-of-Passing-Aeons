@@ -758,3 +758,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 无清单/平铺布局兼容路径保持原样；`enabled=false`/非法清单仍在排序前剔除。
 - 测试：A 依赖 B → B 先加载；既有布局/校验测试不变。
 - 未做：跨 mod 内容冲突的细粒度诊断（同 id 覆盖仍是“后者胜”）。
+
+## D92 经济原型文案外提（P2.4 第八张表）
+
+- 11 条 `EconomicalArchetypeInfo`（名称/描述/五轴偏好）从 `EconomicalArchetypes` 外提到 `StreamingAssets/Base/Archetype/EconomicalArchetypes.json`。
+- `EconomicalArchetypeLoader` 懒加载；`EconomicalArchetypes.All` 改为属性：内容优先、代码兜底；`Get()` 语义不变。
+- 测试：11 条齐全/唯一/枚举合法；好战原型名称与 war/build 偏好转换正确。
+- 未做：`PersonalityDimensions`/`DnaLocus`/`GenerationStage` 等属于枚举或流程顺序，不是可编辑平表，不外提。

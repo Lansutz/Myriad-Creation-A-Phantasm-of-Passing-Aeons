@@ -1,8 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
+
 namespace MyriadCreation.Content.Definitions
 {
 public static class EconomicalArchetypes
 {
-	public static readonly EconomicalArchetypeInfo[] All = new EconomicalArchetypeInfo[11]
+	private static EconomicalArchetypeInfo[] _all;
+
+	public static EconomicalArchetypeInfo[] All => _all ??= EconomicalArchetypeLoader.EnsureLoaded() ? EconomicalArchetypeLoader.Archetypes : Fallback;
+
+	private static readonly EconomicalArchetypeInfo[] Fallback = new EconomicalArchetypeInfo[11]
 	{
 		new EconomicalArchetypeInfo(EconomicalArchetype.Balanced, "均衡之主", "无明显战略倾向，行事中庸", 0f, 0f, 0f, 0f, 0f),
 		new EconomicalArchetypeInfo(EconomicalArchetype.Warlike, "好战之君", "崇尚武力，以战争扩张为第一要务", 0.8f, -0.2f, 0.1f, 0.1f, -0.2f),
@@ -28,6 +37,87 @@ public static class EconomicalArchetypes
 			}
 		}
 		return All[0];
+	}
+}
+
+[Serializable]
+public sealed class EconomicalArchetypeDef
+{
+	public int archetype;
+	public string displayName = "";
+	public string description = "";
+	public float warBias;
+	public float buildBias;
+	public float faithBias;
+	public float schemeBias;
+	public float diplomacyBias;
+}
+
+[Serializable]
+internal sealed class EconomicalArchetypeListWrapper
+{
+	public List<EconomicalArchetypeDef> archetypes = new List<EconomicalArchetypeDef>();
+}
+
+/// <summary>经济原型文案外提（P2.4）：内容优先，代码兜底。</summary>
+public static class EconomicalArchetypeLoader
+{
+	private static bool _attempted;
+	private static EconomicalArchetypeInfo[] _archetypes = Array.Empty<EconomicalArchetypeInfo>();
+
+	public static EconomicalArchetypeInfo[] Archetypes => _archetypes;
+
+	public static bool EnsureLoaded()
+	{
+		if (!_attempted)
+		{
+			LoadFromFile(ResolveDefaultPath());
+		}
+		return _archetypes.Length > 0;
+	}
+
+	public static string ResolveDefaultPath()
+	{
+		string root = Application.streamingAssetsPath;
+		return string.IsNullOrEmpty(root) ? "" : Path.Combine(root, "Base/Archetype/EconomicalArchetypes.json");
+	}
+
+	public static bool LoadFromFile(string path)
+	{
+		_attempted = true;
+		_archetypes = Array.Empty<EconomicalArchetypeInfo>();
+		if (string.IsNullOrEmpty(path) || !File.Exists(path))
+		{
+			return false;
+		}
+		try
+		{
+			EconomicalArchetypeListWrapper wrapper =
+				JsonUtility.FromJson<EconomicalArchetypeListWrapper>(File.ReadAllText(path));
+			if (wrapper?.archetypes == null || wrapper.archetypes.Count == 0)
+			{
+				return false;
+			}
+			List<EconomicalArchetypeInfo> parsed = new List<EconomicalArchetypeInfo>(wrapper.archetypes.Count);
+			for (int i = 0; i < wrapper.archetypes.Count; i++)
+			{
+				EconomicalArchetypeDef def = wrapper.archetypes[i];
+				if (def == null || !Enum.IsDefined(typeof(EconomicalArchetype), def.archetype))
+				{
+					continue;
+				}
+				parsed.Add(new EconomicalArchetypeInfo(
+					(EconomicalArchetype)def.archetype, def.displayName, def.description,
+					def.warBias, def.buildBias, def.faithBias, def.schemeBias, def.diplomacyBias));
+			}
+			_archetypes = parsed.ToArray();
+			return _archetypes.Length > 0;
+		}
+		catch (Exception ex)
+		{
+			Debug.LogError("[EconomicalArchetypeLoader] 读取 JSON 失败：" + ex.Message);
+			return false;
+		}
 	}
 }
 }
