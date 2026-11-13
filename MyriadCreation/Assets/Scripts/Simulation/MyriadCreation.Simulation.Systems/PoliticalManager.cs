@@ -76,7 +76,7 @@ public class PoliticalManager
 	{
 		foreach (RealmData value in _realms.Values)
 		{
-			value.stability = Mathf.Lerp(value.stability, 50f, 0.001f);
+			RealmStability.Drift(value, 50f, 0.001f);
 			if (value.CalculateRebellionRisk() > 70f && Random.value < 0.01f)
 			{
 				Debug.Log((object)("[Politics] " + value.realmName + " 爆发叛乱！"));

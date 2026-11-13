@@ -1,3 +1,4 @@
+using MyriadCreation.Simulation.State;
 using System.Collections.Generic;
 using MyriadCreation.Simulation.Systems;
 using UnityEngine;
@@ -182,7 +183,7 @@ public class RegimeChangeDynamics
 		if (flag)
 		{
 			Finish(state, activeJuncture, JunctureOutcomeType.Collapse, "各方失控，国家权威崩溃");
-			realm.stability = Mathf.Max(0f, realm.stability - 30f);
+			RealmStability.Adjust(realm, -30f);
 			return;
 		}
 		if (num4 >= num5 && num4 >= num3)
@@ -190,7 +191,7 @@ public class RegimeChangeDynamics
 			if (num4 > num5 * 1.25f)
 			{
 				Finish(state, activeJuncture, JunctureOutcomeType.Reaction, "保守派反扑，旧制强化");
-				realm.stability = Mathf.Clamp(realm.stability + 8f, 0f, 100f);
+				RealmStability.Adjust(realm, 8f);
 			}
 			else
 			{

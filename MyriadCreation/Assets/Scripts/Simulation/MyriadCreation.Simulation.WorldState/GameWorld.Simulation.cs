@@ -1530,7 +1530,7 @@ public partial class GameWorld : MonoBehaviour
 			stabilityCost += tierGap * rules.warGoalForceStabilityCostPerTier;
 			unrestCost += tierGap * rules.warGoalForceUnrestCostPerTier;
 		}
-		realm.stability = Mathf.Max(0f, realm.stability - stabilityCost);
+		RealmStability.Adjust(realm, -stabilityCost);
 		realm.unrest = Mathf.Min(100f, realm.unrest + unrestCost);
 		if (tierGap > 0)
 		{
@@ -1607,7 +1607,7 @@ public partial class GameWorld : MonoBehaviour
 		{
 			return;
 		}
-		realm.stability = Mathf.Max(0f, realm.stability - stabilityCost);
+		RealmStability.Adjust(realm, -stabilityCost);
 		realm.unrest = Mathf.Min(100f, realm.unrest + unrestCost);
 		if (opinionPenalty <= 0f || council.memberIds == null || _characterManager == null)
 		{

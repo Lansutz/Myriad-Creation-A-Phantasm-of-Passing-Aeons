@@ -25,7 +25,7 @@ public static class LawReform
 		string componentName = GetComponentName(dimension, GetCurrent(realm, dimension));
 		string componentName2 = GetComponentName(dimension, newComponent);
 		Apply(realm, dimension, newComponent);
-		realm.stability = Mathf.Max(0f, realm.stability - 5f);
+		RealmStability.Adjust(realm, -5f);
 		chronicle?.Add("reform", realm.realmName + " 政体改革：" + componentName + " → " + componentName2 + "（稳定性下降）", true, realm.realmId);
 		// 政变/派系路径成功后，把结果同步到 catalog 法律流水线（清同组 pending、并入 known、立即固化）；
 		// 同步失败只记录日志，不影响上面已写入的 realm.laws 改革结果。

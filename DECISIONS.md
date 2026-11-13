@@ -716,3 +716,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `PersonalityTraitDatabase.All` 改为属性：内容表可用时返回内容表，否则回退代码兜底数组；所有既有消费者（按数组用）无需改调用点。
 - 测试：108 条齐全/唯一/枚举合法；加载器字段与修正值（`brave_1` 武力 +1、冲突 `craven_1`）。
 - 未做：其余内容表；代码兜底表暂保留（删表需先确认真实内容加载在全部入口都发生）。
+
+## D87 政权稳定度单一入口（P2.5 C 第二步）
+
+- 新增 `RealmStability`（Get/Adjust/Set/Drift）：统一钳制 0–100；`Drift` 向基准值按比例靠拢，替代裸 `Mathf.Lerp`。
+- 迁移帝国级写点：AI 决策、法律年度效果、政体改革、政权更替、外交赔款、战争议事代价、政治系统回归。
+- 修正旧口径不一致：有的只 `Max(0)`、有的只 `Min(100)`，现在两端都钳。
+- `LawEffects` 的局部 `e.stability` 是算法中间量（非 RealmData），保持原样。
+- 测试：两端钳制、Set、Drift。
+- 未做：population 入口（人口块是单一真源，写点分散在迁移/生育/征兵，需按场景逐个收口）。

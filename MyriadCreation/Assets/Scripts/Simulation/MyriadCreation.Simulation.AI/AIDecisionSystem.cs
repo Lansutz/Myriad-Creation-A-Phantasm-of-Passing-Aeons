@@ -172,7 +172,7 @@ public class AIDecisionSystem
 		{
 			_ = realm.taxSystem;
 			realm.treasury = Mathf.Max(0f, realm.treasury - 50f);
-			realm.stability = Mathf.Min(100f, realm.stability + 5f);
+			RealmStability.Adjust(realm, 5f);
 		}
 		if (state.economyFocus > 0.6f)
 		{

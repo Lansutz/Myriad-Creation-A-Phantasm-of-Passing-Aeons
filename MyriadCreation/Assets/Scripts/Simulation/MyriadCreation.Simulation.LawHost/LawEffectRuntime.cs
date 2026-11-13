@@ -94,7 +94,7 @@ public static class LawEffectRuntime
 		result.stabilityDelta = effect.stabilityPerYear * num;
 		result.legitimacyDelta = effect.legitimacyPerYear * num;
 		result.unrestDelta = effect.unrestPerYear * num;
-		realm.stability = Mathf.Clamp(realm.stability + result.stabilityDelta, 0f, 100f);
+		RealmStability.Adjust(realm, result.stabilityDelta);
 		realm.unrest = Mathf.Clamp(realm.unrest + result.unrestDelta, 0f, 100f);
 		realm.lawState ??= new RealmLawState();
 		realm.lawState.legitimacy = Mathf.Clamp(realm.lawState.legitimacy + result.legitimacyDelta, 0f, 100f);

@@ -427,7 +427,7 @@ public class DiplomacyManager
 		if (_realms.TryGetValue(attackerId, out var value))
 		{
 			// 威望是等级/声望容量，不是可花费点数；宣战代价落在稳定度（及后续议事关系）上。
-			value.stability = Mathf.Max(0f, value.stability - tuple.Item2);
+			RealmStability.Adjust(value, -tuple.Item2);
 			MovementControlSystem.OnWarDeclared(value, defenderId);
 		}
 		if (_realms.TryGetValue(defenderId, out var value2))
