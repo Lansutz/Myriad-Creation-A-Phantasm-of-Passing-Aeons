@@ -190,7 +190,7 @@ namespace MyriadCreation.Tests.EditMode
         [Test]
         public void SaveData_UsesCanonicalCollectionAndSiteKeys()
         {
-            var save = new GameSaveData
+            var save = new MapSaveData
             {
                 habitation_sites = new[]
                 {
@@ -238,7 +238,7 @@ namespace MyriadCreation.Tests.EditMode
 
             // JsonUtility 不认 [FormerlySerializedAs]（实测旧键不会映射），
             // 所以旧档必须走读档入口 SaveJsonMigration，而不是裸 FromJson。
-            var save = SaveJsonMigration.FromGameSaveJson(legacyJson);
+            var save = SaveJsonMigration.FromMapSaveJson(legacyJson);
             Assert.IsNotNull(save, "存档解析");
             Assert.IsNotNull(save.habitation_sites);
             Assert.AreEqual(1, save.habitation_sites.Length);

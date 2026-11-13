@@ -140,6 +140,7 @@ public static class LawContentLoader
 			_groups = file.groups;
 			_decrees = file.decrees;
 			_lastError = "";
+			DefaultLawCatalog.ResetLawIndex();
 			// 目录变了：让效果消费层重建 law/decree 索引。
 			LawEffectRuntime.ResetCatalogs();
 			return true;
@@ -157,6 +158,7 @@ public static class LawContentLoader
 		_groups = null;
 		_decrees = null;
 		_lastError = "";
+		DefaultLawCatalog.ResetLawIndex();
 		LawEffectRuntime.ResetCatalogs();
 	}
 

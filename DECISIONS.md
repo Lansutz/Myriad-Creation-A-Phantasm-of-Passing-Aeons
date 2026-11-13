@@ -832,3 +832,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `DefaultLawCatalog.CloneLaw` 补齐两个新字段（否则内容加载后被克隆丢掉）；测试基准表同步新增该法。
 - 测试：掩码豁免/限定范围；世界里推行教士法庭后教士豁免、平民不豁免；JSON 计数与字段对拍。
 - §5.1 冲突 2 的“法律人格效力”欠账由此关闭。
+
+## D102 删除 legacy GameSaveData，法律索引随内容重载失效
+
+- `GameSaveData` 已无生产读写路径，仅作为旧 JSON 形态被测试引用；删除该 DTO，`RealmBasicSaveData` 一并消失；`TitleHoldingSaveData/TitleInstanceSaveData/ChronicleEntrySaveData` 移入 `SaveData.cs` 继续被活存档使用。
+- `SaveJsonMigration` 只保留地图旧键迁移（`FromMapSaveJson`），删除 `FromGameSaveJson`；测试改用 `MapSaveData`。活存档唯一路径仍是 `SaveSystem + SaveData`。
+- `DefaultLawCatalog.ResetLawIndex` 在内容重载/重置时清空 lawId 索引，避免用旧定义做人格效力/豁免判定。
+- 验证：`EXIT=0`、`876/878`、零 `error CS`。

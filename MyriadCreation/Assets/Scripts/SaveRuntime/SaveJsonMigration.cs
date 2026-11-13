@@ -42,21 +42,6 @@ namespace MyriadCreation.Infrastructure.Save
             public LegacySettlementEntry[] settlements;
         }
 
-        /// <summary>反序列化完整游戏存档，并把旧键聚落数据迁移成规范字段。</summary>
-        public static GameSaveData FromGameSaveJson(string json)
-        {
-            var data = JsonUtility.FromJson<GameSaveData>(json);
-            if (data == null) return null;
-
-            if (data.habitation_sites == null || data.habitation_sites.Length == 0)
-            {
-                var migrated = ReadLegacySettlements(json);
-                if (migrated != null) data.habitation_sites = migrated;
-            }
-
-            return data;
-        }
-
         /// <summary>反序列化地图存档，并把旧键聚落数据迁移成规范字段。</summary>
         public static MapSaveData FromMapSaveJson(string json)
         {

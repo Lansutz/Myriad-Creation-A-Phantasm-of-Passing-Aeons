@@ -29,6 +29,12 @@ public static class DefaultLawCatalog
 	private static Dictionary<string, LawDef> _lawIndex;
 
 	/// <summary>按 lawId 查定义（缓存）；找不到返回 null。用于人格效力/豁免判定。</summary>
+	/// <summary>内容重载后清空 lawId 索引，避免继续用旧定义做豁免判定。</summary>
+	public static void ResetLawIndex()
+	{
+		_lawIndex = null;
+	}
+
 	public static LawDef FindLaw(string lawId)
 	{
 		if (string.IsNullOrEmpty(lawId))

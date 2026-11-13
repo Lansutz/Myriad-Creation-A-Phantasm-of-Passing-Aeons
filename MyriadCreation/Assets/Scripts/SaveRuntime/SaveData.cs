@@ -102,4 +102,36 @@ namespace MyriadCreation.Infrastructure.Save
         // ===== 海军实体（SaveVersion 17 起；旧档字段为 null）=====
         public List<NavySaveData> navies;
     }
+
+    [System.Serializable]
+    public class TitleHoldingSaveData
+    {
+        public int characterId = -1;
+        public int institutionId = -1;
+        public int role;
+        public float share = 1f;
+        public int sinceDay = -1;
+        public int endDay = -1;
+        public float legitimacy = 50f;
+    }
+
+    [System.Serializable]
+    public class TitleInstanceSaveData
+    {
+        public string titleId;
+        public string definitionId;
+        public TitleHoldingSaveData[] holders;
+    }
+
+    [System.Serializable]
+    public class ChronicleEntrySaveData
+    {
+        public int entryId;
+        public int tick;
+        public int year;
+        public string eventType;
+        public string description;
+        public bool major;
+        public int[] participants;
+    }
 }
