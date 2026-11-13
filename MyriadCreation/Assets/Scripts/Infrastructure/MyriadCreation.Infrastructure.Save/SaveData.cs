@@ -19,6 +19,7 @@ using MyriadCreation.Simulation.Culture;
 using MyriadCreation.Simulation.Planning;
 using MyriadCreation.Simulation.AI;
 using MyriadCreation.Simulation.Systems;
+using MyriadCreation.Simulation.LawHost;
 using MyriadCreation.Content.Definitions;
 namespace MyriadCreation.Infrastructure.Save
 {
@@ -91,6 +92,9 @@ namespace MyriadCreation.Infrastructure.Save
 
         // ===== 角色级革新掌握/练习（P0.1；旧档为 null，读档从零掌握开始）=====
         public InnovationKnowledgeSaveData innovationKnowledge;
+
+        // ===== 司法运行态（P0.1；旧档为 null，读档按需重建默认司法系统）=====
+        public List<JudicialSystemSaveData> judicialSystems;
 
  // ===== 角色纽带（SaveVersion 15 起；CharacterManager 私有持有，旧档字段为 null）=====
         public List<CharacterBondSaveData> bonds;

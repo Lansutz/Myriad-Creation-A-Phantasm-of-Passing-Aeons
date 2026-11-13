@@ -413,6 +413,7 @@ namespace MyriadCreation.Infrastructure.Save
 
             data.plans = world.Plans.CapturePlans();
             data.aiControllers = world.GetAIManager()?.CaptureState();
+            data.judicialSystems = world.CaptureJudicialSystems();
 
  // 角色/家族/官职 holder/地图单位/角色知识（v11 起；旧档读取时这些字段为 null）
             CapturePersistentEntities(world, data);
@@ -533,6 +534,9 @@ namespace MyriadCreation.Infrastructure.Save
 
             // AI 长期决策（P0.1）：PrepareLoadedWorld 已按政权补齐控制器，这里覆盖人格与决策状态。
             world.GetAIManager()?.RestoreState(data.aiControllers);
+
+            // 司法运行态（P0.1）：旧档 null 时清空，按首次访问重建默认司法系统。
+            world.RestoreJudicialSystems(data.judicialSystems);
         }
 
         // ===== 角色/家族/官职/地图单位（SaveVersion 11 起）=====

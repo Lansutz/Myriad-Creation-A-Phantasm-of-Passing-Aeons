@@ -255,6 +255,18 @@ namespace MyriadCreation.Tests.EditMode
             Assert.IsTrue(knowledge.SetMastery(4242, 101, 2), "前置：革新掌握应写入");
             Assert.AreEqual(3.5f, knowledge.RecordPractice(4242, 101, 3.5f), 0.001f, "前置：练习量应写入");
 
+            var judicialSystem = world.GetOrCreateJudicialSystem(realmId);
+            Assert.IsNotNull(judicialSystem, "前置：司法系统应存在");
+            judicialSystem.judicialSystemName = "测试司法";
+            judicialSystem.judicialEfficiency = 0.77f;
+            judicialSystem.corruption = 0.11f;
+            judicialSystem.lawEnforcement = 0.66f;
+            judicialSystem.severity = 0.44f;
+            judicialSystem.useCapitalPunishment = false;
+            judicialSystem.useCorporalPunishment = false;
+            judicialSystem.useExile = false;
+            judicialSystem.useSlavery = false;
+
             var division = new AdminDivision
             {
                 divisionId = 9001,
@@ -419,6 +431,18 @@ namespace MyriadCreation.Tests.EditMode
             InnovationKnowledgeSystem loadedKnowledge = loaded.ResearchPlans.Knowledge;
             Assert.AreEqual(2, loadedKnowledge.GetMastery(4242, 101), "革新掌握等级");
             Assert.AreEqual(3.5f, loadedKnowledge.GetPractice(4242, 101), 0.001f, "革新练习量");
+
+            var loadedJudicial = loaded.GetOrCreateJudicialSystem(realmId);
+            Assert.IsNotNull(loadedJudicial, "司法系统应还原");
+            Assert.AreEqual("测试司法", loadedJudicial.judicialSystemName, "司法名称");
+            Assert.AreEqual(0.77f, loadedJudicial.judicialEfficiency, 0.001f, "司法效率");
+            Assert.AreEqual(0.11f, loadedJudicial.corruption, 0.001f, "司法腐败");
+            Assert.AreEqual(0.66f, loadedJudicial.lawEnforcement, 0.001f, "执法力度");
+            Assert.AreEqual(0.44f, loadedJudicial.severity, 0.001f, "严苛度");
+            Assert.IsFalse(loadedJudicial.useCapitalPunishment, "死刑开关");
+            Assert.IsFalse(loadedJudicial.useCorporalPunishment, "体刑开关");
+            Assert.IsFalse(loadedJudicial.useExile, "流放开关");
+            Assert.IsFalse(loadedJudicial.useSlavery, "奴役开关");
 
             AdminDivision loadedDivision = null;
             foreach (var d in loadedRealm.adminDivisions)

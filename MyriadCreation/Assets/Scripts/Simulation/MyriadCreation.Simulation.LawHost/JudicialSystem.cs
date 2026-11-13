@@ -137,6 +137,48 @@ public class JudicialSystem
 		}
 	}
 
+	public JudicialSystemSaveData CaptureState()
+	{
+		var data = new JudicialSystemSaveData
+		{
+			judicialSystemId = judicialSystemId,
+			judicialSystemName = judicialSystemName ?? string.Empty,
+			source = (int)source,
+			judicialEfficiency = judicialEfficiency,
+			corruption = corruption,
+			lawEnforcement = lawEnforcement,
+			severity = severity,
+			useCapitalPunishment = useCapitalPunishment,
+			useCorporalPunishment = useCorporalPunishment,
+			useFines = useFines,
+			useImprisonment = useImprisonment,
+			useExile = useExile,
+			useSlavery = useSlavery
+		};
+		if (laws != null) data.laws.AddRange(laws);
+		return data;
+	}
+
+	public void RestoreState(JudicialSystemSaveData data)
+	{
+		if (data == null) return;
+		judicialSystemId = data.judicialSystemId;
+		judicialSystemName = data.judicialSystemName ?? string.Empty;
+		source = (LawSource)data.source;
+		judicialEfficiency = data.judicialEfficiency;
+		corruption = data.corruption;
+		lawEnforcement = data.lawEnforcement;
+		severity = data.severity;
+		useCapitalPunishment = data.useCapitalPunishment;
+		useCorporalPunishment = data.useCorporalPunishment;
+		useFines = data.useFines;
+		useImprisonment = data.useImprisonment;
+		useExile = data.useExile;
+		useSlavery = data.useSlavery;
+		laws.Clear();
+		if (data.laws != null) laws.AddRange(data.laws);
+	}
+
 	public void DailyTick()
 	{
 		judicialEfficiency = Mathf.Clamp(judicialEfficiency + Random.Range(-0.001f, 0.001f), 0.1f, 1f);

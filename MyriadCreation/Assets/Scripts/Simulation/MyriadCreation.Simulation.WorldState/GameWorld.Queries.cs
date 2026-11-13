@@ -309,6 +309,33 @@ public partial class GameWorld : MonoBehaviour
 		return judicialSystem;
 	}
 
+	public List<JudicialSystemSaveData> CaptureJudicialSystems()
+	{
+		var result = new List<JudicialSystemSaveData>();
+		foreach (KeyValuePair<int, JudicialSystem> entry in _judicialSystems)
+		{
+			if (entry.Value == null) continue;
+			JudicialSystemSaveData data = entry.Value.CaptureState();
+			data.realmId = entry.Key;
+			result.Add(data);
+		}
+		result.Sort((a, b) => a.realmId.CompareTo(b.realmId));
+		return result;
+	}
+
+	public void RestoreJudicialSystems(List<JudicialSystemSaveData> saved)
+	{
+		_judicialSystems.Clear();
+		if (saved == null) return;
+		foreach (JudicialSystemSaveData data in saved)
+		{
+			if (data == null || data.realmId < 0) continue;
+			var judicialSystem = new JudicialSystem();
+			judicialSystem.RestoreState(data);
+			_judicialSystems[data.realmId] = judicialSystem;
+		}
+	}
+
 	public DisasterSystem GetDisasterSystem()
 	{
 		return _disasterSystem;
