@@ -128,6 +128,12 @@ namespace MyriadCreation.Content.Modding
         }
 
         [Serializable]
+        private class BuildingListWrapper
+        {
+            public List<BuildingContentDef> buildings = new List<BuildingContentDef>();
+        }
+
+        [Serializable]
         private class EpithetListWrapper
         {
             public List<EpithetDef> epithets = new List<EpithetDef>();
@@ -166,6 +172,7 @@ namespace MyriadCreation.Content.Modding
             providerCatalog.Add(new DelegateContentProvider<string, TitleDef>("Title", LoadTitleRoot), new DictionaryContentStore<string, TitleDef>(Titles));
             providerCatalog.Add(new DelegateContentProvider<int, EquipmentDef>("Equipment", LoadEquipmentRoot), new DictionaryContentStore<int, EquipmentDef>(Equipment));
             providerCatalog.Add(new DelegateContentProvider<string, EpithetDef>("Epithet", LoadEpithetRoot), new DictionaryContentStore<string, EpithetDef>(new Dictionary<string, EpithetDef>()));
+            providerCatalog.Add(new DelegateContentProvider<int, BuildingContentDef>("Building", LoadBuildingRoot), new DictionaryContentStore<int, BuildingContentDef>(new Dictionary<int, BuildingContentDef>()));
 
             foreach (ContentSource source in ContentSourceCatalog.CreateDefault(streamingAssetsRoot))
             {
@@ -202,6 +209,7 @@ namespace MyriadCreation.Content.Modding
             Titles.Clear();
             Equipment.Clear();
             EpithetCatalog.ResetContent();
+            BuildingCatalog.ResetContent();
         }
 
         // ===== LoadRoot（按 provider 根目录解析）=====
@@ -269,6 +277,28 @@ namespace MyriadCreation.Content.Modding
         {
             string path = Path.Combine(r, "Innovation/Innovations.json");
             if (File.Exists(path)) LoadInnovations(path, t);
+        }
+
+        private void LoadBuildingRoot(string r, IContentStore<int, BuildingContentDef> t)
+        {
+            string path = Path.Combine(r, "Building/Buildings.json");
+            if (File.Exists(path)) LoadBuildings(path, t);
+        }
+
+        private static void LoadBuildings(string path, IContentStore<int, BuildingContentDef> target)
+        {
+            BuildingListWrapper wrapper = JsonUtility.FromJson<BuildingListWrapper>(File.ReadAllText(path));
+            if (wrapper == null || wrapper.buildings == null) return;
+            List<BuildingContentDef> parsed = new List<BuildingContentDef>();
+            foreach (BuildingContentDef item in wrapper.buildings)
+            {
+                if (item != null && item.buildingId > 0)
+                {
+                    target.Set(item.buildingId, item);
+                    parsed.Add(item);
+                }
+            }
+            BuildingCatalog.LoadFromContent(parsed);
         }
 
         private void LoadEpithetRoot(string r, IContentStore<string, EpithetDef> t)

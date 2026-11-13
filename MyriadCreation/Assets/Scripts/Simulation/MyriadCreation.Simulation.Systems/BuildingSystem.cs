@@ -31,6 +31,14 @@ public class BuildingSystem
 
 	private void InitializeBuildingDefs()
 	{
+		if (BuildingCatalog.IsLoaded)
+		{
+			foreach (KeyValuePair<int, BuildingDef> pair in BuildingCatalog.All)
+			{
+				_buildingDefs[pair.Key] = pair.Value;
+			}
+			return;
+		}
 		AddBuildingDef(100, "农田", BuildingCategory.Agriculture, 1, 100f, new Dictionary<int, float> { { 30, 20f } });
 		AddBuildingDef(101, "灌溉渠", BuildingCategory.Agriculture, 2, 200f, new Dictionary<int, float>
 		{

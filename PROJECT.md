@@ -158,6 +158,7 @@
 - 2026-11-13 **P2.2 宗派运行时创建/挂靠**：新增 `GameWorld.CreateDenomination/AttachFaithToDenomination`（同教校验、成员重算、编年史）；宗派 id 正段递增，默认宗派负 id 段不变。新增 `FaithSchismTests` 3 例。验证：`EXIT=0`、`828/830`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：divergence 计算与合一/妥协/分裂判定。
 - 2026-11-13 **P2.2 分歧度按组计算**：新增 `DoctrineDivergence`（sequence 档距 / category 集合距离），`ReligionCatalog.GetDivergence` 委托它并删除旧加权口径；测试覆盖 5 种情形。验证：`EXIT=0`、`833/835`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：正统边界与异端阈值、合一/妥协阶段。
 - 2026-11-13 **§5.1 冲突 1 + P2.4 绰号外提**：`PlanType` 四类战争/贸易/外交/迁徙标 `[Obsolete]`（仅保留序号稳定）；81 条绰号外提到 `Epithets.json`，新增 Epithet provider 与代码兜底。新增 `EpithetContentTests` 3 例。验证：`EXIT=0`、`836/838`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：其余 17 张表外提。
+- 2026-11-13 **P2.4 建筑表外提**：29 条建筑进 `Buildings.json`，新增 `BuildingCatalog` 与 Building provider；内容优先、代码兜底。新增 `BuildingContentTests` 3 例。验证：`EXIT=0`、`839/841`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：其余 15 张表。
 - 待办：P2.2 正统边界/教派阶段、P2.3 信息传播/Intrigue、P2.4 其余内容表、P2.5 架构 A–F、P2.6 Compute/Apply；**G5 / G6**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。

@@ -645,3 +645,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `EpithetCatalog.LoadFromContent/ResetContent`：内容加载后覆盖；无内容时仍走代码兜底，避免早期测试/空内容世界拿不到数据。
 - 测试：81 条齐全且 id 唯一、枚举合法；代码兜底仍可用；内容覆盖优先生效。
 - 未做：其余 17 张表的外提（逐张排期，机制同上）。
+
+## D78 建筑表外提（P2.4 第二张表）
+
+- 29 条建筑从 `BuildingSystem.InitializeBuildingDefs` 外提到 `StreamingAssets/Base/Building/Buildings.json`；`BuildingContentDef` 用 `materialCost[{goodsId,amount}]` 表达字典（`BuildingDef.materialCost` 是 `[NonSerialized]` 字典，JsonUtility 不能直读）。
+- `BuildingCatalog`：内容加载后由 `BuildingSystem` 构造时复制；未加载时仍走原代码表，保证早期测试/空内容世界可用。`ContentDefinitionIndex` 新增 Building provider，Base→Mods 同 id 覆盖。
+- 测试：29 条齐全且 id 唯一、材料合法；内容转换（类别/工期/材料字典）；内容优先与代码兜底两条路径。
+- 未做：其余 15 张表（单位/商品/灾害/政体门槛/阶层门槛等）逐张外提。
