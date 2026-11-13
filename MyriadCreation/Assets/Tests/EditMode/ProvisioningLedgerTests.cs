@@ -84,7 +84,8 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(cost.food, funding.foodPaid, 0.001f, "foodPaid 应记账");
 
             var vault = TreasuryLedger.NationalVault(realm);
-            Assert.AreEqual(100f - cost.money, vault.CurrencyAmount(60), 0.01f, "国库货币应真的扣款");
+            Assert.AreEqual(100f - cost.money, realm.treasury, 0.01f, "货币唯一余额是 realm.treasury，必须真的扣款");
+            Assert.AreEqual(0f, vault.CurrencyAmount(60), 0.01f, "vault 货币是储备，不随国库付款镜像变动");
             Assert.AreEqual(100f - cost.food, vault.Get(0), 0.01f, "国库粮食应真的扣款");
 
             var unit = new TransportUnit();

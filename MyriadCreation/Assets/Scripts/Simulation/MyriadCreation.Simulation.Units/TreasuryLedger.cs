@@ -283,55 +283,27 @@ public static class TreasuryLedger
 	{
 		reason = "";
 		TreasuryVault treasuryVault = NationalVault(realm);
-		int currencyGoodsId = funding.currencyGoodsId;
-		bool flag = realm.treasury < 0f;
-		if (currencyGoodsId >= 0)
-		{
-			ReconcileNationalCurrency(realm, currencyGoodsId);
-		}
-		bool flag2 = false;
-		bool flag3 = false;
+		// D43：货币唯一真源是 realm.treasury。vault 里的货币物产是储备，不是第二本可支付余额；
+		// 粮草仍从 vault 扣（它本来就是货物账）。
+		bool moneyPaid = false;
 		if (cost.money > 0f)
 		{
-			if (currencyGoodsId >= 0)
+			if (realm.treasury + 0.0001f < cost.money)
 			{
-				if (!treasuryVault.TrySpend(currencyGoodsId, cost.money))
-				{
-					reason = "国库货币货物不足";
-					return false;
-				}
+				reason = "国库不足";
+				return false;
 			}
-			else
-			{
-				if (realm.treasury + 0.0001f < cost.money)
-				{
-					reason = "国库不足";
-					return false;
-				}
-				realm.treasury -= cost.money;
-				flag3 = true;
-			}
-			flag2 = true;
+			realm.treasury -= cost.money;
+			moneyPaid = true;
 		}
 		if (cost.food > 0f && funding.foodGoodsId >= 0 && !treasuryVault.TrySpend(funding.foodGoodsId, cost.food))
 		{
-			if (flag2)
+			if (moneyPaid)
 			{
-				if (currencyGoodsId >= 0)
-				{
-					treasuryVault.Add(currencyGoodsId, cost.money);
-				}
-				else if (flag3)
-				{
-					realm.treasury += cost.money;
-				}
+				realm.treasury += cost.money;
 			}
 			reason = "国库粮草货物不足";
 			return false;
-		}
-		if (currencyGoodsId >= 0 && !flag)
-		{
-			realm.treasury = treasuryVault.CurrencyAmount(currencyGoodsId);
 		}
 		funding.moneyPaid = cost.money;
 		funding.foodPaid = ((cost.food > 0f && funding.foodGoodsId >= 0) ? cost.food : 0f);

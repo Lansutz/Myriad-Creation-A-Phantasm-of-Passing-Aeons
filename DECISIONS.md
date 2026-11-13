@@ -413,3 +413,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 税率唯一真源是 `RealmData.taxSystem`；`EconomyManager` 的全局 `_taxSystem` 只作旧测试/缺省兜底，生产结算不得再统一读全局税率。
 - 税基 = 土地生产力（fertility × development × 10）× 人口因子 × 秩序因子；人口取 `TileData.populationBlocks` 聚合，秩序用 `tile.order` 作控制度代理。人口/控制度不再是税基外的抽象乘数。
 - 不做：暂不引入 `vault` 与 `treasury` 二选一、不另建收支表；四轴需求报告留到 P1.2 后续。
+
+## D43 国库单源：realm.treasury 是唯一货币余额，vault 是货物储备
+
+- 事实：`TreasuryLedger.TryPayNational` 曾在有货币物产时花 `currencySystem.vault` 并回写 `realm.treasury`，无货币物产时又花 `realm.treasury`，形成"货币两本账"；UI/AI 直接读 treasury，付款却可能扣 vault。
+- 裁决：**货币唯一可支付余额是 `realm.treasury`**；`currencySystem.vault` 只存货物（粮草、货币物产作为储备），不是第二本可支付余额。`TryPayNational` 只扣 treasury 的 money 与 vault 的 food；付款失败回滚 treasury。`ReconcileNationalCurrency` 保留作旧档迁移，不再在每次付款时镜像。
+- 影响：vault 富裕不能覆盖国库赤字；储备与预算分离，后续收支表分别展示"货币余额/货物储备"。
