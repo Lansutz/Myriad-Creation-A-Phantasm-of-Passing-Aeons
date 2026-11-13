@@ -838,6 +838,7 @@ public partial class GameWorld : MonoBehaviour
 			TickLawEffectsYearly();
 		});
 		ArmySchedule.Register(_simulationScheduler, armies, unitDefs, tiles, _seaLandGenerator, TryOccupyByArmy);
+		NavySchedule.Register(_simulationScheduler, navies);
 		SettlementSchedule.Register(_simulationScheduler, _settlementSimulationSystem);
 		CultureSchedule.Register(_simulationScheduler, MonthlyCultureStageEvolution);
 		DiplomacySchedule.Register(_simulationScheduler, _diplomacyManager, () => currentDay);

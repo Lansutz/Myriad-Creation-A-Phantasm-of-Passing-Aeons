@@ -472,3 +472,8 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `RecruitmentSystem.TryRecruit`：校验政权/兵种/数量；兵种 `requiredInnovations` 全部已掌握且 `InnovationUnlockKind.Unit` 未被未完成革新锁住；按 `count × manpowerCost` 从政权核心/所属地块人口块按每块最多 10% 分摊扣除；按 `UnitDef.recruitCost` 从本区市场扣物资；已有同地块同政权军队则补编，否则新建（自动选将）。
 - 不做：不新增“人力储备”第二本账——人口块就是人力池；财政工资/装备折旧暂未接入，避免预造费率。
 - 影响：P1.4 的 Unit 消费者由征兵入口正式消费，不再是空接。
+
+## D53 海军日结写侧（P1.5）
+
+- 新增 `NavySchedule`（`navy.daily`，order 16）：每舰队按 `0.05/舰/日` 消耗补给；断补后士气/组织下降，驻港训练缓慢恢复。
+- 未做：海军寻路/海战结算/舰船建造消耗；这些仍属 P1.5 剩余，不硬接空逻辑。
