@@ -55,6 +55,9 @@ public class Army
 
 	public float training = 50f;
 
+	/// <summary>斥候可达范围（地块，切比雪夫距离）；每日按兵力构成/状态/地形重算，D37。</summary>
+	public int scoutRange = 1;
+
 	[NonSerialized]
 	public float originalManpower;
 
@@ -411,7 +414,7 @@ public class Army
 		{
 			return GameEnums.TerrainTacticType.Desert;
 		}
-		if (tile.buildingLevels[3] > 0)
+		if (tile.buildingLevels != null && tile.buildingLevels.Length > 3 && tile.buildingLevels[3] > 0)
 		{
 			return GameEnums.TerrainTacticType.Fortress;
 		}

@@ -19,14 +19,25 @@ public class CombatManager
 
 	private readonly SimulationEventBus _events;
 
+	private readonly int _mapWidth;
+
+	private readonly List<DetectionContact> _lastContacts = new List<DetectionContact>();
+
 	public const float VictoryScore = 100f;
 
-	public CombatManager(TileData[] tiles, Dictionary<int, UnitDef> unitDefs, SeaLandGenerator seaLand, SimulationEventBus events = null)
+	/// <summary>当日探测接触结果（观察者视角，可能双向重复）；供 AI 选目标/UI 展示，不落盘。</summary>
+	public IReadOnlyList<DetectionContact> LastContacts => _lastContacts;
+
+	/// <summary>最近一场战斗的遭遇变量（形态/地形/设防/侦察先手）。</summary>
+	public EncounterContext LastEncounter { get; private set; }
+
+	public CombatManager(TileData[] tiles, Dictionary<int, UnitDef> unitDefs, SeaLandGenerator seaLand, SimulationEventBus events = null, int mapWidth = 0)
 	{
 		_tiles = tiles;
 		_unitDefs = unitDefs;
 		_seaLand = seaLand;
 		_events = events;
+		_mapWidth = mapWidth;
 	}
 
 	public BattleResult ResolveBattle(Army attacker, Army defender)
@@ -34,8 +45,10 @@ public class CombatManager
 		BattleResult result = default;
 		attacker.RecordBattleStartManpower(_unitDefs);
 		defender.RecordBattleStartManpower(_unitDefs);
-		float num = attacker.CalculateCombatPower(_unitDefs, _tiles[attacker.currentTileIndex]);
-		float num2 = defender.CalculateCombatPower(_unitDefs, _tiles[defender.currentTileIndex]);
+		EncounterContext encounter = DetectionContactService.BuildEncounter(attacker, defender, _tiles, 0);
+		LastEncounter = encounter;
+		float num = attacker.CalculateCombatPower(_unitDefs, _tiles[attacker.currentTileIndex]) * encounter.attackerPowerMultiplier;
+		float num2 = defender.CalculateCombatPower(_unitDefs, _tiles[defender.currentTileIndex]) * encounter.defenderPowerMultiplier;
 		num2 *= 1.2f;
 		float num3 = num * (1f + Random.Range(-0.1f, 0.2f));
 		num2 *= 1f + Random.Range(-0.1f, 0.2f);
@@ -188,6 +201,11 @@ public class CombatManager
 		{
 			return;
 		}
+		foreach (KeyValuePair<int, Army> army3 in armies)
+		{
+			DetectionContactService.RefreshScoutRange(army3.Value, _tiles, _unitDefs);
+		}
+		_lastContacts.Clear();
 		foreach (WarState item in new List<WarState>(wars.FindAll((WarState w) => !w.ended)))
 		{
 			foreach (KeyValuePair<int, Army> army in armies)
@@ -206,7 +224,27 @@ public class CombatManager
 					}
 					Army value2 = army2.Value;
 					int ownerRealmId2 = value2.ownerRealmId;
-					if ((ownerRealmId2 == item.attackerId || ownerRealmId2 == item.defenderId) && ownerRealmId2 != ownerRealmId && value2.state != GameEnums.CombatState.Dead && value2.currentTileIndex == value.currentTileIndex)
+					if ((ownerRealmId2 != item.attackerId && ownerRealmId2 != item.defenderId) || ownerRealmId2 == ownerRealmId || value2.state == GameEnums.CombatState.Dead)
+					{
+						continue;
+					}
+					// D37：先有接触，才有接敌。斥候可达范围覆盖不到对方时，双方都看不见彼此。
+					int distance = DetectionContactService.TileDistance(value.currentTileIndex, value2.currentTileIndex, _mapWidth);
+					int reach = Mathf.Max(value.scoutRange, value2.scoutRange);
+					if (distance > reach)
+					{
+						continue;
+					}
+					_lastContacts.Add(new DetectionContact
+					{
+						observerArmyId = value.armyId,
+						targetArmyId = value2.armyId,
+						observerRealmId = ownerRealmId,
+						targetRealmId = ownerRealmId2,
+						distance = distance,
+						mutual = value2.scoutRange >= distance
+					});
+					if (distance == 0)
 					{
 						BattleResult battleResult = ResolveBattle(value, value2);
 						RecordBattlePractice(value);

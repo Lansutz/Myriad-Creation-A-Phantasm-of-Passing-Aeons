@@ -565,7 +565,7 @@ public partial class GameWorld : MonoBehaviour
 		_taxSystem = new TaxSystem();
 		_economyManager = new EconomyManager(tiles, tradeCenters, goodsDefs, _currencySystem, _taxSystem);
 		_politicalManager = new PoliticalManager(tiles, realms);
-		_combatManager = new CombatManager(tiles, unitDefs, _seaLandGenerator, SimulationEvents);
+		_combatManager = new CombatManager(tiles, unitDefs, _seaLandGenerator, SimulationEvents, mapWidth);
 		_diplomacyManager = new DiplomacyManager(realms);
 		_characterManager = new CharacterManager();
 		_characterManager.Races = races;
