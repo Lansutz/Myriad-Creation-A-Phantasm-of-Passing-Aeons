@@ -60,6 +60,9 @@ sysinfo.txt
 *.aab
 *.unitypackage
 *.app
+# 例外：App 程序集源码目录名以 .App 结尾，不能被 macOS 构建产物规则吞掉
+!Assets/Scripts/App/
+!Assets/Scripts/App/**
 
 # Crashlytics generated file
 crashlytics-build.properties
