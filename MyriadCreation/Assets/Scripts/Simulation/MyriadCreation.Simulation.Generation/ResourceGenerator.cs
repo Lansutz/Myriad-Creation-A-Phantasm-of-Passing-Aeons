@@ -10,6 +10,11 @@ public static class ResourceGenerator
 {
 	public static void GenerateAll(GameWorld world)
 	{
+		GenerateAll(world, world != null ? world.randomSeed : 0);
+	}
+
+	public static void GenerateAll(GameWorld world, int seed)
+	{
 		if ((Object)(object)world == (Object)null || world.tiles == null)
 		{
 			return;
@@ -20,6 +25,7 @@ public static class ResourceGenerator
 			Debug.LogWarning((object)"[ResourceGenerator] 没有自然资源类物资定义（GoodsDef.isNaturalResource=true）");
 			return;
 		}
+		var random = new System.Random(seed);
 		int num = 0;
 		for (int i = 0; i < world.tiles.Length; i++)
 		{
@@ -38,7 +44,7 @@ public static class ResourceGenerator
 			}
 			foreach (GoodsDef item in naturalGoods)
 			{
-				if (TrySpawnResource(world, in reference, item, out var resource))
+				if (TrySpawnResource(world, in reference, item, random, out var resource))
 				{
 					reference.resources.Add(resource);
 					num++;
@@ -48,7 +54,7 @@ public static class ResourceGenerator
 		Debug.Log((object)$"[ResourceGenerator] 自然资源点生成完成：共 {num} 个资源点，涉及 {naturalGoods.Count} 种自然资源");
 	}
 
-	private static bool TrySpawnResource(GameWorld world, in TileData tile, GoodsDef goods, out TileResource resource)
+	private static bool TrySpawnResource(GameWorld world, in TileData tile, GoodsDef goods, System.Random random, out TileResource resource)
 	{
 		resource = default;
 		if (goods.originBiomes == null || goods.originBiomes.Count == 0)
@@ -65,12 +71,15 @@ public static class ResourceGenerator
 		}
 		float num = CalculateGeographicQuality(in tile, goods);
 		float num2 = goods.baseAbundance * num;
-		if (Random.value > num2)
+		if (random.NextDouble() > num2)
 		{
 			return false;
 		}
-		float abundance = Mathf.Clamp01(goods.baseAbundance * num * Random.Range(0.7f, 1.3f));
-		resource = TileResource.Create(goods.goodsId, abundance, RollDepth(in goods, Random.value));
+		float abundance = Mathf.Clamp01(goods.baseAbundance * num * (0.7f + (float)random.NextDouble() * 0.6f));
+		resource = TileResource.Create(goods.goodsId, abundance, RollDepth(in goods, (float)random.NextDouble()));
+		// 地表资源默认已发现/已开发；深层资源保持未发现，等待勘探与开发系统。
+		resource.discovered = resource.accessDepth == ResourceAccessDepth.Surface;
+		resource.developed = resource.discovered;
 		return true;
 	}
 

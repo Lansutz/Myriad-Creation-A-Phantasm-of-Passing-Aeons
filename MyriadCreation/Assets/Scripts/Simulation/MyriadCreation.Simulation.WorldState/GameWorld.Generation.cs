@@ -162,6 +162,7 @@ public partial class GameWorld : MonoBehaviour
 		{
 			GenerateSettlements(seed);
 		}
+		ResourceGenerator.GenerateAll(this, seed);
 		GenerateInitialUnits(seed);
 		ClearInitialTerrainDirty();
 		Debug.Log((object)$"[GameWorld] 地形生成完成（{SetupOptions.initialContent}），陆地{GetLandTileCount()}地块，海洋{GetSeaTileCount()}地块，省份{provinces.Count}个");
@@ -377,6 +378,7 @@ public partial class GameWorld : MonoBehaviour
 		{
 			GenerateSettlements(seed);
 		}
+		ResourceGenerator.GenerateAll(this, seed);
 		GenerateInitialUnits(seed);
 		ClearInitialTerrainDirty();
 		Debug.Log((object)$"[GameWorld] 配置化地形生成完成（{SetupOptions.initialContent}）：陆地{GetLandTileCount()}，海洋{GetSeaTileCount()}，省份{provinces.Count}");
@@ -596,6 +598,7 @@ public partial class GameWorld : MonoBehaviour
 			onProgress?.Invoke(0.88f, "生成聚落…");
 			GenerateSettlements(seed);
 		}
+		ResourceGenerator.GenerateAll(this, seed);
 		GenerateInitialUnits(seed);
 		ClearInitialTerrainDirty();
 		onProgress?.Invoke(1f, "完成");

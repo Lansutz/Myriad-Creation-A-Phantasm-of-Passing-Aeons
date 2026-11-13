@@ -117,6 +117,7 @@ public class EconomyManager
 		{
 			_storageUpdateDay++;
 		}
+		ProduceResources();
 		UpdateAllSupplyDemand();
 		CalculateAllRouteEfficiency();
 		InitiateTrades();
@@ -124,6 +125,35 @@ public class EconomyManager
 		ProcessConsumption();
 		_currency.DailyTick();
 		ProcessShelfLife();
+	}
+
+	/// <summary>
+	/// 地块自然资源产出：已发现/已开发资源按 EffectiveOutput 每日进入所属地区 TradeCenter。
+	/// 这是库存唯一生产写入口；后续建筑/劳力只调整 EffectiveOutput，不另开库存。
+	/// </summary>
+	public int ProduceResources()
+	{
+		if (_tiles == null || _tradeCenters == null) return 0;
+		int produced = 0;
+		foreach (KeyValuePair<int, TradeCenter> pair in _tradeCenters)
+		{
+			TradeCenter tradeCenter = pair.Value;
+			if (tradeCenter == null || tradeCenter.inventory == null) continue;
+			int regionStart = pair.Key * 16;
+			int regionEnd = regionStart + 16;
+			for (int i = regionStart; i < regionEnd && i < _tiles.Length; i++)
+			{
+				TileData tile = _tiles[i];
+				if (!tile.exists || !tile.isLand || tile.resources == null) continue;
+				foreach (TileResource resource in tile.resources)
+				{
+					if (!resource.discovered || !resource.developed || resource.IsDepleted) continue;
+					float accepted = tradeCenter.AddGoodsReturningAccepted(resource.goodsId, resource.EffectiveOutput);
+					if (accepted > 0f) produced++;
+				}
+			}
+		}
+		return produced;
 	}
 
 	private void UpdateAllSupplyDemand()

@@ -104,6 +104,19 @@ namespace MyriadCreation.Tests.EditMode
                 Assert.GreaterOrEqual(army.commanderId, 0, "开局军队应有指挥官");
                 Assert.Greater(army.unitCounts.Count, 0, "开局军队应有兵力");
             }
+
+            bool hasDevelopedResource = false;
+            foreach (var tile in world.tiles)
+            {
+                if (tile.resources == null) continue;
+                foreach (var resource in tile.resources)
+                {
+                    if (resource.discovered && resource.developed) { hasDevelopedResource = true; break; }
+                }
+                if (hasDevelopedResource) break;
+            }
+            Assert.IsTrue(hasDevelopedResource, "地表自然资源应已发现并开发");
+            Assert.Greater(world.GetEconomyManager().ProduceResources(), 0, "地块资源应流入地区库存");
         }
 
         [Test]
