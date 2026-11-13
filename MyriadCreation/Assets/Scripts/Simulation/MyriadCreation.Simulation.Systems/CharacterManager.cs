@@ -986,6 +986,7 @@ public class CharacterManager
 			CharacterData characterData = CreateCharacter(GenerateName(realmId, (!flag) ? 1 : 0), text, 0, flag, realmId, raceId, 0, CharacterRole.Ruler, null, -1, -1, null, value);
 			characterData.realmId = value3.realmId;
 			characterData.isPublicFigure = true;
+			value3.monarchId = characterData.characterId;
 			characterData.aiCategory = CharacterAICategory.Ruler;
 			CharacterKnowledgeRegistry.Learn(value3.realmId, characterData, 1, "court");
 			CharacterData characterData2 = CreateCharacter(GenerateName(realmId, flag ? 1 : 0), text, 0, !flag, realmId, raceId, 0, CharacterRole.Spouse, null, -1, -1, null, value2);

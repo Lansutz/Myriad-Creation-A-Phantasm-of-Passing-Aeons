@@ -81,6 +81,26 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
+        public void GeneratedWorld_InitializesRulerStateReligionAndHighPriest()
+        {
+            var world = NewWorld(48, 24);
+            world.GenerateTerrain(11);
+
+            Assert.Greater(world.realms.Count, 0, "前置：应有政权");
+            bool hasHighPriest = false;
+            foreach (var realm in world.realms.Values)
+            {
+                Assert.GreaterOrEqual(realm.monarchId, 0, "每个政权开局应有君主指针");
+                Assert.GreaterOrEqual(realm.stateReligionId, 0, "每个政权开局应有国教");
+            }
+            foreach (var faith in world.FaithSystems)
+            {
+                if (faith != null && faith.highPriestCharacterId >= 0) hasHighPriest = true;
+            }
+            Assert.IsTrue(hasHighPriest, "至少一个国教应有大祭司生产者");
+        }
+
+        [Test]
         public void SaveLoad_FullChain_RestoresTilesProvincesSettlementsRealms()
         {
             var world = NewWorld(48, 24);

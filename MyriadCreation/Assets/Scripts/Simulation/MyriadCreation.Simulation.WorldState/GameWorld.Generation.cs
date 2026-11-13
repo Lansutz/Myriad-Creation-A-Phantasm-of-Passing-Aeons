@@ -113,10 +113,23 @@ public partial class GameWorld : MonoBehaviour
 					}
 				}
 			}
+			if (_faithSystems.Count > 0)
+			{
+				realmData.stateReligionId = _faithSystems[j % _faithSystems.Count].faithId;
+			}
 			realms[j] = realmData;
 			_aiManager.CreateController(j);
 		}
 		_characterManager.CreateInitialRulers(realms, currentYear);
+		foreach (RealmData realm in realms.Values)
+		{
+			if (realm == null || realm.monarchId < 0 || realm.stateReligionId < 0) continue;
+			FaithSystem faith = _faithSystems.Find(f => f != null && f.faithId == realm.stateReligionId);
+			if (faith != null && faith.highPriestCharacterId < 0)
+			{
+				faith.highPriestCharacterId = realm.monarchId;
+			}
+		}
 		if (PlayerRealmId < 0 && num > 0)
 		{
 			PlayerRealmId = 0;
