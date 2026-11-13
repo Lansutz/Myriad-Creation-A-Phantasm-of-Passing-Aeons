@@ -523,3 +523,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 事实：`GameSaveSystem` 已标 `[Obsolete]`、未接游戏循环，全库无引用；唯一残留是 `SaveJsonMigration` 仍用 `GameSaveData` 读旧档。
 - 裁决：删除 `GameSaveSystem.cs`（约 700 行的第二套写/读路径），保留 `GameSaveData` 仅作旧档迁移 DTO；新档一律走 `SaveSystem + SaveData`。
 - 下一步：把 `GameSaveData` 的字段并进 `SaveData` 后删除迁移 DTO；本轮不硬删，避免旧档不可读。
+
+## D62 军事占领压力 → 聚落毁灭（P1.1 毁灭端口接线）
+
+- `SettlementData.occupationPressureDays` 随存档往返；军队进入交战方聚落地块后，由 `ApplyOccupationPressure` 每日累加。
+- 连续被同一占领方占领 90 天 → `SettlementDestructionSystem.DestroySettlement(..., Dismantle)`，进入废墟；占领方变化/退出则清零。
+- 军事占领仍只写 `occupyingRealmId`，所有权与割让仍归和约；毁灭是占领的长期后果，不是第二套领土系统。

@@ -7,6 +7,7 @@ using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World.Generation;
+using MyriadCreation.World.Settlement;
 
 namespace MyriadCreation.Tests.EditMode
 {
@@ -71,6 +72,55 @@ namespace MyriadCreation.Tests.EditMode
                 }
             }
             return (-1, -1);
+        }
+
+        [Test]
+        public void LongOccupation_RuinsEnemySettlement()
+        {
+            var world = NewWorld();
+            var (attacker, defender) = PickTwoRealms(world);
+            Assert.GreaterOrEqual(defender, 0);
+            int from = -1;
+            int to = -1;
+            SettlementData targetSettlement = null;
+            for (int i = 0; i < world.tiles.Length && targetSettlement == null; i++)
+            {
+                if (world.tiles[i].ownerRealmId != defender || !world.tiles[i].isLand) continue;
+                foreach (SettlementData settlement in world.settlements.Values)
+                {
+                    if (settlement != null && settlement.tileIndex == i) { targetSettlement = settlement; to = i; break; }
+                }
+                if (targetSettlement == null) continue;
+                int x = i % world.mapWidth;
+                int y = i / world.mapWidth;
+                for (int dy = -1; dy <= 1 && from < 0; dy++)
+                for (int dx = -1; dx <= 1; dx++)
+                {
+                    if (dx == 0 && dy == 0) continue;
+                    int nx = x + dx, ny = y + dy;
+                    if (nx < 0 || ny < 0 || nx >= world.mapWidth || ny >= world.mapHeight) continue;
+                    int neighbor = ny * world.mapWidth + nx;
+                    if (world.tiles[neighbor].ownerRealmId == attacker && world.tiles[neighbor].isLand) { from = neighbor; break; }
+                }
+            }
+            if (targetSettlement == null || from < 0) Assert.Ignore("没有可用的敌境聚落接壤对");
+
+            int unitId = -1;
+            foreach (int key in world.unitDefs.Keys) { unitId = key; break; }
+            UnitDef def = world.unitDefs[unitId];
+            def.speed = 100f;
+            world.unitDefs[unitId] = def;
+            Army army = world.CreateArmy(attacker, -1, from);
+            army.unitCounts[unitId] = 10f;
+            Assert.IsTrue(world.DeclareWar(attacker, defender, "围城测试"));
+            army.SetMoveTarget(to, world.tiles, world.GetSeaLandGenerator(), world.mapWidth);
+            world.RunDiagnosticDays(3);
+            Assert.AreEqual(to, army.currentTileIndex);
+
+            targetSettlement.occupationPressureDays = 89;
+            world.RunDiagnosticDays(1);
+
+            Assert.Greater(targetSettlement.ruinLevel, 0, "长期占领后聚落应进入废墟状态");
         }
 
         [Test]

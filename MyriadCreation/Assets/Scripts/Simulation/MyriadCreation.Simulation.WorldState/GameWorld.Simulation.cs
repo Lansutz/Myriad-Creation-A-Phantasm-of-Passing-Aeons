@@ -902,6 +902,46 @@ public partial class GameWorld : MonoBehaviour
 		if (owner >= 0 && owner != army.ownerRealmId && tile.isLand && _diplomacyManager.AreAtWar(army.ownerRealmId, owner))
 		{
 			_politicalManager.OccupyTile(army.currentTileIndex, army.ownerRealmId);
+			ApplyOccupationPressure(army.currentTileIndex, army.ownerRealmId);
+		}
+	}
+
+	/// <summary>P1.1 毁灭端口：敌境聚落被连续占领 90 天后拆毁。</summary>
+	private void ApplyOccupationPressure(int tileIndex, int occupyingRealmId)
+	{
+		const int OccupationRuinDays = 90;
+		if (settlements == null)
+		{
+			return;
+		}
+		SettlementData target = null;
+		foreach (SettlementData settlement in settlements.Values)
+		{
+			if (settlement != null && settlement.tileIndex == tileIndex && !settlement.IsRuined)
+			{
+				target = settlement;
+				break;
+			}
+		}
+		if (target == null)
+		{
+			return;
+		}
+		if (tiles[tileIndex].occupyingRealmId == occupyingRealmId)
+		{
+			target.occupationPressureDays++;
+			if (target.occupationPressureDays >= OccupationRuinDays)
+			{
+				string result = SettlementDestructionSystem.DestroySettlement(this, target.anchorId, DestructionMethod.Dismantle, occupyingRealmId);
+				if (!string.IsNullOrEmpty(result))
+				{
+					_chronicle?.Add("settlement_destroyed", target.settlementName + " 被长期占领后拆毁", true, occupyingRealmId);
+				}
+			}
+		}
+		else
+		{
+			target.occupationPressureDays = 0;
 		}
 	}
 
