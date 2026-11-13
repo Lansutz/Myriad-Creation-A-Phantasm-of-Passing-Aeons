@@ -606,3 +606,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `CultureData.mergedIntoCultureId` 记录吸收结果；被吸收文化保留实体（人物仍引用其 cultureId），但不再参与传播/融合。
 - 调度 `culture.fusion.monthly`（order 40），编年史留痕；同化与融合共用 `culturePenetration`，不新增"融合点"。
 - 未做：文化**分裂**（需要运行时新建文化 id 与命名）；融合后主文化颜色的重算。
+
+## D73 文化分裂（P2.1 第三批，P2.1 收口）
+
+- 新增 `CultureSplitSystem.MonthlyTick`：某文化在「非故土」政权内人口占比 ≥25%、平均整合度 <25、母文化在别的政权仍是主文化、`allowsBranching`、冷却 10 年、子文化数 <4 ⇒ 就地分出一个子文化。
+- 子文化继承母文化的语言/语言族/族群/传承/传统/阶段/成熟度，`parentCultureId` 指向母文化、`allowsBranching=false`（防止无限增殖）；命名 `母文化名·宿主政权名支`，颜色在母色上偏 0.06 色相。
+- 宿主政权内该文化的人口块改挂子文化（复用同化入口，人口守恒）；母文化记 `childCultureIds` 与 `lastSplitDay`。
+- 调度 `culture.split.monthly`（order 41），编年史留痕。分裂、同化、融合三者互斥：整合度高→同化/融合，整合度低且有故土→分裂。
+- **P2.1 收口**：传播、融合、分裂三条链均有执行点与测试；未做：融合后主文化颜色重算（表现层，不影响模拟）。

@@ -882,6 +882,16 @@ public partial class GameWorld : MonoBehaviour
 		{
 			CultureTransmissionSystem.MonthlyTick(realms, cultures, tiles);
 		});
+		// 文化分裂：有故土的文化在异政权内抗拒同化且占比足够时，分出一个子文化。
+		_simulationScheduler.Register("culture.split.monthly", SimulationCadence.Monthly, 41, (SimulationTickContext _) =>
+		{
+			CultureSplitSystem.MonthlyTick(realms, cultures, tiles, currentDay, (parentId, childId, realmId) =>
+			{
+				string parentName = cultures.TryGetValue(parentId, out var parent) ? parent?.cultureName : null;
+				string childName = cultures.TryGetValue(childId, out var child) ? child?.cultureName : null;
+				_chronicle?.Add("culture", (parentName ?? ("#" + parentId)) + " 分出 " + (childName ?? ("#" + childId)), true, realmId);
+			});
+		});
 		// 文化融合：少数文化被主文化吸收，主文化吸收其可兼容传统。
 		_simulationScheduler.Register("culture.fusion.monthly", SimulationCadence.Monthly, 40, (SimulationTickContext _) =>
 		{

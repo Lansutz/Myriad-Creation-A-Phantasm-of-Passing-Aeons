@@ -77,6 +77,9 @@ public class CultureData
 	/// <summary>被哪个文化吸收（-1=独立）；吸收后保留实体供人物引用，但不再作为可传播文化。</summary>
 	public int mergedIntoCultureId = -1;
 
+	/// <summary>最近一次分裂的日期（-1=从未）；用于同一文化两次分裂之间的冷却。</summary>
+	public int lastSplitDay = -1;
+
 	public Color color = Color.white;
 
 	public InheritanceLaw defaultSuccessionLaw = InheritanceLaw.Primogeniture();
