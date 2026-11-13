@@ -668,3 +668,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `DisasterCatalog` + `ContentDefinitionIndex.Disaster` provider（该表合法使用 0 作为 Drought 键，store 显式允许默认键）；内容优先、代码兜底。
 - 测试：12 条齐全/类型唯一/区间合法；转换与钳制。
 - 未做：其余 13 张表。
+
+## D81 商品表外提（P2.4 第五张表）
+
+- 57 条商品从 `GameWorld.InitializeGoodsDefs` 外提到 `StreamingAssets/Base/Goods/Goods.json`；生成时合并了 `MarkPerishable/MarkLiving/MarkNaturalResource` 的后置标记，避免代码与内容两套状态。
+- `GoodsCatalog` 转回 `GoodsDef`：自然资源的默认生物群系在目录层补全（与代码 `DefaultNaturalBiomes` 同口径），`spawnCondition` 用 `Unrestricted`；属性仍由既有 `GoodsPropertyCatalog` 合并，`ApplyGoodsProperties` 成为唯一合并点。
+- `ContentDefinitionIndex.Goods` provider 允许 0 键（小麦）；内容优先、代码兜底；Base→Mods 覆盖。
+- 测试：57 条齐全/唯一/自然丰度合法；自然标记与默认群系转换。
+- 未做：其余 12 张表。

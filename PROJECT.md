@@ -161,6 +161,7 @@
 - 2026-11-13 **P2.4 建筑表外提**：29 条建筑进 `Buildings.json`，新增 `BuildingCatalog` 与 Building provider；内容优先、代码兜底。新增 `BuildingContentTests` 3 例。验证：`EXIT=0`、`839/841`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：其余 15 张表。
 - 2026-11-13 **P2.4 兵种表外提**：14 条兵种进 `Units.json`，新增 `UnitCatalog` 与 Unit provider；默认招募成本与覆盖在生成时合并。新增 `UnitContentTests` 2 例。验证：`EXIT=0`、`841/843`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：其余 14 张表。
 - 2026-11-13 **P2.4 灾害表外提**：12 条灾害进 `Disasters.json`，新增 `DisasterCatalog` 与 provider；时长钳制 `min≥1 / max≥min`。新增 `DisasterContentTests` 2 例。验证：`EXIT=0`、`843/845`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：其余 13 张表。
+- 2026-11-13 **P2.4 商品表外提**：57 条商品进 `Goods.json`，后置标记在生成时合并；`GoodsCatalog` + provider；属性合并收口到 `ApplyGoodsProperties`。新增 `GoodsContentTests` 2 例。验证：`EXIT=0`、`845/847`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：其余 12 张表。
 - 待办：P2.2 正统边界/教派阶段、P2.3 信息传播/Intrigue、P2.4 其余内容表、P2.5 架构 A–F、P2.6 Compute/Apply；**G5 / G6**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。

@@ -626,6 +626,15 @@ public partial class GameWorld : MonoBehaviour
 
 	private void InitializeGoodsDefs()
 	{
+		if (GoodsCatalog.IsLoaded)
+		{
+			foreach (KeyValuePair<int, GoodsDef> pair in GoodsCatalog.All)
+			{
+				goodsDefs[pair.Key] = pair.Value;
+			}
+			ApplyGoodsProperties();
+			return;
+		}
 		AddGoodsDef(0, "小麦", GameEnums.GoodsCategory.Crop, 1f, 0.1f, hasShelfLife: true, 180f);
 		AddGoodsDef(1, "肉类", GameEnums.GoodsCategory.Food, 2f, 0.15f, hasShelfLife: true, 14f);
 		AddGoodsDef(2, "鱼类", GameEnums.GoodsCategory.Food, 1.5f, 0.1f, hasShelfLife: true, 7f);
@@ -707,6 +716,11 @@ public partial class GameWorld : MonoBehaviour
 		MarkLiving(27, 0.02f, 1);
 		MarkLiving(28, 0.02f, 1);
 		MarkLiving(90, 0f, 0);
+		ApplyGoodsProperties();
+	}
+
+	private void ApplyGoodsProperties()
+	{
 		foreach (int item in new List<int>(goodsDefs.Keys))
 		{
 			if (GoodsPropertyCatalog.TryGet(item, out var properties))

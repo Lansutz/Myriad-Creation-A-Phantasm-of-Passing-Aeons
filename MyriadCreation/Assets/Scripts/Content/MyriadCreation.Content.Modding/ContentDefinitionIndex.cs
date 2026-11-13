@@ -128,6 +128,12 @@ namespace MyriadCreation.Content.Modding
         }
 
         [Serializable]
+        private class GoodsListWrapper
+        {
+            public List<GoodsContentDef> goods = new List<GoodsContentDef>();
+        }
+
+        [Serializable]
         private class DisasterListWrapper
         {
             public List<DisasterContentDef> disasters = new List<DisasterContentDef>();
@@ -187,6 +193,7 @@ namespace MyriadCreation.Content.Modding
             providerCatalog.Add(new DelegateContentProvider<int, BuildingContentDef>("Building", LoadBuildingRoot), new DictionaryContentStore<int, BuildingContentDef>(new Dictionary<int, BuildingContentDef>()));
             providerCatalog.Add(new DelegateContentProvider<int, UnitContentDef>("Unit", LoadUnitRoot), new DictionaryContentStore<int, UnitContentDef>(new Dictionary<int, UnitContentDef>()));
             providerCatalog.Add(new DelegateContentProvider<int, DisasterContentDef>("Disaster", LoadDisasterRoot), new DictionaryContentStore<int, DisasterContentDef>(new Dictionary<int, DisasterContentDef>(), allowDefaultKey: true));
+            providerCatalog.Add(new DelegateContentProvider<int, GoodsContentDef>("Goods", LoadGoodsRoot), new DictionaryContentStore<int, GoodsContentDef>(new Dictionary<int, GoodsContentDef>(), allowDefaultKey: true));
 
             foreach (ContentSource source in ContentSourceCatalog.CreateDefault(streamingAssetsRoot))
             {
@@ -226,6 +233,7 @@ namespace MyriadCreation.Content.Modding
             BuildingCatalog.ResetContent();
             UnitCatalog.ResetContent();
             DisasterCatalog.ResetContent();
+            GoodsCatalog.ResetContent();
         }
 
         // ===== LoadRoot（按 provider 根目录解析）=====
@@ -293,6 +301,28 @@ namespace MyriadCreation.Content.Modding
         {
             string path = Path.Combine(r, "Innovation/Innovations.json");
             if (File.Exists(path)) LoadInnovations(path, t);
+        }
+
+        private void LoadGoodsRoot(string r, IContentStore<int, GoodsContentDef> t)
+        {
+            string path = Path.Combine(r, "Goods/Goods.json");
+            if (File.Exists(path)) LoadGoods(path, t);
+        }
+
+        private static void LoadGoods(string path, IContentStore<int, GoodsContentDef> target)
+        {
+            GoodsListWrapper wrapper = JsonUtility.FromJson<GoodsListWrapper>(File.ReadAllText(path));
+            if (wrapper == null || wrapper.goods == null) return;
+            List<GoodsContentDef> parsed = new List<GoodsContentDef>();
+            foreach (GoodsContentDef item in wrapper.goods)
+            {
+                if (item != null && item.goodsId >= 0)
+                {
+                    target.Set(item.goodsId, item);
+                    parsed.Add(item);
+                }
+            }
+            GoodsCatalog.LoadFromContent(parsed);
         }
 
         private void LoadDisasterRoot(string r, IContentStore<int, DisasterContentDef> t)
