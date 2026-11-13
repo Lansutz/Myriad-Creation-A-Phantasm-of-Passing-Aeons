@@ -734,3 +734,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 存档：`KnownCharacterSaveData` 增 `characterRealmId`；读档经 `Learn` 按当前人物归属重建，不依赖旧值。
 - 测试：外邦过期被遗忘、本政权保留、近期外邦保留、旧档未知归属保守保留。
 - 未做：Intrigue（WP5）——计划本身要求先有 S19 地图知识；当前只有角色知识，不硬造密谋系统。
+
+## D89 聚落形态建造门槛外提（P2.4 第七张表）
+
+- 30 条 `BuildableType` 建造门槛从 `BuildingAvailabilitySystem.RegisterAllRequirements` 外提到 `StreamingAssets/Base/Buildable/BuildableTypes.json`；`BuildableRequirementLoader` 懒加载并转回 `BuildingRequirement`（生物群系/海洋层级/聚落等级用 int 数组，越界丢弃）。
+- `BuildingAvailabilitySystem.Initialize` 内容优先、代码兜底；`allowedBiomes` 等数组字段在加载时重建，避免 JsonUtility 对枚举数组的兼容问题。
+- 测试：30 条齐全/唯一/区间合法；关隘形态（瓶颈、6 个群系、坡度 5–40）转换正确。
+- 长跑回归：`longrun.cmd` 2 seed × 100 年通过（1/1，260s），新加的月结系统未造成超时。
+- 未做：其余零散常量表（多为逐类 switch/权重，不是可外提的平表）。

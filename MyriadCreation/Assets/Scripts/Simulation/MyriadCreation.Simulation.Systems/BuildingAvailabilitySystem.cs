@@ -19,7 +19,17 @@ public static class BuildingAvailabilitySystem
 		if (!_initialized)
 		{
 			_requirements = new Dictionary<BuildableType, BuildingRequirement>();
-			RegisterAllRequirements();
+			if (BuildableRequirementLoader.EnsureLoaded())
+			{
+				foreach (KeyValuePair<BuildableType, BuildingRequirement> pair in BuildableRequirementLoader.Requirements)
+				{
+					_requirements[pair.Key] = pair.Value;
+				}
+			}
+			else
+			{
+				RegisterAllRequirements();
+			}
 			_initialized = true;
 		}
 	}
