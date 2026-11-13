@@ -1153,7 +1153,7 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 复杂度：捕鱼/火灾都在既有月度 O(N) 循环内；每个地块 O(1)。
 - 旧档：新字段缺省 0，沿海旧档鱼群为 0（需一次生成/事件补种；不影响存档读取）。
 - 测试：`EcologyExtensionTests` 5 例（沿海捕鱼、鱼群恢复、放牧压低植被、火灾确定性/恢复、字段往返）。
-- 验证：`EXIT=0`、`992/994`（2 个 Explicit 跳过）、零 `error CS`。
+- 验证：`EXIT=0`、`986/988`（2 个 Explicit 跳过）、零 `error CS`。
 
 ## D136 生态物种表与物种池（P4.4）
 
@@ -1163,7 +1163,7 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 不存逐格物种数组：物种池按栖息地查表，承载/捕猎是池内性状的纯函数；空表返回 1，保持旧行为。
 - 复杂度：内容只在初始化读一次；运行期每组地块 O(池大小)（池很小），无 tick 额外分配。
 - 测试：`EcologySpeciesTests` 4 例（内容加载/栖息地分类、承载与捕猎差异、Tick 下森林>荒漠、Mods 覆盖）。
-- 验证：`EXIT=0`、`992/994`（2 个 Explicit 跳过）、零 `error CS`。
+- 验证：`EXIT=0`、`990/992`（2 个 Explicit 跳过）、零 `error CS`。
 
 ## D137 P4 欠账收口验证
 
