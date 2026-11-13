@@ -842,7 +842,7 @@ public class CharacterManager
 			lastName = lastName,
 			age = age,
 			isMale = isMale,
-			birthDay = Random.Range(1, 365),
+			birthDay = Random.Range(1, MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear),
 			birthYear = 0,
 			cultureId = cultureId,
 			raceId = raceId,

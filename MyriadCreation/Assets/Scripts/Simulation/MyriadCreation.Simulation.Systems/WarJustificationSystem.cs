@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.State;
 using UnityEngine;
@@ -248,7 +248,7 @@ public static class WarJustificationSystem
 			signerAId = realmA,
 			signerBId = realmB,
 			signedDay = currentDay,
-			truceUntilDay = currentDay + truceYears * 365,
+			truceUntilDay = currentDay + truceYears * MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear,
 			goalsFullyAchieved = false,
 			isPeaceTreaty = true
 		};
@@ -257,7 +257,7 @@ public static class WarJustificationSystem
 			type = TreatyClauseType.Truce,
 			fromRealmId = realmA,
 			toRealmId = realmB,
-			durationDays = truceYears * 365,
+			durationDays = truceYears * MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear,
 			description = $"停战 {truceYears} 年"
 		});
 		return treaty;
@@ -273,7 +273,7 @@ public static class WarJustificationSystem
 			signerBId = loserId,
 			signedDay = currentDay,
 			warScoreAtSigning = warScore,
-			truceUntilDay = currentDay + truceYears * 365
+			truceUntilDay = currentDay + truceYears * MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear
 		};
 		foreach (WarGoal attackerGoal in attackerGoals)
 		{
@@ -299,7 +299,7 @@ public static class WarJustificationSystem
 				fromRealmId = loserId,
 				toRealmId = winnerId,
 				value = num2,
-				durationDays = 365,
+				durationDays = MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear,
 				description = $"战争赔款 {num2:F0}"
 			});
 			num -= 10f;
@@ -329,7 +329,7 @@ public static class WarJustificationSystem
 			type = TreatyClauseType.Truce,
 			fromRealmId = loserId,
 			toRealmId = winnerId,
-			durationDays = truceYears * 365,
+			durationDays = truceYears * MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear,
 			description = $"停战 {truceYears} 年"
 		});
 		return treaty;

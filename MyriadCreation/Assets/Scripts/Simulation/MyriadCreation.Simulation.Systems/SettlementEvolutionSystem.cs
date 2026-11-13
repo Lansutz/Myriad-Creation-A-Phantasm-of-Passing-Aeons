@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Simulation.Actors;
 using MyriadCreation.Simulation.WorldState;
@@ -134,7 +134,7 @@ public static class SettlementEvolutionSystem
 			constructionTier = 1,
 			settlementEvolution = 100f,
 			settlementStability = 50f,
-			foundingTick = world.currentYear * 365 + world.currentDay,
+			foundingTick = world.calendar.AbsoluteDay(world.currentYear, world.currentDay),
 			fortificationLevel = (flag ? FortificationLevels.Palisade : FortificationLevels.None)
 		};
 		// SettlementData 构造时按默认 SiteMode 初始化模式数据，据点数据可能为 null；

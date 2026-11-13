@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Simulation.Politics;
@@ -34,9 +34,9 @@ public static class OfficeSystem
 	public const string ModuleMilitaryCommand = "military_command";
 	public const string ModuleDiplomacy = "diplomacy";
 
-	public static int AbsoluteDay(int year, int day)
+	public static int AbsoluteDay(int year, int day, int daysPerYear = MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear)
 	{
-		return year * 365 + day;
+		return year * System.Math.Max(1, daysPerYear) + day;
 	}
 
 	public static bool HasModule(OfficeDef def, string module)
@@ -88,7 +88,7 @@ public static class OfficeSystem
 			if (!gone && OfficeCatalog.TryGet(slot, out OfficeDef def) && def.termYears > 0
 				&& realm.officeAppointedDays != null
 				&& realm.officeAppointedDays.TryGetValue(slot, out int appointedDay) && appointedDay > 0
-				&& absoluteDay - appointedDay >= def.termYears * 365)
+				&& absoluteDay - appointedDay >= def.termYears * MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear)
 			{
 				expired = true;
 			}

@@ -236,6 +236,9 @@ public partial class GameWorld : MonoBehaviour
 
 	private WorldMapSimulationSystem _worldMapSimulation;
 
+	/// <summary>世界历法：日长/年长/季节/tick 的唯一来源。</summary>
+	public GameCalendar calendar = new GameCalendar();
+
 	public int currentYear = 1;
 
 	public int currentDay = 1;
@@ -555,6 +558,11 @@ public partial class GameWorld : MonoBehaviour
 
 	public void InitializeWorld()
 	{
+		if (SetupOptions?.calendar != null)
+		{
+			calendar = SetupOptions.calendar.Clone();
+		}
+		calendar.Normalize();
 		RelationRegistry.Clear();
 		ContractRegistry.Clear();
 		MapUnitRegistry.Clear();
@@ -625,6 +633,7 @@ public partial class GameWorld : MonoBehaviour
 		ApplySetupOptions();
 		_campManager = new CampManager(this);
 		_climateSimulator = new PlanetClimateSimulator(config, tiles, mapWidth, mapHeight, _seaLandGenerator);
+		_climateSimulator.Calendar = calendar;
 		_worldMapSimulation = new WorldMapSimulationSystem(_seaLandGenerator, _climateSimulator);
 		_worldMapSimulation.BeforeFullRecalculate = EnsureSeaLandGeneratorSeed;
 		_currencySystem = new CurrencySystem();

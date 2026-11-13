@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace MyriadCreation.Simulation.State
 {
@@ -84,7 +84,7 @@ public class WarRules
 
 	public int GetTruceUntilDay(int currentDay, int years)
 	{
-		return currentDay + years * 365;
+		return currentDay + years * MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear;
 	}
 
 	public static WarRules Default()

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Core.Events;
@@ -292,7 +292,7 @@ public class CombatManager
 					war.outcome = "victory";
 					list.Add(war);
 				}
-				else if (rules != null && rules.allowWhitePeace && war.attackerScore < rules.peaceWhiteScore * 100f && war.defenderScore < rules.peaceWhiteScore * 100f && day - war.startDay >= rules.peaceMinYears * 365)
+				else if (rules != null && rules.allowWhitePeace && war.attackerScore < rules.peaceWhiteScore * 100f && war.defenderScore < rules.peaceWhiteScore * 100f && day - war.startDay >= rules.peaceMinYears * MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear)
 				{
 					war.ended = true;
 					war.winnerId = -1;

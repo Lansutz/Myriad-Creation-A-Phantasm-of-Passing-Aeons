@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Simulation.State;
@@ -54,10 +54,10 @@ public static class StateFormationSystem
 		TileData tile = world.tiles[settlement.tileIndex];
 		if (!tile.exists || !tile.isLand || tile.ownerRealmId >= 0) return false;
 
-		// foundingTick 用绝对日（year*365+day），不能用 currentDay（它每年回绕到 1）。
-		int absoluteDay = world.currentYear * 365 + world.currentDay;
+		// foundingTick 用绝对日（calendar.AbsoluteDay），不能用 currentDay（它每年回绕到 1）。
+		int absoluteDay = world.calendar.AbsoluteDay(world.currentYear, world.currentDay);
 		int ageDays = absoluteDay - settlement.foundingTick;
-		if (ageDays < MinSettlementAgeYears * 365) return false;
+		if (ageDays < MinSettlementAgeYears * world.calendar.daysPerYear) return false;
 
 		float population = Mathf.Max(settlement.population, PopulationLedger.Total(tile));
 		if (population < MinSettlementPopulation) return false;

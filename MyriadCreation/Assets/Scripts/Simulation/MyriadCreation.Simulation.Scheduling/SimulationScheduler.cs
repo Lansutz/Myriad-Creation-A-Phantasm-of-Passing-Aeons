@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Content.Definitions;
 
@@ -29,6 +29,12 @@ public sealed class SimulationScheduler : ISimulationScheduler
 
 		public double avgMs = 0.1;
 
+		/// <summary>距上次触发累计的游戏日；cadence 按区间判定，跳日（daysPerTick&gt;1）也不会漏。</summary>
+		public int elapsedDays;
+
+		/// <summary>是否已按首次 tick 的日历相位初始化 elapsedDays。</summary>
+		public bool hasCadencePhase;
+
 		public Action<SimulationTickContext> execute;
 
 		/// <summary>两相系统中的 Apply 相；null = 单相系统。</summary>
@@ -40,6 +46,9 @@ public sealed class SimulationScheduler : ISimulationScheduler
 	private readonly Dictionary<string, Entry> _entries = new Dictionary<string, Entry>();
 
 	private readonly List<Entry> _pending = new List<Entry>();
+
+	/// <summary>调度器使用的年长；LongTerm cadence 与按年系统据此换算。</summary>
+	public int DaysPerYear = MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear;
 
 	public int Count => _entries.Count;
 
@@ -179,10 +188,28 @@ public sealed class SimulationScheduler : ISimulationScheduler
 			list.AddRange(_pending);
 			_pending.Clear();
 		}
+		int step = Math.Max(1, deltaDays);
 		foreach (Entry value in _entries.Values)
 		{
-			if (!list.Contains(value) && lane != SimulationLane.None && (lane == SimulationLane.Both || value.lane == SimulationLane.Both || (value.lane & lane) != 0) && (value.intervalDays <= 1 || day % value.intervalDays == 0) && (value.dirtyKey == null || _dirty.IsDirty(value.dirtyKey)))
+			if (list.Contains(value)) continue;
+			if (lane == SimulationLane.None) continue;
+			if (lane != SimulationLane.Both && value.lane != SimulationLane.Both && (value.lane & lane) == 0) continue;
+			if (value.dirtyKey != null && !_dirty.IsDirty(value.dirtyKey)) continue;
+			if (value.intervalDays <= 1)
 			{
+				list.Add(value);
+				continue;
+			}
+			if (!value.hasCadencePhase)
+			{
+				// 调度器可能在世界中途创建：用当前日号补齐相位，避免 monthly 永远差 30 天。
+				value.elapsedDays = Math.Max(0, (day - 1) % value.intervalDays);
+				value.hasCadencePhase = true;
+			}
+			value.elapsedDays += step;
+			if (value.elapsedDays >= value.intervalDays)
+			{
+				value.elapsedDays = 0;
 				list.Add(value);
 			}
 		}
@@ -234,14 +261,14 @@ public sealed class SimulationScheduler : ISimulationScheduler
 		}
 	}
 
-	private static int GetIntervalDays(SimulationCadence cadence)
+	private int GetIntervalDays(SimulationCadence cadence)
 	{
 		return cadence switch
 		{
 			SimulationCadence.Weekly => 7, 
 			SimulationCadence.Monthly => 30, 
 			SimulationCadence.Seasonal => 90, 
-			SimulationCadence.LongTerm => 365, 
+			SimulationCadence.LongTerm => DaysPerYear, 
 			_ => 1, 
 		};
 	}

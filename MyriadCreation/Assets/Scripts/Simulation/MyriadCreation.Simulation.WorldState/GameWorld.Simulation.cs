@@ -49,7 +49,7 @@ namespace MyriadCreation.Simulation.WorldState
 {
 public partial class GameWorld : MonoBehaviour
 {
-	private const int FamineCooldownDays = 365;
+	private const int FamineCooldownDays = MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear;
 
 	/// <summary>地区粮仓低于全区人口这么多天的口粮才判定为急性饥荒（30 天是建国余粮门槛，不是饥荒线）。</summary>
 	private const float FamineBufferDays = 7f;
@@ -76,7 +76,7 @@ public partial class GameWorld : MonoBehaviour
 	{
 		ConcurrentQueue<GameEvent> parallelEvents = new ConcurrentQueue<GameEvent>();
 		EnsureFamineCooldownBuffer();
-		int absoluteDay = currentYear * 365 + currentDay;
+		int absoluteDay = calendar.AbsoluteDay(currentYear, currentDay);
 		// 饥荒是“地区粮仓够不够全区人吃”的问题，不是每块地各向同一个粮仓要 30 天口粮。
 		// 按地块人口检查会让多聚落地区凭空多出数倍需求，长跑里城市被误判饥荒反复削人口（P7 诊断）。
 		float[] regionPopulation = new float[tiles.Length];
@@ -424,16 +424,19 @@ public partial class GameWorld : MonoBehaviour
 
 	private void AdvanceTime()
 	{
-		currentDay += daysPerTick;
-		if (currentDay > 365)
+		GameCalendar cal = calendar ?? (calendar = new GameCalendar());
+		int step = Mathf.Max(1, daysPerTick);
+		cal.daysPerYear = Mathf.Max(1, cal.daysPerYear);
+		currentDay += step;
+		while (currentDay > cal.daysPerYear)
 		{
-			currentDay = 1;
+			currentDay -= cal.daysPerYear;
 			currentYear++;
 		}
-		int num = (currentDay - 1) / 91;
-		if (num != currentSeason && num < 4)
+		int season = cal.SeasonIndex(currentDay);
+		if (season != currentSeason)
 		{
-			currentSeason = num;
+			currentSeason = season;
 			_climateSimulator.UpdateForSeason(currentSeason);
 			SimulationEvents.Publish(new SeasonChangedEvent(currentDay, currentYear, currentSeason));
 			EnqueueEvent(new GameEvent
@@ -847,7 +850,7 @@ public partial class GameWorld : MonoBehaviour
 
 	private void GameTick()
 	{
-		AdvanceTime();
+		// 时间由 simulation.time.daily 在调度器尾部推进一次；这里再调会一天走两日。
 		float frameMs = Time.unscaledDeltaTime * 1000f;
 		float budgetMs = _budgetGovernor.NextBudget(frameMs, _simulationScheduler.PendingCount, _lastDeferred);
 		_simulationScheduler.TickBudgeted(currentDay, currentYear, daysPerTick, budgetMs, () => Time.realtimeSinceStartupAsDouble, out var _, out _lastDeferred);
@@ -876,6 +879,7 @@ public partial class GameWorld : MonoBehaviour
 
 	private void RegisterSimulationSchedules()
 	{
+		_simulationScheduler.DaysPerYear = calendar.daysPerYear;
 		_simulationScheduler.Clear();
 		WorldMapSchedule.Register(_simulationScheduler, _worldMapSimulation);
 		DisasterSchedule.Register(_simulationScheduler, _disasterSystem, _diseaseSystem, () => currentDay, () => currentYear);

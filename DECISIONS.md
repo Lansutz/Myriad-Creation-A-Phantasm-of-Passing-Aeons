@@ -1248,3 +1248,15 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 测试：`GameSpeedScaleTests`、`SoilRecoveryTests`、`SwarmDamageTests`、`AgricultureYieldTests`（旱年场景改用肥力 0.1）、`EconomyConservationTests.InitiateTrades_KeepsLocalFoodReserve`、`SettlementLifecycleTests`（过载源 1200 人）。
 - 验证：100 年无政权通过（101.4s）；220 年自然长跑出现政权/官职/实物税流水通过（202.6s）；全量 EditMode：`EXIT=0`、1021 例、1013 通过、0 失败、零 `error CS`（8 个 Explicit 按需跳过）。
 - 欠账（P7.1/P7.6）：革新数量与研究速度、仓储设施化（粮仓/盐仓/金库/货栈分级与升级配方）、第二套气候模型合并、30x 下的事件队列压力测试。
+
+## D144 P8.0 历法与时间尺度（2026-11-14）
+
+- **GameCalendar 成为日/年/季节唯一来源**：`hoursPerDay`（自转，默认 24，仅显示与昼夜推导）、`daysPerYear`（公转，默认 365）、`seasons`（默认 4，边界按年长/季数计算）、`ticksPerDay`（默认 1，世界模拟以“日”为原子步长）、`daysPerTick`（史前快进/高倍速批处理）。提供 `SeasonIndex/AbsoluteDay/YearOfAbsoluteDay/DayOfYearOfAbsoluteDay/HourOfDay`。
+- **五档速度语义**：`GameSpeedScale` 的 1/2/5/10/30 表示“游戏日/现实秒”（`tickInterval=1s`、`daysPerTick=1` 时）；30x 上限不变。史前跨度不靠继续抬高 `Time.timeScale`，而靠 `daysPerTick` 批处理。
+- **自转/公转是两个世界参数**：`WorldSetupOptions.calendar` 提供 `hoursPerDay`（自转）与 `daysPerYear`（公转），新局克隆到 `GameWorld.calendar`；`PlanetClimateSimulator` 读 `DiurnalRangeFactor = sqrt(24/hoursPerDay)` 调整昼夜温差（转得快温差小、转得慢温差大），公转通过季节长度/年长影响所有按年系统。完整气候耦合仍留 P8.3。
+- **调度器 cadence 改为区间累计**：Entry 记录 `elapsedDays`，首次按 `(day-1) % interval` 补齐相位，之后按 `deltaDays` 累加；`daysPerTick=30/90` 时月度/季节/年度系统不会因跳日漏触发。`LongTerm` 间隔读 `SimulationScheduler.DaysPerYear`。
+- **修复“时间双推进”**：`GameTick` 与 `RunDiagnosticDays` 原来先直接调用 `AdvanceTime()`，调度器里的 `simulation.time.daily` 又推进一次，长跑实际以两倍速度老化（这也是 P7 诊断里“150 年就出现政权”的来源）。现在只由调度器推进一次。
+- **替换运行时裸 365/91**：`OfficeSystem`、`LawEffectRuntime`、`WarRules`、`WarJustificationSystem`、`DiplomacyManager`、`CombatManager`、`SuccessionSystem`、`PoliticsSimulationSystem`、`StateFormationSystem`、`SettlementEvolutionSystem`、`CharacterManager`、`GameWorld.Budget/Simulation`、`DisasterSystem` 等改用 `calendar.AbsoluteDay/daysPerYear` 或 `GameCalendar.Default*`；运行时 grep `365/91` 只剩日历自身。
+- 测试：`GameCalendarTests`（4）、`SimulationSchedulerCadenceTests`（4，含 30/90/365 跳日）、`CalendarIntegrationTests`（2 + 100 年 Explicit：365 与 360 天两套各 100 年）。
+- 验证：全量 EditMode `EXIT=0`、1035 例、1026 通过、0 失败、零 `error CS`（9 个 Explicit 跳过）；100 年双历法回归通过（81.1s）。
+- 说明：5000–7000 年不作为时间门禁；P8.1 的城市/政权只由机制涌现，该区间是文献校准带（Zeder 2011、Çatalhöyük 7400–5600 cal BC、Uruk 晚第五至第四千年、Yoffee 2005、Trigger 2003 等，见 P8 计划 §6）。

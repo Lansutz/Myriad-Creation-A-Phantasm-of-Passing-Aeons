@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Simulation.State;
 using UnityEngine;
 using MyriadCreation.Simulation.Laws;
@@ -114,11 +114,11 @@ public static class SuccessionSystem
 		{
 			return result;
 		}
-		// currentDay 每年回绕（1..365）：跨年时按回绕计算空位天数
+		// currentDay 每年回绕（1..daysPerYear）：跨年时按回绕计算空位天数
 		int elapsedDays = day - realm.interregnumStartDay;
 		if (elapsedDays < 0)
 		{
-			elapsedDays += 365;
+			elapsedDays += MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear;
 		}
 		int elapsedMonths = Mathf.Max(0, elapsedDays / 30);
 		if (elapsedMonths > realm.interregnumMonths)

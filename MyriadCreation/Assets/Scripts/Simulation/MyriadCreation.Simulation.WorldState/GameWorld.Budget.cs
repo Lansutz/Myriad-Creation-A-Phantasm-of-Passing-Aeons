@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Units;
 
@@ -10,7 +10,7 @@ public partial class GameWorld
 	/// P1.2 只读收支报告：只汇总实际发生的国库流水（目前主税收入；支出随命令/军费逐步接入）。
 	/// 不预造费率，不改任何模拟状态。
 	/// </summary>
-	public RealmBudgetReport GetRealmBudgetReport(int realmId, int windowDays = 365)
+	public RealmBudgetReport GetRealmBudgetReport(int realmId, int windowDays = MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear)
 	{
 		RealmBudgetReport report = new RealmBudgetReport
 		{
@@ -22,7 +22,7 @@ public partial class GameWorld
 			return report;
 		}
 		report.treasury = realm.treasury;
-		int today = currentYear * 365 + currentDay;
+		int today = calendar.AbsoluteDay(currentYear, currentDay);
 		List<TreasuryTransaction> transactions = TreasuryLedger.GetHistory(realmId, today - windowDays);
 		Dictionary<string, RealmBudgetLine> lines = new Dictionary<string, RealmBudgetLine>();
 		foreach (TreasuryTransaction transaction in transactions)

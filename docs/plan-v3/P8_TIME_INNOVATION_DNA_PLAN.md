@@ -268,3 +268,18 @@
 - 中国、南亚、中美洲、西非的城市化时间与形态；目前表以近东为主，不能当全球模板。
 - 从“大型定居”到“城市”的因果：人口压力、灌溉、贸易、战争、宗教/仪式、气候，各文献权重不同；游戏应做成多因素而非单因子。
 - 社会实践的量化：Reckwitz 是理论，不是可计算模型；把“实践”转成游戏数值是我们的设计构造，需在文档中明确是隐喻/近似。
+
+
+---
+
+## 7. P8.0 实施记录（2026-11-14）
+
+- `GameCalendar`（Core.Data）落地：`hoursPerDay/daysPerYear/seasons/ticksPerDay/daysPerTick` 与换算方法；`WorldSetupOptions.calendar` 是两个可调世界参数（自转/公转）的入口，新局克隆到 `GameWorld.calendar`。
+- 自转影响昼夜温差：`DiurnalRangeFactor = sqrt(24/hoursPerDay)`，由 `PlanetClimateSimulator` 读取；公转影响年长/季长与所有按年系统。完整气候/生态耦合留 P8.3。
+- 五档速度语义写进 `GameSpeedScale` 注释：1/2/5/10/30 = 游戏日/现实秒；史前跨度用 `daysPerTick` 批处理。
+- 调度器：`elapsedDays` 区间累计 + 首次相位 `(day-1)%interval`；`LongTerm` 读 `DaysPerYear`。
+- 修复“时间双推进”：`GameTick`/`RunDiagnosticDays` 不再直接 `AdvanceTime()`，只由 `simulation.time.daily` 推进。
+- 运行时 365/91 收口：17 个文件改用 `calendar` 或 `GameCalendar.Default*`；grep 只剩日历自身。
+- 测试：`GameCalendarTests`、`SimulationSchedulerCadenceTests`、`CalendarIntegrationTests`（含 365/360 各 100 年 Explicit）。
+- 验证：`EXIT=0`、1035 例、1026 通过、0 失败；双历法 100 年回归 81.1s。
+- 下一步：P8.1 取消年份门禁，改为机制涌现；用文献校准带观测第一座城市出现的年份。

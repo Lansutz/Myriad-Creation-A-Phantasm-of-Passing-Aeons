@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.Diplomacy;
@@ -779,7 +779,7 @@ public class DiplomacyManager
 		treaty.isActive = true;
 		if (treaty.truceUntilDay <= 0)
 		{
-			treaty.truceUntilDay = day + ((WarRules != null) ? WarRules.truceYears * 365 : 1825);
+			treaty.truceUntilDay = day + ((WarRules != null) ? WarRules.truceYears * MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear : 1825);
 		}
 		relation.isAtWar = false;
 		relation.activeTreaties.Add(treaty);
@@ -800,7 +800,7 @@ public class DiplomacyManager
 		if (relation != null)
 		{
 			relation.isAtWar = false;
-			relation.truceUntilDay = day + truceYears * 365;
+			relation.truceUntilDay = day + truceYears * MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear;
 			relation.AddEvent(new DiplomaticEvent
 			{
 				type = DiplomaticEventType.PeaceTreaty,

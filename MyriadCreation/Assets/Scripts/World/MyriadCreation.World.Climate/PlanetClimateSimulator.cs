@@ -12,6 +12,9 @@ public class PlanetClimateSimulator
 
 	private readonly TileData[] _tiles;
 
+	/// <summary>世界历法（自转/公转）；为空时按地球基准。</summary>
+	public MyriadCreation.Core.Data.GameCalendar Calendar;
+
 	private readonly int _width;
 
 	private readonly int _height;
@@ -169,7 +172,7 @@ public class PlanetClimateSimulator
 		float num7 = (0f - (Mathf.Abs(tileLatitude - _config.thermalEquatorLat) - num)) * 0.15f;
 		float num8 = _seasonTempMod[season] * (num / 90f);
 		reference.annualTemp = Mathf.Clamp(num4 + num5 + num6 + num7 + num8, -55f, 35f);
-		reference.diurnalTempRange = (1f - reference.waterAdjacentWeight) * 12f + reference.elevation01 * 4f + 4f;
+		reference.diurnalTempRange = ((1f - reference.waterAdjacentWeight) * 12f + reference.elevation01 * 4f + 4f) * (Calendar != null ? Calendar.DiurnalRangeFactor : 1f);
 		float num9 = CalculateITCZPrecipitation(tileLatitude);
 		float num10 = CalculateWesterlyPrecipitation(tileLatitude);
 		float num11 = CalculateSubtropicalDry(tileLatitude);

@@ -349,7 +349,7 @@ public class DisasterSystem
 
 	private float GetSeasonDisasterMod(DisasterType type, int dayOfYear)
 	{
-		int num = (dayOfYear - 1) / 91;
+		int num = (dayOfYear - 1) / MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerSeason;
 		return type switch
 		{
 			DisasterType.Drought => num switch

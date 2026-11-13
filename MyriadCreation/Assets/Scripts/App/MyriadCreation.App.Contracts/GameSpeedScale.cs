@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 
 namespace MyriadCreation.App.Contracts
 {
     /// <summary>
-    /// P7 时间尺度：游戏速度只有五档（1/2/5/10/30 倍），暂停用 0。
+    /// 时间尺度：游戏速度只有五档（1/2/5/10/30），暂停用 0。
+    /// 语义 = 游戏日/现实秒（tickInterval=1s、daysPerTick=1 时）；高倍速由 GameCalendar.daysPerTick 批处理。
     /// 放在契约层，是因为设置端（GameManager）与展示端（UIManager）分属两个程序集，
     /// 档位表必须单源，否则 UI 标签和真实 timeScale 会漂移。
     /// </summary>
@@ -11,7 +12,7 @@ namespace MyriadCreation.App.Contracts
     {
         public const float Paused = 0f;
 
-        /// <summary>上限 30 倍：再高会让日 tick 与事件队列在同一帧内堆积，且 30x 已足够跨越数十年。</summary>
+        /// <summary>上限 30 日/秒：再高会让日 tick 与事件队列在同一帧内堆积；史前跨度用 daysPerTick 批处理。</summary>
         public const float Max = 30f;
 
         public static readonly float[] Options = { 1f, 2f, 5f, 10f, 30f };

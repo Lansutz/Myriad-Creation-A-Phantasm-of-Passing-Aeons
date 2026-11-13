@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace MyriadCreation.Simulation.WorldState
 {
@@ -6,7 +6,7 @@ namespace MyriadCreation.Simulation.WorldState
     {
         /// <summary>
         /// Headless 长跑/验收台用：推进 N 天并执行已注册调度。
-        /// 与正常 GameTick 使用同一 AdvanceTime + SimulationScheduler，避免两套时间语义。
+        /// 与正常 GameTick 使用同一 SimulationScheduler（时间由 simulation.time.daily 推进），避免两套时间语义。
         /// </summary>
         public void RunDiagnosticDays(int days)
         {
@@ -20,7 +20,7 @@ namespace MyriadCreation.Simulation.WorldState
             {
                 for (int i = 0; i < days; i++)
                 {
-                    AdvanceTime();
+                    // 时间由 simulation.time.daily 推进；这里重复调用会让长跑以两倍速度老化。
                     var tickClock = Stopwatch.StartNew();
                     SimulationScheduler.TickBudgeted(currentDay, currentYear, daysPerTick, float.MaxValue,
                         () => tickClock.Elapsed.TotalSeconds, out _, out _);

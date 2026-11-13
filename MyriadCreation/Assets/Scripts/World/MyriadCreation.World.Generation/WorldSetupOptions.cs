@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace MyriadCreation.World.Generation
@@ -29,6 +29,9 @@ public class WorldSetupOptions
 	public int initialUnitCount;
 
 	public SandboxSpawnRates spawnRates = new SandboxSpawnRates();
+
+	/// <summary>世界历法：自转小时/公转天数/季节/每日 tick。新局从这份配置克隆到 GameWorld.calendar。</summary>
+	public MyriadCreation.Core.Data.GameCalendar calendar = new MyriadCreation.Core.Data.GameCalendar();
 
 	/// <summary>
 	/// 自然基线：地理 + 聚落 + 自然生成，不预置政权/君主/宫廷/官职/军队/国教。

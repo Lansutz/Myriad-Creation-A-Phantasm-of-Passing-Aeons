@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Simulation.State;
@@ -98,7 +98,7 @@ public class DiseaseSystem
 			baseMortalityRate = 0.1f,
 			baseRecoveryRate = 0.01f,
 			incubationDays = 90,
-			durationDays = 365,
+			durationDays = MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear,
 			baseR0 = 1.2f,
 			isEndemic = true
 		};

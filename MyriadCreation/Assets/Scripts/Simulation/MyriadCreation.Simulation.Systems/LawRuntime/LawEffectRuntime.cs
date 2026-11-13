@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Simulation.State;
 using UnityEngine;
@@ -6,7 +6,7 @@ using MyriadCreation.Simulation.Laws;
 
 namespace MyriadCreation.Simulation.LawHost
 {
-/// <summary>一次法律效果结算的结果（年度增量已按 days/365 折算，供测试/UI/编年史使用）。</summary>
+/// <summary>一次法律效果结算的结果（年度增量已按 days/年长 折算，供测试/UI/编年史使用）。</summary>
 public struct LawEffectTickResult
 {
 	public LawEffect effect;
@@ -79,7 +79,7 @@ public static class LawEffectRuntime
 
 	/// <summary>
 	/// 按 days 天折算并应用年度效果（stability/legitimacy/unrest）。
-	/// 每年传 365（ApplyYearlyEffects）；周期结算传实际天数。
+	/// 每年传默认年长（ApplyYearlyEffects）；周期结算传实际天数。
 	/// </summary>
 	public static LawEffectTickResult ApplyPeriodicEffects(RealmData realm, RealmSociety society, int currentDay, int days)
 	{
@@ -110,12 +110,12 @@ public static class LawEffectRuntime
 	/// <summary>应用一整年的法律/法令效果（测试/年度结算用）。</summary>
 	public static LawEffectTickResult ApplyYearlyEffects(RealmData realm, RealmSociety society, int currentDay)
 	{
-		return ApplyPeriodicEffects(realm, society, currentDay, 365);
+		return ApplyPeriodicEffects(realm, society, currentDay, MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear);
 	}
 
 	/// <summary>
 	/// 年份变化 guard：每个 world-year 只结算一次年度效果（daysPerTick&gt;1 时 currentDay 可能跳过
-	/// 365 的整数倍，用 currentYear 变化判断可保证不漏不重）。返回本次实际结算的政权数。
+	/// 年长的整数倍，用 currentYear 变化判断可保证不漏不重）。返回本次实际结算的政权数。
 	/// </summary>
 	public static int ApplyYearlyIfNewYear(IEnumerable<RealmData> realms, Func<int, RealmSociety> societyProvider, int currentYear, int currentDay, ref int lastAppliedYear)
 	{

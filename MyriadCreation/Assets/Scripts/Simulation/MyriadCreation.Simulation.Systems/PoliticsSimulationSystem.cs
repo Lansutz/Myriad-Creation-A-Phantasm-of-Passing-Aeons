@@ -88,7 +88,7 @@ public sealed class PoliticsSimulationSystem
 			_economyManager.CollectTaxes(
 				value4.realmId,
 				_characterManager,
-				context.year * 365 + context.day,
+				context.year * MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear + context.day,
 				LawEffectRuntime.GetTaxMultiplier(value4, context.day));
 		}
 		Dictionary<int, float> dictionary = new Dictionary<int, float>(_realms.Count);

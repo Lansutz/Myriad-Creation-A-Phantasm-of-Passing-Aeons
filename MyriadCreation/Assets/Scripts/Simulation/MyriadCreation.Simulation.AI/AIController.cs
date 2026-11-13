@@ -41,7 +41,7 @@ public class AIController
 	private int _buildCooldown = -1;
 
 	/// <summary>密谋决策间隔（日）。</summary>
-	private const int IntrigueInterval = 365;
+	private const int IntrigueInterval = MyriadCreation.Core.Data.GameCalendar.DefaultDaysPerYear;
 
 	private int _intrigueCooldown = -1;
 
