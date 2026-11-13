@@ -28,6 +28,19 @@ public static class EcosystemSystem
 	/// <summary>人口压力拉满时，野生群落相对植被承载的上限比例。</summary>
 	public const float MaxWildlifeSuppression = 0.9f;
 
+	/// <summary>
+	/// 土地肥力的自然恢复：每月把当前肥力与“气候/地形潜在肥力”的差距缩小 1%（约 5–6 年恢复一半）。
+	/// 没有这项，旱灾/蝗灾/歉收的每日扣减会在一两百年里把全图肥力磨到 0，城市必然饿死。
+	/// </summary>
+	public const float SoilRecoveryPerMonth = 0.01f;
+
+	/// <summary>稳定/秩序每月向中性值回归的步长：约 4 年从 0 恢复到 50。</summary>
+	public const float CivilOrderRecoveryPerMonth = 1f;
+
+	public const float NeutralStability = 50f;
+
+	public const float NeutralOrder = 50f;
+
 	/// <summary>每地块野生承载 = 植被 × 该系数（0–1 密度口径）。</summary>
 	public const float WildlifePerVegetation = 0.8f;
 
@@ -195,8 +208,12 @@ public static class EcosystemSystem
 	}
 
 	/// <summary>推进 <paramref name="days"/> 天的演替；返回发生变化的陆地地块数。</summary>
+	/// <summary>累计调用次数，供诊断/测试确认月度调度确实在跑。</summary>
+	public static int TickCount;
+
 	public static int Tick(TileData[] tiles, float days, int year = 0)
 	{
+		TickCount++;
 		if (tiles == null || days <= 0f) return 0;
 		float months = days / 30f;
 		int changed = 0;
@@ -207,6 +224,8 @@ public static class EcosystemSystem
 			EnsureInitialized(ref tile);
 			float pressure = PopulationPressure(in tile);
 			float people = PopulationOf(in tile);
+			RecoverSoil(ref tile, months);
+			RecoverCivilOrder(ref tile, months);
 			float livestockTarget = Mathf.Clamp01(people / 800f);
 			float livestock = Step(tile.livestock, livestockTarget, 0.02f, 0.02f, months);
 			float grazing = Mathf.Clamp01(livestock);
@@ -247,6 +266,36 @@ public static class EcosystemSystem
 		float people = 0f;
 		for (int i = 0; i < tile.populationBlocks.Count; i++) people += Mathf.Max(0f, tile.populationBlocks[i].count);
 		return people;
+	}
+
+	/// <summary>
+	/// 潜在肥力由气候（温度/降水）、地形（海拔/坡度）与群系决定，是同一套生成期分类器；
+	/// 恢复只向上靠拢，不把火山灰等一次性增肥抹掉。
+	/// </summary>
+	public static float PotentialFertility(in TileData tile)
+	{
+		return Mathf.Clamp01(MyriadCreation.World.Biome.HoldridgeBiomeClassifier.CalculateFertility(
+			tile.annualTemp, tile.annualPrecipMm, tile.elevation01, tile.slopeDegree, tile.biome));
+	}
+
+	/// <summary>休耕/淤积/植被恢复：把肥力往潜在值拉，单月最多缩小 1% 的差距。</summary>
+	private static void RecoverSoil(ref TileData tile, float months)
+	{
+		float potential = PotentialFertility(in tile);
+		if (tile.fertility >= potential) return;
+		float t = Mathf.Clamp01(SoilRecoveryPerMonth * months);
+		tile.fertility = Mathf.Min(potential, Mathf.Lerp(tile.fertility, potential, t));
+	}
+
+	/// <summary>
+	/// 秩序与稳定度会随记忆淡化、行政恢复而回到中性值（稳定 50 / 秩序 40）。
+	/// 没有恢复端时，一次饥荒的 −10 稳定度会永久把满意度压到 0，人口增长随之停摆（P7 诊断）。
+	/// </summary>
+	private static void RecoverCivilOrder(ref TileData tile, float months)
+	{
+		float step = CivilOrderRecoveryPerMonth * months;
+		tile.stability = Mathf.MoveTowards(tile.stability, NeutralStability, step);
+		tile.order = Mathf.MoveTowards(tile.order, NeutralOrder, step);
 	}
 
 	private static float Step(float current, float target, float growRate, float decayRate, float months)

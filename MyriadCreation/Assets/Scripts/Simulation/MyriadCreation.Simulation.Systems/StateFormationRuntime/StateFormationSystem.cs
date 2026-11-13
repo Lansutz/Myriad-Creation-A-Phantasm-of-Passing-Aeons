@@ -18,15 +18,15 @@ public static class StateFormationSystem
 	/// <summary>世界尺度上限：防止小地图无限建国，也给长跑一个可预期的实体规模；不是经济/政治门槛。</summary>
 	public const int MaxRealms = 8;
 
-	/// <summary>聚落至少存在这么多年，才谈得上形成政权（避免开局即国家）。</summary>
-	public const int MinSettlementAgeYears = 8;
+	/// <summary>聚落至少存在这么多年，才谈得上形成政权（P7：从 8 年拉到 200 年量级）。</summary>
+	public const int MinSettlementAgeYears = 200;
 
-	public const float MinSettlementPopulation = 200f;
+	public const float MinSettlementPopulation = 800f;
 
-	public const float MinSettlementDevelopment = 6f;
+	public const float MinSettlementDevelopment = 15f;
 
-	/// <summary>地区仓储至少要能覆盖人口 90 天口粮，才有多余养活脱产者。</summary>
-	public const int RequiredSurplusDays = 90;
+	/// <summary>地区仓储至少要能覆盖人口 180 天口粮，才有多余养活脱产者。</summary>
+	public const int RequiredSurplusDays = 180;
 
 	private const float PersonFoodPerDay = 0.01f;
 

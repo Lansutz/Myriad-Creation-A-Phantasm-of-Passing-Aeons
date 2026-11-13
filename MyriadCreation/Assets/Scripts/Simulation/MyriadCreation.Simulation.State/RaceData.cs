@@ -184,7 +184,9 @@ public class RaceData
 	public float CalculatePopulationGrowthRate(TileData tile, float satisfaction)
 	{
 		float num = CalculateEnvironmentFitness(tile);
-		float num2 = 0.002f * reproductionRate;
+		// 前现代人口自然增长约 0.1%–1%/年；旧值 0.002/日 ≈ 73%/年，人口一年就冲满承载力，
+		// 随后靠饥荒/迁出回落，长跑里表现为剧烈振荡而不是缓慢生灭（P7 诊断）。
+		float num2 = 0.00003f * reproductionRate;
 		float num3 = 0.5f + satisfaction / 100f;
 		float num4 = 0.3f + num * 0.7f;
 		return num2 * num3 * num4;

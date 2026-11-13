@@ -187,6 +187,23 @@ public partial class GameWorld : MonoBehaviour
 		Debug.Log((object)$"[GameWorld] 地形生成完成（{SetupOptions.initialContent}），陆地{GetLandTileCount()}地块，海洋{GetSeaTileCount()}地块，省份{provinces.Count}个");
 	}
 
+	/// <summary>
+	/// 生成收尾的肥力一致性：按当前气候/群系把肥力压到潜在值。
+	/// 生成期的肥力在 GCM/破碎化之前写入，气候重算后若不夹取，会出现“沙漠地块肥力 0.87、潜力 0.13”。
+	/// 只下调不回升，火山灰/建筑增肥仍由运行时恢复逻辑维护。
+	/// </summary>
+	private void ClampFertilityToCurrentClimate()
+	{
+		if (tiles == null) return;
+		for (int i = 0; i < tiles.Length; i++)
+		{
+			if (!tiles[i].exists || !tiles[i].isLand) continue;
+			float potential = MyriadCreation.World.Biome.HoldridgeBiomeClassifier.CalculateFertility(
+				tiles[i].annualTemp, tiles[i].annualPrecipMm, tiles[i].elevation01, tiles[i].slopeDegree, tiles[i].biome);
+			if (tiles[i].fertility > potential) tiles[i].fertility = potential;
+		}
+	}
+
 	private void GenerateTerrainBase(int seed)
 	{
 		randomSeed = seed;
@@ -201,6 +218,7 @@ public partial class GameWorld : MonoBehaviour
 		new TerrainGenerator(seed).TrackRivers(tiles);
 		// 初始开图也应用破碎化（task-42）：必须在省份/聚落/初始单位生成之前完成，下游按最终海陆生成。
 		ApplyInitialSeaLandFragmentation(0f);
+		ClampFertilityToCurrentClimate();
 		ClearInitialTerrainDirty();
 	}
 
@@ -248,7 +266,7 @@ public partial class GameWorld : MonoBehaviour
 	///
 	/// 重算范围：annualTemp / annualPrecipMm / airHumidityPct / climateZone / biome / fertility
 	///（task-55：湿度与气候带也随新 climate 重算，海地块 fertility=0；不跑 GCM，
-	/// 也不改 CalculateClimate 全量路径）。温度使用破碎化前的绝对高程，避免相对化后整体偏暖。
+	/// 也不改 CalculateClimate 全量路径）。温度使用相对海平面的 elevation01，避免把陆地海拔重复罚一次。
 	/// </summary>
 	private void RecalculateDerivedClimateAfterFragmentation(float[] elevationBefore, bool[] isLandBefore, bool[] isCoastBefore, float globalTempOffset)
 	{
@@ -272,7 +290,7 @@ public partial class GameWorld : MonoBehaviour
 			{
 				return;
 			}
-			RecalculateDerivedClimateForTile(i, elevationBefore[i], globalTempOffset);
+			RecalculateDerivedClimateForTile(i, tiles[i].elevation01, globalTempOffset);
 			recomputedFlags[i] = true;
 			Interlocked.Increment(ref changedCount);
 		});
@@ -313,7 +331,8 @@ public partial class GameWorld : MonoBehaviour
 	/// <summary>
 	/// 按主生成公式重算单地块 climate/biome/fertility（海地块 fertility=0），供破碎化后一致性修复使用。
 	/// task-55 起 helper 同时重算 annualPrecipMm / airHumidityPct / climateZone，这里只补 biome/fertility。
-	/// 温度用破碎化前的绝对高程（与未受影响地块同口径）；biome/fertility 按当前字段（含相对化后的 elevation01）计算。
+	/// 温度用当前 elevation01（破碎化后已统一折算为相对海平面高程），与主生成公式同口径；
+	/// biome/fertility 也按当前字段计算。
 	/// </summary>
 	private void RecalculateDerivedClimateForTile(int index, float elevationForTemperature, float globalTempOffset)
 	{
@@ -385,9 +404,13 @@ public partial class GameWorld : MonoBehaviour
 		// 初始开图也应用破碎化（task-42）：在此之后才生成政权/省份/聚落/初始单位，下游按最终海陆生成。
 		// 传生成器使用中的 GlobalTempOffset，保证破碎化后补算的温度与主生成同口径（task-51）。
 		ApplyInitialSeaLandFragmentation(_planetTerrainGenerator.GlobalTempOffset);
+		ClampFertilityToCurrentClimate();
 		_worldMapSimulation?.MarkAllTerrainDirty(tiles.Length);
 		SimulationScheduler.MarkDirty("world.terrain");
 		SetupOptions.Normalize();
+		// 聚落选址必须读“最终气候”：GCM 会重判群系与降水，若在聚落生成之后才算，
+		// 省治会被放在旧肥力的沙漠/冰盖上（P7 诊断：HotDesert 地块肥力 0.77、潜力 0.02）。
+		CalculateClimate();
 		if (SetupOptions.generatePolities)
 		{
 			InitializeDefaultRealms();

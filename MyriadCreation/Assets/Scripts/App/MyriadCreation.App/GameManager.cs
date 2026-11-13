@@ -322,7 +322,7 @@ namespace MyriadCreation.UI
  /// <summary>设置游戏速度</summary>
         public void SetGameSpeed(float speed)
         {
-            gameSpeed = Mathf.Clamp(speed, 0f, 5f);
+            gameSpeed = MyriadCreation.App.Contracts.GameSpeedScale.Clamp(speed);
             if (!isPaused && currentState == GameState.Playing)
                 Time.timeScale = gameSpeed;
             OnGameSpeedChanged?.Invoke(gameSpeed);

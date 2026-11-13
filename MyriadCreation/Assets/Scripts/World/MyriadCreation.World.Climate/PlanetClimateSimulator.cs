@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.World.Terrain;
@@ -184,7 +184,10 @@ public class PlanetClimateSimulator
 		reference.accumulatedTemp = Mathf.Max(0f, reference.annualTemp - 10f) * 365f;
 		reference.frostFreeDays = Mathf.Clamp((reference.annualTemp + 5f) / 30f * 365f, 0f, 365f);
 		reference.climateZone = DetermineClimateZone(reference.annualTemp, num, reference.elevation01, reference.annualPrecipMm);
-		reference.biome = DetermineBiome(reference.climateZone, reference.annualTemp, reference.annualPrecipMm, reference.elevation01, reference.soilHumidityPct);
+		// 只更新气候带：群系与肥力统一由生成期的 Holdridge 分类器负责。
+		// 本类的时间/降水模型是第二套口径，若在这里重判群系，会在首个 tick 把全图改判成沙漠/冰盖，
+		// 而聚落选址与肥力仍按生成期群系计算，城市就会坐在“实际不产粮的沃土”上饿死（P7 诊断）。
+		// 气候模型统一（两套口径合并）列入 P7.5 板块漂移/长期气候阶段处理。
 	}
 
 	private float CalculateEquatorBaseTemp()

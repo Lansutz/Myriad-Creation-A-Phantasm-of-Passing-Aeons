@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Content.Definitions;
@@ -108,7 +108,8 @@ namespace MyriadCreation.Tests.EditMode
             var source = Land(0, 1f, 1f);
             source.populationBlocks = new List<PopulationBlock>
             {
-                new PopulationBlock { count = 500f, raceId = 0, cultureId = 0, faithId = 0, socialClass = GameEnums.SocialClass.Peasant, satisfaction = 60f }
+                // 无开发（dev=0）的温带草地承载力约 1350；1800 人明确过载，迁移才有意义。
+                new PopulationBlock { count = 1800f, raceId = 0, cultureId = 0, faithId = 0, socialClass = GameEnums.SocialClass.Peasant, satisfaction = 60f }
             };
             world.tiles[0] = source;
             var spawn = new SandboxSpawnSystem(world, 7);

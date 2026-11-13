@@ -1233,3 +1233,18 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 测试：`SettlementLifecycleTests` 4 例（营地正反向、迁移守恒、无过载源不造人）。验证：`EXIT=0`、`1006/1003`、零 `error CS`（3 个 Explicit 跳过）。
 - 仍留欠账：完整市场价格/货币流通、迁徙路线寻路、营地仓储上限、聚落财富的消费端。
 - **长跑回归**：P6 改动后 100 年自然长跑通过（189.0s），P5 自然建国/官职/实物税流水仍成立。
+
+## D143 P7.0 时间尺度与 200 年建国周期（2026-11-14）
+
+- **五档倍速单源**：新增 `GameSpeedScale`（App.Contracts）`{1,2,5,10,30}`、暂停 0、上限 30，`Clamp/IndexOf/Next`；`GameManager.SetGameSpeed` 与 TopBar 循环按钮共用，旧 1x/2x/3x 按钮运行时隐藏。测试 `GameSpeedScaleTests`。
+- **建国门槛**：聚落年龄 ≥200 年、人口 ≥800、开发 ≥15、地区仓储 ≥180 天口粮；`MaxRealms=8`。`NaturalHundredYears_NoRealmBeforeStateCycle` 与 `NaturalLongRun_FormsRealmOfficesAndTaxReceipts` 通过。
+- **世界气温公式修正**：`ComputeBaseAnnualTemperature` 原按全表归一化高程 ×65℃ 罚海拔，默认世界均温 -28.7℃、半图为冰盖；改为相对海平面高程 ×45℃，破碎化补算同口径。修复后均温约 0℃、冰盖约 23%，肥力 p90 0.5。
+- **生成期肥力一致性**：气候重算/破碎化后按当前群系把肥力夹到潜在值（`ClampFertilityToCurrentClimate`），并在气候模拟改群系时同步夹取；不再出现“沙漠地块肥力 0.8、潜力 0.02”。第二套气候模型（`PlanetClimateSimulator`）不再重判群系，气候模型统一列为 P7.5 欠账。
+- **承载力机制化**：`2400 × 地形 × NPP × 开发 × 肥力`；农业 NPP 对河流/海岸设灌溉下限（0.65/0.45）；人口超载由“增长率归零”改为马尔萨斯净减少。
+- **人口与秩序**：修复 `PopulationTick` 先缩放再写回旧块导致增长被覆盖的 bug；自然增长从 0.002/日（≈73%/年）降到 0.00003/日（≈1%/年）；稳定/秩序每月向 50 恢复；未初始化的文化渗透按中性 50。
+- **食物链**：可食货列表惰性重建 + 兜底商品表显式 `MarkEdible`；饥荒与消费统一按经济系统的可食货清单与营养折算；饥荒线改为“全区不足 7 天且缺口 >50%”，死亡率随缺口（≤2%）；出口保留本地 180 天口粮；主粮储存期 1800→7300 天；**口粮独立仓容**，非食用货最多占共享仓容 60%，避免矿石/木材把粮食挤到无法入库。
+- **聚落选址**：省治落在省域内“肥力×NPP×水”最高地块，额外村落从地力前 1/3 抽取；初始人口按选址得分平方给（40 + max×score²），不再把两千人塞进干旱海岸。
+- **其他长跑 bug**：蝗群改为“到达新地块才结算一次”（原 -2.0/日直接清零）；营地演化聚落时 `fortifiedOutpostData` 空引用；迁移只搬“超过承载 1.1 倍的部分”，每次 ≤2%。
+- 测试：`GameSpeedScaleTests`、`SoilRecoveryTests`、`SwarmDamageTests`、`AgricultureYieldTests`（旱年场景改用肥力 0.1）、`EconomyConservationTests.InitiateTrades_KeepsLocalFoodReserve`、`SettlementLifecycleTests`（过载源 1200 人）。
+- 验证：100 年无政权通过（101.4s）；220 年自然长跑出现政权/官职/实物税流水通过（202.6s）；全量 EditMode：`EXIT=0`、1021 例、1013 通过、0 失败、零 `error CS`（8 个 Explicit 按需跳过）。
+- 欠账（P7.1/P7.6）：革新数量与研究速度、仓储设施化（粮仓/盐仓/金库/货栈分级与升级配方）、第二套气候模型合并、30x 下的事件队列压力测试。

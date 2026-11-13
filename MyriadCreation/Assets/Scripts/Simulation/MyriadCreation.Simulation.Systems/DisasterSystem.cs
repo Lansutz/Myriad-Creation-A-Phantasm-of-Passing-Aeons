@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Simulation.State;
@@ -318,7 +318,9 @@ public class DisasterSystem
 			{
 			case DisasterType.Drought:
 				reference.soilHumidityPct = Mathf.Max(0f, reference.soilHumidityPct - 0.5f);
-				reference.fertility = Mathf.Max(0f, reference.fertility - 0.001f);
+				// 干旱主要是当年减产与土壤失水，不是永久毁地：肥力日损压到 0.0002，
+				// 与 EcosystemSystem 的年度恢复（约 12%/年）配平，避免几百年后全图肥力归零。
+				reference.fertility = Mathf.Max(0f, reference.fertility - 0.0002f);
 				break;
 			case DisasterType.Flood:
 				reference.soilHumidityPct = Mathf.Min(100f, reference.soilHumidityPct + 2f);
@@ -331,10 +333,11 @@ public class DisasterSystem
 				reference.annualTemp = Mathf.Min(50f, reference.annualTemp + 0.3f);
 				break;
 			case DisasterType.LocustPlague:
-				reference.fertility = Mathf.Max(0f, reference.fertility - 0.005f);
+				// 蝗群吃掉的是植被与当季作物，土壤肥力只轻微受损。
+				reference.fertility = Mathf.Max(0f, reference.fertility - 0.001f);
 				break;
 			case DisasterType.CropFailure:
-				reference.fertility = Mathf.Max(0f, reference.fertility - 0.002f);
+				reference.fertility = Mathf.Max(0f, reference.fertility - 0.0005f);
 				break;
 			case DisasterType.Famine:
 				reference.stability = Mathf.Max(0f, reference.stability - 0.2f);

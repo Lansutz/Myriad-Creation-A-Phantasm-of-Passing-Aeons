@@ -1,4 +1,4 @@
-using MyriadCreation.Core.Data;
+﻿using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.WorldState;
 using UnityEngine;
@@ -34,7 +34,7 @@ public class NomadAI : IMapActorAI
 			if (num8 >= 0 && num8 < world.tiles.Length)
 			{
 				TileData tileData = world.tiles[num8];
-				if (tileData.exists && tileData.isLand && (tileData.biome == GameEnums.BiomeType.Savanna || tileData.biome == GameEnums.BiomeType.TemperateGrassland || tileData.biome == GameEnums.BiomeType.TemperateGrassland || tileData.fertility > 30f))
+				if (tileData.exists && tileData.isLand && (tileData.biome == GameEnums.BiomeType.Savanna || tileData.biome == GameEnums.BiomeType.TemperateGrassland || tileData.biome == GameEnums.BiomeType.TemperateGrassland || tileData.fertility > 0.3f))
 				{
 					actor.SetTarget(num8);
 					break;
@@ -45,7 +45,7 @@ public class NomadAI : IMapActorAI
 
 	public void Act(GameWorld world, MapActor actor)
 	{
-		if (world.tiles[actor.currentTile].fertility > 40f)
+		if (world.tiles[actor.currentTile].fertility > 0.4f)
 		{
 			actor.supplies = Mathf.Min(200f, actor.supplies + 5f);
 			actor.health = Mathf.Min(100f, actor.health + 1f);

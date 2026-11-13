@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.Units;
@@ -224,7 +224,7 @@ public class MapActorManager
 					break;
 				}
 			}
-			else if (!(tileData.fertility < 40f))
+			else if (!(tileData.fertility < 0.4f))
 			{
 				bool flag = Random.value < 0.55f;
 				MapActor mapActor2 = CreateActor(MapActorType.Wildlife, num, Random.Range(100, 1000), flag ? UnitSubcategory.LocustSwarm : UnitSubcategory.RodentPlague);

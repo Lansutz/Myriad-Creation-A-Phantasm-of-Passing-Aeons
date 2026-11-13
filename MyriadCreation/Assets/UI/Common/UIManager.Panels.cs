@@ -350,6 +350,64 @@ public partial class UIManager
             return eventSystem.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() != null;
         }
 
+        /// <summary>P7：TopBar 上的五档速度循环按钮（1/2/5/10/30x），不依赖场景改造。</summary>
+        private void EnsureSpeedCycleButton()
+        {
+            if (_speedCycleButton != null) return;
+            Transform topBar = null;
+            GameObject topBarObj = GameObject.Find("TopBar");
+            if (topBarObj != null) topBar = topBarObj.transform;
+            if (topBar == null && societyOpenButton != null) topBar = societyOpenButton.transform.parent;
+            if (topBar == null && charOpenButton != null) topBar = charOpenButton.transform.parent;
+            if (topBar == null) return;
+
+            var go = new GameObject("SpeedCycleButton", typeof(RectTransform),
+                typeof(CanvasRenderer), typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Button));
+            var rt = (RectTransform)go.transform;
+            rt.SetParent(topBar, false);
+            rt.sizeDelta = new Vector2(64f, 30f);
+            go.GetComponent<UnityEngine.UI.Image>().color = new Color32(52, 62, 78, 255);
+            var layoutElement = go.AddComponent<UnityEngine.UI.LayoutElement>();
+            layoutElement.preferredWidth = 64f;
+            layoutElement.minWidth = 54f;
+            layoutElement.preferredHeight = 30f;
+            layoutElement.minHeight = 30f;
+
+            _speedCycleButton = go.GetComponent<UnityEngine.UI.Button>();
+            _speedCycleButton.onClick.AddListener(() => { UiSfx.PlayClick(); CycleGameSpeed(); });
+
+            var textGo = new GameObject("Text", typeof(RectTransform));
+            textGo.transform.SetParent(go.transform, false);
+            var txt = textGo.AddComponent<TMPro.TextMeshProUGUI>();
+            txt.font = TMPFontUtility.GetChineseFont();
+            txt.text = "1x";
+            txt.fontSize = 13;
+            txt.alignment = TMPro.TextAlignmentOptions.Center;
+            txt.color = Color.white;
+            txt.raycastTarget = false;
+            var trt = txt.rectTransform;
+            trt.anchorMin = Vector2.zero;
+            trt.anchorMax = Vector2.one;
+            trt.offsetMin = Vector2.zero;
+            trt.offsetMax = Vector2.zero;
+            _speedCycleLabel = txt;
+
+            float currentSpeed = AppServices.GameSession != null ? AppServices.GameSession.GameSpeed : 1f;
+            _speedIndex = System.Array.IndexOf(SpeedOptions, currentSpeed);
+            if (_speedIndex < 0)
+            {
+                // 旧场景默认 3x 或暂停 0f 不在五档里：标签按真实值显示，下一次点击从 1x 开始循环。
+                _speedIndex = 0;
+                _speedCycleLabel.text = currentSpeed <= 0f ? "暂停" : $"{currentSpeed:0}x";
+            }
+            else
+            {
+                _speedCycleLabel.text = $"{SpeedOptions[_speedIndex]:0}x";
+            }
+            _speedCycleButton.gameObject.SetActive(
+                AppServices.GameSession == null || AppServices.GameSession.CurrentState != GameState.MainMenu);
+        }
+
         /// <summary>懒创建 TopBar 上的「政府」按钮（若场景已有则复用引用；不改场景文件）。</summary>
         private void EnsureGovernmentButton()
         {

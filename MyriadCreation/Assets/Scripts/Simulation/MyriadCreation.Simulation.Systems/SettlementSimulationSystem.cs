@@ -140,6 +140,7 @@ public sealed class SettlementSimulationSystem
 			float gain = 0.02f + Mathf.Clamp(settlement.population / 5000f, 0f, 1f) * 0.08f;
 			// 开发度来自持续建设劳动：人口越多，日常营建把聚落开发度推得越快；不再只减不增。
 			settlement.development += gain * context.deltaDays * 0.01f;
+			SyncSiteLandDevelopment(settlement, context.deltaDays);
 			SettlementTypologySystem.UpdateConstructionProgress(settlement, gain * context.deltaDays);
 			if (!SettlementTypologySystem.IsConstructionReady(settlement))
 			{
@@ -160,6 +161,21 @@ public sealed class SettlementSimulationSystem
 				_world.GetChronicle()?.Add("settlement_abandoned", name + " 因人口流失废弃为营地", true);
 			}
 		}
+	}
+
+	/// <summary>
+	/// 聚落营建会逐步开垦周边土地：地块开发度（0-1）向 聚落开发度/100 缓慢靠拢。
+	/// 只上不下地“追平”会抹掉灾害/战争造成的土地退化，所以按日步长移动，受灾后仍需时间恢复。
+	/// </summary>
+	private void SyncSiteLandDevelopment(SettlementData settlement, int deltaDays)
+	{
+		int tileIndex = settlement.tileIndex;
+		if (tileIndex < 0 || tileIndex >= _tiles.Length) return;
+		TileData tile = _tiles[tileIndex];
+		if (!tile.exists || !tile.isLand) return;
+		float target = Mathf.Clamp01(settlement.development / 100f);
+		tile.development = Mathf.MoveTowards(tile.development, target, 0.001f * deltaDays);
+		_tiles[tileIndex] = tile;
 	}
 
 	public void ProductionDailyTick(SimulationTickContext context)

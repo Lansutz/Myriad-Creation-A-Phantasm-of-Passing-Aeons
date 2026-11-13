@@ -1,4 +1,4 @@
-using MyriadCreation.Core.Data;
+﻿using MyriadCreation.Core.Data;
 using MyriadCreation.Simulation.WorldState;
 using UnityEngine;
 
@@ -9,6 +9,9 @@ public class SwarmAI : IMapActorAI
 	private int _lifespanDays;
 
 	private int _spreadCooldown;
+
+	/// <summary>上一次造成损害的地块；蝗群只在“落到新地块”时啃食一次，而不是每天原地扣一遍。</summary>
+	private int _lastDamagedTile = -1;
 
 	public SwarmAI(int lifespanDays = 120)
 	{
@@ -46,7 +49,7 @@ public class SwarmAI : IMapActorAI
 				if (num7 >= 0 && num7 < world.tiles.Length)
 				{
 					TileData tileData = world.tiles[num7];
-					if (tileData.exists && tileData.isLand && tileData.fertility > 30f)
+					if (tileData.exists && tileData.isLand && tileData.fertility > 0.3f)
 					{
 						actor.SetTarget(num7);
 						break;
@@ -58,8 +61,13 @@ public class SwarmAI : IMapActorAI
 
 	public void Act(GameWorld world, MapActor actor)
 	{
+		// 蝗群每天都会调用 Act：只在到达新地块时造成一次损害，否则一个蝗群 120 天就能把沿途肥力清零。
+		if (actor.currentTile == _lastDamagedTile) return;
+		_lastDamagedTile = actor.currentTile;
 		TileData tileData = world.tiles[actor.currentTile];
-		tileData.fertility = Mathf.Max(0f, tileData.fertility - 2f);
+		// 蝗群啃的是植被与当季作物，不是土壤本身；肥力只轻微受损，休耕可恢复。
+		tileData.vegetation = Mathf.Max(0f, tileData.vegetation - 0.25f);
+		tileData.fertility = Mathf.Max(0f, tileData.fertility - 0.01f);
 		tileData.development = Mathf.Max(0f, tileData.development - 0.005f);
 		world.tiles[actor.currentTile] = tileData;
 	}

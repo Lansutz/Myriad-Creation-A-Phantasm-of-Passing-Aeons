@@ -49,7 +49,10 @@ namespace MyriadCreation.Simulation.WorldState
 {
 public partial class GameWorld : MonoBehaviour
 {
-	private const int FamineCooldownDays = 30;
+	private const int FamineCooldownDays = 365;
+
+	/// <summary>地区粮仓低于全区人口这么多天的口粮才判定为急性饥荒（30 天是建国余粮门槛，不是饥荒线）。</summary>
+	private const float FamineBufferDays = 7f;
 
 	private int[] _lastFamineAbsoluteDay;
 
@@ -63,6 +66,10 @@ public partial class GameWorld : MonoBehaviour
 				_lastFamineAbsoluteDay[i] = -100000;
 			}
 		}
+		if (FamineByTile == null || FamineByTile.Length != tiles.Length)
+		{
+			FamineByTile = new int[tiles.Length];
+		}
 	}
 
 	private void PopulationTick()
@@ -70,6 +77,18 @@ public partial class GameWorld : MonoBehaviour
 		ConcurrentQueue<GameEvent> parallelEvents = new ConcurrentQueue<GameEvent>();
 		EnsureFamineCooldownBuffer();
 		int absoluteDay = currentYear * 365 + currentDay;
+		// 饥荒是“地区粮仓够不够全区人吃”的问题，不是每块地各向同一个粮仓要 30 天口粮。
+		// 按地块人口检查会让多聚落地区凭空多出数倍需求，长跑里城市被误判饥荒反复削人口（P7 诊断）。
+		float[] regionPopulation = new float[tiles.Length];
+		for (int i = 0; i < tiles.Length; i++)
+		{
+			if (!tiles[i].exists || !tiles[i].isLand || tiles[i].populationBlocks == null) continue;
+			int region = tiles[i].regionId;
+			if (region < 0 || region >= regionPopulation.Length) continue;
+			float total = 0f;
+			for (int b = 0; b < tiles[i].populationBlocks.Count; b++) total += Mathf.Max(0f, tiles[i].populationBlocks[b].count);
+			regionPopulation[region] += total;
+		}
 		Parallel.For(0, tiles.Length, (int i) =>
 		{
 			if (tiles[i].exists && tiles[i].isLand && tiles[i].populationBlocks != null)
@@ -77,17 +96,20 @@ public partial class GameWorld : MonoBehaviour
 				for (int j = 0; j < tiles[i].populationBlocks.Count; j++)
 				{
 					PopulationBlock populationBlock = tiles[i].populationBlocks[j];
-					if (races.TryGetValue(populationBlock.raceId, out var value))
+					bool hasRace = races.TryGetValue(populationBlock.raceId, out var race);
+					float growth = 0f;
+					if (hasRace)
 					{
-						float num = value.CalculatePopulationGrowthRate(tiles[i], populationBlock.satisfaction);
+						growth = race.CalculatePopulationGrowthRate(tiles[i], populationBlock.satisfaction);
 						float capacity = CarryingCapacitySystem.CalculateCarryingCapacity(tiles[i], tradeCenters);
 						float overloadRatio = CarryingCapacitySystem.GetOverloadRatio(tiles[i], capacity);
 						if (overloadRatio > 1f)
 						{
-							float num2 = Mathf.Clamp01((overloadRatio - 1.1f) / 0.9f);
-							num *= 1f - num2;
+							// 马尔萨斯回落：超出土地承载后，饥荒、疫病与迁出带来净减少，
+							// 而不是把增长率压到 0 让人口卡在承载线上反复过冲。
+							float excess = Mathf.Min(1f, overloadRatio - 1f);
+							growth = -0.001f * excess;
 						}
-						PopulationLedger.Scale(tiles[i].populationBlocks, j, 1f + num * (float)daysPerTick);
 					}
 					float num3 = CalculateSatisfactionDelta(i, populationBlock);
 					populationBlock.satisfaction = Mathf.Clamp(populationBlock.satisfaction + num3, 0f, 100f);
@@ -101,24 +123,58 @@ public partial class GameWorld : MonoBehaviour
 						});
 					}
 					tiles[i].populationBlocks[j] = populationBlock;
+					// 增长必须写在满意度回写之后：Scale 直接改列表里的块，若先 Scale 再用旧副本赋值，
+					// 会把这一 tick 的增长覆盖掉（长跑里表现为人口永远不增长/缓慢流失）。
+					if (hasRace)
+					{
+						PopulationLedger.Scale(tiles[i].populationBlocks, j, 1f + growth * (float)daysPerTick);
+					}
 				}
 				if (tradeCenters.TryGetValue(tiles[i].regionId, out var value2))
 				{
-					float valueOrDefault = value2.inventory.GetValueOrDefault(0, 0f);
-					float tilePopulation = GetTilePopulation(i);
-					if (valueOrDefault < tilePopulation * 0.01f && tilePopulation > 0f)
+					// 饥荒与消费必须同一口径：用经济系统的可食货清单（含粟/黍等所有 edible 货），
+					// 只写死小麦/肉/鱼/稻会让只种粟黍的地区“粮仓满但被判定饥荒”，长跑里城市被反复削死。
+					float food = 0f;
+					IReadOnlyList<int> edibleGoods = _economyManager != null ? _economyManager.EdibleGoods : null;
+					if (edibleGoods != null && edibleGoods.Count > 0)
 					{
-						// 同一地块 30 天内只报一次饥荒：否则长跑后几乎全图每日重复入队，
+						for (int f = 0; f < edibleGoods.Count; f++)
+						{
+							int goodsId = edibleGoods[f];
+							food += value2.inventory.GetValueOrDefault(goodsId, 0f) * _economyManager.GetNutrition(goodsId);
+						}
+					}
+					else
+					{
+						int[] foodGoods = CarryingCapacitySystem.FoodGoodsIds;
+						for (int f = 0; f < foodGoods.Length; f++) food += value2.inventory.GetValueOrDefault(foodGoods[f], 0f);
+					}
+					float tilePopulation = GetTilePopulation(i);
+					int regionId = tiles[i].regionId;
+					float regionPeople = regionId >= 0 && regionId < regionPopulation.Length ? regionPopulation[regionId] : tilePopulation;
+					// 饥荒线是“粮仓见底”（不足 7 天），不是“储备低于 30 天”。
+					// 30 天是建国的余粮门槛；把青黄不接当饥荒会让每个地区每年都死 2% 人口，形成死亡螺旋。
+					float need = regionPeople * 0.01f * FamineBufferDays;
+					float shortfall = need > 0f ? 1f - food / need : 0f;
+					// 只有粮仓见底过半才算急性饥荒；死亡比例随缺口加深（最多 2%），
+					// 而不是“只要低于 7 天就固定死 2%”，否则自给自足的穷地区会每年被削一次、永远无法稳定。
+					if (shortfall > 0.5f && tilePopulation > 0f)
+					{
+						// 同一地块一年内只报一次饥荒：否则长跑后几乎全图每日重复入队，
 						// events.daily 会从 0.4ms 漂到 100ms+（P0.4 一年档实测）。
 						int lastDay = _lastFamineAbsoluteDay[i];
 						if (absoluteDay - lastDay >= FamineCooldownDays)
 						{
 							_lastFamineAbsoluteDay[i] = absoluteDay;
+							LastFamineTile = i;
+							LastFamineFood = food;
+							LastFamineNeed = need;
+							if (i < FamineByTile.Length) System.Threading.Interlocked.Increment(ref FamineByTile[i]);
 							parallelEvents.Enqueue(new GameEvent
 							{
 								eventType = GameEventType.Famine,
 								tileIndex = i,
-								severity = 50f
+								severity = Mathf.Clamp01(shortfall) * 100f
 							});
 						}
 					}
@@ -145,7 +201,9 @@ public partial class GameWorld : MonoBehaviour
 		}
 		if (cultures.TryGetValue(pb.cultureId, out var _))
 		{
-			num += (pb.culturePenetration - 50f) * 0.005f;
+			// culturePenetration=0 是旧档/未初始化，按中性 50 处理；否则每个新人口块都背 −0.25/日 的满意度惩罚。
+			float penetration = pb.culturePenetration > 0f ? pb.culturePenetration : 50f;
+			num += (penetration - 50f) * 0.005f;
 		}
 		if (races.TryGetValue(pb.raceId, out var value3))
 		{
@@ -514,6 +572,13 @@ public partial class GameWorld : MonoBehaviour
 			float latAbs = Mathf.Abs((float)((double)TileGrid.ToY(k, mapWidth) - (double)mapHeight * 0.5) / (float)mapHeight * 180f);
 			tiles[k].biome = HoldridgeBiomeClassifier.Classify(tiles[k].annualTemp, tiles[k].annualPrecipMm, tiles[k].elevation01, tiles[k].isLand, tiles[k].isCoast, tiles[k].isRiver, tiles[k].slopeDegree, latAbs);
 			tiles[k].movementCost = BiomeAttributes.GetMovementCost(tiles[k].biome);
+			// 气候重算会改变群系；肥力必须跟着新气候下调，否则沙漠地块会保留冲积平原的 0.8+ 肥力，
+			// 长跑里城市会在“实际产不出粮的沃土”上慢慢饿死（P7 诊断：HotDesert 肥力 0.77 / 潜力 0.02）。
+			if (tiles[k].isLand)
+			{
+				float potential = HoldridgeBiomeClassifier.CalculateFertility(tiles[k].annualTemp, tiles[k].annualPrecipMm, tiles[k].elevation01, tiles[k].slopeDegree, tiles[k].biome);
+				tiles[k].fertility = Mathf.Min(tiles[k].fertility, potential);
+			}
 		}
 		Debug.Log((object)"[GameWorld] 气候计算完成：GCM已运行，降水/湿度/生物群系已更新");
 	}

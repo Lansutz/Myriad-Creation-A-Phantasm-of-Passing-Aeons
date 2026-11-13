@@ -417,6 +417,17 @@ public partial class GameWorld : MonoBehaviour
 	/// <summary>最近一次事件处理的条数（诊断用）。</summary>
 	public int LastProcessedEventCount { get; private set; }
 
+	/// <summary>累计饥荒事件数（人口后果的实际触发次数），供长跑诊断与调参使用；不参与模拟。</summary>
+	public int FamineEventCount { get; private set; }
+
+	/// <summary>最近一次饥荒判定的地块与库存/需求，供诊断定位“为什么又饥荒”；不参与模拟。</summary>
+	public int LastFamineTile { get; internal set; } = -1;
+	public float LastFamineFood { get; internal set; }
+	public float LastFamineNeed { get; internal set; }
+
+	/// <summary>每地块累计饥荒事件数（诊断用）。</summary>
+	public int[] FamineByTile = System.Array.Empty<int>();
+
 	private void ProcessEvents()
 	{
 		int processed = 0;
@@ -461,14 +472,18 @@ public partial class GameWorld : MonoBehaviour
 
 	private void HandleFamine(GameEvent evt)
 	{
+		FamineEventCount++;
 		if (evt.tileIndex >= 0 && evt.tileIndex < tiles.Length)
 		{
+			// 死亡比例跟着缺口走：缺口 50% 死 1%，粮仓彻底见底才死 2%。
+			float mortality = Mathf.Clamp01(evt.severity / 100f) * 0.02f;
+			float survivorScale = 1f - mortality;
 			for (int i = 0; i < tiles[evt.tileIndex].populationBlocks.Count; i++)
 			{
 				PopulationBlock value = tiles[evt.tileIndex].populationBlocks[i];
 				value.satisfaction = Mathf.Max(0f, value.satisfaction - 20f);
 				tiles[evt.tileIndex].populationBlocks[i] = value;
-				PopulationLedger.Scale(tiles[evt.tileIndex].populationBlocks, i, 0.95f);
+				PopulationLedger.Scale(tiles[evt.tileIndex].populationBlocks, i, survivorScale);
 			}
 			tiles[evt.tileIndex].stability = Mathf.Max(0f, tiles[evt.tileIndex].stability - 10f);
 			// 不逐条 Debug.Log：编辑器下每条都抓栈，长跑时会成为 events.daily 的主要成本。
@@ -689,13 +704,18 @@ public partial class GameWorld : MonoBehaviour
 			ApplyGoodsProperties();
 			return;
 		}
-		AddGoodsDef(0, "小麦", GameEnums.GoodsCategory.Crop, 1f, 0.1f, hasShelfLife: true, 180f);
+		AddGoodsDef(0, "小麦", GameEnums.GoodsCategory.Crop, 1f, 0.1f, hasShelfLife: true, 7300f);
 		AddGoodsDef(1, "肉类", GameEnums.GoodsCategory.Food, 2f, 0.15f, hasShelfLife: true, 14f);
 		AddGoodsDef(2, "鱼类", GameEnums.GoodsCategory.Food, 1.5f, 0.1f, hasShelfLife: true, 7f);
 		AddGoodsDef(3, "盐", GameEnums.GoodsCategory.Food, 3f, 0.05f, hasShelfLife: false, 0f);
-		AddGoodsDef(10, "稻谷", GameEnums.GoodsCategory.Crop, 0.8f, 0.1f, hasShelfLife: true, 365f);
-		AddGoodsDef(15, "粟", GameEnums.GoodsCategory.Crop, 1.0f, 0.1f, hasShelfLife: true, 365f);
-		AddGoodsDef(16, "黍", GameEnums.GoodsCategory.Crop, 1.0f, 0.1f, hasShelfLife: true, 365f);
+		AddGoodsDef(10, "稻谷", GameEnums.GoodsCategory.Crop, 0.8f, 0.1f, hasShelfLife: true, 7300f);
+		// 兜底表必须显式标可食：AddGoodsDef 不会推断 edible，漏标会让消费链以为全图无粮。
+		MarkEdible(0);
+		MarkEdible(1);
+		MarkEdible(2);
+		MarkEdible(10);
+		AddGoodsDef(15, "粟", GameEnums.GoodsCategory.Crop, 1.0f, 0.1f, hasShelfLife: true, 7300f);
+		AddGoodsDef(16, "黍", GameEnums.GoodsCategory.Crop, 1.0f, 0.1f, hasShelfLife: true, 7300f);
 		AddGoodsDef(17, "大麦", GameEnums.GoodsCategory.Crop, 0.9f, 0.1f, hasShelfLife: true, 365f);
 		AddGoodsDef(18, "玉米", GameEnums.GoodsCategory.Crop, 0.9f, 0.1f, hasShelfLife: true, 365f);
 		AddGoodsDef(19, "马铃薯", GameEnums.GoodsCategory.Crop, 1.2f, 0.2f, hasShelfLife: true, 180f);
@@ -783,6 +803,15 @@ public partial class GameWorld : MonoBehaviour
 				value.properties = new List<GoodsPropertyValue>(properties);
 				goodsDefs[item] = value;
 			}
+		}
+	}
+
+	private void MarkEdible(int goodsId)
+	{
+		if (goodsDefs.TryGetValue(goodsId, out var value))
+		{
+			value.edible = true;
+			goodsDefs[goodsId] = value;
 		}
 	}
 

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Content.Definitions;
@@ -54,7 +54,7 @@ namespace MyriadCreation.Tests.EditMode
             return null;
         }
 
-        private static void MakeEligible(GameWorld world, SettlementData settlement, float population = 300f, int ageDays = 9 * 365)
+        private static void MakeEligible(GameWorld world, SettlementData settlement, float population = 1200f, int ageDays = 210 * 365)
         {
             TileData tile = world.tiles[settlement.tileIndex];
             tile.populationBlocks = new List<PopulationBlock>
@@ -63,14 +63,14 @@ namespace MyriadCreation.Tests.EditMode
             };
             world.tiles[settlement.tileIndex] = tile;
             SettlementPopulationSystem.Recompute(world, settlement);
-            settlement.development = 10f;
+            settlement.development = 20f;
             settlement.foundingTick = world.currentYear * 365 + world.currentDay - ageDays;
 
             int regionId = tile.regionId;
             if (world.tradeCenters.TryGetValue(regionId, out TradeCenter center))
             {
                 center.inventory.Clear();
-                center.inventory[0] = population; // 0 号小麦：足够 90 天以上口粮
+                center.inventory[0] = population * 3f; // 0 号小麦：足够 180 天以上口粮
             }
         }
 
@@ -196,16 +196,204 @@ namespace MyriadCreation.Tests.EditMode
             CollectionAssert.AreEqual(firstTiles, secondTiles, "同 seed 的领土必须一致");
         }
 
+        [Test]
+        [Explicit("诊断用，默认套件不跑")]
+        public void Diagnose_FixedCity()
+        {
+            var world = NewWorld(4242, 48, 24);
+            SettlementData tracked = null;
+            float bestCap = -1f;
+            foreach (SettlementData s in world.settlements.Values)
+            {
+                if (s.IsRuined || s.settlementCategory == SettlementCategory.Outpost) continue;
+                float cap = CarryingCapacitySystem.CalculateCarryingCapacity(world.tiles[s.tileIndex], world.tradeCenters);
+                if (cap > bestCap) { bestCap = cap; tracked = s; }
+            }
+            TestContext.WriteLine($"TRACK {tracked?.settlementName} tile{tracked?.tileIndex} cap0={bestCap:F0}");
+            int lastFamine = 0;
+            for (int year = 1; year <= 200; year++)
+            {
+                for (int d = 0; d < 365; d++) world.RunDiagnosticDays(1);
+                if (year > 15) break;
+                if (year < 5) continue;
+                TileData tile = world.tiles[tracked.tileIndex];
+                float pop = PopulationLedger.Total(tile);
+                var blockInfo = new System.Text.StringBuilder();
+                if (tile.populationBlocks != null)
+                    foreach (PopulationBlock b in tile.populationBlocks) blockInfo.Append($"{b.socialClass}:{b.count:F0} ");
+                bool hasCenter = world.tradeCenters.TryGetValue(tile.regionId, out var center);
+float regionPop = 0f, regionAgri = 0f;
+for (int t = tile.regionId * 16; t < Mathf.Min(world.tiles.Length, tile.regionId * 16 + 16); t++)
+{
+    regionPop += PopulationLedger.Total(world.tiles[t]);
+    regionAgri += AgricultureYield.Compute(world.tiles[t]);
+}
+var invInfo = new System.Text.StringBuilder();
+if (center != null) foreach (var kv in center.inventory) invInfo.Append($"{kv.Key}:{kv.Value:F0} ");
+TestContext.WriteLine($"Y{year} pop{pop:F0} agri{AgricultureYield.Compute(tile):F2} food{StateFormationSystem.EdibleStock(world, tile.regionId):F0} ownFamine{world.FamineByTile[tracked.tileIndex]}");
+                int famineDelta = world.FamineEventCount - lastFamine;
+                lastFamine = world.FamineEventCount;
+                TestContext.WriteLine($"Y{year} pop{pop:F0} cap{CarryingCapacitySystem.CalculateCarryingCapacity(tile, world.tradeCenters):F0} fert{tile.fertility:F2}/{EcosystemSystem.PotentialFertility(tile):F2} temp{tile.annualTemp:F1} precip{tile.annualPrecipMm:F0} npp{tile.npp:F2} biome{tile.biome} river{tile.isRiver} dev{tile.development:F2} food{StateFormationSystem.EdibleStock(world, tile.regionId):F0} ownFamine{(tracked.tileIndex < world.FamineByTile.Length ? world.FamineByTile[tracked.tileIndex] : -1)}");
+            }
+            Assert.Pass();
+        }
+
+        [Test]
+        [Explicit("诊断用，默认套件不跑")]
+        public void Diagnose_FertilityBaseline()
+        {
+            var world = NewWorld(4242, 48, 24);
+            var values = new List<float>();
+            var biomes = new Dictionary<GameEnums.BiomeType, int>();
+            float precipSum = 0f, tempSum = 0f, nppSum = 0f;
+            foreach (TileData tile in world.tiles)
+            {
+                if (!tile.exists || !tile.isLand) continue;
+                values.Add(tile.fertility);
+                precipSum += tile.annualPrecipMm;
+                tempSum += tile.annualTemp;
+                nppSum += tile.npp;
+                biomes.TryGetValue(tile.biome, out int c);
+                biomes[tile.biome] = c + 1;
+            }
+            values.Sort();
+            int n = values.Count;
+            float Pct(float p) => values[Mathf.Clamp(Mathf.RoundToInt(p * (n - 1)), 0, n - 1)];
+            int good = 0, best = 0;
+            foreach (float f in values) { if (f >= 0.4f) good++; if (f >= 0.6f) best++; }
+            TestContext.WriteLine($"FERT n={n} min={Pct(0f):F2} p25={Pct(0.25f):F2} p50={Pct(0.5f):F2} p75={Pct(0.75f):F2} p90={Pct(0.9f):F2} max={Pct(1f):F2} ge40={good} ge60={best} precip={precipSum / n:F0} temp={tempSum / n:F1} npp={nppSum / n:F2}");
+            foreach (var pair in biomes) TestContext.WriteLine($"BIOME {pair.Key}={pair.Value}");
+            TestContext.WriteLine($"SETTLEMENTS {world.settlements.Count}");
+            int shown = 0;
+            foreach (SettlementData s in world.settlements.Values)
+            {
+                if (shown++ >= 8) break;
+                TileData tile = world.tiles[s.tileIndex];
+                TestContext.WriteLine($"S {s.settlementName} tile{s.tileIndex} fert{tile.fertility:F2} npp{tile.npp:F2} dev{tile.development:F2} pop{PopulationLedger.Total(tile):F0} cap{CarryingCapacitySystem.CalculateCarryingCapacity(tile, world.tradeCenters):F0} stab{tile.stability:F0} order{tile.order:F0}");
+            }
+            Assert.Pass();
+        }
+
+        [Test]
+        [Explicit("诊断用，默认套件不跑")]
+        public void Diagnose_After220()
+        {
+            var world = NewWorld(4242, 48, 24);
+            int lastFamine = 0;
+            for (int chunk = 0; chunk < 5; chunk++)
+            {
+                for (int year = 0; year < 50; year++) world.RunDiagnosticDays(365);
+                int famineDelta = world.FamineEventCount - lastFamine;
+                lastFamine = world.FamineEventCount;
+                int cities = 0, outposts = 0, capOk = 0, overCap = 0;
+                float chunkMaxPop = 0f, chunkMaxFood = 0f, cityPopSum = 0f, tilePopSum = 0f;
+                float fertSum = 0f, devSum = 0f, agriSum = 0f, foodSum = 0f, capSum = 0f;
+                foreach (SettlementData s in world.settlements.Values)
+                {
+                    if (s.IsRuined) continue;
+                    if (s.settlementCategory == SettlementCategory.Outpost) { outposts++; continue; }
+                    cities++;
+                    TileData tile = world.tiles[s.tileIndex];
+                    float pop = Mathf.Max(s.population, PopulationLedger.Total(tile));
+                    cityPopSum += pop;
+                    fertSum += tile.fertility;
+                    devSum += tile.development;
+                    agriSum += AgricultureYield.Compute(tile);
+                    float cap = CarryingCapacitySystem.CalculateCarryingCapacity(tile, world.tradeCenters);
+                    capSum += cap;
+                    if (cap >= 800f) capOk++;
+                    if (pop > cap) overCap++;
+                    chunkMaxPop = Mathf.Max(chunkMaxPop, pop);
+                    chunkMaxFood = Mathf.Max(chunkMaxFood, StateFormationSystem.EdibleStock(world, tile.regionId));
+                }
+                foreach (TileData tile in world.tiles)
+                {
+                    if (tile.exists && tile.isLand) tilePopSum += PopulationLedger.Total(tile);
+                }
+                int hungryRegions = 0, emptyRegions = 0;
+                float[] regionPop = new float[world.tiles.Length];
+                foreach (TileData tile in world.tiles)
+                {
+                    if (!tile.exists || !tile.isLand || tile.populationBlocks == null) continue;
+                    if (tile.regionId < 0 || tile.regionId >= regionPop.Length) continue;
+                    regionPop[tile.regionId] += PopulationLedger.Total(tile);
+                }
+                foreach (TradeCenter center in world.tradeCenters.Values)
+                {
+                    float stock = StateFormationSystem.EdibleStock(world, center.regionId);
+                    foodSum += stock;
+                    if (stock <= 0.01f) emptyRegions++;
+                    int rid = center.regionId;
+                    if (rid >= 0 && rid < regionPop.Length && stock < regionPop[rid] * 0.01f * 7f) hungryRegions++;
+                }
+                float inv = cities > 0 ? 1f / cities : 0f;
+                var topCities = new List<SettlementData>();
+                foreach (SettlementData s in world.settlements.Values)
+                {
+                    if (s.IsRuined || s.settlementCategory == SettlementCategory.Outpost) continue;
+                    topCities.Add(s);
+                }
+                topCities.Sort((a, b) => Mathf.Max(b.population, PopulationLedger.Total(world.tiles[b.tileIndex]))
+                    .CompareTo(Mathf.Max(a.population, PopulationLedger.Total(world.tiles[a.tileIndex]))));
+                System.Text.StringBuilder topNow = new System.Text.StringBuilder();
+                for (int t = 0; t < topCities.Count && t < 3; t++)
+                {
+                    SettlementData s = topCities[t];
+                    TileData tile = world.tiles[s.tileIndex];
+                    int rid = tile.regionId;
+                    float rp = rid >= 0 && rid < regionPop.Length ? regionPop[rid] : 0f;
+                    topNow.Append($"[{s.settlementName} pop{Mathf.Max(s.population, PopulationLedger.Total(tile)):F0} cap{CarryingCapacitySystem.CalculateCarryingCapacity(tile, world.tradeCenters):F0} fert{tile.fertility:F2} stock{StateFormationSystem.EdibleStock(world, rid):F0} rpop{rp:F0}] ");
+                }
+                TestContext.WriteLine($"TOP{(chunk + 1) * 50} {topNow}");
+                TestContext.WriteLine($"AT{(chunk + 1) * 50} cities={cities} outposts={outposts} maxPop={chunkMaxPop:F0} cityPop={cityPopSum:F0} allPop={tilePopSum:F0} food={foodSum:F0} agri={agriSum:F1} eat={tilePopSum * 0.01f:F1} fert={fertSum * inv:F2} dev={devSum * inv:F2} cap={capSum * inv:F0} capOk={capOk} overCap={overCap} famine={famineDelta} hungry={hungryRegions} empty={emptyRegions} regions={world.tradeCenters.Count} realms={world.realms.Count}");
+            }
+            int total = world.settlements.Count, eligible = 0, popOk = 0, devOk = 0, ageOk = 0, foodOk = 0;
+            float maxPop = 0f, maxFood = 0f, maxDev = 0f;
+            System.Text.StringBuilder top = new System.Text.StringBuilder();
+            int shown = 0;
+            foreach (SettlementData s in world.settlements.Values)
+            {
+                if (s.IsRuined || s.settlementCategory == SettlementCategory.Outpost) continue;
+                TileData tile = world.tiles[s.tileIndex];
+                float pop = Mathf.Max(s.population, PopulationLedger.Total(tile));
+                float food = StateFormationSystem.EdibleStock(world, tile.regionId);
+                int age = world.currentYear * 365 + world.currentDay - s.foundingTick;
+                maxPop = Mathf.Max(maxPop, pop); maxFood = Mathf.Max(maxFood, food); maxDev = Mathf.Max(maxDev, s.development);
+                if (pop >= 800f) popOk++;
+                if (s.development >= 15f) devOk++;
+                if (age >= 200 * 365) ageOk++;
+                if (food >= pop * 0.01f * 180f) foodOk++;
+                if (StateFormationSystem.IsEligible(world, s)) eligible++;
+                float siteCap = CarryingCapacitySystem.CalculateCarryingCapacity(tile, world.tradeCenters);
+                if (shown++ < 8) top.Append($"{s.settlementName}:pop{pop:F0},cap{siteCap:F0},fert{tile.fertility:F2},dev{s.development:F0},age{age / 365},food{food:F0},own{tile.ownerRealmId}; ");
+            }
+            TestContext.WriteLine($"D220 day={world.currentDay} settlements={total} eligible={eligible} popOk={popOk} devOk={devOk} ageOk={ageOk} foodOk={foodOk} maxPop={maxPop:F0} maxFood={maxFood:F0} maxDev={maxDev:F0} realms={world.realms.Count}");
+            TestContext.WriteLine("TOP " + top);
+            Assert.Pass();
+        }
+
+        /// <summary>P7：建国周期拉到 200 年量级，100 年内默认世界不应出现政权。</summary>
+        [Test]
+        [Explicit("100 年无政权回归按需运行，默认套件不跑")]
+        [Timeout(1800000)]
+        public void NaturalHundredYears_NoRealmBeforeStateCycle()
+        {
+            var world = NewWorld(4242, 48, 24);
+            for (int year = 0; year < 100; year++) world.RunDiagnosticDays(365);
+
+            Assert.AreEqual(0, world.realms.Count, "P7 建国周期下，100 年内不应出现政权");
+        }
+
         /// <summary>
-        /// 自然长跑：默认世界（无预置政权）1 seed × 100 年，必须出现政权、官职与实物税流水。
+        /// 自然长跑：默认世界（无预置政权）1 seed × 220 年，必须出现政权、官职与实物税流水。
         /// Explicit：按需运行，默认套件不跑。
         /// </summary>
         [Test]
-        [Explicit("自然世界 100 年长跑按需运行，默认套件不跑")]
+        [Explicit("自然世界 220 年长跑按需运行，默认套件不跑")]
         [Timeout(1800000)]
         public void NaturalLongRun_FormsRealmOfficesAndTaxReceipts()
         {
-            // 100 年自然世界实体规模大，长跑取 1 个 seed；确定性由独立单测覆盖。
+            // 220 年自然世界实体规模大，长跑取 1 个 seed；确定性由独立单测覆盖。
             int[] seeds = { 4242 };
             foreach (int seed in seeds)
             {
@@ -213,7 +401,7 @@ namespace MyriadCreation.Tests.EditMode
                 bool everFormed = false;
                 bool everHadOffice = false;
                 bool everHadTaxReceipt = false;
-                for (int year = 0; year < 100; year++)
+                for (int year = 0; year < 220; year++)
                 {
                     world.RunDiagnosticDays(365);
                     if (world.realms.Count > 0) everFormed = true;
@@ -224,7 +412,7 @@ namespace MyriadCreation.Tests.EditMode
                     }
                 }
 
-                Assert.IsTrue(everFormed, $"seed {seed}：100 年内应自然形成过政权");
+                Assert.IsTrue(everFormed, $"seed {seed}：220 年内应自然形成过政权");
                 Assert.IsTrue(everHadOffice, $"seed {seed}：政权形成后应出现官职");
                 Assert.IsTrue(everHadTaxReceipt, $"seed {seed}：应有实物税从地方仓储流入国家仓");
             }

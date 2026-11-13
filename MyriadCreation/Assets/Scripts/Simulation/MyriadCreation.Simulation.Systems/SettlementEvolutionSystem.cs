@@ -137,7 +137,13 @@ public static class SettlementEvolutionSystem
 			foundingTick = world.currentYear * 365 + world.currentDay,
 			fortificationLevel = (flag ? FortificationLevels.Palisade : FortificationLevels.None)
 		};
-		settlementData.fortifiedOutpostData.purpose = camp.fortifiedOutpostData.purpose;
+		// SettlementData 构造时按默认 SiteMode 初始化模式数据，据点数据可能为 null；
+		// 长跑里营地首次演化成聚落就会在这里 NRE（P7 250 年诊断实际触发）。
+		if (camp.fortifiedOutpostData != null)
+		{
+			settlementData.fortifiedOutpostData ??= new FortifiedOutpostData();
+			settlementData.fortifiedOutpostData.purpose = camp.fortifiedOutpostData.purpose;
+		}
 		settlementData.SetLegacyCategoryFromSiteMode();
 		if (siteMode == SiteMode.SedentarySettlement && !HabitationSiteTransitionSystem.TryTransition(settlementData, SiteMode.SedentarySettlement, out var failure2))
 		{

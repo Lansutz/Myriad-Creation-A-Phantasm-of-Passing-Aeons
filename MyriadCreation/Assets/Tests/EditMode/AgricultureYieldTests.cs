@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Core.Data;
@@ -130,12 +130,13 @@ namespace MyriadCreation.Tests.EditMode
         [Test]
         public void Drought_ReducesYieldBelowNeed_AndTriggersFamine()
         {
-            TileData[] tiles = { NewTile(0.5f, 0.5f, 0.1f, 100) };
+            // 旱年：肥力跌到 0.1，产出低于 100 人的日粮（0.05 单产 × 100 农夫 × 0.15 ≈ 0.77）
+            TileData[] tiles = { NewTile(0.1f, 0.5f, 0.1f, 100) };
             var center = new TradeCenter { regionId = 0, inventoryCapacity = 10000f };
             EconomyManager economy = NewEconomy(tiles, new Dictionary<int, TradeCenter> { { 0, center } });
 
             float yield = AgricultureYield.Compute(tiles[0]);
-            Assert.Less(yield, 1f, "肥力 0.5 的旱年应产不足 100 人的日粮");
+            Assert.Less(yield, 1f, "肥力 0.1 的旱年应产不足 100 人的日粮");
 
             economy.DailyTick();
 
@@ -154,10 +155,11 @@ namespace MyriadCreation.Tests.EditMode
             float stockAfterGoodYear = center.inventory.GetValueOrDefault(0);
             Assert.Greater(stockAfterGoodYear, 1f, "正常年份应积累余粮");
 
-            tiles[0].fertility = 0.2f; // 旱年：肥力大幅下降，产出低于口粮需求
+            tiles[0].fertility = 0.02f; // 颗粒无收的旱年：低于可耕作阈值，产出归零
             float stabilityBeforeDrought = tiles[0].stability;
             bool famineObserved = false;
-            for (int day = 0; day < 365; day++)
+            // 颗粒无收持续两年，才足以吃穿好年景的余粮（好年景单产 0.06 会留下约 1.2 年口粮）。
+            for (int day = 0; day < 730; day++)
             {
                 economy.DailyTick();
                 if (tiles[0].stability < stabilityBeforeDrought) famineObserved = true;

@@ -157,7 +157,8 @@ public class PlanetTerrainGenerator
 				}
 			}
 			float latitude = 90f - (float)num5 / (float)height * 180f;
-			reference.annualTemp = ComputeBaseAnnualTemperature(latitude, reference.elevation01, reference.isLand, reference.isCoast, GlobalTempOffset);
+			float heightAboveSea = LandElevationAboveSea(reference.elevation01, reference.isLand, seaLevel);
+			reference.annualTemp = ComputeBaseAnnualTemperature(latitude, heightAboveSea, reference.isLand, reference.isCoast, GlobalTempOffset);
 			float latitudeAbs = Mathf.Abs(latitude);
 			reference.annualPrecipMm = ComputeBaseAnnualPrecipitationMm(latitudeAbs, reference.slopeDegree, reference.isLand, reference.isCoast);
 			reference.airHumidityPct = ComputeBaseAirHumidityPct(reference.annualPrecipMm);
@@ -198,7 +199,8 @@ public class PlanetTerrainGenerator
 				}
 				reference.slopeDegree = num6 * 90f;
 				float latitude = 90f - (float)num5 / (float)height * 180f;
-				reference.annualTemp = ComputeBaseAnnualTemperature(latitude, reference.elevation01, reference.isLand, reference.isCoast, GlobalTempOffset);
+				float heightAboveSea = LandElevationAboveSea(reference.elevation01, reference.isLand, seaLevel);
+				reference.annualTemp = ComputeBaseAnnualTemperature(latitude, heightAboveSea, reference.isLand, reference.isCoast, GlobalTempOffset);
 			}
 		});
 		float[] array2 = new float[num];
@@ -241,15 +243,26 @@ public class PlanetTerrainGenerator
 
 	/// <summary>
 	/// 主生成基础温度公式（Phase A：高程/海陆/海岸 -> 温度；Phase B：侵蚀后陆地温度）。纬度单位为度。
+	/// <paramref name="elevationForTemperature"/> 是**相对海平面**的高程（海岸 0，最高 1），不是全表归一化高程；
+	/// 用绝对高程会让陆地整体被海拔罚掉二三十度，把半张图变成冰盖（P7 诊断：均温 -28.7℃）。
 	/// 生成路径与 <see cref="RecalculateBaseClimateForTile"/> 共用本函数，避免公式两处维护漂移。
 	/// </summary>
 	public static float ComputeBaseAnnualTemperature(float latitude, float elevationForTemperature, bool isLand, bool isCoast, float globalTempOffset)
 	{
 		float baseTemp = -10f + Mathf.Cos(latitude * (MathF.PI / 180f)) * 38f;
-		float elevationTerm = elevationForTemperature * 65f;
+		// 0→1 相对高程约 0→7000m；6.5℃/km 的干绝热近似上限约 45℃。
+		float elevationTerm = Mathf.Clamp01(elevationForTemperature) * 45f;
 		// 生成期：海洋 +3；陆地海岸 0 / 内陆 -2（Phase A 与 Phase B 同一公式）
 		float waterOrCoastTerm = (isLand ? (isCoast ? 0f : (-2f)) : 3f);
 		return baseTemp - elevationTerm + waterOrCoastTerm + globalTempOffset;
+	}
+
+	/// <summary>把全表归一化高程折算成相对海平面的陆地高程（0=海岸线，1=最高点）。</summary>
+	public static float LandElevationAboveSea(float elevation01, bool isLand, float seaLevel)
+	{
+		if (!isLand) return 0f;
+		float span = Mathf.Max(0.01f, 1f - seaLevel);
+		return Mathf.Clamp01((elevation01 - seaLevel) / span);
 	}
 
 	/// <summary>
@@ -280,8 +293,8 @@ public class PlanetTerrainGenerator
 	/// 避免公式复制漂移）。climateZone 用主生成同一分类器重算，保证与新 climate 一致。
 	/// </summary>
 	/// <param name="elevationForTemperature">
-	/// 计算温度用的高程值：主生成公式按"绝对高程"（0~1）计算；破碎化会把 elevation01 折算为相对海平面值，
-	/// 调用方应传入破碎化前的快照高程，保证温度与未受影响地块同口径（传当前 elevation01 会整体抬高温度）。
+	/// 计算温度用的高程：**相对海平面**的陆地高程（海岸 0、最高 1）。破碎化后 elevation01 已统一折算为相对海平面值，
+	/// 直接传当前 elevation01 即可；传破碎化前的绝对高程序会整体抬高温度，与主生成口径不一致。
 	/// </param>
 	public static float RecalculateBaseClimateForTile(TileData[] tiles, int index, int width, int height, float elevationForTemperature, float globalTempOffset)
 	{

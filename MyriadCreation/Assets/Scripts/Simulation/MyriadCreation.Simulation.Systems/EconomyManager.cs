@@ -177,6 +177,13 @@ public class EconomyManager
 					foreach (TileResource resource in tile.resources)
 					{
 						if (!resource.discovered || !resource.developed || resource.IsDepleted) continue;
+						// 仓储优先保口粮：矿料/木材/盐等非食用货最多占 60% 容量，
+						// 否则持续产出的矿石会把仓库塞满，粮食再也入不了库、只能靠损耗慢慢归零（P7 诊断）。
+						if (!IsEdibleGood(resource.goodsId)
+							&& NonFoodStock(tradeCenter) >= tradeCenter.inventoryCapacity * NonFoodCapacityShare)
+						{
+							continue;
+						}
 						float accepted = tradeCenter.AddGoodsReturningAccepted(resource.goodsId, resource.EffectiveOutput);
 						if (accepted > 0f) produced++;
 					}
@@ -184,19 +191,19 @@ public class EconomyManager
 				float cropYield = AgricultureYield.Compute(tile);
 				if (cropYield > 0f)
 				{
-					float accepted = tradeCenter.AddGoodsReturningAccepted(AgricultureYield.FoodGoodsId, cropYield);
+					float accepted = AddEdibleReturningAccepted(tradeCenter, AgricultureYield.FoodGoodsId, cropYield);
 					if (accepted > 0f) produced++;
 				}
 				float meatYield = EcosystemSystem.Harvest(ref tile, days);
 				if (meatYield > 0f)
 				{
-					float accepted = tradeCenter.AddGoodsReturningAccepted(MeatGoodsId, meatYield);
+					float accepted = AddEdibleReturningAccepted(tradeCenter, MeatGoodsId, meatYield);
 					if (accepted > 0f) produced++;
 				}
 				float fishYield = EcosystemSystem.HarvestFish(ref tile, days);
 				if (fishYield > 0f)
 				{
-					float accepted = tradeCenter.AddGoodsReturningAccepted(FishGoodsId, fishYield);
+					float accepted = AddEdibleReturningAccepted(tradeCenter, FishGoodsId, fishYield);
 					if (accepted > 0f) produced++;
 				}
 			}
@@ -292,6 +299,7 @@ public class EconomyManager
 		}
 		foreach (TradeCenter value2 in _tradeCenters.Values)
 		{
+			float edibleBudget = Mathf.Max(0f, TotalEdibleStock(value2) - LocalEdibleReserve(value2.regionId));
 			foreach (TradeRoute tradeRoute in value2.tradeRoutes)
 			{
 				// 发车循环内复查上限：滞留商队不应让贸易继续无界发车
@@ -308,6 +316,8 @@ public class EconomyManager
 				foreach (KeyValuePair<int, float> item in value2.localSupply)
 				{
 					int key = item.Key;
+					bool edible = _edibleGoods.Contains(key);
+					if (edible && edibleBudget <= 1f) continue;
 					float goodsPrice = value2.GetGoodsPrice(key, _goodsDefs);
 					float num3 = (value.GetGoodsPrice(key, _goodsDefs) - goodsPrice) * tradeRoute.currentEfficiency;
 					if (num3 > num2 && value2.inventory.GetValueOrDefault(key, 0f) > 10f)
@@ -319,6 +329,11 @@ public class EconomyManager
 				if (num >= 0 && num2 > 0.5f)
 				{
 					float num4 = Mathf.Min(100f, value2.inventory[num] * 0.3f);
+					// 粮商不能把本地区最后的口粮卖光：先留够本地人口 30 天，再谈出口。
+					// 没有这条，贸易路线会反复把产粮区抽到饥荒线以下，长跑里城市被自家商队饿死。
+					bool edibleChosen = _edibleGoods.Contains(num);
+					if (edibleChosen) num4 = Mathf.Min(num4, edibleBudget);
+					if (num4 <= 0.01f) continue;
 					float destinationCapacityLeft = value.inventoryCapacity - value.GetTotalInventory();
 					// 发车前检查目的地可用容量：不足计划发货量的 10%（或不足 1）就跳过该路线，
 					// 避免满仓目的地被反复发车（发车→滞留退役→退货的空转），且不占用商队名额
@@ -330,6 +345,7 @@ public class EconomyManager
 					}
 					if (value2.RemoveGoods(num, num4))
 					{
+						if (edibleChosen) edibleBudget -= num4;
 						Caravan caravan = new Caravan
 						{
 							caravanId = _nextCaravanId++,
@@ -344,6 +360,73 @@ public class EconomyManager
 				}
 			}
 		}
+	}
+
+	/// <summary>
+	/// 口粮单独占一份仓储：非食用货不能把粮食挤出去。
+	/// 共享容量时，矿料/木材会持续填满腾出的空间，粮食产量永远进不了库，只能被损耗吃空（P7 诊断：9996/10000 满仓、8330 粮食线性归零）。
+	/// </summary>
+	private float AddEdibleReturningAccepted(TradeCenter center, int goodsId, float amount)
+	{
+		if (center == null || amount <= 0f) return 0f;
+		float edible = TotalEdibleStock(center);
+		float room = Mathf.Max(0f, center.inventoryCapacity - edible);
+		float accepted = Mathf.Min(amount, room);
+		if (accepted <= 0f) return 0f;
+		center.inventory[goodsId] = center.inventory.GetValueOrDefault(goodsId, 0f) + accepted;
+		return accepted;
+	}
+
+	private const float NonFoodCapacityShare = 0.6f;
+
+	private bool IsEdibleGood(int goodsId)
+	{
+		for (int i = 0; i < _edibleGoods.Count; i++)
+		{
+			if (_edibleGoods[i] == goodsId) return true;
+		}
+		return false;
+	}
+
+	private float NonFoodStock(TradeCenter center)
+	{
+		float total = 0f;
+		foreach (KeyValuePair<int, float> pair in center.inventory)
+		{
+			if (pair.Value > 0f && !IsEdibleGood(pair.Key)) total += pair.Value;
+		}
+		return total;
+	}
+
+	/// <summary>本地区可食用货总量（按库存数量，不折算营养；用于出口前的本地口粮保护）。</summary>
+	private float TotalEdibleStock(TradeCenter center)
+	{
+		float total = 0f;
+		for (int i = 0; i < _edibleGoods.Count; i++)
+		{
+			total += center.inventory.GetValueOrDefault(_edibleGoods[i], 0f);
+		}
+		return total;
+	}
+
+	/// <summary>
+	/// 本地人口 180 天口粮：贸易出口的下限。30 天只够“这一个季节”，会把产粮城抽到饥荒线；
+	/// 180 天覆盖青黄不接 + 种子粮，与建国余粮门槛同一口径。
+	/// </summary>
+	private float LocalEdibleReserve(int regionId)
+	{
+		float population = 0f;
+		int start = regionId * 16;
+		int end = Mathf.Min(_tiles.Length, start + 16);
+		for (int i = start; i < end; i++)
+		{
+			if (!_tiles[i].exists || !_tiles[i].isLand || _tiles[i].populationBlocks == null) continue;
+			for (int b = 0; b < _tiles[i].populationBlocks.Count; b++)
+			{
+				population += Mathf.Max(0f, _tiles[i].populationBlocks[b].count);
+			}
+		}
+		return population * PersonFoodPerDay * 180f;
 	}
 
 	/// <summary>目的地容量不足导致跳发车的 Warn（按 TradeCapacityWarnInterval 节流，避免每日刷屏）。</summary>
@@ -573,6 +656,17 @@ public class EconomyManager
 
 	private void ProcessConsumption()
 	{
+		// 内容表/兜底表都可能在 EconomyManager 构造之后才补齐：惰性重建可食货列表。
+		if (_edibleGoods.Count == 0 && _goodsDefs != null && _goodsDefs.Count > 0)
+		{
+			RebuildEdibleGoods();
+		}
+		// 没有任何可食货定义时不能把全图判成饥荒（那会每天扣稳定度，永久压死人口增长）；
+		// 这是内容链故障，跳过消费并交给内容校验去报错。
+		if (_edibleGoods.Count == 0)
+		{
+			return;
+		}
 		int starvingTileCount = 0;
 		float starvingPopulation = 0f;
 		for (int i = 0; i < _tiles.Length; i++)
@@ -690,6 +784,18 @@ public class EconomyManager
 	public IReadOnlyList<Caravan> GetActiveCaravans()
 	{
 		return _caravans;
+	}
+
+	/// <summary>当前识别到的可食用货种数；0 表示内容表未加载，消费链会静默失效。</summary>
+	public int EdibleGoodsCount => _edibleGoods.Count;
+
+	/// <summary>可食用货种（消费/饥荒判定的唯一口径）。</summary>
+	public IReadOnlyList<int> EdibleGoods => _edibleGoods;
+
+	/// <summary>货种营养折算系数（未定义按 1）。</summary>
+	public float GetNutrition(int goodsId)
+	{
+		return _goodsDefs != null && _goodsDefs.TryGetValue(goodsId, out GoodsDef def) && def.nutrition > 0f ? def.nutrition : 1f;
 	}
 
 	public CurrencySystem GetCurrencySystem()

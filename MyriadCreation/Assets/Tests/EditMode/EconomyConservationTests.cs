@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
@@ -449,6 +449,44 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(100f, tiles[0].populationBlocks[0].count, 0.001f, "口径 a：本系统不得再扣人口（避免与 Famine 事件双罚）");
             Assert.AreEqual(59.8f, tiles[0].stability, 0.001f, "只保留轻量稳定度惩罚（−0.2）");
             Assert.AreEqual(39.9f, tiles[0].order, 0.001f, "只保留轻量秩序惩罚（−0.1）");
+        }
+
+        [Test]
+        public void InitiateTrades_KeepsLocalFoodReserve()
+        {
+            // 产粮区本地有 1000 人（180 天口粮 = 1800），库存只剩 200 时不得出口：
+            // 否则商队会把本地口粮抽干，城市被自家贸易路线饿死（P7 250 年诊断）。
+            TileData[] tiles =
+            {
+                new TileData
+                {
+                    exists = true,
+                    isLand = true,
+                    regionId = 0,
+                    populationBlocks = new List<PopulationBlock>
+                    {
+                        new PopulationBlock { count = 1000f, socialClass = GameEnums.SocialClass.Peasant, satisfaction = 60f }
+                    }
+                }
+            };
+            var origin = new TradeCenter { regionId = 0, inventoryCapacity = 10000f };
+            origin.inventory[0] = 200f;
+            origin.localSupply[0] = 1f;
+            var destination = new TradeCenter { regionId = 1, inventoryCapacity = 10000f };
+            destination.localDemand[0] = 500f;
+            origin.tradeRoutes.Add(new TradeRoute { fromRegionId = 0, toRegionId = 1, currentEfficiency = 1f });
+            var economy = NewEconomy(tiles, new Dictionary<int, TradeCenter> { { 0, origin }, { 1, destination } });
+
+            economy.InitiateTrades();
+
+            Assert.AreEqual(0, economy.GetActiveCaravans().Count, "库存低于本地 180 天口粮时不得发车");
+            Assert.AreEqual(200f, origin.inventory.GetValueOrDefault(0), 0.001f, "不得从口粮底线以下扣货");
+
+            // 库存 2100、底线 1800 → 可出口 300；单车上限 100，出口后剩 2000。
+            origin.inventory[0] = 2100f;
+            economy.InitiateTrades();
+
+            Assert.AreEqual(2000f, origin.inventory.GetValueOrDefault(0), 0.001f, "出口量必须封顶在本地口粮之上");
         }
     }
 }

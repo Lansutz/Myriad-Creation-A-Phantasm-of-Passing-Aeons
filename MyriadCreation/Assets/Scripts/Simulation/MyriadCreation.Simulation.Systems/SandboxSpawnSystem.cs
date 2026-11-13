@@ -72,7 +72,10 @@ public sealed class SandboxSpawnSystem
 			int targetIndex = FindMigrationTarget(sourceIndex);
 			if (targetIndex < 0) continue;
 
-			float move = Mathf.Clamp(population * 0.1f, 1f, population - capacity * 0.9f);
+			// 只迁出“超出承载的那部分”，每次最多 2% 人口；旧口径每次搬走 10% 全城人口，
+			// 一个过载城市会在几个月内被搬空（P7 诊断：1104 人的城 50 年后只剩 397）。
+			float excess = population - capacity * 1.1f;
+			float move = Mathf.Min(population * 0.02f, excess);
 			if (move < 1f) continue;
 			PopulationBlock template = source.populationBlocks[0];
 			float remaining = move;

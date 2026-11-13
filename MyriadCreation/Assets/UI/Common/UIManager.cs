@@ -161,6 +161,12 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
         [SerializeField] private Button speed2Button;
         [SerializeField] private Button speed3Button;
 
+        // P7：1/2/5/10/30 五档速度。场景仍保留旧三键，但运行时隐藏并按新档位循环。
+        private static readonly float[] SpeedOptions = MyriadCreation.App.Contracts.GameSpeedScale.Options;
+        private Button _speedCycleButton;
+        private TMP_Text _speedCycleLabel;
+        private int _speedIndex;
+
         [Header("显示模式切换")]
         [SerializeField] private TMPro.TMP_Dropdown displayModeDropdown;
         [SerializeField] private TMPro.TMP_Dropdown displayModeSubDropdown;
@@ -296,9 +302,10 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
             if (eventLogPanel != null) eventLogPanel.SetActive(visible);
  // 速度控制按钮
             if (pauseButton != null) pauseButton.gameObject.SetActive(visible);
-            if (speed1Button != null) speed1Button.gameObject.SetActive(visible);
-            if (speed2Button != null) speed2Button.gameObject.SetActive(visible);
-            if (speed3Button != null) speed3Button.gameObject.SetActive(visible);
+            if (speed1Button != null) speed1Button.gameObject.SetActive(false);
+            if (speed2Button != null) speed2Button.gameObject.SetActive(false);
+            if (speed3Button != null) speed3Button.gameObject.SetActive(false);
+            if (_speedCycleButton != null) _speedCycleButton.gameObject.SetActive(visible);
 // 政府/法律面板入口（TopBar 动态按钮）与面板本体
             if (_governmentOpenButton != null) _governmentOpenButton.gameObject.SetActive(visible);
             if (_governmentPanel != null && !visible) _governmentPanel.Hide();
@@ -449,15 +456,13 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
  /// <summary>初始化UI</summary>
         private void InitializeUI()
         {
- // 速度按钮
+ // 速度：P7 五档循环按钮（1/2/5/10/30x），旧三键隐藏但保留场景引用。
             if (pauseButton != null)
                 pauseButton.onClick.AddListener(() => SetGameSpeed(0f));
-            if (speed1Button != null)
-                speed1Button.onClick.AddListener(() => SetGameSpeed(1f));
-            if (speed2Button != null)
-                speed2Button.onClick.AddListener(() => SetGameSpeed(2f));
-            if (speed3Button != null)
-                speed3Button.onClick.AddListener(() => SetGameSpeed(3f)); // 修复：原为 5f（与按钮标注 3x 不符）
+            if (speed1Button != null) speed1Button.gameObject.SetActive(false);
+            if (speed2Button != null) speed2Button.gameObject.SetActive(false);
+            if (speed3Button != null) speed3Button.gameObject.SetActive(false);
+            EnsureSpeedCycleButton();
 
  // 地图模式（两级：类别 Dropdown + 子项 Dropdown——政治第 1；宗教默认教统）
             if (displayModeDropdown != null)
@@ -514,7 +519,18 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
         private void SetGameSpeed(float speed)
         {
             AppServices.GameSession?.SetGameSpeed(speed);
+            if (_speedCycleLabel != null)
+                _speedCycleLabel.text = speed <= 0f ? "暂停" : $"{speed:0}x";
             AddEventLog($"游戏速度: {(speed == 0 ? "暂停" : speed + "x")}", EventLogKind.System);
+        }
+
+        private void CycleGameSpeed()
+        {
+            float next = GameSpeedScale.Next(_speedCycleButton != null && AppServices.GameSession != null
+                ? AppServices.GameSession.GameSpeed
+                : SpeedOptions[_speedIndex]);
+            _speedIndex = Mathf.Max(0, GameSpeedScale.IndexOf(next));
+            SetGameSpeed(next);
         }
 
  /// <summary>显示模式切换</summary> // ===== 地图模式两级切换（类别 → 子项） =====

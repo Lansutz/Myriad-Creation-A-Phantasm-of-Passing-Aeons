@@ -208,6 +208,7 @@
 - 2026-11-14 **P5.2 官职随制度出现**：删除生成期 `CreateInitialCourtiers`/`EnsureOfficeHolders`；`OfficeDef` 增 `minTiles/minPopulation/minCentralization/minCultureStage`，8 个官职按领土/人口/中枢/文化阶段设门槛；配偶/继承人/平民/信使不进入候选池。详见 D139。验证同上。
 - 2026-11-14 **P5.3 机制化税收**：删除 `SettleTaxes`/`CalculateTileTax` 抽象税基；新增 `TaxCollectionSystem`：地方 `TradeCenter` 实物 → 行政区划持有人 → 90 天口粮保留 → 距离运输损耗 → 国家仓；只有铸币阶段 + 市场真实需求才把非食用货物卖出换成国库货币；`TaxReceiptLedger` 记实物流水。详见 D140。验证：`EXIT=0`、`1004/1001`、零 `error CS`；自然世界 1 seed×100 年长跑（48×24，MaxRealms=8）通过，187.8s，过程中出现政权/官职/实物税流水。详见 D141。
 - 2026-11-14 **P6 聚落生命周期闭合**：营地补给来自本地农业劳动/狩猎/捕鱼并统一 0.01/人/日；人口改为从过载地块向邻近可承载地块迁移（人口守恒，无源不造人）；商队成交价值 5% 留成聚落 wealth，建设劳动推进 development。新增 `SettlementLifecycleTests` 4 例。详见 D142。验证：`EXIT=0`、`1006/1003`、零 `error CS`。
+- 2026-11-14 **P7.0 时间尺度与 200 年建国周期**：五档倍速（1/2/5/10/30，上限 30）与 TopBar 循环按钮；自然建国改为聚落 ≥200 年、人口 ≥800、开发 ≥15、180 天口粮。长跑诊断连带修复世界气温公式（原均温 -28.7℃ 冰盖星球）、生成期肥力与气候不一致、承载力与单产不同口径、人口增长被写回覆盖、可食货清单为空、饥荒口径与消费不一致、粮食被非食用货挤出仓库、聚落选址不看地力等 16 项机制缺陷。100 年无政权与 220 年政权/官职/税流长跑均通过。详见 D143 与 `docs/plan-v3/P7_TIME_SCALE_WORLD_DETAIL_PLAN.md`。
 - 2026-11-13 **官职调度降频**：`offices.daily` → `offices.monthly`（俸禄按 deltaDays 折算），避免百年人物表增长后每天全量扫人。
 - 2026-11-13 **纹章模型对齐 Azgaar/Armoria**：division/ordinary/盾形 + 纹章金属/颜色规则，家族纹章确定性生成。验证：`EXIT=0`、`887/889`、零 `error CS`。
 - 2026-11-13 **程序化家族纹章**：`Heraldry` 确定性生成 pattern+三色，家族创建/旧档补齐，`FamilySaveData` 往返。新增 3 例测试。验证：`EXIT=0`、`887/889`、零 `error CS`。
