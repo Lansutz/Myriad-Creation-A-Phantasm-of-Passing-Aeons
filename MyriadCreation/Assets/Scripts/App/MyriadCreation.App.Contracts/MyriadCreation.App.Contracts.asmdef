@@ -2,7 +2,8 @@
     "name": "MyriadCreation.App.Contracts",
     "rootNamespace": "MyriadCreation.App.Contracts",
     "references": [
-        "MyriadCreation.Core"
+        "MyriadCreation.Core",
+        "MyriadCreation.Save.Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

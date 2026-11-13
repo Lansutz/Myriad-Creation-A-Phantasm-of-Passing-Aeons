@@ -5,8 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+using MyriadCreation.App.Contracts;
 using MyriadCreation.UI.Common;
-using MyriadCreation.Infrastructure.Save;
 namespace MyriadCreation.UI.Panels
 {
  /// 存档选择面板——列出 MapSaves 目录下的所有 .json 存档，
@@ -116,8 +116,8 @@ namespace MyriadCreation.UI.Panels
             // 旧实现扫 Application.persistentDataPath/MapSaves/*.json（已废弃的 MapSaveSystem 格式），
             // 当前存档系统写的是 persistentDataPath/Saves/*.sav → 列表永远显示"暂无存档"，
             // "加载世界"按钮因此看起来点了没反应。统一改用 SaveSystem 公开 API。
-            string saveDir = SaveSystem.GetSaveDirectory();
-            string[] names = SaveSystem.ListSaves();
+            string saveDir = AppServices.SaveSlots != null ? AppServices.SaveSlots.GetSaveDirectory() : "";
+            string[] names = AppServices.SaveSlots != null ? AppServices.SaveSlots.ListSaves() : new string[0];
             if (names == null || names.Length == 0)
             {
                 ShowEmptyHint("暂无存档");
@@ -309,7 +309,7 @@ namespace MyriadCreation.UI.Panels
             }
 
             _pendingDeleteName = null;
-            bool deleted = SaveSystem.DeleteSave(saveName);
+            bool deleted = AppServices.SaveSlots != null && AppServices.SaveSlots.DeleteSave(saveName);
             if (!deleted)
                 Debug.LogWarning($"[SaveLoadPanel] 删除存档失败（可能已不存在）: {saveName}");
 

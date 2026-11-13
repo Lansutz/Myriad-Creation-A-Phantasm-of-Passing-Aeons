@@ -6,10 +6,11 @@
         "MyriadCreation.Rendering",
         "UnityEngine.UI",
         "Unity.TextMeshPro",
-        "MyriadCreation.Infrastructure",
         "MyriadCreation.Content",
         "MyriadCreation.App.Contracts",
-        "MyriadCreation.Settings"
+        "MyriadCreation.Settings",
+        "MyriadCreation.Audio",
+        "MyriadCreation.Save.Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

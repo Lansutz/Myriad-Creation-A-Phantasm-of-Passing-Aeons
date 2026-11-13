@@ -3,7 +3,7 @@
     "rootNamespace": "MyriadCreation.App.Settings",
     "references": [
         "MyriadCreation.Core",
-        "MyriadCreation.Infrastructure"
+        "MyriadCreation.Audio"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

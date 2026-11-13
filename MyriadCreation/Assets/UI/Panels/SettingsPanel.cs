@@ -5,8 +5,8 @@ using UnityEngine.UI;
 using TMPro;
 
 using MyriadCreation.UI.Common;
+using MyriadCreation.App.Contracts;
 using MyriadCreation.App.Settings;
-using MyriadCreation.Infrastructure.Save;
 
 namespace MyriadCreation.UI.Panels
 {
@@ -160,7 +160,7 @@ namespace MyriadCreation.UI.Panels
                 14, new Color(0.6f, 0.62f, 0.66f, 1f), FontStyles.Normal,
                 new Vector2(-300, y), TextAlignmentOptions.MidlineLeft, new Vector2(200, 22));
             y -= 24f;
-            CreateText(panel, "SavePath", SaveSystem.GetSaveDirectory(),
+            CreateText(panel, "SavePath", AppServices.SaveSlots != null ? AppServices.SaveSlots.GetSaveDirectory() : "",
                 13, new Color(0.72f, 0.74f, 0.78f, 1f), FontStyles.Normal,
                 new Vector2(0, y), TextAlignmentOptions.Center, new Vector2(PanelWidth - 80, 40));
             y -= 54f;

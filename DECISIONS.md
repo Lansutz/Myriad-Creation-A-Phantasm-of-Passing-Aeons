@@ -780,3 +780,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `UIManager`/`UIManager.Panels` 的 GameManager 访问改 `AppServices.GameSession`。
 - `SiteTypeLabels` 移到 World 程序集（`MyriadCreation.World.Presentation`），UI 不再因一个标签文件依赖 World；SettlementDetailPanel 删除未使用的 World using。
 - 未做：UI 仍引用 Infrastructure（SaveSystem/SfxPlayer）；Save/Audio 需要契约化后才能去掉。B 剩余这一项。
+
+## D95 UI 去 Infrastructure 依赖（P2.5 B 收口）
+
+- 音频独立：`MusicPlayerSystem/SfxPlayer` 从 Infrastructure 移到新 `MyriadCreation.Audio` 程序集（仅引 Core）；Settings、UI、Infrastructure（旧档 DTO）、测试显式引用。
+- 存档槽契约：`Save.Contracts.ISaveSlotService`（列目录/列存档/删除）；Infrastructure 提供 `SaveSlotService`，Bootstrap 在 Awake 注册到 `AppServices.SaveSlots`；UI 的 SaveLoad/Settings 面板只依赖契约。
+- UI asmdef 最终 references：Core / Content / Rendering / App.Contracts / Save.Contracts / Settings / Audio / UI / TextMeshPro——不再引用 App、World、Infrastructure。
+- 架构门禁保持：UI 不得引用 Simulation 家族；App 装配 UI。
+- 未做：`SaveSystem` 的读/写仍由 App 层（Bootstrap/GameManager）直接调用；若以后玩家侧也要读写入口，再扩契约。

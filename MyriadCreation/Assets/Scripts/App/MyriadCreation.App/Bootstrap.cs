@@ -49,6 +49,7 @@ namespace MyriadCreation.UI
         {
 // B3-part2d：App 只依赖 App.Contracts；UiFactory 由 UI 程序集自注册（Bootstrap 不再引用 UI 具体类型）。
             AppServices.RegisterSettings(new AppSettingsService());
+            AppServices.RegisterSaveSlots(new MyriadCreation.Infrastructure.Save.SaveSlotService());
 
 // 启动应用玩家设置（分辨率/显示模式/vSync/画质/帧率/UI 缩放/音量/语言），
 // 必须先于任何 UI/相机 构建，保证设置面板打开时看到的就是当前生效值。

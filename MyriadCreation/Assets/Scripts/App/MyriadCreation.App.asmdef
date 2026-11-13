@@ -10,7 +10,8 @@
         "MyriadCreation.Simulation",
         "MyriadCreation.Rendering",
         "MyriadCreation.Settings",
-        "MyriadCreation.UI"
+        "MyriadCreation.UI",
+        "MyriadCreation.Save.Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

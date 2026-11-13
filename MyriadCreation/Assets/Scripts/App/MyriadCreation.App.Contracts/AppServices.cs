@@ -1,4 +1,5 @@
 using UnityEngine;
+using MyriadCreation.Save.Contracts;
 
 namespace MyriadCreation.App.Contracts
 {
@@ -14,6 +15,7 @@ namespace MyriadCreation.App.Contracts
         private static ISettingsService _settings;
         private static IAppFlow _appFlow;
         private static IGameSession _gameSession;
+        private static ISaveSlotService _saveSlots;
 
         public static IGameUiHost UiHost => Alive(_uiHost);
         public static IMainMenuUi MainMenuUi => Alive(_mainMenuUi);
@@ -21,6 +23,7 @@ namespace MyriadCreation.App.Contracts
         public static ISettingsService Settings => Alive(_settings);
         public static IAppFlow AppFlow => Alive(_appFlow);
         public static IGameSession GameSession => Alive(_gameSession);
+        public static ISaveSlotService SaveSlots => _saveSlots;
 
         public static void RegisterUiHost(IGameUiHost value) => _uiHost = value;
         public static void RegisterMainMenuUi(IMainMenuUi value) => _mainMenuUi = value;
@@ -28,6 +31,7 @@ namespace MyriadCreation.App.Contracts
         public static void RegisterSettings(ISettingsService value) => _settings = value;
         public static void RegisterAppFlow(IAppFlow value) => _appFlow = value;
         public static void RegisterGameSession(IGameSession value) => _gameSession = value;
+        public static void RegisterSaveSlots(ISaveSlotService value) => _saveSlots = value;
 
         public static void UnregisterUiHost(IGameUiHost value) { if (ReferenceEquals(_uiHost, value)) _uiHost = null; }
         public static void UnregisterMainMenuUi(IMainMenuUi value) { if (ReferenceEquals(_mainMenuUi, value)) _mainMenuUi = null; }
@@ -35,6 +39,7 @@ namespace MyriadCreation.App.Contracts
         public static void UnregisterSettings(ISettingsService value) { if (ReferenceEquals(_settings, value)) _settings = null; }
         public static void UnregisterAppFlow(IAppFlow value) { if (ReferenceEquals(_appFlow, value)) _appFlow = null; }
         public static void UnregisterGameSession(IGameSession value) { if (ReferenceEquals(_gameSession, value)) _gameSession = null; }
+        public static void UnregisterSaveSlots(ISaveSlotService value) { if (ReferenceEquals(_saveSlots, value)) _saveSlots = null; }
 
         /// <summary>场景切换/测试清理用（正常流程不需要；注册会自动覆盖）。</summary>
         public static void Reset()
@@ -45,6 +50,7 @@ namespace MyriadCreation.App.Contracts
             _settings = null;
             _appFlow = null;
             _gameSession = null;
+            _saveSlots = null;
         }
 
         private static T Alive<T>(T value) where T : class

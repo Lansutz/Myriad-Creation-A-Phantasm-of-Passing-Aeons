@@ -19,7 +19,8 @@
         "MyriadCreation.Faith",
         "MyriadCreation.Culture",
         "MyriadCreation.Save.Contracts",
-        "MyriadCreation.Settings"
+        "MyriadCreation.Settings",
+        "MyriadCreation.Audio"
     ],
     "includePlatforms": [
         "Editor"
