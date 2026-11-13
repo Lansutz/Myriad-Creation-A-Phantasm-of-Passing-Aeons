@@ -72,6 +72,52 @@ namespace MyriadCreation.Tests.EditMode
                 foreach (SocialAxisBucket bucket in report.buckets) sum += bucket.population;
                 Assert.AreEqual(expected, sum, 0.01f, report.axis + " 分桶合计应等于总人口");
                 Assert.Greater(report.buckets.Count, 0, report.axis + " 应有分桶");
+                Assert.That(report.axisSatisfaction, Is.InRange(0f, 100f), report.axis + " 轴满足度应在 0–100");
+                foreach (SocialAxisBucket bucket in report.buckets)
+                {
+                    Assert.That(bucket.needsSatisfaction, Is.InRange(0f, 100f), bucket.key + " 桶满足度应在 0–100");
+                }
+            }
+        }
+
+        [Test]
+        public void AxisWeights_ChangeUnrestReproducibly()
+        {
+            var world = NewWorld();
+            RealmData realm = FirstRealm(world);
+            Assert.IsNotNull(realm);
+            List<SocialAxisReport> reports = world.GetSocialAxisReports(realm.realmId);
+            SocialAxisReport lowest = reports[0];
+            SocialAxisReport highest = reports[0];
+            foreach (SocialAxisReport report in reports)
+            {
+                if (report.axisSatisfaction < lowest.axisSatisfaction) lowest = report;
+                if (report.axisSatisfaction > highest.axisSatisfaction) highest = report;
+            }
+
+            var lowWeight = new SocialAxisWeights { classWeight = 0f, stratumWeight = 0f, identityWeight = 0f, occupationWeight = 0f };
+            SetWeight(lowWeight, lowest.axis, 1f);
+            var highWeight = new SocialAxisWeights { classWeight = 0f, stratumWeight = 0f, identityWeight = 0f, occupationWeight = 0f };
+            SetWeight(highWeight, highest.axis, 1f);
+
+            float unrestLow = world.GetSocialAxisUnrest(realm.realmId, lowWeight);
+            float unrestHigh = world.GetSocialAxisUnrest(realm.realmId, highWeight);
+            float unrestLowAgain = world.GetSocialAxisUnrest(realm.realmId, lowWeight);
+
+            Assert.That(unrestLow, Is.InRange(0f, 100f));
+            Assert.That(unrestHigh, Is.InRange(0f, 100f));
+            Assert.Less(unrestHigh, unrestLow, "权重压在高满足度轴上，unrest 应更低");
+            Assert.AreEqual(unrestLow, unrestLowAgain, 0.001f, "同权重结果应可复现");
+        }
+
+        private static void SetWeight(SocialAxisWeights weights, SocialAxis axis, float value)
+        {
+            switch (axis)
+            {
+                case SocialAxis.Class: weights.classWeight = value; break;
+                case SocialAxis.Stratum: weights.stratumWeight = value; break;
+                case SocialAxis.Identity: weights.identityWeight = value; break;
+                case SocialAxis.Occupation: weights.occupationWeight = value; break;
             }
         }
 

@@ -437,3 +437,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 轴：阶级（`EconomicClass`）、阶层（`SocialStratum`）、身份（由 legacy `socialClass` 映射的 `SocialIdentityFlags`）、职业（`OccupationFlags`）。
 - 归桶：阶级/阶层各计 1 次；身份/职业是位标志，按位展开并把该块人口按位数均分，保证四轴人口合计与人口块总量相等（守恒断言）。
 - 已做：`SocialAxisReportSystem` + `GameWorld.GetSocialAxisReports` 只读报告。未做：四轴需求评分与政权 unrest 权重（D25 后半），不假装已接。
+
+## D47 四轴需求评分与 unrest 权重（D25 后半）
+
+- 评分沿用现有 `ClassNeedsSystem` 的阶级满足度作为底分（8 维需求已实现），再叠加位置修正：阶层的上下位置、身份（Royalty/Noble/Clergy/Citizen/Freedman/Foreigner/Outlaw）、职业（农/工/商/学/兵/官/祭/矿/水手/牧/医/师/力役）。修正解释为社会位置与职业风险，不是抽象货币。
+- 身份/职业仍按位均分人口；每桶记录 `needsSatisfaction`，每轴记录按人口加权的 `axisSatisfaction`；四轴合计仍与人口块总量守恒。
+- `SocialAxisWeights` 提供四轴权重（默认均分，可配）；`GetSocialAxisUnrest` = 100 − 加权满足度。改权重 → unrest 改变且同权重可复现，满足 D25 验收③。
