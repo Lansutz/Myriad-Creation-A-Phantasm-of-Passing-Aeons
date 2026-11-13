@@ -16,7 +16,7 @@ namespace MyriadCreation.Simulation.Systems
 public static class StateFormationSystem
 {
 	/// <summary>世界尺度上限：防止小地图无限建国，也给长跑一个可预期的实体规模；不是经济/政治门槛。</summary>
-	public const int MaxRealms = 16;
+	public const int MaxRealms = 8;
 
 	/// <summary>聚落至少存在这么多年，才谈得上形成政权（避免开局即国家）。</summary>
 	public const int MinSettlementAgeYears = 8;

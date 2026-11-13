@@ -1210,3 +1210,16 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 沙盒预置政权从 `MintedCoin` 开始（便于测试/调试货币税）；自然政权仍从 `Barter` 开始。
 - 测试：`TaxSingleSourceTests`（税率单源、高税率多征、无行政区划不征、90 天口粮保护、物物交换无货币/铸币+市场才有货币）、`CourtAndTaxGateTests`（实物从地方仓储进国家仓、移除持有人停征/恢复）、`BudgetReportTests`（真实售货产生 tax 流水）、`LawEffectRuntimeTests`（征收强度乘子按实物量缩放）。
 - 验证：`EXIT=0`、`1005/1001`、零 `error CS`。
+
+## D141 P5 收口验证（2026-11-14）
+
+- **全量 EditMode**：`EXIT=0`、`1004` 例、`1001` 通过、`0` 失败、零 `error CS`（3 个 Explicit 按需跳过）。
+- **自然世界 100 年长跑**：`NaturalEmergenceTests.NaturalLongRun_FormsRealmOfficesAndTaxReceipts`（1 seed × 100 年，48×24，`StateFormationSystem.MaxRealms=8`）通过，耗时 187.8s；长跑过程中出现过政权、官职与 `TaxReceiptLedger` 实物税流水。
+- **施工中修复的前置 bug**：
+  1. `AnchorGenerator.CreatePair` 未回填 `SettlementData.anchor`，初始人口写进 -1 号地块，城市人口快照为 0、180 天后被废弃；
+  2. 聚落地块开发度为 0，城市按未开发土地产粮，产出低于口粮；
+  3. `currentDay` 每年回绕，建国年龄与 `foundingTick` 必须用 `currentYear*365+currentDay`；
+  4. Unity/Mono 的 `Dictionary` 在改写已有键时也递增 version，边枚举边 `RemoveGoods`/同键赋值会抛 "Collection was modified"；
+  5. 税收按政权全图扫描是 O(政权×地块×天)，改为只扫行政区划所在地区的 16 格。
+- **自然政权上限**：小地图默认最多 8 个自然政权（`MaxRealms=8`），是实体规模/性能上限，不是历史规律；大地图可另行配置。
+- **仍留欠账**：营地补给无来源、`SandboxSpawnSystem` 随机地块造人、稳定度回归/种族常数/聚落财富只减不增、铸币发行与在途运输队列。

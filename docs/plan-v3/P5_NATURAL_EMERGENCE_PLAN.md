@@ -167,8 +167,8 @@
 
 ### 5.3 验证
 
-- 全量 EditMode：`EXIT=0`、`1005` 例、`1001` 通过、`0` 失败、零 `error CS`（2 个 Explicit 跳过）。
-- 自然世界 100 年长跑：`NaturalEmergenceTests.NaturalLongRun_FormsRealmOfficesAndTaxReceipts`（2 seed × 100 年，Explicit）见 §5.4。
+- 全量 EditMode：`EXIT=0`、`1004` 例、`1001` 通过、`0` 失败、零 `error CS`（3 个 Explicit 跳过）。
+- 自然世界 100 年长跑：`NaturalEmergenceTests.NaturalLongRun_FormsRealmOfficesAndTaxReceipts`（1 seed × 100 年，48×24，`MaxRealms=8`）**通过**，耗时 187.8s；过程中出现过政权、官职与实物税流水。
 - 沙盒预置（`CreateStandard`）行为保持：3 政权、标准测试基线不变。
 
 ### 5.4 遗留（不在 P5 收口范围）

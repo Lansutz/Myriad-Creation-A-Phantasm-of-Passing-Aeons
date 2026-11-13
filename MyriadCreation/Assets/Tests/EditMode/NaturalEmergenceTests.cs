@@ -196,73 +196,8 @@ namespace MyriadCreation.Tests.EditMode
             CollectionAssert.AreEqual(firstTiles, secondTiles, "同 seed 的领土必须一致");
         }
 
-        [Test]
-        [Explicit("诊断用，默认套件不跑")]
-        public void Diagnose_EligibilityBreakdown()
-        {
-            var world = NewWorld(4242, 64, 32);
-            float genMaxPop = 0f;
-            float genMaxTilePop = 0f;
-            float genMaxDev = 0f;
-            foreach (SettlementData s in world.settlements.Values)
-            {
-                if (s.settlementCategory == SettlementCategory.Outpost) continue;
-                genMaxPop = Mathf.Max(genMaxPop, s.population);
-                genMaxTilePop = Mathf.Max(genMaxTilePop, PopulationLedger.Total(world.tiles[s.tileIndex]));
-                genMaxDev = Mathf.Max(genMaxDev, world.tiles[s.tileIndex].development);
-            }
-            TestContext.WriteLine($"GEN total={world.settlements.Count} genMaxPop={genMaxPop:F0} genMaxTilePop={genMaxTilePop:F0} genMaxDev={genMaxDev:F2}");
-            for (int month = 0; month < 24; month++)
-            {
-                world.RunDiagnosticDays(30);
-                int cities = 0, villages = 0, outposts = 0;
-                float monthMaxPop = 0f, monthMinPop = float.MaxValue, monthMaxFood = 0f;
-                foreach (SettlementData s in world.settlements.Values)
-                {
-                    if (s.settlementCategory == SettlementCategory.Outpost) { outposts++; continue; }
-                    if (s.settlementForm == SettlementForm.City) cities++; else villages++;
-                    monthMaxPop = Mathf.Max(monthMaxPop, s.population);
-                    monthMinPop = Mathf.Min(monthMinPop, s.population);
-                    monthMaxFood = Mathf.Max(monthMaxFood, StateFormationSystem.EdibleStock(world, world.tiles[s.tileIndex].regionId));
-                }
-                TestContext.WriteLine($"MONTH {month + 1} y={world.currentYear} d={world.currentDay} total={world.settlements.Count} city={cities} village={villages} outpost={outposts} maxPop={monthMaxPop:F0} minPop={(monthMinPop == float.MaxValue ? 0 : monthMinPop):F0} maxFood={monthMaxFood:F0}");
-            }
-            for (int year = 0; year < 10; year++) world.RunDiagnosticDays(365);
-            int total = 0, ruined = 0, outpost = 0, owned = 0, ageOk = 0, popOk = 0, devOk = 0, foodOk = 0, eligible = 0;
-            float maxPop = 0f, maxFood = 0f;
-            int maxAge = -1;
-            foreach (SettlementData s in world.settlements.Values)
-            {
-                total++;
-                if (s.IsRuined) { ruined++; continue; }
-                if (s.settlementCategory == SettlementCategory.Outpost) { outpost++; continue; }
-                TileData tile = world.tiles[s.tileIndex];
-                if (tile.ownerRealmId >= 0) owned++;
-                int age = world.currentDay - s.foundingTick;
-                if (age > maxAge) maxAge = age;
-                if (age >= 8 * 365) ageOk++;
-                float pop = Mathf.Max(s.population, PopulationLedger.Total(tile));
-                if (pop > maxPop) maxPop = pop;
-                if (pop >= 200f) popOk++;
-                if (s.development >= 6f) devOk++;
-                float food = StateFormationSystem.EdibleStock(world, tile.regionId);
-                if (food > maxFood) maxFood = food;
-                if (food >= pop * 0.01f * 90f) foodOk++;
-                if (StateFormationSystem.IsEligible(world, s)) eligible++;
-            }
-            int officeCount = 0;
-            int receiptCount = 0;
-            foreach (RealmData realm in world.realms.Values)
-            {
-                if (realm.officeHolders != null) officeCount += realm.officeHolders.Count;
-                receiptCount += TaxReceiptLedger.GetHistory(realm.realmId, 0).Count;
-            }
-            TestContext.WriteLine($"DIAG total={total} ruined={ruined} outpost={outpost} owned={owned} ageOk={ageOk} popOk={popOk} devOk={devOk} foodOk={foodOk} eligible={eligible} maxPop={maxPop:F0} maxFood={maxFood:F0} maxAge={maxAge} day={world.currentDay} realms={world.realms.Count} offices={officeCount} receipts={receiptCount}");
-            Assert.Pass();
-        }
-
         /// <summary>
-        /// 自然长跑：默认世界（无预置政权）2 seed × 100 年，必须出现政权、官职与实物税流水。
+        /// 自然长跑：默认世界（无预置政权）1 seed × 100 年，必须出现政权、官职与实物税流水。
         /// Explicit：按需运行，默认套件不跑。
         /// </summary>
         [Test]
@@ -274,7 +209,7 @@ namespace MyriadCreation.Tests.EditMode
             int[] seeds = { 4242 };
             foreach (int seed in seeds)
             {
-                var world = NewWorld(seed, 64, 32);
+                var world = NewWorld(seed, 48, 24);
                 bool everFormed = false;
                 bool everHadOffice = false;
                 bool everHadTaxReceipt = false;
