@@ -52,6 +52,7 @@ namespace MyriadCreation.Content.Modding
         public Dictionary<int, OfficeDef> Offices { get; } = new Dictionary<int, OfficeDef>();
         public Dictionary<string, GenomeDef> Genomes { get; } = new Dictionary<string, GenomeDef>();
         public Dictionary<string, SpeciesDef> Species { get; } = new Dictionary<string, SpeciesDef>();
+        public Dictionary<string, EcologySpeciesDef> EcologySpecies { get; } = new Dictionary<string, EcologySpeciesDef>();
 
         public bool IsInitialized { get; private set; }
 
@@ -184,6 +185,12 @@ namespace MyriadCreation.Content.Modding
             public List<SpeciesDef> species = new List<SpeciesDef>();
         }
 
+        [Serializable]
+        private class EcologySpeciesListWrapper
+        {
+            public List<EcologySpeciesDef> species = new List<EcologySpeciesDef>();
+        }
+
         /// <summary>
         /// 按 ContentSourceCatalog（Base→Mods 优先级）解析全部纯定义；root 为空/不存在/坏 JSON 安全（沿用原 provider 的 try/catch 行为）。
         /// </summary>
@@ -218,6 +225,7 @@ namespace MyriadCreation.Content.Modding
             providerCatalog.Add(new DelegateContentProvider<int, OfficeDef>("Office", LoadOfficeRoot), new DictionaryContentStore<int, OfficeDef>(Offices));
             providerCatalog.Add(new DelegateContentProvider<string, GenomeDef>("Genome", LoadGenomeRoot), new DictionaryContentStore<string, GenomeDef>(Genomes));
             providerCatalog.Add(new DelegateContentProvider<string, SpeciesDef>("Species", LoadSpeciesRoot), new DictionaryContentStore<string, SpeciesDef>(Species));
+            providerCatalog.Add(new DelegateContentProvider<string, EcologySpeciesDef>("EcologySpecies", LoadEcologySpeciesRoot), new DictionaryContentStore<string, EcologySpeciesDef>(EcologySpecies));
 
             foreach (ContentSource source in ContentSourceCatalog.CreateDefault(streamingAssetsRoot))
             {
@@ -230,6 +238,7 @@ namespace MyriadCreation.Content.Modding
             // 官职表在全部来源合并后统一刷新：Base 打底、Mods 按 slot 覆盖，避免整表被某个来源清空。
             OfficeCatalog.LoadFromContent(Offices.Values);
             ValidateGenetics();
+            EcologySpeciesCatalog.LoadFromContent(EcologySpecies.Values);
 
             IsInitialized = true;
         }
@@ -266,6 +275,8 @@ namespace MyriadCreation.Content.Modding
             OfficeCatalog.ResetContent();
             Genomes.Clear();
             Species.Clear();
+            EcologySpecies.Clear();
+            EcologySpeciesCatalog.ResetContent();
         }
 
         // ===== LoadRoot（按 provider 根目录解析）=====
@@ -437,6 +448,18 @@ namespace MyriadCreation.Content.Modding
                 Debug.LogWarning("[ContentDefinitionIndex] 物种 " + pair.Key + " 引用不存在的基因组 " + species.genomeId + "，已跳过");
             }
             for (int i = 0; i < badSpecies.Count; i++) Species.Remove(badSpecies[i]);
+        }
+
+        private void LoadEcologySpeciesRoot(string r, IContentStore<string, EcologySpeciesDef> t)
+        {
+            string path = Path.Combine(r, "Ecology/Species.json");
+            if (!File.Exists(path)) return;
+            EcologySpeciesListWrapper wrapper = JsonUtility.FromJson<EcologySpeciesListWrapper>(File.ReadAllText(path));
+            if (wrapper?.species == null) return;
+            foreach (EcologySpeciesDef species in wrapper.species)
+            {
+                if (species != null && !string.IsNullOrEmpty(species.speciesId)) t.Set(species.speciesId, species);
+            }
         }
 
         private void LoadGenomeRoot(string r, IContentStore<string, GenomeDef> t)

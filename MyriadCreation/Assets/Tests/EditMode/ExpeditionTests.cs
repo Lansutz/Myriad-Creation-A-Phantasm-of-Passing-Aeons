@@ -151,6 +151,28 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(ExpeditionState.Outbound, restored.state);
         }
 
+        [Test]
+        public void ExpeditionPersistence_CapturesAndRestores()
+        {
+            var world = NewWorld();
+            world.expeditions[7] = new Expedition
+            {
+                expeditionId = 7,
+                ownerRealmId = 1,
+                route = new List<int> { 1, 2, 3 },
+                routeCursor = 2,
+                supplies = 30f
+            };
+
+            List<ExpeditionSaveData> captured = ExpeditionPersistence.Capture(world);
+            world.expeditions.Clear();
+            int nextId = ExpeditionPersistence.Restore(world, captured);
+
+            Assert.IsTrue(world.expeditions.ContainsKey(7));
+            Assert.AreEqual(2, world.expeditions[7].routeCursor);
+            Assert.AreEqual(8, nextId, "恢复后自增 id 应接在最大值之后");
+        }
+
         private static int FindOwned(GameWorld world, int realmId)
         {
             for (int i = 0; i < world.tiles.Length; i++)

@@ -1,0 +1,94 @@
+{
+  "species": [
+    {
+      "speciesId": "eco_deer",
+      "name": "鹿",
+      "role": "herbivore",
+      "habitat": "forest",
+      "bodySize": 0.8,
+      "fecundity": 1.2,
+      "dietHerbivore": 1,
+      "dietCarnivore": 0
+    },
+    {
+      "speciesId": "eco_wolf",
+      "name": "狼",
+      "role": "predator",
+      "habitat": "forest",
+      "bodySize": 0.6,
+      "fecundity": 0.8,
+      "dietHerbivore": 0,
+      "dietCarnivore": 1
+    },
+    {
+      "speciesId": "eco_antelope",
+      "name": "羚羊",
+      "role": "herbivore",
+      "habitat": "grass",
+      "bodySize": 0.7,
+      "fecundity": 1.3,
+      "dietHerbivore": 1,
+      "dietCarnivore": 0
+    },
+    {
+      "speciesId": "eco_bison",
+      "name": "野牛",
+      "role": "herbivore",
+      "habitat": "grass",
+      "bodySize": 1.4,
+      "fecundity": 0.7,
+      "dietHerbivore": 1,
+      "dietCarnivore": 0
+    },
+    {
+      "speciesId": "eco_camel",
+      "name": "骆驼",
+      "role": "herbivore",
+      "habitat": "arid",
+      "bodySize": 1.2,
+      "fecundity": 0.5,
+      "dietHerbivore": 1,
+      "dietCarnivore": 0
+    },
+    {
+      "speciesId": "eco_boar",
+      "name": "野猪",
+      "role": "herbivore",
+      "habitat": "wet",
+      "bodySize": 0.9,
+      "fecundity": 1.1,
+      "dietHerbivore": 0.8,
+      "dietCarnivore": 0.2
+    },
+    {
+      "speciesId": "eco_reindeer",
+      "name": "驯鹿",
+      "role": "herbivore",
+      "habitat": "tundra",
+      "bodySize": 0.9,
+      "fecundity": 0.9,
+      "dietHerbivore": 1,
+      "dietCarnivore": 0
+    },
+    {
+      "speciesId": "eco_fish",
+      "name": "鱼群",
+      "role": "fish",
+      "habitat": "coast",
+      "bodySize": 0.4,
+      "fecundity": 1.5,
+      "dietHerbivore": 0,
+      "dietCarnivore": 0.5
+    },
+    {
+      "speciesId": "eco_rabbit",
+      "name": "野兔",
+      "role": "herbivore",
+      "habitat": "generic",
+      "bodySize": 0.3,
+      "fecundity": 1.6,
+      "dietHerbivore": 1,
+      "dietCarnivore": 0
+    }
+  ]
+}

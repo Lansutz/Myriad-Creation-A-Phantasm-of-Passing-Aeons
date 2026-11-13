@@ -1,4 +1,6 @@
-﻿using MyriadCreation.Core.Data;
+﻿using MyriadCreation.Content.Definitions;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Enums;
 using UnityEngine;
 
 namespace MyriadCreation.Simulation.Systems
@@ -62,7 +64,8 @@ public static class EcosystemSystem
 			people += Mathf.Max(0f, tile.populationBlocks[i].count);
 		}
 		if (people <= 0f) return 0f;
-		float capacity = tile.wildlife * WildlifeFoodCapacityPerUnit * days;
+		float capacity = tile.wildlife * WildlifeFoodCapacityPerUnit * days
+			* EcologySpeciesCatalog.HuntYieldFactor(HabitatOf(in tile));
 		float demand = people * HuntFoodPerPersonPerDay * days;
 		float harvest = Mathf.Min(capacity, demand);
 		if (harvest <= 0f) return 0f;
@@ -81,7 +84,8 @@ public static class EcosystemSystem
 			people += Mathf.Max(0f, tile.populationBlocks[i].count);
 		}
 		if (people <= 0f) return 0f;
-		float capacity = tile.fishStock * FishFoodCapacityPerUnit * days;
+		float capacity = tile.fishStock * FishFoodCapacityPerUnit * days
+			* EcologySpeciesCatalog.CarryingFactor("coast", "fish");
 		float demand = people * FishFoodPerPersonPerDay * days;
 		float harvest = Mathf.Min(capacity, demand);
 		if (harvest <= 0f) return 0f;
@@ -133,6 +137,49 @@ public static class EcosystemSystem
 		return Mathf.Clamp01(people / (200f + 800f * vegetation));
 	}
 
+	/// <summary>地块栖息地分类（物种池键）：coast 优先，其次按群系归类。</summary>
+	public static string HabitatOf(in TileData tile)
+	{
+		if (tile.isCoast) return "coast";
+		switch (tile.biome)
+		{
+			case GameEnums.BiomeType.BorealForest:
+			case GameEnums.BiomeType.DeciduousForest:
+			case GameEnums.BiomeType.EvergreenForest:
+			case GameEnums.BiomeType.MonsoonForest:
+			case GameEnums.BiomeType.TropicalRainforest:
+			case GameEnums.BiomeType.TropicalMonsoon:
+			case GameEnums.BiomeType.TropicalSeasonalForest:
+			case GameEnums.BiomeType.TemperateMixedForest:
+			case GameEnums.BiomeType.CloudForest:
+			case GameEnums.BiomeType.Mangrove:
+				return "forest";
+			case GameEnums.BiomeType.TemperateGrassland:
+			case GameEnums.BiomeType.Savanna:
+			case GameEnums.BiomeType.Parkland:
+				return "grass";
+			case GameEnums.BiomeType.HotDesert:
+			case GameEnums.BiomeType.InlandDesert:
+			case GameEnums.BiomeType.ColdDesert:
+			case GameEnums.BiomeType.CoastalDesert:
+			case GameEnums.BiomeType.SemiAridShrubland:
+			case GameEnums.BiomeType.SaltDesert:
+				return "arid";
+			case GameEnums.BiomeType.WetMarshPlain:
+			case GameEnums.BiomeType.Swamp:
+			case GameEnums.BiomeType.PlateauMarsh:
+			case GameEnums.BiomeType.TundraWetland:
+				return "wet";
+			case GameEnums.BiomeType.Tundra:
+			case GameEnums.BiomeType.IceSheet:
+			case GameEnums.BiomeType.MountainGlacier:
+			case GameEnums.BiomeType.PermafrostPlateau:
+				return "tundra";
+			default:
+				return "generic";
+		}
+	}
+
 	/// <summary>推进 <paramref name="days"/> 天的演替；返回发生变化的陆地地块数。</summary>
 	public static int Tick(TileData[] tiles, float days, int year = 0)
 	{
@@ -156,13 +203,15 @@ public static class EcosystemSystem
 			tile.vegetation = vegetation;
 			if (ShouldBurn(in tile, year)) Burn(ref tile);
 			vegetation = tile.vegetation;
-			float targetWildlife = vegetation * WildlifePerVegetation * (1f - MaxWildlifeSuppression * pressure);
+			string habitat = HabitatOf(in tile);
+			float carrying = EcologySpeciesCatalog.CarryingFactor(habitat, "herbivore");
+			float targetWildlife = vegetation * WildlifePerVegetation * (1f - MaxWildlifeSuppression * pressure) * carrying;
 			float wildlife = Step(tile.wildlife, targetWildlife,
 				WildlifeResponsePerMonth, WildlifeResponsePerMonth, months);
 			float fish = tile.fishStock;
 			if (tile.isCoast)
 			{
-				float targetFish = 0.8f * (1f - 0.5f * pressure);
+				float targetFish = 0.8f * (1f - 0.5f * pressure) * EcologySpeciesCatalog.CarryingFactor("coast", "fish");
 				fish = Step(tile.fishStock, targetFish, FishResponsePerMonth, FishResponsePerMonth, months);
 			}
 			if (!Mathf.Approximately(vegetation, oldVegetation) || !Mathf.Approximately(wildlife, tile.wildlife)

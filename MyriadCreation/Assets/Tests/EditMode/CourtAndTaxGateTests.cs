@@ -85,6 +85,25 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
+        public void RemoveCollector_ZeroTax_ThenRefillRestores()
+        {
+            var world = NewWorld();
+            RealmData realm = FirstRealm(world);
+            Assert.IsNotNull(realm);
+
+            realm.officeHolders.Clear();
+            Assert.IsFalse(OfficeSystem.HasModuleHolder(realm, OfficeSystem.ModuleTaxation, world.Characters, out _),
+                "移除后不应再有征税官");
+            Assert.AreEqual(0f, world.GetEconomyManager().SettleTaxes(realm.realmId, 1f, hasCollector: false), 0.001f);
+
+            int filled = OfficeSystem.FillVacancies(realm, world.Characters, world.currentYear * 365 + world.currentDay);
+
+            Assert.Greater(filled, 0, "有候选时应补缺");
+            Assert.IsTrue(OfficeSystem.HasModuleHolder(realm, OfficeSystem.ModuleTaxation, world.Characters, out _),
+                "补缺后应恢复征税权");
+        }
+
+        [Test]
         public void FirstDayTax_AppearsInBudgetReport()
         {
             var world = NewWorld();

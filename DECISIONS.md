@@ -1153,4 +1153,27 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 复杂度：捕鱼/火灾都在既有月度 O(N) 循环内；每个地块 O(1)。
 - 旧档：新字段缺省 0，沿海旧档鱼群为 0（需一次生成/事件补种；不影响存档读取）。
 - 测试：`EcologyExtensionTests` 5 例（沿海捕鱼、鱼群恢复、放牧压低植被、火灾确定性/恢复、字段往返）。
-- 验证：`EXIT=0`、`986/988`（2 个 Explicit 跳过）、零 `error CS`。
+- 验证：`EXIT=0`、`992/994`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D136 生态物种表与物种池（P4.4）
+
+- 新增 `Content.Definitions.EcologySpeciesDef`/`EcologySpeciesCatalog`：生态物种只描述承载/捕猎有意义的性状（role/habitat/bodySize/fecundity/diet），与遗传 `SpeciesDef` 通过 `speciesId` 对齐，不复制遗传定义。
+- `Base/Ecology/Species.json`：森林（鹿/狼）、草原（羚羊/野牛）、荒漠（骆驼）、湿地（野猪）、苔原（驯鹿）、海岸（鱼群）、通用（野兔）；`ContentDefinitionIndex` 新增 `EcologySpecies` provider，Base 打底、Mods 按 id 覆盖。
+- `EcosystemSystem`：`HabitatOf` 把群系归为 forest/grass/arid/wet/tundra/coast/generic；野生承载 × `CarryingFactor(habitat, herbivore)`（含体型/繁殖/食性），捕猎产出 × `HuntYieldFactor`（最大体型）；鱼群承载/捕捞 × `CarryingFactor("coast","fish")`。
+- 不存逐格物种数组：物种池按栖息地查表，承载/捕猎是池内性状的纯函数；空表返回 1，保持旧行为。
+- 复杂度：内容只在初始化读一次；运行期每组地块 O(池大小)（池很小），无 tick 额外分配。
+- 测试：`EcologySpeciesTests` 4 例（内容加载/栖息地分类、承载与捕猎差异、Tick 下森林>荒漠、Mods 覆盖）。
+- 验证：`EXIT=0`、`992/994`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D137 P4 欠账收口验证
+
+- `build`：994 例、992 通过、0 失败、零 `error CS`（2 个 Explicit 跳过）。
+- `longrun`：2 seed × 100 年 `1/1`、`EXIT=0`。
+- 对照 `P4_DEFERRED_PLAN.md §4`：
+  1. 宫廷/官职/征税：开局 3 名宫廷人物、生成末段填官职、`taxation` 硬门禁、移除后 0 税收与补缺恢复（D132 + `CourtAndTaxGateTests`）。
+  2. 远征：BFS 路线、知识揭示、补给/拦截失败、计划完成、DTO 与 Persistence 往返（D133 + `ExpeditionTests`）。
+  3. 城市视图：Core 布局、确定性纹理、LRU、`CityViewPanel` 注册与空态、聚落面板入口（D134 + `CityViewTests`）。
+  4. 渔业/火灾/放牧：`fishStock` 产 2 号货、火灾确定性/恢复、放牧压植被（D135 + `EcologyExtensionTests`）。
+  5. 生态物种表：Base/Mods 加载、承载/捕猎受体型/繁殖/食性影响（D136 + `EcologySpeciesTests`）。
+  6. 最终验证与文档同步：本条。
+- 明确未做（不在 P4 范围）：逐格物种个体/完整食物网、3D 城市模型、远征 UI 入口、旧档沿海鱼群补种。
