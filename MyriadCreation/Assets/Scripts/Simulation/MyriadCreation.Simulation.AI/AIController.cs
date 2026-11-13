@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
@@ -35,6 +35,11 @@ public class AIController
 
 	private const int RaidInterval = 45;
 
+	/// <summary>建造决策间隔（日）：与 30 日大决策错开，避免同一天所有政权一起开工。</summary>
+	private const int BuildInterval = 180;
+
+	private int _buildCooldown = -1;
+
 	public AIController(int realmId, AIPersonality personality)
 	{
 		this.realmId = realmId;
@@ -47,6 +52,7 @@ public class AIController
 		_decisionTimer++;
 		SelectDailyIntent(realms, tiles, innovations, _pendingIntents, world);
 		TryRaid(realms, tiles, diplomacy, characters, _pendingIntents);
+		TryPlanConstruction(realms, tiles, diplomacy, world);
 		if (_decisionTimer >= 30f)
 		{
 			_decisionTimer = 0f;
@@ -64,6 +70,66 @@ public class AIController
 		List<AIIntent> result = new List<AIIntent>(_pendingIntents);
 		_pendingIntents.Clear();
 		return result;
+	}
+
+	/// <summary>
+	/// 建造令的生产调用者（P3.3）：按“是否在战 / 财政余量”选建筑，在开发度最高且该类别尚空的地块立计划。
+	/// 只调用统一的 ConstructionPlanSystem，不另开建造/库存系统。
+	/// </summary>
+	private void TryPlanConstruction(Dictionary<int, RealmData> realms, TileData[] tiles, DiplomacyManager diplomacy, GameWorld world)
+	{
+		if (_buildCooldown < 0) _buildCooldown = Mathf.Abs(realmId) % BuildInterval;
+		_buildCooldown++;
+		if (_buildCooldown < BuildInterval) return;
+		_buildCooldown = 0;
+		if (world == null || tiles == null || realms == null || !realms.TryGetValue(realmId, out RealmData realm) || realm == null) return;
+
+		bool atWar = IsAtWar(diplomacy);
+		int buildingId = atWar ? 401 : (realm.treasury < 800f ? 100 : 500);
+		BuildingSystem buildings = world.Buildings;
+		if (buildings == null || !buildings.GetBuildingDef(buildingId).HasValue) return;
+		BuildingCategory category = buildings.GetBuildingDef(buildingId).Value.category;
+		if (realm.treasury < buildings.GetBuildingDef(buildingId).Value.buildCost) return;
+
+		int bestTile = -1;
+		float bestScore = -1f;
+		int bestLevel = int.MaxValue;
+		for (int i = 0; i < tiles.Length; i++)
+		{
+			if (!tiles[i].exists || !tiles[i].isLand || tiles[i].ownerRealmId != realmId) continue;
+			int[] levels = tiles[i].buildingLevels;
+			if (levels == null || (int)category >= levels.Length) continue;
+			int level = levels[(int)category];
+			float score = tiles[i].development * 100f + PopulationOf(tiles[i]);
+			// 同类别等级低的地块优先；同分按 tileIndex 稳定决胜。
+			if (level < bestLevel || (level == bestLevel && (score > bestScore || (score == bestScore && (bestTile < 0 || i < bestTile)))))
+			{
+				bestTile = i;
+				bestLevel = level;
+				bestScore = score;
+			}
+		}
+		if (bestTile < 0) return;
+		world.CreateConstructionPlan(realmId, realm.GetSupremeRulerId(), bestTile, buildingId);
+	}
+
+	private static float PopulationOf(TileData tile)
+	{
+		if (tile.populationBlocks == null) return 0f;
+		float people = 0f;
+		for (int i = 0; i < tile.populationBlocks.Count; i++) people += tile.populationBlocks[i].count;
+		return people;
+	}
+
+	private bool IsAtWar(DiplomacyManager diplomacy)
+	{
+		if (diplomacy == null) return false;
+		foreach (KeyValuePair<string, DiplomaticRelation> pair in diplomacy.GetAllRelations())
+		{
+			DiplomaticRelation relation = pair.Value;
+			if (relation != null && relation.isAtWar && (relation.realmAId == realmId || relation.realmBId == realmId)) return true;
+		}
+		return false;
 	}
 
 	private void TryRaid(Dictionary<int, RealmData> realms, TileData[] tiles, DiplomacyManager diplomacy, CharacterManager characters, List<AIIntent> intents)
@@ -134,15 +200,18 @@ public class AIController
 			return;
 		}
 		List<InnovationDef> availableInnovations = innovations.GetAvailableInnovations(realmId, world);
+		// 内容不完整时列表可能夹带 null；排序比较器会解引用，先剔除。
+		availableInnovations.RemoveAll(i => i == null);
 		if (availableInnovations.Count <= 0)
 		{
 			return;
 		}
 		int currentEra = InnovationEra.GetEraForYear((!((Object)(object)world != (Object)null)) ? 1 : world.currentYear);
+		bool hasPreferredDomains = personality.preferredDomains != null && personality.preferredDomains.Count > 0;
 		availableInnovations.Sort((InnovationDef a, InnovationDef b) =>
 		{
-			bool flag = personality.preferredDomains.Contains(a.Domain);
-			bool flag2 = personality.preferredDomains.Contains(b.Domain);
+			bool flag = hasPreferredDomains && personality.preferredDomains.Contains(a.Domain);
+			bool flag2 = hasPreferredDomains && personality.preferredDomains.Contains(b.Domain);
 			if (flag != flag2)
 			{
 				if (!flag)

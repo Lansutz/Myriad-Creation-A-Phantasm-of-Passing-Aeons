@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -377,7 +377,8 @@ namespace MyriadCreation.Infrastructure.Save
                 relations = MyriadCreation.Simulation.Systems.RelationEndpointValidator.Filter(world, RelationPersistencePolicy.ForWorldSave(RelationRegistry.Capture()), out _),
                 contracts = ContractRegistry.Capture(),
                 configJson = JsonUtility.ToJson(world.config),
-                setupOptions = world.SetupOptions
+                setupOptions = world.SetupOptions,
+                realmKnowledge = world.Knowledge.Capture()
             };
 
             foreach (var kv in world.races) data.races.Add(RaceDTO.FromRaceData(kv.Value));
@@ -429,6 +430,7 @@ namespace MyriadCreation.Infrastructure.Save
             world.currentSeason = data.currentSeason;
             world.PlayerRealmId = data.playerRealmId;
             world.tiles = data.tiles;
+            world.Knowledge.Restore(data.realmKnowledge, world.tiles?.Length ?? 0);
             world.SetupOptions = data.setupOptions ?? MyriadCreation.World.Generation.WorldSetupOptions.CreateDefault();
 
  // 注：WorldFactory.CreateEmpty 仅 AddComponent，不再触发 InitializeWorld；此处用存档数据整体覆盖；unitDefs 不入档，保留默认集。

@@ -186,6 +186,10 @@
 - 2026-11-13 **P3.1 职权接线（第二批）**：提案权改查 `law_proposal` 模块（宰相），审案权改查 `judiciary`（无官则驳回）；征税硬门禁暂不接（宫廷人物供给不足会归零国库），在 D118 记明欠账。验证：`EXIT=0`、`908/910`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **P3.2 生态演替（第一批）**：`EcosystemSystem` 每月推进 `vegetation`（向 NPP 潜力，开垦压力压低）与 `wildlife`（跟随植被/人口压力）；旧档按 NPP 惰性补齐，随地块存档。新增 `EcosystemTests` 6 例。详见 D119。验证：`EXIT=0`、`914/916`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **P3.2 食物篮子与狩猎（第二批）**：`GoodsDef.edible/nutrition` 进内容表，口粮不再只吃 0 号；狩猎产出肉类并与野生密度同源扣减。`TileData` 按 `ref` 传递修复演替写回。验证：`EXIT=0`、`919/921`（2 个 Explicit 跳过）、零 `error CS`。
+- 2026-11-13 **P3.3 建造令调用者**：AI 每 180 日按战/财政选建筑并走 `ConstructionPlanSystem`；修 `GetAvailableInnovations` 的 null 排序与 `preferredDomains` 未初始化崩溃。新增 2 例测试。详见 D121。验证：`EXIT=0`、`926/928`（2 个 Explicit 跳过）、零 `error CS`。
+- 2026-11-13 **S19 地图知识**：`MapKnowledge` 每政权位图，所有权/军队斥候写入、Base64 存档、坏段安全；为 Intrigue 前置。新增 5 例测试。详见 D122。验证：`EXIT=0`、`926/928`（2 个 Explicit 跳过）、零 `error CS`。
+- 2026-11-13 **P3.4 旗帜与城市布局**：`BannerKind` 四态（无旗/军旗/家旗/国族旗）按君主、纹章习俗、民族主义革新条件化；`CityLayoutGenerator` 按区块面积确定性切分俯视布局（不存档、读档重算）。新增 `BannerSystemTests` 6 例、`CityLayoutTests` 5 例。详见 D123。验证：`EXIT=0`、`937/939`（2 个 Explicit 跳过）、零 `error CS`。
+- 2026-11-13 **官职调度降频**：`offices.daily` → `offices.monthly`（俸禄按 deltaDays 折算），避免百年人物表增长后每天全量扫人。
 - 2026-11-13 **纹章模型对齐 Azgaar/Armoria**：division/ordinary/盾形 + 纹章金属/颜色规则，家族纹章确定性生成。验证：`EXIT=0`、`887/889`、零 `error CS`。
 - 2026-11-13 **程序化家族纹章**：`Heraldry` 确定性生成 pattern+三色，家族创建/旧档补齐，`FamilySaveData` 往返。新增 3 例测试。验证：`EXIT=0`、`887/889`、零 `error CS`。
 - 2026-11-13 **架构解耦收口**：C 写入口+门禁、E Genome 主路径、F Hosts 程序集反转、P2.6 两相调度；最终 `build` 884/886、`longrun` 1/1 全绿。详见 D111。

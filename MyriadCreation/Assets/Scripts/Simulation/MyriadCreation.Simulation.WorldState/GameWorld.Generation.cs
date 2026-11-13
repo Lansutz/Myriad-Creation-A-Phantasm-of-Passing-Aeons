@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -169,6 +169,12 @@ public partial class GameWorld : MonoBehaviour
 		ClearInitialTerrainDirty();
 		SettlementPopulationSystem.RecomputeAll(this);
 		BuildPreloadPlan();
+		Knowledge.EnsureCapacity(tiles?.Length ?? 0);
+		Knowledge.SeedOwnership(tiles, mapWidth, mapHeight);
+		for (int i = 0; i < realms.Count; i++)
+		{
+			if (realms[i] != null) BannerSystem.Ensure(realms[i], _characterManager, _innovationTree);
+		}
 		Debug.Log((object)$"[GameWorld] 地形生成完成（{SetupOptions.initialContent}），陆地{GetLandTileCount()}地块，海洋{GetSeaTileCount()}地块，省份{provinces.Count}个");
 	}
 
@@ -395,6 +401,8 @@ public partial class GameWorld : MonoBehaviour
 		GenerateTerrainWithConfig();
 		CalculateClimate();
 		RecalculateHydrology();
+		Knowledge.EnsureCapacity(tiles?.Length ?? 0);
+		Knowledge.SeedOwnership(tiles, mapWidth, mapHeight);
 		Debug.Log((object)"[GameWorld] 全部生成完成");
 	}
 

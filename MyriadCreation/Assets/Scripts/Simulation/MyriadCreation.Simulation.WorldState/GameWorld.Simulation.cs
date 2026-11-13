@@ -804,8 +804,9 @@ public partial class GameWorld : MonoBehaviour
 		{
 			_thoughtManager.DailyTick(currentYear);
 		});
-		// 官职：每日补缺/任期到期，并按日折算俸禄（国库不足则本日不付）。
-		_simulationScheduler.Register("offices.daily", SimulationCadence.Daily, 26, (SimulationTickContext ctx) =>
+		// 官职：每月补缺/任期到期，并按日折算俸禄（国库不足则当月不付）。
+		// 用月度而非日度：无空缺时不必每天扫全政权人物，人物表随百年增长会放大成本。
+		_simulationScheduler.Register("offices.monthly", SimulationCadence.Monthly, 26, (SimulationTickContext ctx) =>
 		{
 			EnsureOfficeHolders();
 			if (_characterManager != null)
@@ -813,6 +814,27 @@ public partial class GameWorld : MonoBehaviour
 				for (int i = 0; i < realms.Count; i++)
 				{
 					if (realms[i] != null) OfficeSystem.PaySalaries(realms[i], _characterManager, ctx.deltaDays);
+				}
+			}
+		});
+		// 政权旗帜（P3.4）：每月按条件刷新；无旗是合法状态。
+		_simulationScheduler.Register("polity.banners.monthly", SimulationCadence.Monthly, 31, (SimulationTickContext _) =>
+		{
+			for (int i = 0; i < realms.Count; i++)
+			{
+				if (realms[i] != null) BannerSystem.Ensure(realms[i], _characterManager, _innovationTree);
+			}
+		});
+		// 地图知识（S19）：军队按斥候范围揭示；所有权地块在生成时已播种。
+		_simulationScheduler.Register("knowledge.scouts.monthly", SimulationCadence.Monthly, 30, (SimulationTickContext _) =>
+		{
+			Knowledge.EnsureCapacity(tiles.Length);
+			Knowledge.SeedOwnership(tiles, mapWidth, mapHeight);
+			foreach (Army army in armies.Values)
+			{
+				if (army != null && army.ownerRealmId >= 0)
+				{
+					Knowledge.RevealRadius(army.ownerRealmId, army.currentTileIndex, Math.Max(1, army.scoutRange), mapWidth, mapHeight);
 				}
 			}
 		});

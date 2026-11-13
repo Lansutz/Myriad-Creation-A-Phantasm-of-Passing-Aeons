@@ -18,7 +18,8 @@ public class EconomyManager
 
 	private readonly Dictionary<int, TradeCenter> _tradeCenters;
 
-	private readonly List<int> _edibleIds = new List<int>();
+	/// <summary>可食货号缓存（构造时按内容表建一次）；每格每日只遍历这几项，不扫全部货物。</summary>
+	private readonly List<int> _edibleGoods = new List<int>();
 
 	private readonly Dictionary<int, GoodsDef> _goodsDefs;
 
@@ -93,6 +94,7 @@ public class EconomyManager
 		_tiles = tiles;
 		_tradeCenters = tradeCenters;
 		_goodsDefs = goodsDefs;
+		RebuildEdibleGoods();
 		_currency = currency;
 		_taxSystem = taxSystem;
 		_realms = realms;
@@ -508,6 +510,17 @@ public class EconomyManager
 		return total;
 	}
 
+	private void RebuildEdibleGoods()
+	{
+		_edibleGoods.Clear();
+		if (_goodsDefs == null) return;
+		foreach (KeyValuePair<int, GoodsDef> pair in _goodsDefs)
+		{
+			if (pair.Value.edible) _edibleGoods.Add(pair.Key);
+		}
+		_edibleGoods.Sort();
+	}
+
 	private void ProcessConsumption()
 	{
 		int starvingTileCount = 0;
@@ -535,24 +548,22 @@ public class EconomyManager
 			float amount = num * PersonFoodPerDay;
 			float amount2 = num * SaltPerPersonPerDay;
 			// 食物篮子：只吃 edible 货（小麦/肉/鱼/稻谷），盐与矿物即使同属 Food 类也不充饥。
-			_edibleIds.Clear();
 			float foodAvailable = 0f;
-			foreach (KeyValuePair<int, GoodsDef> pair in _goodsDefs)
+			for (int g = 0; g < _edibleGoods.Count; g++)
 			{
-				if (!pair.Value.edible) continue;
-				float qty = value.inventory.GetValueOrDefault(pair.Key, 0f);
+				int goodsId = _edibleGoods[g];
+				float qty = value.inventory.GetValueOrDefault(goodsId, 0f);
 				if (qty <= 0f) continue;
-				_edibleIds.Add(pair.Key);
-				float nutrition = pair.Value.nutrition <= 0f ? 1f : pair.Value.nutrition;
+				float nutrition = _goodsDefs[goodsId].nutrition <= 0f ? 1f : _goodsDefs[goodsId].nutrition;
 				foodAvailable += qty * nutrition;
 			}
-			_edibleIds.Sort();
 			if (foodAvailable < amount)
 			{
 				// 库存不足日需：先把剩余口粮吃光再进入饥荒分支，避免库存永远卡在 0 < stock < need
-				for (int e = 0; e < _edibleIds.Count; e++)
+				for (int e = 0; e < _edibleGoods.Count; e++)
 				{
-					value.RemoveGoods(_edibleIds[e], value.inventory.GetValueOrDefault(_edibleIds[e], 0f));
+					int goodsId = _edibleGoods[e];
+					value.RemoveGoods(goodsId, value.inventory.GetValueOrDefault(goodsId, 0f));
 				}
 				ApplyFaminePenalty(i);
 				starvingTileCount++;
@@ -561,9 +572,9 @@ public class EconomyManager
 			else
 			{
 				float remaining = amount;
-				for (int e = 0; e < _edibleIds.Count && remaining > 0f; e++)
+				for (int e = 0; e < _edibleGoods.Count && remaining > 0f; e++)
 				{
-					int goodsId = _edibleIds[e];
+					int goodsId = _edibleGoods[e];
 					float nutrition = _goodsDefs[goodsId].nutrition <= 0f ? 1f : _goodsDefs[goodsId].nutrition;
 					float stock = value.inventory.GetValueOrDefault(goodsId, 0f);
 					float take = Mathf.Min(stock, remaining / nutrition);

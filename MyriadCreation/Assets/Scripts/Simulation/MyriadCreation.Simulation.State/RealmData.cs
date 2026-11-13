@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
@@ -29,6 +29,18 @@ public class RealmData
 	/// <summary>各槽位的任命绝对日（year*365+day）；0/缺省视为旧档终身任职。随 RealmOfficeSaveData 入档。</summary>
 	[NonSerialized]
 	public Dictionary<int, int> officeAppointedDays = new Dictionary<int, int>();
+
+	/// <summary>旗帜类型（P3.4）；None = 无旗合法状态。</summary>
+	[NonSerialized]
+	public BannerKind bannerKind;
+
+	/// <summary>旗帜布局（如 StateFlag|twoBands）；空 = 无旗。</summary>
+	[NonSerialized]
+	public string bannerPattern = "";
+
+	/// <summary>旗帜配色（field|charge|accent）；空 = 无旗。</summary>
+	[NonSerialized]
+	public string bannerColors = "";
 
 	public List<AdminDivision> adminDivisions = new List<AdminDivision>();
 

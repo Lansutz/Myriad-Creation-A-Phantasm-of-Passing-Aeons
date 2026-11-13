@@ -386,6 +386,10 @@ namespace MyriadCreation.Infrastructure.Save
         public List<IntPairEntry> officeHolders = new List<IntPairEntry>();
         /// <summary>任命日（P3.1）；旧档缺省为空 = 终身任职，不误判任期到期。</summary>
         public List<IntPairEntry> officeAppointedDays = new List<IntPairEntry>();
+        /// <summary>政权旗帜（P3.4）；0/空 = 无旗。</summary>
+        public int bannerKind;
+        public string bannerPattern = "";
+        public string bannerColors = "";
 
         public static RealmOfficeSaveData FromRealm(RealmData r)
         {
@@ -402,6 +406,9 @@ namespace MyriadCreation.Infrastructure.Save
                 foreach (var kv in r.officeHolders) dto.officeHolders.Add(new IntPairEntry(kv.Key, kv.Value));
             if (r.officeAppointedDays != null)
                 foreach (var kv in r.officeAppointedDays) dto.officeAppointedDays.Add(new IntPairEntry(kv.Key, kv.Value));
+            dto.bannerKind = (int)r.bannerKind;
+            dto.bannerPattern = r.bannerPattern ?? "";
+            dto.bannerColors = r.bannerColors ?? "";
             return dto;
         }
 
@@ -421,6 +428,9 @@ namespace MyriadCreation.Infrastructure.Save
             r.officeAppointedDays.Clear();
             if (officeAppointedDays != null)
                 foreach (var e in officeAppointedDays) r.officeAppointedDays[e.key] = e.value;
+            r.bannerKind = (BannerKind)bannerKind;
+            r.bannerPattern = bannerPattern ?? "";
+            r.bannerColors = bannerColors ?? "";
         }
     }
 

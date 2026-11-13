@@ -1,4 +1,4 @@
-# DECISIONS — 计划 v3（系统总纲）
+﻿# DECISIONS — 计划 v3（系统总纲）
 
 > 记录本轮的方案取舍与被否方案，避免走回头路。每条：候选 → 取舍 → 依据。
 
@@ -995,3 +995,35 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 种间/物种层、渔业、火灾与放牧反馈仍未做：需要独立物种表与更大预算，暂不半途插入。
 - 测试：新增 `Salt_IsNotEdible`、`CityWithOnlyMeat_DoesNotStarve`、`WildlifeHarvest_ProducesMeatAndReducesHerd`、`Harvest_TakesMeatAndReducesWildlife`、`Harvest_WithoutPeopleOrWildlifeIsZero`。
 - 验证：`EXIT=0`、`919/921`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D121 建造令的 AI 调用者（P3.3 第一批）
+
+- 现状：`ConstructionPlanSystem.CreateConstructionPlan` 只有 API 与存档，没有任何生产调用者；P3.3 首先补调用者。
+- `AIController.TryPlanConstruction`：每 180 日（按 realmId 错峰）根据“是否在战 / 财政余量”选建筑（战→石墙 401，财政 <800→农田 100，否则集市 500），在开发度最高、该建筑类别等级最低的己方地块上调用统一 `CreateConstructionPlan`。不新建建造系统、不直接写 `buildingLevels`。
+- 计划自带 treasury/construction_days 需求，财政门禁由 `CanBuildBuilding` 统一判定；国库不足时不会立项。
+- 战斗/贸易/外交/迁徙仍按 D32 不走 Plan；`PlanType.Military` 的 §9.4 设想与 D32 冲突，以 D32 为准（战争归 Warfare/ManpowerSystem）。
+- 顺带修两个潜在崩溃：`GetAvailableInnovations` 列表可能含 null（排序解引用），以及 `AIPersonality.preferredDomains` 未初始化时比较器 NRE；两者都是内容不完整/测试环境的真实路径。
+- 验证：`EXIT=0`、`926/928`（2 个 Explicit 跳过）、零 `error CS`；新增 `ConstructionPlanAITests` 2 例。
+
+## D122 S19 地图知识层（P3.5 第一刀）
+
+- `MapKnowledge`：每政权一张位图（`byte[]`），只存“知道/不知道”，不存传闻强度；读取不写状态。
+- 写入口三个：`SeedOwnership`（自己拥有的地块+一圈邻地，生成时播种）、`RevealRadius`（军队按 `scoutRange` 每月揭示，切比雪夫方形网格）、`Restore`（读档）。后续商队/探险只加写入口，不另开知识系统。
+- 存档：`SaveData.realmKnowledge` 为 `RealmKnowledgeSaveData { realmId, bitsBase64 }`；坏 Base64 段只让该政权退回全未知，不让整档读失败。
+- UI/密谋读取：`GameWorld.Knowledge`；P3.5 的 Intrigue 必须在“目标地块已知”条件下才允许立项（下一步接入）。
+- 性能：MarkKnown O(1)，RevealRadius O(r²)，SeadOwnership O(N) 只在生成/月度跑；存储 = 每政权 ceil(N/8) 字节。
+- 验证：`EXIT=0`、`926/928`（2 个 Explicit 跳过）、零 `error CS`；新增 `MapKnowledgeTests` 5 例。
+
+## D123 政权旗帜与城市俯视布局（P3.4）
+
+- 旗帜四态（`BannerKind`）：`None / MilitaryBanner / HouseholdBanner / StateFlag`，都是合法状态，不强制每个政权都有旗。
+- 条件（中立表述，不绑定现实文明）：
+  - 无君主/执政官 → `None`；
+  - 已获得民族主义革新（内容 1017）且定居政体 → `StateFlag`；
+  - 统治家族已有纹章（`CultureData.heraldryEnabled` 才会生成）→ `HouseholdBanner`；
+  - 其余有君主的政体 → `MilitaryBanner`（早期默认，符合“先有军旗”）。
+- 生成：`BannerSystem.Generate` 由 `realmId + 名称 + 类型` 确定性产出 `类型|布局` 与三色（field/charge/accent），遵循金属不压金属；不生成美术资源。类型变化才重算，否则保留。
+- 存档：`RealmOfficeSaveData` 增 `bannerKind/bannerPattern/bannerColors`；旧档缺省 0/空 = 无旗。
+- 城市俯视图：`CityLayoutGenerator` 只产布局数据（`CityLayoutPlan`：100×100 画布、按 `areaRatio` 的竖条街区、道路间隙、城墙外环），按 `blockId` 稳定排序，确定性、不存档、读档重算；渲染层后续把矩形光栅化成 Sprite。空聚落返回空布局，不抛异常。
+- 未做：旗帜/城市布局的实际 Sprite 渲染与 UI 入口；`StateFlag` 的政体条件目前只有“定居”，共和/宪章政体细分等政体系统补齐后再收紧。
+- 验证：`EXIT=0`、`937/939`（2 个 Explicit 跳过）、零 `error CS`（含 `BannerSystemTests` 6 例、`CityLayoutTests` 5 例）。

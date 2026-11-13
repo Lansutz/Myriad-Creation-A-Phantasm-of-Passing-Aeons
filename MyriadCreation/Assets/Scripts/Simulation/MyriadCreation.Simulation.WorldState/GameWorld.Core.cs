@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -248,6 +248,12 @@ public partial class GameWorld : MonoBehaviour
 	public ResearchPlanSystem ResearchPlans => _researchPlanSystem ?? (_researchPlanSystem = CreateResearchPlanSystem());
 
 	public ConstructionPlanSystem ConstructionPlans => _constructionPlanSystem ?? (_constructionPlanSystem = CreateConstructionPlanSystem());
+
+	/// <summary>建筑只读入口（AI/UI 查定义与已建等级，不直接写状态）。</summary>
+	public BuildingSystem Buildings => _buildingSystem;
+
+	/// <summary>地图知识层（S19）：每政权已知地块位图；写入口只有 SeedOwnership/RevealRadius/Restore。</summary>
+	public MapKnowledge Knowledge { get; } = new MapKnowledge();
 
 	public CharacterManager Characters => _characterManager;
 

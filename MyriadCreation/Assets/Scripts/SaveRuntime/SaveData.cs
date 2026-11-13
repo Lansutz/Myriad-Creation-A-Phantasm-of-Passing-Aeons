@@ -1,4 +1,4 @@
-
+﻿
 
 
 using System.Collections.Generic;
@@ -86,6 +86,9 @@ namespace MyriadCreation.Infrastructure.Save
 
         // ===== 计划运行态（P0.1；旧档为 null，读档保持空计划表）=====
         public List<PlanSaveData> plans;
+
+        // ===== 地图知识（S19；旧档为 null，读档保持全未知）=====
+        public List<RealmKnowledgeSaveData> realmKnowledge;
 
         // ===== AI 长期决策状态（P0.1；旧档为 null，保留 EnsureAIControllers 的默认人格）=====
         public List<AIControllerSaveData> aiControllers;
