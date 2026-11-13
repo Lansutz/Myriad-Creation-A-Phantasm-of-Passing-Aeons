@@ -512,3 +512,8 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `GameWorld.IsStateFaithPacifist(realmId)` 读国教 `DoctrineBindings.pacifism`。
 - 若为真：`Crusade/ReligiousConflict` 宣战直接拒绝；`DeclareGreatHolyWar` 直接拒绝。普通世俗战争不受影响，避免把和平主义误写成“不能打仗”。
 - 测试：临时给国教加 `doctrine_pacifism`，断言宗教战争被拒，`finally` 还原内容。
+
+## D60 Shunned 的社会后果（P1.3 WP3 第四点）
+
+- `IsDoctrineShunned` 与 `ApplyShunnedStigma`：当伦理绑定为 `Shunned` 时，同政权、同信仰、在世的成年人（最多 12 人）对该行为人的好感下降 5，并写编年史；不入罪、不走司法。
+- `TryTrialDoctrineCrime` 在非罪行分支调用它：Crime 走司法，Shunned 走社会排斥，Accepted/未指定无反应。三条口径互斥，避免“忌讳”只是空标签。

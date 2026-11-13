@@ -1745,11 +1745,59 @@ public partial class GameWorld : MonoBehaviour
 		return MyriadCreation.Simulation.FaithHost.DoctrineBindingHost.IsCrime(bindings, behavior);
 	}
 
+	public bool IsDoctrineShunned(int realmId, MyriadCreation.Simulation.FaithHost.DoctrineCrimeBehavior behavior)
+	{
+		if (realms == null || !realms.TryGetValue(realmId, out RealmData realm) || realm == null)
+		{
+			return false;
+		}
+		FaithSystem faith = GetFaithSystem(realm.stateReligionId);
+		if (faith == null || !MyriadCreation.Simulation.ContentHost.ContentResolvers.Religions.TryGet(faith.religionId, out MyriadCreation.Content.Definitions.ReligionDef religion))
+		{
+			return false;
+		}
+		var bindings = MyriadCreation.Simulation.FaithHost.DoctrineBindingHost.Resolve(religion);
+		return MyriadCreation.Simulation.FaithHost.DoctrineBindingHost.GetStance(bindings, behavior) == MyriadCreation.Simulation.FaithHost.DoctrineMoralStance.Shunned;
+	}
+
+	/// <summary>忌讳行为的社会后果：同政权、同信仰的成年人对当事人好感下降。</summary>
+	public void ApplyShunnedStigma(int realmId, MyriadCreation.Simulation.FaithHost.DoctrineCrimeBehavior behavior, int actorCharacterId)
+	{
+		if (!IsDoctrineShunned(realmId, behavior) || _characterManager == null)
+		{
+			return;
+		}
+		CharacterData actor = _characterManager.GetCharacter(actorCharacterId);
+		if (actor == null || !actor.isAlive)
+		{
+			return;
+		}
+		int applied = 0;
+		foreach (CharacterData other in _characterManager.GetCharactersByRealm(realmId))
+		{
+			if (other == null || !other.isAlive || other.characterId == actorCharacterId || other.faithId != actor.faithId)
+			{
+				continue;
+			}
+			other.ModifyRelation(actorCharacterId, -5f, "忌讳行为");
+			applied++;
+			if (applied >= 12)
+			{
+				break;
+			}
+		}
+		_chronicle?.Add("doctrine_shunned", actor.fullName + " 的行为受到同信仰者排斥", false, realmId);
+	}
+
 	/// <summary>P1.3：按教义伦理发起审判；非罪行直接驳回，不入司法流程。</summary>
 	public TrialResult TryTrialDoctrineCrime(int realmId, MyriadCreation.Simulation.FaithHost.DoctrineCrimeBehavior behavior, int suspectCharacterId)
 	{
 		if (!IsDoctrineCriminal(realmId, behavior))
 		{
+			if (IsDoctrineShunned(realmId, behavior))
+			{
+				ApplyShunnedStigma(realmId, behavior, suspectCharacterId);
+			}
 			return default;
 		}
 		CrimeType crime = (behavior == MyriadCreation.Simulation.FaithHost.DoctrineCrimeBehavior.Witchcraft) ? CrimeType.Witchcraft : CrimeType.SexualMisconduct;

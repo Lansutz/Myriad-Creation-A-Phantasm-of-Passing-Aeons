@@ -24,6 +24,21 @@ public static class DoctrineBindingHost
 		};
 	}
 
+	public static DoctrineMoralStance GetStance(DoctrineBindings bindings, DoctrineCrimeBehavior behavior)
+	{
+		if (bindings == null)
+		{
+			return DoctrineMoralStance.Unspecified;
+		}
+		return behavior switch
+		{
+			DoctrineCrimeBehavior.Homosexuality => bindings.homosexuality,
+			DoctrineCrimeBehavior.Adultery => bindings.adultery,
+			DoctrineCrimeBehavior.Witchcraft => bindings.witchcraft,
+			_ => DoctrineMoralStance.Unspecified
+		};
+	}
+
 	public static DoctrineBindings Resolve(ReligionDef religion)
 	{
 		if (religion == null)
