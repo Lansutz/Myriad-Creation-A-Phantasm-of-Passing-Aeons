@@ -185,8 +185,15 @@ public static class WarJustificationSystem
 		warGoal.defenderRealmId = defenderId;
 		warGoal.targetTileIndex = targetTile;
 		warGoal.targetRegionId = targetRegion;
-		WarGoal warGoal2 = warGoal;
-		warGoal2.targetWarScore = type switch
+		warGoal.targetWarScore = GetDefaultTargetWarScore(type);
+		warGoal.description = type.ToString();
+		warGoal.isPrimaryGoal = true;
+		return warGoal;
+	}
+
+	public static float GetDefaultTargetWarScore(GameEnums.WarGoalType type)
+	{
+		return type switch
 		{
 			GameEnums.WarGoalType.ConquerTerritory => 50f, 
 			GameEnums.WarGoalType.ConquerRegion => 75f, 
@@ -199,9 +206,61 @@ public static class WarJustificationSystem
 			GameEnums.WarGoalType.Independence => 70f, 
 			_ => 30f, 
 		};
-		warGoal.description = type.ToString();
-		warGoal.isPrimaryGoal = true;
-		return warGoal;
+	}
+
+	/// <summary>
+	/// 战争目标可变更，但理由（CB）不可变：新目标必须落在原 CB 授权范围内；无 CB 的突袭没有扩张依据。
+	/// 冷却、升级成本与威望门槛由世界层执行，本方法只做纯合法性判定。
+	/// </summary>
+	public static bool CanChangeWarGoal(CasusBelli casusBelli, WarGoal currentGoal, WarGoal proposedGoal, out string reason)
+	{
+		if (casusBelli == null)
+		{
+			reason = "no_casus_belli";
+			return false;
+		}
+		if (proposedGoal == null)
+		{
+			reason = "no_goal";
+			return false;
+		}
+		if (currentGoal != null && currentGoal.type == proposedGoal.type && currentGoal.targetTileIndex == proposedGoal.targetTileIndex && currentGoal.targetRegionId == proposedGoal.targetRegionId)
+		{
+			reason = "same_goal";
+			return false;
+		}
+		List<GameEnums.WarGoalType> supported = GetSupportedWarGoals(casusBelli.type);
+		if (!supported.Contains(proposedGoal.type))
+		{
+			reason = "goal_not_supported";
+			return false;
+		}
+		reason = "ok";
+		return true;
+	}
+
+	public static Treaty GenerateWhitePeace(int realmA, int realmB, int currentDay, int truceYears = 5)
+	{
+		Treaty treaty = new Treaty
+		{
+			treatyId = _nextTreatyId++,
+			treatyName = $"白和条约（第{currentDay}日）",
+			signerAId = realmA,
+			signerBId = realmB,
+			signedDay = currentDay,
+			truceUntilDay = currentDay + truceYears * 365,
+			goalsFullyAchieved = false,
+			isPeaceTreaty = true
+		};
+		treaty.clauses.Add(new TreatyClause
+		{
+			type = TreatyClauseType.Truce,
+			fromRealmId = realmA,
+			toRealmId = realmB,
+			durationDays = truceYears * 365,
+			description = $"停战 {truceYears} 年"
+		});
+		return treaty;
 	}
 
 	public static Treaty GeneratePeaceTreaty(int winnerId, int loserId, float warScore, List<WarGoal> attackerGoals, int currentDay, int truceYears = 5)

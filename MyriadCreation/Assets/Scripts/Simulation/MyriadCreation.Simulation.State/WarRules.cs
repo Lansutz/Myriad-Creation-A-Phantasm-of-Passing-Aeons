@@ -47,6 +47,12 @@ public class WarRules
 
 	public int pocketSurrenderMaxProvinces = 3;
 
+	/// <summary>战争目标可改期：两次变更之间的最短间隔（天）。理由固定，目标不是随便改的。</summary>
+	public int warGoalRevisionCooldownDays = 90;
+
+	/// <summary>目标升级（要求更高战争分）的威望成本；降级免费。</summary>
+	public float warGoalEscalationPrestigeCost = 25f;
+
 	public int GetTruceUntilDay(int currentDay, int years)
 	{
 		return currentDay + years * 365;

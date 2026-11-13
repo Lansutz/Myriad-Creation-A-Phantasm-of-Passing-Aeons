@@ -879,7 +879,19 @@ public partial class GameWorld : MonoBehaviour
 			_simulationEvents.Publish(new WarEndedEvent(item.warId, item.attackerId, item.defenderId, item.winnerId, item.outcome, day));
 			string text = ((item.outcome == "victory") ? (realms[item.winnerId].realmName + " 赢得战争胜利") : "双方白和");
 			_chronicle?.Add("war_end", text, true, item.attackerId, item.defenderId);
-			_diplomacyManager.ForcePeace(item.attackerId, item.defenderId, day, _diplomacyManager.WarRules.truceYears, text);
+			int truceYears = ((_diplomacyManager.WarRules != null) ? _diplomacyManager.WarRules.truceYears : 5);
+			Treaty treaty;
+			if (item.outcome == "victory" && item.winnerId >= 0)
+			{
+				int loserId = ((item.winnerId == item.attackerId) ? item.defenderId : item.attackerId);
+				List<WarGoal> goals = ((item.winnerId == item.attackerId) ? item.warGoals : null);
+				treaty = WarJustificationSystem.GeneratePeaceTreaty(item.winnerId, loserId, item.GetScore(item.winnerId), goals, day, truceYears);
+			}
+			else
+			{
+				treaty = WarJustificationSystem.GenerateWhitePeace(item.attackerId, item.defenderId, day, truceYears);
+			}
+			_diplomacyManager.SignPeaceTreaty(item.attackerId, item.defenderId, treaty, day, text);
 			EnsureOfficeHolders();
 			EnsureAdminDivisions();
 			if (item.outcome == "victory" && item.winnerId >= 0)
@@ -1047,10 +1059,37 @@ public partial class GameWorld : MonoBehaviour
 		{
 			return false;
 		}
-		WarState warState = new WarState(_nextWarId++, attackerId, defenderId, currentDay);
+		CreateWarState(attackerId, defenderId, reason);
+		_chronicle?.Add("war", realms[attackerId].realmName + " 对 " + realms[defenderId].realmName + " 宣战：" + reason, true, attackerId, defenderId);
+		return true;
+	}
+
+	/// <summary>
+	/// 战争运行态的唯一创建入口。战略层真源是 <see cref="WarState"/>（参战方 / 宣战理由 / 战争目标），
+	/// 外交关系上的 CB 与目标是投影，不反向充当战争状态。普通宣战、带理由宣战、大圣战都必须走这里。
+	/// </summary>
+	private WarState CreateWarState(int attackerId, int defenderId, string reason, CasusBelli casusBelli = null, List<WarGoal> warGoals = null)
+	{
+		WarState warState = new WarState(_nextWarId++, attackerId, defenderId, currentDay)
+		{
+			reason = reason ?? "",
+			casusBelli = casusBelli
+		};
+		if (warGoals != null)
+		{
+			foreach (WarGoal warGoal in warGoals)
+			{
+				if (warGoal == null)
+				{
+					continue;
+				}
+				warGoal.attackerRealmId = attackerId;
+				warGoal.defenderRealmId = defenderId;
+				warState.warGoals.Add(warGoal);
+			}
+		}
 		_wars.Add(warState);
 		_simulationEvents.Publish(new WarDeclaredEvent(warState.warId, attackerId, defenderId, currentDay));
-		_chronicle?.Add("war", realms[attackerId].realmName + " 对 " + realms[defenderId].realmName + " 宣战：" + reason, true, attackerId, defenderId);
 		if (attackerId >= 0 && defenderId >= 0 && attackerId < realms.Count && defenderId < realms.Count)
 		{
 			int stateReligionId = realms[attackerId].stateReligionId;
@@ -1060,6 +1099,87 @@ public partial class GameWorld : MonoBehaviour
 				OnWarBetweenFaiths(stateReligionId, stateReligionId2);
 			}
 		}
+		return warState;
+	}
+
+	/// <summary>带宣战理由与战争目标的正式宣战。CB / 目标同时写入战争运行态与外交投影。</summary>
+	public bool DeclareWarWithJustification(int attackerId, int defenderId, CasusBelli casusBelli, WarGoal warGoal, string reason = "")
+	{
+		return DeclareWarWithJustification(attackerId, defenderId, casusBelli, warGoal, reason, ResolveSupremeRulerId(attackerId));
+	}
+
+	private bool DeclareWarWithJustification(int attackerId, int defenderId, CasusBelli casusBelli, WarGoal warGoal, string reason, int actorCharacterId)
+	{
+		if (attackerId < 0 || attackerId >= realms.Count)
+		{
+			return false;
+		}
+		IActionGate gate = BuildActionGate();
+		ActionContext context = new ActionContext(actorCharacterId, attackerId, ActionIds.DeclareWar, targetRealmId: defenderId);
+		if (!gate.Check(in context).Allowed)
+		{
+			return false;
+		}
+		if (casusBelli != null && !casusBelli.IsValid(currentDay))
+		{
+			casusBelli = null;
+		}
+		if (!_diplomacyManager.DeclareWarWithJustification(attackerId, defenderId, casusBelli, warGoal, reason))
+		{
+			return false;
+		}
+		List<WarGoal> warGoals = (warGoal != null) ? new List<WarGoal> { warGoal } : null;
+		CreateWarState(attackerId, defenderId, string.IsNullOrEmpty(reason) ? (casusBelli != null ? WarJustificationSystem.GetCBDescription(casusBelli.type) : "无借口宣战") : reason, casusBelli, warGoals);
+		return true;
+	}
+
+	/// <summary>
+	/// 中途变更战争目标：理由（CB）固定不变，目标只能落在原 CB 授权范围内，且有冷却与升级成本。
+	/// 降级/收缩免费；升级到更高战争分要求支付威望，威望不足则不允许。
+	/// </summary>
+	public bool ReviseWarGoal(int warId, WarGoal proposedGoal)
+	{
+		WarState war = _wars.Find((WarState w) => w.warId == warId);
+		if (war == null || war.ended || proposedGoal == null)
+		{
+			return false;
+		}
+		WarRules rules = _diplomacyManager.WarRules ?? WarRules.Default();
+		if (war.lastWarGoalChangeDay >= 0 && currentDay - war.lastWarGoalChangeDay < rules.warGoalRevisionCooldownDays)
+		{
+			return false;
+		}
+		WarGoal currentGoal = (war.warGoals.Count > 0) ? war.warGoals[0] : null;
+		if (!WarJustificationSystem.CanChangeWarGoal(war.casusBelli, currentGoal, proposedGoal, out _))
+		{
+			return false;
+		}
+		float targetScore = ((proposedGoal.targetWarScore > 0f) ? proposedGoal.targetWarScore : WarJustificationSystem.GetDefaultTargetWarScore(proposedGoal.type));
+		bool escalation = currentGoal == null || targetScore > currentGoal.targetWarScore;
+		if (escalation && war.attackerId >= 0 && war.attackerId < realms.Count)
+		{
+			RealmData attacker = realms[war.attackerId];
+			if (attacker.prestige < rules.warGoalEscalationPrestigeCost)
+			{
+				return false;
+			}
+			attacker.prestige -= rules.warGoalEscalationPrestigeCost;
+		}
+		proposedGoal.attackerRealmId = war.attackerId;
+		proposedGoal.defenderRealmId = war.defenderId;
+		proposedGoal.targetWarScore = targetScore;
+		proposedGoal.isPrimaryGoal = true;
+		war.warGoals.Clear();
+		war.warGoals.Add(proposedGoal);
+		war.lastWarGoalChangeDay = currentDay;
+		war.warGoalRevisionCount++;
+		DiplomaticRelation relation = _diplomacyManager.GetRelation(war.attackerId, war.defenderId);
+		if (relation != null)
+		{
+			relation.activeWarGoals.Clear();
+			relation.activeWarGoals.Add(proposedGoal);
+		}
+		_chronicle?.Add("war_goal", realms[war.attackerId].realmName + " 将战争目标改为 " + proposedGoal.type, true, war.attackerId, war.defenderId);
 		return true;
 	}
 
@@ -1144,8 +1264,7 @@ public partial class GameWorld : MonoBehaviour
 		{
 			return false;
 		}
-		WarState warState = new WarState(_nextWarId++, callerRealmId, targetRealmId, currentDay);
-		_wars.Add(warState);
+		WarState warState = CreateWarState(callerRealmId, targetRealmId, reason);
 		GreatHolyWarSystem.BindWar(greatHolyWarState, warState.warId);
 		_chronicle?.Add("religion", realms[callerRealmId].realmName + " 号召大圣战讨伐 " + realms[targetRealmId].realmName, true, callerRealmId, targetRealmId);
 		return true;

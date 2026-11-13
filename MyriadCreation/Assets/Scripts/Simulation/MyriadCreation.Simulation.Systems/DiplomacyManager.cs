@@ -765,6 +765,36 @@ public class DiplomacyManager
 		return treaty;
 	}
 
+	/// <summary>
+	/// 以条约结束战争：战争运行态的真源仍是 <see cref="WarState"/>，这里只负责把条约挂到外交投影并执行其停战/同盟类条款。
+	/// 割地等实体效果由条约条款的后续执行器处理，不在外交层硬写。
+	/// </summary>
+	public bool SignPeaceTreaty(int realmA, int realmB, Treaty treaty, int day, string reason = "战争结束")
+	{
+		DiplomaticRelation relation = GetRelation(realmA, realmB);
+		if (relation == null || treaty == null)
+		{
+			return false;
+		}
+		treaty.isPeaceTreaty = true;
+		treaty.isActive = true;
+		if (treaty.truceUntilDay <= 0)
+		{
+			treaty.truceUntilDay = day + ((WarRules != null) ? WarRules.truceYears * 365 : 1825);
+		}
+		relation.isAtWar = false;
+		relation.activeTreaties.Add(treaty);
+		WarJustificationSystem.ExecutePeaceTreaty(treaty, relation, day);
+		relation.AddEvent(new DiplomaticEvent
+		{
+			type = DiplomaticEventType.PeaceTreaty,
+			description = $"{reason}：{_realms[realmA].realmName} 与 {_realms[realmB].realmName} 签订《{treaty.treatyName}》，停战至第 {relation.truceUntilDay} 日",
+			relationChange = 20f
+		});
+		Chronicle?.Add("peace", _realms[realmA].realmName + " 与 " + _realms[realmB].realmName + " 签订《" + treaty.treatyName + "》", true, realmA, realmB);
+		return true;
+	}
+
 	public void ForcePeace(int realmA, int realmB, int day, int truceYears, string reason = "战争结束")
 	{
 		DiplomaticRelation relation = GetRelation(realmA, realmB);
@@ -808,6 +838,16 @@ public class DiplomacyManager
 	public DiplomacyManager(Dictionary<int, RealmData> realms)
 	{
 		_realms = realms;
+		InitializeAllRelations();
+	}
+
+	/// <summary>
+	/// 政权表在构造后生成（InitializeWorld → GenerateTerrain）时，构造期建好的关系表是空的；
+	/// 生成政权后必须重建一次，否则新局所有双边关系都查不到，宣战/同盟入口会静默失败。
+	/// 幂等：已存在的关系不覆盖。
+	/// </summary>
+	public void EnsureRelations()
+	{
 		InitializeAllRelations();
 	}
 

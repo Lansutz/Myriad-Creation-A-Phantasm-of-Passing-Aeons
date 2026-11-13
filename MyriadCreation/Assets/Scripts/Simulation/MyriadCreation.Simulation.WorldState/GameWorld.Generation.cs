@@ -121,6 +121,8 @@ public partial class GameWorld : MonoBehaviour
 			_aiManager.CreateController(j);
 		}
 		_characterManager.CreateInitialRulers(realms, currentYear);
+		// 政权在构造后才生成：外交关系表必须在此时补齐，否则新局宣战/同盟查不到关系。
+		_diplomacyManager.EnsureRelations();
 		foreach (RealmData realm in realms.Values)
 		{
 			if (realm == null || realm.monarchId < 0 || realm.stateReligionId < 0) continue;
