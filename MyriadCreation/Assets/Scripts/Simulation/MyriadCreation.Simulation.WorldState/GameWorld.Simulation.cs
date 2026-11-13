@@ -765,6 +765,7 @@ public partial class GameWorld : MonoBehaviour
 
 	private void GameTick()
 	{
+		AdvanceTime();
 		float frameMs = Time.unscaledDeltaTime * 1000f;
 		float budgetMs = _budgetGovernor.NextBudget(frameMs, _simulationScheduler.PendingCount, _lastDeferred);
 		_simulationScheduler.TickBudgeted(currentDay, currentYear, daysPerTick, budgetMs, () => Time.realtimeSinceStartupAsDouble, out var _, out _lastDeferred);
