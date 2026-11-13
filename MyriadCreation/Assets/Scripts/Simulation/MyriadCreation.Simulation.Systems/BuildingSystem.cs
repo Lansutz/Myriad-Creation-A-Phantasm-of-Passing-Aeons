@@ -20,6 +20,8 @@ public class BuildingSystem
 
 	private readonly SimulationEventBus _events;
 
+	public InnovationTree Innovations { get; set; }
+
 	public BuildingSystem(TileData[] tiles, SimulationEventBus events = null)
 	{
 		_tiles = tiles;
@@ -156,6 +158,10 @@ public class BuildingSystem
 	private bool StartBuildingInternal(int tileIndex, int buildingId, int realmId, RealmData realm, int constructionPlanId, int builderCharacterId, int innovationId)
 	{
 		if (!_buildingDefs.TryGetValue(buildingId, out var value))
+		{
+			return false;
+		}
+		if (Innovations != null && !Innovations.IsUnlockGranted(realmId, InnovationUnlockKind.Building, buildingId))
 		{
 			return false;
 		}

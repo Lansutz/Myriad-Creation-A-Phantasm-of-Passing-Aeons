@@ -404,6 +404,73 @@ public class InnovationTree
 		return _realmDiscovered.TryGetValue(realmId, out var value) ? value.Count : 0;
 	}
 
+	/// <summary>是否存在任何革新把该内容列为解锁目标；未引用的内容不设革新门槛。</summary>
+	public bool IsUnlockReferenced(InnovationUnlockKind kind, int id)
+	{
+		foreach (InnovationDef def in _innovations.Values)
+		{
+			if (def?.unlockRefs == null)
+			{
+				continue;
+			}
+			foreach (InnovationUnlock unlock in def.unlockRefs)
+			{
+				if (unlock != null && unlock.kind == kind && unlock.id == id)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/// <summary>内容是否已由本政权已完成的革新解锁；未被任何革新引用时视为可用。</summary>
+	public bool IsUnlockGranted(int realmId, InnovationUnlockKind kind, int id)
+	{
+		if (!IsUnlockReferenced(kind, id))
+		{
+			return true;
+		}
+		if (!_realmInnovations.TryGetValue(realmId, out HashSet<int> owned))
+		{
+			return false;
+		}
+		foreach (int innovationId in owned)
+		{
+			if (!_innovations.TryGetValue(innovationId, out InnovationDef def) || def?.unlockRefs == null)
+			{
+				continue;
+			}
+			foreach (InnovationUnlock unlock in def.unlockRefs)
+			{
+				if (unlock != null && unlock.kind == kind && unlock.id == id)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/// <summary>写入已完成革新（事件/测试/调试用），并触发完成事件。</summary>
+	public bool GrantInnovation(int realmId, int innovationId)
+	{
+		if (!_innovations.ContainsKey(innovationId))
+		{
+			return false;
+		}
+		if (!_realmInnovations.TryGetValue(realmId, out HashSet<int> set))
+		{
+			_realmInnovations[realmId] = set = new HashSet<int>();
+		}
+		if (!set.Add(innovationId))
+		{
+			return false;
+		}
+		OnInnovationCompleted?.Invoke(realmId, innovationId);
+		return true;
+	}
+
 	public bool HasInnovation(int realmId, int innovationId)
 	{
 		return _realmInnovations.TryGetValue(realmId, out var value) && value.Contains(innovationId);

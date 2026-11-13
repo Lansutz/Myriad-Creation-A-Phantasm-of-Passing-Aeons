@@ -449,3 +449,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 阶段：`Active → Consolidated（连续 20 年）→ Fundamentalized（连续 50 年 + legitimacy ≥ 70 + 该组无 pending）`；换法时 `SetActiveLaw` 把旧法记入 `repealedLawIds`、年限清零、阶段回 Active。
 - 写入方：`LawRealmHost.BeginEnactLaw` 标 Pending；`LawLifecycleSystem.YearlyTick` 由年度法律效果调度调用；`Fundamentalized` 同时写入 `fundamentalizedLawIds`（普通法律/法令不能覆盖）。
 - 不做：暂不接革新门槛（LawDef 无 requiredInnovations 字段）；教理合并（WP3）与八接线点仍属 P1.3 剩余。
+
+## D49 革新 unlockRefs 第一消费者：建筑门禁
+
+- `InnovationTree` 新增 `IsUnlockReferenced/IsUnlockGranted/GrantInnovation`：只有**已完成的革新**（`_realmInnovations`）才算解锁；未被任何革新引用的内容不设门槛，避免把全部既有建筑一刀切锁死。
+- 消费者：`BuildingSystem.StartBuildingInternal` 在扣款前校验 `InnovationUnlockKind.Building`；`GameWorld` 在构造 `InnovationTree` 后注入 `BuildingSystem.Innovations`。
+- 其余消费者（Recipe/Law/Unit/Equipment）按同一 API 后续接入，不另造映射表。
