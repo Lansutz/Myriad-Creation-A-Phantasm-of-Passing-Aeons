@@ -974,3 +974,14 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **任免/罢免**：`dismissalResistance` 只入表，尚未接动作层；`personnel` 模块待与 `ActionIds.AppointTitle` 一起接。
 - 测试适配：`LawDecreePipelineTests` 的“中央机构 holder 可提案”改用槽位 2（宰相）；新增“区长官无 law_proposal 不能提案”“无审判官时驳回案件”两例。
 - 验证：`EXIT=0`、`908/910`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D119 生态演替与野生群落（P3.2 第一批）
+
+- 参考 Earth Simulator 的 `ecology.js`/`fauna.js`：植被向 NPP 潜力趋近、破坏快于恢复；野生群落跟随植被与人类压力。只借模型，不搬运代码/数据。
+- 聚合口径：`TileData.vegetation`（0–1）与 `TileData.wildlife`（0–1，草食动物密度），**不存逐格物种清单**——物种层需要独立表与更大预算，暂不做，避免半套系统。
+- `EcosystemSystem`：每月 O(N)、无随机。目标植被 = NPP × (1 − 0.75 × 人口压力)；压力 = 人口 / (200 + 800×植被)。植被恢复 0.02/月、退化 0.065/月；野生群落向 `植被×0.8×(1−0.9×压力)` 响应 0.03/月。速率与 Earth Simulator 的 GROW/DECAY 同量级，是模型常量而非平衡加成。
+- 旧档兼容：`vegetation/wildlife` 为 0 时按 `npp` 惰性补齐（植被=NPP，野生=0.4×植被）；世界生成时直接写入初值。
+- 存档：`TileData` 随 `SaveData.tiles` 整体序列化，两个新字段自动往返；`npp` 同样随地块落盘。
+- 已知未做：狩猎/渔业尚未接入食物链（`wildlife` 不产肉）、物种与灭绝、火灾/放牧反馈；这些需要与 P3.0 食物篮子一起做，避免一次跨太大。
+- 测试：`EcosystemTests` 6 例（旧档补齐、向 NPP 恢复、人口压力压低植被与野生、海陆边界、确定性、存档往返）。
+- 验证：`EXIT=0`、`914/916`（2 个 Explicit 跳过）、零 `error CS`。

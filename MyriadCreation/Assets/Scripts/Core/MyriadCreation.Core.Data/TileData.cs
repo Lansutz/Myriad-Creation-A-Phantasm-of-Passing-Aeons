@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Enums;
 
@@ -91,6 +91,12 @@ public struct TileData
 
 	/// <summary>Miami 模型净初级生产力 0–1（借鉴 Earth Simulator）；0 = 旧档未计算/极端不毛。</summary>
 	public float npp;
+
+	/// <summary>植被覆盖 0–1（生态演替状态）。0 = 旧档/未初始化，按 <see cref="npp"/> 惰性补齐。</summary>
+	public float vegetation;
+
+	/// <summary>野生草食动物密度 0–1（聚合口径；随植被与人口压力变化）。</summary>
+	public float wildlife;
 
 	public float development;
 

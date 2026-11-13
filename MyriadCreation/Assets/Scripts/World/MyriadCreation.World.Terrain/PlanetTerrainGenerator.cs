@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
@@ -229,6 +229,11 @@ public class PlanetTerrainGenerator
 			reference.climateZone = ClassifyClimateZone(reference.annualTemp, reference.annualPrecipMm);
 			reference.fertility = HoldridgeBiomeClassifier.CalculateFertility(reference.annualTemp, reference.annualPrecipMm, reference.elevation01, reference.slopeDegree, reference.biome);
 			reference.npp = EcologyModel.ComputeNpp(reference.annualTemp, reference.annualPrecipMm);
+			if (reference.exists && reference.isLand)
+			{
+				reference.vegetation = reference.npp;
+				reference.wildlife = reference.npp * 0.4f;
+			}
 		});
 		Debug.Log((object)$"[PlanetTerrainGenerator] 生成完成，陆地{CountLand(tiles)}地块，海洋{num - CountLand(tiles)}地块");
 	}
