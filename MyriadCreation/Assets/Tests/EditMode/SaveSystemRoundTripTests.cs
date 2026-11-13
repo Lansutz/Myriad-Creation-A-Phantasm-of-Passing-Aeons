@@ -4,6 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Core.Constants;
 using MyriadCreation.Core.Data;
+using MyriadCreation.Content.Definitions;
 using MyriadCreation.Infrastructure.Save;
 using MyriadCreation.Simulation.Economy;
 using MyriadCreation.Simulation.State;
@@ -150,6 +151,59 @@ namespace MyriadCreation.Tests.EditMode
                 legitimacy = 33f
             });
 
+            var diplomacy = world.GetDiplomacyManager();
+            Assert.IsNotNull(diplomacy, "前置：外交管理器应存在");
+            int otherRealmId = -1;
+            foreach (int key in world.realms.Keys)
+            {
+                if (key == realmId) continue;
+                otherRealmId = key;
+                break;
+            }
+            Assert.GreaterOrEqual(otherRealmId, 0, "前置：应有第二个政权");
+            DiplomaticRelation relation = diplomacy.GetOrCreateRelation(realmId, otherRealmId);
+            relation.relation = 77f;
+            relation.trust = 88f;
+            relation.threat = 66f;
+            relation.isAtWar = true;
+            relation.hostilityLevel = 91f;
+            relation.activeAlliances.Add(new Alliance
+            {
+                type = AllianceType.DefensiveAlliance,
+                realmAId = realmId,
+                realmBId = otherRealmId,
+                signedDay = 77,
+                durationDays = 365,
+                isActive = true,
+                mutualDefense = true,
+                relationRequirement = 30f
+            });
+            relation.casusBelliList.Add(new CasusBelli
+            {
+                cbId = 555,
+                type = 0,
+                holderRealmId = realmId,
+                targetRealmId = otherRealmId,
+                generatedDay = 10,
+                expiryDay = 100,
+                description = "测试宣战理由",
+                justificationStrength = 0.5f,
+                relatedTileIndex = modifiedTile
+            });
+            relation.activeTreaties.Add(new Treaty
+            {
+                treatyId = 901,
+                treatyName = "测试条约",
+                signerAId = realmId,
+                signerBId = otherRealmId,
+                signedDay = 77,
+                isActive = true
+            });
+            Subordination subordination = diplomacy.EstablishSubordination(realmId, otherRealmId, SubordinationType.Vassal);
+            Assert.IsNotNull(subordination, "前置：从属应建立");
+            subordination.tributeRatio = 0.125f;
+            subordination.autonomy = 0.4f;
+
             var division = new AdminDivision
             {
                 divisionId = 9001,
@@ -254,6 +308,29 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(66f, loadedTitle.holders[0].legitimacy, 0.001f, "主持有合法性");
             Assert.AreEqual(TitleHolderRole.CoRuler, loadedTitle.holders[1].role, "共治持有角色");
             Assert.AreEqual(50, loadedTitle.holders[1].endDay, "旧持有结束日");
+
+            var loadedDiplomacy = loaded.GetDiplomacyManager();
+            Assert.IsNotNull(loadedDiplomacy, "外交管理器应重建");
+            DiplomaticRelation loadedRelation = loadedDiplomacy.GetRelation(realmId, otherRealmId);
+            Assert.IsNotNull(loadedRelation, "外交关系应还原");
+            Assert.AreEqual(77f, loadedRelation.relation, 0.001f, "关系值");
+            Assert.AreEqual(88f, loadedRelation.trust, 0.001f, "信任");
+            Assert.AreEqual(66f, loadedRelation.threat, 0.001f, "威胁");
+            Assert.IsTrue(loadedRelation.isAtWar, "战争状态");
+            Assert.AreEqual(91f, loadedRelation.hostilityLevel, 0.001f, "敌意");
+            Assert.AreEqual(1, loadedRelation.activeAlliances.Count, "同盟数");
+            Assert.AreEqual(AllianceType.DefensiveAlliance, loadedRelation.activeAlliances[0].type, "同盟类型");
+            Assert.AreEqual(1, loadedRelation.casusBelliList.Count, "CB 数");
+            Assert.AreEqual(555, loadedRelation.casusBelliList[0].cbId, "CB id");
+            Assert.AreEqual(1, loadedRelation.activeTreaties.Count, "条约数");
+            Assert.AreEqual(901, loadedRelation.activeTreaties[0].treatyId, "条约 id");
+            Subordination loadedSubordination = loadedDiplomacy.GetSubordination(realmId, otherRealmId);
+            Assert.IsNotNull(loadedSubordination, "从属应还原");
+            Assert.AreEqual(SubordinationType.Vassal, loadedSubordination.type, "从属类型");
+            Assert.AreEqual(0.125f, loadedSubordination.tributeRatio, 0.001f, "贡赋比例");
+            Assert.AreEqual(0.4f, loadedSubordination.autonomy, 0.001f, "自治度");
+            Assert.IsTrue(ReferenceEquals(loadedRelation.subordination, loadedSubordination),
+                "关系与从属表应指向同一对象");
 
             AdminDivision loadedDivision = null;
             foreach (var d in loadedRealm.adminDivisions)

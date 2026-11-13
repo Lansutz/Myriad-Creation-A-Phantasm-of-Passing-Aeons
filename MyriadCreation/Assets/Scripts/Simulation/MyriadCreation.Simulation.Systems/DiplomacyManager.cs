@@ -1009,6 +1009,60 @@ public class DiplomacyManager
 		}
 	}
 
+	public List<DiplomaticRelation> CaptureRelations()
+	{
+		var result = new List<DiplomaticRelation>(_relations.Values);
+		result.Sort((a, b) =>
+		{
+			int byRealm = a.realmAId.CompareTo(b.realmAId);
+			return byRealm != 0 ? byRealm : a.realmBId.CompareTo(b.realmBId);
+		});
+		return result;
+	}
+
+	public List<Subordination> CaptureSubordinations()
+	{
+		var result = new List<Subordination>(_subordinations);
+		result.Sort((a, b) =>
+		{
+			int bySuzerain = a.suzerainId.CompareTo(b.suzerainId);
+			return bySuzerain != 0 ? bySuzerain : a.vassalId.CompareTo(b.vassalId);
+		});
+		return result;
+	}
+
+	/// <summary>读档还原外交四表；relations/subordinations 为 null 时表示旧档缺段，保留当前初始化。</summary>
+	public void RestoreDiplomacy(List<DiplomaticRelation> relations, List<Subordination> subordinations)
+	{
+		if (relations == null && subordinations == null) return;
+
+		_relations.Clear();
+		_subordinations.Clear();
+		_nextTreatyId = 1;
+		if (relations != null)
+		{
+			foreach (DiplomaticRelation relation in relations)
+			{
+				if (relation == null) continue;
+				_relations[GetRelationKey(relation.realmAId, relation.realmBId)] = relation;
+				if (relation.activeTreaties == null) continue;
+				foreach (Treaty treaty in relation.activeTreaties)
+					if (treaty != null && treaty.treatyId >= _nextTreatyId) _nextTreatyId = treaty.treatyId + 1;
+			}
+		}
+
+		if (subordinations != null)
+		{
+			foreach (Subordination subordination in subordinations)
+			{
+				if (subordination == null) continue;
+				_subordinations.Add(subordination);
+				DiplomaticRelation relation = GetRelation(subordination.suzerainId, subordination.vassalId);
+				if (relation != null) relation.subordination = subordination;
+			}
+		}
+	}
+
 	public IReadOnlyDictionary<string, DiplomaticRelation> GetAllRelations()
 	{
 		return _relations;

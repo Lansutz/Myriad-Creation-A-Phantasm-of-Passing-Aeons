@@ -76,6 +76,10 @@ namespace MyriadCreation.Infrastructure.Save
         public ChronicleSaveData chronicle;
         public List<TitleInstanceSaveData> titleInstances;
 
+        // ===== 外交关系/从属（P0.1；旧档为 null，读档保留初始化关系）=====
+        public List<DiplomaticRelation> diplomaticRelations;
+        public List<Subordination> diplomaticSubordinations;
+
  // ===== 角色纽带（SaveVersion 15 起；CharacterManager 私有持有，旧档字段为 null）=====
         public List<CharacterBondSaveData> bonds;
 

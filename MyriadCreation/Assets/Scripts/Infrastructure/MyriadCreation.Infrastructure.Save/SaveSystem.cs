@@ -403,6 +403,13 @@ namespace MyriadCreation.Infrastructure.Save
             data.chronicle = ChroniclePersistence.Capture(world);
             data.titleInstances = TitlePersistence.Capture();
 
+            var diplomacy = world.GetDiplomacyManager();
+            if (diplomacy != null)
+            {
+                data.diplomaticRelations = diplomacy.CaptureRelations();
+                data.diplomaticSubordinations = diplomacy.CaptureSubordinations();
+            }
+
  // 角色/家族/官职 holder/地图单位/角色知识（v11 起；旧档读取时这些字段为 null）
             CapturePersistentEntities(world, data);
             return data;
@@ -512,6 +519,9 @@ namespace MyriadCreation.Infrastructure.Save
             // 编年史/头衔实例（P0.1）：两者都是运行时静态/对象状态，必须在世界重建后覆盖。
             ChroniclePersistence.Restore(world, data.chronicle);
             TitlePersistence.Restore(data.titleInstances);
+
+            // 外交四表（P0.1）：旧档 null 表示缺段，保留 InitializeSubsystems 的初始化关系。
+            world.GetDiplomacyManager()?.RestoreDiplomacy(data.diplomaticRelations, data.diplomaticSubordinations);
         }
 
         // ===== 角色/家族/官职/地图单位（SaveVersion 11 起）=====
