@@ -591,3 +591,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 裁决：`Mods/` 的一级子目录各算一个 mod 源，按目录名稳定排序后给 100、101… 优先级；没有子目录时才退回“整个 Mods 根 = 单个平铺 mod”兼容旧布局。
 - 覆盖仍走既有 provider 链（Base→mods 优先级）：同 id 后者覆盖前者，不新增平行内容库。
 - 未做：启动期包校验器（F5 后半）、`mod.json` 清单/依赖/启用开关；当前布局不读清单。
+
+## D71 启动期 mod 清单校验（P2.4 F5 第二刀）
+
+- `ContentPackageManifest` 增 `enabled`（默认 true）与 `dependencies`（暂只记录，不做自动排序/拉取）。
+- `ContentSourceCatalog` 对每个 mod 目录读 `mod.json`：存在则走 `ContentPackageValidator`，清单非法或 `enabled=false` 时整包跳过并留日志；缺清单时按兼容模式加载（当前 `Mods/Dna` 即无清单）。
+- 校验只做结构（formatVersion/packageId/contentTypes/路径逃逸），不做跨 mod 依赖解析；依赖字段先落数据，排期留给后续。
+- 测试覆盖：合法加载、禁用跳过、非法跳过、缺清单兼容。

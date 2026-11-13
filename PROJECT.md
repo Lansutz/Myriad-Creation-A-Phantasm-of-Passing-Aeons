@@ -151,7 +151,8 @@
 - 2026-11-13 **P1.6 角色面板（一 UI 一文件 + 注册表）**：新增 `IUserInterfacePanel`/`UiPanelRegistry`；`CharacterPanelView` 单文件自建面板并只读角色查询契约；`UIManager` 启动时创建并注册，开关/翻页/关闭优先转调。新增 `CharacterPanelViewTests` 3 例。验证：`EXIT=0`、`805/807`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：家族树面板、革新面板。
 - 2026-11-13 **P1.6/P1.4 UI 收口**：新增 `FamilyTreePanelView`/`InnovationPanelView`（一 UI 一文件），注册进 `UiPanelRegistry`；`C/F/I` 键盘入口（输入框/主菜单不响应）；共用骨架 `UiPanelBuilder`。新增两组面板测试。验证：`EXIT=0`、`809/811`（2 个 Explicit 跳过）、零 `error CS`。**P1 代码面完成**（葬礼按 D64 暂缓）。
 - 2026-11-13 **P2.4 Mods 布局**：`ContentSourceCatalog` 改为「一级子目录 = 一个 mod」，按名称稳定排序给优先级；无子目录时兼容平铺。修正此前 `Mods/Dna` 实际从未加载的问题。新增布局测试。验证：`EXIT=0`、`810/812`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：启动期包校验器、mod 清单/依赖。
-- 待办：P2.1 文化分裂/融合、P2.2 信仰六层/教义参数、P2.3 信息传播/Intrigue、P2.4 内容外提/校验器、P2.5 架构 A–F、P2.6 Compute/Apply；**G5 / G6**；内容体检。
+- 2026-11-13 **P2.4 启动期 mod 校验**：`ContentPackageManifest` 增 `enabled`/`dependencies`；`ContentSourceCatalog` 读 `mod.json` 走 `ContentPackageValidator`，非法或禁用整包跳过，缺清单兼容加载。新增测试。验证：`EXIT=0`、`811/813`（2 个 Explicit 跳过）、零 `error CS`。**剩余**：跨 mod 依赖解析、内容表逐张外提。
+- 待办：P2.1 文化分裂/融合、P2.2 信仰六层/教义参数、P2.3 信息传播/Intrigue、P2.4 内容外提、P2.5 架构 A–F、P2.6 Compute/Apply；**G5 / G6**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。
 - 备注：卡住时先 `Get-Process Unity` + 删 `MyriadCreation\Temp\UnityLockfile` 再重跑 `build.cmd`。

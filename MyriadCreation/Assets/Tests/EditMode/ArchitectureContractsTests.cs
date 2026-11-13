@@ -17,6 +17,7 @@ using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Content.Definitions;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace MyriadCreation.Tests.EditMode
 {
@@ -95,6 +96,38 @@ namespace MyriadCreation.Tests.EditMode
             }
             finally
             {
+                Directory.Delete(root, true);
+            }
+        }
+
+        [Test]
+        public void ContentSourceCatalog_ValidatesManifestAndHonorsEnabled()
+        {
+            LogAssert.ignoreFailingMessages = true;
+            string root = Path.Combine(Path.GetTempPath(), "myriad_mods_" + System.Guid.NewGuid().ToString("N"));
+            string mods = Path.Combine(root, "Mods");
+            Directory.CreateDirectory(Path.Combine(mods, "Good", "Religion"));
+            Directory.CreateDirectory(Path.Combine(mods, "Off", "Religion"));
+            Directory.CreateDirectory(Path.Combine(mods, "Bad"));
+            Directory.CreateDirectory(Path.Combine(mods, "Legacy", "Religion"));
+            File.WriteAllText(Path.Combine(mods, "Good", "mod.json"),
+                "{ \"formatVersion\": \"1\", \"packageId\": \"test.good\", \"displayName\": \"Good\" }");
+            File.WriteAllText(Path.Combine(mods, "Off", "mod.json"),
+                "{ \"formatVersion\": \"1\", \"packageId\": \"test.off\", \"displayName\": \"Off\", \"enabled\": false }");
+            File.WriteAllText(Path.Combine(mods, "Bad", "mod.json"),
+                "{ \"formatVersion\": \"1\", \"packageId\": \"bad id\", \"displayName\": \"Bad\" }");
+            try
+            {
+                var sources = ContentSourceCatalog.CreateDefault(root);
+                var modIds = sources.Where(s => s.kind == ContentSourceKind.Mod).Select(s => s.id).ToList();
+                CollectionAssert.Contains(modIds, "Good");
+                CollectionAssert.Contains(modIds, "Legacy", "缺清单按兼容模式加载");
+                CollectionAssert.DoesNotContain(modIds, "Off", "enabled=false 应跳过");
+                CollectionAssert.DoesNotContain(modIds, "Bad", "非法清单应跳过");
+            }
+            finally
+            {
+                LogAssert.ignoreFailingMessages = false;
                 Directory.Delete(root, true);
             }
         }
