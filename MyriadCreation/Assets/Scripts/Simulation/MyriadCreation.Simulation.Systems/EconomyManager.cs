@@ -35,6 +35,8 @@ public class EconomyManager
 	/// <summary>政权表：税率唯一真源是 `realm.taxSystem`，全局 `_taxSystem` 只作旧测试/缺省兜底。</summary>
 	private readonly Dictionary<int, RealmData> _realms;
 
+	private readonly int _mapWidth;
+
 	private int _nextCaravanId = 1;
 
 	private int _storageUpdateDay = -1;
@@ -92,7 +94,7 @@ public class EconomyManager
 	/// <summary>被节流抑制的容量不足跳发车次数，用于告警汇总。</summary>
 	private int _suppressedTradeCapacitySkips;
 
-	public EconomyManager(TileData[] tiles, Dictionary<int, TradeCenter> tradeCenters, Dictionary<int, GoodsDef> goodsDefs, CurrencySystem currency, TaxSystem taxSystem, Dictionary<int, RealmData> realms = null)
+	public EconomyManager(TileData[] tiles, Dictionary<int, TradeCenter> tradeCenters, Dictionary<int, GoodsDef> goodsDefs, CurrencySystem currency, TaxSystem taxSystem, Dictionary<int, RealmData> realms = null, int mapWidth = 128)
 	{
 		_tiles = tiles;
 		_tradeCenters = tradeCenters;
@@ -101,6 +103,7 @@ public class EconomyManager
 		_currency = currency;
 		_taxSystem = taxSystem;
 		_realms = realms;
+		_mapWidth = mapWidth;
 	}
 
 	public void UpdateStorageCapacities()
@@ -633,69 +636,17 @@ public class EconomyManager
 	}
 
 	/// <summary>
-	/// 结算税收；multiplier 为法律/法令的税收乘子（LawEffectRuntime.GetTaxMultiplier）。
-	/// hasCollector=false：政权没有持 taxation 职权的在职官员，本日无人征收（不是税率归零）。
+	/// 机制化税收（P5.3）：只从有行政区划持有人的地区仓储征实物；
+	/// multiplier 为法律/法令的征收强度（LawEffectRuntime.GetTaxMultiplier）。
+	/// 没有官、没有库存、没有仓储的地区不产生任何收入；货币只在铸币阶段且市场有需求时由售货产生。
 	/// </summary>
-	public float SettleTaxes(int realmId, float multiplier = 1f, bool hasCollector = true)
+	public TaxCollectionResult CollectTaxes(int realmId, CharacterManager characters, int absoluteDay, float multiplier = 1f)
 	{
-		if (!hasCollector) return 0f;
-		TaxSystem tax = ResolveTaxSystem(realmId);
-		float num = 0f;
-		for (int i = 0; i < _tiles.Length; i++)
+		if (_realms == null || !_realms.TryGetValue(realmId, out RealmData realm) || realm == null)
 		{
-			if (_tiles[i].exists && _tiles[i].isLand && _tiles[i].ownerRealmId == realmId)
-			{
-				// 税基 = 土地生产力 × 人口 × 秩序（控制度代理）；税率来自该政权自己的 taxSystem。
-				float population = 0f;
-				if (_tiles[i].populationBlocks != null)
-				{
-					foreach (PopulationBlock block in _tiles[i].populationBlocks)
-					{
-						population += block.count;
-					}
-				}
-				float populationFactor = 0.5f + Mathf.Clamp01(population / 1000f) * 0.5f;
-				float orderFactor = 0.5f + Mathf.Clamp01(_tiles[i].order / 100f) * 0.5f;
-				float baseOutput = _tiles[i].fertility * _tiles[i].development * 10f * populationFactor * orderFactor;
-				GameEnums.SocialClass dominantClass = GetDominantClass(_tiles[i]);
-				num += tax.CalculateTileTax(_tiles[i], baseOutput, dominantClass);
-			}
+			return default;
 		}
-		return num * multiplier;
-	}
-
-	/// <summary>税率唯一真源：政权 taxSystem；政权表缺失时才回退全局旧实例。</summary>
-	private TaxSystem ResolveTaxSystem(int realmId)
-	{
-		if (_realms != null && _realms.TryGetValue(realmId, out RealmData realm) && realm?.taxSystem != null)
-		{
-			return realm.taxSystem;
-		}
-		return _taxSystem;
-	}
-
-	private GameEnums.SocialClass GetDominantClass(TileData tile)
-	{
-		if (tile.populationBlocks == null || tile.populationBlocks.Count == 0)
-		{
-			return GameEnums.SocialClass.Peasant;
-		}
-		Dictionary<GameEnums.SocialClass, float> dictionary = new Dictionary<GameEnums.SocialClass, float>();
-		foreach (PopulationBlock populationBlock in tile.populationBlocks)
-		{
-			dictionary[populationBlock.socialClass] = dictionary.GetValueOrDefault(populationBlock.socialClass, 0f) + populationBlock.count;
-		}
-		GameEnums.SocialClass result = GameEnums.SocialClass.Peasant;
-		float num = 0f;
-		foreach (KeyValuePair<GameEnums.SocialClass, float> item in dictionary)
-		{
-			if (item.Value > num)
-			{
-				num = item.Value;
-				result = item.Key;
-			}
-		}
-		return result;
+		return TaxCollectionSystem.Collect(realm, characters, _tiles, _tradeCenters, _goodsDefs, absoluteDay, multiplier, _mapWidth);
 	}
 
 	public IReadOnlyList<Caravan> GetActiveCaravans()

@@ -20,7 +20,7 @@ public struct LawEffectTickResult
 
 /// <summary>
 /// 法律/法令效果消费层（SumLawEffects / SumDecreeEffects 的运行时调用方，兼容层）：
-/// - 乘子：<see cref="GetTaxMultiplier"/> 由每日税收结算消费（PoliticsSimulationSystem → EconomyManager.SettleTaxes）；
+/// - 乘子：<see cref="GetTaxMultiplier"/> 由每日征收结算消费（PoliticsSimulationSystem → EconomyManager.CollectTaxes）；
 ///         <see cref="GetManpowerMultiplier"/> 由人力入口消费（ManpowerSystem.GetRealmTotalManpower 重载 + Army.ReinforceUnit 参数）；
 /// - 年度效果：<see cref="ApplyYearlyIfNewYear"/> 由 GameWorld "laws.effects.yearly" 每日 guard 调度消费，
 ///   stability → realm.stability，legitimacy → realm.lawState.legitimacy，

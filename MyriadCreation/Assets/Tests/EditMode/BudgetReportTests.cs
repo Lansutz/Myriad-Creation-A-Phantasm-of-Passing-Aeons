@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
+using MyriadCreation.Content.Definitions;
+using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.Units;
@@ -52,9 +54,40 @@ namespace MyriadCreation.Tests.EditMode
             var world = NewWorld();
             RealmData realm = FirstRealm(world);
             Assert.IsNotNull(realm, "前置：应有政权");
-            // P5：生成期不再自动造宫廷/填官职，税收必须有人征。显式播种成熟宫廷后再跑一天。
+            // P5：生成期不再自动造宫廷/填官职，税收必须有人征、有货可征。
             world.Characters.CreateInitialCourtiers(world.realms, world.currentYear);
             OfficeSystem.FillVacancies(realm, world.Characters, world.currentYear * 365 + world.currentDay);
+            CharacterData official = null;
+            foreach (CharacterData character in world.Characters.GetCharactersByRealm(realm.realmId))
+            {
+                if (character.role != CharacterRole.Ruler && character.role != CharacterRole.Spouse)
+                {
+                    official = character;
+                    break;
+                }
+            }
+            Assert.IsNotNull(official);
+            foreach (AdminDivision division in realm.adminDivisions) division.holderCharacterId = official.characterId;
+
+            int luxuryId = -1;
+            foreach (KeyValuePair<int, GoodsDef> pair in world.goodsDefs)
+            {
+                if (pair.Value.category == GameEnums.GoodsCategory.Luxury)
+                {
+                    luxuryId = pair.Key;
+                    break;
+                }
+            }
+            Assert.GreaterOrEqual(luxuryId, 0);
+            foreach (int tileIndex in realm.coreTiles)
+            {
+                if (world.tradeCenters.TryGetValue(world.tiles[tileIndex].regionId, out TradeCenter center))
+                {
+                    center.inventory[luxuryId] = 1000f;
+                    center.localDemand[luxuryId] = 1000f;
+                    break;
+                }
+            }
 
             world.RunDiagnosticDays(1);
             RealmBudgetReport report = world.GetRealmBudgetReport(realm.realmId);

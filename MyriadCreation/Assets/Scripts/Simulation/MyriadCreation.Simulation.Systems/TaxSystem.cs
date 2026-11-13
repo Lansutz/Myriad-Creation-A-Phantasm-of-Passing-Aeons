@@ -28,20 +28,14 @@ public class TaxSystem
 
 	public float wartimeSpecialTax;
 
+	/// <summary>征收前必须给当地人口保留的口粮天数；不足此数的食物不征。</summary>
+	public int reserveDays = 90;
+
+	/// <summary>每格运输摩擦 0-1；由地区仓储到首都的距离决定实际损耗，上限 50%。</summary>
+	public float transportLossPerTile = 0.002f;
+
 	[NonSerialized]
 	public Dictionary<GameEnums.SocialClass, bool> taxExemptions = new Dictionary<GameEnums.SocialClass, bool>();
-
-	public float CalculateTileTax(TileData tile, float baseOutput, GameEnums.SocialClass dominantClass)
-	{
-		if (taxExemptions.GetValueOrDefault(dominantClass, defaultValue: false))
-		{
-			return 0f;
-		}
-		float num = 0.3f + tile.stability / 100f * 0.7f;
-		float num2 = agriculturalTax * 0.4f + headTax * 0.2f + tradeTax * 0.2f + craftTax * 0.1f + wartimeSpecialTax * 0.1f;
-		float num3 = ((num2 < 0.3f) ? num2 : (0.3f + (num2 - 0.3f) * 0.5f));
-		return baseOutput * num3 * num;
-	}
 
 	public float GetTaxSatisfactionImpact(GameEnums.SocialClass socialClass)
 	{

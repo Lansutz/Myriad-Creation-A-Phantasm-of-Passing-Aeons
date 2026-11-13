@@ -88,7 +88,13 @@ public partial class GameWorld : MonoBehaviour
 				treasury = 1000f,
 				prestige = 50f,
 				stability = 70f,
-				centralization = 0.5f
+				centralization = 0.5f,
+				// 沙盒预置政权从铸币阶段开始，便于测试/调试货币税；自然政权仍从物物交换开始。
+				currencySystem = new CurrencySystem
+				{
+					currentStage = GameEnums.CurrencyStage.MintedCoin,
+					currencyName = "铸币"
+				}
 			};
 			int num3 = j * num2;
 			int num4 = ((j == num - 1) ? list.Count : ((j + 1) * num2));
@@ -123,6 +129,8 @@ public partial class GameWorld : MonoBehaviour
 		_characterManager.CreateInitialRulers(realms, currentYear);
 		// 政权在构造后才生成：外交关系表必须在此时补齐，否则新局宣战/同盟查不到关系。
 		_diplomacyManager.EnsureRelations();
+		// 行政区划是征税/任官的空间载体；沙盒预置政权也要有，否则没有“谁管辖哪块地”。
+		EnsureAdminDivisions();
 		foreach (RealmData realm in realms.Values)
 		{
 			if (realm == null || realm.monarchId < 0 || realm.stateReligionId < 0) continue;

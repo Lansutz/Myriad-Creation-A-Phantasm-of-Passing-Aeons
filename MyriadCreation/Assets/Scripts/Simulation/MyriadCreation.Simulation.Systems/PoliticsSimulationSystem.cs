@@ -83,11 +83,13 @@ public sealed class PoliticsSimulationSystem
 		}
 		foreach (RealmData value4 in _realms.Values)
 		{
-			// 法律/法令税收乘子在税收结算点消费（旧法/法令到期后乘子随 TickDecreeExpiry / 法律 pending 自然回落）
-			bool hasCollector = OfficeSystem.HasModuleHolder(value4, OfficeSystem.ModuleTaxation, _characterManager, out _);
-			float num = _economyManager.SettleTaxes(value4.realmId, LawEffectRuntime.GetTaxMultiplier(value4, context.day), hasCollector);
-			RealmTreasury.Add(value4, num);
-			TreasuryLedger.Record(value4.realmId, context.year * 365 + context.day, num, "tax");
+			// 机制化征收：地区仓储实物 → 行政区划持有人 → 运输损耗 → 国家仓/市场货币化。
+			// 法律/法令的征收强度在结算点消费；无官、无仓储、无库存则不产生收入。
+			_economyManager.CollectTaxes(
+				value4.realmId,
+				_characterManager,
+				context.year * 365 + context.day,
+				LawEffectRuntime.GetTaxMultiplier(value4, context.day));
 		}
 		Dictionary<int, float> dictionary = new Dictionary<int, float>(_realms.Count);
 		foreach (RealmData value5 in _realms.Values)

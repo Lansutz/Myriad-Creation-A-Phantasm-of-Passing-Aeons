@@ -28,15 +28,17 @@ namespace MyriadCreation.Tests.EditMode
                 if (go != null) Object.DestroyImmediate(go);
             }
             _objects.Clear();
+            TaxReceiptLedger.Clear();
         }
 
-        private GameWorld NewWorld(int seed = 131)
+        private GameWorld NewWorld(int seed = 131, int width = 48, int height = 24)
         {
             var go = new GameObject("NaturalWorld");
             _objects.Add(go);
             var world = go.AddComponent<GameWorld>();
-            world.mapWidth = 48;
-            world.mapHeight = 24;
+            world.randomSeed = seed;
+            world.mapWidth = width;
+            world.mapHeight = height;
             world.SetupOptions = WorldSetupOptions.CreateDefault();
             world.InitializeWorld();
             world.GenerateTerrain(seed);
@@ -159,6 +161,34 @@ namespace MyriadCreation.Tests.EditMode
             Assert.IsFalse(OfficeSystem.IsEligible(spouse, ruler, def));
             Assert.IsFalse(OfficeSystem.IsEligible(commoner, ruler, def));
             Assert.IsFalse(OfficeSystem.IsEligible(ruler, ruler, def));
+        }
+
+        /// <summary>
+        /// 自然长跑：默认世界（无预置政权）2 seed × 100 年，必须出现政权、官职与实物税流水。
+        /// Explicit：按需运行，默认套件不跑。
+        /// </summary>
+        [Test]
+        [Explicit("自然世界 100 年长跑按需运行，默认套件不跑")]
+        [Timeout(1800000)]
+        public void NaturalLongRun_FormsRealmOfficesAndTaxReceipts()
+        {
+            int[] seeds = { 4242, 7777 };
+            foreach (int seed in seeds)
+            {
+                var world = NewWorld(seed, 64, 32);
+                for (int year = 0; year < 100; year++) world.RunDiagnosticDays(365);
+
+                Assert.Greater(world.realms.Count, 0, $"seed {seed}：100 年内应自然形成政权");
+                bool hasOffice = false;
+                bool hasTaxReceipt = false;
+                foreach (RealmData realm in world.realms.Values)
+                {
+                    if (realm.officeHolders != null && realm.officeHolders.Count > 0) hasOffice = true;
+                    if (TaxReceiptLedger.GetHistory(realm.realmId, 0).Count > 0) hasTaxReceipt = true;
+                }
+                Assert.IsTrue(hasOffice, $"seed {seed}：政权形成后应出现官职");
+                Assert.IsTrue(hasTaxReceipt, $"seed {seed}：应有实物税从地方仓储流入国家仓");
+            }
         }
     }
 }

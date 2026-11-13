@@ -200,11 +200,27 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(15f, armyNew.unitCounts[1], 0.001f);
         }
 
-        // ===================== 9. 税收结算点消费税收乘子（EconomyManager.SettleTaxes） =====================
+        // ===================== 9. 征收结算点消费税收乘子（EconomyManager.CollectTaxes） =====================
 
         [Test]
-        public void SettleTaxes_AppliesTaxMultiplier()
+        public void CollectTaxes_AppliesTaxMultiplier()
         {
+            var realm = new RealmData { realmId = 1, realmName = "税国", treasury = 0f };
+            var manager = new CharacterManager();
+            CharacterData ruler = manager.CreateCharacter("君", "氏", 40, true, 0, 0, 0, CharacterRole.Ruler);
+            ruler.realmId = 1;
+            ruler.currentTile = 0;
+            realm.monarchId = ruler.characterId;
+            var division = new AdminDivision
+            {
+                divisionId = 1,
+                realmId = 1,
+                level = 1,
+                holderCharacterId = ruler.characterId
+            };
+            division.tiles.Add(0);
+            realm.adminDivisions.Add(division);
+
             var tiles = new[]
             {
                 new TileData
@@ -212,18 +228,34 @@ namespace MyriadCreation.Tests.EditMode
                     exists = true,
                     isLand = true,
                     ownerRealmId = 1,
-                    fertility = 1f,
-                    development = 1f,
-                    stability = 50f
+                    regionId = 0,
+                    populationBlocks = new List<PopulationBlock>
+                    {
+                        new PopulationBlock { count = 10f, socialClass = MyriadCreation.Core.Enums.GameEnums.SocialClass.Peasant }
+                    }
                 }
             };
-            var economy = new EconomyManager(tiles, new Dictionary<int, TradeCenter>(),
-                new Dictionary<int, GoodsDef>(), new CurrencySystem(), new TaxSystem());
+            var centers = new Dictionary<int, TradeCenter>
+            {
+                [0] = new TradeCenter { regionId = 0, centerTileIndex = 0, inventory = new Dictionary<int, float> { [0] = 1000f } }
+            };
+            var goods = new Dictionary<int, GoodsDef>
+            {
+                [0] = new GoodsDef { goodsId = 0, category = MyriadCreation.Core.Enums.GameEnums.GoodsCategory.Crop, edible = true, nutrition = 1f }
+            };
+            var realms = new Dictionary<int, RealmData> { [1] = realm };
+            var economy = new EconomyManager(tiles, centers, goods, new CurrencySystem(), new TaxSystem(), realms, 1);
 
-            float baseTax = economy.SettleTaxes(1);
-            Assert.That(baseTax, Is.GreaterThan(0f), "测试地块应产生正税收");
-            Assert.AreEqual(baseTax * 2f, economy.SettleTaxes(1, 2f), 0.001f, "税收乘子应放大结算额");
-            Assert.AreEqual(baseTax * 0.5f, economy.SettleTaxes(1, 0.5f), 0.001f, "税收乘子应缩小结算额");
+            float baseGoods = economy.CollectTaxes(1, manager, 1).goodsCollected;
+            Assert.That(baseGoods, Is.GreaterThan(0f), "有仓储、有持有人应产生正实物税");
+
+            centers[0].inventory[0] = 1000f;
+            float doubled = economy.CollectTaxes(1, manager, 1, 2f).goodsCollected;
+            Assert.AreEqual(baseGoods * 2f, doubled, 0.01f, "征收强度乘子应放大实物征收量");
+
+            centers[0].inventory[0] = 1000f;
+            float halved = economy.CollectTaxes(1, manager, 1, 0.5f).goodsCollected;
+            Assert.AreEqual(baseGoods * 0.5f, halved, 0.01f, "征收强度乘子应缩小实物征收量");
         }
 
         // ===================== 10. B1：yearly 年份 guard（daysPerTick 跳跃不漏不重） =====================

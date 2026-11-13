@@ -4,6 +4,7 @@ using UnityEngine;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
+using MyriadCreation.Simulation.Units;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World;
 using MyriadCreation.World.Generation;
@@ -11,8 +12,7 @@ using MyriadCreation.World.Generation;
 namespace MyriadCreation.Tests.EditMode
 {
     /// <summary>
-    /// 过渡期测试（P5.2 之前）：世界生成不再自动造宫廷/填官职；
-    /// 成熟的宫廷必须在测试里显式播种，官职才由内容表补缺。
+    /// P5：世界生成不再自动造宫廷/填官职；税收由行政区划持有人从地方仓储征实物。
     /// </summary>
     public class CourtAndTaxGateTests
     {
@@ -26,6 +26,7 @@ namespace MyriadCreation.Tests.EditMode
                 if (go != null) Object.DestroyImmediate(go);
             }
             _objects.Clear();
+            TreasuryLedger.ClearHistory();
         }
 
         private GameWorld NewWorld()
@@ -47,10 +48,41 @@ namespace MyriadCreation.Tests.EditMode
             return null;
         }
 
-        private static void SeedMatureCourt(GameWorld world, RealmData realm)
+        private static CharacterData SeedMatureCourt(GameWorld world, RealmData realm)
         {
             world.Characters.CreateInitialCourtiers(world.realms, world.currentYear);
             OfficeSystem.FillVacancies(realm, world.Characters, world.currentYear * 365 + world.currentDay);
+            CharacterData official = null;
+            foreach (CharacterData character in world.Characters.GetCharactersByRealm(realm.realmId))
+            {
+                if (character.role != CharacterRole.Ruler && character.role != CharacterRole.Spouse)
+                {
+                    official = character;
+                    break;
+                }
+            }
+            Assert.IsNotNull(official);
+            foreach (AdminDivision division in realm.adminDivisions)
+            {
+                division.holderCharacterId = official.characterId;
+            }
+            return official;
+        }
+
+        private static TradeCenter CapitalCenter(GameWorld world, RealmData realm)
+        {
+            foreach (int tileIndex in realm.coreTiles)
+            {
+                int regionId = world.tiles[tileIndex].regionId;
+                if (world.tradeCenters.TryGetValue(regionId, out TradeCenter center)) return center;
+            }
+            return null;
+        }
+
+        private static TaxCollectionResult Collect(GameWorld world, RealmData realm)
+        {
+            return world.GetEconomyManager().CollectTaxes(
+                realm.realmId, world.Characters, world.currentYear * 365 + world.currentDay);
         }
 
         [Test]
@@ -81,50 +113,60 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
-        public void TaxGate_NoCollectorMeansZeroRevenue()
+        public void TaxCollection_RequiresAdministrativeHolder()
         {
             var world = NewWorld();
             RealmData realm = FirstRealm(world);
-            Assert.IsNotNull(realm);
             SeedMatureCourt(world, realm);
-            float normal = world.GetEconomyManager().SettleTaxes(realm.realmId);
-            Assert.Greater(normal, 0f, "有征收者时应能算出正税收");
+            TradeCenter center = CapitalCenter(world, realm);
+            Assert.IsNotNull(center);
+            center.inventory.Clear();
+            center.inventory[0] = 1000f;
 
-            float blocked = world.GetEconomyManager().SettleTaxes(realm.realmId, 1f, hasCollector: false);
-            Assert.AreEqual(0f, blocked, 0.001f, "无征税官时税收必须为 0，而不是税率归零");
+            realm.adminDivisions.Clear();
+            TaxCollectionResult none = Collect(world, realm);
+            Assert.AreEqual(0f, none.goodsCollected, 0.001f, "没有行政区划持有人就没有征收资格");
+            Assert.AreEqual(1000f, center.inventory[0], 0.001f);
         }
 
         [Test]
-        public void RemoveCollector_ZeroTax_ThenRefillRestores()
+        public void TaxCollection_MovesRealGoodsFromLocalStorageToNationalVault()
         {
             var world = NewWorld();
             RealmData realm = FirstRealm(world);
-            Assert.IsNotNull(realm);
-            SeedMatureCourt(world, realm);
+            CharacterData official = SeedMatureCourt(world, realm);
+            Assert.IsNotNull(official);
+            TradeCenter center = CapitalCenter(world, realm);
+            center.inventory.Clear();
+            center.inventory[0] = 1000f;
+            float before = center.inventory[0];
+            TreasuryVault vault = TreasuryLedger.NationalVault(realm);
+            float vaultBefore = vault.Get(0);
 
-            realm.officeHolders.Clear();
-            Assert.IsFalse(OfficeSystem.HasModuleHolder(realm, OfficeSystem.ModuleTaxation, world.Characters, out _),
-                "移除后不应再有征税官");
-            Assert.AreEqual(0f, world.GetEconomyManager().SettleTaxes(realm.realmId, 1f, hasCollector: false), 0.001f);
+            TaxCollectionResult result = Collect(world, realm);
 
-            int filled = OfficeSystem.FillVacancies(realm, world.Characters, world.currentYear * 365 + world.currentDay);
-
-            Assert.Greater(filled, 0, "有候选时应补缺");
-            Assert.IsTrue(OfficeSystem.HasModuleHolder(realm, OfficeSystem.ModuleTaxation, world.Characters, out _),
-                "补缺后应恢复征税权");
+            Assert.Greater(result.goodsCollected, 0f);
+            Assert.Less(center.inventory[0], before, "地方仓储必须真实下降");
+            Assert.Greater(vault.Get(0), vaultBefore, "国家仓必须真实上升");
         }
 
         [Test]
-        public void FirstDayTax_AppearsInBudgetReport()
+        public void RemoveHolder_StopsCollection_ThenRestores()
         {
             var world = NewWorld();
             RealmData realm = FirstRealm(world);
-            SeedMatureCourt(world, realm);
-            world.RunDiagnosticDays(1);
+            CharacterData official = SeedMatureCourt(world, realm);
+            TradeCenter center = CapitalCenter(world, realm);
+            center.inventory.Clear();
+            center.inventory[0] = 1000f;
 
-            RealmBudgetReport report = world.GetRealmBudgetReport(realm.realmId);
-            Assert.Greater(report.income, 0f, "有征收者时第一日应有税收入账");
-            Assert.IsTrue(report.lines.Exists(l => l.reason == "tax"), "税收应留下流水");
+            var saved = new List<AdminDivision>(realm.adminDivisions);
+            realm.adminDivisions.Clear();
+            Assert.AreEqual(0f, Collect(world, realm).goodsCollected, 0.001f, "没有行政区划就没有征收资格");
+
+            realm.adminDivisions.AddRange(saved);
+            foreach (AdminDivision division in realm.adminDivisions) division.holderCharacterId = official.characterId;
+            Assert.Greater(Collect(world, realm).goodsCollected, 0f, "恢复行政区划与持有人后应恢复征收");
         }
     }
 }
