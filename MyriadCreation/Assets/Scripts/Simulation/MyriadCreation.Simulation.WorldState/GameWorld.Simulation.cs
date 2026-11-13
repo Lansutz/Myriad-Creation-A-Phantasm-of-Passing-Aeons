@@ -1705,6 +1705,33 @@ public partial class GameWorld : MonoBehaviour
 		return CrimeRegistry.MatchByBehavior(behavior, target, context);
 	}
 
+	/// <summary>P1.3：按国教伦理绑定判断行为是否入罪；无绑定/Shunned/Accepted 都不入罪。</summary>
+	public bool IsDoctrineCriminal(int realmId, MyriadCreation.Simulation.FaithHost.DoctrineCrimeBehavior behavior)
+	{
+		if (realms == null || !realms.TryGetValue(realmId, out RealmData realm) || realm == null)
+		{
+			return false;
+		}
+		FaithSystem faith = GetFaithSystem(realm.stateReligionId);
+		if (faith == null || !MyriadCreation.Simulation.ContentHost.ContentResolvers.Religions.TryGet(faith.religionId, out MyriadCreation.Content.Definitions.ReligionDef religion))
+		{
+			return false;
+		}
+		var bindings = MyriadCreation.Simulation.FaithHost.DoctrineBindingHost.Resolve(religion);
+		return MyriadCreation.Simulation.FaithHost.DoctrineBindingHost.IsCrime(bindings, behavior);
+	}
+
+	/// <summary>P1.3：按教义伦理发起审判；非罪行直接驳回，不入司法流程。</summary>
+	public TrialResult TryTrialDoctrineCrime(int realmId, MyriadCreation.Simulation.FaithHost.DoctrineCrimeBehavior behavior, int suspectCharacterId)
+	{
+		if (!IsDoctrineCriminal(realmId, behavior))
+		{
+			return default;
+		}
+		CrimeType crime = (behavior == MyriadCreation.Simulation.FaithHost.DoctrineCrimeBehavior.Witchcraft) ? CrimeType.Witchcraft : CrimeType.SexualMisconduct;
+		return TryTrialCrime(realmId, crime, suspectCharacterId);
+	}
+
 	public TrialResult TryTrialCrime(int realmId, CrimeType crime, int suspectCharacterId)
 	{
 		JudicialSystem orCreateJudicialSystem = GetOrCreateJudicialSystem(realmId);

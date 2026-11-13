@@ -500,3 +500,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `CharacterManager.Marry(a,b,allowSameSex=false)` 保留原默认；`GameWorld.TryArrangeMarriage` 从政权国教解析 `DoctrineBindings.homosexuality`，只有 `Accepted` 才放行同性婚姻。
 - 这是 WP3 的第一条真实消费链：内容选项 → FaithHost 绑定 → 世界层婚姻入口；没有 Accepted 内容时行为保持旧口径（拒绝），不会凭空放开。
 - 其余绑定点（伦理入罪、神职婚配/性别、葬礼、和平主义）仍待接。
+
+## D58 教义伦理 → 司法入罪（P1.3 WP3 第二点）
+
+- `CrimeBehavior`/`CrimeType` 增加 `SexualMisconduct`、`Witchcraft`；`CrimeRegistry` 注册对应罪行（性伦理 40 / 巫术 50），仍走既有司法系统，不新建审判流程。
+- `GameWorld.IsDoctrineCriminal(realmId, behavior)` 按国教伦理绑定判定：只有 `Crime` 入罪；`Shunned`/`Accepted`/未指定都不入罪。`TryTrialDoctrineCrime` 非罪行直接驳回，入罪才调用既有 `TryTrialCrime`。
+- 不做：`Shunned` 的社会排斥后果（关系/声望）暂未接，留给后续 WP3 批次。

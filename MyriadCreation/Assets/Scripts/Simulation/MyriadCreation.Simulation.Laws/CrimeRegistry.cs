@@ -117,6 +117,32 @@ public static class CrimeRegistry
 		});
 		Add(new CrimeDefinition
 		{
+			type = CrimeType.SexualMisconduct,
+			name = "性伦理罪",
+			baseSeverity = 40f,
+			defaultPunishment = PunishmentType.Fine,
+			behaviors = new List<CrimeBehavior> { CrimeBehavior.SexualMisconduct },
+			targetClasses = new List<CrimeTargetClass> { CrimeTargetClass.CoReligionist },
+			contexts = new List<string>(),
+			citedDomainIds = new List<int> { 4 },
+			citedFamilyIds = new List<int> { 9 },
+			citedGroupIds = new List<int>()
+		});
+		Add(new CrimeDefinition
+		{
+			type = CrimeType.Witchcraft,
+			name = "巫术",
+			baseSeverity = 50f,
+			defaultPunishment = PunishmentType.Exile,
+			behaviors = new List<CrimeBehavior> { CrimeBehavior.Witchcraft },
+			targetClasses = new List<CrimeTargetClass> { CrimeTargetClass.CoReligionist },
+			contexts = new List<string>(),
+			citedDomainIds = new List<int> { 4 },
+			citedFamilyIds = new List<int> { 9 },
+			citedGroupIds = new List<int>()
+		});
+		Add(new CrimeDefinition
+		{
 			type = CrimeType.TaxEvasion,
 			name = "逃税",
 			baseSeverity = 25f,

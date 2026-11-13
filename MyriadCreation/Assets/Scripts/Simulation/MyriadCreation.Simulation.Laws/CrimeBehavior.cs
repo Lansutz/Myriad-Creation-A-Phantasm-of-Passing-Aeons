@@ -19,6 +19,8 @@ public enum CrimeBehavior
 	Sedition,
 	Deserter,
 	Blasphemy,
-	Heresy
+	Heresy,
+	SexualMisconduct,
+	Witchcraft
 }
 }

@@ -16,6 +16,8 @@ public enum CrimeType
 	Kidnapping,
 	Smuggling,
 	Piracy,
-	Rebellion
+	Rebellion,
+	SexualMisconduct,
+	Witchcraft
 }
 }
