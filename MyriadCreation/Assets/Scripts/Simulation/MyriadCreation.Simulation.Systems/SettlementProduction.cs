@@ -43,6 +43,10 @@ public static class SettlementProduction
 			{
 				return false;
 			}
+			if (innovations != null && !innovations.IsUnlockGranted(realmId, InnovationUnlockKind.Recipe, outputGoodsId))
+			{
+				return false;
+			}
 			if (recipe.requiredBuilding > 0 && hasBuilding != null && !hasBuilding(recipe.requiredBuilding))
 			{
 				return false;

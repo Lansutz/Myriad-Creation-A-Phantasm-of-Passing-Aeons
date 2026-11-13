@@ -3,9 +3,11 @@ using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Simulation.State;
+using MyriadCreation.Content.Modding;
 using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World.Generation;
+using MyriadCreation.World.Settlement;
 
 namespace MyriadCreation.Tests.EditMode
 {
@@ -63,6 +65,41 @@ namespace MyriadCreation.Tests.EditMode
 
             Assert.IsTrue(world.Innovations.IsUnlockGranted(realm.realmId, InnovationUnlockKind.Building, 99999),
                 "未被任何革新引用的建筑不应被门禁挡住");
+        }
+
+        [Test]
+        public void ReferencedRecipe_RequiresGrantedInnovation()
+        {
+            GoodsRecipe recipe = null;
+            foreach (GoodsRecipe candidate in RecipeCatalog.GetAll())
+            {
+                if (candidate != null && candidate.inputs != null && candidate.inputs.Count == 0)
+                {
+                    recipe = candidate;
+                    break;
+                }
+            }
+            if (recipe == null) Assert.Ignore("没有无输入配方可用于门禁测试");
+
+            var world = NewWorld();
+            RealmData realm = FirstRealm(world);
+            SettlementData settlement = null;
+            foreach (var s in world.settlements.Values) { settlement = s; break; }
+            Assert.IsNotNull(settlement);
+            SettlementMarket market = settlement.GetOrCreateMarket();
+            world.Innovations.RegisterInnovation(new InnovationDef
+            {
+                innovationId = 9002,
+                unlockRefs = new List<InnovationUnlock> { InnovationUnlock.Of(InnovationUnlockKind.Recipe, recipe.outputGoodsId) }
+            });
+
+            Assert.IsFalse(SettlementProduction.TryCraft(market, recipe.outputGoodsId, out _, world.Innovations, realm.realmId, _ => true),
+                "未解锁配方不得生产");
+
+            world.Innovations.GrantInnovation(realm.realmId, 9002);
+            Assert.IsTrue(SettlementProduction.TryCraft(market, recipe.outputGoodsId, out float produced, world.Innovations, realm.realmId, _ => true),
+                "解锁后应可生产");
+            Assert.Greater(produced, 0f);
         }
 
         [Test]
