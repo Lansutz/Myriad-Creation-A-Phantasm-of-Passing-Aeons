@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Simulation.Genetics;
@@ -869,6 +869,12 @@ public class CharacterManager
 		// M3：专精 = f(基本能力, 训练)；暂无教育系统，先给统一训练基线。
 		float trainingBaseline = 0.6f;
 		characterData3.prowess = SpecialtyDerivation.Derive(SpecialtyType.Prowess, characterData3.basicAbilities, trainingBaseline);
+		// D3：身体构造（角/爪/体型/天然护甲）是近身战力的生理基础，不是通用加成。
+		if (genomeDefForChild != null && childGenome != null)
+		{
+			PhenotypeResult bodyPhenotype = GeneticsEngine.ComputePhenotype(genomeDefForChild, childGenome);
+			characterData3.prowess = Mathf.Clamp(characterData3.prowess + PhenotypeMechanics.ProwessBonus(bodyPhenotype), 0f, 100f);
+		}
 		characterData3.social = SpecialtyDerivation.Derive(SpecialtyType.Social, characterData3.basicAbilities, trainingBaseline);
 		characterData3.military = SpecialtyDerivation.Derive(SpecialtyType.Military, characterData3.basicAbilities, trainingBaseline);
 		characterData3.management = SpecialtyDerivation.Derive(SpecialtyType.Management, characterData3.basicAbilities, trainingBaseline);
@@ -1053,11 +1059,12 @@ public class CharacterManager
 		}
 	}
 
-	public void DailyTick(int currentDay, int currentYear)
+	public void DailyTick(int currentDay, int currentYear, System.Func<int, float> ambientAtTile = null)
 	{
 		foreach (CharacterData value in _characters.Values)
 		{
-			value.DailyTick(currentDay, currentYear);
+			float ambient = ambientAtTile != null ? ambientAtTile(value.currentTile) : 20f;
+			value.DailyTick(currentDay, currentYear, ambient);
 		}
 		foreach (CharacterBond bond in _bonds)
 		{

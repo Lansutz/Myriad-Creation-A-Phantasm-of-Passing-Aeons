@@ -795,7 +795,8 @@ public partial class GameWorld : MonoBehaviour
 		{
 			ProcessWarOutcomes(currentDay);
 		});
-		CharacterSchedule.Register(_simulationScheduler, _characterManager, () => currentDay, () => currentYear);
+		CharacterSchedule.Register(_simulationScheduler, _characterManager, () => currentDay, () => currentYear,
+			(int tileIndex) => (tileIndex >= 0 && tileIndex < tiles.Length) ? tiles[tileIndex].annualTemp : 20f);
 		SuccessionSchedule.Register(_simulationScheduler, () =>
 		{
 			CheckRulerSuccessions();

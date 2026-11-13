@@ -592,6 +592,7 @@ public partial class GameWorld : MonoBehaviour
 		_combatManager = new CombatManager(tiles, unitDefs, _seaLandGenerator, SimulationEvents, mapWidth);
 		_diplomacyManager = new DiplomacyManager(realms);
 		_characterManager = new CharacterManager();
+		DetectionContactService.CommanderResolver = (int characterId) => _characterManager?.GetCharacter(characterId);
 		_characterManager.Races = races;
 		_characterManager.Economy = _economyManager;
 		_characterManager.Tiles = tiles;

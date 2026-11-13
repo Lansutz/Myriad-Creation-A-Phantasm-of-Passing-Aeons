@@ -1072,3 +1072,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 复杂度：表型计算 O(位点数)，纯函数、无随机；运行期只读。
 - 测试：`BodyPhenotypeTests` 5 例（显性/隐性、加性生理量、缺位点回退、创始人与繁殖覆盖新位点）；旧迁移测试改为按默认基因组位点数断言，不再写死 6。
 - 验证：`EXIT=0`、`950/952`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D128 表型→机制接线（D3）
+
+- **角/爪/体型/天然护甲 → 个人战力**：`PhenotypeMechanics.ProwessBonus` 在 `CharacterManager.CreateCharacter` 中加到最后一次 `prowess` 推导之后；只读身体构造，不新建通用加成层。中性表型返回 0。
+- **隔热/耐温 → 寒热健康损耗**：`CharacterData.DailyTick(day, year, ambientTempC)` 增加表型驱动的健康损耗；`CharacterManager.DailyTick` 接收 `ambientAtTile`，`CharacterSchedule` 由 GameWorld 注入 `tiles[tileIndex].annualTemp`。舒适区：`[-10 - 耐温 - 隔热×10, 30 + 耐温 - 隔热×5]`，损耗上限 0.5/日，避免极端气候一天致死。旧调用（不传温度）默认 20°C，行为不变。
+- **翼型 → 斥候范围**：`DetectionContactService` 增加 `CommanderResolver`（GameWorld 注入人物查询），具翼指挥官的军队 `scoutRange` +2（膜翼）/+1（羽翼）；无翼 0。接入既有 `ComputeScoutRange`，不新建视野系统。
+- **食性 → 口粮结构暂缓**：人口块没有物种字段（只有阶层），若按“统治种族食性”硬接会把全体人口当成一个物种。等人口块带物种归属后再做，先记欠账；本轮三条机制已满足验收。
+- 测试：`PhenotypeMechanicsTests` 7 例（中性无加成、角爪体型加战力、隔热寒暑双向、翼型斥候、具翼指挥官实际扩大范围、酷暑实际掉血）。
+- 验证：`EXIT=0`、`956/958`（2 个 Explicit 跳过）、零 `error CS`。

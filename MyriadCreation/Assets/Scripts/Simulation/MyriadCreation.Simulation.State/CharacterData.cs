@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.Genetics;
@@ -334,7 +334,7 @@ public class CharacterData
 		}
 	}
 
-	public void DailyTick(int currentDay, int currentYear)
+	public void DailyTick(int currentDay, int currentYear, float ambientTempC = 20f)
 	{
 		if (!isAlive)
 		{
@@ -349,6 +349,8 @@ public class CharacterData
 		float num3 = (((float)age > num) ? (((float)age - num) / Mathf.Max(1f, num2 - num)) : 0f);
 		float num4 = ((obesity > 70f) ? 1.5f : 1f);
 		health = Mathf.Clamp(health - num3 * 0.01f * num4, 0f, 100f);
+		// D3：寒热损耗由表型（耐温/隔热）决定，而不是全物种统一。
+		health = Mathf.Clamp(health - PhenotypeMechanics.TemperatureHealthPenalty(PhenotypeMechanics.PhenotypeOf(this), ambientTempC), 0f, 100f);
 		MentalDisorderDef def = MentalHealthSystem.GetDef(mentalDisorderId);
 		float num5 = ((def != null) ? (0.05f * def.stressDecayMult) : 0.05f);
 		stress = Mathf.Max(0f, stress - ((stress > 60f) ? 0.01f : num5));

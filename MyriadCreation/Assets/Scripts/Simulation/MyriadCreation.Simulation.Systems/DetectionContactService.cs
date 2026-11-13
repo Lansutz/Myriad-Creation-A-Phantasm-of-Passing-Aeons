@@ -1,7 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
+using MyriadCreation.Simulation.Genetics;
 using MyriadCreation.Simulation.State;
 using UnityEngine;
 
@@ -47,6 +48,9 @@ public static class DetectionContactService
 	public const int BaseScoutRange = 1;
 
 	public const int MaxScoutRange = 6;
+
+	/// <summary>指挥官查询（由 GameWorld 注入）；未注入时视为无指挥官表型加成。</summary>
+	public static System.Func<int, CharacterData> CommanderResolver;
 
 	public static void RefreshScoutRange(Army army, TileData[] tiles, Dictionary<int, UnitDef> unitDefs)
 	{
@@ -103,6 +107,14 @@ public static class DetectionContactService
 			if (tile.roadLevel != GameEnums.RoadLevel.None)
 			{
 				range += 1;
+			}
+		}
+		if (CommanderResolver != null && army.commanderId >= 0)
+		{
+			CharacterData commander = CommanderResolver(army.commanderId);
+			if (commander != null)
+			{
+				range += PhenotypeMechanics.ScoutRangeBonus(PhenotypeMechanics.PhenotypeOf(commander));
 			}
 		}
 		return Mathf.Clamp(range, 0, MaxScoutRange);
