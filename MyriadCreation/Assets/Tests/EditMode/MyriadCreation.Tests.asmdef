@@ -18,7 +18,8 @@
         "MyriadCreation.Laws",
         "MyriadCreation.Faith",
         "MyriadCreation.Culture",
-        "MyriadCreation.Save.Contracts"
+        "MyriadCreation.Save.Contracts",
+        "MyriadCreation.Settings"
     ],
     "includePlatforms": [
         "Editor"

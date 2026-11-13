@@ -1,0 +1,17 @@
+{
+    "name": "MyriadCreation.Settings",
+    "rootNamespace": "MyriadCreation.App.Settings",
+    "references": [
+        "MyriadCreation.Core",
+        "MyriadCreation.Infrastructure"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

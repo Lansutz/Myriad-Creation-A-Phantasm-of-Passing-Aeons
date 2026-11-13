@@ -765,3 +765,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `EconomicalArchetypeLoader` 懒加载；`EconomicalArchetypes.All` 改为属性：内容优先、代码兜底；`Get()` 语义不变。
 - 测试：11 条齐全/唯一/枚举合法；好战原型名称与 war/build 偏好转换正确。
 - 未做：`PersonalityDimensions`/`DnaLocus`/`GenerationStage` 等属于枚举或流程顺序，不是可编辑平表，不外提。
+
+## D93 设置程序集独立（P2.5 B 第一步）
+
+- 事实：`*.app` 忽略规则误吞了 `Scripts/App/MyriadCreation.App/` 整个目录，App 程序集源码此前从未入库（GameManager/SceneFlow/Bootstrap/Settings 全部只在本地）。已在 `.gitignore` 加目录级例外并入库。
+- 新增 `MyriadCreation.Settings` 程序集（引用 Core + Infrastructure），把 `SettingsModel/SettingsService` 从 App 移出；App、UI、两个测试程序集都显式引用它。
+- 目的：UI 对 App 的依赖只剩 `Bootstrap/SceneFlowController/GameManager`（下一步改用 `AppServices` 契约），设置不再需要 App。
+- 未做：UI 真正去掉 `MyriadCreation.App` 引用；UI 仍引用 Infrastructure（Save/Audio）与 World（SettlementData 标签），这两项留给 B 的后续步骤。

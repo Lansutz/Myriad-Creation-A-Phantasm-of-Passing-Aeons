@@ -8,7 +8,8 @@
         "MyriadCreation.App.Contracts",
         "MyriadCreation.World",
         "MyriadCreation.Simulation",
-        "MyriadCreation.Rendering"
+        "MyriadCreation.Rendering",
+        "MyriadCreation.Settings"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

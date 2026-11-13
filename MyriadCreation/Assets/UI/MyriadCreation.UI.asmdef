@@ -10,7 +10,8 @@
         "MyriadCreation.World",
         "MyriadCreation.Content",
         "MyriadCreation.App",
-        "MyriadCreation.App.Contracts"
+        "MyriadCreation.App.Contracts",
+        "MyriadCreation.Settings"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

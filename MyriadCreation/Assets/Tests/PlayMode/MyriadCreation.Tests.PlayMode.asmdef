@@ -11,7 +11,8 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Unity.TextMeshPro",
-        "MyriadCreation.App"
+        "MyriadCreation.App",
+        "MyriadCreation.Settings"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
