@@ -483,3 +483,8 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `GameWorld.TryArrangeMarriage` 成为婚姻唯一世界层入口：条件由 `CharacterManager.Marry` 判定；跨政权联姻改善外交关系；编年史留痕。
 - `AutoProcreate` 的未婚配对改为“先收集候选 → 统一 Marry → Procreate”，避免枚举人口列表时改关系/家族集合；Marry 真正进入人口流程。
 - 顺带修复 `CharacterData.ModifyRelation` 对 `relations/history` 为 null 的 NRE（旧档/手工构造关系时会出现）。
+
+## D55 摄政评分消费治理能力与威望等级（P1.6）
+
+- `SuccessionSystem.RegentScore` = 威望等级 × 1000 + `CalculateRuleAbility()` × 10 + 年龄；威望只按等级计权，不再用裸点数压过治理能力。
+- 作用面：同家族、行政区、官职、同政权候选四条摄政推举路径统一使用该评分；测试改为跨等级比较（150 vs 10），避免两个同为 Unknown 时把随机能力当成威望差异。

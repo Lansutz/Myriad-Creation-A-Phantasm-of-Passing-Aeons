@@ -209,7 +209,7 @@ namespace MyriadCreation.Tests.EditMode
             CharacterData deadRuler = NewCharacter(1200, 70, true, 12);
             deadRuler.epithetEvaluated = true;
             CharacterData firstRegent = NewCharacter(1201, 30, false, 12);
-            firstRegent.prestige = 50f;
+            firstRegent.prestige = 150f;
             CharacterData secondRegent = NewCharacter(1202, 35, false, 12);
             secondRegent.prestige = 10f;
             RegisterCharacter(manager, deadRuler);
@@ -228,7 +228,7 @@ namespace MyriadCreation.Tests.EditMode
 
                 InvokePrivate(world, "CheckRulerSuccessions");
                 Assert.IsTrue(realm.inInterregnum);
-                Assert.AreEqual(1201, realm.regentCharacterId, "威望高者优先出任摄政");
+                Assert.AreEqual(1201, realm.regentCharacterId, "威望等级高者优先出任摄政");
 
                 Kill(firstRegent, 400);
                 world.currentDay = 401;

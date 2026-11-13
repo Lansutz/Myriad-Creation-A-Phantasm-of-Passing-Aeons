@@ -208,6 +208,16 @@ public static class SuccessionSystem
 		return SelectByEligibility(candidates);
 	}
 
+	/// <summary>摄政评分：威望等级是门槛性权重，治理能力才是主要区分；年龄只作同分兜底。</summary>
+	public static float RegentScore(CharacterData character)
+	{
+		if (character == null)
+		{
+			return float.MinValue;
+		}
+		return (int)PrestigeTiers.Of(character.prestige) * 1000f + character.CalculateRuleAbility() * 10f + character.age;
+	}
+
 	private static bool IsValidRegent(CharacterData character)
 	{
 		return character != null && character.isAlive && character.age >= 16;
@@ -245,7 +255,7 @@ public static class SuccessionSystem
 					{
 						continue;
 					}
-					float score = member.prestige * 10f + member.age;
+					float score = RegentScore(member);
 					if (score > bestScore)
 					{
 						bestScore = score;
@@ -275,7 +285,7 @@ public static class SuccessionSystem
 				{
 					continue;
 				}
-				float score = holder.prestige * 10f + holder.age;
+				float score = RegentScore(holder);
 				if (score > bestAdministrativeScore)
 				{
 					bestAdministrativeScore = score;
@@ -296,7 +306,7 @@ public static class SuccessionSystem
 				{
 					continue;
 				}
-				float score = holder.prestige * 10f + holder.age;
+				float score = RegentScore(holder);
 				if (score > bestAdministrativeScore)
 				{
 					bestAdministrativeScore = score;
@@ -318,7 +328,7 @@ public static class SuccessionSystem
 			{
 				continue;
 			}
-			float score = candidate.prestige * 10f + candidate.age;
+			float score = RegentScore(candidate);
 			if (score > bestRealmScore)
 			{
 				bestRealmScore = score;
