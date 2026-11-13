@@ -43,6 +43,18 @@ public sealed class OfficeDef
 	/// <summary>罢免阻力 0-100：越高越需要议事会支持（后续接罢免动作）。</summary>
 	public float dismissalResistance = 10f;
 
+	/// <summary>任职门槛：政权实际控制地块数；0 = 不限（旧内容/Mods 兼容）。</summary>
+	public int minTiles;
+
+	/// <summary>任职门槛：政权人口；0 = 不限。</summary>
+	public float minPopulation;
+
+	/// <summary>任职门槛：中枢能力 0-1；0 = 不限。</summary>
+	public float minCentralization;
+
+	/// <summary>任职门槛：文化阶段（GameEnums.CultureStage 的 int 值）；0 = 不限。</summary>
+	public int minCultureStage;
+
 	public bool enabled = true;
 }
 }

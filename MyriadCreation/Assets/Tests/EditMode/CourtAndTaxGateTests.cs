@@ -11,7 +11,8 @@ using MyriadCreation.World.Generation;
 namespace MyriadCreation.Tests.EditMode
 {
     /// <summary>
-    /// P4.0 宫廷人物供给与征税门禁：开国有可任职的人，官职能填上，税收有征收者。
+    /// 过渡期测试（P5.2 之前）：世界生成不再自动造宫廷/填官职；
+    /// 成熟的宫廷必须在测试里显式播种，官职才由内容表补缺。
     /// </summary>
     public class CourtAndTaxGateTests
     {
@@ -46,29 +47,37 @@ namespace MyriadCreation.Tests.EditMode
             return null;
         }
 
-        [Test]
-        public void NewRealm_HasCourtiersBeyondRulerAndSpouse()
+        private static void SeedMatureCourt(GameWorld world, RealmData realm)
         {
-            var world = NewWorld();
-            RealmData realm = FirstRealm(world);
-            Assert.IsNotNull(realm);
-            int count = 0;
-            foreach (CharacterData character in world.Characters.GetCharactersByRealm(realm.realmId))
-            {
-                if (character.role != CharacterRole.Ruler && character.role != CharacterRole.Spouse) count++;
-            }
-            Assert.GreaterOrEqual(count, 3, "开局至少应有 3 名可任职宫廷人物");
+            world.Characters.CreateInitialCourtiers(world.realms, world.currentYear);
+            OfficeSystem.FillVacancies(realm, world.Characters, world.currentYear * 365 + world.currentDay);
         }
 
         [Test]
-        public void NewRealm_OfficesFilledIncludingTaxation()
+        public void NewRealm_HasNoAutoCourtOrOffices()
         {
             var world = NewWorld();
             RealmData realm = FirstRealm(world);
             Assert.IsNotNull(realm);
-            Assert.IsTrue(realm.officeHolders != null && realm.officeHolders.Count > 0, "生成结束应填充官职");
+            int extra = 0;
+            foreach (CharacterData character in world.Characters.GetCharactersByRealm(realm.realmId))
+            {
+                if (character.role != CharacterRole.Ruler && character.role != CharacterRole.Spouse) extra++;
+            }
+            Assert.AreEqual(0, extra, "世界生成不得再凭空造 3 名宫廷人物");
+            Assert.IsTrue(realm.officeHolders == null || realm.officeHolders.Count == 0, "生成结束不得自动填官职");
+        }
+
+        [Test]
+        public void MatureRealm_OfficesFilledIncludingTaxation()
+        {
+            var world = NewWorld();
+            RealmData realm = FirstRealm(world);
+            Assert.IsNotNull(realm);
+            SeedMatureCourt(world, realm);
+            Assert.IsTrue(realm.officeHolders != null && realm.officeHolders.Count > 0, "显式播种宫廷后才应补缺");
             Assert.IsTrue(OfficeSystem.HasModuleHolder(realm, OfficeSystem.ModuleTaxation, world.Characters, out _),
-                "开局应有持 taxation 职权的官员");
+                "有可任职人物后应出现持 taxation 职权的官员");
         }
 
         [Test]
@@ -77,6 +86,7 @@ namespace MyriadCreation.Tests.EditMode
             var world = NewWorld();
             RealmData realm = FirstRealm(world);
             Assert.IsNotNull(realm);
+            SeedMatureCourt(world, realm);
             float normal = world.GetEconomyManager().SettleTaxes(realm.realmId);
             Assert.Greater(normal, 0f, "有征收者时应能算出正税收");
 
@@ -90,6 +100,7 @@ namespace MyriadCreation.Tests.EditMode
             var world = NewWorld();
             RealmData realm = FirstRealm(world);
             Assert.IsNotNull(realm);
+            SeedMatureCourt(world, realm);
 
             realm.officeHolders.Clear();
             Assert.IsFalse(OfficeSystem.HasModuleHolder(realm, OfficeSystem.ModuleTaxation, world.Characters, out _),
@@ -108,10 +119,11 @@ namespace MyriadCreation.Tests.EditMode
         {
             var world = NewWorld();
             RealmData realm = FirstRealm(world);
+            SeedMatureCourt(world, realm);
             world.RunDiagnosticDays(1);
 
             RealmBudgetReport report = world.GetRealmBudgetReport(realm.realmId);
-            Assert.Greater(report.income, 0f, "开局第一日应有税收入账");
+            Assert.Greater(report.income, 0f, "有征收者时第一日应有税收入账");
             Assert.IsTrue(report.lines.Exists(l => l.reason == "tax"), "税收应留下流水");
         }
     }

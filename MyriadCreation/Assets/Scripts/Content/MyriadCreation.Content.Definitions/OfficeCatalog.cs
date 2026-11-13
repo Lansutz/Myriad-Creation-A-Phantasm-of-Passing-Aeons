@@ -75,37 +75,43 @@ public static class OfficeCatalog
 			{
 				id = "governor", slot = 0, name = "地方长官", nameKey = "office_Governor", rank = 3,
 				modules = new[] { "taxation", "judiciary" }, appointmentOrder = new[] { "ruler" },
-				termYears = 5, salary = 40f, dismissalResistance = 20f
+				termYears = 5, salary = 40f, dismissalResistance = 20f,
+				minTiles = 2, minPopulation = 150f, minCentralization = 0.05f
 			},
 			new OfficeDef
 			{
 				id = "district_governor", slot = 1, name = "区长官", nameKey = "office_DistrictGovernor", rank = 4,
 				modules = new[] { "taxation" }, appointmentOrder = new[] { "ruler" },
-				termYears = 5, salary = 25f, dismissalResistance = 15f
+				termYears = 5, salary = 25f, dismissalResistance = 15f,
+				minTiles = 4, minPopulation = 300f, minCentralization = 0.1f
 			},
 			new OfficeDef
 			{
 				id = "chancellor", slot = 2, name = "宰相", nameKey = "office_Chancellor", rank = 1,
 				modules = new[] { "law_proposal", "personnel" }, appointmentOrder = new[] { "ruler", "council" },
-				termYears = 0, salary = 60f, dismissalResistance = 35f
+				termYears = 0, salary = 60f, dismissalResistance = 35f,
+				minTiles = 6, minPopulation = 600f, minCentralization = 0.25f, minCultureStage = 2
 			},
 			new OfficeDef
 			{
 				id = "steward", slot = 3, name = "司库", nameKey = "office_Steward", rank = 2,
 				modules = new[] { "taxation", "personnel" }, appointmentOrder = new[] { "ruler" },
-				termYears = 0, salary = 50f, dismissalResistance = 25f
+				termYears = 0, salary = 50f, dismissalResistance = 25f,
+				minTiles = 3, minPopulation = 300f, minCentralization = 0.15f
 			},
 			new OfficeDef
 			{
 				id = "marshal", slot = 4, name = "统军官", nameKey = "office_Marshal", rank = 2,
 				modules = new[] { "military_command" }, appointmentOrder = new[] { "ruler" },
-				termYears = 0, salary = 55f, dismissalResistance = 30f
+				termYears = 0, salary = 55f, dismissalResistance = 30f,
+				minTiles = 3, minPopulation = 300f, minCentralization = 0.15f
 			},
 			new OfficeDef
 			{
 				id = "war_commander", slot = 5, name = "元帅", nameKey = "office_WarCommander", rank = 2,
 				modules = new[] { "military_command" }, appointmentOrder = new[] { "ruler" },
-				termYears = 0, salary = 35f, dismissalResistance = 30f
+				termYears = 0, salary = 35f, dismissalResistance = 30f,
+				minTiles = 8, minPopulation = 800f, minCentralization = 0.3f
 			}
 		};
 	}

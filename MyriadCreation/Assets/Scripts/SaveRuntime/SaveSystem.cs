@@ -596,7 +596,6 @@ namespace MyriadCreation.Infrastructure.Save
                 // 旧档（SaveVersion < 11）：无角色段，重建初始统治者，避免读档后世界无君主（可接受的降级）。
                 Debug.LogWarning("[SaveSystem] 旧档无角色段，按初始统治者兜底重建");
                 characters.CreateInitialRulers(world.realms, world.currentYear);
-                characters.CreateInitialCourtiers(world.realms, world.currentYear);
             }
             else
             {

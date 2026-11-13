@@ -299,13 +299,69 @@ public partial class GameWorld : MonoBehaviour
 	{
 		if (_characterManager == null) return;
 		int absoluteDay = OfficeSystem.AbsoluteDay(currentYear, currentDay);
+		bool anyVacancy = false;
 		for (int i = 0; i < realms.Count; i++)
 		{
 			RealmData realmData = realms[i];
 			if (realmData == null) continue;
 			OfficeSystem.VacateExpired(realmData, _characterManager, absoluteDay);
-			OfficeSystem.FillVacancies(realmData, _characterManager, absoluteDay);
+			if (HasOfficeVacancy(realmData)) anyVacancy = true;
 		}
+		// 官职已满时不扫全图人口/领土，避免百年后人物与地块规模放大日 tick。
+		if (!anyVacancy) return;
+
+		Dictionary<int, OfficeRealmContext> contexts = BuildOfficeContexts();
+		for (int i = 0; i < realms.Count; i++)
+		{
+			RealmData realmData = realms[i];
+			if (realmData == null) continue;
+			contexts.TryGetValue(realmData.realmId, out OfficeRealmContext context);
+			OfficeSystem.FillVacancies(realmData, _characterManager, absoluteDay, context);
+		}
+	}
+
+	private static bool HasOfficeVacancy(RealmData realm)
+	{
+		foreach (OfficeDef def in OfficeCatalog.All.Values)
+		{
+			if (!def.enabled) continue;
+			if (!realm.officeHolders.TryGetValue(def.slot, out int holder) || holder < 0) return true;
+		}
+		return false;
+	}
+
+	/// <summary>一次 O(N) 扫描给出各政权的实际控制地块/人口，供官职制度门槛判定。</summary>
+	private Dictionary<int, OfficeRealmContext> BuildOfficeContexts()
+	{
+		Dictionary<int, int> tileCounts = new Dictionary<int, int>();
+		Dictionary<int, float> populations = new Dictionary<int, float>();
+		for (int i = 0; i < tiles.Length; i++)
+		{
+			int realmId = tiles[i].ownerRealmId;
+			if (!tiles[i].exists || realmId < 0) continue;
+			tileCounts.TryGetValue(realmId, out int count);
+			tileCounts[realmId] = count + 1;
+			populations.TryGetValue(realmId, out float population);
+			populations[realmId] = population + PopulationLedger.Total(tiles[i]);
+		}
+		Dictionary<int, OfficeRealmContext> result = new Dictionary<int, OfficeRealmContext>();
+		foreach (RealmData realm in realms.Values)
+		{
+			if (realm == null) continue;
+			int cultureStage = 0;
+			if (realm.primaryCultureId >= 0 && cultures.TryGetValue(realm.primaryCultureId, out CultureData culture) && culture != null)
+			{
+				cultureStage = (int)culture.stage;
+			}
+			result[realm.realmId] = new OfficeRealmContext
+			{
+				ownedTiles = tileCounts.GetValueOrDefault(realm.realmId, 0),
+				population = populations.GetValueOrDefault(realm.realmId, 0f),
+				centralization = realm.centralization,
+				cultureStage = cultureStage
+			};
+		}
+		return result;
 	}
 
 	private void AdvanceTime()
@@ -919,6 +975,11 @@ public partial class GameWorld : MonoBehaviour
 		_simulationScheduler.Register("sandbox.spawn.monthly", SimulationCadence.Monthly, 36, (SimulationTickContext _) =>
 		{
 			_sandboxSpawnSystem.MonthlyTick();
+		});
+		// 政权自然形成：先有聚落、人口与剩余，才有国家；每月最多一个，确定性排序。
+		_simulationScheduler.Register("state.formation.monthly", SimulationCadence.Monthly, 37, (SimulationTickContext _) =>
+		{
+			StateFormationSystem.MonthlyTick(this);
 		});
 	}
 

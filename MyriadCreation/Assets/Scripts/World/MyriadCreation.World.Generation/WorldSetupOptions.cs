@@ -30,15 +30,30 @@ public class WorldSetupOptions
 
 	public SandboxSpawnRates spawnRates = new SandboxSpawnRates();
 
+	/// <summary>
+	/// 自然基线：地理 + 聚落 + 自然生成，不预置政权/君主/宫廷/官职/军队/国教。
+	/// 国家由世界运行中的聚落与行为体自然形成（P5.1），菜单里没有“选一个政权”。
+	/// </summary>
 	public static WorldSetupOptions CreateDefault()
 	{
 		WorldSetupOptions worldSetupOptions = new WorldSetupOptions();
 		worldSetupOptions.initialContent = InitialContentMode.Custom;
+		worldSetupOptions.generatePolities = false;
+		worldSetupOptions.initialPolityCount = 0;
+		worldSetupOptions.generateSettlements = true;
+		worldSetupOptions.initialSettlementCount = -1;
+		worldSetupOptions.generateInitialUnits = false;
+		worldSetupOptions.initialUnitCount = 0;
+		worldSetupOptions.initialPopulationScale = 1f;
 		worldSetupOptions.spawnRates.enableNaturalSpawning = true;
 		worldSetupOptions.Normalize();
 		return worldSetupOptions;
 	}
 
+	/// <summary>
+	/// 沙盒预置：预置 3 个政权与配套君主/国教/军队，仅供测试、调试和“从成熟局面开始”的沙盒。
+	/// 它不是默认新游戏；自然演化请用 <see cref="CreateDefault"/>。
+	/// </summary>
 	public static WorldSetupOptions CreateStandard()
 	{
 		WorldSetupOptions worldSetupOptions = new WorldSetupOptions();

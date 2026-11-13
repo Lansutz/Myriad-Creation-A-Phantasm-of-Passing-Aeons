@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Simulation.State;
+using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.Units;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World.Generation;
@@ -51,6 +52,9 @@ namespace MyriadCreation.Tests.EditMode
             var world = NewWorld();
             RealmData realm = FirstRealm(world);
             Assert.IsNotNull(realm, "前置：应有政权");
+            // P5：生成期不再自动造宫廷/填官职，税收必须有人征。显式播种成熟宫廷后再跑一天。
+            world.Characters.CreateInitialCourtiers(world.realms, world.currentYear);
+            OfficeSystem.FillVacancies(realm, world.Characters, world.currentYear * 365 + world.currentDay);
 
             world.RunDiagnosticDays(1);
             RealmBudgetReport report = world.GetRealmBudgetReport(realm.realmId);

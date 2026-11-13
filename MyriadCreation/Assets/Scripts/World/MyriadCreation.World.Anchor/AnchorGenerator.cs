@@ -160,7 +160,9 @@ public class AnchorGenerator
 			isCoastal = reference.isCoast,
 			siteMode = mode,
 			constructionProgress = 0f,
-			constructionTier = 1
+			constructionTier = 1,
+			// 初始社会秩序是“无人扰动”的中性值，不是加成；后续由事件/政治 tick 改变。
+			settlementStability = 50f
 		};
 		SettlementTypologySystem.DeriveInitialType(settlementData, reference, _width, _height);
 		EconomicCompositionSystem.InitializeComposition(settlementData, reference);

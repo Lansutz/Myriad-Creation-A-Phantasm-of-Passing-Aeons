@@ -37,7 +37,13 @@ public static class CultureStageEvolutionHost
 		}
 		RealmData realmData = new RealmData
 		{
-			realmId = num
+			realmId = num,
+			// 自然政权从零货币/零威望开始；不再用 ApplyPathBonuses 送 stability/treasury。
+			treasury = 0f,
+			prestige = 0f,
+			stability = Mathf.Clamp(actor.morale, 0f, 100f),
+			centralization = 0.05f,
+			stateReligionId = -1
 		};
 		world.realms[num] = realmData;
 		realmData.realmName = actor.actorName;
@@ -67,33 +73,17 @@ public static class CultureStageEvolutionHost
 			realmData.coreTiles.Add(actor.currentTile);
 			world.tiles[actor.currentTile] = tileData;
 		}
-		ApplyPathBonuses(realmData, path);
 		MapActorManager.AddPopulationToTile(ref world.tiles[actor.currentTile], actor.population);
 		actor.population = 0;
+		// 首领来自行为体自身的领导人；没有就按当地人口/文化产生一个，不另造宫廷。
+		if (realmData.monarchId < 0 && world.Characters != null)
+		{
+			world.Characters.CreateFoundingLeader(realmData, cultureId, raceId: 0, faithId: -1, world.currentYear, out _);
+		}
+		world.NotifyRealmCreated();
+		world.GetChronicle()?.Add("state_formation", $"{realmData.realmName} 通过{path}路径形成政权", true, num);
 		Debug.Log((object)$"[StageEvolution] {realmData.realmName} 通过{path}路径建国（{realmData.realmForm}），地块={actor.currentTile}");
 		return num;
-	}
-
-	private static void ApplyPathBonuses(RealmData realm, StateFormationPath path)
-	{
-		switch (path)
-		{
-		case StateFormationPath.AgrarianSettlement:
-			RealmStability.Set(realm, 55f);
-			break;
-		case StateFormationPath.NomadicConquest:
-			realm.centralization = 0.7f;
-			break;
-		case StateFormationPath.TradeControl:
-			RealmTreasury.Set(realm, 2000f);
-			break;
-		case StateFormationPath.ReligiousUnification:
-			RealmStability.Set(realm, 60f);
-			break;
-		case StateFormationPath.MilitaryLeague:
-			realm.centralization = 0.3f;
-			break;
-		}
 	}
 
 	public static void MonthlyTick(GameWorld world)

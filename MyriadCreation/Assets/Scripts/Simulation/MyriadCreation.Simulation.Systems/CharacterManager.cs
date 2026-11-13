@@ -1061,9 +1061,81 @@ public class CharacterManager
 	}
 
 	/// <summary>
-	/// 开局宫廷：每个政权 3 名可任职成年人（贵族/学者/军人）。
-	/// 没有这批人，官职无法在开局被担任，征税硬门禁会让前十几年国库归零。
-	/// 必须在世界生成末段调用：CreateCharacter 会消耗全局 Random，早调用会改变地图/聚落生成结果。
+	/// 自然建国：从当地人口中产生一位成年首领及其家族/配偶。
+	/// 不消耗全局 Random（用 realmId+currentYear 派生），避免建国改变地图/生态结果。
+	/// </summary>
+	public CharacterData CreateFoundingLeader(RealmData realm, int cultureId, int raceId, int faithId, int currentYear, out FamilyNode family)
+	{
+		family = null;
+		if (realm == null) return null;
+		var rng = new System.Random(realm.realmId * 7919 + currentYear * 31 + 17);
+		bool male = rng.Next(2) == 0;
+		int age = 30 + rng.Next(21);
+		string familyName = GenerateName(cultureId, 2);
+		CharacterData leader = CreateCharacter(
+			GenerateName(cultureId, male ? 1 : 0), familyName, age, male,
+			cultureId, raceId, faithId, CharacterRole.Ruler);
+		if (leader == null) return null;
+		leader.realmId = realm.realmId;
+		leader.isPublicFigure = true;
+		leader.birthYear = currentYear - age;
+		leader.aiCategory = CharacterAICategory.Ruler;
+		realm.monarchId = leader.characterId;
+		realm.primaryCultureId = cultureId;
+		CharacterKnowledgeRegistry.Learn(realm.realmId, leader, 1, "court");
+		family = CreateFamily(familyName, leader.characterId, currentYear, realm.realmId);
+		if (family != null) leader.familyId = family.familyId;
+
+		// 配偶是家庭单位的一部分，不是“开局三公职”；配偶不进入官职候选池。
+		int spouseAge = Mathf.Clamp(age + rng.Next(-6, 7), 18, 70);
+		CharacterData spouse = CreateCharacter(
+			GenerateName(cultureId, male ? 0 : 1), familyName, spouseAge, !male,
+			cultureId, raceId, faithId, CharacterRole.Spouse);
+		if (spouse != null)
+		{
+			spouse.realmId = realm.realmId;
+			spouse.isPublicFigure = true;
+			spouse.birthYear = currentYear - spouseAge;
+			CharacterKnowledgeRegistry.Learn(realm.realmId, spouse, 1, "court");
+			spouse.familyId = family?.familyId ?? -1;
+			family?.AddMember(spouse.characterId);
+		}
+		return leader;
+	}
+
+	/// <summary>
+	/// 自然建国：按人口规模产生地方显贵（贵族/学者/军人/商人/教士），作为官职候选池。
+	/// 不是每政权固定 3 人，而是“人口越多，能脱产办事的人越多”（1 人/约 120 人，封顶 5）。
+	/// </summary>
+	public int SeedFoundingNotables(RealmData realm, int cultureId, int raceId, int faithId, int currentYear, float population)
+	{
+		if (realm == null) return 0;
+		// 人口越多，能脱产办事的人越多；无人口时仍给 1 名，避免新政权完全无候选。
+		int count = Mathf.Clamp(Mathf.RoundToInt(Mathf.Max(1f, population) / 120f), 1, 5);
+		CharacterRole[] roles = { CharacterRole.Noble, CharacterRole.Scholar, CharacterRole.Military, CharacterRole.Merchant, CharacterRole.Clergy };
+		var rng = new System.Random(realm.realmId * 104729 + currentYear * 13 + 5);
+		int created = 0;
+		for (int i = 0; i < count; i++)
+		{
+			bool male = rng.Next(2) == 0;
+			int age = 20 + rng.Next(36);
+			CharacterData notable = CreateCharacter(
+				GenerateName(cultureId, male ? 1 : 0), GenerateName(cultureId, 2), age, male,
+				cultureId, raceId, faithId, roles[i % roles.Length]);
+			if (notable == null) continue;
+			notable.realmId = realm.realmId;
+			notable.isPublicFigure = true;
+			notable.birthYear = currentYear - age;
+			CharacterKnowledgeRegistry.Learn(realm.realmId, notable, 1, "court");
+			created++;
+		}
+		return created;
+	}
+
+	/// <summary>
+	/// 沙盒/测试用：为每个政权显式播种 3 名可任职成年人（贵族/学者/军人）。
+	/// 生产路径（世界生成、读档兜底）不得调用：自然演化的宫廷由人口、家族与时间产生，
+	/// 不是开局凭空造人（P5.2）。调用会消耗全局 Random，测试里应在所有地形生成之后再用。
 	/// </summary>
 	public void CreateInitialCourtiers(Dictionary<int, RealmData> realms, int currentYear)
 	{

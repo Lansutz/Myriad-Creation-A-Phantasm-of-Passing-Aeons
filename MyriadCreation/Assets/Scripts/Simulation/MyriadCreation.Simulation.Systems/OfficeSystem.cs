@@ -7,6 +7,21 @@ using MyriadCreation.Simulation.State;
 namespace MyriadCreation.Simulation.Systems
 {
 /// <summary>
+/// 补缺所需的政权实际条件。只有调用方给出 context 时才启用任职门槛；
+/// 旧测试/旧调用不给 context，保持“只按内容表补缺”的兼容行为。
+/// </summary>
+public struct OfficeRealmContext
+{
+	public int ownedTiles;
+
+	public float population;
+
+	public float centralization;
+
+	public int cultureStage;
+}
+
+/// <summary>
 /// 官职运行（P3.1）：按 <see cref="OfficeCatalog"/> 的槽位/任期/候选规则补缺、罢免到期者、支付俸禄。
 /// 只改“谁在位、谁有权”，不改产出百分比；职权由 <c>HasModuleHolder</c> 在各自系统里消费。
 /// </summary>
@@ -39,6 +54,16 @@ public static class OfficeSystem
 	{
 		if (candidate == null || !candidate.isAlive || def == null) return false;
 		if (ruler != null && candidate.characterId == ruler.characterId) return false;
+		// 官职不是“有个活人就能坐”：君主、配偶、继承人、普通人与信使不进入候选池。
+		switch (candidate.role)
+		{
+			case CharacterRole.Ruler:
+			case CharacterRole.Spouse:
+			case CharacterRole.Heir:
+			case CharacterRole.Commoner:
+			case CharacterRole.Courier:
+				return false;
+		}
 		if (string.Equals(def.candidateGender, "male", StringComparison.Ordinal) && !candidate.isMale) return false;
 		if (string.Equals(def.candidateGender, "female", StringComparison.Ordinal) && candidate.isMale) return false;
 		bool sameFamily = ruler != null && candidate.familyId >= 0 && candidate.familyId == ruler.familyId;
@@ -76,8 +101,11 @@ public static class OfficeSystem
 		return vacated;
 	}
 
-	/// <summary>按内容表补缺；返回新任职人数。</summary>
-	public static int FillVacancies(RealmData realm, CharacterManager characters, int absoluteDay)
+	/// <summary>
+	/// 按内容表补缺；返回新任职人数。
+	/// context 给出时，额外检查官职的领土/人口/中枢/文化门槛（制度撑不起这个职位就不设）。
+	/// </summary>
+	public static int FillVacancies(RealmData realm, CharacterManager characters, int absoluteDay, OfficeRealmContext? context = null)
 	{
 		if (realm == null || characters == null) return 0;
 		if (realm.officeHolders == null) realm.officeHolders = new Dictionary<int, int>();
@@ -95,6 +123,7 @@ public static class OfficeSystem
 		foreach (OfficeDef def in defs)
 		{
 			if (!def.enabled) continue;
+			if (context.HasValue && !MeetsInstitutionalThreshold(def, context.Value)) continue;
 			if (realm.officeHolders.TryGetValue(def.slot, out int current) && current >= 0)
 			{
 				continue;
@@ -117,6 +146,17 @@ public static class OfficeSystem
 			filled++;
 		}
 		return filled;
+	}
+
+	/// <summary>制度门槛：职位需要的最低领土/人口/中枢/文化阶段；0 表示该维度不限。</summary>
+	public static bool MeetsInstitutionalThreshold(OfficeDef def, OfficeRealmContext context)
+	{
+		if (def == null) return false;
+		if (def.minTiles > 0 && context.ownedTiles < def.minTiles) return false;
+		if (def.minPopulation > 0f && context.population < def.minPopulation) return false;
+		if (def.minCentralization > 0f && context.centralization < def.minCentralization) return false;
+		if (def.minCultureStage > 0 && context.cultureStage < def.minCultureStage) return false;
+		return true;
 	}
 
 	private static CharacterData SelectCandidate(RealmData realm, CharacterManager characters, CharacterData ruler, OfficeDef def, HashSet<int> seated)

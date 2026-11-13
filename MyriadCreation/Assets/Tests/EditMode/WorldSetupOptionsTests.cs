@@ -7,16 +7,16 @@ namespace MyriadCreation.Tests.EditMode
     public class WorldSetupOptionsTests
     {
         [Test]
-        public void Default_IsZeroPolitiesSettlementsUnits()
+        public void Default_HasSettlementsButNoPolitiesOrUnits()
         {
             var options = WorldSetupOptions.CreateDefault();
             Assert.AreEqual(0, options.initialPolityCount);
-            Assert.AreEqual(0, options.initialSettlementCount);
+            Assert.AreEqual(-1, options.initialSettlementCount, "默认按省生成聚落：有人群，但没有国家");
             Assert.AreEqual(0, options.initialUnitCount);
-            Assert.IsFalse(options.generatePolities);
-            Assert.IsFalse(options.generateSettlements);
+            Assert.IsFalse(options.generatePolities, "默认世界不得预置政权");
+            Assert.IsTrue(options.generateSettlements, "聚落是人群，不是国家");
             Assert.IsFalse(options.generateInitialUnits);
-            Assert.IsTrue(options.spawnRates.enableNaturalSpawning, "内容为 0，但自然生成开启");
+            Assert.IsTrue(options.spawnRates.enableNaturalSpawning);
         }
 
         [Test]

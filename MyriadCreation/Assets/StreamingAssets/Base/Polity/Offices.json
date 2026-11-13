@@ -13,6 +13,10 @@
       "termYears": 5,
       "salary": 40.0,
       "dismissalResistance": 20.0,
+      "minTiles": 2,
+      "minPopulation": 150.0,
+      "minCentralization": 0.05,
+      "minCultureStage": 0,
       "enabled": true
     },
     {
@@ -28,6 +32,10 @@
       "termYears": 5,
       "salary": 25.0,
       "dismissalResistance": 15.0,
+      "minTiles": 4,
+      "minPopulation": 300.0,
+      "minCentralization": 0.1,
+      "minCultureStage": 0,
       "enabled": true
     },
     {
@@ -43,6 +51,10 @@
       "termYears": 0,
       "salary": 60.0,
       "dismissalResistance": 35.0,
+      "minTiles": 6,
+      "minPopulation": 600.0,
+      "minCentralization": 0.25,
+      "minCultureStage": 2,
       "enabled": true
     },
     {
@@ -58,6 +70,10 @@
       "termYears": 0,
       "salary": 50.0,
       "dismissalResistance": 25.0,
+      "minTiles": 3,
+      "minPopulation": 300.0,
+      "minCentralization": 0.15,
+      "minCultureStage": 0,
       "enabled": true
     },
     {
@@ -73,6 +89,10 @@
       "termYears": 0,
       "salary": 55.0,
       "dismissalResistance": 30.0,
+      "minTiles": 3,
+      "minPopulation": 300.0,
+      "minCentralization": 0.15,
+      "minCultureStage": 0,
       "enabled": true
     },
     {
@@ -88,6 +108,10 @@
       "termYears": 0,
       "salary": 35.0,
       "dismissalResistance": 30.0,
+      "minTiles": 8,
+      "minPopulation": 800.0,
+      "minCentralization": 0.3,
+      "minCultureStage": 0,
       "enabled": true
     },
     {
@@ -103,6 +127,10 @@
       "termYears": 5,
       "salary": 30.0,
       "dismissalResistance": 40.0,
+      "minTiles": 3,
+      "minPopulation": 250.0,
+      "minCentralization": 0.15,
+      "minCultureStage": 2,
       "enabled": true
     },
     {
@@ -118,6 +146,10 @@
       "termYears": 0,
       "salary": 20.0,
       "dismissalResistance": 10.0,
+      "minTiles": 2,
+      "minPopulation": 200.0,
+      "minCentralization": 0.1,
+      "minCultureStage": 2,
       "enabled": true
     }
   ]

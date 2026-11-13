@@ -667,6 +667,17 @@ public partial class GameWorld : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// 新政权形成的统一收尾：行政区划、AI 控制器、外交关系。
+	/// 由 StateFormationHost 在写入领土/首领/家族之后调用；不生成官职（官职由每日 tick 按制度门槛补）。
+	/// </summary>
+	internal void NotifyRealmCreated()
+	{
+		EnsureAdminDivisions();
+		EnsureAIControllers();
+		_diplomacyManager?.EnsureRelations();
+	}
+
 	private void InitializeGoodsDefs()
 	{
 		if (GoodsCatalog.IsLoaded)
