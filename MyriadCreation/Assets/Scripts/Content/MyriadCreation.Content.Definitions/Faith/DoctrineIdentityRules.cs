@@ -1,6 +1,6 @@
 using MyriadCreation.Core.Enums;
 
-namespace MyriadCreation.Simulation.FaithHost
+namespace MyriadCreation.Content.Definitions
 {
 /// <summary>
 /// P1.3 合并接线点：教职规则 × 身份旗标。

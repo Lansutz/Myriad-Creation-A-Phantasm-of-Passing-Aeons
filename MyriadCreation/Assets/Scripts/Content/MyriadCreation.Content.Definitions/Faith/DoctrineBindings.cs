@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MyriadCreation.Simulation.FaithHost
+namespace MyriadCreation.Content.Definitions
 {
 /// <summary>伦理立场：罪行 / 忌讳 / 接纳（未指定 = 无该组教义）。</summary>
 public enum DoctrineMoralStance

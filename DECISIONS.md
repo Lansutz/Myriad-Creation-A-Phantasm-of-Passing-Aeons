@@ -886,3 +886,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 测试：两相条目的 Compute 全部先于 Apply；多个两相条目按注册序 Apply；既有影响力测试保留。
 - 验证：`EXIT=0`、`884/886`、零 `error CS`。
 - 未做：其余重量级系统尚未迁移到两相（先完成一个可测消费者，避免空抽象）。
+
+## D109 教义快照移出 Simulation（P2.5 F 第一刀）
+
+- `DoctrineBindings/DoctrineBindingHost/DoctrineCrime/DoctrineIdentityRules` 从 `Simulation.FaithHost` 移到 `Content.Definitions`：教义解析只依赖内容表与 Core，不再反向依赖 Simulation。
+- 命名空间改为 `MyriadCreation.Content.Definitions`；调用方改用 Content 命名（11 处引用）。
+- 效果：Faith 叶子只出不可变快照（RELIGION_V2 的 F 原则），Simulation 仍使用它但不构成循环依赖。
+- 验证：`EXIT=0`、`884/886`、零 `error CS`。
+- 未做：Faith/Culture/Law 的适配器与 Host 文件夹尚未迁到独立程序集；这是 F 的剩余主体。

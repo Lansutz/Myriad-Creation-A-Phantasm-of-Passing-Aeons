@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using MyriadCreation.Core.Enums;
+using MyriadCreation.Content.Definitions;
 using MyriadCreation.Simulation.FaithHost;
 
 namespace MyriadCreation.Tests.EditMode

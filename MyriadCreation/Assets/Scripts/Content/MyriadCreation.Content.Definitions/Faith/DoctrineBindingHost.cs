@@ -1,6 +1,6 @@
 using MyriadCreation.Content.Definitions;
 
-namespace MyriadCreation.Simulation.FaithHost
+namespace MyriadCreation.Content.Definitions
 {
 /// <summary>
 /// P1.3 WP3 绑定入口：把 religion 的选中教义解析成 DoctrineBindings。
