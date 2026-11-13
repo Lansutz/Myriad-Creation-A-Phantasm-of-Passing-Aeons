@@ -67,5 +67,7 @@
 - **P6.0 营地补给**：`AgricultureYield.ComputeForLabor`、`EcosystemSystem.HarvestForPeople/HarvestFishForPeople` 抽出；`CampData.Tick` 改为“本地农业+狩猎+捕鱼 → 补给”，消耗统一 0.01/人/日。测试：有产出营地 2200 天后未废弃且 `CanEvolveToSettlement`；无产出营地 80 天内废弃。
 - **P6.1 人口迁移**：`SandboxSpawnSystem.TrySeedPopulation` 改为过载源→邻近可承载目标，人口守恒；无过载源不新增。源扣减走 `PopulationLedger.RemoveFromIndex`（通过人口写入网关测试）。
 - **P6.2 财富/开发**：商队实际入库货物价值的 5% 留成目的地聚落 `wealth`；`SettlementSimulationSystem` 按人口建设劳动推进 `development`。
-- **验证**：`build` `EXIT=0`、`1005/1002`、零 `error CS`（3 个 Explicit 跳过）。
+- **验证**：`build` `EXIT=0`、`1006/1003`、零 `error CS`（3 个 Explicit 跳过）。
 - **未做**：完整市场货币流通、迁徙路线寻路、营地仓储上限、财富消费端。
+
+- **长跑回归**：P6 改动后重跑 `NaturalEmergenceTests.NaturalLongRun_FormsRealmOfficesAndTaxReceipts`（1 seed × 100 年，48×24，MaxRealms=8）通过，189.0s；营地补给/迁移/财富改动未破坏 P5 自然建国链。

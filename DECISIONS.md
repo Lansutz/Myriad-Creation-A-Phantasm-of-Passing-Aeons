@@ -1230,5 +1230,6 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **人口迁移替代随机造人**：`SandboxSpawnSystem.TrySeedPopulation` 改为从人口 > 承载力 1.1 倍的源地块，向邻近可承载地块移出约 10% 人口；源地块按 `PopulationLedger.RemoveFromIndex` 扣减、目标地块按 `PopulationLedger.Add` 增加，总人口守恒；没有过载源/合适目标就不新增人口。原“随机地块凭空加 4–16 人”删除。
 - **聚落财富来源**：商队到货时按实际入库货物的 `baseValue` 计成交价值，其中 5% 留在目的地聚落 `wealth`（仓储/卸货/交易服务）；没有聚落/没有成交就不加。
 - **聚落开发来源**：`SettlementSimulationSystem` 每日按人口规模产生的建设劳动推进 `development`（`gain * deltaDays * 0.01`），不再只减不增。
-- 测试：`SettlementLifecycleTests` 4 例（营地正反向、迁移守恒、无过载源不造人）。验证：`EXIT=0`、`1005/1002`、零 `error CS`（3 个 Explicit 跳过）。
+- 测试：`SettlementLifecycleTests` 4 例（营地正反向、迁移守恒、无过载源不造人）。验证：`EXIT=0`、`1006/1003`、零 `error CS`（3 个 Explicit 跳过）。
 - 仍留欠账：完整市场价格/货币流通、迁徙路线寻路、营地仓储上限、聚落财富的消费端。
+- **长跑回归**：P6 改动后 100 年自然长跑通过（189.0s），P5 自然建国/官职/实物税流水仍成立。

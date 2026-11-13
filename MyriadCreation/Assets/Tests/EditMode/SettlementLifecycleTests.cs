@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
+using MyriadCreation.Content.Definitions;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.Actors;
@@ -147,6 +148,43 @@ namespace MyriadCreation.Tests.EditMode
 
             Assert.IsFalse(moved, "没有过载源时不应迁移");
             Assert.AreEqual(before, after, 0.01f, "没有过载源时不得凭空新增人口");
+        }
+
+        [Test]
+        public void MarketDelivery_AddsSettlementWealthFromDeliveredGoods()
+        {
+            var settlement = new SettlementData
+            {
+                anchorId = 0,
+                anchor = new MyriadCreation.World.Anchor.AnchorData { anchorId = 0, tileIndex = 16 },
+                wealth = 0f
+            };
+            var settlements = new Dictionary<int, SettlementData> { [0] = settlement };
+            var origin = new TradeCenter { regionId = 0, centerTileIndex = 0 };
+            var destination = new TradeCenter { regionId = 1, centerTileIndex = 16 };
+            origin.tradeRoutes.Add(new TradeRoute { fromRegionId = 0, toRegionId = 1, nodeTileIndices = new List<int> { 0, 16 } });
+            var centers = new Dictionary<int, TradeCenter> { [0] = origin, [1] = destination };
+            var goods = new Dictionary<int, GoodsDef>
+            {
+                [0] = new GoodsDef { goodsId = 0, baseValue = 1f, weight = 1f }
+            };
+            var economy = new EconomyManager(
+                new TileData[32], centers, goods, new CurrencySystem(), new TaxSystem(),
+                realms: null, mapWidth: 8, settlements: settlements);
+            var caravan = new Caravan
+            {
+                caravanId = 1,
+                fromRegionId = 0,
+                toRegionId = 1,
+                isMoving = false,
+                cargo = new Dictionary<int, float> { [0] = 100f }
+            };
+            economy.RegisterCaravan(caravan);
+
+            economy.MoveCaravans();
+
+            Assert.Greater(settlement.wealth, 0f, "商队实际入库的货物价值应留成到目的地聚落财富");
+            Assert.AreEqual(100f, destination.inventory[0], 0.01f, "货物仍应真实入库");
         }
     }
 }

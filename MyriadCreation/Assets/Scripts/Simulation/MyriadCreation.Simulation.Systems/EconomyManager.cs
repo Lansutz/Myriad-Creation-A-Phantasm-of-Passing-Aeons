@@ -451,10 +451,12 @@ public class EconomyManager
 	{
 		const float TradeWealthShare = 0.05f;
 		if (_settlements == null || destination == null || deliveredValue <= 0f) return;
+		int regionStart = Mathf.Max(0, destination.regionId) * 16;
+		int regionEnd = regionStart + 16;
 		foreach (SettlementData settlement in _settlements.Values)
 		{
 			if (settlement == null || settlement.IsRuined) continue;
-			if (settlement.tileIndex != destination.centerTileIndex) continue;
+			if (settlement.tileIndex < regionStart || settlement.tileIndex >= regionEnd) continue;
 			settlement.wealth += deliveredValue * TradeWealthShare;
 			return;
 		}
