@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using NUnit.Framework;
-using MyriadCreation.World.Settlement;
+using MyriadCreation.Core.Data;
 
 namespace MyriadCreation.Tests.EditMode
 {
@@ -9,16 +9,14 @@ namespace MyriadCreation.Tests.EditMode
     /// </summary>
     public class CityLayoutTests
     {
-        private static SettlementBlock Block(string id, float area, SettlementBlockKind kind = SettlementBlockKind.District,
-            CityDistrictType district = CityDistrictType.None, int wallLayers = 0)
+        private static CityBlockSpec Block(string id, float area, bool wall = false, int district = 0)
         {
-            return new SettlementBlock
+            return new CityBlockSpec
             {
                 blockId = id,
                 areaRatio = area,
-                kind = kind,
                 districtType = district,
-                wallLayerCount = wallLayers,
+                isWall = wall,
                 enabled = true
             };
         }
@@ -26,7 +24,7 @@ namespace MyriadCreation.Tests.EditMode
         [Test]
         public void Build_AllocatesEveryEnabledBlockInsideMap()
         {
-            var blocks = new List<SettlementBlock>
+            var blocks = new List<CityBlockSpec>
             {
                 Block("a", 2f),
                 Block("b", 1f),
@@ -47,7 +45,7 @@ namespace MyriadCreation.Tests.EditMode
         [Test]
         public void Build_WeightsLotsByAreaRatio()
         {
-            var blocks = new List<SettlementBlock>
+            var blocks = new List<CityBlockSpec>
             {
                 Block("big", 3f),
                 Block("small", 1f)
@@ -65,7 +63,7 @@ namespace MyriadCreation.Tests.EditMode
         [Test]
         public void Build_IsDeterministic()
         {
-            var blocks = new List<SettlementBlock> { Block("b", 1f), Block("a", 2f) };
+            var blocks = new List<CityBlockSpec> { Block("b", 1f), Block("a", 2f) };
 
             CityLayoutPlan first = CityLayoutGenerator.Build(blocks, 80, 80);
             CityLayoutPlan second = CityLayoutGenerator.Build(blocks, 80, 80);
@@ -82,11 +80,11 @@ namespace MyriadCreation.Tests.EditMode
         [Test]
         public void Build_EmitsWallRingOnlyWhenWallBlockExists()
         {
-            var withoutWall = new List<SettlementBlock> { Block("a", 1f) };
-            var withWall = new List<SettlementBlock>
+            var withoutWall = new List<CityBlockSpec> { Block("a", 1f) };
+            var withWall = new List<CityBlockSpec>
             {
                 Block("a", 1f),
-                Block("wall", 0.2f, SettlementBlockKind.Wall, CityDistrictType.None, 2)
+                Block("wall", 0.2f, wall: true)
             };
 
             Assert.IsFalse(CityLayoutGenerator.Build(withoutWall).hasWall, "没有城墙区块就没有外环");
@@ -99,7 +97,7 @@ namespace MyriadCreation.Tests.EditMode
         [Test]
         public void Build_EmptySettlementIsValid()
         {
-            CityLayoutPlan plan = CityLayoutGenerator.Build(new List<SettlementBlock>());
+            CityLayoutPlan plan = CityLayoutGenerator.Build(new List<CityBlockSpec>());
 
             Assert.AreEqual(0, plan.lots.Count, "空聚落是合法状态，不应抛出");
         }

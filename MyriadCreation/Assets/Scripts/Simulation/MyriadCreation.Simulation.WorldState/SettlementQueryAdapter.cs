@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Contracts;
 using MyriadCreation.Core.Data;
@@ -29,6 +29,32 @@ public sealed class SettlementQueryAdapter : ISettlementQuery
 			return null;
 		}
 		return ToDto(settlement);
+	}
+
+	public IReadOnlyList<SettlementBlockRowDto> GetSettlementBlocks(int anchorId)
+	{
+		List<SettlementBlockRowDto> list = new List<SettlementBlockRowDto>();
+		if (_world?.settlements == null
+			|| !_world.settlements.TryGetValue(anchorId, out SettlementData settlement)
+			|| settlement?.blocks == null)
+		{
+			return list;
+		}
+		foreach (SettlementBlock block in settlement.blocks)
+		{
+			if (block == null) continue;
+			list.Add(new SettlementBlockRowDto
+			{
+				blockId = block.blockId ?? "",
+				areaRatio = block.areaRatio,
+				districtType = (int)block.districtType,
+				kind = (int)block.kind,
+				isWall = block.kind == SettlementBlockKind.Wall,
+				wallLayerCount = block.wallLayerCount,
+				enabled = block.enabled
+			});
+		}
+		return list;
 	}
 
 	public IReadOnlyList<SettlementSnapshotDto> GetSettlementsInRealm(int realmId)

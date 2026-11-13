@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -451,6 +451,9 @@ namespace MyriadCreation.Tests.EditMode
         private sealed class FakeSettlementQuery : ISettlementQuery
         {
             public SettlementSnapshotDto GetSettlement(int anchorId) => null;
+
+            public IReadOnlyList<SettlementBlockRowDto> GetSettlementBlocks(int anchorId)
+                => new List<SettlementBlockRowDto>();
 
             public IReadOnlyList<SettlementSnapshotDto> GetSettlementsInRealm(int realmId)
                 => new List<SettlementSnapshotDto>();

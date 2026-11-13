@@ -1134,3 +1134,13 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 复杂度：路线 BFS O(N) 仅在立项时；每日 O(远征数×1)；知识揭示 O(r²)。
 - 测试：`ExpeditionTests` 4 例（立项+完成+知识揭示、补给失败、拦截失败、DTO 往返）。
 - 验证：`EXIT=0`、`977/979`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D134 城市俯视 Sprite 与独立面板（P4.2）
+
+- 布局类型从 `World.Settlement` 迁到 `Core.Data`，输入改为 `CityBlockSpec`（blockId/areaRatio/districtType/isWall/enabled）：World 不再被 Rendering/UI 反向依赖；`SettlementBlock` 映射留在 `SettlementQueryAdapter`。
+- `ISettlementQuery.GetSettlementBlocks(anchorId)` 返回纯 DTO `SettlementBlockRowDto`；GameWorld/ReadModel/Adapter 三层透传，Fake 与测试同步。
+- `CityLayoutRenderer`：布局→RGBA32 纹理（街区按区划上色、道路间隙为背景、城墙外环 2px）；`RenderCached` 按 key 做 LRU（默认 8），同布局同图；纹理按需生成、不参与主 tick。
+- UI：新增 `CityViewPanel`（一个 UI 一个文件），实现 `IUserInterfacePanel`，由 `UIManager.RegisterRuntimePanels` 创建并注册到 `UiPanelRegistry`；`SettlementDetailPanel` 底部新增“城市视图”按钮，调用 `UIManager.OpenCityView`；无区块/无聚落显示合法空态。
+- 复杂度：布局 O(B log B)，纹理 O(W×H)，缓存 O(1)；缓存淘汰时销毁旧纹理。
+- 测试：`CityViewTests` 4 例（纹理确定性、缓存命中/淘汰、面板注册+空态、有区块标题/渲染）。
+- 验证：`EXIT=0`、`981/983`（2 个 Explicit 跳过）、零 `error CS`。

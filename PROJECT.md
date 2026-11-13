@@ -201,6 +201,7 @@
 - 2026-11-14 **D7 收口**：表型缓存（避免每日重算）；最终 `build` 971 例/969 通过/零 `error CS`，`longrun` 2 seed×100 年通过。DNA/物种目标按 `DNA_SPECIES_PLAN.md §4` 收口；食性→口粮、逐格物种丰度记为欠账。详见 D131。
 - 2026-11-14 **P4.0 宫廷与征税门禁**：开局每政权 3 名宫廷人物（生成末段创建，避免扰动地图 RNG）；生成结束填官职；`taxation` 硬门禁恢复。新增 `CourtAndTaxGateTests` 4 例。详见 D132。验证：`EXIT=0`、`973/975`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-14 **P4.1 远征与探索计划**：`Expedition` + BFS 路线 + 每日补给/拦截/知识揭示；`ExplorationPlanSystem` 以远征进度驱动计划；入档。新增 `ExpeditionTests` 4 例。详见 D133。验证：`EXIT=0`、`977/979`（2 个 Explicit 跳过）、零 `error CS`。
+- 2026-11-14 **P4.2 城市俯视**：布局迁入 Core.Data，`CityLayoutRenderer` 确定性纹理 + LRU，`CityViewPanel` 注册进 UiPanelRegistry 并从聚落面板打开。新增 4 例测试。详见 D134。验证：`EXIT=0`、`981/983`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **官职调度降频**：`offices.daily` → `offices.monthly`（俸禄按 deltaDays 折算），避免百年人物表增长后每天全量扫人。
 - 2026-11-13 **纹章模型对齐 Azgaar/Armoria**：division/ordinary/盾形 + 纹章金属/颜色规则，家族纹章确定性生成。验证：`EXIT=0`、`887/889`、零 `error CS`。
 - 2026-11-13 **程序化家族纹章**：`Heraldry` 确定性生成 pattern+三色，家族创建/旧档补齐，`FamilySaveData` 往返。新增 3 例测试。验证：`EXIT=0`、`887/889`、零 `error CS`。

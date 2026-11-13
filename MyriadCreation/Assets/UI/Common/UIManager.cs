@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -175,6 +175,7 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
         [Header("角色面板")]
         // P1.6：角色面板由 CharacterPanelView 单文件负责，管理器只注册与转调。
         private CharacterPanelView _characterPanelView;
+        private MyriadCreation.UI.Panels.CityViewPanel _cityViewPanel;
         private FamilyTreePanelView _familyTreeView;
         private InnovationPanelView _innovationView;
         public UiPanelRegistry Panels { get; } = new UiPanelRegistry();
@@ -366,10 +367,24 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
             _innovationView.SetViewRealm(ViewRealmId);
             Panels.Register(_innovationView);
 
+            var cityGo = new GameObject("CityViewPanel");
+            cityGo.transform.SetParent(transform, false);
+            _cityViewPanel = cityGo.AddComponent<MyriadCreation.UI.Panels.CityViewPanel>();
+            _cityViewPanel.Build(cityGo.transform);
+            _cityViewPanel.SetQuery(_worldReadModel);
+            Panels.Register(_cityViewPanel);
+
             TMPFontUtility.ApplyFontChoice(SettingsService.Current.FontChoice);
         }
 
         /// <summary>革新面板入口；面板未注册时静默忽略。</summary>
+        /// <summary>城市俯视图入口（P4.2）；面板未注册时静默忽略。</summary>
+        public void OpenCityView(int anchorId)
+        {
+            if (_cityViewPanel == null || anchorId < 0) return;
+            _cityViewPanel.ShowFor(anchorId);
+        }
+
         public void OpenInnovationPanel()
         {
             if (_innovationView == null)

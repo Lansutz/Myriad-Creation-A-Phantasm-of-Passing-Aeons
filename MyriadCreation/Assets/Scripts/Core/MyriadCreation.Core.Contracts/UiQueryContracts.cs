@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace MyriadCreation.Core.Contracts
 {
@@ -147,9 +147,24 @@ public interface IRealmQuery
 }
 
 /// <summary>聚落查询契约（UI 4b 第一批）。</summary>
+/// <summary>城市区块行（俯视图布局输入）：只读快照，不含运行时对象。</summary>
+public sealed class SettlementBlockRowDto
+{
+	public string blockId = "";
+	public float areaRatio;
+	public int districtType;
+	public int kind;
+	public bool isWall;
+	public int wallLayerCount;
+	public bool enabled = true;
+}
+
 public interface ISettlementQuery
 {
 	SettlementSnapshotDto GetSettlement(int anchorId);
+
+	/// <summary>聚落区块列表（俯视图用）；未知聚落返回空表。</summary>
+	IReadOnlyList<SettlementBlockRowDto> GetSettlementBlocks(int anchorId);
 
 	IReadOnlyList<SettlementSnapshotDto> GetSettlementsInRealm(int realmId);
 

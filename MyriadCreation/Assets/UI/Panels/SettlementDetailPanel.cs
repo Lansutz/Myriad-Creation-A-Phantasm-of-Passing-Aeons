@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -143,6 +143,9 @@ public partial class SettlementDetailPanel : MonoBehaviour, ISettlementDetailUi
             bodyRt.offsetMin = new Vector2(36f, 92f);
             bodyRt.offsetMax = new Vector2(-36f, -122f);
 
+            // 城市俯视图入口（P4.2）：独立面板，由 UIManager 注册与开关。
+            CreateButton(panel, "城市视图", new Vector2(-200f, 20f), new Vector2(180, 44), OpenCityView);
+
             // 关闭按钮
             Button closeButton = CreateButton(panel, "关闭", new Vector2(0f, 20f), new Vector2(170, 44), Hide);
             closeButton.transform.SetParent(panel, false);
@@ -270,6 +273,12 @@ public partial class SettlementDetailPanel : MonoBehaviour, ISettlementDetailUi
             tmp.raycastTarget = false;
             obj.transform.SetParent(parent, false);
             return tmp;
+        }
+
+        private void OpenCityView()
+        {
+            var ui = FindAnyObjectByType<MyriadCreation.UI.Common.UIManager>(FindObjectsInactive.Include);
+            ui?.OpenCityView(_currentAnchorId);
         }
 
         private static Button CreateButton(Transform parent, string label, Vector2 anchoredPos, Vector2 size, System.Action onClick)

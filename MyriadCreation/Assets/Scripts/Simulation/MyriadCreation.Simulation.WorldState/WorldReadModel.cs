@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Contracts;
 
@@ -82,6 +82,8 @@ namespace MyriadCreation.Simulation.WorldState
         // ===== ISettlementQuery =====
 
         public SettlementSnapshotDto GetSettlement(int anchorId) => _settlementQuery.GetSettlement(anchorId);
+
+        public IReadOnlyList<SettlementBlockRowDto> GetSettlementBlocks(int anchorId) => _settlementQuery.GetSettlementBlocks(anchorId);
 
         public IReadOnlyList<SettlementSnapshotDto> GetSettlementsInRealm(int realmId) => _settlementQuery.GetSettlementsInRealm(realmId);
 
