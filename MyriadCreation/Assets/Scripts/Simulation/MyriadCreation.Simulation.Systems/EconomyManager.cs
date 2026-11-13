@@ -51,6 +51,11 @@ public class EconomyManager
 
 	private const float DispatchDestinationMinCapacity = 1f;
 
+	/// <summary>自动生成贸易路线的总上限；避免全图区域两两相连。</summary>
+	private const int MaxTradeRoutes = 512;
+
+	private int _tradeRouteCursor;
+
 	/// <summary>目的地容量不足导致跳发车的 Warn 节流间隔（按 InitiateTrades 调用次数≈天数计）。</summary>
 	private const int TradeCapacityWarnInterval = 30;
 
@@ -119,6 +124,7 @@ public class EconomyManager
 		}
 		ProduceResources();
 		UpdateAllSupplyDemand();
+		EnsureTradeRoutes();
 		CalculateAllRouteEfficiency();
 		InitiateTrades();
 		MoveCaravans();
@@ -154,6 +160,62 @@ public class EconomyManager
 			}
 		}
 		return produced;
+	}
+
+	/// <summary>
+	/// 按供需差为尚无出向路线的区域创建一条就近路线。
+	/// 仅从“本区有剩余、邻区有缺口”的方向建边；总量封顶，避免全图两两相连。
+	/// </summary>
+	public int EnsureTradeRoutes()
+	{
+		if (_tiles == null || _tradeCenters == null || _tradeCenters.Count == 0) return 0;
+		int created = 0;
+		int checks = 0;
+		int centerCount = _tradeCenters.Count;
+		int[] deltas = { 1, -1, 2, -2, 4, -4, 8, -8 };
+		while (created < MaxTradeRoutes && checks < centerCount)
+		{
+			int regionId = _tradeRouteCursor;
+			_tradeRouteCursor = (_tradeRouteCursor + 1) % centerCount;
+			checks++;
+			if (!_tradeCenters.TryGetValue(regionId, out TradeCenter origin) || origin == null || origin.tradeRoutes.Count > 0)
+				continue;
+
+			TradeCenter target = null;
+			foreach (int delta in deltas)
+			{
+				int targetId = regionId + delta;
+				if (targetId < 0 || targetId == regionId || !_tradeCenters.TryGetValue(targetId, out TradeCenter candidate) || candidate == null)
+					continue;
+				if (!HasTradeGradient(origin, candidate)) continue;
+				target = candidate;
+				break;
+			}
+			if (target == null) continue;
+
+			origin.tradeRoutes.Add(new TradeRoute
+			{
+				fromRegionId = origin.regionId,
+				toRegionId = target.regionId,
+				nodeTileIndices = new List<int> { origin.centerTileIndex, target.centerTileIndex },
+				baseEfficiency = 1f
+			});
+			created++;
+		}
+		return created;
+	}
+
+	private static bool HasTradeGradient(TradeCenter origin, TradeCenter target)
+	{
+		if (origin?.localSupply == null || origin.localDemand == null || target?.localSupply == null || target.localDemand == null)
+			return false;
+		foreach (KeyValuePair<int, float> supply in origin.localSupply)
+		{
+			if (supply.Value <= origin.localDemand.GetValueOrDefault(supply.Key) + 1f) continue;
+			if (target.localDemand.GetValueOrDefault(supply.Key) > target.localSupply.GetValueOrDefault(supply.Key) + 1f)
+				return true;
+		}
+		return false;
 	}
 
 	private void UpdateAllSupplyDemand()

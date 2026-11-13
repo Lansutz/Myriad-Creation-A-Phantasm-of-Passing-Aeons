@@ -96,6 +96,26 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(90f, center.inventory[1], 0.01f, "shelfLifeDays=10 时每日应损耗 10%");
         }
 
+        [Test]
+        public void EnsureTradeRoutes_CreatesRouteFromSurplusToDeficit()
+        {
+            var tiles = new TileData[32];
+            for (int i = 0; i < tiles.Length; i++)
+                tiles[i] = new TileData { tileIndex = i, exists = true, isLand = true, regionId = i / 16, buildingLevels = new int[6] };
+            var origin = new TradeCenter { regionId = 0, centerTileIndex = 0, inventoryCapacity = 1000f };
+            var target = new TradeCenter { regionId = 1, centerTileIndex = 16, inventoryCapacity = 1000f };
+            origin.localSupply[0] = 100f;
+            origin.localDemand[0] = 0f;
+            target.localSupply[0] = 0f;
+            target.localDemand[0] = 100f;
+            var centers = new Dictionary<int, TradeCenter> { { 0, origin }, { 1, target } };
+            var economy = new EconomyManager(tiles, centers, DefaultGoods(), new CurrencySystem(), new TaxSystem());
+
+            Assert.Greater(economy.EnsureTradeRoutes(), 0, "供需差应创建路线");
+            Assert.AreEqual(1, origin.tradeRoutes.Count, "出向路线数");
+            Assert.AreEqual(1, origin.tradeRoutes[0].toRegionId, "路线方向");
+        }
+
         // ---------- 2. 商队结算守恒 ----------
 
         [Test]
