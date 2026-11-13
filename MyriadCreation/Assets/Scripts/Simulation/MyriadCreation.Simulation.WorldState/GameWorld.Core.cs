@@ -736,6 +736,7 @@ public partial class GameWorld : MonoBehaviour
 			value.baseAbundance = abundance;
 			value.requiredInnovation = requiredInnovation;
 			value.originBiomes = DefaultNaturalBiomes(type);
+			value.spawnCondition = ResourceSpawnCondition.Unrestricted;
 			value.surfaceDepthShare = surfaceShare;
 			value.shaftDepthShare = shaftShare;
 			value.renewable = type == ResourceType.Forest || type == ResourceType.WildAnimal || type == ResourceType.WildPlant || type == ResourceType.Aquatic;
