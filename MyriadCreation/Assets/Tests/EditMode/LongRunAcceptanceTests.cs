@@ -51,18 +51,59 @@ namespace MyriadCreation.Tests.EditMode
             ContractRegistry.Clear();
         }
 
-        private GameWorld NewWorld()
+        private GameWorld NewWorld(int seed = 4242)
         {
             var go = new GameObject("LongRunAcceptanceWorld");
             _objects.Add(go);
             GameWorld world = go.AddComponent<GameWorld>();
             world.mapWidth = 64;
             world.mapHeight = 32;
-            world.randomSeed = 4242;
+            world.randomSeed = seed;
             world.SetupOptions = WorldSetupOptions.CreateStandard();
             world.InitializeWorld();
-            world.GenerateTerrain(4242);
+            world.GenerateTerrain(seed);
             return world;
+        }
+
+        [Test]
+        public void RunTwoSeeds_15Days_NoNaN_AndHotspots()
+        {
+            string dir = Path.Combine(Application.dataPath, "../Logs");
+            Directory.CreateDirectory(dir);
+            var lines = new List<string> { "seed,day,total_ms,max_ms,memory_mb,realms,settlements,armies" };
+            int[] seeds = { 4242, 7777 };
+            var stopwatch = new Stopwatch();
+
+            foreach (int seed in seeds)
+            {
+                GameWorld world = NewWorld(seed);
+                double totalMs = 0d;
+                double maxMs = 0d;
+                for (int day = 0; day < 15; day++)
+                {
+                    stopwatch.Restart();
+                    world.RunDiagnosticDays(1);
+                    stopwatch.Stop();
+                    double ms = stopwatch.Elapsed.TotalMilliseconds;
+                    totalMs += ms;
+                    maxMs = System.Math.Max(maxMs, ms);
+                    Assert.IsFalse(double.IsNaN(ms), "seed " + seed + " 日耗时为 NaN");
+                }
+                double memoryMb = System.GC.GetTotalMemory(false) / (1024d * 1024d);
+                lines.Add(string.Format(CultureInfo.InvariantCulture,
+                    "{0},{1},{2:F3},{3:F3},{4:F3},{5},{6},{7}",
+                    seed, world.currentDay, totalMs, maxMs, memoryMb,
+                    world.realms.Count, world.settlements.Count, world.armies.Count));
+                Assert.Greater(totalMs, 0d, "seed " + seed + " 应有耗时");
+                Assert.Less(maxMs, 5000d, "seed " + seed + " 单日不应卡死");
+                Assert.Greater(world.realms.Count, 0, "seed " + seed + " 政权不应消失");
+                Assert.Greater(world.SimulationScheduler.GetTimings().Count, 0, "seed " + seed + " 应有热点记录");
+            }
+
+            string file = Path.Combine(dir, "m05-multiseed-test.csv");
+            File.WriteAllLines(file, lines, Encoding.UTF8);
+            Assert.IsTrue(File.Exists(file), "多 seed 指标应导出");
+            Assert.AreEqual(3, lines.Count, "表头 + 2 个 seed");
         }
 
         [Test]
