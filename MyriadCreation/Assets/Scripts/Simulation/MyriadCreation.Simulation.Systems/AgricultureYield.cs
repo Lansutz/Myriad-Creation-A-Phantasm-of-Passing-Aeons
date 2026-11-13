@@ -30,7 +30,16 @@ public static class AgricultureYield
 				farmers += block.count;
 			}
 		}
-		if (farmers <= 0f)
+		return ComputeForLabor(tile, farmers);
+	}
+
+	/// <summary>
+	/// 给定劳动人口（不要求已写成地块人口块）的农业日产出。
+	/// 营地/迁徙队伍等“尚未落入地块人口块”的人群也能按同一劳动—土地关系产粮。
+	/// </summary>
+	public static float ComputeForLabor(TileData tile, float farmers)
+	{
+		if (!tile.exists || !tile.isLand || farmers <= 0f)
 		{
 			return 0f;
 		}

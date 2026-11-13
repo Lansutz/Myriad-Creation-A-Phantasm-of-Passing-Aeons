@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using MyriadCreation.Core.Data;
+using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World.Anchor;
 using MyriadCreation.World.Settlement;
@@ -89,14 +91,25 @@ public class CampData : HabitationSite
 		InitializeModeData(siteMode);
 	}
 
+	/// <summary>营地口粮按人口口径：1 人 1 日 0.01 食物单位（与 EconomyManager.PersonFoodPerDay 一致）。</summary>
+	public const float FoodPerPersonPerDay = 0.01f;
+
 	public void Tick(GameWorld world, float deltaDays)
 	{
 		if (isAbandoned)
 		{
 			return;
 		}
-		float num = population * 0.1f * deltaDays;
-		supplies -= num;
+		// 先收本地食物：营地人口在所在地块耕作/狩猎/捕鱼，产出从地块植被、野生、鱼群真实扣减。
+		if (world?.tiles != null && tileIndex >= 0 && tileIndex < world.tiles.Length && population > 0f)
+		{
+			ref TileData tile = ref world.tiles[tileIndex];
+			float farm = AgricultureYield.ComputeForLabor(tile, population) * deltaDays;
+			float meat = EcosystemSystem.HarvestForPeople(ref tile, population, deltaDays);
+			float fish = EcosystemSystem.HarvestFishForPeople(ref tile, population, deltaDays);
+			supplies += farm + meat + fish;
+		}
+		supplies -= population * FoodPerPersonPerDay * deltaDays;
 		if (supplies <= 0f)
 		{
 			morale -= deltaDays * 2f;

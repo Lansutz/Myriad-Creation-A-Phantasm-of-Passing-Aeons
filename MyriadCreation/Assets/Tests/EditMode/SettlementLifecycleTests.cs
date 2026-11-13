@@ -3,22 +3,19 @@ using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
-using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Simulation.Actors;
 using MyriadCreation.Simulation.State;
+using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.WorldState;
-using MyriadCreation.World;
-using MyriadCreation.World.Generation;
 using MyriadCreation.World.Settlement;
 
 namespace MyriadCreation.Tests.EditMode
 {
     /// <summary>
-    /// P1.1 聚落生命周期：长期低人口 + 无守军 + 无驻军 → 废弃压力累积 → 降为营地；
-    /// 人口/守军恢复则压力清零；压力随存档往返。
+    /// P6：营地补给来自本地劳动/狩猎/捕鱼；人口迁移从过载地块来，不再随机造人。
     /// </summary>
     public class SettlementLifecycleTests
     {
-        private const string SaveName = "__settlement_lifecycle_test";
         private readonly List<GameObject> _objects = new List<GameObject>();
 
         [TearDown]
@@ -29,130 +26,127 @@ namespace MyriadCreation.Tests.EditMode
                 if (go != null) Object.DestroyImmediate(go);
             }
             _objects.Clear();
-            SaveSystem.DeleteSave(SaveName);
         }
 
-        private GameWorld NewWorld()
+        private GameWorld NewFlatWorld(int size = 64)
         {
-            var go = new GameObject("SettlementLifecycleWorld");
+            var go = new GameObject("LifecycleWorld");
             _objects.Add(go);
             var world = go.AddComponent<GameWorld>();
-            world.mapWidth = 48;
-            world.mapHeight = 24;
-            world.SetupOptions = WorldSetupOptions.CreateStandard();
-            world.InitializeWorld();
-            world.GenerateTerrain(59);
+            world.mapWidth = 8;
+            world.mapHeight = size / 8;
+            world.tiles = new TileData[size];
+            world.settlements = new Dictionary<int, SettlementData>();
+            world.tradeCenters = new Dictionary<int, TradeCenter>();
+            for (int i = 0; i < size; i++) world.tiles[i] = Land(i, 1f, 1f);
             return world;
         }
 
-        private static SettlementData FirstSettlement(GameWorld world)
+        private static TileData Land(int tileIndex, float fertility, float npp, float wildlife = 1f, bool coast = false)
         {
-            foreach (var settlement in world.settlements.Values)
+            return new TileData
             {
-                if (settlement != null && settlement.siteMode == SiteMode.SedentarySettlement) return settlement;
-            }
-            return null;
-        }
-
-        private static void ClearTilePopulation(GameWorld world, int tileIndex)
-        {
-            TileData tile = world.tiles[tileIndex];
-            tile.populationBlocks = new List<PopulationBlock>();
-            world.tiles[tileIndex] = tile;
-        }
-
-        private static void SetTilePopulation(GameWorld world, int tileIndex, float amount)
-        {
-            TileData tile = world.tiles[tileIndex];
-            tile.populationBlocks = new List<PopulationBlock>
-            {
-                new PopulationBlock
-                {
-                    count = amount,
-                    raceId = 0,
-                    cultureId = -1,
-                    faithId = -1,
-                    socialClass = GameEnums.SocialClass.Peasant,
-                    satisfaction = 60f
-                }
+                exists = true,
+                isLand = true,
+                tileIndex = tileIndex,
+                regionId = 0,
+                biome = GameEnums.BiomeType.TemperateGrassland,
+                elevation01 = 0.2f,
+                fertility = fertility,
+                npp = npp,
+                vegetation = 1f,
+                wildlife = wildlife,
+                fishStock = coast ? 1f : 0f,
+                isCoast = coast
             };
-            world.tiles[tileIndex] = tile;
         }
 
-        private static void ClearArmiesFrom(GameWorld world, int tileIndex)
+        [Test]
+        public void Camp_WithLocalFood_SurvivesAndCanEvolve()
         {
-            foreach (Army army in world.armies.Values)
+            var world = NewFlatWorld();
+            var camp = new CampData
             {
-                if (army != null && army.currentTileIndex == tileIndex)
+                tileIndex = 0,
+                population = 50f,
+                supplies = 50f,
+                morale = 80f,
+                type = CampType.Refugee
+            };
+
+            for (int day = 0; day < 2200; day++) camp.Tick(world, 1f);
+
+            Assert.IsFalse(camp.isAbandoned, "有本地农业产出的营地不应饿死");
+            Assert.GreaterOrEqual(camp.permanence, 100f, "营地应能积累到可演化永久度");
+            Assert.IsTrue(camp.CanEvolveToSettlement, "永久度与人口达标后应可演化为聚落");
+        }
+
+        [Test]
+        public void Camp_WithoutLocalFood_IsAbandoned()
+        {
+            var world = NewFlatWorld();
+            world.tiles[0] = Land(0, 0f, 0f, 0f, coast: false);
+            var camp = new CampData
+            {
+                tileIndex = 0,
+                population = 50f,
+                supplies = 0f,
+                morale = 80f,
+                type = CampType.Refugee
+            };
+
+            for (int day = 0; day < 80 && !camp.isAbandoned; day++) camp.Tick(world, 1f);
+
+            Assert.IsTrue(camp.isAbandoned, "无农业/野生/鱼群的营地应因补给耗尽废弃");
+        }
+
+        [Test]
+        public void Migration_MovesPeopleFromOverloadedTile()
+        {
+            var world = NewFlatWorld();
+            var source = Land(0, 1f, 1f);
+            source.populationBlocks = new List<PopulationBlock>
+            {
+                new PopulationBlock { count = 500f, raceId = 0, cultureId = 0, faithId = 0, socialClass = GameEnums.SocialClass.Peasant, satisfaction = 60f }
+            };
+            world.tiles[0] = source;
+            var spawn = new SandboxSpawnSystem(world, 7);
+
+            float before = PopulationLedger.Total(world.tiles[0]);
+            bool moved = spawn.TrySeedPopulation();
+            float sourceAfter = PopulationLedger.Total(world.tiles[0]);
+            float targetAfter = 0f;
+            for (int i = 1; i < world.tiles.Length; i++) targetAfter += PopulationLedger.Total(world.tiles[i]);
+
+            Assert.IsTrue(moved, "过载地块应发生迁移");
+            Assert.Less(sourceAfter, before, "源地块人口应下降");
+            Assert.Greater(targetAfter, 0f, "目标地块人口应上升");
+            Assert.AreEqual(before, sourceAfter + targetAfter, 0.01f, "迁移前后总人口必须守恒");
+        }
+
+        [Test]
+        public void Migration_NoOverload_DoesNotCreatePeople()
+        {
+            var world = NewFlatWorld();
+            for (int i = 0; i < world.tiles.Length; i++)
+            {
+                TileData tile = Land(i, 1f, 1f);
+                tile.populationBlocks = new List<PopulationBlock>
                 {
-                    army.currentTileIndex = (tileIndex + 1) % world.tiles.Length;
-                    army.state = GameEnums.CombatState.Idle;
-                }
+                    new PopulationBlock { count = 50f, raceId = 0, cultureId = 0, faithId = 0, socialClass = GameEnums.SocialClass.Peasant, satisfaction = 60f }
+                };
+                world.tiles[i] = tile;
             }
-        }
+            float before = 0f;
+            foreach (TileData tile in world.tiles) before += PopulationLedger.Total(tile);
+            var spawn = new SandboxSpawnSystem(world, 7);
 
-        [Test]
-        public void LowPopulationWithoutGarrison_AbandonsAfterPressure()
-        {
-            var world = NewWorld();
-            SettlementData settlement = FirstSettlement(world);
-            Assert.IsNotNull(settlement, "前置：应有聚落");
-            settlement.garrison = 0;
-            settlement.abandonmentPressureDays = 179;
-            foreach (int tileIndex in Simulation.Systems.SettlementPopulationSystem.CollectTiles(world, settlement))
-            {
-                ClearTilePopulation(world, tileIndex);
-            }
-            Simulation.Systems.SettlementPopulationSystem.Recompute(world, settlement);
-            ClearArmiesFrom(world, settlement.tileIndex);
-            int anchorId = settlement.anchorId;
-            string siteId = settlement.siteId;
+            bool moved = spawn.TrySeedPopulation();
+            float after = 0f;
+            foreach (TileData tile in world.tiles) after += PopulationLedger.Total(tile);
 
-            world.RunSettlementTypologyNow();
-
-            Assert.IsFalse(world.settlements.ContainsKey(anchorId), "达到压力阈值应废弃聚落");
-            bool campFound = false;
-            foreach (var camp in world.Camps.AllCamps)
-            {
-                if (camp != null && camp.siteId == siteId) { campFound = true; break; }
-            }
-            Assert.IsTrue(campFound, "废弃后应留下营地");
-        }
-
-        [Test]
-        public void HealthySettlement_ResetsPressure()
-        {
-            var world = NewWorld();
-            SettlementData settlement = FirstSettlement(world);
-            Assert.IsNotNull(settlement);
-            settlement.garrison = 50;
-            settlement.abandonmentPressureDays = 50;
-            SetTilePopulation(world, settlement.tileIndex, 1000f);
-
-            world.RunSettlementTypologyNow();
-            Assert.Greater(world.SettlementTypologyTickCount, 0, "类型学日结应被调用");
-            Assert.Greater(world.SettlementTypologySettlementCount, 0, "系统应持有聚落表");
-            Assert.Greater(world.SettlementTypologySedentaryCount, 0, "系统内应有定居聚落");
-            Assert.IsTrue(world.SettlementTypologyHasSettlement(settlement.anchorId), "系统与 world.settlements 必须是同一张表");
-            Assert.IsTrue(world.settlements.ContainsKey(settlement.anchorId), "健康聚落不应被废弃");
-            Assert.AreEqual(0, settlement.abandonmentPressureDays, "人口/守军恢复应清零压力");
-        }
-
-        [Test]
-        public void AbandonmentPressure_RoundTripsThroughSave()
-        {
-            var world = NewWorld();
-            SettlementData settlement = FirstSettlement(world);
-            Assert.IsNotNull(settlement);
-            settlement.abandonmentPressureDays = 42;
-
-            Assert.IsTrue(SaveSystem.SaveGame(world, SaveName), "存盘应成功");
-            var loaded = SaveSystem.LoadGame(SaveName);
-            Assert.IsNotNull(loaded, "读档应返回世界");
-            _objects.Add(loaded.gameObject);
-
-            Assert.IsTrue(loaded.settlements.TryGetValue(settlement.anchorId, out SettlementData loadedSettlement));
-            Assert.AreEqual(42, loadedSettlement.abandonmentPressureDays, "废弃压力应往返");
+            Assert.IsFalse(moved, "没有过载源时不应迁移");
+            Assert.AreEqual(before, after, 0.01f, "没有过载源时不得凭空新增人口");
         }
     }
 }

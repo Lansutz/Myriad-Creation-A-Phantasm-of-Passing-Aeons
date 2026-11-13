@@ -1223,3 +1223,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
   5. 税收按政权全图扫描是 O(政权×地块×天)，改为只扫行政区划所在地区的 16 格。
 - **自然政权上限**：小地图默认最多 8 个自然政权（`MaxRealms=8`），是实体规模/性能上限，不是历史规律；大地图可另行配置。
 - **仍留欠账**：营地补给无来源、`SandboxSpawnSystem` 随机地块造人、稳定度回归/种族常数/聚落财富只减不增、铸币发行与在途运输队列。
+
+## D142 聚落生命周期闭合（P6）
+
+- **营地补给有来源**：`CampData.Tick` 不再只消耗；每日从所在地块获得农业劳动产出（`AgricultureYield.ComputeForLabor`）+ 狩猎（`EcosystemSystem.HarvestForPeople`）+ 捕鱼（`HarvestFishForPeople`），产出从地块植被/野生/鱼群真实扣减。补给消耗统一为 `0.01/人/日`，与人口口粮同单位（原 0.1 是 10 倍口径错误）。营地能在有产出的地块活过 5 年并把 `permanence` 推到 100，进而可演化为聚落；无产出地块仍会废弃。
+- **人口迁移替代随机造人**：`SandboxSpawnSystem.TrySeedPopulation` 改为从人口 > 承载力 1.1 倍的源地块，向邻近可承载地块移出约 10% 人口；源地块按 `PopulationLedger.RemoveFromIndex` 扣减、目标地块按 `PopulationLedger.Add` 增加，总人口守恒；没有过载源/合适目标就不新增人口。原“随机地块凭空加 4–16 人”删除。
+- **聚落财富来源**：商队到货时按实际入库货物的 `baseValue` 计成交价值，其中 5% 留在目的地聚落 `wealth`（仓储/卸货/交易服务）；没有聚落/没有成交就不加。
+- **聚落开发来源**：`SettlementSimulationSystem` 每日按人口规模产生的建设劳动推进 `development`（`gain * deltaDays * 0.01`），不再只减不增。
+- 测试：`SettlementLifecycleTests` 4 例（营地正反向、迁移守恒、无过载源不造人）。验证：`EXIT=0`、`1005/1002`、零 `error CS`（3 个 Explicit 跳过）。
+- 仍留欠账：完整市场价格/货币流通、迁徙路线寻路、营地仓储上限、聚落财富的消费端。

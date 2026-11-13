@@ -56,14 +56,21 @@ public static class EcosystemSystem
 	public static float Harvest(ref TileData tile, float days)
 	{
 		if (!tile.exists || !tile.isLand || days <= 0f) return 0f;
-		EnsureInitialized(ref tile);
-		if (tile.wildlife <= 0f || tile.populationBlocks == null) return 0f;
+		if (tile.populationBlocks == null) return 0f;
 		float people = 0f;
 		for (int i = 0; i < tile.populationBlocks.Count; i++)
 		{
 			people += Mathf.Max(0f, tile.populationBlocks[i].count);
 		}
-		if (people <= 0f) return 0f;
+		return HarvestForPeople(ref tile, people, days);
+	}
+
+	/// <summary>给定人口规模（不要求已写成地块人口块）的狩猎产出；扣减与产出同源。</summary>
+	public static float HarvestForPeople(ref TileData tile, float people, float days)
+	{
+		if (!tile.exists || !tile.isLand || days <= 0f || people <= 0f) return 0f;
+		EnsureInitialized(ref tile);
+		if (tile.wildlife <= 0f) return 0f;
 		float capacity = tile.wildlife * WildlifeFoodCapacityPerUnit * days
 			* EcologySpeciesCatalog.HuntYieldFactor(HabitatOf(in tile));
 		float demand = people * HuntFoodPerPersonPerDay * days;
@@ -77,13 +84,20 @@ public static class EcosystemSystem
 	public static float HarvestFish(ref TileData tile, float days)
 	{
 		if (!tile.exists || !tile.isLand || !tile.isCoast || days <= 0f) return 0f;
-		if (tile.fishStock <= 0f || tile.populationBlocks == null) return 0f;
+		if (tile.populationBlocks == null) return 0f;
 		float people = 0f;
 		for (int i = 0; i < tile.populationBlocks.Count; i++)
 		{
 			people += Mathf.Max(0f, tile.populationBlocks[i].count);
 		}
-		if (people <= 0f) return 0f;
+		return HarvestFishForPeople(ref tile, people, days);
+	}
+
+	/// <summary>给定人口规模的捕鱼产出。</summary>
+	public static float HarvestFishForPeople(ref TileData tile, float people, float days)
+	{
+		if (!tile.exists || !tile.isLand || !tile.isCoast || days <= 0f || people <= 0f) return 0f;
+		if (tile.fishStock <= 0f) return 0f;
 		float capacity = tile.fishStock * FishFoodCapacityPerUnit * days
 			* EcologySpeciesCatalog.CarryingFactor("coast", "fish");
 		float demand = people * FishFoodPerPersonPerDay * days;

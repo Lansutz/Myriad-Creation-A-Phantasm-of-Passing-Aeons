@@ -6,6 +6,8 @@ using MyriadCreation.Simulation.Actors;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World.Generation;
 using MyriadCreation.World.Settlement;
+using UnityEngine;
+using Random = System.Random;
 
 namespace MyriadCreation.Simulation.Systems
 {
@@ -49,34 +51,91 @@ public sealed class SandboxSpawnSystem
 		}
 	}
 
-	private void TrySeedPopulation()
+	/// <summary>
+	/// 人口迁移：从人口超过承载力 1.1 倍的源地块，向邻近可承载地块移出一小群。
+	/// 没有过载源/合适目标就不新增人口——不再“随机地块凭空造人”（D16）。
+	/// 返回是否真的发生迁移；供测试与长跑断言。
+	/// </summary>
+	public bool TrySeedPopulation()
 	{
-		for (int i = 0; i < 24; i++)
+		int start = _rng.Next(_world.tiles.Length);
+		for (int attempt = 0; attempt < _world.tiles.Length; attempt++)
 		{
-			int num = _rng.Next(_world.tiles.Length);
-			if (!IsSuitableLand(num))
+			int sourceIndex = (start + attempt) % _world.tiles.Length;
+			if (!IsSuitableLand(sourceIndex)) continue;
+			ref TileData source = ref _world.tiles[sourceIndex];
+			if (source.populationBlocks == null || source.populationBlocks.Count == 0) continue;
+			float population = PopulationLedger.Total(source);
+			float capacity = CarryingCapacitySystem.CalculateCarryingCapacity(source, _world.tradeCenters);
+			if (population < 10f || capacity <= 0f || population <= capacity * 1.1f) continue;
+
+			int targetIndex = FindMigrationTarget(sourceIndex);
+			if (targetIndex < 0) continue;
+
+			float move = Mathf.Clamp(population * 0.1f, 1f, population - capacity * 0.9f);
+			if (move < 1f) continue;
+			PopulationBlock template = source.populationBlocks[0];
+			float remaining = move;
+			for (int i = source.populationBlocks.Count - 1; i >= 0 && remaining > 0f; i--)
 			{
-				continue;
+				float take = Mathf.Min(source.populationBlocks[i].count, remaining);
+				PopulationLedger.RemoveFromIndex(source.populationBlocks, i, take);
+				remaining -= take;
+				if (source.populationBlocks[i].count <= 0.01f) source.populationBlocks.RemoveAt(i);
 			}
-			ref TileData reference = ref _world.tiles[num];
-			if (reference.populationBlocks == null || reference.populationBlocks.Count <= 0)
+			_world.tiles[sourceIndex] = source;
+
+			ref TileData target = ref _world.tiles[targetIndex];
+			target.populationBlocks ??= new List<PopulationBlock>();
+			PopulationLedger.Add(target.populationBlocks, new PopulationBlock
 			{
-				ref List<PopulationBlock> populationBlocks = ref reference.populationBlocks;
-				if (populationBlocks == null)
-				{
-					populationBlocks = new List<PopulationBlock>();
-				}
-				reference.populationBlocks.Add(new PopulationBlock
-				{
-					raceId = 0,
-					cultureId = 0,
-					count = 4f + (float)_rng.Next(0, 12),
-					satisfaction = 55f,
-					socialClass = GameEnums.SocialClass.Peasant
-				});
-				break;
+				raceId = template.raceId,
+				cultureId = template.cultureId,
+				faithId = template.faithId,
+				count = move,
+				satisfaction = Mathf.Clamp(template.satisfaction, 35f, 75f),
+				socialClass = template.socialClass
+			});
+			_world.tiles[targetIndex] = target;
+			return true;
+		}
+		return false;
+	}
+
+	private int FindMigrationTarget(int sourceIndex)
+	{
+		int width = Mathf.Max(1, _world.mapWidth);
+		int height = Mathf.Max(1, _world.mapHeight);
+		int sx = sourceIndex % width;
+		int sy = sourceIndex / width;
+		for (int dy = -2; dy <= 2; dy++)
+		{
+			for (int dx = -2; dx <= 2; dx++)
+			{
+				if (dx == 0 && dy == 0) continue;
+				int x = sx + dx;
+				int y = sy + dy;
+				if (x < 0 || x >= width || y < 0 || y >= height) continue;
+				int index = y * width + x;
+				if (!IsSuitableLand(index)) continue;
+				if (HasSettlementAt(index)) continue;
+				TileData candidate = _world.tiles[index];
+				float population = PopulationLedger.Total(candidate);
+				float capacity = CarryingCapacitySystem.CalculateCarryingCapacity(candidate, _world.tradeCenters);
+				if (capacity > population * 1.5f) return index;
 			}
 		}
+		return -1;
+	}
+
+	private bool HasSettlementAt(int tileIndex)
+	{
+		if (_world.settlements == null) return false;
+		foreach (SettlementData settlement in _world.settlements.Values)
+		{
+			if (settlement != null && settlement.tileIndex == tileIndex) return true;
+		}
+		return false;
 	}
 
 	private void TrySeedCamp()

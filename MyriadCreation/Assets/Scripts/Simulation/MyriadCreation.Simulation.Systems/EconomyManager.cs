@@ -6,6 +6,7 @@ using MyriadCreation.Simulation.Units;
 using UnityEngine;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Simulation.LawHost;
+using MyriadCreation.World.Settlement;
 
 namespace MyriadCreation.Simulation.Systems
 {
@@ -34,6 +35,8 @@ public class EconomyManager
 
 	/// <summary>政权表：税率唯一真源是 `realm.taxSystem`，全局 `_taxSystem` 只作旧测试/缺省兜底。</summary>
 	private readonly Dictionary<int, RealmData> _realms;
+
+	private readonly Dictionary<int, SettlementData> _settlements;
 
 	private readonly int _mapWidth;
 
@@ -94,7 +97,7 @@ public class EconomyManager
 	/// <summary>被节流抑制的容量不足跳发车次数，用于告警汇总。</summary>
 	private int _suppressedTradeCapacitySkips;
 
-	public EconomyManager(TileData[] tiles, Dictionary<int, TradeCenter> tradeCenters, Dictionary<int, GoodsDef> goodsDefs, CurrencySystem currency, TaxSystem taxSystem, Dictionary<int, RealmData> realms = null, int mapWidth = 128)
+	public EconomyManager(TileData[] tiles, Dictionary<int, TradeCenter> tradeCenters, Dictionary<int, GoodsDef> goodsDefs, CurrencySystem currency, TaxSystem taxSystem, Dictionary<int, RealmData> realms = null, int mapWidth = 128, Dictionary<int, SettlementData> settlements = null)
 	{
 		_tiles = tiles;
 		_tradeCenters = tradeCenters;
@@ -104,6 +107,7 @@ public class EconomyManager
 		_taxSystem = taxSystem;
 		_realms = realms;
 		_mapWidth = mapWidth;
+		_settlements = settlements;
 	}
 
 	public void UpdateStorageCapacities()
@@ -393,7 +397,10 @@ public class EconomyManager
 	/// </summary>
 	private void DeliverOrRetireStuckCaravan(int index, Caravan caravan, TradeCenter destination)
 	{
+		float valueBefore = CargoValue(caravan.cargo);
 		float accepted = DeliverCargo(destination, caravan.cargo);
+		float valueAfter = CargoValue(caravan.cargo);
+		CreditSettlementTrade(destination, valueBefore - valueAfter);
 		float left = SumCargo(caravan.cargo);
 		if (left <= CargoEpsilon)
 		{
@@ -422,6 +429,35 @@ public class EconomyManager
 			return;
 		}
 		_caravans.Add(caravan);
+	}
+
+	/// <summary>商队货物的内容价值（baseValue 口径），用于把成交留成记到聚落财富。</summary>
+	private float CargoValue(Dictionary<int, float> cargo)
+	{
+		if (cargo == null || _goodsDefs == null) return 0f;
+		float value = 0f;
+		foreach (KeyValuePair<int, float> pair in cargo)
+		{
+			if (pair.Value > 0f && _goodsDefs.TryGetValue(pair.Key, out GoodsDef def)) value += pair.Value * def.baseValue;
+		}
+		return value;
+	}
+
+	/// <summary>
+	/// 成交留成：商队实际入库的货物价值中，有一部分留在目的地聚落（仓储/卸货/交易服务）。
+	/// 不是凭空加钱，来源是真实货物的价值；没有聚落/没有成交就不加。
+	/// </summary>
+	private void CreditSettlementTrade(TradeCenter destination, float deliveredValue)
+	{
+		const float TradeWealthShare = 0.05f;
+		if (_settlements == null || destination == null || deliveredValue <= 0f) return;
+		foreach (SettlementData settlement in _settlements.Values)
+		{
+			if (settlement == null || settlement.IsRuined) continue;
+			if (settlement.tileIndex != destination.centerTileIndex) continue;
+			settlement.wealth += deliveredValue * TradeWealthShare;
+			return;
+		}
 	}
 
 	/// <summary>到货结算：逐项把商队货物入目的地仓储，返回实际入库总量；未入账部分原样留在 cargo（不蒸发）。</summary>

@@ -138,6 +138,8 @@ public sealed class SettlementSimulationSystem
 				settlement.abandonmentPressureDays = 0;
 			}
 			float gain = 0.02f + Mathf.Clamp(settlement.population / 5000f, 0f, 1f) * 0.08f;
+			// 开发度来自持续建设劳动：人口越多，日常营建把聚落开发度推得越快；不再只减不增。
+			settlement.development += gain * context.deltaDays * 0.01f;
 			SettlementTypologySystem.UpdateConstructionProgress(settlement, gain * context.deltaDays);
 			if (!SettlementTypologySystem.IsConstructionReady(settlement))
 			{
