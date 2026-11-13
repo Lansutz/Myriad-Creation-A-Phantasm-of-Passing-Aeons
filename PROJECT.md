@@ -205,7 +205,7 @@
 | 2 | 教理性别/婚姻 vs M5 人格效力 | 已收口 | `DoctrineIdentityRules`（D64）+ `LawApplicability/CharacterIdentity` 与司法豁免（D101）；同一套身份旗标供两处使用 |
 | 3 | 入口口径（授权 vs 面板） | 按 D33 执行 | 新面板只有查询（角色/家族/革新），无新增微操面板 |
 | 4 | denomination 必挂 vs 可选 | 按 D29 执行 | 生成期为每个 religion 合成 `isDefault=true` 默认宗派；faith 挂靠链有日志兜底（`GameWorld.Core`） |
-| 5 | 15 vs 16 asmdef | 以实测为准 | P2.5 后实测 **18** 个 asmdef（新增 Settings/Audio/Save.Runtime，删除 Infrastructure）；不再有“15/16”口径 |
+| 5 | 15 vs 16 asmdef | 以实测为准 | P2.5 后实测 **19** 个 asmdef（新增 Settings/Audio/Save.Runtime/Simulation.Hosts，删除 Infrastructure）；不再有“15/16”口径 |
 | 6 | D8 过期 | 已按 D29 取代 | 文档记录；M9 阻塞项改为 P2.2（已施工） |
 
 ## §6 统一验收状态（2026-11-13）

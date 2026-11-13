@@ -8,6 +8,7 @@
   <Project Path="MyriadCreation.Tests.PlayMode.csproj" />
   <Project Path="MyriadCreation.Save.Contracts.csproj" />
   <Project Path="MyriadCreation.Laws.csproj" />
+  <Project Path="MyriadCreation.Simulation.Hosts.csproj" />
   <Project Path="MyriadCreation.Settings.csproj" />
   <Project Path="MyriadCreation.Rendering.csproj" />
   <Project Path="MyriadCreation.Save.Runtime.csproj" />
