@@ -506,3 +506,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `CrimeBehavior`/`CrimeType` 增加 `SexualMisconduct`、`Witchcraft`；`CrimeRegistry` 注册对应罪行（性伦理 40 / 巫术 50），仍走既有司法系统，不新建审判流程。
 - `GameWorld.IsDoctrineCriminal(realmId, behavior)` 按国教伦理绑定判定：只有 `Crime` 入罪；`Shunned`/`Accepted`/未指定都不入罪。`TryTrialDoctrineCrime` 非罪行直接驳回，入罪才调用既有 `TryTrialCrime`。
 - 不做：`Shunned` 的社会排斥后果（关系/声望）暂未接，留给后续 WP3 批次。
+
+## D59 教义和平主义 → 宗教战争门禁（P1.3 WP3 第三点）
+
+- `GameWorld.IsStateFaithPacifist(realmId)` 读国教 `DoctrineBindings.pacifism`。
+- 若为真：`Crusade/ReligiousConflict` 宣战直接拒绝；`DeclareGreatHolyWar` 直接拒绝。普通世俗战争不受影响，避免把和平主义误写成“不能打仗”。
+- 测试：临时给国教加 `doctrine_pacifism`，断言宗教战争被拒，`finally` 还原内容。

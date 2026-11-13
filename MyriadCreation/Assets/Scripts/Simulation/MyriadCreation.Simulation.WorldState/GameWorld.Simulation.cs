@@ -1110,6 +1110,26 @@ public partial class GameWorld : MonoBehaviour
 		return DeclareWar(attackerId, defenderId, reason, ResolveSupremeRulerId(attackerId));
 	}
 
+	private static bool IsReligiousCasusBelli(GameEnums.CasusBelliType type)
+	{
+		return type == GameEnums.CasusBelliType.Crusade || type == GameEnums.CasusBelliType.ReligiousConflict;
+	}
+
+	/// <summary>P1.3：国教是否持和平主义教义（禁止圣战/宗教战争）。</summary>
+	public bool IsStateFaithPacifist(int realmId)
+	{
+		if (realms == null || !realms.TryGetValue(realmId, out RealmData realm) || realm == null)
+		{
+			return false;
+		}
+		FaithSystem faith = GetFaithSystem(realm.stateReligionId);
+		if (faith == null || !MyriadCreation.Simulation.ContentHost.ContentResolvers.Religions.TryGet(faith.religionId, out MyriadCreation.Content.Definitions.ReligionDef religion))
+		{
+			return false;
+		}
+		return MyriadCreation.Simulation.FaithHost.DoctrineBindingHost.Resolve(religion).pacifism;
+	}
+
 	private bool DeclareWarCore(int attackerId, int defenderId, string reason)
 	{
 		WarRules rules = _diplomacyManager.WarRules ?? WarRules.Default();
@@ -1197,6 +1217,10 @@ public partial class GameWorld : MonoBehaviour
 			casusBelli = null;
 		}
 		WarRules rules = _diplomacyManager.WarRules ?? WarRules.Default();
+		if (casusBelli != null && IsStateFaithPacifist(attackerId) && IsReligiousCasusBelli(casusBelli.type))
+		{
+			return false;
+		}
 		if (warGoal != null)
 		{
 			if (casusBelli != null && !WarJustificationSystem.GetSupportedWarGoals(casusBelli.type).Contains(warGoal.type))
@@ -1619,7 +1643,7 @@ public partial class GameWorld : MonoBehaviour
 		{
 			return false;
 		}
-		if (!faithSystem.CanDeclareGreatHolyWar())
+		if (!faithSystem.CanDeclareGreatHolyWar() || IsStateFaithPacifist(callerRealmId))
 		{
 			return false;
 		}
