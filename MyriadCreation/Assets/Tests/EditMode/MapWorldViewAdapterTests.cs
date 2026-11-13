@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using MyriadCreation.Core.Contracts;
 using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.Culture;
+using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World;
 using MyriadCreation.World.Settlement;
@@ -164,6 +166,40 @@ namespace MyriadCreation.Tests.EditMode
             IReadOnlyList<MapRealmInfo> realms = view.GetNomadicRealms();
             Assert.IsNotNull(realms);
             Assert.AreEqual(0, realms.Count);
+        }
+
+        [Test]
+        public void ArmyView_MapsLiveArmies_AndSkipsDead()
+        {
+            _world.armies = new Dictionary<int, Army>
+            {
+                [1] = new Army
+                {
+                    armyId = 1,
+                    ownerRealmId = 3,
+                    currentTileIndex = 5,
+                    armyName = "第一军",
+                    organization = 80f,
+                    state = GameEnums.CombatState.Marching
+                },
+                [2] = new Army
+                {
+                    armyId = 2,
+                    ownerRealmId = 4,
+                    currentTileIndex = 7,
+                    state = GameEnums.CombatState.Dead
+                }
+            };
+
+            var view = new MapWorldViewAdapter(_world);
+            Assert.AreEqual(2, view.ArmyCount);
+            IReadOnlyList<MapArmyInfo> armies = view.GetArmies();
+            Assert.AreEqual(1, armies.Count, "阵亡军队不进地图视图");
+            Assert.AreEqual(1, armies[0].armyId);
+            Assert.AreEqual(3, armies[0].realmId);
+            Assert.AreEqual(5, armies[0].tileIndex);
+            Assert.AreEqual((int)GameEnums.CombatState.Marching, armies[0].combatState);
+            Assert.AreEqual(80f, armies[0].organization, 0.001f);
         }
     }
 }

@@ -42,6 +42,7 @@ namespace MyriadCreation.Rendering
         private IMapSettlementView _settlementView;
         private IMapOverlayView _overlayView;
         private IMapRealmView _realmView;
+        private IMapArmyView _armyView;
         [SerializeField] private MeshFilter meshFilter;
         [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private Texture2D mapTexture;
@@ -80,6 +81,9 @@ namespace MyriadCreation.Rendering
         /// <summary>当前注入的只读聚落视图（SettlementIconLayer 用）。</summary>
         public IMapSettlementView SettlementView => _settlementView;
 
+        /// <summary>当前注入的只读军队视图（ArmyMarkerLayer 用）。</summary>
+        public IMapArmyView ArmyView => _armyView;
+
         public void SetWorldView(IMapWorldView view)
         {
             // 只记录只读视图，不改 mapWidth/mapHeight：
@@ -89,8 +93,11 @@ namespace MyriadCreation.Rendering
             _settlementView = view as IMapSettlementView;
             _overlayView = view as IMapOverlayView;
             _realmView = view as IMapRealmView;
+            _armyView = view as IMapArmyView;
             var settlementIcons = GetComponent<SettlementIconLayer>();
             if (settlementIcons != null) settlementIcons.SetSettlementView(_settlementView);
+            var armyMarkers = GetComponent<ArmyMarkerLayer>();
+            if (armyMarkers != null) armyMarkers.SetArmyView(_armyView);
             _forceMapRefresh = true;
         }
 
@@ -173,6 +180,11 @@ namespace MyriadCreation.Rendering
             {
                 settlementIcons.SetSettlementView(_settlementView);
             }
+            var armyMarkers = ArmyMarkerLayer.Ensure(this);
+            if (armyMarkers != null)
+            {
+                armyMarkers.SetArmyView(_armyView);
+            }
         }
 
                 void Update()
@@ -186,6 +198,8 @@ namespace MyriadCreation.Rendering
  // 地图尺寸变化 → 聚落图标的世界坐标随之变化，重建图标层
                 var settlementIcons = GetComponent<SettlementIconLayer>();
                 if (settlementIcons != null) settlementIcons.Rebuild();
+                var armyMarkers = GetComponent<ArmyMarkerLayer>();
+                if (armyMarkers != null) armyMarkers.Rebuild();
                 Debug.Log($"[MapRenderer] 尺寸重同步：{mapWidth}×{mapHeight}——显示就位");
             }
 

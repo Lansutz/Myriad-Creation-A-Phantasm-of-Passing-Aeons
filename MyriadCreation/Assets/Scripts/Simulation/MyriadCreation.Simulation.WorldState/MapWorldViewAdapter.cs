@@ -9,6 +9,7 @@ using MyriadCreation.Simulation.Systems;
 using UnityEngine;
 using MyriadCreation.World.Settlement;
 using MyriadCreation.Simulation.Diplomacy;
+using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.WorldState;
 
 namespace MyriadCreation.Simulation.WorldState
@@ -17,7 +18,7 @@ namespace MyriadCreation.Simulation.WorldState
 /// IMapWorldView 的 host 适配器（B7）：把 GameWorld 的宽高/地块/文化/外交/聚落锚点转成 Rendering 可用的只读视图。
 /// 只缓存 MapWidth/MapHeight（世界生成后尺寸固定）；Wrap/Player/关系/聚落读取保持实时，避免世界重绑后陈旧。
 /// </summary>
-public sealed class MapWorldViewAdapter : IMapWorldView, IMapSettlementView, IMapOverlayView, IMapRealmView
+public sealed class MapWorldViewAdapter : IMapWorldView, IMapSettlementView, IMapOverlayView, IMapRealmView, IMapArmyView
 {
 	private readonly GameWorld _world;
 
@@ -153,6 +154,43 @@ public sealed class MapWorldViewAdapter : IMapWorldView, IMapSettlementView, IMa
 		}
 		return list;
 	}
+	// ===== IMapArmyView =====
+
+	public int ArmyCount => ((_world?.armies != null) ? _world.armies.Count : 0);
+
+	public IReadOnlyList<MapArmyInfo> GetArmies()
+	{
+		List<MapArmyInfo> list = new List<MapArmyInfo>();
+		if (_world?.armies == null)
+		{
+			return list;
+		}
+		foreach (var army in _world.armies.Values)
+		{
+			if (army == null || army.state == GameEnums.CombatState.Dead)
+			{
+				continue;
+			}
+			list.Add(ToArmyInfo(army));
+		}
+		return list;
+	}
+
+	private MapArmyInfo ToArmyInfo(Army army)
+	{
+		return new MapArmyInfo
+		{
+			armyId = army.armyId,
+			realmId = army.ownerRealmId,
+			tileIndex = army.currentTileIndex,
+			armyName = army.armyName,
+			manpower = army.GetTotalManpower(_world?.unitDefs),
+			organization = army.organization,
+			combatState = (int)army.state,
+			isMoving = army.movePath != null && army.movePath.Count > 0
+		};
+	}
+
 	// ===== IMapSettlementView =====
 
 	public int SettlementCount => ((_world?.settlements != null) ? _world.settlements.Count : 0);

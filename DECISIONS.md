@@ -547,3 +547,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 未接：教职任免的玩家入口（官职 0–5 仍无语义定义）；`Shunned` 之外的人格效力（法律适用按身份的差异）仍属 M5 剩余。
 - 葬礼：`DoctrineBindings.funeral` 已可解析，但当前没有遗体/仪式/纪念物系统，唯一可接的只有抽象加成，违反宪章原则 5（机制优先于数值）。裁决：**内容就绪、消费者暂缓**，待仪式/节期系统落地后再接线；不假装已完成。
 
+
+## D65 军队地图标记（P1.5 最后一个代码项）
+
+- 契约：`Core.Contracts.MapArmyInfo` + `IMapArmyView`（只带 Core 类型，`combatState` 用 int 传值）；`MapWorldViewAdapter` 实现，投影 `GameWorld.armies`，跳过 `CombatState.Dead`。
+- 渲染：`ArmyMarkerLayer` 与 `SettlementIconLayer` 同构——代码创建、程序化箭头 Sprite、按政权 id 确定性配色（交战红/围城橙/溃退灰）、每帧轻量跟随 `currentTileIndex`、相机 billboard。
+- 开关：受 `MapLayerConfig.showArmyMarkers` 控制（默认关，属可选叠加层，不改变既有画面）；`MapRenderer.Start`/`SetWorldView`/尺寸重同步三处接上。
+- Rendering 仍只依赖 `Core.Contracts`，没有把 `GameWorld/Army` 带进表现层。
+- 未做：舰队标记（`Navy` 还没有地图视图契约）；海战结算；舰船建造消耗。
