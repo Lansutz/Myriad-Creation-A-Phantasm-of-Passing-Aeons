@@ -461,3 +461,8 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `Army.DailyTick` 之前从未注册进调度（军队不行军、不耗补）；新增 `ArmySchedule`（`army.daily`，order 15，在战斗日结之前）统一推进补给/组织/训练/行军。
 - 行军后 `GameWorld.TryOccupyByArmy`：进入交战方领土时调用 `PoliticalManager.OccupyTile` 标记 `occupyingRealmId`；**所有权仍由和约决定**，占领只是军事状态，避免与外交割让两套写入口。
 - 未做：征兵路径（依赖人力/物资/财政）、海军写侧、军队标记绘制；这些仍是 P1.5 剩余。
+
+## D51 选将接入军队创建（P1.6 第一批）
+
+- `GameWorld.CreateArmy(ownerRealmId, -1, tile)` 现在调用 `CharacterManager.FindBestGeneral` 选统帅能力最高者，并把 `commandedArmyId` 写回人物；显式传指挥官时保持原行为。
+- 不做：不新建"将军池/任命系统"；指挥官仍是人物 id，军队仍是唯一军事实体。

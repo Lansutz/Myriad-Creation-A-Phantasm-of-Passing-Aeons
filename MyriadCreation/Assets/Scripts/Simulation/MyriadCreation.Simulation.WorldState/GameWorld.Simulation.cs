@@ -1628,6 +1628,11 @@ public partial class GameWorld : MonoBehaviour
 
 	public Army CreateArmy(int ownerRealmId, int commanderId, int tileIndex)
 	{
+		// P1.6：未指定指挥官时按统帅能力选将，并把军队挂到该人物身上。
+		if (commanderId < 0)
+		{
+			commanderId = _characterManager?.FindBestGeneral(ownerRealmId)?.characterId ?? -1;
+		}
 		Army army = new Army
 		{
 			armyId = _nextArmyId++,
@@ -1642,6 +1647,14 @@ public partial class GameWorld : MonoBehaviour
 		};
 		armies[army.armyId] = army;
 		MapUnitRegistry.RegisterArmy(army);
+		if (commanderId >= 0)
+		{
+			CharacterData commander = _characterManager?.GetCharacter(commanderId);
+			if (commander != null)
+			{
+				commander.commandedArmyId = army.armyId;
+			}
+		}
 		return army;
 	}
 

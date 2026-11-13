@@ -74,6 +74,26 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
+        public void CreateArmy_AutoAssignsBestGeneral()
+        {
+            var world = NewWorld();
+            var (attacker, _) = PickTwoRealms(world);
+            CharacterData expected = world.GetCharacterManager().FindBestGeneral(attacker);
+            Assert.IsNotNull(expected, "前置：政权应有可用人物");
+            int tile = -1;
+            for (int i = 0; i < world.tiles.Length; i++)
+            {
+                if (world.tiles[i].isLand && world.tiles[i].ownerRealmId == attacker) { tile = i; break; }
+            }
+            Assert.GreaterOrEqual(tile, 0);
+
+            Army army = world.CreateArmy(attacker, -1, tile);
+
+            Assert.AreEqual(expected.characterId, army.commanderId, "未指定指挥官时应选统帅能力最高者");
+            Assert.AreEqual(army.armyId, expected.commandedArmyId, "军队应挂到该人物身上");
+        }
+
+        [Test]
         public void ArmyMovesAndOccupiesEnemyTile()
         {
             var world = NewWorld();
