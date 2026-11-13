@@ -26,6 +26,36 @@ public static class DefaultLawCatalog
 	/// 覆盖开局/政变映射最常引用的 lawId（tax_light/tax_standard/tax_heavy/militia/standing_army）。
 	/// 这不是完整目录：完整 9 组/32 法请修复 StreamingAssets/Base/Laws/Laws.json。
 	/// </summary>
+	private static Dictionary<string, LawDef> _lawIndex;
+
+	/// <summary>按 lawId 查定义（缓存）；找不到返回 null。用于人格效力/豁免判定。</summary>
+	public static LawDef FindLaw(string lawId)
+	{
+		if (string.IsNullOrEmpty(lawId))
+		{
+			return null;
+		}
+		if (_lawIndex == null)
+		{
+			_lawIndex = new Dictionary<string, LawDef>();
+			List<LawGroupDef> groups = CreateGroups();
+			for (int g = 0; g < groups.Count; g++)
+			{
+				LawGroupDef group = groups[g];
+				if (group?.laws == null) continue;
+				for (int i = 0; i < group.laws.Count; i++)
+				{
+					LawDef law = group.laws[i];
+					if (law != null && !string.IsNullOrEmpty(law.lawId))
+					{
+						_lawIndex[law.lawId] = law;
+					}
+				}
+			}
+		}
+		return _lawIndex.TryGetValue(lawId, out LawDef value) ? value : null;
+	}
+
 	public static List<LawGroupDef> CreateDefaultGroups()
 	{
 		return new List<LawGroupDef>
@@ -239,7 +269,9 @@ public static class DefaultLawCatalog
 			issuerCharacterId = source.issuerCharacterId,
 			enactmentDays = source.enactmentDays,
 			proposalAuthority = source.proposalAuthority,
-			requiredInstitution = source.requiredInstitution
+			requiredInstitution = source.requiredInstitution,
+			appliesTo = source.appliesTo,
+			exemptIdentities = source.exemptIdentities
 		};
 		if (source.overrides != null)
 		{

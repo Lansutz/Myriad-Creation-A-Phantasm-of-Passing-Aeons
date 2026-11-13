@@ -56,7 +56,7 @@ namespace MyriadCreation.Tests.EditMode
             List<DecreeDef> referenceDecrees = LawCatalogReference.CreateDecrees();
             Assert.AreEqual(referenceGroups.Count, LawContentLoader.Groups.Count, "组数量应与测试基准（JSON 对照）一致");
             Assert.AreEqual(12, LawContentLoader.Groups.Count, "默认目录应为 12 组");
-            Assert.AreEqual(49, CountLaws(LawContentLoader.Groups), "默认目录应为 49 条法律");
+            Assert.AreEqual(50, CountLaws(LawContentLoader.Groups), "默认目录应为 50 条法律");
             Assert.AreEqual(referenceDecrees.Count, LawContentLoader.Decrees.Count, "法令数量应与测试基准一致");
             Assert.AreEqual(2, LawContentLoader.Decrees.Count);
         }
@@ -166,7 +166,7 @@ namespace MyriadCreation.Tests.EditMode
 
             List<LawGroupDef> loadedViaCatalog = DefaultLawCatalog.CreateGroups();
             Assert.AreEqual(12, loadedViaCatalog.Count);
-            Assert.AreEqual(49, CountLaws(loadedViaCatalog), "加载 JSON 后 CreateGroups 应返回 JSON 内容");
+            Assert.AreEqual(50, CountLaws(loadedViaCatalog), "加载 JSON 后 CreateGroups 应返回 JSON 内容");
 
             // 返回的是深拷贝：修改不影响后续调用
             loadedViaCatalog[0].laws[0].name = "被外部改掉";
@@ -236,7 +236,7 @@ namespace MyriadCreation.Tests.EditMode
 
             Assert.IsTrue(LawContentLoader.EnsureLoaded());
             Assert.AreEqual(groupsFirst, LawContentLoader.Groups.Count);
-            Assert.AreEqual(49, CountLaws(DefaultLawCatalog.CreateGroups()));
+            Assert.AreEqual(50, CountLaws(DefaultLawCatalog.CreateGroups()));
         }
     }
 }

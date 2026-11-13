@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using MyriadCreation.Core.Enums;
 using MyriadCreation.Content.Definitions;
 
 namespace MyriadCreation.Simulation.Laws
@@ -59,5 +60,11 @@ public class LawDef
 
 	/// <summary>提案权为中央机构时要求的中央机构（None = 任意中央机构官员）。</summary>
 	public CentralInstitution requiredInstitution = CentralInstitution.None;
+
+	/// <summary>适用身份掩码；None = 所有人。与 exemptIdentities 同时命中时豁免优先。</summary>
+	public SocialIdentityFlags appliesTo = SocialIdentityFlags.None;
+
+	/// <summary>豁免身份掩码；命中即不适用（教士法庭/贵族特权等）。</summary>
+	public SocialIdentityFlags exemptIdentities = SocialIdentityFlags.None;
 }
 }

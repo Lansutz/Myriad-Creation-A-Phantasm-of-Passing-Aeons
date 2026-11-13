@@ -60,7 +60,8 @@ namespace MyriadCreation.Tests.EditMode
                     laws = new List<LawDef>
                     {
                         Law("charter_free_city", "privilege", "自由市特许", 1, 100f, 10f, 0.95f, 1f, 0f, 1f, description: "授予城市自治与贸易特许。", authority: ProposalAuthority.CharterHolders, enactmentDays: 45),
-                        Law("charter_guild", "privilege", "行会特许", 2, 140f, 15f, 1f, 0f, 0f, 1f, description: "授予行会垄断与自治权。", authority: ProposalAuthority.CharterHolders, initiallyKnown: false, enactmentDays: 60)
+                        Law("charter_guild", "privilege", "行会特许", 2, 140f, 15f, 1f, 0f, 0f, 1f, description: "授予行会垄断与自治权。", authority: ProposalAuthority.CharterHolders, initiallyKnown: false, enactmentDays: 60),
+                        Law("clergy_forum", "privilege", "教士法庭", 1, 80f, 10f, 1f, 0f, 0f, 1f, description: "教士不受世俗法庭审判，由教会法庭处置。", enactmentDays: 30, exemptIdentities: MyriadCreation.Core.Enums.SocialIdentityFlags.Clergy)
                     }
                 },
                 new LawGroupDef
@@ -223,7 +224,7 @@ namespace MyriadCreation.Tests.EditMode
             };
         }
 
-        private static LawDef Law(string id, string groupId, string name, int tier, float costTreasury, float costPrestige, float tax = 1f, float stability = 0f, float legitimacy = 0f, float manpower = 1f, float unrest = 0f, string description = "", bool initiallyKnown = true, int enactmentDays = 30, ProposalAuthority authority = ProposalAuthority.HeadOfState, CentralInstitution requiredInstitution = CentralInstitution.None, List<int> requiredInnovationIds = null)
+        private static LawDef Law(string id, string groupId, string name, int tier, float costTreasury, float costPrestige, float tax = 1f, float stability = 0f, float legitimacy = 0f, float manpower = 1f, float unrest = 0f, string description = "", bool initiallyKnown = true, int enactmentDays = 30, ProposalAuthority authority = ProposalAuthority.HeadOfState, CentralInstitution requiredInstitution = CentralInstitution.None, List<int> requiredInnovationIds = null, MyriadCreation.Core.Enums.SocialIdentityFlags exemptIdentities = MyriadCreation.Core.Enums.SocialIdentityFlags.None)
         {
             return new LawDef
             {
@@ -238,6 +239,7 @@ namespace MyriadCreation.Tests.EditMode
                 enactmentDays = enactmentDays,
                 proposalAuthority = authority,
                 requiredInstitution = requiredInstitution,
+                exemptIdentities = exemptIdentities,
                 requirements = new LawRequirement
                 {
                     requiredInnovationIds = requiredInnovationIds ?? new List<int>()

@@ -822,3 +822,13 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 表型/魅力/疾病等既有消费者继续读 DnaData 快照，行为不变；新代码可只读 genome。
 - 测试：双亲子代同时有 genome 与 6 座 DnaData 位点。
 - 未做：彻底删除 DnaData 字段（它仍是存档 DTO 与大量消费者的输入；删除需同批改存档与表型链，风险大于收益）。
+
+## D101 法律人格效力（M5 身份轴）落地
+
+- `LawDef` 增 `appliesTo/exemptIdentities`（`SocialIdentityFlags` 掩码）；`LawApplicability.AppliesTo`：豁免优先，`appliesTo=None` 表示不限身份。
+- `CharacterIdentity.Of(character, realmId)`：按角色给出身份旗标（Clergy 只给教士，不再把 Noble 也算作教士），外政权人物补 `Foreigner`。
+- `GameWorld.HasLegalExemption(realmId, characterId)`：查现行 `activeLawId` 对应定义，命中不适用/豁免即返回 true；`TryTrialCrime` 与教义罪行审判入口据此不启动司法程序。
+- 内容：`privilege` 组新增 `clergy_forum`（教士法庭，`exemptIdentities=Clergy`）；默认未设为现行法，需推行后生效，既有行为不变。
+- `DefaultLawCatalog.CloneLaw` 补齐两个新字段（否则内容加载后被克隆丢掉）；测试基准表同步新增该法。
+- 测试：掩码豁免/限定范围；世界里推行教士法庭后教士豁免、平民不豁免；JSON 计数与字段对拍。
+- §5.1 冲突 2 的“法律人格效力”欠账由此关闭。

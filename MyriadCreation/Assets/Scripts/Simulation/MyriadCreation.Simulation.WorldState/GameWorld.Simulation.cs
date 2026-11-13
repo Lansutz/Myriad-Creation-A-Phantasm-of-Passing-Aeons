@@ -1896,6 +1896,10 @@ public partial class GameWorld : MonoBehaviour
 
 	public TrialResult TryTrialCrime(int realmId, CrimeType crime, int suspectCharacterId)
 	{
+		if (HasLegalExemption(realmId, suspectCharacterId))
+		{
+			return default;
+		}
 		JudicialSystem orCreateJudicialSystem = GetOrCreateJudicialSystem(realmId);
 		if (orCreateJudicialSystem == null)
 		{
@@ -1909,6 +1913,38 @@ public partial class GameWorld : MonoBehaviour
 			_chronicle.Add(eventType, string.Format("{0}司法审结：{1}（{2}）", value?.realmName ?? "某政权", crime, result.verdict), false, realmId);
 		}
 		return result;
+	}
+
+	/// <summary>
+	/// 人格效力（M5）：现行法中若有对该身份不适用/豁免的条款，司法程序不启动。
+	/// 只查现行 activeLawId，不扫描全部法律目录。
+	/// </summary>
+	public bool HasLegalExemption(int realmId, int characterId)
+	{
+		if (realms == null || !realms.TryGetValue(realmId, out RealmData realm) || realm?.lawState?.groups == null)
+		{
+			return false;
+		}
+		CharacterData character = _characterManager?.GetCharacter(characterId);
+		if (character == null)
+		{
+			return false;
+		}
+		SocialIdentityFlags identity = CharacterIdentity.Of(character, realmId);
+		for (int i = 0; i < realm.lawState.groups.Count; i++)
+		{
+			LawGroupState group = realm.lawState.groups[i];
+			if (group == null || string.IsNullOrEmpty(group.activeLawId))
+			{
+				continue;
+			}
+			LawDef law = DefaultLawCatalog.FindLaw(group.activeLawId);
+			if (law != null && !LawApplicability.AppliesTo(law, identity))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void RebuildJudicialLaws(int realmId)

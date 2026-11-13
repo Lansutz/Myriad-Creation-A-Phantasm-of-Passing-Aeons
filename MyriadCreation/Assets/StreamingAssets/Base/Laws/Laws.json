@@ -377,6 +377,36 @@
           "enactmentDays": 60,
           "proposalAuthority": 2,
           "requiredInstitution": 0
+        },
+        {
+          "lawId": "clergy_forum",
+          "groupId": "privilege",
+          "name": "教士法庭",
+          "description": "教士不受世俗法庭审判，由教会法庭处置。",
+          "tier": 1,
+          "requirements": {
+            "minTreasury": 0.0,
+            "minLegitimacy": 0.0,
+            "minCentralization": 0.0,
+            "requiredLawIds": [],
+            "requiredInnovationIds": []
+          },
+          "effects": {
+            "taxMultiplier": 1.0,
+            "stabilityPerYear": 0.0,
+            "legitimacyPerYear": 0.0,
+            "manpowerMultiplier": 1.0,
+            "unrestPerYear": 0.0
+          },
+          "enactmentCostTreasury": 80.0,
+          "enactmentCostPrestige": 10.0,
+          "upkeepPerYear": 0.0,
+          "isInitiallyKnown": true,
+          "enactmentDays": 30,
+          "proposalAuthority": 0,
+          "requiredInstitution": 0,
+          "appliesTo": 0,
+          "exemptIdentities": 4
         }
       ]
     },
