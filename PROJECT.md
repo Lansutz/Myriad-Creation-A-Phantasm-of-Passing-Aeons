@@ -208,4 +208,4 @@
 6. **架构判据** — `Rendering/Laws/Faith/Culture/Save.Contracts/Settings/Audio` 可独立编译；`Infrastructure` 已删除，存档实现归 `Save.Runtime`；`UI` 不再引用 App/World/Infrastructure；App 装配 UI。判据达成。
 7. **迁移已落地** — 旧总纲在 `docs/archive/2026-11-11_superseded/`，不再作为现行；V2 为唯一现行总纲。
 
-**结论**：§5.1 清零（第 2 条剩余项归属 M5）；§6 七条全部满足。P2.5 F、P2.3 Intrigue、调度器全局两相按 D97–D99 作废并写明触发条件；其余 P0–P2 项完成。
+**结论**：§5.1 清零（第 2 条剩余项归属 M5）；§6 七条全部满足。P2.5 A–E 完成（F 按 D97 作废并写明触发条件）、P2.3 信息滞后完成（Intrigue 按 D98 作废）、P2.6 影响力两相完成（调度器全局两相按 D99 作废）、P2.4 计划点名平表全部外提（其余按 D99 清点）。
