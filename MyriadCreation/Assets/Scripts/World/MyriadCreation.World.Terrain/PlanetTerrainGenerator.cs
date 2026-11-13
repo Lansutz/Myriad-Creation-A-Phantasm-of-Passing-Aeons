@@ -228,6 +228,7 @@ public class PlanetTerrainGenerator
 			reference.biome = HoldridgeBiomeClassifier.Classify(reference.annualTemp, reference.annualPrecipMm, reference.elevation01, reference.isLand, reference.isCoast, reference.isRiver, reference.slopeDegree, latAbs[i]);
 			reference.climateZone = ClassifyClimateZone(reference.annualTemp, reference.annualPrecipMm);
 			reference.fertility = HoldridgeBiomeClassifier.CalculateFertility(reference.annualTemp, reference.annualPrecipMm, reference.elevation01, reference.slopeDegree, reference.biome);
+			reference.npp = EcologyModel.ComputeNpp(reference.annualTemp, reference.annualPrecipMm);
 		});
 		Debug.Log((object)$"[PlanetTerrainGenerator] 生成完成，陆地{CountLand(tiles)}地块，海洋{num - CountLand(tiles)}地块");
 	}

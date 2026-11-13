@@ -928,3 +928,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 仍不复制其图标/渲染资源；只借符号模型，家族创建/存档字段不变（复用 coaPattern/coaColors）。
 - 城市俯视图：Azgaar 的 `burgs-generator` 生成聚落位置/人口/经济与 SVG 图标，不是街道级俯视布局；因此不按它做“城市俯视图”，需要自研布局。
 - 验证：`EXIT=0`、`887/889`、零 `error CS`。
+
+## D114 NPP：Earth Simulator 生态模型移植
+
+- 从本机 `E:\SteamLibrary\...\Earth Simulator\EarthSimulator\ecology.js` 读取 Miami NPP 公式（温度 sigmoid + 降水指数 + 45/55°C 叶片上限），在 `World.Terrain.EcologyModel` 重新实现（不复制代码）。
+- `TileData.npp` 落盘、`PlanetTerrainGenerator` 生成时计算；`CarryingCapacitySystem` 以 `0.5+0.5*npp` 缩放承载力（`npp=0` 视为旧档/未计算保持旧口径）。
+- 测试：温度/降水双限制、高温封顶、承载力随 NPP 变化。
+- 未做：NPP 驱动植被演替/食物链/饥荒（Earth Simulator 的 fauna 需要独立子系统）；TTHTOM 的 polity/office/flag schema 仍待接入。
+- 验证：`EXIT=0`、`889/891`、零 `error CS`。

@@ -89,6 +89,9 @@ public struct TileData
 
 	public float fertility;
 
+	/// <summary>Miami 模型净初级生产力 0–1（借鉴 Earth Simulator）；0 = 旧档未计算/极端不毛。</summary>
+	public float npp;
+
 	public float development;
 
 	public float stability;

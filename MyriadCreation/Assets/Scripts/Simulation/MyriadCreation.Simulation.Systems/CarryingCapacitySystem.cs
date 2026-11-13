@@ -91,7 +91,8 @@ public static class CarryingCapacitySystem
 
 	public static float CalculateCarryingCapacity(TileData tile, IReadOnlyDictionary<int, TradeCenter> tradeCenters)
 	{
-		float num = 100f * GetTerrainMultiplier(tile);
+		float nppFactor = tile.npp > 0f ? 0.5f + 0.5f * Mathf.Clamp01(tile.npp) : 1f;
+		float num = 100f * GetTerrainMultiplier(tile) * nppFactor;
 		if (tradeCenters != null && tradeCenters.TryGetValue(tile.regionId, out var value))
 		{
 			num *= 1.15f;
