@@ -131,6 +131,50 @@ public static class TreasuryLedger
 		return value;
 	}
 
+	private static readonly Dictionary<int, List<TreasuryTransaction>> _history = new Dictionary<int, List<TreasuryTransaction>>();
+
+	private const int HistoryLimit = 2000;
+
+	/// <summary>记录一条真实国库流水；只用于只读收支报告，不参与结算。</summary>
+	public static void Record(int realmId, int absoluteDay, float amount, string reason)
+	{
+		if (realmId < 0 || Mathf.Abs(amount) < 0.0001f)
+		{
+			return;
+		}
+		if (!_history.TryGetValue(realmId, out List<TreasuryTransaction> list))
+		{
+			list = new List<TreasuryTransaction>();
+			_history[realmId] = list;
+		}
+		list.Add(new TreasuryTransaction(absoluteDay, amount, reason));
+		if (list.Count > HistoryLimit)
+		{
+			list.RemoveRange(0, list.Count - HistoryLimit);
+		}
+	}
+
+	public static List<TreasuryTransaction> GetHistory(int realmId, int fromAbsoluteDay)
+	{
+		List<TreasuryTransaction> result = new List<TreasuryTransaction>();
+		if (_history.TryGetValue(realmId, out List<TreasuryTransaction> list))
+		{
+			foreach (TreasuryTransaction transaction in list)
+			{
+				if (transaction.absoluteDay >= fromAbsoluteDay)
+				{
+					result.Add(transaction);
+				}
+			}
+		}
+		return result;
+	}
+
+	public static void ClearHistory()
+	{
+		_history.Clear();
+	}
+
 	public static bool TryPay(RealmData realm, GameWorld world, UnitFundingSource source, int regionId, IReadOnlyDictionary<int, GoodsDef> goodsDefs, UnitProvisioningCost cost, int payerCharacterId, out UnitFunding funding, out string reason)
 	{
 		reason = "";

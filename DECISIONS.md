@@ -425,3 +425,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 事实：`GameWorld.InitializeSubsystems` 在 `InitializeWorld` 阶段构造 `SettlementSimulationSystem` 并持有 `settlements` 字典引用；`GenerateSettlements` 之后用 `settlements = item2` 重新赋值，导致聚落模拟/生产/生命周期一直在操作旧空表（长跑看似正常，实际这些系统空转）。
 - 裁决：生成期一律 **就地 Clear + 填充** 现有字典（`AdoptSettlements`），不得替换字段引用；同理适用于任何在子系统构造后才生成、且被子系统持有引用的容器。
 - 附带修正：营地降级必须走 `TryDowngradeDueToDestruction`，`TryTransition` 对 Sedentary→TemporaryEncampment 是禁止转移。
+
+## D45 收支报告只汇总真实国库流水
+
+- 机制：`TreasuryLedger` 增加运行时流水（`Record/GetHistory/ClearHistory`，上限 2000 条，不入档）；`GameWorld.GetRealmBudgetReport(realmId, windowDays)` 只读聚合窗口内的收入/支出/净额与分项。
+- 已接：税收入（`PoliticsSimulationSystem` 每日入账时记录）。支出随命令/军费/建筑维护逐步接入，不预造费率；报告不得写任何模拟状态。
+- 不做：不新建第二套账本；`realm.treasury` 仍是唯一货币余额（D43）。

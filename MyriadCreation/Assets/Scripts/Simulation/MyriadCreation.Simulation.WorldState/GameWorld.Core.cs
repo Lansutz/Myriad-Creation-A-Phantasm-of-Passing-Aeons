@@ -504,6 +504,7 @@ public partial class GameWorld : MonoBehaviour
 		CharacterKnowledgeRegistry.Clear();
 		// 动态物产是全局静态表：新局不清理会把上一局的合金/合成物带进新世界（审计 A-P1-6）。
 		DynamicGoodsRegistry.Clear();
+		MyriadCreation.Simulation.Units.TreasuryLedger.ClearHistory();
 		if (Pipeline == null)
 		{
 			GenerationPipeline generationPipeline = (Pipeline = new GenerationPipeline(this));
