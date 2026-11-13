@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Core.Enums;
 
 namespace MyriadCreation.Content.Definitions
@@ -44,6 +44,13 @@ public struct GoodsDef
 	public float spoilagePerDay;
 
 	public bool canBeSlaughtered;
+
+	/// <summary>可作口粮（P3.2 食物篮子）；盐、矿石等即使归在 Food 类也不参与充饥。</summary>
+	public bool edible;
+
+	/// <summary>每单位提供的口粮当量（1 = 与小麦同口径）。</summary>
+	/// <summary>1 = 与小麦同口径；0/缺省按 1 处理（旧内容/测试夹具）。</summary>
+	public float nutrition;
 
 	public int slaughterGoodsId;
 

@@ -985,3 +985,13 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 已知未做：狩猎/渔业尚未接入食物链（`wildlife` 不产肉）、物种与灭绝、火灾/放牧反馈；这些需要与 P3.0 食物篮子一起做，避免一次跨太大。
 - 测试：`EcosystemTests` 6 例（旧档补齐、向 NPP 恢复、人口压力压低植被与野生、海陆边界、确定性、存档往返）。
 - 验证：`EXIT=0`、`914/916`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D120 食物篮子与狩猎（P3.2 第二批）
+
+- `GoodsDef.edible/nutrition`：口粮资格进内容表（`Goods.json` 中 0 小麦、1 肉类、2 鱼类、10 稻谷标 `edible`），盐/矿物即使归在 Food 类也不充饥。旧内容/测试夹具缺字段时 `nutrition` 按 1 处理，`edible` 缺省 false。
+- `ProcessConsumption` 改为按货号升序吃“可食库存”，不再只看 0 号。库存不足时先吃光全部可食库存再进饥荒分支（沿用原语义，避免卡在 0<stock<need）。
+- 狩猎：`EcosystemSystem.Harvest` 按人口取肉（人均日粮的 10% 为上限），产出与野生密度扣减同源；`EconomyManager.ProduceResources` 把肉写入 1 号货，和农业共用库存/仓容/保质期链。
+- `EcosystemSystem` 的 `TileData` 参数改为 `ref`（`TileData` 是 struct，按值传会把演替写丢）；`Tick` 使用 `ref` 局部变量原地更新。
+- 种间/物种层、渔业、火灾与放牧反馈仍未做：需要独立物种表与更大预算，暂不半途插入。
+- 测试：新增 `Salt_IsNotEdible`、`CityWithOnlyMeat_DoesNotStarve`、`WildlifeHarvest_ProducesMeatAndReducesHerd`、`Harvest_TakesMeatAndReducesWildlife`、`Harvest_WithoutPeopleOrWildlifeIsZero`。
+- 验证：`EXIT=0`、`919/921`（2 个 Explicit 跳过）、零 `error CS`。

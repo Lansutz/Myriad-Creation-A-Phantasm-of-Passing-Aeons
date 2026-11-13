@@ -29,6 +29,35 @@ public static class EcosystemSystem
 	/// <summary>每地块野生承载 = 植被 × 该系数（0–1 密度口径）。</summary>
 	public const float WildlifePerVegetation = 0.8f;
 
+	/// <summary>狩猎口粮占人均日粮的比例（其余靠农牧；比例小，避免把野味当主粮）。</summary>
+	public const float HuntFoodPerPersonPerDay = 0.001f;
+
+	/// <summary>野生密度 1.0 对应每日可提供的食物单位（丰度→肉的换算）。</summary>
+	public const float WildlifeFoodCapacityPerUnit = 20f;
+
+	/// <summary>
+	/// 狩猎：按人口需求从野生群落取肉，返回食物单位，并就地扣减野生密度。
+	/// 无人、无兽、非陆地返回 0；扣减与产出同源，不允许只产不扣。
+	/// </summary>
+	public static float Harvest(ref TileData tile, float days)
+	{
+		if (!tile.exists || !tile.isLand || days <= 0f) return 0f;
+		EnsureInitialized(ref tile);
+		if (tile.wildlife <= 0f || tile.populationBlocks == null) return 0f;
+		float people = 0f;
+		for (int i = 0; i < tile.populationBlocks.Count; i++)
+		{
+			people += Mathf.Max(0f, tile.populationBlocks[i].count);
+		}
+		if (people <= 0f) return 0f;
+		float capacity = tile.wildlife * WildlifeFoodCapacityPerUnit * days;
+		float demand = people * HuntFoodPerPersonPerDay * days;
+		float harvest = Mathf.Min(capacity, demand);
+		if (harvest <= 0f) return 0f;
+		tile.wildlife = Mathf.Clamp01(tile.wildlife - harvest / WildlifeFoodCapacityPerUnit);
+		return harvest;
+	}
+
 	/// <summary>旧档/新地块惰性初始化：植被从 NPP 起步，野生群落按植被比例起步。</summary>
 	public static void EnsureInitialized(ref TileData tile)
 	{

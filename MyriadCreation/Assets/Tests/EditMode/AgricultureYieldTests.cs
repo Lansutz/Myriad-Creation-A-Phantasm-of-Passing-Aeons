@@ -52,7 +52,8 @@ namespace MyriadCreation.Tests.EditMode
                         goodsName = "粮食",
                         category = GameEnums.GoodsCategory.Food,
                         baseValue = 1f,
-                        weight = 0.1f
+                        weight = 0.1f,
+                        edible = true
                     }
                 }
             };

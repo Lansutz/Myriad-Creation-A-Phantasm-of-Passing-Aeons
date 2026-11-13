@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Enums;
 
@@ -34,6 +34,10 @@ public sealed class GoodsContentDef
 	public bool isLiving;
 
 	public bool canBeSlaughtered;
+
+	public bool edible;
+
+	public float nutrition = 1f;
 
 	public int slaughterGoodsId = -1;
 
@@ -114,6 +118,8 @@ public static class GoodsCatalog
 				isPerishable = def.isPerishable,
 				spoilagePerDay = def.spoilagePerDay,
 				canBeSlaughtered = def.canBeSlaughtered,
+				edible = def.edible,
+				nutrition = def.nutrition <= 0f ? 1f : def.nutrition,
 				slaughterGoodsId = def.slaughterGoodsId,
 				properties = new List<GoodsPropertyValue>(),
 				surfaceDepthShare = def.surfaceDepthShare,

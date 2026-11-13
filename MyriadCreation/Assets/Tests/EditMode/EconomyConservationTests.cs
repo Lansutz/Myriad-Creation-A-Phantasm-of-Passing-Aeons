@@ -24,7 +24,8 @@ namespace MyriadCreation.Tests.EditMode
                         goodsName = "粮食",
                         category = GameEnums.GoodsCategory.Food,
                         baseValue = 1f,
-                        weight = 0.1f
+                        weight = 0.1f,
+                        edible = true
                     }
                 },
                 {
@@ -35,6 +36,17 @@ namespace MyriadCreation.Tests.EditMode
                         category = GameEnums.GoodsCategory.Food,
                         baseValue = 3f,
                         weight = 0.05f
+                    }
+                },
+                {
+                    1, new GoodsDef
+                    {
+                        goodsId = 1,
+                        goodsName = "肉类",
+                        category = GameEnums.GoodsCategory.Food,
+                        baseValue = 2f,
+                        weight = 0.2f,
+                        edible = true
                     }
                 }
             };
@@ -363,6 +375,65 @@ namespace MyriadCreation.Tests.EditMode
 
             Assert.AreEqual(0f, center.inventory.GetValueOrDefault(0), 0.001f, "次日仍无粮，库存不得卡在部分值");
             Assert.Less(tiles[0].stability, 59.8f, "持续缺粮应继续轻量惩罚");
+        }
+
+        [Test]
+        public void CityWithOnlyMeat_DoesNotStarve()
+        {
+            TileData[] tiles = NewSingleCityWorld();
+            var center = new TradeCenter { regionId = 0, inventoryCapacity = 10000f };
+            center.inventory[1] = 100f;
+            var economy = NewEconomy(tiles, new Dictionary<int, TradeCenter> { { 0, center } });
+
+            economy.DailyTick();
+
+            Assert.AreEqual(60f, tiles[0].stability, 0.001f, "肉也是口粮：只有肉库存不应触发饥荒");
+            Assert.AreEqual(99f, center.inventory.GetValueOrDefault(1), 0.001f, "应按营养当量吃掉 1 单位肉");
+        }
+
+        [Test]
+        public void Salt_IsNotEdible()
+        {
+            TileData[] tiles = NewSingleCityWorld();
+            var center = new TradeCenter { regionId = 0, inventoryCapacity = 10000f };
+            center.inventory[3] = 100f;
+            var economy = NewEconomy(tiles, new Dictionary<int, TradeCenter> { { 0, center } });
+
+            economy.DailyTick();
+
+            Assert.Less(tiles[0].stability, 60f, "盐不能充饥：满仓盐也必须进入饥荒分支");
+            Assert.AreEqual(99.8f, center.inventory.GetValueOrDefault(3), 0.001f, "盐只按日耗被取用（100 人 × 0.002），不作为口粮抵扣");
+        }
+
+        [Test]
+        public void WildlifeHarvest_ProducesMeatAndReducesHerd()
+        {
+            var tile = new TileData
+            {
+                exists = true,
+                isLand = true,
+                regionId = 0,
+                tileIndex = 0,
+                stability = 60f,
+                order = 40f,
+                fertility = 0f,
+                npp = 0.6f,
+                vegetation = 0.6f,
+                wildlife = 0.5f,
+                buildingLevels = new int[2],
+                populationBlocks = new List<PopulationBlock>
+                {
+                    new PopulationBlock { count = 100f, socialClass = GameEnums.SocialClass.Peasant }
+                }
+            };
+            var tiles = new[] { tile };
+            var center = new TradeCenter { regionId = 0, inventoryCapacity = 10000f };
+            var economy = NewEconomy(tiles, new Dictionary<int, TradeCenter> { { 0, center } });
+
+            economy.ProduceResources(1f);
+
+            Assert.Greater(center.inventory.GetValueOrDefault(1), 0f, "有兽有人时应猎到肉");
+            Assert.Less(tiles[0].wildlife, 0.5f, "狩猎必须扣减野生群落，不能只产不扣");
         }
 
         [Test]

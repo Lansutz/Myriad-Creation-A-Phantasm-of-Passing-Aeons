@@ -86,6 +86,27 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
+        public void Harvest_TakesMeatAndReducesWildlife()
+        {
+            TileData[] tiles = { Land(0.8f, vegetation: 0.6f, wildlife: 0.5f, people: 100) };
+
+            float meat = EcosystemSystem.Harvest(ref tiles[0], 1f);
+
+            Assert.Greater(meat, 0f, "有人有兽时应产出肉");
+            Assert.Less(tiles[0].wildlife, 0.5f, "取肉必须同源扣减野生密度");
+        }
+
+        [Test]
+        public void Harvest_WithoutPeopleOrWildlifeIsZero()
+        {
+            TileData[] empty = { Land(0.8f, vegetation: 0.6f, wildlife: 0.5f) };
+            TileData[] barren = { Land(0f, vegetation: 0f, wildlife: 0f, people: 100) };
+
+            Assert.AreEqual(0f, EcosystemSystem.Harvest(ref empty[0], 1f), 0.0001f, "无人不狩猎");
+            Assert.AreEqual(0f, EcosystemSystem.Harvest(ref barren[0], 1f), 0.0001f, "无兽可猎");
+        }
+
+        [Test]
         public void EcosystemFields_SurviveJsonRoundTrip()
         {
             TileData tile = Land(0.6f, vegetation: 0.45f, wildlife: 0.2f);

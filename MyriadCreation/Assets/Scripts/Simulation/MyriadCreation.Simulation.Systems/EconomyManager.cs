@@ -11,9 +11,14 @@ namespace MyriadCreation.Simulation.Systems
 {
 public class EconomyManager
 {
+	/// <summary>肉类货号（P3.2 狩猎产出；与 Goods.json 的 1 号对齐，不新建货号）。</summary>
+	private const int MeatGoodsId = 1;
+
 	private readonly TileData[] _tiles;
 
 	private readonly Dictionary<int, TradeCenter> _tradeCenters;
+
+	private readonly List<int> _edibleIds = new List<int>();
 
 	private readonly Dictionary<int, GoodsDef> _goodsDefs;
 
@@ -141,7 +146,7 @@ public class EconomyManager
 	/// 地块自然资源产出：已发现/已开发资源按 EffectiveOutput 每日进入所属地区 TradeCenter。
 	/// 这是库存唯一生产写入口；后续建筑/劳力只调整 EffectiveOutput，不另开库存。
 	/// </summary>
-	public int ProduceResources()
+	public int ProduceResources(float days = 1f)
 	{
 		if (_tiles == null || _tradeCenters == null) return 0;
 		int produced = 0;
@@ -153,7 +158,7 @@ public class EconomyManager
 			int regionEnd = regionStart + 16;
 			for (int i = regionStart; i < regionEnd && i < _tiles.Length; i++)
 			{
-				TileData tile = _tiles[i];
+				ref TileData tile = ref _tiles[i];
 				if (!tile.exists || !tile.isLand) continue;
 				if (tile.resources != null)
 				{
@@ -168,6 +173,12 @@ public class EconomyManager
 				if (cropYield > 0f)
 				{
 					float accepted = tradeCenter.AddGoodsReturningAccepted(AgricultureYield.FoodGoodsId, cropYield);
+					if (accepted > 0f) produced++;
+				}
+				float meatYield = EcosystemSystem.Harvest(ref tile, days);
+				if (meatYield > 0f)
+				{
+					float accepted = tradeCenter.AddGoodsReturningAccepted(MeatGoodsId, meatYield);
 					if (accepted > 0f) produced++;
 				}
 			}
@@ -523,13 +534,25 @@ public class EconomyManager
 			}
 			float amount = num * PersonFoodPerDay;
 			float amount2 = num * SaltPerPersonPerDay;
-			float foodAvailable = value.inventory.GetValueOrDefault(FoodGoodsId, 0f);
+			// 食物篮子：只吃 edible 货（小麦/肉/鱼/稻谷），盐与矿物即使同属 Food 类也不充饥。
+			_edibleIds.Clear();
+			float foodAvailable = 0f;
+			foreach (KeyValuePair<int, GoodsDef> pair in _goodsDefs)
+			{
+				if (!pair.Value.edible) continue;
+				float qty = value.inventory.GetValueOrDefault(pair.Key, 0f);
+				if (qty <= 0f) continue;
+				_edibleIds.Add(pair.Key);
+				float nutrition = pair.Value.nutrition <= 0f ? 1f : pair.Value.nutrition;
+				foodAvailable += qty * nutrition;
+			}
+			_edibleIds.Sort();
 			if (foodAvailable < amount)
 			{
 				// 库存不足日需：先把剩余口粮吃光再进入饥荒分支，避免库存永远卡在 0 < stock < need
-				if (foodAvailable > 0f)
+				for (int e = 0; e < _edibleIds.Count; e++)
 				{
-					value.RemoveGoods(FoodGoodsId, foodAvailable);
+					value.RemoveGoods(_edibleIds[e], value.inventory.GetValueOrDefault(_edibleIds[e], 0f));
 				}
 				ApplyFaminePenalty(i);
 				starvingTileCount++;
@@ -537,7 +560,16 @@ public class EconomyManager
 			}
 			else
 			{
-				value.RemoveGoods(FoodGoodsId, amount);
+				float remaining = amount;
+				for (int e = 0; e < _edibleIds.Count && remaining > 0f; e++)
+				{
+					int goodsId = _edibleIds[e];
+					float nutrition = _goodsDefs[goodsId].nutrition <= 0f ? 1f : _goodsDefs[goodsId].nutrition;
+					float stock = value.inventory.GetValueOrDefault(goodsId, 0f);
+					float take = Mathf.Min(stock, remaining / nutrition);
+					value.RemoveGoods(goodsId, take);
+					remaining -= take * nutrition;
+				}
 			}
 			value.RemoveGoods(SaltGoodsId, amount2);
 		}

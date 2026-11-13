@@ -22,7 +22,8 @@
       "surfaceDepthShare": 1.0,
       "shaftDepthShare": 0.0,
       "renewable": false,
-      "originBiomes": []
+      "originBiomes": [],
+      "edible": true
     },
     {
       "goodsId": 1,
@@ -46,7 +47,8 @@
       "surfaceDepthShare": 1.0,
       "shaftDepthShare": 0.0,
       "renewable": false,
-      "originBiomes": []
+      "originBiomes": [],
+      "edible": true
     },
     {
       "goodsId": 2,
@@ -70,7 +72,8 @@
       "surfaceDepthShare": 1.0,
       "shaftDepthShare": 0.0,
       "renewable": false,
-      "originBiomes": []
+      "originBiomes": [],
+      "edible": true
     },
     {
       "goodsId": 3,
@@ -118,7 +121,8 @@
       "surfaceDepthShare": 1.0,
       "shaftDepthShare": 0.0,
       "renewable": false,
-      "originBiomes": []
+      "originBiomes": [],
+      "edible": true
     },
     {
       "goodsId": 11,
