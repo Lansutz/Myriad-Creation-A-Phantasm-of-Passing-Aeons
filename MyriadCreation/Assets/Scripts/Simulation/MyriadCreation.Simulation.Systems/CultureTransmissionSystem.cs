@@ -91,8 +91,8 @@ public static class CultureTransmissionSystem
 		return converted;
 	}
 
-	/// <summary>换文化：优先并入同属性人口块（种族/信仰/阶级/职业一致），否则原位改写。</summary>
-	private static void ConvertBlock(List<PopulationBlock> blocks, int index, int targetCultureId)
+	/// <summary>换文化：优先并入同属性人口块（种族/信仰/阶级/职业一致），否则原位改写。文化融合复用同一入口。</summary>
+	internal static void ConvertBlock(List<PopulationBlock> blocks, int index, int targetCultureId)
 	{
 		PopulationBlock converted = blocks[index];
 		converted.cultureId = targetCultureId;

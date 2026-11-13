@@ -882,6 +882,16 @@ public partial class GameWorld : MonoBehaviour
 		{
 			CultureTransmissionSystem.MonthlyTick(realms, cultures, tiles);
 		});
+		// 文化融合：少数文化被主文化吸收，主文化吸收其可兼容传统。
+		_simulationScheduler.Register("culture.fusion.monthly", SimulationCadence.Monthly, 40, (SimulationTickContext _) =>
+		{
+			CultureFusionSystem.MonthlyTick(realms, cultures, tiles, (minorityId, primaryId) =>
+			{
+				string minorityName = cultures.TryGetValue(minorityId, out var minority) ? minority?.cultureName : null;
+				string primaryName = cultures.TryGetValue(primaryId, out var primary) ? primary?.cultureName : null;
+				_chronicle?.Add("culture", (minorityName ?? ("#" + minorityId)) + " 融入 " + (primaryName ?? ("#" + primaryId)), true);
+			});
+		});
 		if (_sandboxSpawnSystem == null)
 		{
 			_sandboxSpawnSystem = new SandboxSpawnSystem(this);

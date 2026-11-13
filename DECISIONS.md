@@ -598,3 +598,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `ContentSourceCatalog` 对每个 mod 目录读 `mod.json`：存在则走 `ContentPackageValidator`，清单非法或 `enabled=false` 时整包跳过并留日志；缺清单时按兼容模式加载（当前 `Mods/Dna` 即无清单）。
 - 校验只做结构（formatVersion/packageId/contentTypes/路径逃逸），不做跨 mod 依赖解析；依赖字段先落数据，排期留给后续。
 - 测试覆盖：合法加载、禁用跳过、非法跳过、缺清单兼容。
+
+## D72 文化融合（P2.1 第二批）
+
+- 新增 `CultureFusionSystem.MonthlyTick`：政权内某文化人口占比 ≤15%、且不是任何政权的主文化、平均整合度 ≥60、`CultureTransition.CanCultureMerge` 通过 ⇒ 被主文化吸收。
+- 融合的实际后果有两层：① 该政权内该文化的人口块并入主文化（复用同化入口，人口守恒、同属性合并）；② 主文化从被吸收文化吸收最多 2 条可兼容传统（`CultureTransitionHost.ListTraditionCandidates`，含角色门禁与互斥检查）。
+- `CultureData.mergedIntoCultureId` 记录吸收结果；被吸收文化保留实体（人物仍引用其 cultureId），但不再参与传播/融合。
+- 调度 `culture.fusion.monthly`（order 40），编年史留痕；同化与融合共用 `culturePenetration`，不新增"融合点"。
+- 未做：文化**分裂**（需要运行时新建文化 id 与命名）；融合后主文化颜色的重算。

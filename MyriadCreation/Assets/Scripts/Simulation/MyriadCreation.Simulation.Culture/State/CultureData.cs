@@ -74,6 +74,9 @@ public class CultureData
 
 	public bool allowsBranching = true;
 
+	/// <summary>被哪个文化吸收（-1=独立）；吸收后保留实体供人物引用，但不再作为可传播文化。</summary>
+	public int mergedIntoCultureId = -1;
+
 	public Color color = Color.white;
 
 	public InheritanceLaw defaultSuccessionLaw = InheritanceLaw.Primogeniture();
