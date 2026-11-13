@@ -555,3 +555,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 开关：受 `MapLayerConfig.showArmyMarkers` 控制（默认关，属可选叠加层，不改变既有画面）；`MapRenderer.Start`/`SetWorldView`/尺寸重同步三处接上。
 - Rendering 仍只依赖 `Core.Contracts`，没有把 `GameWorld/Army` 带进表现层。
 - 未做：舰队标记（`Navy` 还没有地图视图契约）；海战结算；舰船建造消耗。
+
+## D66 文化传播/同化首个执行点（P2.1 第一批）
+
+- 事实：`CultureTransition.GetGroupResistance/CanCultureMerge` 与 `CultureSimilarity` 早已存在，但全库 0 调用；文化此前只有阶段演化与地图着色，没有可观察的人口变化。
+- 新增 `CultureTransmissionSystem.MonthlyTick(realms, cultures, tiles)`：逐地块读政权 `primaryCultureId`，对非主文化人口块计算既有群体阻力；阻力低于 `AssimilationResistanceCeiling=0.45` 时累加 `PopulationBlock.culturePenetration`（既有字段，已是满意度输入），满 100 才换文化。
+- 换文化时优先并入「种族/信仰/阶级/职业一致」的同文化人口块，人口守恒；不做碎片人口。
+- 阻力高于上限时进度每月回落 3（接触减少），不产生反向同化。
+- 调度：`culture.transmission.monthly`（order 39），月结一次，不逐日扫描。
+- 未做：文化**分裂**（需要运行时新建文化 id/命名/子文化登记）与**融合**（两个文化合并为一个新文化）；本批只开「传播/同化」一条可验证链。

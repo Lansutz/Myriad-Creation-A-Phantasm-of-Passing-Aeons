@@ -877,6 +877,11 @@ public partial class GameWorld : MonoBehaviour
 		{
 			EnsureFaithLeadership();
 		});
+		// 文化传播：人口块向政权主文化同化，进度取既有阻力公式。
+		_simulationScheduler.Register("culture.transmission.monthly", SimulationCadence.Monthly, 39, (SimulationTickContext _) =>
+		{
+			CultureTransmissionSystem.MonthlyTick(realms, cultures, tiles);
+		});
 		if (_sandboxSpawnSystem == null)
 		{
 			_sandboxSpawnSystem = new SandboxSpawnSystem(this);
