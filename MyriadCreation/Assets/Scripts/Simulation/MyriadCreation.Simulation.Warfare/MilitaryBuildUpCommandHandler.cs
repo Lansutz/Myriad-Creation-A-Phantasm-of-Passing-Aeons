@@ -24,7 +24,7 @@ public sealed class MilitaryBuildUpCommandHandler : ISimulationCommandHandler<Mi
 		{
 			return CommandResult.Failed("military_budget_rejected");
 		}
-		value.treasury -= command.Budget;
+		RealmTreasury.Spend(value, command.Budget);
 		return CommandResult.Succeeded("military_budget_committed");
 	}
 }

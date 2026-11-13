@@ -31,7 +31,7 @@ public sealed class ImproveRealmEconomyCommandHandler : ISimulationCommandHandle
 			if (coreTile >= 0 && coreTile < _tiles.Length && !(value.treasury <= 50f))
 			{
 				_tiles[coreTile].development = Mathf.Min(1f, _tiles[coreTile].development + 0.01f);
-				value.treasury -= 10f;
+				RealmTreasury.Spend(value, 10f);
 				num++;
 			}
 		}

@@ -173,7 +173,10 @@ public class BuildingSystem
 		{
 			return false;
 		}
-		realm.treasury -= value.buildCost;
+		if (!RealmTreasury.TrySpend(realm, value.buildCost))
+		{
+			return false;
+		}
 		ActiveBuilding item = new ActiveBuilding
 		{
 			buildingId = buildingId,

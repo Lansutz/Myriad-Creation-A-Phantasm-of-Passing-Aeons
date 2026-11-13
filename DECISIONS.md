@@ -701,3 +701,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 局势月结：若同教全部 faith 都在共融期内，阶段最高只到「妥协」，不会升级为敌意/分裂。
 - 入档：`FaithSaveData` 增 `doctrineIds/communionUntilDay`，读档 overlay；旧档默认空/-1，不冲内容口径。
 - 测试：合一后教义一致、妥协写共融期限、DTO 往返。
+
+## D85 政权货币余额单一入口（P2.5 C 第一步）
+
+- 新增 `RealmTreasury`（Get/TrySpend/Spend/Add/Set）：`RealmData.treasury` 仍是存档字段，运行时运行代码经此增减；`TrySpend` 先预检后整笔扣款，不产生部分扣款。
+- 已迁移：建筑扣款、`TreasuryLedger` 国家付款/退款、军事预算、经济改善投资。`LawAndDecreeSystem` 的 `ref float treasury` 纯函数保持原样（它是算法层，不持有 RealmData）。
+- 未迁移：外交赔款等必须允许负余额的路径仍可用 `Spend`；`DiplomacyManager` 的内部转账下一批再收口。
+- 测试：余额不足不扣款、足额扣款、`Spend` 允许负余额、Add/Set。
+- 未做：`stability`/`population` 的同类入口；字段仍未私有化（存档直接序列化，收紧需 DTO 配合）。

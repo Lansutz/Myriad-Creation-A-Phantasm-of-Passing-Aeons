@@ -337,14 +337,14 @@ public static class TreasuryLedger
 				reason = "国库不足";
 				return false;
 			}
-			realm.treasury -= cost.money;
+			RealmTreasury.Spend(realm, cost.money);
 			moneyPaid = true;
 		}
 		if (cost.food > 0f && funding.foodGoodsId >= 0 && !treasuryVault.TrySpend(funding.foodGoodsId, cost.food))
 		{
 			if (moneyPaid)
 			{
-				realm.treasury += cost.money;
+				RealmTreasury.Add(realm, cost.money);
 			}
 			reason = "国库粮草货物不足";
 			return false;
