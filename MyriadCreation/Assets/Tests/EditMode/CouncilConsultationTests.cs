@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Content.Definitions;
@@ -93,6 +93,7 @@ namespace MyriadCreation.Tests.EditMode
 
         private static void MakeSupportiveCouncil(GameWorld world, RealmData realm)
         {
+            realm.officeHolders?.Clear();
             AddCouncilor(world, realm, "主战甲", 0, 90f, 0f, 100f);
             AddCouncilor(world, realm, "主战乙", 1, 80f, 10f, 80f);
             AddCouncilor(world, realm, "主战丙", 2, 70f, 20f, 60f);
@@ -100,6 +101,7 @@ namespace MyriadCreation.Tests.EditMode
 
         private static void MakeOpposedCouncil(GameWorld world, RealmData realm)
         {
+            realm.officeHolders?.Clear();
             AddCouncilor(world, realm, "反战甲", 0, 0f, 100f, -100f);
             AddCouncilor(world, realm, "反战乙", 1, 10f, 90f, -150f);
             AddCouncilor(world, realm, "反战丙", 2, 5f, 80f, -120f);

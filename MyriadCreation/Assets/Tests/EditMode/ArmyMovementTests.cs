@@ -1,10 +1,11 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.State;
+using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World.Generation;
 using MyriadCreation.World.Settlement;
@@ -112,7 +113,7 @@ namespace MyriadCreation.Tests.EditMode
             world.unitDefs[unitId] = def;
             Army army = world.CreateArmy(attacker, -1, from);
             army.unitCounts[unitId] = 10f;
-            Assert.IsTrue(world.DeclareWar(attacker, defender, "围城测试"));
+            Assert.IsTrue(world.DeclareWar(attacker, defender, "围城测试", WarDecisionMode.SkipConsultation));
             army.SetMoveTarget(to, world.tiles, world.GetSeaLandGenerator(), world.mapWidth);
             world.RunDiagnosticDays(3);
             Assert.AreEqual(to, army.currentTileIndex);
@@ -161,7 +162,7 @@ namespace MyriadCreation.Tests.EditMode
 
             Army army = world.CreateArmy(attacker, -1, from);
             army.unitCounts[unitId] = 10f;
-            Assert.IsTrue(world.DeclareWar(attacker, defender, "行军测试"));
+            Assert.IsTrue(world.DeclareWar(attacker, defender, "行军测试", WarDecisionMode.SkipConsultation));
             army.SetMoveTarget(to, world.tiles, world.GetSeaLandGenerator(), world.mapWidth);
 
             world.RunDiagnosticDays(3);

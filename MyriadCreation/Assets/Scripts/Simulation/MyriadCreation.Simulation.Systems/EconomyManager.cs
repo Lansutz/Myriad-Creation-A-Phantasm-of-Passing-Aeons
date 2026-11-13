@@ -623,9 +623,13 @@ public class EconomyManager
 		}
 	}
 
-	/// <summary>结算税收；multiplier 为法律/法令的税收乘子（LawEffectRuntime.GetTaxMultiplier）。</summary>
-	public float SettleTaxes(int realmId, float multiplier = 1f)
+	/// <summary>
+	/// 结算税收；multiplier 为法律/法令的税收乘子（LawEffectRuntime.GetTaxMultiplier）。
+	/// hasCollector=false：政权没有持 taxation 职权的在职官员，本日无人征收（不是税率归零）。
+	/// </summary>
+	public float SettleTaxes(int realmId, float multiplier = 1f, bool hasCollector = true)
 	{
+		if (!hasCollector) return 0f;
 		TaxSystem tax = ResolveTaxSystem(realmId);
 		float num = 0f;
 		for (int i = 0; i < _tiles.Length; i++)

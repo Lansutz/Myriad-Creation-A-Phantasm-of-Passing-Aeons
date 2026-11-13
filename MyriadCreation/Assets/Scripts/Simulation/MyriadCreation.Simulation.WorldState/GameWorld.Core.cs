@@ -334,6 +334,12 @@ public partial class GameWorld : MonoBehaviour
 
 	public IntriguePlanSystem IntriguePlans => _intriguePlanSystem ?? (_intriguePlanSystem = new IntriguePlanSystem(this, Plans));
 
+	/// <summary>旧档/读档后补一次官职（不改变已有 holder）。</summary>
+	public void EnsureInitialOffices()
+	{
+		EnsureOfficeHolders();
+	}
+
 	public Plan CreateIntriguePlan(int realmId, int initiatorCharacterId, int targetCharacterId)
 	{
 		return IntriguePlans.CreatePlan(realmId, initiatorCharacterId, targetCharacterId);

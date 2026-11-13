@@ -1115,3 +1115,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
   5. 旧档迁移、可繁殖、存档往返 — D130；
   6. 文档与最终验证 — 本条。
 - 未做（明确欠账）：食性→口粮结构（人口块无物种字段）；逐格物种丰度/食物网；3D/DNA 直接建模。
+
+## D132 宫廷人物供给与征税硬门禁（P4.0）
+
+- 世界生成末段为每个政权创建 3 名宫廷人物（Noble/Scholar/Military，成年、同文化、非君主家族），由 `CreateInitialCourtiers` 负责。**必须在所有依赖全局 Random 的生成步骤之后调用**：`CreateCharacter` 会消耗全局随机数，早调用会改变地图/聚落/初始单位结果（本轮首次实现踩到，已修正）。
+- 生成结束调用 `EnsureOfficeHolders`，开局官职即可被担任；`offices` 调度从月度改回每日（优先级 12，早于政治 15），已满时只遍历槽位，空槽才扫候选。
+- 恢复 `taxation` 硬门禁：`PoliticsSimulationSystem` 查 `OfficeSystem.HasModuleHolder(..., taxation)`；无征税官时 `EconomyManager.SettleTaxes(..., hasCollector:false)` 返回 0，不是税率归零。
+- 测试适配：战争/议事测试改用 `WarDecisionMode.SkipConsultation` 隔离议事变量；`CouncilConsultationTests` 在构造议事会前清空自动填充的官职，避免人数漂移。
+- 验证：`EXIT=0`、`973/975`（2 个 Explicit 跳过）、零 `error CS`；`longrun` 2 seed×100 年 `1/1`、`EXIT=0`（税收硬门禁未摧毁经济）。

@@ -1060,6 +1060,40 @@ public class CharacterManager
 		}
 	}
 
+	/// <summary>
+	/// 开局宫廷：每个政权 3 名可任职成年人（贵族/学者/军人）。
+	/// 没有这批人，官职无法在开局被担任，征税硬门禁会让前十几年国库归零。
+	/// 必须在世界生成末段调用：CreateCharacter 会消耗全局 Random，早调用会改变地图/聚落生成结果。
+	/// </summary>
+	public void CreateInitialCourtiers(Dictionary<int, RealmData> realms, int currentYear)
+	{
+		foreach (RealmData realm in realms.Values)
+		{
+			if (realm == null) continue;
+			CreateInitialCourt(realm, realm.realmName, currentYear);
+		}
+	}
+
+	private void CreateInitialCourt(RealmData realm, string dynastyName, int currentYear)
+	{
+		CharacterRole[] roles = { CharacterRole.Noble, CharacterRole.Scholar, CharacterRole.Military };
+		int cultureId = realm.primaryCultureId >= 0 ? realm.primaryCultureId : realm.realmId;
+		var localRng = new System.Random(realm.realmId * 397 + currentYear * 17);
+		for (int i = 0; i < roles.Length; i++)
+		{
+			bool male = localRng.Next(2) == 0;
+			int age = 24 + localRng.Next(32);
+			CharacterData courtier = CreateCharacter(
+				GenerateName(cultureId, male ? 1 : 0), dynastyName, age, male,
+				cultureId, 0, realm.stateReligionId, roles[i]);
+			if (courtier == null) continue;
+			courtier.realmId = realm.realmId;
+			courtier.isPublicFigure = true;
+			courtier.birthYear = currentYear - age;
+			CharacterKnowledgeRegistry.Learn(realm.realmId, courtier, 1, "court");
+		}
+	}
+
 	public void DailyTick(int currentDay, int currentYear, System.Func<int, float> ambientAtTile = null)
 	{
 		foreach (CharacterData value in _characters.Values)

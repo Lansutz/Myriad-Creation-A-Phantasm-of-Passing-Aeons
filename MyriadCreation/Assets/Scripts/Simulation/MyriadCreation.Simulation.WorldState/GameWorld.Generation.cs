@@ -169,6 +169,9 @@ public partial class GameWorld : MonoBehaviour
 		ClearInitialTerrainDirty();
 		SettlementPopulationSystem.RecomputeAll(this);
 		BuildPreloadPlan();
+		// 宫廷人物必须在所有依赖全局 Random 的生成步骤之后创建，避免改变地图/聚落/初始单位。
+		_characterManager.CreateInitialCourtiers(realms, currentYear);
+		EnsureOfficeHolders();
 		Knowledge.EnsureCapacity(tiles?.Length ?? 0);
 		Knowledge.SeedOwnership(tiles, mapWidth, mapHeight);
 		for (int i = 0; i < realms.Count; i++)
@@ -393,6 +396,8 @@ public partial class GameWorld : MonoBehaviour
 		ClearInitialTerrainDirty();
 		SettlementPopulationSystem.RecomputeAll(this);
 		BuildPreloadPlan();
+		_characterManager.CreateInitialCourtiers(realms, currentYear);
+		EnsureOfficeHolders();
 		Debug.Log((object)$"[GameWorld] 配置化地形生成完成（{SetupOptions.initialContent}）：陆地{GetLandTileCount()}，海洋{GetSeaTileCount()}，省份{provinces.Count}");
 	}
 

@@ -805,9 +805,9 @@ public partial class GameWorld : MonoBehaviour
 		{
 			_thoughtManager.DailyTick(currentYear);
 		});
-		// 官职：每月补缺/任期到期，并按日折算俸禄（国库不足则当月不付）。
-		// 用月度而非日度：无空缺时不必每天扫全政权人物，人物表随百年增长会放大成本。
-		_simulationScheduler.Register("offices.monthly", SimulationCadence.Monthly, 26, (SimulationTickContext ctx) =>
+		// 官职：每日补缺/任期到期，并按日折算俸禄（国库不足则当日不付）。
+		// 已满时只遍历槽位；只有空槽才扫候选，避免百年人物表放大成本。
+		_simulationScheduler.Register("offices.daily", SimulationCadence.Daily, 12, (SimulationTickContext ctx) =>
 		{
 			EnsureOfficeHolders();
 			if (_characterManager != null)
@@ -1178,7 +1178,13 @@ public partial class GameWorld : MonoBehaviour
 
 	public bool DeclareWar(int attackerId, int defenderId, string reason)
 	{
-		return DeclareWar(attackerId, defenderId, reason, ResolveSupremeRulerId(attackerId));
+		return DeclareWar(attackerId, defenderId, reason, ResolveSupremeRulerId(attackerId), WarDecisionMode.ConsultAndAbide);
+	}
+
+	/// <summary>简单宣战（可指定议事模式；测试/强制路径用 SkipConsultation）。</summary>
+	public bool DeclareWar(int attackerId, int defenderId, string reason, WarDecisionMode mode)
+	{
+		return DeclareWar(attackerId, defenderId, reason, ResolveSupremeRulerId(attackerId), mode);
 	}
 
 	private static bool IsReligiousCasusBelli(GameEnums.CasusBelliType type)
@@ -1201,15 +1207,15 @@ public partial class GameWorld : MonoBehaviour
 		return MyriadCreation.Content.Definitions.DoctrineBindingHost.Resolve(religion).pacifism;
 	}
 
-	private bool DeclareWarCore(int attackerId, int defenderId, string reason)
+	private bool DeclareWarCore(int attackerId, int defenderId, string reason, WarDecisionMode mode = WarDecisionMode.ConsultAndAbide)
 	{
 		WarRules rules = _diplomacyManager.WarRules ?? WarRules.Default();
 		CouncilConsultationResult council = CouncilConsultationSystem.Consult(this, attackerId, null);
-		if (!ResolveCouncilDecision(council, WarDecisionMode.ConsultAndAbide))
+		if (!ResolveCouncilDecision(council, mode))
 		{
 			return false;
 		}
-		ApplyCouncilConsequences(realms[attackerId], council, WarDecisionMode.ConsultAndAbide, rules);
+		ApplyCouncilConsequences(realms[attackerId], council, mode, rules);
 		if (!_diplomacyManager.DeclareWar(attackerId, defenderId, reason))
 		{
 			return false;
@@ -1668,6 +1674,11 @@ public partial class GameWorld : MonoBehaviour
 	/// <summary>带主体的宣战：先过 ActionGate（能力∧职权），再走原宣战流程。actor 为发起者角色。</summary>
 	public bool DeclareWar(int attackerId, int defenderId, string reason, int actorCharacterId)
 	{
+		return DeclareWar(attackerId, defenderId, reason, actorCharacterId, WarDecisionMode.ConsultAndAbide);
+	}
+
+	public bool DeclareWar(int attackerId, int defenderId, string reason, int actorCharacterId, WarDecisionMode mode)
+	{
 		if (attackerId < 0 || attackerId >= realms.Count)
 		{
 			return false;
@@ -1678,7 +1689,7 @@ public partial class GameWorld : MonoBehaviour
 		{
 			return false;
 		}
-		return DeclareWarCore(attackerId, defenderId, reason);
+		return DeclareWarCore(attackerId, defenderId, reason, mode);
 	}
 
 	private int ResolveSupremeRulerId(int realmId)

@@ -1,10 +1,11 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Infrastructure.Save;
 using MyriadCreation.Simulation.State;
+using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World;
 using MyriadCreation.World.Generation;
@@ -136,7 +137,7 @@ namespace MyriadCreation.Tests.EditMode
                 targetTileIndex = borderTile
             };
 
-            bool declared = world.DeclareWarWithJustification(attacker, defender, casusBelli, goal, "测试宣战");
+            bool declared = world.DeclareWarWithJustification(attacker, defender, casusBelli, goal, "测试宣战", WarDecisionMode.SkipConsultation);
 
             Assert.IsTrue(declared, "带理由宣战应成功");
             WarState war = LastOpenWar(world);
@@ -161,7 +162,7 @@ namespace MyriadCreation.Tests.EditMode
             PickTwoRealms(world, out int attacker, out int defender);
             Assert.GreaterOrEqual(defender, 0, "前置：应有两个政权");
 
-            bool declared = world.DeclareWar(attacker, defender, "无借口突袭");
+            bool declared = world.DeclareWar(attacker, defender, "无借口突袭", WarDecisionMode.SkipConsultation);
 
             Assert.IsTrue(declared, "无 CB 突袭也应允许");
             WarState war = LastOpenWar(world);
@@ -186,7 +187,7 @@ namespace MyriadCreation.Tests.EditMode
                 type = GameEnums.WarGoalType.ConquerTerritory,
                 targetTileIndex = borderTile
             };
-            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, null, goal, "征服"));
+            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, null, goal, "征服", WarDecisionMode.SkipConsultation));
             WarState war = LastOpenWar(world);
             Assert.IsNotNull(war);
             war.attackerScore = 100f;
@@ -222,18 +223,18 @@ namespace MyriadCreation.Tests.EditMode
             int borderTile = FindBorderTile(world, attacker, defender);
             Assert.GreaterOrEqual(borderTile, 0, "前置：应有接壤地块");
             var initialGoal = new WarGoal { goalId = 3, type = GameEnums.WarGoalType.BorderAdjustment, targetTileIndex = borderTile };
-            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境"));
+            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境", WarDecisionMode.SkipConsultation));
             WarState war = LastOpenWar(world);
 
             var downgradedGoal = new WarGoal { goalId = 4, type = GameEnums.WarGoalType.Humiliation, targetTileIndex = borderTile };
-            Assert.IsTrue(world.ReviseWarGoal(war.warId, downgradedGoal), "CB 授权范围内的降级应允许");
+            Assert.IsTrue(world.ReviseWarGoal(war.warId, downgradedGoal, WarDecisionMode.SkipConsultation), "CB 授权范围内的降级应允许");
             Assert.AreEqual(GameEnums.WarGoalType.Humiliation, war.warGoals[0].type);
             Assert.AreEqual(world.currentDay, war.lastWarGoalChangeDay);
             Assert.AreEqual(1, war.warGoalRevisionCount);
             Assert.AreEqual(war.casusBelli, casusBelli, "理由不随目标变更");
 
             var secondRevision = new WarGoal { goalId = 5, type = GameEnums.WarGoalType.Indemnity, targetTileIndex = 1 };
-            Assert.IsFalse(world.ReviseWarGoal(war.warId, secondRevision), "冷却期内不得再次改目标");
+            Assert.IsFalse(world.ReviseWarGoal(war.warId, secondRevision, WarDecisionMode.SkipConsultation), "冷却期内不得再次改目标");
             Assert.AreEqual(GameEnums.WarGoalType.Humiliation, war.warGoals[0].type);
         }
 
@@ -255,11 +256,11 @@ namespace MyriadCreation.Tests.EditMode
             int borderTile = FindBorderTile(world, attacker, defender);
             Assert.GreaterOrEqual(borderTile, 0, "前置：应有接壤地块");
             var initialGoal = new WarGoal { goalId = 6, type = GameEnums.WarGoalType.BorderAdjustment, targetTileIndex = borderTile };
-            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境"));
+            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境", WarDecisionMode.SkipConsultation));
             WarState war = LastOpenWar(world);
 
             var overreach = new WarGoal { goalId = 7, type = GameEnums.WarGoalType.ConvertReligion };
-            Assert.IsFalse(world.ReviseWarGoal(war.warId, overreach), "越出 CB 授权范围的目标不得改");
+            Assert.IsFalse(world.ReviseWarGoal(war.warId, overreach, WarDecisionMode.SkipConsultation), "越出 CB 授权范围的目标不得改");
             Assert.AreEqual(GameEnums.WarGoalType.BorderAdjustment, war.warGoals[0].type);
             Assert.AreEqual(0, war.warGoalRevisionCount);
         }
@@ -270,11 +271,11 @@ namespace MyriadCreation.Tests.EditMode
             var world = NewWorld();
             PickTwoRealms(world, out int attacker, out int defender);
             Assert.GreaterOrEqual(defender, 0, "前置：应有两个政权");
-            Assert.IsTrue(world.DeclareWar(attacker, defender, "无借口突袭"));
+            Assert.IsTrue(world.DeclareWar(attacker, defender, "无借口突袭", WarDecisionMode.SkipConsultation));
             WarState war = LastOpenWar(world);
 
             var revised = new WarGoal { goalId = 8, type = GameEnums.WarGoalType.Indemnity };
-            Assert.IsFalse(world.ReviseWarGoal(war.warId, revised), "无 CB 的突袭没有扩张依据");
+            Assert.IsFalse(world.ReviseWarGoal(war.warId, revised, WarDecisionMode.SkipConsultation), "无 CB 的突袭没有扩张依据");
             Assert.AreEqual(0, war.warGoals.Count);
         }
 
@@ -302,7 +303,7 @@ namespace MyriadCreation.Tests.EditMode
                 targetTileIndex = borderTile
             };
 
-            Assert.IsFalse(world.DeclareWarWithJustification(attacker, defender, casusBelli, overreach, "越权"),
+            Assert.IsFalse(world.DeclareWarWithJustification(attacker, defender, casusBelli, overreach, "越权", WarDecisionMode.SkipConsultation),
                 "边境事件不足以支撑吞并领土");
             Assert.IsNull(LastOpenWar(world), "失败宣战不得留下战争运行态");
         }
@@ -327,12 +328,12 @@ namespace MyriadCreation.Tests.EditMode
                 expiryDay = -1
             };
             var initialGoal = new WarGoal { goalId = 10, type = GameEnums.WarGoalType.BorderAdjustment, targetTileIndex = borderTile };
-            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境"));
+            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境", WarDecisionMode.SkipConsultation));
             WarState war = LastOpenWar(world);
             war.lastWarGoalChangeDay = -10000;
 
             var deepStrike = new WarGoal { goalId = 11, type = GameEnums.WarGoalType.ConquerTerritory, targetTileIndex = interiorTile };
-            Assert.IsFalse(world.ReviseWarGoal(war.warId, deepStrike), "不接壤的领土目标不得成为战争目标");
+            Assert.IsFalse(world.ReviseWarGoal(war.warId, deepStrike, WarDecisionMode.SkipConsultation), "不接壤的领土目标不得成为战争目标");
             Assert.AreEqual(GameEnums.WarGoalType.BorderAdjustment, war.warGoals[0].type);
         }
 
@@ -358,14 +359,14 @@ namespace MyriadCreation.Tests.EditMode
                 expiryDay = -1
             };
             var initialGoal = new WarGoal { goalId = 12, type = GameEnums.WarGoalType.BorderAdjustment, targetTileIndex = borderTile };
-            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境"));
+            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境", WarDecisionMode.SkipConsultation));
             WarState war = LastOpenWar(world);
             float prestigeBefore = realm.prestige;
             float stabilityBefore = realm.stability;
             war.lastWarGoalChangeDay = -10000;
 
             var escalate = new WarGoal { goalId = 13, type = GameEnums.WarGoalType.ConquerTerritory, targetTileIndex = borderTile };
-            Assert.IsTrue(world.ReviseWarGoal(war.warId, escalate), "威望等级不足但政权仍稳时可以强推");
+            Assert.IsTrue(world.ReviseWarGoal(war.warId, escalate, WarDecisionMode.SkipConsultation), "威望等级不足但政权仍稳时可以强推");
             Assert.AreEqual(prestigeBefore, realm.prestige, "威望等级是门槛，不是可花费点数");
             Assert.Less(realm.stability, stabilityBefore, "强推目标的代价落在稳定度上");
             Assert.Greater(realm.unrest, 0f, "强推目标应推高不安");
@@ -394,13 +395,13 @@ namespace MyriadCreation.Tests.EditMode
                 expiryDay = -1
             };
             var initialGoal = new WarGoal { goalId = 14, type = GameEnums.WarGoalType.BorderAdjustment, targetTileIndex = borderTile };
-            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境"));
+            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境", WarDecisionMode.SkipConsultation));
             WarState war = LastOpenWar(world);
             war.lastWarGoalChangeDay = -10000;
             realm.stability = 30f;
 
             var escalate = new WarGoal { goalId = 15, type = GameEnums.WarGoalType.ConquerTerritory, targetTileIndex = borderTile };
-            Assert.IsFalse(world.ReviseWarGoal(war.warId, escalate), "政权不稳时不得强推超越威望等级的目标");
+            Assert.IsFalse(world.ReviseWarGoal(war.warId, escalate, WarDecisionMode.SkipConsultation), "政权不稳时不得强推超越威望等级的目标");
             Assert.AreEqual(GameEnums.WarGoalType.BorderAdjustment, war.warGoals[0].type);
         }
 
@@ -428,7 +429,7 @@ namespace MyriadCreation.Tests.EditMode
                 type = GameEnums.WarGoalType.BorderAdjustment,
                 targetTileIndex = borderTile
             };
-            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, goal, "存读"));
+            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, goal, "存读", WarDecisionMode.SkipConsultation));
             int warId = LastOpenWar(world).warId;
 
             Assert.IsTrue(SaveSystem.SaveGame(world, SaveName), "存盘应成功");
