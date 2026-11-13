@@ -266,3 +266,96 @@
 4. **架构动作落到 asmdef + 文件级**，并更正 15→16 个程序集（旧总纲 §2 与本轮实测不符）。
 5. **冲突从 2 条扩到 6 条**（新增入口口径、denomination 必挂、asmdef 计数、D8 过期四条），每条给处置或指定拍板项。
 6. **§7 迁移说明**（旧总纲无；导致"哪份还算数"每轮都要重议）。
+
+---
+
+## §9 代码复核与统一规划（2026-11-13）
+
+> 本节是在读完当前代码与内容后写的**统一规划**，不替代 §1–§8 的架构判断；两者冲突时，以本节 §9.2 的设计原则与 §8 的宪章判据为准，并记入 `DECISIONS.md`。
+
+### 9.1 复核事实（本机实测）
+
+- **规模**：`Assets/**/*.cs` 共 1154 个；`StreamingAssets/Base` 40 张 JSON；19 个 asmdef；EditMode 891 条测试（889 通过，2 条 Explicit 默认跳过）。
+- **程序集层次**：Core → Content → {Laws, Faith, Culture} → World → Simulation → Rendering → UI → App；契约层为 `Save.Contracts` / `App.Contracts`；`Save.Runtime` 承载存档实现；`Simulation.Hosts` 承载 Faith/Culture 适配器；`Settings` 与 `Audio` 独立；`Infrastructure` 已删除。
+- **代码分布**：Simulation 486（State 78 / Systems 147 / Laws 36 / Units 30 / Genetics 26 / WorldState 41 / 其余 128），Content 188，World 98，Core 83，UI 33，Rendering 13，SaveRuntime 16，App 14。
+- **已跑通的链**：存档单源（`SaveSystem+SaveData`）、人口块单源（`PopulationLedger`）、货币/稳定度单源（`RealmTreasury/RealmStability`）、文化传播/融合/分裂、教义/宗派/正统/局势、战争契约/探测/占领、革新解锁五类消费者、调度预算与两相、Mods 布局/校验/依赖。
+- **验证基线**：`build.cmd` `EXIT=0`、`889/891`、零 `error CS`；`longrun` 2 seed×100 年 `1/1`。
+
+### 9.2 本规划必须遵守的原则（从宪章 §2 落到本轮）
+
+1. **机制优先于数值**（原则 5）：只改容量/成本/延迟/占有/信息，不新增“+X% 产出/+N 稳定”的驱动字段。
+2. **单一真源**（原则 8）：人口、货币、稳定度、法律、遗传、存档、影响力各只有一条权威链；不新建平行库存/关系/战争/人口。
+3. **数据驱动**（原则 6）：新增/修改内容不改 `.cs`；新表必须可被 `Mods/` 覆盖。
+4. **过程优先**（原则 11）：长周期变化用 Plan/过程承载，允许中断与失败，不点一下立即生效。
+5. **确定性**（原则 9）：随机只发生在条件层（气候/灾害/出生/疾病），由 world seed 派生。
+6. **性能是约束**（原则 7）：新系统必须声明 O(N)/O(dirty)/O(1)，并挂预算或增量；查询路径不写模拟状态。
+7. **干预只改条件**（原则 10）：不设代价层，不直接改结果。
+8. **可断言**：每项必须有 EditMode 测试或长跑断言，不能只靠“看起来通了”。
+
+### 9.3 现状缺口（按因果链，不按文件）
+
+| # | 缺口 | 证据 | 影响 |
+|---|---|---|---|
+| G1 | **农业产出链缺失** | 自然资源产出走 `ResourceGenerator → TradeCenter`；小麦/稻谷等作物不是 `isNaturalResource`，肥力/NPP 不进入产出；食物需求只在 `ClassNeedsSystem` 读库存 | 旱灾→减产→饥荒的经典因果链是断的（原则 5/9） |
+| G2 | **官职无语义** | `RealmData.officeHolders` 0–5 只有槽位；`OfficeTitleCatalog` 仅命名；无法表达 rank/modules/任命/薪酬 | 治理、法律提案、行政效率没有人物载体 |
+| G3 | **生态只到 NPP** | `EcologyModel` 已算 NPP，但植被演替/动物/过牧/侵蚀未接；`fauna.js` 的动物链未实现 | 生态反馈只有承载力一个出口 |
+| G4 | **Plan 只有 2/10 在转** | `ResearchPlanExecutor`、`ConstructionPlanExecutor`；其余 8 类无执行器/创建者 | 远航、围城、变法、迁徙等仍是瞬时或缺失（原则 11） |
+| G5 | **政权标识只有家族纹章** | `Heraldry` 已生成家族纹章；政权旗帜/徽记未接 | 地图/面板缺少政权可识别符号 |
+| G6 | **城市只有块数据** | `SettlementBlock` 有区划/面积/城墙；无布局坐标/俯视图 | 无法做城市俯视或街道级可视化 |
+| G7 | **信息/密谋缺失** | 只有 `CharacterKnowledgeRegistry` 的过期遗忘；无 S19 地图知识/密谋 | P2.3 的 WP5 未开始 |
+| G8 | **本地化与内容尾巴** | UI 文案大量硬编码；少量历史常量无 `source/TODO_M05`；`DnaData` 仍作旧输入兼容 | 可模组化与验收 §6.5 不完全 |
+
+### 9.4 统一施工序列（P3.0–P3.6）
+
+#### P3.0 农业—食物链（最高优先，G1）
+
+- **机制**：耕地/牧场/渔场是“生产场所”，产出 = 面积 × 肥力/NPP × 劳力 × 工具/革新 × 运输可达性；作物进入市场，人口块按需求消费；短缺→价格/配给→饥荒/不满。
+- **不新增**：不建第二套人口、第二套库存；产出走既有 `TradeCenter`，消费走既有 `ClassNeedsSystem` 的需求输入。
+- **验收**：同一 seed 下，旱灾年作物产出下降、库存下降、食物不满上升、饥荒事件可复现；关掉 NPP/肥力后链条断开（反向断言）。
+- **依赖**：`TileData.fertility/npp`、`TradeCenter`、`SettlementProduction`。
+
+#### P3.1 官职与治理（G2，借 TTHTOM `polity_profile`）
+
+- **内容**：`Offices.json`：6 个槽位的 id/名称/rank/modules（central_office/general/personnel_authority/treasury/judicial/religious）/salary/appointment_order/candidate_gender/royal/scope/family_power/dismissal_resistance。
+- **机制**：任命按候选约束与能力/关系；官职提供“职权”而非数值加成：谁能提案、谁审案、谁征税、谁能任免；`officeHolders` 仍是唯一真源。
+- **验收**：任职改变法律提案权/司法管辖/税收执行者；读档往返；无“官职 +X%”字段。
+- **依赖**：`OfficeTitleCatalog`、`LawRealmContext`、`JudicialSystem`、`TaxSystem`。
+
+#### P3.2 生态演替与动物（G3，借 Earth Simulator `ecology.js/fauna.js`）
+
+- **机制**：NPP→植被量（慢增快减）→过牧/侵蚀→肥力下降；动物种按 NPP 承载，捕食/驯化由具体物种参数驱动。
+- **验收**：过度放牧 20 年后 NPP/肥力下降；移除草食动物后捕食者数量下降；全部 seed 派生。
+- **依赖**：P3.0 的产出链、`MapActor`/`TileData`。
+
+#### P3.3 Plan 执行器扩展（G4，原则 11）
+
+- **首批**：Construction 生产调用者（AI/玩家下建造令）、Military 战役计划（行军/围城/撤退，接 `ArmySchedule`）、Expedition（远航）。
+- **验收**：计划可被中断/失败并留编年史；参与者与需求可查；不新建第二套军队/建造系统。
+
+#### P3.4 政权旗帜与城市俯视图（G5/G6，借 TTHTOM `flag_profile`）
+
+- **旗帜**：确定性 layout/bands/colors/saltire/canton + 家族纹章同源配色；只存符号，不存美术。
+- **城市俯视**：块数据→派生布局（城墙外环/道路骨架/区划按面积切分/建筑落位）→程序化 Sprite；布局不存档、读档重算。
+- **验收**：同 `settlementId/blockId` 同图；旗帜与纹章可区分政权/家族。
+
+#### P3.5 信息与密谋（G7，前置 S19）
+
+- **先做**：地图知识层（谁知道哪块地/哪条路，由军队/商队/斥候写入，入档）。
+- **后做**：密谋计划（PlanType.Intrigue）+ 信息延迟/伪造；不硬造无知识层的密谋。
+
+#### P3.6 内容/本地化/架构尾巴（G8）
+
+- 继续外提可编辑表（政体/阶层门槛等）；UI 文案走 Localization JSON；`RealmData` 可变字段逐步私有化；`DnaData` 仅保留旧档迁移；法律 Host 运行逻辑按需再拆。
+- 所有新增阈值带 `source/TODO_M05`。
+
+### 9.5 顺序与并行
+
+- **串行**：P3.0 → P3.2（生态反馈依赖产出链）；P3.1 可与 P3.0 并行（不同文件面）。
+- **并行**：P3.3 与 P3.4 可在 P3.0 稳定后并行；P3.5 等 S19；P3.6 持续穿插。
+- **每批**：先读现有代码 → 写测试 → 实现 → `build.cmd` 全绿 → `DECISIONS.md/PROJECT.md` → 提交推送；不达全绿不开下一批。
+
+### 9.6 本轮不做
+
+- 不复制任何参考项目的代码/美术/数据格式（Azgaar MIT 仅借模型并注明；Earth Simulator/TTHTOM 只读分析）。
+- 不为“全量”硬填空内容；不新增平行系统；不用抽象加成替代因果链。
+- 不在没有消费者时引入新抽象层（F 的剩余部分按触发条件再开）。
