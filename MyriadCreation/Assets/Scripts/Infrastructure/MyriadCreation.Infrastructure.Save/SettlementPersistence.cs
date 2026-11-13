@@ -93,6 +93,7 @@ namespace MyriadCreation.Infrastructure.Save
                         anchor_id = settlement.anchorId,
                         site_name = settlement.settlementName,
                         legacy_settlement_form = (int)settlement.settlementForm,
+                        legacy_settlement_level = (int)settlement.settlementLevel,
                         legacy_site_category = (int)settlement.settlementCategory,
                         provinceId = anchor?.provinceId ?? -1,
                         tileIndex = anchor?.tileIndex ?? -1,
@@ -286,6 +287,10 @@ namespace MyriadCreation.Infrastructure.Save
                     economicInitialized = entry.economicInitialized
                 };
                 entry.ApplyModeData(settlement);
+                int savedLevel = entry.legacy_settlement_level >= 0
+                    ? entry.legacy_settlement_level
+                    : (entry.sedentary_settlement_data?.development_stage ?? 0);
+                settlement.settlementLevel = (SettlementLevel)Math.Min(4, Math.Max(0, savedLevel));
                 settlement.SetLegacyCategoryFromSiteMode();
 
                 if (entry.economicSectors != null && entry.economicRatios != null

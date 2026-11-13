@@ -37,6 +37,7 @@ namespace MyriadCreation.Save.Contracts
         public int anchor_id;
         public string site_name;
         public int legacy_settlement_form;
+        public int legacy_settlement_level = -1;
         public int legacy_site_category;
 
         // ===== 聚落基础字段 =====

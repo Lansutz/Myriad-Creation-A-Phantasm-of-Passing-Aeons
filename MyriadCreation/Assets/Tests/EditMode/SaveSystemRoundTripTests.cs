@@ -5,6 +5,7 @@ using UnityEngine;
 using MyriadCreation.Core.Constants;
 using MyriadCreation.Core.Contracts;
 using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Enums;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Infrastructure.Save;
 using MyriadCreation.Simulation.AI;
@@ -101,6 +102,7 @@ namespace MyriadCreation.Tests.EditMode
             settlement.wealth = 987f;
             settlement.garrison = 654;
             settlement.constructionTier = 4;
+            settlement.settlementLevel = SettlementLevel.LevelIII;
             var market = settlement.GetOrCreateMarket();
             market.capacity = 500f; // 前置：保证库存放得下（仓储块可能尚未建成，容量为 0）
             Assert.IsTrue(market.AddStock(53, 42f), "前置：市场应能入库");
@@ -327,6 +329,7 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(987f, loadedSettlement.wealth, 0.01f, "聚落财富");
             Assert.AreEqual(654, loadedSettlement.garrison, "聚落守军");
             Assert.AreEqual(4, loadedSettlement.constructionTier, "建造等级");
+            Assert.AreEqual(SettlementLevel.LevelIII, loadedSettlement.settlementLevel, "聚落等级");
             Assert.AreEqual(42f, loadedSettlement.market.GetStock(53), 0.01f, "市场库存");
             Assert.AreEqual(1, loadedSettlement.districts.Count, "城市区划");
             Assert.AreEqual("测试东市", loadedSettlement.districts[0].districtName);
