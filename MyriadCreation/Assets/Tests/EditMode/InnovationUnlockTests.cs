@@ -68,6 +68,23 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
+        public void ReferencedEquipment_RequiresGrantedInnovation()
+        {
+            var world = NewWorld();
+            RealmData realm = FirstRealm(world);
+            var equipment = new EquipmentDef { equipmentId = 9004, requiredInnovation = 0 };
+            world.Innovations.RegisterInnovation(new InnovationDef
+            {
+                innovationId = 9005,
+                unlockRefs = new List<InnovationUnlock> { InnovationUnlock.Of(InnovationUnlockKind.Equipment, 9004) }
+            });
+
+            Assert.IsFalse(world.Innovations.AreItemInnovationsMet(realm.realmId, equipment), "未解锁装备不得可用");
+            world.Innovations.GrantInnovation(realm.realmId, 9005);
+            Assert.IsTrue(world.Innovations.AreItemInnovationsMet(realm.realmId, equipment), "解锁后装备应可用");
+        }
+
+        [Test]
         public void ReferencedLawKey_RequiresGrantedInnovation()
         {
             var world = NewWorld();

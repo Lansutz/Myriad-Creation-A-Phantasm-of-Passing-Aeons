@@ -260,6 +260,10 @@ public class InnovationTree
 	public bool AreItemInnovationsMet(int realmId, EquipmentDef equipment)
 	{
 		if (equipment == null) return false;
+		if (!IsUnlockGranted(realmId, InnovationUnlockKind.Equipment, equipment.equipmentId))
+		{
+			return false;
+		}
 		if (equipment.requiredInnovation > 0 && !HasInnovation(realmId, equipment.requiredInnovation))
 		{
 			return false;
