@@ -1,0 +1,4954 @@
+{
+  "biomes": [
+    {
+      "biome": 0,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 1,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 2,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 3,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 4,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 5,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 6,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 7,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 8,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 9,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 10,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 11,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 12,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 13,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 14,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 15,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 16,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 17,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 18,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 19,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 20,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 21,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 22,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 23,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 24,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 25,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 26,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 27,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 28,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 29,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 32,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 33,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 34,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 35,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 36,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 37,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 38,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 39,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 40,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 41,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 42,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 43,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 44,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 45,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 46,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 47,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 48,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 49,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 50,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 51,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 52,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 53,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 54,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 55,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 56,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 57,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 58,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 59,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 60,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 61,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 62,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 63,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 64,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 65,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 66,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 67,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 68,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 69,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 70,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 71,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 72,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 73,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 74,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 75,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 76,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 77,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 78,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 79,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 80,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 81,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 82,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 83,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 84,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 85,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 86,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 87,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 88,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 89,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 90,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    },
+    {
+      "biome": 91,
+      "resources": [
+        {
+          "goodsId": 3,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 30,
+          "probability": 0.6,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 40,
+          "probability": 0.5,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 50,
+          "probability": 0.4,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 51,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 54,
+          "probability": 0.15,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 58,
+          "probability": 0.3,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 130,
+          "probability": 0.12,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 131,
+          "probability": 0.08,
+          "abundanceMultiplier": 1.0
+        },
+        {
+          "goodsId": 140,
+          "probability": 0.35,
+          "abundanceMultiplier": 1.0
+        }
+      ]
+    }
+  ]
+}

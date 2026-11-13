@@ -19,6 +19,7 @@ public static class ResourceGenerator
 		{
 			return;
 		}
+		BiomeResourceCatalog.EnsureLoaded();
 		List<GoodsDef> naturalGoods = GetNaturalGoods(world);
 		if (naturalGoods.Count == 0)
 		{
@@ -57,25 +58,37 @@ public static class ResourceGenerator
 	private static bool TrySpawnResource(GameWorld world, in TileData tile, GoodsDef goods, System.Random random, out TileResource resource)
 	{
 		resource = default;
-		if (goods.originBiomes == null || goods.originBiomes.Count == 0)
-		{
-			return false;
-		}
-		if (!goods.originBiomes.Contains(tile.biome))
-		{
-			return false;
-		}
 		if (!CheckSpawnCondition(in tile, goods.spawnCondition))
 		{
 			return false;
 		}
+		float probability;
+		float abundanceMultiplier;
+		if (BiomeResourceCatalog.IsLoaded)
+		{
+			if (!BiomeResourceCatalog.TryGet((int)tile.biome, goods.goodsId, out BiomeResourceEntry entry))
+			{
+				return false;
+			}
+			probability = entry.probability;
+			abundanceMultiplier = entry.abundanceMultiplier <= 0f ? 1f : entry.abundanceMultiplier;
+		}
+		else
+		{
+			if (goods.originBiomes == null || goods.originBiomes.Count == 0 || !goods.originBiomes.Contains(tile.biome))
+			{
+				return false;
+			}
+			probability = goods.baseAbundance;
+			abundanceMultiplier = 1f;
+		}
 		float num = CalculateGeographicQuality(in tile, goods);
-		float num2 = goods.baseAbundance * num;
+		float num2 = probability * num;
 		if (random.NextDouble() > num2)
 		{
 			return false;
 		}
-		float abundance = Mathf.Clamp01(goods.baseAbundance * num * (0.7f + (float)random.NextDouble() * 0.6f));
+		float abundance = Mathf.Clamp01(probability * num * abundanceMultiplier * (0.7f + (float)random.NextDouble() * 0.6f));
 		resource = TileResource.Create(goods.goodsId, abundance, RollDepth(in goods, (float)random.NextDouble()));
 		// 地表资源默认已发现/已开发；深层资源保持未发现，等待勘探与开发系统。
 		resource.discovered = resource.accessDepth == ResourceAccessDepth.Surface;
