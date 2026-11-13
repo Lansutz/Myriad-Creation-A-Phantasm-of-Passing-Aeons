@@ -196,7 +196,7 @@ public class CharacterManager
 		return num;
 	}
 
-	public bool Marry(int aId, int bId)
+	public bool Marry(int aId, int bId, bool allowSameSex = false)
 	{
 		CharacterData character = GetCharacter(aId);
 		CharacterData character2 = GetCharacter(bId);
@@ -208,7 +208,7 @@ public class CharacterManager
 		{
 			return false;
 		}
-		if (character.isMale == character2.isMale)
+		if (!allowSameSex && character.isMale == character2.isMale)
 		{
 			return false;
 		}

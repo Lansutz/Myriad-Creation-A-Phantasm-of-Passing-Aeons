@@ -4,6 +4,8 @@ using UnityEngine;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.WorldState;
+using MyriadCreation.Simulation.ContentHost;
+using MyriadCreation.Simulation.Faith;
 using MyriadCreation.World.Generation;
 
 namespace MyriadCreation.Tests.EditMode
@@ -72,6 +74,33 @@ namespace MyriadCreation.Tests.EditMode
 
             Assert.IsFalse(world.TryArrangeMarriage(a.characterId, b.characterId, out string reason));
             Assert.AreEqual("不满足婚姻条件", reason);
+        }
+
+        [Test]
+        public void SameSexMarriage_AllowedWhenDoctrineAccepts()
+        {
+            var world = NewWorld();
+            int realmId = -1;
+            foreach (int key in world.realms.Keys) { realmId = key; break; }
+            RealmData realm = world.realms[realmId];
+            FaithSystem faith = world.GetFaithSystem(realm.stateReligionId);
+            Assert.IsNotNull(faith, "前置：政权应有国教");
+            Assert.IsTrue(ContentResolvers.Religions.TryGet(faith.religionId, out ReligionDef religion), "前置：应有宗教定义");
+            var original = new List<string>(religion.selectedDoctrines);
+            try
+            {
+                religion.selectedDoctrines.Add("doctrine_homosexuality_accepted");
+                CharacterData a = CreateAdult(world, realmId, "甲", true);
+                CharacterData b = CreateAdult(world, realmId, "乙", true);
+
+                Assert.IsTrue(world.TryArrangeMarriage(a.characterId, b.characterId, out string reason), reason);
+                Assert.AreEqual(b.characterId, a.spouseId);
+            }
+            finally
+            {
+                religion.selectedDoctrines.Clear();
+                religion.selectedDoctrines.AddRange(original);
+            }
         }
 
         [Test]

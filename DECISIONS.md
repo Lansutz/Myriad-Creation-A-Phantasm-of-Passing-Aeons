@@ -494,3 +494,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 内容层已有 `Doctrines.json` 的 optionId（doctrine_/ethics/ritual/institution/material 前缀），但运行时只有 `Doctrine{name,category,strictness}`，没有可消费的绑定。
 - 新增 `DoctrineBindings`：把选中 optionId 解析成伦理立场（同性/婚外情/巫术：罪行/忌讳/接纳）、离婚（禁止/许可/允许）、葬礼（土/火/天/木乃伊）、神职性别与婚配、和平主义、君权神授。`DoctrineBindingHost.Resolve(ReligionDef)` 是唯一解析入口。
 - 未做：八接线点消费与参数级 schema（group→option→parameter）；本批只落“可被系统读取的绑定快照”，不假装已改行为。
+
+## D57 教义绑定第一个消费者：同性婚姻是否允许（P1.3 WP3）
+
+- `CharacterManager.Marry(a,b,allowSameSex=false)` 保留原默认；`GameWorld.TryArrangeMarriage` 从政权国教解析 `DoctrineBindings.homosexuality`，只有 `Accepted` 才放行同性婚姻。
+- 这是 WP3 的第一条真实消费链：内容选项 → FaithHost 绑定 → 世界层婚姻入口；没有 Accepted 内容时行为保持旧口径（拒绝），不会凭空放开。
+- 其余绑定点（伦理入罪、神职婚配/性别、葬礼、和平主义）仍待接。

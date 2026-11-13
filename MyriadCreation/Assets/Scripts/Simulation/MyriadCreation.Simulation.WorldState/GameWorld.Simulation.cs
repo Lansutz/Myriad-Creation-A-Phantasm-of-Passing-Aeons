@@ -1543,7 +1543,16 @@ public partial class GameWorld : MonoBehaviour
 			reason = "人物已故";
 			return false;
 		}
-		if (!_characterManager.Marry(aId, bId))
+		bool allowSameSex = false;
+		if (realms != null && realms.TryGetValue(a.realmId, out RealmData realm) && realm != null)
+		{
+			FaithSystem faith = GetFaithSystem(realm.stateReligionId);
+			if (faith != null && MyriadCreation.Simulation.ContentHost.ContentResolvers.Religions.TryGet(faith.religionId, out MyriadCreation.Content.Definitions.ReligionDef religion))
+			{
+				allowSameSex = MyriadCreation.Simulation.FaithHost.DoctrineBindingHost.Resolve(religion).homosexuality == MyriadCreation.Simulation.FaithHost.DoctrineMoralStance.Accepted;
+			}
+		}
+		if (!_characterManager.Marry(aId, bId, allowSameSex))
 		{
 			reason = "不满足婚姻条件";
 			return false;
