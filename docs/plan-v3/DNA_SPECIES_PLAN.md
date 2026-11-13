@@ -21,7 +21,20 @@
 
 ---
 
-## 1. 设计规则（不可违反）
+## 1. 总原则（继承宪章与既有决策，不另立一套）
+
+本计划不新造原则，继续执行此前定下的总原则：
+
+1. **架构分层**：纯定义进 `Content.Definitions`，运行逻辑留在 Simulation/World；不新增平行系统；单一真源（基因组、物种、表型各一条权威链）。
+2. **文件/代码架构**：保持 CK3 式“定义表 / 运行态 / 引擎”分离与程序集边界；新内容走 `Base/...` JSON + `Mods` 覆盖，不把内容写死进代码。
+3. **性能预算**：每个新增系统声明复杂度（O(N)/O(dirty)/O(1)），挂调度预算/增量；查询不写状态；内容表只在初始化读一次，运行期查字典。
+4. **并行与锁步**：表型计算是纯函数可并行；写状态（迁移、繁殖落盘）保持在主 tick 锁步；不引入跨系统异步写。
+5. **模拟真实性（尽量）**：优先用机制/因果链（翼→侦察、鳞皮→耐温、角爪→近战、食性→口粮）而不是抽象加成；必要数值必须是可解释的生理/物理量。
+6. **确定性**：随机只来自 world seed 派生的 `System.Random`；表型、物种判定、存档迁移全部可复现。
+7. **旧档与内容兼容**：新增字段可选、缺省有明确语义；旧 `GenomeInstance` 按基因组版本补齐；坏内容跳过并告警，不拖垮整包。
+8. **可维护/可测试**：每批先读现有代码；表驱动 + 单元测试；`build` 与 `longrun` 全绿后提交。
+
+### 1.1 DNA 专项规则
 
 1. **每个位点一个机制消费者**：位点必须能回答“它改变哪条因果链”，否则不进表。禁止只做展示的装饰位点。
 2. **离散性状用等位基因表达，不用随机标签**：翼型、角型、皮膜、尾型等由 `AlleleTraitEffect` 的离散通道表达；表现型由基因型推导，不额外抽卡。
@@ -37,7 +50,7 @@
 ### D1 基因组/物种内容化
 - 新增 `StreamingAssets/Base/Genetics/Genomes.json`：`{ genomes: [GenomeDef...] }`；人类基因组从代码搬到表，代码保留 `CreateHumanGenome()` 作为无内容环境兜底。
 - 新增 `StreamingAssets/Base/Genetics/Species.json`：`{ species: [SpeciesDef...] }`；`RaceDefs.json` 与物种表的关系写清楚（种族=可玩外观/文化载体，物种=可育与身体蓝图）。
-- `ContentDefinitionIndex` 增加 `Genomes`/`Species` 两个 provider，Base 打底、Mods 覆盖；校验：
+- 纯定义（`GenomeDef`/`GenomeLocusDef`/`AlleleDef`/`SpeciesDef` 等）迁入 `Content.Definitions`，由 `ContentDefinitionIndex` 增加 `Genomes`/`Species` 两个 provider：Base 打底、Mods 覆盖；Simulation 只保留引擎与目录桥接。校验：
   - genomeId/speciesId 唯一；
   - locusId 在基因组内唯一，等位基因索引有效；
   - species.genomeId 必须存在；
