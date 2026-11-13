@@ -266,6 +266,7 @@ namespace MyriadCreation.Tests.EditMode
         /// </summary>
         [Test]
         [Explicit("100 年长跑按需运行，默认套件不跑")]
+        [Timeout(1800000)]
         public void RunHundredYears_TwoSeeds_ExportsLongHorizon()
         {
             string dir = Path.Combine(Application.dataPath, "../Logs");

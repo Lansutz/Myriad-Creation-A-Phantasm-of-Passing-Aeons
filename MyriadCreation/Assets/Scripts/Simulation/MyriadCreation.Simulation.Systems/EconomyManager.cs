@@ -23,6 +23,9 @@ public class EconomyManager
 
 	private readonly TaxSystem _taxSystem;
 
+	/// <summary>政权表：税率唯一真源是 `realm.taxSystem`，全局 `_taxSystem` 只作旧测试/缺省兜底。</summary>
+	private readonly Dictionary<int, RealmData> _realms;
+
 	private int _nextCaravanId = 1;
 
 	private int _storageUpdateDay = -1;
@@ -80,13 +83,14 @@ public class EconomyManager
 	/// <summary>被节流抑制的容量不足跳发车次数，用于告警汇总。</summary>
 	private int _suppressedTradeCapacitySkips;
 
-	public EconomyManager(TileData[] tiles, Dictionary<int, TradeCenter> tradeCenters, Dictionary<int, GoodsDef> goodsDefs, CurrencySystem currency, TaxSystem taxSystem)
+	public EconomyManager(TileData[] tiles, Dictionary<int, TradeCenter> tradeCenters, Dictionary<int, GoodsDef> goodsDefs, CurrencySystem currency, TaxSystem taxSystem, Dictionary<int, RealmData> realms = null)
 	{
 		_tiles = tiles;
 		_tradeCenters = tradeCenters;
 		_goodsDefs = goodsDefs;
 		_currency = currency;
 		_taxSystem = taxSystem;
+		_realms = realms;
 	}
 
 	public void UpdateStorageCapacities()
@@ -570,17 +574,39 @@ public class EconomyManager
 	/// <summary>结算税收；multiplier 为法律/法令的税收乘子（LawEffectRuntime.GetTaxMultiplier）。</summary>
 	public float SettleTaxes(int realmId, float multiplier = 1f)
 	{
+		TaxSystem tax = ResolveTaxSystem(realmId);
 		float num = 0f;
 		for (int i = 0; i < _tiles.Length; i++)
 		{
 			if (_tiles[i].exists && _tiles[i].isLand && _tiles[i].ownerRealmId == realmId)
 			{
-				float baseOutput = _tiles[i].fertility * _tiles[i].development * 10f;
+				// 税基 = 土地生产力 × 人口 × 秩序（控制度代理）；税率来自该政权自己的 taxSystem。
+				float population = 0f;
+				if (_tiles[i].populationBlocks != null)
+				{
+					foreach (PopulationBlock block in _tiles[i].populationBlocks)
+					{
+						population += block.count;
+					}
+				}
+				float populationFactor = 0.5f + Mathf.Clamp01(population / 1000f) * 0.5f;
+				float orderFactor = 0.5f + Mathf.Clamp01(_tiles[i].order / 100f) * 0.5f;
+				float baseOutput = _tiles[i].fertility * _tiles[i].development * 10f * populationFactor * orderFactor;
 				GameEnums.SocialClass dominantClass = GetDominantClass(_tiles[i]);
-				num += _taxSystem.CalculateTileTax(_tiles[i], baseOutput, dominantClass);
+				num += tax.CalculateTileTax(_tiles[i], baseOutput, dominantClass);
 			}
 		}
 		return num * multiplier;
+	}
+
+	/// <summary>税率唯一真源：政权 taxSystem；政权表缺失时才回退全局旧实例。</summary>
+	private TaxSystem ResolveTaxSystem(int realmId)
+	{
+		if (_realms != null && _realms.TryGetValue(realmId, out RealmData realm) && realm?.taxSystem != null)
+		{
+			return realm.taxSystem;
+		}
+		return _taxSystem;
 	}
 
 	private GameEnums.SocialClass GetDominantClass(TileData tile)

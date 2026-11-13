@@ -571,7 +571,7 @@ public partial class GameWorld : MonoBehaviour
 		_worldMapSimulation.BeforeFullRecalculate = EnsureSeaLandGeneratorSeed;
 		_currencySystem = new CurrencySystem();
 		_taxSystem = new TaxSystem();
-		_economyManager = new EconomyManager(tiles, tradeCenters, goodsDefs, _currencySystem, _taxSystem);
+		_economyManager = new EconomyManager(tiles, tradeCenters, goodsDefs, _currencySystem, _taxSystem, realms);
 		_politicalManager = new PoliticalManager(tiles, realms);
 		_combatManager = new CombatManager(tiles, unitDefs, _seaLandGenerator, SimulationEvents, mapWidth);
 		_diplomacyManager = new DiplomacyManager(realms);

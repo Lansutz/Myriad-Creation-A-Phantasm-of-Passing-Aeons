@@ -407,3 +407,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 决策模式：`ConsultAndAbide`（默认，议事多数反对就作罢）、`ConsultAndOverride`（强推）、`SkipConsultation`（不协商）。协商通过不额外收费；强推或不协商的代价落在**议事成员对统治者的好感、稳定度、不安**，不是扣威望点数。
 - 记录：`WarState` 保存 `councilConsulted/councilSkipped/councilOverridden/councilSupporters/councilOpponents/councilApproval` 与改目标时的支持/反对数；编年史留痕。
 - 与 D40 一致：所有代价必须能解释为人的反应或政权的政治状态，不用抽象货币替代协商。
+
+## D42 财政税率单源与税基口径（P1.2 第一批）
+
+- 税率唯一真源是 `RealmData.taxSystem`；`EconomyManager` 的全局 `_taxSystem` 只作旧测试/缺省兜底，生产结算不得再统一读全局税率。
+- 税基 = 土地生产力（fertility × development × 10）× 人口因子 × 秩序因子；人口取 `TileData.populationBlocks` 聚合，秩序用 `tile.order` 作控制度代理。人口/控制度不再是税基外的抽象乘数。
+- 不做：暂不引入 `vault` 与 `treasury` 二选一、不另建收支表；四轴需求报告留到 P1.2 后续。
