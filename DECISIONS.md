@@ -894,3 +894,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 效果：Faith 叶子只出不可变快照（RELIGION_V2 的 F 原则），Simulation 仍使用它但不构成循环依赖。
 - 验证：`EXIT=0`、`884/886`、零 `error CS`。
 - 未做：Faith/Culture/Law 的适配器与 Host 文件夹尚未迁到独立程序集；这是 F 的剩余主体。
+
+## D110 Host 适配层独立 + Host 文件夹退出 Simulation（P2.5 F）
+
+- 新增 `MyriadCreation.Simulation.Hosts` 程序集：承载 `FaithContracts`/`CultureContracts` 两个契约适配器；通过 `Core.Contracts.SimulationHostRegistry` 的工厂注册，Simulation 只引用契约，不反向引用 Hosts（无 asmdef 循环）。
+- `HostRegistration.EnsureRegistered` 在运行时由 `RuntimeInitializeOnLoadMethod` 注册；EditMode 用 `[SetUpFixture]` 显式注册。
+- `GameWorld.Contracts` 的 Faith/Culture 查询/命令改为接口 + 注册表工厂，查询与命令共享同一适配器实例（保持既有测试语义）。
+- 其余 Host 逻辑归入 `Simulation/Systems/{FaithRuntime,CultureRuntime,LawRuntime}`：Simulation 不再有 `*Host` 文件夹；法律运行逻辑仍属仿真层（不是适配器），不入 Hosts 程序集。
+- 空 `FaithContextAdapter`（无调用者）删除；教义快照上一刀已移入 Content。
+- 验证：`EXIT=0`、`884/886`、零 `error CS`。

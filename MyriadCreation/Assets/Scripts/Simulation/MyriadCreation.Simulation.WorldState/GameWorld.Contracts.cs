@@ -1,9 +1,7 @@
 using MyriadCreation.Core.Contracts;
-using MyriadCreation.Simulation.CultureHost;
 using MyriadCreation.Simulation.Faith;
 using MyriadCreation.Simulation.Laws;
 using MyriadCreation.Simulation.LawHost;
-using MyriadCreation.Simulation.FaithHost;
 
 namespace MyriadCreation.Simulation.WorldState
 {
@@ -16,9 +14,8 @@ public partial class GameWorld
 {
 	private LawContracts _lawContracts;
 
-	private FaithContracts _faithContracts;
-
-	private CultureContracts _cultureContracts;
+	private object _faithContracts;
+	private object _cultureContracts;
 
 	/// <summary>法律查询契约（已固化/生效中/推行中/候选）。</summary>
 	public ILawQuery LawQuery => _lawContracts ??= new LawContracts(this);
@@ -27,16 +24,16 @@ public partial class GameWorld
 	public ILawCommand LawCommand => _lawContracts ??= new LawContracts(this);
 
 	/// <summary>信仰查询契约（国教/名称/虔诚/圣地）。</summary>
-	public IFaithQuery FaithQuery => _faithContracts ??= new FaithContracts(this);
+	public IFaithQuery FaithQuery => (IFaithQuery)(_faithContracts ??= SimulationHostRegistry.CreateFaithQuery(this));
 
 	/// <summary>信仰命令契约（设国教/加虔诚）。</summary>
-	public IFaithCommand FaithCommand => _faithContracts ??= new FaithContracts(this);
+	public IFaithCommand FaithCommand => _faithContracts as IFaithCommand ?? (IFaithCommand)(_faithContracts = SimulationHostRegistry.CreateFaithCommand(this));
 
 	/// <summary>文化查询契约（主体文化/名称/阶段）。</summary>
-	public ICultureQuery CultureQuery => _cultureContracts ??= new CultureContracts(this);
+	public ICultureQuery CultureQuery => (ICultureQuery)(_cultureContracts ??= SimulationHostRegistry.CreateCultureQuery(this));
 
 	/// <summary>文化命令契约（设主体文化/阶段）。</summary>
-	public ICultureCommand CultureCommand => _cultureContracts ??= new CultureContracts(this);
+	public ICultureCommand CultureCommand => _cultureContracts as ICultureCommand ?? (ICultureCommand)(_cultureContracts = SimulationHostRegistry.CreateCultureCommand(this));
 
 	public ILawQuery GetLawContracts() => LawQuery;
 

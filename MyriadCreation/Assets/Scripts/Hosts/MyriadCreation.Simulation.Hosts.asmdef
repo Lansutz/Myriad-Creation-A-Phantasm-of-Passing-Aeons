@@ -1,0 +1,22 @@
+{
+    "name": "MyriadCreation.Simulation.Hosts",
+    "rootNamespace": "MyriadCreation.Simulation.Hosts",
+    "references": [
+        "MyriadCreation.Core",
+        "MyriadCreation.Content",
+        "MyriadCreation.Simulation",
+        "MyriadCreation.Faith",
+        "MyriadCreation.Culture",
+        "MyriadCreation.Laws",
+        "MyriadCreation.World"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

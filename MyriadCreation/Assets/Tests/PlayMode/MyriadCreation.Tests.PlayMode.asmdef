@@ -13,7 +13,8 @@
         "MyriadCreation.App",
         "MyriadCreation.Settings",
         "MyriadCreation.Audio",
-        "MyriadCreation.Save.Runtime"
+        "MyriadCreation.Save.Runtime",
+        "MyriadCreation.Simulation.Hosts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -11,7 +11,8 @@
         "MyriadCreation.Settings",
         "MyriadCreation.UI",
         "MyriadCreation.Save.Contracts",
-        "MyriadCreation.Save.Runtime"
+        "MyriadCreation.Save.Runtime",
+        "MyriadCreation.Simulation.Hosts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
