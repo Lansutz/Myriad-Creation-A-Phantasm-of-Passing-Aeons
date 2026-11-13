@@ -117,6 +117,10 @@ public partial class GameWorld : MonoBehaviour
 			_aiManager.CreateController(j);
 		}
 		_characterManager.CreateInitialRulers(realms, currentYear);
+		if (PlayerRealmId < 0 && num > 0)
+		{
+			PlayerRealmId = 0;
+		}
 	}
 
 	public void GenerateTerrain(int seed = 42)
