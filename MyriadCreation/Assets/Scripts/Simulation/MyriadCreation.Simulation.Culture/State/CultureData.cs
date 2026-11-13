@@ -74,6 +74,9 @@ public class CultureData
 
 	public bool allowsBranching = true;
 
+	/// <summary>该文化是否已具备家族纹章习俗（内容/事件开启；默认无，不是所有文化都有）。</summary>
+	public bool heraldryEnabled;
+
 	/// <summary>被哪个文化吸收（-1=独立）；吸收后保留实体供人物引用，但不再作为可传播文化。</summary>
 	public int mergedIntoCultureId = -1;
 

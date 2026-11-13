@@ -507,7 +507,15 @@ public class CharacterManager
 			Innovations = Innovations
 		};
 		familyNode.AddMember(founderId);
-		Heraldry.Ensure(familyNode);
+		// 纹章是文化习俗，不是所有家族都有；只有内容/事件把该文化标记为启用时才生成。
+		int founderCultureId = _characters.TryGetValue(founderId, out var founder) ? founder.cultureId : -1;
+		if (founderCultureId >= 0
+			&& ContentResolvers.Cultures.TryGet(founderCultureId, out var culturePack)
+			&& culturePack?.data != null
+			&& culturePack.data.heraldryEnabled)
+		{
+			Heraldry.Ensure(familyNode);
+		}
 		_families[familyNode.familyId] = familyNode;
 		if (_characters.TryGetValue(founderId, out var value))
 		{

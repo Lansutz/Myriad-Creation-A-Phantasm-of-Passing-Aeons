@@ -334,9 +334,10 @@
 
 #### P3.4 政权旗帜与城市俯视图（G5/G6，借 TTHTOM `flag_profile`）
 
-- **旗帜**：确定性 layout/bands/colors/saltire/canton + 家族纹章同源配色；只存符号，不存美术。
+- **旗帜（条件化）**：`BannerKind = None / MilitaryBanner / HouseholdBanner / StateFlag`；早期多数政权只有军旗，StateFlag 需民族主义/印刷/革命类革新与相应政体；只给有旗帜的政体生成，确定性 layout/bands/colors/saltire/canton。
 - **城市俯视**：块数据→派生布局（城墙外环/道路骨架/区划按面积切分/建筑落位）→程序化 Sprite；布局不存档、读档重算。
-- **验收**：同 `settlementId/blockId` 同图；旗帜与纹章可区分政权/家族。
+- **纹章条件**：家族纹章不是普遍习俗，只有 `CultureData.heraldryEnabled`（内容/事件开启）的文化才生成；默认无。
+- **验收**：同 `settlementId/blockId` 同图；旗帜与纹章可区分政权/家族；无旗/无纹章是合法状态。
 
 #### P3.5 信息与密谋（G7，前置 S19）
 

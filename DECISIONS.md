@@ -936,3 +936,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 测试：温度/降水双限制、高温封顶、承载力随 NPP 变化。
 - 未做：NPP 驱动植被演替/食物链/饥荒（Earth Simulator 的 fauna 需要独立子系统）；TTHTOM 的 polity/office/flag schema 仍待接入。
 - 验证：`EXIT=0`、`889/891`、零 `error CS`。
+
+## D115 纹章/旗帜的条件性（用户裁定）
+
+- 家族纹章**不是普遍存在**：它是文化习俗，取决于内容/事件更新。`CultureData.heraldryEnabled` 默认 false；`CreateFamily` 只有该文化启用时才生成纹章，否则 `coaPattern/coaColors` 保持空。
+- 政权旗帜同样不是普遍存在：早期大多数政权只有**军旗**，现代意义上的“国旗”出现很晚且意义不同。规划中的 `BannerKind` 分 `None / MilitaryBanner / HouseholdBanner / StateFlag`；StateFlag 需民族主义/印刷/革命类革新与相应政体，不能给所有政权发国旗。
+- 参考项目的旗帜生成（TTHTOM `flag_profile`）只用于有旗帜的政体，且先做军旗/家旗层，不把现代国旗当默认。
+- 验证：`EXIT=0`、`889/891`、零 `error CS`；纹章改为按文化开关。
