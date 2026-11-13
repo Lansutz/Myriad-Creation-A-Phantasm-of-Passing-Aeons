@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using MyriadCreation.Simulation.Genetics;
 using MyriadCreation.Simulation.Laws;
 using MyriadCreation.Simulation.State;
@@ -20,7 +20,7 @@ namespace MyriadCreation.Tests.EditMode
 
             var genome = dna.ToGenomeInstance(race, isMale: false);
             Assert.IsNotNull(genome);
-            Assert.AreEqual(6, genome.paternalAlleles.Length);
+            Assert.AreEqual(GeneticsCatalog.GetDefaultHumanGenome().loci.Count, genome.paternalAlleles.Length);
             Assert.AreNotEqual(genome.PaternalAt(0), genome.MaternalAt(0), "寿命座保持杂合");
             Assert.AreEqual(genome.PaternalAt(1), genome.MaternalAt(1), "智慧座保持纯合");
         }
@@ -32,7 +32,7 @@ namespace MyriadCreation.Tests.EditMode
             var genome = character.GetGenome(new RaceData());
             Assert.IsNotNull(genome);
             Assert.AreEqual(GeneticSex.Male, genome.sex);
-            Assert.AreEqual(6, genome.paternalAlleles.Length);
+            Assert.AreEqual(GeneticsCatalog.GetDefaultHumanGenome().loci.Count, genome.paternalAlleles.Length);
         }
 
         [Test]

@@ -1061,3 +1061,14 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 复杂度：内容只在初始化读一次，运行期查字典 O(1)；无 tick 开销。
 - 测试：`GeneticsContentIndexTests` 3 例（加载、Mod 覆盖、坏引用剔除）；既有 Offices/GOODS 内容测试保持全绿。
 - 验证：`EXIT=0`、`945/947`（2 个 Explicit 跳过）、零 `error CS`。
+
+## D127 身体构造/体表/代谢位点与表型（D2）
+
+- `AlleleTraitEffect` 增加 `discreteTraitId/discreteValue`：离散性状由等位基因表达，不靠随机标签；加性通道（traitId/additiveEffect）继续用于隔热、护甲、体型、食性、耐温。
+- 新增结构化表型 `BodyPlanPhenotype`（wingType/hornType/tailType/posture）、`IntegumentPhenotype`（skinType/insulation/naturalArmor）、`MetabolicPhenotype`（dietHerbivore/dietCarnivore/tempToleranceC/size），由 `PhenotypeResult` 暴露；`GetDiscrete` 供机制查询。
+- `GeneticsEngine.ComputePhenotype`：离散性状按显性规则取等位基因值，缺位点回退中性默认（none/skin/biped、体型 1、食性 0.5、耐温 0）；加性位点折算为可解释生理量（体型 = 1 + 两份加性，耐温 = 两份加性 °C）。
+- 人类默认基因组扩到 16 个位点：新增 body_plan（翼/角/尾/姿态）、integument（皮/隔热/护甲）、metabolism（体型/食性/耐温），人类等位基因都是中性值，不改变既有角色表现。
+- 旧 `GenomeInstance` 数组短于基因组时，缺位点按 -1 处理并回退默认；D6 再做一次性补齐迁移与存档版本。
+- 复杂度：表型计算 O(位点数)，纯函数、无随机；运行期只读。
+- 测试：`BodyPhenotypeTests` 5 例（显性/隐性、加性生理量、缺位点回退、创始人与繁殖覆盖新位点）；旧迁移测试改为按默认基因组位点数断言，不再写死 6。
+- 验证：`EXIT=0`、`950/952`（2 个 Explicit 跳过）、零 `error CS`。

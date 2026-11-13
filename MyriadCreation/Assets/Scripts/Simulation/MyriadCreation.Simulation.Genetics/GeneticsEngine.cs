@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Content.Definitions;
 
@@ -463,6 +463,55 @@ public static class GeneticsEngine
 				AddAlleleEffects(alleleDef3, 1, dominance: false, envShift, dictionary, array);
 			}
 		}
+		Dictionary<string, string> discrete = new Dictionary<string, string>();
+		for (int d = 0; d < genome.loci.Count; d++)
+		{
+			GenomeLocusDef locus = genome.loci[d];
+			int pd = instance.PaternalAt(d);
+			int md = instance.MaternalAt(d);
+			string pv = DiscreteValue(locus, pd);
+			string mv = DiscreteValue(locus, md);
+			if (string.IsNullOrEmpty(pv) && string.IsNullOrEmpty(mv)) continue;
+			if (string.IsNullOrEmpty(mv)) { discrete[DiscreteId(locus, pd)] = pv; continue; }
+			if (string.IsNullOrEmpty(pv)) { discrete[DiscreteId(locus, md)] = mv; continue; }
+			string pid = DiscreteId(locus, pd);
+			string mid = DiscreteId(locus, md);
+			if (pid == mid && pv == mv) { discrete[pid] = pv; continue; }
+			if (GeneticsCatalog.IsDominantAllele(locus, pd)) discrete[pid] = pv;
+			else if (GeneticsCatalog.IsDominantAllele(locus, md)) discrete[mid] = mv;
+			else { discrete[pid] = pv; }
+		}
+		phenotypeResult.discreteTraitIds = new string[discrete.Count];
+		phenotypeResult.discreteTraitValues = new string[discrete.Count];
+		int di = 0;
+		foreach (KeyValuePair<string, string> pair in discrete)
+		{
+			phenotypeResult.discreteTraitIds[di] = pair.Key;
+			phenotypeResult.discreteTraitValues[di] = pair.Value;
+			di++;
+		}
+		phenotypeResult.bodyPlan = new BodyPlanPhenotype
+		{
+			wingType = DiscreteOr(discrete, "wingType", "none"),
+			hornType = DiscreteOr(discrete, "hornType", "none"),
+			tailType = DiscreteOr(discrete, "tailType", "none"),
+			posture = DiscreteOr(discrete, "posture", "biped")
+		};
+		float carnivore = Clamp01(0.5f + TraitOr(list, array, "dietCarnivore"));
+		phenotypeResult.metabolism = new MetabolicPhenotype
+		{
+			dietCarnivore = carnivore,
+			dietHerbivore = 1f - carnivore,
+			tempToleranceC = TraitOr(list, array, "tempToleranceC"),
+			size = Clamp(1f + TraitOr(list, array, "size"), 0.3f, 3f)
+		};
+		phenotypeResult.integument = new IntegumentPhenotype
+		{
+			skinType = DiscreteOr(discrete, "skinType", "skin"),
+			insulation = Clamp01(0.5f + TraitOr(list, array, "insulation")),
+			naturalArmor = Clamp01(TraitOr(list, array, "naturalArmor"))
+		};
+
 		Dictionary<AppearanceChannel, float> dictionary2 = new Dictionary<AppearanceChannel, float>();
 		for (int k = 0; k < genome.loci.Count; k++)
 		{
@@ -493,6 +542,49 @@ public static class GeneticsEngine
 		phenotypeResult.inbreedingDepression = Clamp01(instance.inbreedingCoefficient) * 0.25f;
 		phenotypeResult.fitness = (phenotypeResult.viable ? Clamp01(1f - phenotypeResult.inbreedingDepression - Math.Abs(environment.stress01 - 0.5f) * 0.2f) : 0f);
 		return phenotypeResult;
+	}
+
+	private static string DiscreteId(GenomeLocusDef locus, int alleleIndex)
+	{
+		if (alleleIndex < 0 || alleleIndex >= locus.alleles.Count) return "";
+		AlleleDef allele = locus.alleles[alleleIndex];
+		if (allele?.effects == null) return "";
+		foreach (AlleleTraitEffect effect in allele.effects)
+		{
+			if (!string.IsNullOrEmpty(effect?.discreteTraitId)) return effect.discreteTraitId;
+		}
+		return "";
+	}
+
+	private static string DiscreteValue(GenomeLocusDef locus, int alleleIndex)
+	{
+		if (alleleIndex < 0 || alleleIndex >= locus.alleles.Count) return "";
+		AlleleDef allele = locus.alleles[alleleIndex];
+		if (allele?.effects == null) return "";
+		foreach (AlleleTraitEffect effect in allele.effects)
+		{
+			if (!string.IsNullOrEmpty(effect?.discreteTraitId)) return effect.discreteValue ?? "";
+		}
+		return "";
+	}
+
+	private static string DiscreteOr(Dictionary<string, string> discrete, string id, string fallback)
+	{
+		return discrete.TryGetValue(id, out string value) && !string.IsNullOrEmpty(value) ? value : fallback;
+	}
+
+	private static float TraitOr(List<string> ids, float[] values, string id)
+	{
+		for (int i = 0; i < ids.Count; i++)
+		{
+			if (ids[i] == id) return values[i];
+		}
+		return 0f;
+	}
+
+	private static float Clamp(float value, float min, float max)
+	{
+		return value < min ? min : (value > max ? max : value);
 	}
 
 	private static void CountAppearance(GenomeLocusDef locus, int alleleIndex, Dictionary<AppearanceChannel, float> appearance)

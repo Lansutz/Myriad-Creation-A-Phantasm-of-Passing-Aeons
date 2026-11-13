@@ -194,6 +194,7 @@
 - 2026-11-13 **农业链长跑证据**：新增两年期“丰年积粮 → 旱年（肥力 0.6→0.2）减产 → 库存吃空 → 稳定度下降”回归；`longrun` 2 seed×100 年 `1/1`、`EXIT=0`。
 - 2026-11-13 **§9 P3.0–P3.6 收口验证**：`build` 944 例、942 通过、0 失败、零 `error CS`；`longrun` 2 seed×100 年通过。
 - 2026-11-13 **D1 遗传内容化**：基因组/物种纯定义迁入 `Content.Definitions/Genetics`，`ContentDefinitionIndex` 新增 `Genome/Species` provider（Base→Mods 覆盖、坏物种引用剔除），`ContentRegistry` 桥接进 `GeneticsCatalog`；修复 provider store 未接属性字典导致内容表空转的 bug。新增 3 例测试。详见 D126。验证：`EXIT=0`、`945/947`（2 个 Explicit 跳过）、零 `error CS`。
+- 2026-11-13 **D2 身体/体表/代谢位点**：`AlleleTraitEffect` 增离散通道；`BodyPlan/Integument/Metabolic` 表型由基因型纯函数推导；人类默认基因组扩到 16 位点，缺位点回退中性。新增 5 例测试。详见 D127。验证：`EXIT=0`、`950/952`（2 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **官职调度降频**：`offices.daily` → `offices.monthly`（俸禄按 deltaDays 折算），避免百年人物表增长后每天全量扫人。
 - 2026-11-13 **纹章模型对齐 Azgaar/Armoria**：division/ordinary/盾形 + 纹章金属/颜色规则，家族纹章确定性生成。验证：`EXIT=0`、`887/889`、零 `error CS`。
 - 2026-11-13 **程序化家族纹章**：`Heraldry` 确定性生成 pattern+三色，家族创建/旧档补齐，`FamilySaveData` 往返。新增 3 例测试。验证：`EXIT=0`、`887/889`、零 `error CS`。

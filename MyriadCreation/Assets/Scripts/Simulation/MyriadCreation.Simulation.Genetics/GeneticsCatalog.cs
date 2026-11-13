@@ -126,7 +126,17 @@ public static class GeneticsCatalog
 				Locus("martial", 1, 0f, "martial", 1f, 0f, 0.00375f),
 				Locus("resistance", 1, 25f, "resistance", 1f, 0f, 0.00375f),
 				Locus("appearance", 2, 0f, "appearance", 1f, 0f, 0.00375f),
-				Locus("talent_defect", 2, 20f, "talent", 1f, 0f, 0.0075f)
+				Locus("talent_defect", 2, 20f, "talent", 1f, 0f, 0.0075f),
+				DiscreteLocus("body_plan_wing", 2, 40f, "wingType", "none", "none", 1E-06f),
+				DiscreteLocus("body_plan_horn", 2, 45f, "hornType", "none", "none", 1E-06f),
+				DiscreteLocus("body_plan_tail", 2, 50f, "tailType", "none", "none", 1E-06f),
+				DiscreteLocus("body_plan_posture", 2, 55f, "posture", "biped", "biped", 1E-06f),
+				DiscreteLocus("integument_skin", 2, 60f, "skinType", "skin", "skin", 1E-06f),
+				Locus("integument_insulation", 1, 55f, "insulation", 0.2f, 0f, 1E-06f),
+				Locus("integument_armor", 1, 65f, "naturalArmor", 0.1f, 0f, 1E-06f),
+				Locus("metabolism_size", 0, 60f, "size", 0.3f, 0f, 1E-06f),
+				Locus("metabolism_diet", 0, 70f, "dietCarnivore", 0.2f, 0f, 1E-06f),
+				Locus("metabolism_temp", 1, 75f, "tempToleranceC", 5f, 0f, 1E-06f)
 			}
 		};
 		GenomeLocusDef genomeLocusDef = genomeDef.loci.Find((GenomeLocusDef l) => l.locusId == "appearance");
@@ -330,6 +340,40 @@ public static class GeneticsCatalog
 			genomeDef.loci.Add(genomeLocusDef2);
 		}
 		return genomeDef;
+	}
+
+	private static GenomeLocusDef DiscreteLocus(string id, int chromosome, float cM, string discreteTraitId, string plusValue, string minusValue, float mutationRate)
+	{
+		return new GenomeLocusDef
+		{
+			locusId = id,
+			chromosome = chromosome,
+			mapPositionCm = cM,
+			mutationRatePerGeneration = mutationRate,
+			alleles = new List<AlleleDef>
+			{
+				new AlleleDef
+				{
+					alleleId = id + "_plus",
+					symbol = "A",
+					defaultFrequency = 0.5f,
+					effects = new List<AlleleTraitEffect>
+					{
+						new AlleleTraitEffect { discreteTraitId = discreteTraitId, discreteValue = plusValue }
+					}
+				},
+				new AlleleDef
+				{
+					alleleId = id + "_minus",
+					symbol = "a",
+					defaultFrequency = 0.5f,
+					effects = new List<AlleleTraitEffect>
+					{
+						new AlleleTraitEffect { discreteTraitId = discreteTraitId, discreteValue = minusValue }
+					}
+				}
+			}
+		};
 	}
 
 	private static GenomeLocusDef Locus(string id, int chromosome, float cM, string traitId, float effect, float dominanceDeviation, float mutationRate)
