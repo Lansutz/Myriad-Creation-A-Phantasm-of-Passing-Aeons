@@ -25,6 +25,7 @@ public static class NavySchedule
 					continue;
 				}
 				navy.DailyTick(SupplyPerShipPerDay);
+				NavyMovementSystem.MoveTick(navy);
 			}
 		});
 	}

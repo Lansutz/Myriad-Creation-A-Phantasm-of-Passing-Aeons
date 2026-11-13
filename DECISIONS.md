@@ -529,3 +529,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `SettlementData.occupationPressureDays` 随存档往返；军队进入交战方聚落地块后，由 `ApplyOccupationPressure` 每日累加。
 - 连续被同一占领方占领 90 天 → `SettlementDestructionSystem.DestroySettlement(..., Dismantle)`，进入废墟；占领方变化/退出则清零。
 - 军事占领仍只写 `occupyingRealmId`，所有权与割让仍归和约；毁灭是占领的长期后果，不是第二套领土系统。
+
+## D63 海军寻路/行军（P1.5）
+
+- 新增 `NavyMovementSystem`：用 `PathfindingSystem(isNavy=true)` 规划海路，每日推进一格；路径含起点时剥掉，终点清空回 Idle。
+- `NavySchedule` 在补给日结后调用 `MoveTick`；不写陆军路径、不共享 Army.MovePath。
+- 未做：海战结算、舰船建造消耗；海军仍不是陆军子类。

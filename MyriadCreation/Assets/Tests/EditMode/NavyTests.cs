@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Simulation.State;
+using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World.Generation;
 
@@ -33,6 +34,41 @@ namespace MyriadCreation.Tests.EditMode
             world.InitializeWorld();
             world.GenerateTerrain(83);
             return world;
+        }
+
+        [Test]
+        public void Navy_FollowsSeaPathToTarget()
+        {
+            var world = NewWorld();
+            int realmId = -1;
+            foreach (int key in world.realms.Keys) { realmId = key; break; }
+            int port = -1;
+            int target = -1;
+            for (int i = 0; i < world.tiles.Length && port < 0; i++)
+            {
+                if (!world.tiles[i].isCoast || !world.tiles[i].isLand) continue;
+                int x = i % world.mapWidth;
+                int y = i / world.mapWidth;
+                for (int dy = -1; dy <= 1 && target < 0; dy++)
+                for (int dx = -1; dx <= 1; dx++)
+                {
+                    if (dx == 0 && dy == 0) continue;
+                    int nx = x + dx, ny = y + dy;
+                    if (nx < 0 || ny < 0 || nx >= world.mapWidth || ny >= world.mapHeight) continue;
+                    int candidate = ny * world.mapWidth + nx;
+                    if (!world.tiles[candidate].isLand) { target = candidate; break; }
+                }
+                if (target >= 0) port = i;
+            }
+            if (port < 0 || target < 0) Assert.Ignore("地图没有可用的港口/相邻水域");
+
+            Navy navy = world.CreateNavy(realmId, -1, port);
+            navy.AddShips(1, 5f);
+            Assert.IsTrue(NavyMovementSystem.SetMoveTarget(world, navy, target), "应能规划海路");
+
+            world.RunDiagnosticDays(1);
+
+            Assert.AreEqual(target, navy.currentTileIndex, "舰队应沿海路推进到目标格");
         }
 
         [Test]

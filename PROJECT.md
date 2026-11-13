@@ -144,7 +144,8 @@
 - 2026-11-13 **P1.3 Shunned 社会后果**：`IsDoctrineShunned` + `ApplyShunnedStigma`，同信仰成年人对行为人好感下降并留编年史；Crime 走司法、Shunned 走社会排斥、Accepted 无反应。新增 `DoctrineShunnedTests`。验证：`EXIT=0`、`790/792`（1 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **P2.5 双源清理第一步**：删除未接游戏循环的 legacy `GameSaveSystem.cs`（约 700 行第二套读/写路径），新档统一走 `SaveSystem + SaveData`；`GameSaveData` 保留仅作旧档迁移 DTO。验证：`EXIT=0`、`790/792`（1 个 Explicit 跳过）、零 `error CS`。
 - 2026-11-13 **P1.1 毁灭端口接线**：`occupationPressureDays` 入档；军队占领敌境聚落连续 90 天后触发 `DestroySettlement(Dismantle)` 进入废墟，占领方变化/退出清零。新增 `LongOccupation_RuinsEnemySettlement` 测试。验证：`EXIT=0`、`791/793`（1 个 Explicit 跳过）、零 `error CS`。
-- 待办：**P1.3 神职/葬礼**、**P1.5 海军/标记**、P1.4/P1.6 面板、P2.1–P2.6；**G5 / G6**；内容体检。
+- 2026-11-13 **P1.5 海军寻路**：`NavyMovementSystem` 用海军寻路每日推进一格，`NavySchedule` 在补给后行军；新增海路测试。验证：`EXIT=0`、`792/794`（1 个 Explicit 跳过）、零 `error CS`。**剩余**：海战结算、舰船建造、地图标记。
+- 待办：**P1.3 神职/葬礼**、**P1.5 海战/标记**、P1.4/P1.6 面板、P2.1–P2.6；**G5 / G6**；内容体检。
 - 当前已完成：M0、M1（A–M 共 13 份审计）、M2 总纲、M3 文档处置、M2.5–M2.44、S15/S16/S17/S18、重构登记、四维对位、需求四轴、法律生命周期、关系层、信仰模型、性能教训、M0.5 重写、缺口审计、F1、架构审计、A0、A1（五类 DTO 706/706）、群系 P0、革新树 Newtonsoft、实体 DTO 纯字段三项、区块树扁平化、生成式命名（后两项待验证）。
 - 待办：验掉扁平化+命名 → 定义引用串化 → 搬 Army/Navy/TransportUnit/MapActor/MapUnit/Character → 大容器 → A2 → A3；**存档深度**；随后 D → E → B → C → F；再 F2–F8。
 - 备注：卡住时先 `Get-Process Unity` + 删 `MyriadCreation\Temp\UnityLockfile` 再重跑 `build.cmd`。
