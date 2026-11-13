@@ -622,3 +622,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - `DoctrinePool.Load` 回填组与组内序、校验每条选项；未知组/未注册参数/无来源参数记录 `Debug.LogError`，不静默吞掉。`GetGroupIds/GetGroupOptions` 成为消费入口。
 - 测试覆盖：前缀映射、域/序、未注册参数拒绝、已注册+来源通过、无来源拒绝、真实 46 条内容全部可归组。
 - 未做：组→档的 UI 选择、`divergence` 计算按组权重、参数消费点（目前只有声明与校验）。
+
+## D75 宗派运行时创建与挂靠（P2.2 六层第二刀）
+
+- `GameWorld.CreateDenomination(faithId, name, parentDenominationId)`：从一条 faith 分出宗派，宗派必挂同一 religion、父宗派必须同教；写 `sinceDay`、`status=Tolerated`、`isDefault=false`，把 faith 挂过去并重算成员关系，编年史留痕。
+- `GameWorld.AttachFaithToDenomination(faithId, denominationId)`：分裂后邀请同教 faith 挂靠的唯一入口；跨教拒绝。
+- 宗派 id 从现有正 id 递增；默认宗派的负 id 段不受影响。成员关系沿用 `RebuildDenominationMembership`，不维护第二份列表。
+- 未做：分歧度触发的自动分裂/合一/妥协判定（需要 divergence 计算与正统边界），本批只给「分裂/挂靠」的写入口。
