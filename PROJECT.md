@@ -179,6 +179,7 @@
 - 2026-11-13 **P2.5 B 收口**：音频拆为 `MyriadCreation.Audio`；新增 `ISaveSlotService` 契约 + Infrastructure 实现 + `AppServices.SaveSlots`；UI 面板改走契约。UI asmdef 最终不再引用 App/World/Infrastructure。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**B 完成**。
 - 2026-11-13 **P2.5 A 收口**：19 个存档适配器迁入新 `MyriadCreation.Save.Runtime`；`MyriadCreation.Infrastructure` 程序集删除；Editor/App/Tests 改引 Save.Runtime。验证：`EXIT=0`、`872/874`（2 个 Explicit 跳过）、零 `error CS`。**A/B 完成**。
 - 2026-11-13 **P2.5 E 遗传单源**：子代先由 `GeneticsEngine.Reproduce` 生成 GenomeInstance，再产出 DnaData 兼容快照；缺基因组才回退旧路径。新增测试。验证：`EXIT=0`、`873/875`（2 个 Explicit 跳过）、零 `error CS`。**E 完成**。
+- 2026-11-13 **删除 legacy 地图存档 DTO**：`MapSaveData`/`SaveJsonMigration` 无生产调用者，删除；规范键测试改用测试 DTO。验证：`EXIT=0`、`876/878`、零 `error CS`。
 - 2026-11-13 **UI 旧面板双源清理**：删除 UIManager 旧角色/家族字段与实现，唯一路径为 `CharacterPanelView/FamilyTreePanelView`；测试改为地块-only。验证：`EXIT=0`、`877/879`、零 `error CS`。
 - 2026-11-13 **P2.5 C 写点收口**：货币/稳定度剩余直接写点全部改走 `RealmTreasury/RealmStability`，新增架构门禁扫描禁止绕过。验证：`EXIT=0`、`877/879`、零 `error CS`。
 - 2026-11-13 **存档双源清理**：删除 legacy `GameSaveData`（无生产路径），头衔/编年史 DTO 移入 `SaveData`；`SaveJsonMigration` 只留地图旧键迁移；法律索引随内容重载失效。验证：`EXIT=0`、`876/878`、零 `error CS`。

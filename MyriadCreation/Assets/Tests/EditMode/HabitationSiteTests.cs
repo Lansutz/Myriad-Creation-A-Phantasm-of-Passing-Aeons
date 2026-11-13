@@ -190,7 +190,7 @@ namespace MyriadCreation.Tests.EditMode
         [Test]
         public void SaveData_UsesCanonicalCollectionAndSiteKeys()
         {
-            var save = new MapSaveData
+            var save = new CanonicalSiteWrapper
             {
                 habitation_sites = new[]
                 {
@@ -231,28 +231,6 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
-        public void LegacySaveJson_MapsOldCollectionAndCategoryKeys()
-        {
-            const string legacyJson =
-                "{\"settlements\":[{\"anchorId\":42,\"settlementName\":\"Old camp\",\"settlementCategory\":2,\"x\":0.2,\"y\":0.3}]}";
-
-            // JsonUtility 不认 [FormerlySerializedAs]（实测旧键不会映射），
-            // 所以旧档必须走读档入口 SaveJsonMigration，而不是裸 FromJson。
-            var save = SaveJsonMigration.FromMapSaveJson(legacyJson);
-            Assert.IsNotNull(save, "存档解析");
-            Assert.IsNotNull(save.habitation_sites);
-            Assert.AreEqual(1, save.habitation_sites.Length);
-
-            var site = save.habitation_sites[0];
-            site.EnsureCanonicalFields();
-            Assert.AreEqual("Old camp", site.site_name);
-            Assert.AreEqual(SiteModeKeys.TemporaryEncampment, site.site_mode);
-            Assert.AreEqual("0000002a-0000-0000-0000-000000000000", site.site_id);
-            Assert.AreEqual(0.2f, site.location.x);
-            Assert.AreEqual(0.3f, site.location.y);
-        }
-
-        [Test]
         public void FacilitySaveData_RoundTripsRepairProgress()
         {
             var site = new HabitationSite(SiteMode.SedentarySettlement);
@@ -271,6 +249,11 @@ namespace MyriadCreation.Tests.EditMode
             var restored = new HabitationSite(SiteMode.SedentarySettlement);
             saveData.ApplyModeData(restored);
             Assert.AreEqual(40f, restored.facilities[0].repairProgress);
+        }
+        [System.Serializable]
+        private sealed class CanonicalSiteWrapper
+        {
+            public HabitationSiteSaveData[] habitation_sites;
         }
     }
 }

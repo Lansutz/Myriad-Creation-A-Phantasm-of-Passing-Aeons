@@ -853,3 +853,9 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 角色/家族面板唯一实现为 `CharacterPanelView`/`FamilyTreePanelView`（已注册到 `UiPanelRegistry`）；UIManager 只保留打开/关闭/翻页的薄转调与 `charOpenButton` 入口（顶栏按钮仍可用）。
 - 测试改为只验证 UIManager 的地块面板；角色面板由 `CharacterPanelViewTests` 覆盖。场景 YAML 中的旧字段名变为未知键，Unity 忽略，不再有第二套渲染路径。
 - 验证：`EXIT=0`、`877/879`、零 `error CS`。
+
+## D105 删除 legacy 地图存档迁移路径
+
+- `MapSaveData`/`SaveJsonMigration` 无生产调用者（`SaveSystem` 只读 `SaveData`），删除两者；`HabitationSiteSaveData` 的规范键测试改用测试内 DTO，保留字段契约断言。
+- 旧 `settlements/burgs` JSON 迁移路径实际已不可达（活档入口不读 GameSaveData/MapSaveData），删除后不再维护第二套地图 DTO。
+- 验证：`EXIT=0`、`876/878`、零 `error CS`。
