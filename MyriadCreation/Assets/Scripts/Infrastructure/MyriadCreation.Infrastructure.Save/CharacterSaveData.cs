@@ -41,6 +41,8 @@ namespace MyriadCreation.Infrastructure.Save
         // ===== 位置（权威位置是聚落 anchorId，currentTile 仅旧逻辑/显示） =====
         public int currentSettlementAnchorId = -1;
         public int currentTile = -1;
+        /// <summary>所在建筑块 id（D36）；旧档为空串 = 不在具体建筑内。</summary>
+        public string currentBlockId = "";
         public bool isPublicFigure;
         public CharacterAICategory aiCategory = CharacterAICategory.Worker;
 
@@ -199,6 +201,7 @@ namespace MyriadCreation.Infrastructure.Save
                 deathYear = c.deathYear,
                 currentSettlementAnchorId = c.currentSettlementAnchorId,
                 currentTile = c.currentTile,
+                currentBlockId = c.currentBlockId ?? "",
                 isPublicFigure = c.isPublicFigure,
                 aiCategory = c.aiCategory,
                 realmId = c.realmId,
@@ -479,6 +482,7 @@ namespace MyriadCreation.Infrastructure.Save
                 deathYear = deathYear,
                 currentSettlementAnchorId = currentSettlementAnchorId,
                 currentTile = currentTile,
+                currentBlockId = currentBlockId ?? "",
                 isPublicFigure = isPublicFigure,
                 aiCategory = aiCategory,
                 realmId = realmId,

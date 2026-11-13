@@ -61,6 +61,16 @@ public class SettlementBlock
 
 	public List<SettlementBlock> children = new List<SettlementBlock>();
 
+	/// <summary>人物容纳容量；0 = 不可容纳。</summary>
+	public int containmentCapacity;
+
+	public ContainmentKind containmentKind;
+
+	public ContainmentAccess containmentAccess;
+
+	/// <summary>当前占用者人物 id；权威位置在人物身上（currentBlockId），这里是对账索引。</summary>
+	public List<int> occupantCharacterIds = new List<int>();
+
 	public SettlementBlock()
 	{
 	}
@@ -100,6 +110,39 @@ public class SettlementBlock
 			}
 		}
 		return null;
+	}
+
+	public bool CanContain(int characterId)
+	{
+		if (containmentKind == ContainmentKind.None || containmentCapacity <= 0)
+		{
+			return false;
+		}
+		if (occupantCharacterIds == null)
+		{
+			occupantCharacterIds = new List<int>();
+		}
+		return occupantCharacterIds.Count < containmentCapacity && (characterId < 0 || !occupantCharacterIds.Contains(characterId));
+	}
+
+	public bool TryAddOccupant(int characterId)
+	{
+		if (characterId < 0 || !CanContain(characterId))
+		{
+			return false;
+		}
+		occupantCharacterIds.Add(characterId);
+		return true;
+	}
+
+	public bool RemoveOccupant(int characterId)
+	{
+		return occupantCharacterIds != null && occupantCharacterIds.Remove(characterId);
+	}
+
+	public bool ContainsOccupant(int characterId)
+	{
+		return occupantCharacterIds != null && occupantCharacterIds.Contains(characterId);
 	}
 
 	/// <summary>城墙字段自愈：层数 1..3、工艺 1..3、段列表非空引用。</summary>

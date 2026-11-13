@@ -47,6 +47,10 @@ namespace MyriadCreation.World.Settlement
                 wallMaterial = (int)block.wallMaterial,
                 wallMaterialGrade = block.wallMaterialGrade,
                 wallSegments = WallSegmentSaveMapping.CaptureAll(block.wallSegments),
+                containmentCapacity = block.containmentCapacity,
+                containmentKind = (int)block.containmentKind,
+                containmentAccess = (int)block.containmentAccess,
+                occupantCharacterIds = block.occupantCharacterIds != null ? block.occupantCharacterIds.ToArray() : null,
                 parent_block_id = parentBlockId ?? string.Empty,
             };
         }
@@ -78,6 +82,10 @@ namespace MyriadCreation.World.Settlement
                 wallLayout = (WallLayout)data.wallLayout,
                 wallMaterial = (WallMaterial)data.wallMaterial,
                 wallMaterialGrade = data.wallMaterialGrade,
+                containmentCapacity = data.containmentCapacity,
+                containmentKind = (ContainmentKind)data.containmentKind,
+                containmentAccess = (ContainmentAccess)data.containmentAccess,
+                occupantCharacterIds = data.occupantCharacterIds != null ? new List<int>(data.occupantCharacterIds) : new List<int>(),
                 children = new List<SettlementBlock>(),
             };
             if (block.kind == SettlementBlockKind.Wall)

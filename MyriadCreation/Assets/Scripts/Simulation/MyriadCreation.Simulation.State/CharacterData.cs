@@ -32,6 +32,9 @@ public class CharacterData
 
 	public int currentTile = -1;
 
+	/// <summary>人物当前所在建筑块 id（空串 = 不在具体建筑内）；锚点仍是聚落级权威位置。</summary>
+	public string currentBlockId = "";
+
 	public bool isPublicFigure;
 
 	public CharacterAICategory aiCategory = CharacterAICategory.Worker;

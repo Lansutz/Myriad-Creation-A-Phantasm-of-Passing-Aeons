@@ -38,6 +38,12 @@ namespace MyriadCreation.Save.Contracts
         public int wallMaterialGrade;
         public WallSegmentSaveData[] wallSegments;
 
+        /// <summary>人物容纳（D36）：容量/语义/访问策略/占用者对账索引。旧档缺字段为 0/空。</summary>
+        public int containmentCapacity;
+        public int containmentKind;
+        public int containmentAccess;
+        public int[] occupantCharacterIds;
+
         /// <summary>
         /// 扁平化（D30，学 CK3）：父块 id，空串 = 根。新档只用这个指针表达层级，
         /// 不再用嵌套子数组——嵌套会撞 Unity 序列化深度 10，深层数据被静默截断。

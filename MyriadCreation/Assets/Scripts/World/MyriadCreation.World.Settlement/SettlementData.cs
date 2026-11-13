@@ -526,6 +526,48 @@ public class SettlementData : HabitationSite, ISerializationCallbackReceiver
 		}
 	}
 
+	public SettlementBlock FindBlock(string blockId)
+	{
+		if (string.IsNullOrEmpty(blockId) || blocks == null)
+		{
+			return null;
+		}
+		foreach (SettlementBlock block in blocks)
+		{
+			SettlementBlock found = FindBlockIn(block, blockId);
+			if (found != null)
+			{
+				return found;
+			}
+		}
+		return null;
+	}
+
+	private static SettlementBlock FindBlockIn(SettlementBlock block, string blockId)
+	{
+		if (block == null)
+		{
+			return null;
+		}
+		if (string.Equals(block.blockId, blockId, System.StringComparison.Ordinal))
+		{
+			return block;
+		}
+		if (block.children == null)
+		{
+			return null;
+		}
+		foreach (SettlementBlock child in block.children)
+		{
+			SettlementBlock found = FindBlockIn(child, blockId);
+			if (found != null)
+			{
+				return found;
+			}
+		}
+		return null;
+	}
+
 	public SettlementBlock EnsureRootBlock(SettlementBlockKind kind, int level = 1, SettlementBlockSubtype subtype = SettlementBlockSubtype.None)
 	{
 		SettlementBlock block = GetBlock(kind);
