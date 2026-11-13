@@ -878,3 +878,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 测试更新：子代仅有 GenomeInstance，`dna == null`。
 - 未做：彻底删除 `DnaData` 类型（旧测试/迁移入口仍用），以及 `DnaSystem` 旧随机表达式（保留作兼容）。
 - 验证：`EXIT=0`、`882/884`、零 `error CS`。
+
+## D108 调度器 Compute→Apply 两相 + 影响力迁移（P2.6）
+
+- `ISimulationScheduler.RegisterPhased(id, cadence, order, compute, apply)`：同一 tick 内先执行全部到期系统的 Compute，再统一执行 Apply（锁步读后写，不交错）；`SimulationScheduler` 的 Apply 不进预算采样（写相轻量），预算只控 Compute。
+- `settlement-influence.daily` 改为两相：Compute 只产 `InfluenceField`，Apply 写 anchor 并缓存 `LastField`；`SettlementControlSystem` 不再内部调用 `UpdateControlTiers`。
+- 测试：两相条目的 Compute 全部先于 Apply；多个两相条目按注册序 Apply；既有影响力测试保留。
+- 验证：`EXIT=0`、`884/886`、零 `error CS`。
+- 未做：其余重量级系统尚未迁移到两相（先完成一个可测消费者，避免空抽象）。

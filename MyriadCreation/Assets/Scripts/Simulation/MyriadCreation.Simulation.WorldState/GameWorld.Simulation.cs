@@ -840,6 +840,17 @@ public partial class GameWorld : MonoBehaviour
 		ArmySchedule.Register(_simulationScheduler, armies, unitDefs, tiles, _seaLandGenerator, TryOccupyByArmy);
 		NavySchedule.Register(_simulationScheduler, navies);
 		SettlementSchedule.Register(_simulationScheduler, _settlementSimulationSystem);
+		// 影响力场：Compute 只读、Apply 只写；同一 tick 内两相锁步。
+		InfluenceField pendingInfluence = null;
+		_simulationScheduler.RegisterPhased("settlement-influence.daily", SimulationCadence.Daily, 18,
+			(SimulationTickContext _) =>
+			{
+				pendingInfluence = SettlementInfluenceSystem.Calculate(settlements, tiles, mapWidth, mapHeight);
+			},
+			(SimulationTickContext _) =>
+			{
+				SettlementInfluenceSystem.Apply(settlements, pendingInfluence);
+			});
 		CultureSchedule.Register(_simulationScheduler, MonthlyCultureStageEvolution);
 		DiplomacySchedule.Register(_simulationScheduler, _diplomacyManager, () => currentDay);
 		WarfareReligionSchedule.Register(_simulationScheduler, _combatManager, armies, _wars, _diplomacyManager.WarRules, () => currentDay, () =>

@@ -26,7 +26,6 @@ public static class SettlementControlSystem
 		{
 			UpdateGarrisonInfo(settlements, tiles, armies, unitDefs);
 			ScanControlRelationships(settlements, tiles, mapWidth, mapHeight);
-			SettlementInfluenceSystem.UpdateControlTiers(settlements, tiles, mapWidth, mapHeight);
 			UpdateControlProgress(settlements, tiles);
 			CheckControlCompletion(settlements);
 		}

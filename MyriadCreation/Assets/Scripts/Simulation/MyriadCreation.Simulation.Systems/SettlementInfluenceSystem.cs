@@ -169,6 +169,7 @@ public static class SettlementInfluenceSystem
 		{
 			return;
 		}
+		_lastField = field;
 		foreach (KeyValuePair<int, InfluenceTier> pair in field.tiersBySettlement)
 		{
 			if (settlements.TryGetValue(pair.Key, out SettlementData settlement) && settlement?.anchor != null)

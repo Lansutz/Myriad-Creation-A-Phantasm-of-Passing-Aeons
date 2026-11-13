@@ -30,6 +30,9 @@ public sealed class SimulationScheduler : ISimulationScheduler
 		public double avgMs = 0.1;
 
 		public Action<SimulationTickContext> execute;
+
+		/// <summary>两相系统中的 Apply 相；null = 单相系统。</summary>
+		public Action<SimulationTickContext> apply;
 	}
 
 	private readonly SimulationDirtySet _dirty = new SimulationDirtySet();
@@ -90,6 +93,29 @@ public sealed class SimulationScheduler : ISimulationScheduler
 			dirtyKey = null,
 			lane = lane,
 			execute = execute
+		};
+	}
+
+	/// <summary>两相注册：同一 tick 内先执行所有到期系统的 Compute，再统一执行 Apply（读后写锁步）。</summary>
+	public void RegisterPhased(string id, SimulationCadence cadence, int order, Action<SimulationTickContext> compute, Action<SimulationTickContext> apply)
+	{
+		if (string.IsNullOrWhiteSpace(id))
+		{
+			throw new ArgumentException("Scheduler id is required.", "id");
+		}
+		if (compute == null || apply == null)
+		{
+			throw new ArgumentNullException("compute/apply");
+		}
+		_entries[id] = new Entry
+		{
+			id = id,
+			intervalDays = GetIntervalDays(cadence),
+			order = order,
+			dirtyKey = null,
+			lane = SimulationLane.Both,
+			execute = compute,
+			apply = apply
 		};
 	}
 
@@ -167,6 +193,7 @@ public sealed class SimulationScheduler : ISimulationScheduler
 		});
 		executed = 0;
 		deferred = 0;
+		List<Entry> phasedApplied = new List<Entry>();
 		double num = clock?.Invoke() ?? 0.0;
 		int num2 = list.Count;
 		for (int num3 = 0; num3 < list.Count; num3++)
@@ -180,6 +207,10 @@ public sealed class SimulationScheduler : ISimulationScheduler
 			double num4 = clock?.Invoke() ?? 0.0;
 			int expectedVersion = ((entry.dirtyKey != null) ? _dirty.GetVersion(entry.dirtyKey) : 0);
 			entry.execute(obj);
+			if (entry.apply != null)
+			{
+				phasedApplied.Add(entry);
+			}
 			if (entry.dirtyKey != null)
 			{
 				_dirty.ClearIfVersion(entry.dirtyKey, expectedVersion);
@@ -190,6 +221,11 @@ public sealed class SimulationScheduler : ISimulationScheduler
 				entry.avgMs = entry.avgMs * 0.7 + num5 * 0.3;
 			}
 			executed++;
+		}
+		// Apply 相：所有到期系统的 Compute 完成后统一写状态（锁步，不交错）。
+		for (int a = 0; a < phasedApplied.Count; a++)
+		{
+			phasedApplied[a].apply(obj);
 		}
 		for (int num6 = num2; num6 < list.Count; num6++)
 		{

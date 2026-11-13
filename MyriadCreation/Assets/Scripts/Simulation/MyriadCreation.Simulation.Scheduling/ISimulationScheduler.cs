@@ -12,6 +12,8 @@ public interface ISimulationScheduler
 
 	void RegisterDirty(string id, SimulationCadence cadence, int order, string dirtyKey, Action<SimulationTickContext> execute);
 
+	void RegisterPhased(string id, SimulationCadence cadence, int order, Action<SimulationTickContext> compute, Action<SimulationTickContext> apply);
+
 	bool Unregister(string id);
 }
 }
