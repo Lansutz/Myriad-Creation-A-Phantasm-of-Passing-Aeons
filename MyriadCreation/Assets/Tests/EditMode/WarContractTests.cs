@@ -55,6 +55,53 @@ namespace MyriadCreation.Tests.EditMode
             }
         }
 
+        /// <summary>找一个守方所有、且八邻接攻方领土的地块；目标选择必须通过接壤约束。</summary>
+        private static int FindBorderTile(GameWorld world, int attacker, int defender)
+        {
+            for (int i = 0; i < world.tiles.Length; i++)
+            {
+                if (world.tiles[i].ownerRealmId != defender) continue;
+                int x = i % world.mapWidth;
+                int y = i / world.mapWidth;
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    for (int dx = -1; dx <= 1; dx++)
+                    {
+                        if (dx == 0 && dy == 0) continue;
+                        int nx = x + dx;
+                        int ny = y + dy;
+                        if (nx < 0 || ny < 0 || nx >= world.mapWidth || ny >= world.mapHeight) continue;
+                        if (world.tiles[ny * world.mapWidth + nx].ownerRealmId == attacker) return i;
+                    }
+                }
+            }
+            return -1;
+        }
+
+        private static int FindNonBorderTileOwnedBy(GameWorld world, int attacker, int defender)
+        {
+            for (int i = 0; i < world.tiles.Length; i++)
+            {
+                if (world.tiles[i].ownerRealmId != defender) continue;
+                int x = i % world.mapWidth;
+                int y = i / world.mapWidth;
+                bool adjacent = false;
+                for (int dy = -1; dy <= 1 && !adjacent; dy++)
+                {
+                    for (int dx = -1; dx <= 1 && !adjacent; dx++)
+                    {
+                        if (dx == 0 && dy == 0) continue;
+                        int nx = x + dx;
+                        int ny = y + dy;
+                        if (nx < 0 || ny < 0 || nx >= world.mapWidth || ny >= world.mapHeight) continue;
+                        if (world.tiles[ny * world.mapWidth + nx].ownerRealmId == attacker) adjacent = true;
+                    }
+                }
+                if (!adjacent) return i;
+            }
+            return -1;
+        }
+
         private static WarState LastOpenWar(GameWorld world)
         {
             WarState found = null;
@@ -72,10 +119,12 @@ namespace MyriadCreation.Tests.EditMode
             PickTwoRealms(world, out int attacker, out int defender);
             Assert.GreaterOrEqual(defender, 0, "前置：应有两个政权");
 
+            int borderTile = FindBorderTile(world, attacker, defender);
+            Assert.GreaterOrEqual(borderTile, 0, "前置：应有接壤地块");
             var casusBelli = new CasusBelli
             {
                 cbId = 1,
-                type = GameEnums.CasusBelliType.BorderIncident,
+                type = GameEnums.CasusBelliType.TerritorialDispute,
                 holderRealmId = attacker,
                 targetRealmId = defender,
                 expiryDay = -1
@@ -84,7 +133,7 @@ namespace MyriadCreation.Tests.EditMode
             {
                 goalId = 1,
                 type = GameEnums.WarGoalType.ConquerTerritory,
-                targetTileIndex = 0
+                targetTileIndex = borderTile
             };
 
             bool declared = world.DeclareWarWithJustification(attacker, defender, casusBelli, goal, "测试宣战");
@@ -95,7 +144,7 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(attacker, war.attackerId);
             Assert.AreEqual(defender, war.defenderId);
             Assert.IsNotNull(war.casusBelli, "WarState 必须承载宣战理由");
-            Assert.AreEqual(GameEnums.CasusBelliType.BorderIncident, war.casusBelli.type);
+            Assert.AreEqual(GameEnums.CasusBelliType.TerritorialDispute, war.casusBelli.type);
             Assert.AreEqual(1, war.warGoals.Count, "WarState 必须承载战争目标");
             Assert.AreEqual(attacker, war.warGoals[0].attackerRealmId);
             Assert.AreEqual(defender, war.warGoals[0].defenderRealmId);
@@ -129,11 +178,13 @@ namespace MyriadCreation.Tests.EditMode
             PickTwoRealms(world, out int attacker, out int defender);
             Assert.GreaterOrEqual(defender, 0, "前置：应有两个政权");
 
+            int borderTile = FindBorderTile(world, attacker, defender);
+            Assert.GreaterOrEqual(borderTile, 0, "前置：应有接壤地块");
             var goal = new WarGoal
             {
                 goalId = 2,
                 type = GameEnums.WarGoalType.ConquerTerritory,
-                targetTileIndex = 0
+                targetTileIndex = borderTile
             };
             Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, null, goal, "征服"));
             WarState war = LastOpenWar(world);
@@ -168,11 +219,13 @@ namespace MyriadCreation.Tests.EditMode
                 targetRealmId = defender,
                 expiryDay = -1
             };
-            var initialGoal = new WarGoal { goalId = 3, type = GameEnums.WarGoalType.BorderAdjustment, targetTileIndex = 1 };
+            int borderTile = FindBorderTile(world, attacker, defender);
+            Assert.GreaterOrEqual(borderTile, 0, "前置：应有接壤地块");
+            var initialGoal = new WarGoal { goalId = 3, type = GameEnums.WarGoalType.BorderAdjustment, targetTileIndex = borderTile };
             Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境"));
             WarState war = LastOpenWar(world);
 
-            var downgradedGoal = new WarGoal { goalId = 4, type = GameEnums.WarGoalType.Humiliation, targetTileIndex = 1 };
+            var downgradedGoal = new WarGoal { goalId = 4, type = GameEnums.WarGoalType.Humiliation, targetTileIndex = borderTile };
             Assert.IsTrue(world.ReviseWarGoal(war.warId, downgradedGoal), "CB 授权范围内的降级应允许");
             Assert.AreEqual(GameEnums.WarGoalType.Humiliation, war.warGoals[0].type);
             Assert.AreEqual(world.currentDay, war.lastWarGoalChangeDay);
@@ -199,7 +252,9 @@ namespace MyriadCreation.Tests.EditMode
                 targetRealmId = defender,
                 expiryDay = -1
             };
-            var initialGoal = new WarGoal { goalId = 6, type = GameEnums.WarGoalType.BorderAdjustment };
+            int borderTile = FindBorderTile(world, attacker, defender);
+            Assert.GreaterOrEqual(borderTile, 0, "前置：应有接壤地块");
+            var initialGoal = new WarGoal { goalId = 6, type = GameEnums.WarGoalType.BorderAdjustment, targetTileIndex = borderTile };
             Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境"));
             WarState war = LastOpenWar(world);
 
@@ -224,6 +279,132 @@ namespace MyriadCreation.Tests.EditMode
         }
 
         [Test]
+        public void DeclareWarWithGoal_RejectsUnsupportedCasusBelli()
+        {
+            var world = NewWorld();
+            PickTwoRealms(world, out int attacker, out int defender);
+            Assert.GreaterOrEqual(defender, 0, "前置：应有两个政权");
+            int borderTile = FindBorderTile(world, attacker, defender);
+            Assert.GreaterOrEqual(borderTile, 0, "前置：应有接壤地块");
+
+            var casusBelli = new CasusBelli
+            {
+                cbId = 9,
+                type = GameEnums.CasusBelliType.BorderIncident,
+                holderRealmId = attacker,
+                targetRealmId = defender,
+                expiryDay = -1
+            };
+            var overreach = new WarGoal
+            {
+                goalId = 9,
+                type = GameEnums.WarGoalType.ConquerTerritory,
+                targetTileIndex = borderTile
+            };
+
+            Assert.IsFalse(world.DeclareWarWithJustification(attacker, defender, casusBelli, overreach, "越权"),
+                "边境事件不足以支撑吞并领土");
+            Assert.IsNull(LastOpenWar(world), "失败宣战不得留下战争运行态");
+        }
+
+        [Test]
+        public void ReviseWarGoal_NonAdjacentTerritory_IsRejected()
+        {
+            var world = NewWorld();
+            PickTwoRealms(world, out int attacker, out int defender);
+            Assert.GreaterOrEqual(defender, 0, "前置：应有两个政权");
+            int borderTile = FindBorderTile(world, attacker, defender);
+            int interiorTile = FindNonBorderTileOwnedBy(world, attacker, defender);
+            Assert.GreaterOrEqual(borderTile, 0, "前置：应有接壤地块");
+            if (interiorTile < 0) Assert.Ignore("该地图没有非接壤的守方地块");
+
+            var casusBelli = new CasusBelli
+            {
+                cbId = 10,
+                type = GameEnums.CasusBelliType.TerritorialDispute,
+                holderRealmId = attacker,
+                targetRealmId = defender,
+                expiryDay = -1
+            };
+            var initialGoal = new WarGoal { goalId = 10, type = GameEnums.WarGoalType.BorderAdjustment, targetTileIndex = borderTile };
+            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境"));
+            WarState war = LastOpenWar(world);
+            war.lastWarGoalChangeDay = -10000;
+
+            var deepStrike = new WarGoal { goalId = 11, type = GameEnums.WarGoalType.ConquerTerritory, targetTileIndex = interiorTile };
+            Assert.IsFalse(world.ReviseWarGoal(war.warId, deepStrike), "不接壤的领土目标不得成为战争目标");
+            Assert.AreEqual(GameEnums.WarGoalType.BorderAdjustment, war.warGoals[0].type);
+        }
+
+        [Test]
+        public void ReviseWarGoal_TierShortfall_CostsStabilityNotPrestige()
+        {
+            var world = NewWorld();
+            PickTwoRealms(world, out int attacker, out int defender);
+            Assert.GreaterOrEqual(defender, 0, "前置：应有两个政权");
+            int borderTile = FindBorderTile(world, attacker, defender);
+            Assert.GreaterOrEqual(borderTile, 0, "前置：应有接壤地块");
+            RealmData realm = world.realms[attacker];
+            realm.prestige = 50f;
+            realm.stability = 70f;
+            realm.centralization = 0.5f;
+
+            var casusBelli = new CasusBelli
+            {
+                cbId = 12,
+                type = GameEnums.CasusBelliType.TerritorialDispute,
+                holderRealmId = attacker,
+                targetRealmId = defender,
+                expiryDay = -1
+            };
+            var initialGoal = new WarGoal { goalId = 12, type = GameEnums.WarGoalType.BorderAdjustment, targetTileIndex = borderTile };
+            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境"));
+            WarState war = LastOpenWar(world);
+            float prestigeBefore = realm.prestige;
+            float stabilityBefore = realm.stability;
+            war.lastWarGoalChangeDay = -10000;
+
+            var escalate = new WarGoal { goalId = 13, type = GameEnums.WarGoalType.ConquerTerritory, targetTileIndex = borderTile };
+            Assert.IsTrue(world.ReviseWarGoal(war.warId, escalate), "威望等级不足但政权仍稳时可以强推");
+            Assert.AreEqual(prestigeBefore, realm.prestige, "威望等级是门槛，不是可花费点数");
+            Assert.Less(realm.stability, stabilityBefore, "强推目标的代价落在稳定度上");
+            Assert.Greater(realm.unrest, 0f, "强推目标应推高不安");
+            Assert.AreEqual(GameEnums.WarGoalType.ConquerTerritory, war.warGoals[0].type);
+        }
+
+        [Test]
+        public void ReviseWarGoal_TierShortfall_RejectedWhenRealmUnstable()
+        {
+            var world = NewWorld();
+            PickTwoRealms(world, out int attacker, out int defender);
+            Assert.GreaterOrEqual(defender, 0, "前置：应有两个政权");
+            int borderTile = FindBorderTile(world, attacker, defender);
+            Assert.GreaterOrEqual(borderTile, 0, "前置：应有接壤地块");
+            RealmData realm = world.realms[attacker];
+            realm.prestige = 50f;
+            realm.stability = 70f;
+            realm.centralization = 0.5f;
+
+            var casusBelli = new CasusBelli
+            {
+                cbId = 14,
+                type = GameEnums.CasusBelliType.TerritorialDispute,
+                holderRealmId = attacker,
+                targetRealmId = defender,
+                expiryDay = -1
+            };
+            var initialGoal = new WarGoal { goalId = 14, type = GameEnums.WarGoalType.BorderAdjustment, targetTileIndex = borderTile };
+            Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, initialGoal, "边境"));
+            WarState war = LastOpenWar(world);
+            war.lastWarGoalChangeDay = -10000;
+            realm.stability = 30f;
+
+            var escalate = new WarGoal { goalId = 15, type = GameEnums.WarGoalType.ConquerTerritory, targetTileIndex = borderTile };
+            Assert.IsFalse(world.ReviseWarGoal(war.warId, escalate), "政权不稳时不得强推超越威望等级的目标");
+            Assert.AreEqual(GameEnums.WarGoalType.BorderAdjustment, war.warGoals[0].type);
+        }
+
+        [Test]
         public void WarState_JustificationAndGoals_RoundTripThroughSave()
         {
             var world = NewWorld();
@@ -239,11 +420,13 @@ namespace MyriadCreation.Tests.EditMode
                 expiryDay = -1,
                 description = "存读往返"
             };
+            int borderTile = FindBorderTile(world, attacker, defender);
+            Assert.GreaterOrEqual(borderTile, 0, "前置：应有接壤地块");
             var goal = new WarGoal
             {
                 goalId = 7,
                 type = GameEnums.WarGoalType.BorderAdjustment,
-                targetTileIndex = 3
+                targetTileIndex = borderTile
             };
             Assert.IsTrue(world.DeclareWarWithJustification(attacker, defender, casusBelli, goal, "存读"));
             int warId = LastOpenWar(world).warId;

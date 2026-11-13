@@ -50,8 +50,23 @@ public class WarRules
 	/// <summary>战争目标可改期：两次变更之间的最短间隔（天）。理由固定，目标不是随便改的。</summary>
 	public int warGoalRevisionCooldownDays = 90;
 
-	/// <summary>目标升级（要求更高战争分）的威望成本；降级免费。</summary>
-	public float warGoalEscalationPrestigeCost = 25f;
+	/// <summary>改目标的基础政治代价：稳定度下降与不安上升（不是扣威望点）。</summary>
+	public float warGoalRevisionStabilityCost = 2f;
+
+	public float warGoalRevisionUnrestCost = 2f;
+
+	/// <summary>威望等级不足却强推目标时，每差一级额外付出的稳定度/不安。</summary>
+	public float warGoalForceStabilityCostPerTier = 6f;
+
+	public float warGoalForceUnrestCostPerTier = 4f;
+
+	/// <summary>强推目标时每差一级的廷臣好感损失（对统治者）。</summary>
+	public float warGoalForceCourtOpinionPerTier = 5f;
+
+	/// <summary>威望等级不足时，能否强推：需要政权仍稳、中央仍有权威。</summary>
+	public float warGoalForceMinStability = 50f;
+
+	public float warGoalForceMinCentralization = 0.5f;
 
 	public int GetTruceUntilDay(int currentDay, int years)
 	{

@@ -382,7 +382,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 事实：`WarState` 只有分数/胜负（`WarState.cs:3-53`），不存 `CasusBelli`/`WarGoal`；CB 与目标在 `DiplomaticRelation.casusBelliList/activeWarGoals`；`DeclareWarWithJustification` 存在于 `DiplomacyManager.cs:388`，但 `GameWorld` 的生产宣战只走 `DeclareWarCore`（`GameWorld.Simulation.cs:1044-1051`），后者创建 `WarState`；正式战争与“敌对行为/劫掠”是两条链。
 - 裁决：**战略层** `WarState/WarPlan` 承载参战方、宣战理由、战争目标、时间；**战役层** `Campaign/Front` 承载方向、兵力、补给线、目标地块；**战斗层** `Battle/Encounter` 只负责一次接触的结算。`CasusBelli`=为什么可打，`WarGoal`=打什么，`Treaty`=怎么结束；三者不得混写。
 - 规则：正式宣战（含无 CB 的突袭）也必须创建 `WarState`，并把 CB/目标挂上；`DeclareWarWithJustification` 不得再有“改了外交关系但没有 WarState”的死路径。不新增 `PlanType.Military`（D32）。
-- **理由固定、目标可变但受约束**：`CasusBelli` 在宣战时锁定，战中不可更换；`WarGoal` 可中途调整，但必须仍在原 CB 授权范围内（`WarJustificationSystem.GetSupportedWarGoals`），两次调整至少间隔 `WarRules.warGoalRevisionCooldownDays`（默认 90 天），升级到更高战争分需支付 `WarRules.warGoalEscalationPrestigeCost`（默认 25 威望），降级/收缩免费，无 CB 的突袭不允许改目标。`WarState.lastWarGoalChangeDay/warGoalRevisionCount` 记录变更史，外交投影同步刷新。
+- **理由固定、目标可变但受约束**：`CasusBelli` 在宣战时锁定，战中不可更换；`WarGoal` 可中途调整，但必须仍在原 CB 授权范围内（`WarJustificationSystem.GetSupportedWarGoals`），两次调整至少间隔 `WarRules.warGoalRevisionCooldownDays`（默认 90 天），无 CB 的突袭不允许改目标。`WarState.lastWarGoalChangeDay/warGoalRevisionCount` 记录变更史，外交投影同步刷新。
+- **目标选择受接壤与类型约束**：`ConquerTerritory/BorderAdjustment/ConvertReligion` 必须指向守方地块且与攻方接壤；`ConquerRegion` 的目标区域必须与攻方接壤；不同目标有不同完成条件（战争分阈值只是其中一项，领土目标最终看条约割让）。
+- **威望是等级，不是货币**：新增 `PrestigeTier`（Unknown/Local/Regional/Realm/Eminent），各目标要求最低等级（边境/赔款/羞辱→Local，夺地/传教→Regional，夺区/附庸/独立→Realm，灭国→Eminent）。**不扣威望点数**；等级不足时，只有在政权稳定度与中央权威仍足够时才能强推，代价落在**稳定度、不安、廷臣对统治者的好感**上（`WarRules.warGoalForce*`）。
+- **两层目标能动性**：统治者层决定“打什么”，受 CB、接壤、威望等级、政治代价约束，不是随手改；执行层由带兵将领根据性格、忠诚、补给与战况自行偏移（后续接入 `CommanderAutonomy`，不得用抽象加成替代）。任何改动都必须留下政治后果与编年史记录。
 - 优化：战争相关查询按参战方/战区索引，禁止每军队×每战争×全军队笛卡尔积。
 
 ## D39 预加载/AI 预热作为性能工作流，不新建玩法系统

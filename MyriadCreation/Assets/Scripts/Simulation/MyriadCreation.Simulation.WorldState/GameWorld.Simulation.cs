@@ -49,10 +49,27 @@ namespace MyriadCreation.Simulation.WorldState
 {
 public partial class GameWorld : MonoBehaviour
 {
+	private const int FamineCooldownDays = 30;
+
+	private int[] _lastFamineAbsoluteDay;
+
+	private void EnsureFamineCooldownBuffer()
+	{
+		if (_lastFamineAbsoluteDay == null || _lastFamineAbsoluteDay.Length != tiles.Length)
+		{
+			_lastFamineAbsoluteDay = new int[tiles.Length];
+			for (int i = 0; i < _lastFamineAbsoluteDay.Length; i++)
+			{
+				_lastFamineAbsoluteDay[i] = -100000;
+			}
+		}
+	}
 
 	private void PopulationTick()
 	{
 		ConcurrentQueue<GameEvent> parallelEvents = new ConcurrentQueue<GameEvent>();
+		EnsureFamineCooldownBuffer();
+		int absoluteDay = currentYear * 365 + currentDay;
 		Parallel.For(0, tiles.Length, (int i) =>
 		{
 			if (tiles[i].exists && tiles[i].isLand && tiles[i].populationBlocks != null)
@@ -91,12 +108,19 @@ public partial class GameWorld : MonoBehaviour
 					float tilePopulation = GetTilePopulation(i);
 					if (valueOrDefault < tilePopulation * 0.01f && tilePopulation > 0f)
 					{
-						parallelEvents.Enqueue(new GameEvent
+						// 同一地块 30 天内只报一次饥荒：否则长跑后几乎全图每日重复入队，
+						// events.daily 会从 0.4ms 漂到 100ms+（P0.4 一年档实测）。
+						int lastDay = _lastFamineAbsoluteDay[i];
+						if (absoluteDay - lastDay >= FamineCooldownDays)
 						{
-							eventType = GameEventType.Famine,
-							tileIndex = i,
-							severity = 50f
-						});
+							_lastFamineAbsoluteDay[i] = absoluteDay;
+							parallelEvents.Enqueue(new GameEvent
+							{
+								eventType = GameEventType.Famine,
+								tileIndex = i,
+								severity = 50f
+							});
+						}
 					}
 				}
 			}
@@ -1124,6 +1148,23 @@ public partial class GameWorld : MonoBehaviour
 		{
 			casusBelli = null;
 		}
+		if (warGoal != null)
+		{
+			WarRules rules = _diplomacyManager.WarRules ?? WarRules.Default();
+			if (casusBelli != null && !WarJustificationSystem.GetSupportedWarGoals(casusBelli.type).Contains(warGoal.type))
+			{
+				return false;
+			}
+			if (!IsWarGoalScopeValid(warGoal, attackerId, defenderId, out _))
+			{
+				return false;
+			}
+			if (!TryAuthorizeWarGoal(realms[attackerId], warGoal, rules, out int tierGap))
+			{
+				return false;
+			}
+			ApplyWarAimPoliticalCost(realms[attackerId], rules, tierGap, escalation: true);
+		}
 		if (!_diplomacyManager.DeclareWarWithJustification(attackerId, defenderId, casusBelli, warGoal, reason))
 		{
 			return false;
@@ -1134,8 +1175,9 @@ public partial class GameWorld : MonoBehaviour
 	}
 
 	/// <summary>
-	/// 中途变更战争目标：理由（CB）固定不变，目标只能落在原 CB 授权范围内，且有冷却与升级成本。
-	/// 降级/收缩免费；升级到更高战争分要求支付威望，威望不足则不允许。
+	/// 中途变更战争目标（统治者层）：理由（CB）固定不变，目标只能落在原 CB 授权范围内，
+	/// 且必须满足接壤/目标类型约束；威望只看等级门槛，不扣点数。
+	/// 等级不足时只有在政权仍稳、中央仍有权威时才能强推，代价落在稳定度、不安与廷臣好感上。
 	/// </summary>
 	public bool ReviseWarGoal(int warId, WarGoal proposedGoal)
 	{
@@ -1154,17 +1196,18 @@ public partial class GameWorld : MonoBehaviour
 		{
 			return false;
 		}
+		if (!IsWarGoalScopeValid(proposedGoal, war.attackerId, war.defenderId, out _))
+		{
+			return false;
+		}
 		float targetScore = ((proposedGoal.targetWarScore > 0f) ? proposedGoal.targetWarScore : WarJustificationSystem.GetDefaultTargetWarScore(proposedGoal.type));
 		bool escalation = currentGoal == null || targetScore > currentGoal.targetWarScore;
-		if (escalation && war.attackerId >= 0 && war.attackerId < realms.Count)
+		RealmData attacker = realms[war.attackerId];
+		if (!TryAuthorizeWarGoal(attacker, proposedGoal, rules, out int tierGap))
 		{
-			RealmData attacker = realms[war.attackerId];
-			if (attacker.prestige < rules.warGoalEscalationPrestigeCost)
-			{
-				return false;
-			}
-			attacker.prestige -= rules.warGoalEscalationPrestigeCost;
+			return false;
 		}
+		ApplyWarAimPoliticalCost(attacker, rules, tierGap, escalation);
 		proposedGoal.attackerRealmId = war.attackerId;
 		proposedGoal.defenderRealmId = war.defenderId;
 		proposedGoal.targetWarScore = targetScore;
@@ -1181,6 +1224,174 @@ public partial class GameWorld : MonoBehaviour
 		}
 		_chronicle?.Add("war_goal", realms[war.attackerId].realmName + " 将战争目标改为 " + proposedGoal.type, true, war.attackerId, war.defenderId);
 		return true;
+	}
+
+	/// <summary>目标范围合法性：领土类目标必须指向守方地块且与攻方接壤；区域目标必须与攻方接壤。</summary>
+	private bool IsWarGoalScopeValid(WarGoal goal, int attackerId, int defenderId, out string reason)
+	{
+		reason = "ok";
+		if (goal == null)
+		{
+			return true;
+		}
+		if (attackerId < 0 || defenderId < 0)
+		{
+			reason = "no_realm";
+			return false;
+		}
+		switch (goal.type)
+		{
+		case GameEnums.WarGoalType.ConquerTerritory:
+		case GameEnums.WarGoalType.BorderAdjustment:
+		case GameEnums.WarGoalType.ConvertReligion:
+			if (!IsTileOwnedBy(goal.targetTileIndex, defenderId))
+			{
+				reason = "target_not_defender_tile";
+				return false;
+			}
+			if (!IsTileAdjacentToRealm(goal.targetTileIndex, attackerId))
+			{
+				reason = "target_not_adjacent";
+				return false;
+			}
+			return true;
+		case GameEnums.WarGoalType.ConquerRegion:
+			if (goal.targetRegionId < 0)
+			{
+				reason = "no_region";
+				return false;
+			}
+			if (!DoesRegionBorderRealm(goal.targetRegionId, attackerId, defenderId))
+			{
+				reason = "region_not_adjacent";
+				return false;
+			}
+			return true;
+		default:
+			return true;
+		}
+	}
+
+	private bool IsTileOwnedBy(int tileIndex, int realmId)
+	{
+		return tiles != null && tileIndex >= 0 && tileIndex < tiles.Length && tiles[tileIndex].ownerRealmId == realmId;
+	}
+
+	private bool IsTileAdjacentToRealm(int tileIndex, int realmId)
+	{
+		if (tiles == null || mapWidth <= 0 || tileIndex < 0 || tileIndex >= tiles.Length)
+		{
+			return false;
+		}
+		int x = tileIndex % mapWidth;
+		int y = tileIndex / mapWidth;
+		for (int dy = -1; dy <= 1; dy++)
+		{
+			int ny = y + dy;
+			if (ny < 0 || ny >= mapHeight)
+			{
+				continue;
+			}
+			for (int dx = -1; dx <= 1; dx++)
+			{
+				if (dx == 0 && dy == 0)
+				{
+					continue;
+				}
+				int nx = x + dx;
+				if (nx < 0 || nx >= mapWidth)
+				{
+					continue;
+				}
+				int neighbor = ny * mapWidth + nx;
+				if (tiles[neighbor].ownerRealmId == realmId)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private bool DoesRegionBorderRealm(int regionId, int attackerId, int defenderId)
+	{
+		if (tiles == null) return false;
+		for (int i = 0; i < tiles.Length; i++)
+		{
+			if (tiles[i].regionId == regionId && tiles[i].ownerRealmId == defenderId && IsTileAdjacentToRealm(i, attackerId))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/// <summary>威望等级门槛：够级直接通过；不够级只有在政权仍稳、中央仍有权威时才能强推。</summary>
+	private bool TryAuthorizeWarGoal(RealmData realm, WarGoal goal, WarRules rules, out int tierGap)
+	{
+		tierGap = 0;
+		if (realm == null || goal == null)
+		{
+			return false;
+		}
+		PrestigeTier required = PrestigeTiers.RequiredFor(goal.type);
+		PrestigeTier current = PrestigeTiers.Of(realm.prestige);
+		if (current >= required)
+		{
+			return true;
+		}
+		tierGap = (int)required - (int)current;
+		return realm.stability >= rules.warGoalForceMinStability && realm.centralization >= rules.warGoalForceMinCentralization;
+	}
+
+	/// <summary>改目标的代价落在政治体上：稳定度、不安、廷臣对统治者的好感，而不是扣威望点数。</summary>
+	private void ApplyWarAimPoliticalCost(RealmData realm, WarRules rules, int tierGap, bool escalation)
+	{
+		if (realm == null)
+		{
+			return;
+		}
+		float stabilityCost = rules.warGoalRevisionStabilityCost * (escalation ? 1f : 0.5f);
+		float unrestCost = rules.warGoalRevisionUnrestCost * (escalation ? 1f : 0.5f);
+		if (tierGap > 0)
+		{
+			stabilityCost += tierGap * rules.warGoalForceStabilityCostPerTier;
+			unrestCost += tierGap * rules.warGoalForceUnrestCostPerTier;
+		}
+		realm.stability = Mathf.Max(0f, realm.stability - stabilityCost);
+		realm.unrest = Mathf.Min(100f, realm.unrest + unrestCost);
+		if (tierGap > 0)
+		{
+			ApplyCourtOpinionPenalty(realm, tierGap * rules.warGoalForceCourtOpinionPerTier);
+		}
+	}
+
+	/// <summary>强推目标会招致廷臣不满：在职官员对统治者的好感下降。</summary>
+	private void ApplyCourtOpinionPenalty(RealmData realm, float amount)
+	{
+		if (_characterManager == null || realm.officeHolders == null || realm.officeHolders.Count == 0 || amount <= 0f)
+		{
+			return;
+		}
+		int rulerId = realm.GetSupremeRulerId();
+		CharacterData ruler = (rulerId >= 0) ? _characterManager.GetCharacter(rulerId) : null;
+		if (ruler == null)
+		{
+			return;
+		}
+		foreach (int holderId in realm.officeHolders.Values)
+		{
+			CharacterData holder = _characterManager.GetCharacter(holderId);
+			if (holder == null || holder == ruler || holder.relations == null)
+			{
+				continue;
+			}
+			if (holder.relations.TryGetValue(rulerId, out CharacterRelation relation))
+			{
+				relation.opinion = Mathf.Clamp(relation.opinion - amount, -200f, 200f);
+				holder.relations[rulerId] = relation;
+			}
+		}
 	}
 
 	/// <summary>带主体的宣战：先过 ActionGate（能力∧职权），再走原宣战流程。actor 为发起者角色。</summary>

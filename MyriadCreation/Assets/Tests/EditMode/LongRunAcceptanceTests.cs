@@ -189,5 +189,139 @@ namespace MyriadCreation.Tests.EditMode
                 "长跑后世界时间必须推进");
             Assert.Greater(world.realms.Count, 0, "长跑后政权不应消失");
         }
+
+        /// <summary>
+        /// P0.4 的日常档：一年长跑，检查早期/晚期日耗时漂移与内存增长。
+        /// 100 年全量见 <see cref="RunHundredYears_TwoSeeds_ExportsLongHorizon"/>（Explicit，按需运行）。
+        /// </summary>
+        [Test]
+        public void RunOneYear_ChecksEarlyLateDrift()
+        {
+            GameWorld world = NewWorld(4242);
+            const int days = 365;
+            var daily = new List<double>(days);
+            var stopwatch = new Stopwatch();
+            double startMemoryMb = System.GC.GetTotalMemory(true) / (1024d * 1024d);
+
+            List<SimulationTimingEntry> midTimings = null;
+            for (int day = 0; day < days; day++)
+            {
+                stopwatch.Restart();
+                world.RunDiagnosticDays(1);
+                stopwatch.Stop();
+                double ms = stopwatch.Elapsed.TotalMilliseconds;
+                Assert.IsFalse(double.IsNaN(ms), "日耗时为 NaN");
+                daily.Add(ms);
+                if (day == 29)
+                {
+                    midTimings = new List<SimulationTimingEntry>(world.SimulationScheduler.GetTimings());
+                }
+            }
+
+            double earlyAvg = AverageRange(daily, 0, 30);
+            double lateAvg = AverageRange(daily, days - 30, days);
+            double maxMs = 0d;
+            foreach (double ms in daily) maxMs = System.Math.Max(maxMs, ms);
+            double endMemoryMb = System.GC.GetTotalMemory(false) / (1024d * 1024d);
+
+            string dir = Path.Combine(Application.dataPath, "../Logs");
+            Directory.CreateDirectory(dir);
+            var lines = new List<string> { "day,elapsed_ms,characters,realms,settlements,armies,wars,events,processed_events" };
+            for (int i = 0; i < daily.Count; i++)
+            {
+                lines.Add(string.Format(CultureInfo.InvariantCulture,
+                    "{0},{1:F3},{2},{3},{4},{5},{6},{7},{8}",
+                    i + 1, daily[i], world.GetCharacterManager().GetAllCharacters().Count,
+                    world.realms.Count, world.settlements.Count, world.armies.Count, world.GetWars().Count,
+                    world.PendingEventCount, world.LastProcessedEventCount));
+            }
+            File.WriteAllLines(Path.Combine(dir, "m05-yearly-test.csv"), lines, Encoding.UTF8);
+
+            var hotspotLines = new List<string> { "phase,id,avg_ms,interval_days" };
+            if (midTimings != null)
+            {
+                foreach (SimulationTimingEntry timing in midTimings)
+                {
+                    hotspotLines.Add(string.Format(CultureInfo.InvariantCulture,
+                        "day30,{0},{1:F4},{2}", timing.id, timing.avgMs, timing.intervalDays));
+                }
+            }
+            foreach (SimulationTimingEntry timing in world.SimulationScheduler.GetTimings())
+            {
+                hotspotLines.Add(string.Format(CultureInfo.InvariantCulture,
+                    "day365,{0},{1:F4},{2}", timing.id, timing.avgMs, timing.intervalDays));
+            }
+            File.WriteAllLines(Path.Combine(dir, "m05-year-hotspots-test.csv"), hotspotLines, Encoding.UTF8);
+
+            Assert.Less(lateAvg, earlyAvg * 4d + 5d, "晚期日均耗时应受控（允许 4 倍 + 5ms 抖动）");
+            Assert.Less(maxMs, 5000d, "单日不应卡死");
+            Assert.Less(endMemoryMb, startMemoryMb * 2.5d + 200d, "一年后内存增长应有界");
+            Assert.Greater(world.currentYear, 0, "时间应推进");
+        }
+
+        /// <summary>
+        /// P0.4 全量档：2 seed × 100 年。默认不跑（Explicit），用
+        /// `-testFilter MyriadCreation.Tests.EditMode.LongRunAcceptanceTests.RunHundredYears_TwoSeeds_ExportsLongHorizon`
+        /// 或 Unity Test Runner 显式执行。
+        /// </summary>
+        [Test]
+        [Explicit("100 年长跑按需运行，默认套件不跑")]
+        public void RunHundredYears_TwoSeeds_ExportsLongHorizon()
+        {
+            string dir = Path.Combine(Application.dataPath, "../Logs");
+            Directory.CreateDirectory(dir);
+            int[] seeds = { 4242, 7777 };
+            const int years = 100;
+            const int daysPerYear = 365;
+            var summary = new List<string> { "seed,year,avg_ms,max_ms,memory_mb,realms,settlements,armies,wars" };
+            var stopwatch = new Stopwatch();
+
+            foreach (int seed in seeds)
+            {
+                GameWorld world = NewWorld(seed);
+                var yearAvgs = new List<double>(years);
+                for (int year = 0; year < years; year++)
+                {
+                    double totalMs = 0d;
+                    double maxMs = 0d;
+                    for (int day = 0; day < daysPerYear; day++)
+                    {
+                        stopwatch.Restart();
+                        world.RunDiagnosticDays(1);
+                        stopwatch.Stop();
+                        double ms = stopwatch.Elapsed.TotalMilliseconds;
+                        totalMs += ms;
+                        maxMs = System.Math.Max(maxMs, ms);
+                    }
+                    double avgMs = totalMs / daysPerYear;
+                    yearAvgs.Add(avgMs);
+                    double memoryMb = System.GC.GetTotalMemory(false) / (1024d * 1024d);
+                    summary.Add(string.Format(CultureInfo.InvariantCulture,
+                        "{0},{1},{2:F3},{3:F3},{4:F3},{5},{6},{7},{8}",
+                        seed, year + 1, avgMs, maxMs, memoryMb,
+                        world.realms.Count, world.settlements.Count, world.armies.Count, world.GetWars().Count));
+                }
+
+                double early = AverageRange(yearAvgs, 0, 10);
+                double late = AverageRange(yearAvgs, years - 10, years);
+                Assert.Less(late, early * 3d + 5d, "seed " + seed + " 晚期十年日均耗时应受控");
+                Assert.Greater(world.realms.Count, 0, "seed " + seed + " 百年后政权不应消失");
+                Assert.Greater(world.currentDay, 0, "seed " + seed + " 时间应推进");
+            }
+
+            File.WriteAllLines(Path.Combine(dir, "m05-100y-test.csv"), summary, Encoding.UTF8);
+            Assert.AreEqual(1 + seeds.Length * years, summary.Count, "表头 + 2 seed × 100 年");
+        }
+
+        private static double AverageRange(List<double> values, int start, int end)
+        {
+            if (values == null || values.Count == 0) return 0d;
+            start = System.Math.Max(0, start);
+            end = System.Math.Min(values.Count, end);
+            if (end <= start) return 0d;
+            double total = 0d;
+            for (int i = start; i < end; i++) total += values[i];
+            return total / (end - start);
+        }
     }
 }

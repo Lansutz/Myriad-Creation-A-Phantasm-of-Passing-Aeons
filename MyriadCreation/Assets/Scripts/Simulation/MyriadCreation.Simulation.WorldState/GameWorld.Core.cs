@@ -364,15 +364,23 @@ public partial class GameWorld : MonoBehaviour
 		_simulationCommands.Register(new ResettleTileCommandHandler(runtime2, _simulationEvents));
 	}
 
+	/// <summary>待处理事件数（诊断用）；长跑中应保持有界，不应逐日累积。</summary>
+	public int PendingEventCount => _eventQueue.Count;
+
 	public void EnqueueEvent(GameEvent evt)
 	{
 		_eventQueue.Enqueue(evt);
 	}
 
+	/// <summary>最近一次事件处理的条数（诊断用）。</summary>
+	public int LastProcessedEventCount { get; private set; }
+
 	private void ProcessEvents()
 	{
+		int processed = 0;
 		while (_eventQueue.Count > 0)
 		{
+			processed++;
 			GameEvent evt = _eventQueue.Dequeue();
 			foreach (IGameEventListener eventListener in _eventListeners)
 			{
@@ -406,6 +414,7 @@ public partial class GameWorld : MonoBehaviour
 				break;
 			}
 		}
+		LastProcessedEventCount = processed;
 	}
 
 	private void HandleFamine(GameEvent evt)
@@ -420,7 +429,7 @@ public partial class GameWorld : MonoBehaviour
 				tiles[evt.tileIndex].populationBlocks[i] = value;
 			}
 			tiles[evt.tileIndex].stability = Mathf.Max(0f, tiles[evt.tileIndex].stability - 10f);
-			Debug.Log((object)$"[Event] 饥荒 @ 地块{evt.tileIndex}");
+			// 不逐条 Debug.Log：编辑器下每条都抓栈，长跑时会成为 events.daily 的主要成本。
 		}
 	}
 
@@ -430,7 +439,6 @@ public partial class GameWorld : MonoBehaviour
 		{
 			tiles[evt.tileIndex].order = Mathf.Max(0f, tiles[evt.tileIndex].order - 15f);
 			tiles[evt.tileIndex].stability = Mathf.Max(0f, tiles[evt.tileIndex].stability - 10f);
-			Debug.Log((object)$"[Event] 叛乱 @ 地块{evt.tileIndex}，严重度{evt.severity:F0}");
 		}
 	}
 

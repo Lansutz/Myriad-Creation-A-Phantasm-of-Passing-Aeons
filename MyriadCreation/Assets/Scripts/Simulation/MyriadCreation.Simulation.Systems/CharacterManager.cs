@@ -673,22 +673,28 @@ public class CharacterManager
 
 	private void PersonalityOpinionDrift()
 	{
-		List<CharacterData> aliveCharacters = GetAliveCharacters();
-		for (int i = 0; i < aliveCharacters.Count; i++)
+		// 只遍历真实存在的关系边，避免 O(人数²) 每日全配对扫描（一年长跑会从几 ms 漂到上百 ms）。
+		foreach (CharacterData character in _characters.Values)
 		{
-			for (int j = i + 1; j < aliveCharacters.Count; j++)
+			if (!character.isAlive || character.relations == null || character.relations.Count == 0)
 			{
-				CharacterData characterData = aliveCharacters[i];
-				CharacterData characterData2 = aliveCharacters[j];
-				if (characterData.relations.TryGetValue(characterData2.characterId, out var value))
+				continue;
+			}
+			foreach (KeyValuePair<int, CharacterRelation> relation in character.relations)
+			{
+				CharacterData other = GetCharacter(relation.Key);
+				if (other == null || !other.isAlive)
 				{
-					float personalityAffinity = characterData.GetPersonalityAffinity(characterData2);
-					if (!(Mathf.Abs(personalityAffinity) < 0.5f))
-					{
-						value.opinion = Mathf.Clamp(value.opinion + personalityAffinity * 0.002f, -200f, 200f);
-						characterData.relations[characterData2.characterId] = value;
-					}
+					continue;
 				}
+				float personalityAffinity = character.GetPersonalityAffinity(other);
+				if (Mathf.Abs(personalityAffinity) < 0.5f)
+				{
+					continue;
+				}
+				CharacterRelation value = relation.Value;
+				value.opinion = Mathf.Clamp(value.opinion + personalityAffinity * 0.002f, -200f, 200f);
+				character.relations[relation.Key] = value;
 			}
 		}
 	}
