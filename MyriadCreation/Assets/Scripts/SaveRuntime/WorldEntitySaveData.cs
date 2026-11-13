@@ -325,6 +325,8 @@ namespace MyriadCreation.Infrastructure.Save
         public int holderRealmId = -1;
         public int homelandCountryId = -1;
         public List<string> generationMarks = new List<string>();
+        public string coaPattern = "";
+        public string coaColors = "";
 
         public static FamilySaveData FromFamily(FamilyNode f)
         {
@@ -338,7 +340,9 @@ namespace MyriadCreation.Infrastructure.Save
                 familyPrestige = f.familyPrestige,
                 familyWealth = f.familyWealth,
                 holderRealmId = f.holderRealmId,
-                homelandCountryId = f.homelandCountryId
+                homelandCountryId = f.homelandCountryId,
+                coaPattern = f.coaPattern ?? "",
+                coaColors = f.coaColors ?? ""
             };
             if (f.memberIds != null) dto.memberIds.AddRange(f.memberIds);
             if (f.generationMarks != null) dto.generationMarks.AddRange(f.generationMarks);
@@ -356,7 +360,9 @@ namespace MyriadCreation.Infrastructure.Save
                 familyPrestige = familyPrestige,
                 familyWealth = familyWealth,
                 holderRealmId = holderRealmId,
-                homelandCountryId = homelandCountryId
+                homelandCountryId = homelandCountryId,
+                coaPattern = coaPattern ?? "",
+                coaColors = coaColors ?? ""
             };
             if (memberIds != null) f.memberIds.AddRange(memberIds);
             if (generationMarks != null) f.generationMarks.AddRange(generationMarks);

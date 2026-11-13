@@ -911,3 +911,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - F：新增 `MyriadCreation.Simulation.Hosts` 程序集承载 Faith/Culture 契约适配器，`SimulationHostRegistry` 反转依赖；Simulation 不再含 `*Host` 文件夹，法律/信仰/文化运行逻辑归入 `Systems/*Runtime`。
 - P2.6：`RegisterPhased` 提供 Compute→Apply 两相（全部 Compute 后统一 Apply），影响力场完成迁移并有顺序测试。
 - 最终验证：`build.cmd` `EXIT=0`、`884/886`（2 个 Explicit 跳过）、零 `error CS`；`longrun` 2 seed×100 年 `1/1` 通过、`EXIT=0`。
+
+## D112 程序化家族纹章（借鉴纹章生成思路，不复制实现）
+
+- 新增 `Heraldry`：由 `familyId + 名称 + 建国年` 确定性生成 `pattern`（bend/chevron/cross/saltire/paly/quarterly/fess/pall）与三色（field/charge/detail），只存字符串，不依赖美术资源。
+- `CreateFamily` 时 `Ensure` 写入；旧档/缺省按需补齐且幂等；`FamilySaveData` 增 `coaPattern/coaColors` 并往返。
+- 测试：确定性、幂等、存档往返。
+- 为什么不用参考项目代码：纹章规则可抽象成“确定性符号组合”，参考实现的资源/代码许可不明；这里只借模型。
+- 城市俯视图：当前 `SettlementBlock` 有区划/面积/城墙数据但没有布局坐标；要做得先定义“块→俯视布局”的确定性算法与渲染层，属于独立子项目，暂不硬塞。
+- 验证：`EXIT=0`、`887/889`、零 `error CS`。

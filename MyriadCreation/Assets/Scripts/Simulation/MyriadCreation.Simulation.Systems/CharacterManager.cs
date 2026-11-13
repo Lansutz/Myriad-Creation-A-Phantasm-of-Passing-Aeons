@@ -507,6 +507,7 @@ public class CharacterManager
 			Innovations = Innovations
 		};
 		familyNode.AddMember(founderId);
+		Heraldry.Ensure(familyNode);
 		_families[familyNode.familyId] = familyNode;
 		if (_characters.TryGetValue(founderId, out var value))
 		{
