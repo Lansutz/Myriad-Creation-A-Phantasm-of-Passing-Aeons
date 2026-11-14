@@ -222,5 +222,13 @@
 
 - `FaithSaveData` 字段迁 `Save.Contracts`；映射器迁 `Simulation.WorldState.FaithSaveMapping`；删除 `Save.Runtime` 的 `FaithPersistence` / `DenominationPersistence` / 旧 DTO。
 - `Save.Runtime.asmdef` 去掉 `MyriadCreation.Faith` 后编译通过；存档字段与 JSON 形状不变，`SaveVersion` 不变。
-- 剩余引用 World/Simulation/Content/Culture 仍未收口，属 A2/A3 后续批次。
+- 第二批（§15）：文化 DTO 分离，`Save.Runtime` 去掉 `Culture`。
+- 剩余引用 World/Simulation/Content 仍未收口，属 A2/A3 后续批次。
 - 验证：`EXIT=0`、1081 例、1070 通过、0 失败、零 warning CS。
+
+## 15. A1/A2 第二切片：Culture 映射器回迁（2026-11-14）
+
+- `CultureSaveData`（含继承法/官衔快照）进 `Save.Contracts`，字段名与旧 JSON 一致；映射器 `Simulation.WorldState.CultureSaveMapping`。
+- `GameWorld.CaptureCultures/RestoreCultures` 收口；`Save.Runtime.asmdef` 去掉 `MyriadCreation.Culture` 后编译通过。
+- 测试：`CultureSaveMappingTests` JSON 往返逐字段断言。
+- 验证：`EXIT=0`、1082 例、1071 通过、0 失败、零 warning CS。

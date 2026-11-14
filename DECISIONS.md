@@ -1390,3 +1390,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **引用收窄**：`MyriadCreation.Save.Runtime.asmdef` 移除 `MyriadCreation.Faith`，编译通过（判据："删掉引用还能编译"）。仍保留 World/Simulation/Content/Culture——A2/A3 尚未收口，不冒充完成。
 - **存档格式不变**：字段名/类型/JSON 形状不动，`SaveVersion` 不递增；`FaithPersistenceTests` 与 `FaithUnityTests` 仅改调用点与日志前缀（`[FaithSaveMapping]`）。
 - 验证：全量 EditMode `EXIT=0`、1081 例、1070 通过、0 失败、11 Explicit、零 warning/error CS。
+
+## D158 A1/A2 第二切片：文化 DTO 分离，Save.Runtime 去掉 Culture 引用（2026-11-14）
+
+- **DTO**：新增 `Save.Contracts.CultureSaveData`（含 `InheritanceLawSaveData` / `OfficeTitleSaveData`），字段名与旧版直接序列化 `CultureData` 一致；继承法与官衔展开成同名字段，JSON 形状不变。
+- **映射器**：`Simulation.WorldState.CultureSaveMapping` 负责 `CultureData ↔ CultureSaveData`；`GameWorld.CaptureCultures/RestoreCultures` 作为存档收口，存档层不再直接触碰 `CultureData`。
+- **引用收窄**：`Save.Runtime.asmdef` 移除 `MyriadCreation.Culture`；剩 Core / Save.Contracts / Content / World / Simulation。
+- **测试**：`CultureSaveMappingTests` 做 JSON 往返逐字段断言。
+- 验证：全量 EditMode `EXIT=0`、1082 例、1071 通过、0 失败、11 Explicit、零 warning/error CS。

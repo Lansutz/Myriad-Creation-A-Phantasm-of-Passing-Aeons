@@ -20,7 +20,6 @@ using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.Actors;
 using MyriadCreation.Simulation.Units;
-using MyriadCreation.Simulation.Culture;
 using MyriadCreation.Content.Definitions;
 namespace MyriadCreation.Infrastructure.Save
 {
@@ -372,7 +371,7 @@ namespace MyriadCreation.Infrastructure.Save
                 lastCityDeclineCause = world.LastCityDeclineCause ?? string.Empty,
                 tiles = world.tiles,
                 races = new List<RaceDTO>(),
-                cultures = new List<CultureData>(),
+                cultures = new List<MyriadCreation.Save.Contracts.CultureSaveData>(),
                 realms = new List<RealmDTO>(),
                 tradeCenters = new List<TradeCenterDTO>(),
                 goodsDefs = new List<GoodsDef>(),
@@ -385,7 +384,7 @@ namespace MyriadCreation.Infrastructure.Save
             };
 
             foreach (var kv in world.races) data.races.Add(RaceDTO.FromRaceData(kv.Value));
-            foreach (var kv in world.cultures) data.cultures.Add(kv.Value);
+            data.cultures = world.CaptureCultures();
             foreach (var kv in world.realms) data.realms.Add(RealmDTO.FromRealmData(kv.Value));
             foreach (var kv in world.tradeCenters) data.tradeCenters.Add(TradeCenterDTO.FromTradeCenter(kv.Value));
             foreach (var kv in world.goodsDefs) data.goodsDefs.Add(kv.Value);
@@ -446,9 +445,7 @@ namespace MyriadCreation.Infrastructure.Save
             if (data.races != null)
                 foreach (var dto in data.races) world.races[dto.raceId] = dto.ToRaceData();
 
-            world.cultures.Clear();
-            if (data.cultures != null)
-                foreach (var c in data.cultures) world.cultures[c.cultureId] = c;
+            world.RestoreCultures(data.cultures);
 
             world.realms.Clear();
             if (data.realms != null)

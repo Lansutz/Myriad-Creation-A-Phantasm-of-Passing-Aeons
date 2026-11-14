@@ -6,8 +6,7 @@
         "MyriadCreation.Save.Contracts",
         "MyriadCreation.Content",
         "MyriadCreation.World",
-        "MyriadCreation.Simulation",
-        "MyriadCreation.Culture"
+        "MyriadCreation.Simulation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -267,3 +267,4 @@
 - 2026-11-14 **P10.6 工程卫生**：删 `LawSystem` 死代码与 `RuntimeMapEditingController.BindWorld` 兼容壳（读档重绑测试改为行为契约）；警告 152 → 0（过时 `FindObjectsByType` 重载、迁移期旧字段标注、未读字段清理）；`Save.Runtime` 移除 Audio 依赖；`GovernmentPanel` 接入面板注册表。验证：`EXIT=0`、1079 例、1069 通过、0 失败、零 warning。详见 D155。
 - 2026-11-14 **P10.1 验收闭环**：研究日结按 `deltaDays` 折算（修复 1/90 速度的批处理 bug）；平民补入 8 个领域的日常实践源；AI 选题优先补齐空白领域。200 年 128×64 世界 26/26 领域均有完成项（939 项）。验证：`EXIT=0`、1081 例、1070 通过、零 warning。详见 D156。
 - 2026-11-14 **A1/A2 切片：存档层去 Faith 依赖**：`FaithSaveData` 进 `Save.Contracts`，信仰/宗派映射迁入 `Simulation.FaithSaveMapping`，`Save.Runtime.asmdef` 移除 `MyriadCreation.Faith`；存档格式不变。验证：`EXIT=0`、1081 例、1070 通过。详见 D157。
+- 2026-11-14 **A1/A2 切片：存档层去 Culture 依赖**：`CultureSaveData` 进 `Save.Contracts`，映射迁 `Simulation.CultureSaveMapping`，`Save.Runtime.asmdef` 移除 `MyriadCreation.Culture`；JSON 形状不变。验证：`EXIT=0`、1082 例、1071 通过。详见 D158。

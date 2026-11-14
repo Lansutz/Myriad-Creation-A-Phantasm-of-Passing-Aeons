@@ -14,7 +14,6 @@ using MyriadCreation.World;
 using MyriadCreation.World.Generation;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
-using MyriadCreation.Simulation.Culture;
 using MyriadCreation.Simulation.Planning;
 using MyriadCreation.Simulation.AI;
 using MyriadCreation.Simulation.LawHost;
@@ -45,7 +44,7 @@ namespace MyriadCreation.Infrastructure.Save
  // 核心数据（TileData/CultureData/GoodsDef/TradeRoute 无字典，可直接序列化）
         public TileData[] tiles;
         public List<RaceDTO> races;
-        public List<CultureData> cultures;
+        public List<CultureSaveData> cultures;
         public List<RealmDTO> realms;
         public List<TradeCenterDTO> tradeCenters;
         public List<GoodsDef> goodsDefs;
