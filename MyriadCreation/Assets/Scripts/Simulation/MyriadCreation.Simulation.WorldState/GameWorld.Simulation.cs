@@ -1068,9 +1068,21 @@ public partial class GameWorld : MonoBehaviour
 
 	private void MonthlyCultureStageEvolution()
 	{
-		if (currentDay % 30 == 0)
+		if (currentDay % 30 != 0) return;
+		CultureStageEvolutionHost.MonthlyTick(this);
+		// P11.5：革新完成 → 传统固化；成熟后尝试转为教义/法律（同一月不重复扫描）。
+		foreach (CultureData culture in cultures.Values)
 		{
-			CultureStageEvolutionHost.MonthlyTick(this);
+			if (culture == null) continue;
+			foreach (RealmData realm in realms.Values)
+			{
+				if (realm == null || realm.primaryCultureId != culture.cultureId) continue;
+				var added = TraditionConversionSystem.TrySpawnTraditions(this, realm.realmId);
+				for (int i = 0; i < added.Count; i++)
+				{
+					TraditionConversionSystem.TryConvert(this, realm.realmId, added[i], currentDay, out _);
+				}
+			}
 		}
 	}
 

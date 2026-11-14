@@ -136,3 +136,10 @@
 - 归属只认 `ownerActorId`；Packed 不入 `ActiveHabitationSites`、不占地块、不建锚点。
 - 存档字段 `camp_mobility/camp_target_tile`，`RoundTrip_PreservesCamps` 断言 Moving/目标。
 - 测试：`CampMobilityTests` 5 例；验证：`EXIT=0`、1099 例、1088 通过、零 warning CS。
+
+## 14. P11.5 实施记录（2026-11-14）
+
+- 传统固化门 = 已掌握革新 + 文化成熟度 + 无相斥；写入 `traditionIds`。
+- 转换表 `TraditionConversions.json`：教义写 `FaithSystem.doctrineIds`，法律走 `ILawCommand.BeginEnactLaw`。
+- 月度文化演替接线；`TraditionConversionTests` 5 例。
+- 验证：`EXIT=0`、1104 例、1093 通过、零 warning CS。

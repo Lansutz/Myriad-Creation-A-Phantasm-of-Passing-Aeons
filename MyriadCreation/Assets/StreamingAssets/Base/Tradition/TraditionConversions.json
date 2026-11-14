@@ -1,0 +1,10 @@
+{
+  "conversions": [
+    { "traditionId": "trad_agrarian_rites", "targetKind": "doctrine", "targetId": "doctrine_feast_communal", "minimumMaturity": 0.3 },
+    { "traditionId": "trad_ancestor_cult", "targetKind": "doctrine", "targetId": "doctrine_ancestor_veneration", "minimumMaturity": 0.35 },
+    { "traditionId": "trad_craft_guild", "targetKind": "law", "targetId": "charter_guild", "minimumMaturity": 0.4 },
+    { "traditionId": "trad_war_bands", "targetKind": "law", "targetId": "militia", "minimumMaturity": 0.35 },
+    { "traditionId": "trad_maritime_trade", "targetKind": "law", "targetId": "border_trade", "minimumMaturity": 0.4 },
+    { "traditionId": "trad_council_assembly", "targetKind": "law", "targetId": "local_scope_full_autonomy", "minimumMaturity": 0.45 }
+  ]
+}

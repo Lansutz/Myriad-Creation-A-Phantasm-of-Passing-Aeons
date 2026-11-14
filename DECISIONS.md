@@ -1459,3 +1459,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **机制复盘**：收起不是"删除营地"，移动不是传送；采集按当天所在地块进行，收起状态无本地采集。
 - 测试：`CampMobilityTests` 5 例（收起清占用/锚点、迁移推进与到达、重扎、收起非活动点、DTO 捕获）+ 存档往返扩展。
 - 验证：全量 EditMode `EXIT=0`、1099 例、1088 通过、0 失败、11 Explicit、零 warning/error CS。
+
+## D165 P11.5 传统链：革新→传统→教义/法律（2026-11-14）
+
+- **固化**：`TraditionConversionSystem.TrySpawnTraditions` 按"该政权已掌握传统的 requiredInnovations + 文化成熟度 ≥ solidification + 无相斥传统"把传统写入 `CultureData.traditionIds`。不新增平行进度条，成熟度就是积累的过程量。
+- **转换**：`TraditionConversions.json` 声明 `targetKind=doctrine|law`、`targetId`、`minimumMaturity`；教义写入国教 `FaithSystem.doctrineIds`，法律走既有 `ILawCommand.BeginEnactLaw`（不绕过立法流程）。
+- **接线**：每月文化演替时，按 `realm.primaryCultureId` 扫描一次；新增传统当月尝试转换。
+- **内容**：农耕祭仪→共食宴、祖先崇拜→祖灵信仰、行会传统→行会特许、战团传统→民兵、海贸传统→边市、议事传统→地方自治。
+- **测试**：`TraditionConversionTests` 5 例（革新/成熟度门、教义写入、法律经 ILawCommand、无传统不得转换）。
+- 验证：全量 EditMode `EXIT=0`、1104 例、1093 通过、0 失败、11 Explicit、零 warning/error CS。
