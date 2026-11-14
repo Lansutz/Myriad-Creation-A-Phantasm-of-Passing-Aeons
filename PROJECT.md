@@ -270,3 +270,4 @@
 - 2026-11-14 **A1/A2 切片：存档层去 Culture 依赖**：`CultureSaveData` 进 `Save.Contracts`，映射迁 `Simulation.CultureSaveMapping`，`Save.Runtime.asmdef` 移除 `MyriadCreation.Culture`；JSON 形状不变。验证：`EXIT=0`、1082 例、1071 通过。详见 D158。
 - 2026-11-14 **A2/A3 存档层三段拆分**：`Save.Runtime` 只留 Core + Save.Contracts（零领域引用），领域捕获与映射集中到 `Save.World`。验证：`EXIT=0`、1082 例、1071 通过。详见 D159。
 - 2026-11-14 **面板注册收口**：聚落详情面板接入 `UiPanelRegistry`（注册表覆盖 6 个游戏内运行时面板）；流程面板按签名口径留在注册表外。详见 D160。
+- 2026-11-14 **P11.1 专精节点**：数据表 + 技能/实践双门槛 + 人物经验与已解锁节点入档；解锁改变可用操作（`CanUseAction`）。验证：`EXIT=0`、1086 例、1075 通过。详见 D161。

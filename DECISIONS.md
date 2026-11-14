@@ -1415,3 +1415,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 注册点：`UIManager.SetWorldReadModel` 找到既有面板时注册；`UiFactory.EnsureSettlementDetailUi` 创建/复用后向 UIManager 注册（管理器尚未创建则跳过，Awake 侧补注册）。
 - 注册表现覆盖：Character / FamilyTree / Innovation / CityView / Government / SettlementDetail。主菜单、存读档、设置仍是流程驱动（`Build(parent, onClose)` 回调）且不常驻游戏内，按签名不硬套 `IUserInterfacePanel`，口径写入 D155。
 - 验证：全量 EditMode `EXIT=0`、1082 例、1071 通过、0 失败、零 warning/error CS。
+
+## D161 P11.1 专精节点：技能值 + 真实实践解锁操作（2026-11-14）
+
+- **数据驱动**：`SpecialtyPerkDef` + `SpecialtyPerkCatalog` 读取 `StreamingAssets/Base/Specialty/SpecialtyPerks.json`（8 个节点：斥候分遣、夜袭、佯退、结阵、巡按、联姻试探、踏勘、离间）。
+- **门槛是机制不是数值**：解锁 = 既有技能值（prowess/military/management/social/conspiracy/scholarship）达到节点门槛 **且** 该专精的真实实践累计达标；实践按 `AddSpecialtyExperience` 累计，不搞打怪掉经验。
+- **人物状态**：`CharacterData.specialtyExperience[6]` + `unlockedPerks`；`CharacterSaveData` 同步字段并往返。
+- **解锁消费**：`SpecialtyPerkSystem.TryUnlock/TryUnlockAll/CanUseAction`；后续 P11.2 用 `scout_detach` 真正改变斥候分遣操作。
+- 测试：`SpecialtyPerkTests` 4 例（高技能零实践不解锁、达标解锁、幂等、存档往返）。
+- 验证：全量 EditMode `EXIT=0`、1086 例、1075 通过、0 失败、11 Explicit、零 warning/error CS。

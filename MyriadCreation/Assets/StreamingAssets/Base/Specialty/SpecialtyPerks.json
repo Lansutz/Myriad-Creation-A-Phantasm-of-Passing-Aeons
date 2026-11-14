@@ -1,0 +1,12 @@
+{
+  "perks": [
+    { "perkId": "scout_detach", "perkName": "斥候分遣", "specialty": 2, "requiredSkill": 45, "requiredPractice": 120, "unlocksAction": "DetachScouts", "unlocksTactic": "ReconInForce", "description": "把骑兵与轻装兵分出为斥候，围绕主军活动并先行发现敌情。" },
+    { "perkId": "night_raid", "perkName": "夜袭", "specialty": 2, "requiredSkill": 60, "requiredPractice": 320, "unlocksAction": "NightRaid", "unlocksTactic": "NightAssault", "description": "在夜间接近敌营发动突袭，依赖训练与纪律而非兵力。" },
+    { "perkId": "feigned_retreat", "perkName": "佯退诱敌", "specialty": 2, "requiredSkill": 55, "requiredPractice": 260, "unlocksAction": "FeignRetreat", "unlocksTactic": "FeignedFlight", "description": "接敌后有序后撤，把敌军拉出阵形再反击。" },
+    { "perkId": "shield_wall", "perkName": "结阵固守", "specialty": 5, "requiredSkill": 50, "requiredPractice": 220, "unlocksAction": "HoldShieldWall", "unlocksTactic": "ShieldWall", "description": "步兵结阵抵御冲击，降低被骑兵突破的概率。" },
+    { "perkId": "realm_audit", "perkName": "巡按审计", "specialty": 3, "requiredSkill": 55, "requiredPractice": 200, "unlocksAction": "AuditRealm", "unlocksTactic": "", "description": "派员清查地方账目与仓储，发现侵吞与虚报。" },
+    { "perkId": "marriage_probe", "perkName": "联姻试探", "specialty": 0, "requiredSkill": 50, "requiredPractice": 180, "unlocksAction": "ProbeMarriage", "unlocksTactic": "", "description": "先派使者试探对方联姻意向，再决定是否正式提亲。" },
+    { "perkId": "field_survey", "perkName": "实地踏勘", "specialty": 4, "requiredSkill": 45, "requiredPractice": 150, "unlocksAction": "SurveyLand", "unlocksTactic": "", "description": "系统记录地块土质、水源与产量，为税册与垦殖提供依据。" },
+    { "perkId": "sow_dissent", "perkName": "离间", "specialty": 1, "requiredSkill": 60, "requiredPractice": 300, "unlocksAction": "SowDissent", "unlocksTactic": "", "description": "在敌对政权的封臣之间散布猜疑，制造内部摩擦。" }
+  ]
+}

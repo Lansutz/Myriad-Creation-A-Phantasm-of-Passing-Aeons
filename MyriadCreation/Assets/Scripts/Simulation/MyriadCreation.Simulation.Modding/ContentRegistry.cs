@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using MyriadCreation.Simulation.State;
@@ -116,6 +116,7 @@ public static class ContentRegistry
 			MyriadCreation.Simulation.Systems.TitleManager.LoadFromContent();
 			Equipment = _definitions.Equipment;
 			LanguageFamilyCatalog.Initialize(streamingAssetsPath);
+			SpecialtyPerkCatalog.Initialize(streamingAssetsPath);
 			PropertyDefinitionCatalog.Initialize(streamingAssetsPath);
 			GoodsPropertyCatalog.Initialize(streamingAssetsPath);
 			RecipeCatalog.Initialize(streamingAssetsPath);

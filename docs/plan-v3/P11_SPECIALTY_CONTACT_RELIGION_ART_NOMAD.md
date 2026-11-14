@@ -107,3 +107,10 @@
 | P11.7 | 欠账 | 每项有判据 |
 
 每批：`EXIT=0`、零 warning、EditMode 全绿、DECISIONS/PROJECT/P11 同步、commit + push。
+
+## 10. P11.1 实施记录（2026-11-14）
+
+- `SpecialtyPerkDef`/`SpecialtyPerkCatalog` 读 `Base/Specialty/SpecialtyPerks.json`（8 节点）。
+- 解锁门槛 = 既有技能值 + 该专精真实实践；`CharacterData.specialtyExperience/unlockedPerks` 入档。
+- `SpecialtyPerkSystem.TryUnlock/TryUnlockAll/CanUseAction`；`SpecialtyPerkTests` 4 例。
+- 验证：`EXIT=0`、1086 例、1075 通过、零 warning CS。下一步 P11.2：斥候分遣与单向探测。

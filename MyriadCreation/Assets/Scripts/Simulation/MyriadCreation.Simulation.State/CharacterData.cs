@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.Genetics;
@@ -136,6 +136,49 @@ public class CharacterData
 
 	[Range(0f, 100f)]
 	public float scholarship = 50f;
+
+	/// <summary>六类专精的真实实践累计（下标 = SpecialtyType）；技能点由实践阈值产生，不打怪掉经验。</summary>
+	public float[] specialtyExperience = new float[6];
+
+	/// <summary>已解锁的专精节点 id（动词/战术）；顺序仅用于展示。</summary>
+	public List<string> unlockedPerks = new List<string>();
+
+	/// <summary>专精对应的既有技能值（0–100），用于节点门槛；不另开一套数值。</summary>
+	public float GetSpecialtySkill(SpecialtyType specialty)
+	{
+		switch (specialty)
+		{
+			case SpecialtyType.Prowess: return prowess;
+			case SpecialtyType.Military: return military;
+			case SpecialtyType.Management: return management;
+			case SpecialtyType.Social: return social;
+			case SpecialtyType.Conspiracy: return conspiracy;
+			case SpecialtyType.Scholarship: return scholarship;
+			default: return 0f;
+		}
+	}
+
+	public float GetSpecialtyExperience(SpecialtyType specialty)
+	{
+		int index = (int)specialty;
+		if (specialtyExperience == null || index < 0 || index >= specialtyExperience.Length) return 0f;
+		return specialtyExperience[index];
+	}
+
+	/// <summary>记录一次真实实践；达到阈值后由 SpecialtyPerkSystem 解锁节点。</summary>
+	public void AddSpecialtyExperience(SpecialtyType specialty, float amount)
+	{
+		if (amount <= 0f) return;
+		if (specialtyExperience == null || specialtyExperience.Length < 6) specialtyExperience = new float[6];
+		int index = (int)specialty;
+		if (index < 0 || index >= specialtyExperience.Length) return;
+		specialtyExperience[index] += amount;
+	}
+
+	public bool HasPerk(string perkId)
+	{
+		return !string.IsNullOrEmpty(perkId) && unlockedPerks != null && unlockedPerks.Contains(perkId);
+	}
 
 	public float prestige;
 

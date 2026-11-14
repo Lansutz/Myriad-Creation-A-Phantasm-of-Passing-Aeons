@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.Definitions;
@@ -69,6 +69,8 @@ namespace MyriadCreation.Infrastructure.Save
         public float management = 50f;
         public float conspiracy = 50f;
         public float scholarship = 50f;
+        public float[] specialtyExperience = new float[6];
+        public string[] unlockedPerks = new string[0];
         public float charm = 50f;
 
         public float health = 100f;
@@ -222,6 +224,8 @@ namespace MyriadCreation.Infrastructure.Save
                 management = c.management,
                 conspiracy = c.conspiracy,
                 scholarship = c.scholarship,
+                specialtyExperience = c.specialtyExperience != null ? (float[])c.specialtyExperience.Clone() : new float[6],
+                unlockedPerks = c.unlockedPerks != null ? new List<string>(c.unlockedPerks).ToArray() : new string[0],
                 charm = c.charm,
                 health = c.health,
                 fertility = c.fertility,
@@ -503,6 +507,8 @@ namespace MyriadCreation.Infrastructure.Save
                 management = management,
                 conspiracy = conspiracy,
                 scholarship = scholarship,
+                specialtyExperience = specialtyExperience != null ? (float[])specialtyExperience.Clone() : new float[6],
+                unlockedPerks = unlockedPerks != null ? new List<string>(unlockedPerks) : new List<string>(),
                 charm = charm,
                 health = health,
                 fertility = fertility,
