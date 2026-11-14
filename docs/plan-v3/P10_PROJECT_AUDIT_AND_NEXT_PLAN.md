@@ -207,7 +207,7 @@
 
 - ~~**200 年每领域至少 1 项**~~：已由 §13 补齐并通过（26/26）。
 - **面板全注册**：见上文口径，`IUserInterfacePanel` 覆盖运行时可开关面板；其余为流程/选择面板，未接入。
-- **Save.Runtime 不引用领域实现**：仅移除 Audio；领域 DTO 映射仍在，属 A2/A3 大工程。
+- **Save.Runtime 不引用领域实现**：已移除 Audio 与 Faith（§14）；World/Simulation/Content/Culture 仍在，A2/A3 继续分批收口。
 
 ## 13. P10.1 验收补齐（2026-11-14）
 
