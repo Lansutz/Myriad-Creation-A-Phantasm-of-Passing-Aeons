@@ -1371,3 +1371,14 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **面板注册口径**：运行时面板以 `UIManager.Panels`（`UiPanelRegistry`）为唯一入口。本次补注册 `GovernmentPanel`（其 `Build/Show/Hide/IsOpen` 与接口完全一致）。聚落详情面板是"锚点选择驱动"（`Show(anchorId)`，由 `ISettlementDetailUi` 契约绑定），存读档/设置/主菜单是"流程驱动"（`Build(parent, onClose)` 回调），签名与 `IUserInterfacePanel` 不兼容；不为它们造假适配，注册表范围明确为"可由管理器按 id 开关的运行时面板"。
 - **依赖收窄**：`MyriadCreation.Save.Runtime.asmdef` 移除 `MyriadCreation.Audio`（该程序集无 Audio 代码）。仍引用 World/Simulation/Faith/Culture 的 DTO 映射属于序列化边界欠账（主计划 A2/A3），本轮不假装解耦，保留在后续计划。
 - **验证**：全量 EditMode `EXIT=0`、1079 例、1069 通过、0 失败、10 个 Explicit 跳过、零 `warning CS`、零 `error CS`。
+
+## D156 P10.1 验收补齐：研究批处理折算、民间实践源与选题短板（2026-11-14）
+
+- **日结研究漏乘 deltaDays（真 bug）**：`InnovationResearchSchedule` 每 tick 只加一次 `researchRate`，`daysPerTick=90` 时长跑实际只有 1/90 速度。实测 365 天进度增量 0.0、控制器速率 1.203。修复为 `researchRate × ctx.deltaDays`。
+- **民间实践源**：医学、自然认知、神学、军事思想、教育、仪式、节庆、社会思想此前只由贵族/教士贡献；早期聚落几乎无专职教士，导致 8 个领域长期零实践。平民阶层补入低于教士的份额（节庆 0.08、仪式 0.05、物候 0.03、草药 0.02、育儿口传 0.02、纠纷规范 0.02、神话 0.01、乡勇经验 0.01）——都是真实日常活动，不新增平行数值系统。
+- **选题短板优先**：`AIController.SelectDailyIntent` 在个性偏好之后，优先选"本政权完全未掌握该领域"的可立项革新，再按时代权重与成本排序。只改排序，不放宽实践门槛、不跳过前置；解释为"缺文字/历法的政权会先补短板"。
+- **实测（seed 4242，200 年，daysPerTick=90）**：
+  - 48×24：修复前 10 项 / 16 个空领域 → 修复后 104 项 / 8 个空领域；
+  - 128×64：8 个政权共 939 项，**26/26 领域全部非零**（补平民实践后空领域 8 → 1，加选题短板后 0）。
+- 测试：`InnovationResearchBatchingTests`（90 天跳步应推进 rate×90）；`NaturalEmergenceTests.Diagnose_InnovationFieldCoverage_200Years` 现为硬断言 26/26 且默认 Explicit。
+- 验证：全量 EditMode `EXIT=0`、1081 例、1070 通过、0 失败、11 个 Explicit 跳过、零 warning/error CS。

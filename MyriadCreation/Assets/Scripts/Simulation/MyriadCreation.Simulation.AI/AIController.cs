@@ -239,6 +239,16 @@ public class AIController
 		}
 		int currentEra = InnovationEra.GetEraForYear((!((Object)(object)world != (Object)null)) ? 1 : world.currentYear);
 		bool hasPreferredDomains = personality.preferredDomains != null && personality.preferredDomains.Count > 0;
+		// 已掌握革新按领域计数：政权会先补齐完全空白的领域（缺历法/文字/医术的政权不会一直只钻研农业），
+		// 这是排序启发式，不改变实践门槛，也不跳过前置。
+		Dictionary<InnovationField, int> fieldCounts = new Dictionary<InnovationField, int>();
+		foreach (int ownedId in innovations.GetRealmInnovations(realmId))
+		{
+			InnovationDef owned = innovations.GetInnovation(ownedId);
+			if (owned == null) continue;
+			fieldCounts.TryGetValue(owned.field, out int count);
+			fieldCounts[owned.field] = count + 1;
+		}
 		availableInnovations.Sort((InnovationDef a, InnovationDef b) =>
 		{
 			bool flag = hasPreferredDomains && personality.preferredDomains.Contains(a.Domain);
@@ -250,6 +260,12 @@ public class AIController
 					return 1;
 				}
 				return -1;
+			}
+			bool emptyA = !fieldCounts.TryGetValue(a.field, out int countA) || countA == 0;
+			bool emptyB = !fieldCounts.TryGetValue(b.field, out int countB) || countB == 0;
+			if (emptyA != emptyB)
+			{
+				return emptyA ? -1 : 1;
 			}
 			float preferenceWeight = InnovationEra.GetPreferenceWeight(a.era, currentEra);
 			float preferenceWeight2 = InnovationEra.GetPreferenceWeight(b.era, currentEra);

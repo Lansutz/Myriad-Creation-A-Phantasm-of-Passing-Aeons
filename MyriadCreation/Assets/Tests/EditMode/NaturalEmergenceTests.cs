@@ -478,5 +478,66 @@ TestContext.WriteLine($"Y{year} pop{pop:F0} agri{AgricultureYield.Compute(tile):
                 Assert.IsTrue(everHadTaxReceipt, $"seed {seed}：应有实物税从地方仓储流入国家仓");
             }
         }
+
+        /// <summary>
+        /// P10.1 验收观测：200 年自然演化后，统计各政权已掌握革新在 26 个领域上的覆盖。
+        /// 验收要求：每个领域至少有一项被任一政权完成；AI 只从实践达标的革新里选题。
+        /// </summary>
+        [Test]
+        [Explicit("200 年领域覆盖观测按需运行，默认套件不跑")]
+        [Timeout(1800000)]
+        public void Diagnose_InnovationFieldCoverage_200Years()
+        {
+            var world = NewWorld(4242, 128, 64);
+            world.daysPerTick = 90;
+            while (world.currentYear < 200)
+            {
+                world.RunDiagnosticDays(world.calendar.daysPerYear);
+                if (world.currentYear % 50 == 0)
+                {
+                    int completed = 0;
+                    InnovationDef current = null;
+                    foreach (RealmData realm in world.realms.Values)
+                    {
+                        completed += world.Innovations.GetRealmInnovations(realm.realmId).Count;
+                        if (current == null) current = world.Innovations.GetCurrentResearch(realm.realmId);
+                    }
+                    TestContext.WriteLine($"FIELDSNAP year={world.currentYear} realms={world.realms.Count} " +
+                        $"completed={completed} current={current?.GetName()} firstRealm={world.FirstRealmYear}");
+                }
+            }
+
+            var perField = new Dictionary<InnovationField, int>();
+            foreach (InnovationField field in System.Enum.GetValues(typeof(InnovationField)))
+            {
+                perField[field] = 0;
+            }
+
+            int total = 0;
+            foreach (RealmData realm in world.realms.Values)
+            {
+                foreach (int innovationId in world.Innovations.GetRealmInnovations(realm.realmId))
+                {
+                    InnovationDef def = world.Innovations.GetInnovation(innovationId);
+                    if (def == null) continue;
+                    perField[def.field] = perField[def.field] + 1;
+                    total++;
+                }
+            }
+
+            var line = new System.Text.StringBuilder();
+            line.Append($"FIELDCOVER year={world.currentYear} realms={world.realms.Count} total={total}");
+            var missing = new List<string>();
+            foreach (var pair in perField)
+            {
+                line.Append($" {pair.Key}={pair.Value}");
+                if (pair.Value == 0) missing.Add(pair.Key.ToString());
+            }
+            TestContext.WriteLine(line.ToString());
+            TestContext.WriteLine($"FIELDCOVER_EMPTY emptyFields={missing.Count}/{perField.Count}");
+
+            Assert.Greater(world.realms.Count, 0, "200 年内应形成政权，否则领域覆盖统计没有意义");
+            Assert.IsEmpty(missing, "200 年内每个革新领域都应至少完成 1 项；缺失：" + string.Join(", ", missing));
+        }
     }
 }

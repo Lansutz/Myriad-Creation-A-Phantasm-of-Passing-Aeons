@@ -179,6 +179,17 @@ public sealed class SettlementSimulationSystem
 				Add(innovations, realmId, InnovationField.Construction, scale * 0.2f);
 				Add(innovations, realmId, InnovationField.Craft, scale * 0.2f);
 				Add(innovations, realmId, InnovationField.Folkways, scale * 0.1f);
+				// 民间生活本身也是实践来源：节庆/仪式由全村参与，草药与物候观察、育儿口传、
+				// 纠纷规范、祖先神话都在日常发生。份额低于专职教士，避免"没有教士就永远零实践"。
+				Add(innovations, realmId, InnovationField.Festival, scale * 0.08f);
+				Add(innovations, realmId, InnovationField.Ritual, scale * 0.05f);
+				Add(innovations, realmId, InnovationField.NaturalCognition, scale * 0.03f);
+				Add(innovations, realmId, InnovationField.Medicine, scale * 0.02f);
+				Add(innovations, realmId, InnovationField.Education, scale * 0.02f);
+				Add(innovations, realmId, InnovationField.SocialThought, scale * 0.02f);
+				Add(innovations, realmId, InnovationField.Theology, scale * 0.01f);
+				// 乡勇/民兵的巡逻、械斗与抵御也是军事经验的日常来源（正规军另计）。
+				Add(innovations, realmId, InnovationField.MilitaryThought, scale * 0.01f);
 				break;
 		}
 	}
