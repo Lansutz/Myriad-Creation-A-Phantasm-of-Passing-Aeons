@@ -127,7 +127,7 @@ public partial class GameWorld : MonoBehaviour
 					// 会把这一 tick 的增长覆盖掉（长跑里表现为人口永远不增长/缓慢流失）。
 					if (hasRace)
 					{
-						PopulationLedger.Scale(tiles[i].populationBlocks, j, 1f + growth * (float)daysPerTick);
+						PopulationLedger.Scale(tiles[i].populationBlocks, j, Mathf.Pow(1f + growth, Mathf.Max(1, daysPerTick)));
 					}
 				}
 				if (tradeCenters.TryGetValue(tiles[i].regionId, out var value2))

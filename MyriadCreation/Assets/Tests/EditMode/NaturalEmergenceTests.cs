@@ -385,7 +385,17 @@ TestContext.WriteLine($"Y{year} pop{pop:F0} agri{AgricultureYield.Compute(tile):
             world.daysPerTick = 90;
             int initialRivers = 0, initialHigh = 0;
             foreach (TileData tile in world.tiles) { if (!tile.isRiver) continue; initialRivers++; if (tile.riverStreamOrder >= 2) initialHigh++; }
-            TestContext.WriteLine($"DIAG0 rivers={initialRivers} order2={initialHigh}");
+            int m0 = 0, p0 = 0, t0 = 0, a0 = 0, c0 = 0;
+            foreach (SettlementData st in world.settlements.Values)
+            {
+                if (st.IsRuined) continue;
+                if (st.hasMarket) m0++;
+                if (st.portTier >= PortTier.RiverPort) p0++;
+                if (st.tradePower >= SettlementEvolutionSystem.CityTradePowerThreshold) t0++;
+                if ((st.primaryFunction & SettlementFunction.Administrative) != 0) a0++;
+                if ((st.primaryFunction & SettlementFunction.Commercial) != 0) c0++;
+            }
+            TestContext.WriteLine($"DIAG0 rivers={initialRivers} order2={initialHigh} settlements={world.settlements.Count} market={m0} port={p0} tradeHigh={t0} admin={a0} commercial={c0}");
             for (int year = 0; year < 500; year++) world.RunDiagnosticDays(world.calendar.daysPerYear);
             int rivers = 0, highOrder = 0, noWater = 0;
             foreach (TileData tile in world.tiles)

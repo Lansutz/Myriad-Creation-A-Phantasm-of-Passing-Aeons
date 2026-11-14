@@ -48,17 +48,20 @@ namespace MyriadCreation.Tests.EditMode
             return null;
         }
 
-        private static void MakeCityReady(GameWorld world, SettlementData settlement, float population = 1500f)
+        private static void MakeCityReady(GameWorld world, SettlementData settlement, float population = 1500f, float nonFarmShare = 0.15f)
         {
             TileData tile = world.tiles[settlement.tileIndex];
+            float nonFarm = population * Mathf.Clamp01(nonFarmShare);
             tile.populationBlocks = new List<PopulationBlock>
             {
-                new PopulationBlock { count = population, raceId = 0, socialClass = GameEnums.SocialClass.Peasant, satisfaction = 60f }
+                new PopulationBlock { count = population - nonFarm, raceId = 0, socialClass = GameEnums.SocialClass.Peasant, satisfaction = 60f },
+                new PopulationBlock { count = nonFarm, raceId = 0, socialClass = GameEnums.SocialClass.MerchantFreeman, satisfaction = 60f }
             };
             world.tiles[settlement.tileIndex] = tile;
             SettlementPopulationSystem.Recompute(world, settlement);
             settlement.development = 25f;
             settlement.hasMarket = true;
+            settlement.tradePower = SettlementEvolutionSystem.CityTradePowerThreshold;
             settlement.constructionTier = 5;
             settlement.constructionProgress = 100f;
             if (world.tradeCenters.TryGetValue(tile.regionId, out TradeCenter center))
@@ -109,6 +112,18 @@ namespace MyriadCreation.Tests.EditMode
             village.foundingTick = world.calendar.AbsoluteDay(world.currentYear, world.currentDay);
 
             Assert.IsTrue(StateFormationSystem.IsEligible(world, village), "城市不应因“年龄不足”被挡在建国之外");
+        }
+
+        [Test]
+        public void Village_WithoutNonFarmShare_StaysVillage()
+        {
+            var world = NewWorld();
+            SettlementData village = FirstVillage(world);
+            Assert.IsNotNull(village, "生成世界应有村镇");
+            MakeCityReady(world, village, nonFarmShare: 0f);
+
+            Assert.IsFalse(SettlementEvolutionSystem.TryUrbanize(world, village), "没有非农分工的聚落不应成为城市");
+            Assert.AreEqual(SettlementForm.Village, village.settlementForm);
         }
 
         [Test]

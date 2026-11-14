@@ -1340,3 +1340,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **教义绑定**：沿用既有 `DoctrineBindings`（教会性别/婚姻、葬礼、同性/通奸/巫术伦理等 option→binding 映射），内容 `selectedDoctrines` 已能驱动；本次只补“国教路径”这一处断链。
 - 测试：`ReligionAdoptionTests` 3 例（民间信仰内容标记与生成播种、多数确立国教、缺革新拒绝/授权后通过）；`ContentInnovationGateAuditTests` 与 `FaithPersistenceTests` 适配新增 faith。
 - 验证：全量 EditMode `EXIT=0`、1078 例、1068 通过、0 失败、零 `error CS`（10 个 Explicit 跳过）。
+
+## D153 P10.4 城市化分工条件与批处理口径（2026-11-14）
+
+- **城市不是人多的大村**：`SettlementEvolutionSystem.TryUrbanize` 增加三层机制条件：① `hasMarket`（省治/港口，临时市集不算）；② 非农人口占比 ≥12%；③ 中心地职能（首都/实际港口/贸易流量 ≥60/行政·商业·宗教·文化·工业职能）。
+- **初始职业构成**：生成期 `SeedStartingOccupations` 从农民块中划出非农人口（省治/港口 18%，普通村落 5%，其中教士 4%/1%），走 `PopulationLedger.SplitToNewBlock`，总人口守恒；后续由 `SocialDifferentiation` 按政权状况演化。
+- **批处理口径**：人口增长由 `1 + growth × daysPerTick` 改为 `(1 + growth)^daysPerTick` 复利，避免大步长线性放大。
+- **观测**：500 年 128×64 诊断城市 71/420（约 17%，此前 263/420）；7000 年 48×24 观测 firstCity=109、firstRealm=109、城市 4/55、建立 4、死亡 0。
+- 测试：`SettlementUrbanizationTests` 新增“无非农分工仍是村镇”；`PopulationMutationGatewayTests` 要求人口变动走 `PopulationLedger`；`SocialAxisReportTests` 的满足度钳位到 0–100。
+- 验证：全量 EditMode `EXIT=0`、1079 例、1069 通过、0 失败、零 `error CS`（10 个 Explicit 跳过）。

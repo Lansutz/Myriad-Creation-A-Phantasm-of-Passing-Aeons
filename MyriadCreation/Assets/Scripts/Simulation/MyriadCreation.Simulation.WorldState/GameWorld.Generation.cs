@@ -176,6 +176,7 @@ public partial class GameWorld : MonoBehaviour
 		GenerateInitialUnits(seed);
 		ClearInitialTerrainDirty();
 		SettlementPopulationSystem.RecomputeAll(this);
+		SeedStartingOccupations();
 		SeedFolkFaith();
 		BuildPreloadPlan();
 		// P5：生成期不再造宫廷、不再填官职。官职只在政权出现后由每日 offices tick 按制度门槛补缺。
@@ -210,6 +211,57 @@ public partial class GameWorld : MonoBehaviour
 		var hydrology = new MyriadCreation.World.Hydrology.HydrologySystem(mapWidth, mapHeight, config.wrapX);
 		hydrology.Run(elevation, land, MyriadCreation.World.Terrain.PlanetTerrainGenerator.ResolveRiverThreshold(mapWidth, mapHeight, 80f));
 		hydrology.ApplyToTiles(tiles);
+	}
+
+	/// <summary>
+	/// 生成期的初始职业构成：省治/港口有商人、教士等非农人口，普通村落只有少量手工与交换。
+	/// 这不是城市门槛，而是开局社会分工的初始状态；后续由 SocialDifferentiation 按政权状况演化。
+	/// </summary>
+	private void SeedStartingOccupations()
+	{
+		if (settlements == null) return;
+		foreach (SettlementData settlement in settlements.Values)
+		{
+			if (settlement == null || settlement.IsRuined) continue;
+			int tileIndex = settlement.tileIndex;
+			if (tileIndex < 0 || tileIndex >= tiles.Length) continue;
+			var blocks = tiles[tileIndex].populationBlocks;
+			if (blocks == null || blocks.Count == 0) continue;
+			float total = 0f;
+			for (int b = 0; b < blocks.Count; b++) total += Mathf.Max(0f, blocks[b].count);
+			if (total <= 0f) continue;
+			float nonFarmShare = settlement.hasMarket ? 0.18f : 0.05f;
+			float clergyShare = settlement.hasMarket ? 0.04f : 0.01f;
+			float nonFarm = total * nonFarmShare;
+			float clergy = total * clergyShare;
+			float merchant = Mathf.Max(0f, nonFarm - clergy);
+			int peasantIndex = -1;
+			for (int b = 0; b < blocks.Count; b++)
+			{
+				if (blocks[b].socialClass == GameEnums.SocialClass.Peasant && blocks[b].count > 0f)
+				{
+					peasantIndex = b;
+					break;
+				}
+			}
+			if (peasantIndex >= 0 && nonFarm > 0f)
+			{
+				PopulationBlock template = blocks[peasantIndex];
+				template.count = 0f;
+				template.socialClass = GameEnums.SocialClass.MerchantFreeman;
+				PopulationLedger.SplitToNewBlock(blocks, peasantIndex, nonFarm, template);
+				if (clergy > 0f)
+				{
+					int merchantIndex = blocks.Count - 1;
+				 PopulationBlock clergyTemplate = blocks[merchantIndex];
+					clergyTemplate.count = 0f;
+					clergyTemplate.socialClass = GameEnums.SocialClass.NobilityClergy;
+					PopulationLedger.SplitToNewBlock(blocks, merchantIndex, clergy, clergyTemplate);
+				}
+			}
+			tiles[tileIndex].populationBlocks = blocks;
+			SettlementPopulationSystem.Recompute(this, settlement);
+		}
 	}
 
 	/// <summary>世界生成时给尚未持有信仰的人口一个默认民间信仰；国教由运行时按多数与革新门槛确立。</summary>

@@ -66,12 +66,14 @@ public static class SocialAxisReportSystem
 			float weighted = 0f;
 			foreach (SocialAxisBucket bucket in buckets[i].Values)
 			{
-				bucket.needsSatisfaction = (bucket.population > 0f) ? (bucket.needsSatisfaction / bucket.population) : 50f;
+				bucket.needsSatisfaction = (bucket.population > 0f)
+					? Mathf.Clamp(bucket.needsSatisfaction / bucket.population, 0f, 100f)
+					: 50f;
 				weighted += bucket.needsSatisfaction * bucket.population;
 			}
 			reports[i].buckets.AddRange(buckets[i].Values);
 			reports[i].totalPopulation = total;
-			reports[i].axisSatisfaction = (total > 0f) ? (weighted / total) : 50f;
+			reports[i].axisSatisfaction = (total > 0f) ? Mathf.Clamp(weighted / total, 0f, 100f) : 50f;
 		}
 		return reports;
 	}

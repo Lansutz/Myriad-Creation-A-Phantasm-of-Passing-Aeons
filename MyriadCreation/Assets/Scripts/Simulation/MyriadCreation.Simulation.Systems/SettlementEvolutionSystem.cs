@@ -30,6 +30,12 @@ public static class SettlementEvolutionSystem
 
 	private const float PERSON_FOOD_PER_DAY = 0.01f;
 
+	/// <summary>城市形态所需的非农人口占比；低于此值仍是农业聚落。</summary>
+	public const float NonFarmShareForCity = 0.12f;
+
+	/// <summary>贸易流量达到该值即视为商业中心地（与市场/港口并列的城市职能判据）。</summary>
+	public const float CityTradePowerThreshold = 60f;
+
 	/// <summary>
 	/// 村镇→城市：人口、开发、市场、营建与粮食剩余都到位才转形态，不读世界/聚落年龄。
 	/// 城市形态是分工与行政剩余的结果，出现年份只作观测。
@@ -48,8 +54,32 @@ public static class SettlementEvolutionSystem
 		if (population < CITY_POPULATION_THRESHOLD) return false;
 		if (settlement.development < CITY_DEVELOPMENT_THRESHOLD) return false;
 
-		// 没有市场就没有稳定的分工与交换；市场是“城市”而非“大村庄”的机制标志。
-		if (!settlement.hasMarket && settlement.market == null) return false;
+		// 只有省治/港口这类真正的交换节点才有市场；临时市集不算城市形态。
+		if (!settlement.hasMarket) return false;
+
+		// 城市是“中心地”，不是“人口多的农业村”：需要行政/商业/宗教/港口职能，
+		// 或已经形成足够大的贸易流量；纯农业聚落即使人口增长也保持村镇形态。
+		bool centralPlace = settlement.isCapital
+			|| settlement.tradePower >= CityTradePowerThreshold
+			|| settlement.isPort
+			|| (settlement.primaryFunction & (SettlementFunction.Commercial | SettlementFunction.Administrative
+				| SettlementFunction.Religious | SettlementFunction.Cultural | SettlementFunction.Industrial)) != 0;
+		if (!centralPlace) return false;
+
+		// 城市不是“人多的大村”：必须有稳定的非农分工。农民以外的商人/教士/工匠/奴隶
+		// 占比不足时，剩余劳力仍绑在土地上，不产生城市形态。
+		float total = 0f;
+		float nonFarm = 0f;
+		if (tile.populationBlocks != null)
+		{
+			foreach (PopulationBlock block in tile.populationBlocks)
+			{
+				if (block.count <= 0f) continue;
+				total += block.count;
+				if (block.socialClass != GameEnums.SocialClass.Peasant) nonFarm += block.count;
+			}
+		}
+		if (total > 0f && nonFarm / total < NonFarmShareForCity) return false;
 
 		// 营建到位才谈得上城墙/街区/公共建筑；未完工的村镇不升级形态。
 		if (!SettlementTypologySystem.IsConstructionReady(settlement)) return false;

@@ -176,3 +176,12 @@
 - 教义绑定沿用 `DoctrineBindings`（已有 option→binding 映射）。
 - 测试：`ReligionAdoptionTests` 3 例；全量 `EXIT=0`、1078 例、1068 通过。
 - 下一步：P10.4 城市化非农条件与批处理口径。
+
+## 10. P10.4 实施记录（2026-11-14）
+
+- 城市化：市场 + 非农 ≥12% + 中心地职能（首都/actual port/贸易 ≥60/行政商业宗教文化工业）。
+- 生成期初始职业构成（省治/港口 18%，村落 5%），走 `PopulationLedger.SplitToNewBlock`。
+- 人口增长改复利 `(1+growth)^days`。
+- 观测：500 年 128×64 城市 71/420；7000 年 48×24 城市 4/55、建立 4、死亡 0、firstCity=109。
+- 测试：`SettlementUrbanizationTests` 5 例；全量 `EXIT=0`、1079 例、1069 通过。
+- 下一步：P10.5 经济性能。
