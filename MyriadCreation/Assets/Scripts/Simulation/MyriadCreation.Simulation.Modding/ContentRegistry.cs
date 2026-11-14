@@ -117,6 +117,7 @@ public static class ContentRegistry
 			Equipment = _definitions.Equipment;
 			LanguageFamilyCatalog.Initialize(streamingAssetsPath);
 			SpecialtyPerkCatalog.Initialize(streamingAssetsPath);
+			TraditionConversionCatalog.Initialize(streamingAssetsPath);
 			PropertyDefinitionCatalog.Initialize(streamingAssetsPath);
 			GoodsPropertyCatalog.Initialize(streamingAssetsPath);
 			RecipeCatalog.Initialize(streamingAssetsPath);
