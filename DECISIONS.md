@@ -1349,3 +1349,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **观测**：500 年 128×64 诊断城市 71/420（约 17%，此前 263/420）；7000 年 48×24 观测 firstCity=109、firstRealm=109、城市 4/55、建立 4、死亡 0。
 - 测试：`SettlementUrbanizationTests` 新增“无非农分工仍是村镇”；`PopulationMutationGatewayTests` 要求人口变动走 `PopulationLedger`；`SocialAxisReportTests` 的满足度钳位到 0–100。
 - 验证：全量 EditMode `EXIT=0`、1079 例、1069 通过、0 失败、零 `error CS`（10 个 Explicit 跳过）。
+
+## D154 P10.5 经济日结性能（2026-11-14）
+
+- **消费按地区聚合**：`ProcessConsumption` 不再对每个地块重复扫描可食货清单（旧实现 O(地块×货种)）；先按地区汇总人口，每个地区只算一次口粮与库存，缺粮时才回扫地塊做稳定度惩罚。语义不变，守恒测试 18/18 通过。
+- **单产滚动缓存**：`ProduceResources` 用 `_cropYieldCache`，首次全表算一次，之后每 tick 只重算约 1/30 地块；气候/肥力缓慢变化，日级精度足够。
+- **实测**：128×64（8192 地块）经济日结平均 **3.24ms**（旧实现约 28ms），回到调度预算内；7000 年 48×24 观测从约 149s 降到约 85s。
+- 测试：`EconomyTickPerformanceTests`（20 次采样平均 <25ms，实测 3.24ms）；`EconomyConservationTests` 18/18。
+- 验证：全量 EditMode `EXIT=0`、1080 例、1070 通过、0 失败、零 `error CS`（10 个 Explicit 跳过）。

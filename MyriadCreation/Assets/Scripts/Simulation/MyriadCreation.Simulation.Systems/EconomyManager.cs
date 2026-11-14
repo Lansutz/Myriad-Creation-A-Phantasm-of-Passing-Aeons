@@ -20,6 +20,11 @@ public class EconomyManager
 
 	private readonly TileData[] _tiles;
 
+	// 农业单产缓存：气候/肥力变化缓慢，按 30 天滚动刷新，避免每 tick 对全表重算。
+	private float[] _cropYieldCache;
+	private int _cropYieldCursor;
+	private bool _cropYieldPrimed;
+
 	private readonly Dictionary<int, TradeCenter> _tradeCenters;
 
 	/// <summary>可食货号缓存（构造时按内容表建一次）；每格每日只遍历这几项，不扫全部货物。</summary>
@@ -172,6 +177,7 @@ public class EconomyManager
 	public int ProduceResources(float days = 1f)
 	{
 		if (_tiles == null || _tradeCenters == null) return 0;
+		RefreshCropYieldCache();
 		int produced = 0;
 		foreach (KeyValuePair<int, TradeCenter> pair in _tradeCenters)
 		{
@@ -203,7 +209,7 @@ public class EconomyManager
 						}
 					}
 				}
-				float cropYield = AgricultureYield.Compute(tile);
+				float cropYield = _cropYieldCache != null && i < _cropYieldCache.Length ? _cropYieldCache[i] : 0f;
 				if (cropYield > 0f)
 				{
 					float accepted = AddEdibleReturningAccepted(tradeCenter, AgricultureYield.FoodGoodsId, cropYield * days);
@@ -695,64 +701,100 @@ public class EconomyManager
 		_edibleGoods.Sort();
 	}
 
+	/// <summary>
+	/// 农业单产按 30 天滚动刷新：首次全表算一次，之后每 tick 只重算约 1/30 的地块。
+	/// 单产随肥力/气候缓慢变化，日级精度足够；避免 30x 下每 tick 全表重算。
+	/// </summary>
+	private void RefreshCropYieldCache()
+	{
+		if (_tiles.Length == 0) return;
+		if (_cropYieldCache == null || _cropYieldCache.Length != _tiles.Length)
+		{
+			_cropYieldCache = new float[_tiles.Length];
+			_cropYieldCursor = 0;
+			_cropYieldPrimed = false;
+		}
+		if (!_cropYieldPrimed)
+		{
+			for (int i = 0; i < _tiles.Length; i++) _cropYieldCache[i] = AgricultureYield.Compute(_tiles[i]);
+			_cropYieldPrimed = true;
+			return;
+		}
+		int batch = Mathf.Max(1, _tiles.Length / 30);
+		for (int k = 0; k < batch; k++)
+		{
+			int index = _cropYieldCursor;
+			_cropYieldCursor = (_cropYieldCursor + 1) % _tiles.Length;
+			_cropYieldCache[index] = AgricultureYield.Compute(_tiles[index]);
+		}
+	}
+
 	private void ProcessConsumption(float days = 1f)
 	{
-		// 内容表/兜底表都可能在 EconomyManager 构造之后才补齐：惰性重建可食货列表。
 		if (_edibleGoods.Count == 0 && _goodsDefs != null && _goodsDefs.Count > 0)
 		{
 			RebuildEdibleGoods();
 		}
-		// 没有任何可食货定义时不能把全图判成饥荒（那会每天扣稳定度，永久压死人口增长）；
-		// 这是内容链故障，跳过消费并交给内容校验去报错。
-		if (_edibleGoods.Count == 0)
-		{
-			return;
-		}
-		int starvingTileCount = 0;
-		float starvingPopulation = 0f;
+		if (_edibleGoods.Count == 0) return;
+
+		// 按地区聚合人口，避免对每个地块重复扫描可食货清单（旧实现 O(地块×货种)）。
+		float[] regionPopulation = new float[_tiles.Length];
 		for (int i = 0; i < _tiles.Length; i++)
 		{
-			if (!_tiles[i].exists || !_tiles[i].isLand || _tiles[i].populationBlocks == null)
+			TileData tile = _tiles[i];
+			if (!tile.exists || !tile.isLand || tile.populationBlocks == null) continue;
+			int regionId = tile.regionId;
+			if (regionId < 0 || regionId >= regionPopulation.Length) continue;
+			for (int b = 0; b < tile.populationBlocks.Count; b++)
 			{
-				continue;
+				float count = tile.populationBlocks[b].count;
+				if (count > 0f) regionPopulation[regionId] += count;
 			}
-			float num = 0f;
-			foreach (PopulationBlock populationBlock in _tiles[i].populationBlocks)
-			{
-				num += populationBlock.count;
-			}
-			if (num <= 0f)
-			{
-				continue;
-			}
-			int regionId = _tiles[i].regionId;
-			if (!_tradeCenters.TryGetValue(regionId, out var value))
-			{
-				continue;
-			}
-			float amount = num * PersonFoodPerDay * days;
-			float amount2 = num * SaltPerPersonPerDay * days;
-			// 食物篮子：只吃 edible 货（小麦/肉/鱼/稻谷），盐与矿物即使同属 Food 类也不充饥。
+		}
+
+		int starvingTileCount = 0;
+		float starvingPopulation = 0f;
+		foreach (KeyValuePair<int, TradeCenter> pair in _tradeCenters)
+		{
+			TradeCenter center = pair.Value;
+			int regionId = pair.Key;
+			if (center == null || center.inventory == null) continue;
+			float population = regionId >= 0 && regionId < regionPopulation.Length ? regionPopulation[regionId] : 0f;
+			if (population <= 0f) continue;
+
+			float amount = population * PersonFoodPerDay * days;
+			float amountSalt = population * SaltPerPersonPerDay * days;
 			float foodAvailable = 0f;
 			for (int g = 0; g < _edibleGoods.Count; g++)
 			{
 				int goodsId = _edibleGoods[g];
-				float qty = value.inventory.GetValueOrDefault(goodsId, 0f);
+				float qty = center.inventory.GetValueOrDefault(goodsId, 0f);
 				if (qty <= 0f) continue;
 				float nutrition = _goodsDefs[goodsId].nutrition <= 0f ? 1f : _goodsDefs[goodsId].nutrition;
 				foodAvailable += qty * nutrition;
 			}
+
 			if (foodAvailable < amount)
 			{
-				// 库存不足日需：先把剩余口粮吃光再进入饥荒分支，避免库存永远卡在 0 < stock < need
 				for (int e = 0; e < _edibleGoods.Count; e++)
 				{
 					int goodsId = _edibleGoods[e];
-					value.RemoveGoods(goodsId, value.inventory.GetValueOrDefault(goodsId, 0f));
+					center.RemoveGoods(goodsId, center.inventory.GetValueOrDefault(goodsId, 0f));
 				}
-				ApplyFaminePenalty(i);
-				starvingTileCount++;
-				starvingPopulation += num;
+				// 缺粮按地块罚稳定度/秩序，但已经不重复计算库存。
+				int start = regionId * 16;
+				int end = Mathf.Min(_tiles.Length, start + 16);
+				for (int i = start; i < end; i++)
+				{
+					TileData tile = _tiles[i];
+					if (!tile.exists || !tile.isLand || tile.populationBlocks == null) continue;
+					float tilePop = 0f;
+					for (int b = 0; b < tile.populationBlocks.Count; b++) tilePop += Mathf.Max(0f, tile.populationBlocks[b].count);
+					if (tilePop <= 0f) continue;
+					ApplyFaminePenalty(i);
+					starvingTileCount++;
+					starvingPopulation += tilePop;
+				}
 			}
 			else
 			{
@@ -761,13 +803,13 @@ public class EconomyManager
 				{
 					int goodsId = _edibleGoods[e];
 					float nutrition = _goodsDefs[goodsId].nutrition <= 0f ? 1f : _goodsDefs[goodsId].nutrition;
-					float stock = value.inventory.GetValueOrDefault(goodsId, 0f);
+					float stock = center.inventory.GetValueOrDefault(goodsId, 0f);
 					float take = Mathf.Min(stock, remaining / nutrition);
-					value.RemoveGoods(goodsId, take);
+					center.RemoveGoods(goodsId, take);
 					remaining -= take * nutrition;
 				}
 			}
-			value.RemoveGoods(SaltGoodsId, amount2);
+			center.RemoveGoods(SaltGoodsId, amountSalt);
 		}
 		if (starvingTileCount > 0)
 		{
