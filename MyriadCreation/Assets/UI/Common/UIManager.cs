@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -91,7 +91,11 @@ public partial class UIManager : MonoBehaviour, MyriadCreation.App.Contracts.IGa
             UpdateTopBar();
             var settlementPanel = FindAnyObjectByType<MyriadCreation.UI.Panels.SettlementDetailPanel>(
                 FindObjectsInactive.Include);
-            if (settlementPanel != null) settlementPanel.SetSettlementQuery(view);
+            if (settlementPanel != null)
+            {
+                settlementPanel.SetSettlementQuery(view);
+                Panels.Register(settlementPanel);
+            }
             if (_governmentPanel != null) _governmentPanel.SetWorldReadModel(view);
             if (_characterPanelView != null) _characterPanelView.SetWorldReadModel(view);
             if (_familyTreeView != null) _familyTreeView.SetQueries(view, view);

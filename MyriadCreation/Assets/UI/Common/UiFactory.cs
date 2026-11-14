@@ -46,6 +46,7 @@ namespace MyriadCreation.UI.Common
             if (existing != null)
             {
                 existing.Build(null);
+                RegisterInUiManager(existing);
                 _settlementDetail = existing;
                 return _settlementDetail;
             }
@@ -53,8 +54,16 @@ namespace MyriadCreation.UI.Common
             var go = new GameObject("SettlementDetailPanel");
             var panel = go.AddComponent<SettlementDetailPanel>();
             panel.Build(null); // 面板自带 Canvas/Scaler/Raycaster（见 UI 2 卡实现）
+            RegisterInUiManager(panel);
             _settlementDetail = panel;
             return _settlementDetail;
+        }
+
+        /// <summary>把面板登记到 UIManager 的注册表（管理器可能尚未创建，则跳过；Awake 侧会补注册）。</summary>
+        private static void RegisterInUiManager(SettlementDetailPanel panel)
+        {
+            var manager = Object.FindAnyObjectByType<UIManager>(FindObjectsInactive.Include);
+            manager?.Panels.Register(panel);
         }
 
         public ISettlementDetailUi ExistingSettlementDetailUi

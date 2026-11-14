@@ -206,7 +206,7 @@
 ### 12.1 仍未达成的 P10 验收项（不掩盖）
 
 - ~~**200 年每领域至少 1 项**~~：已由 §13 补齐并通过（26/26）。
-- **面板全注册**：见上文口径，`IUserInterfacePanel` 覆盖运行时可开关面板；其余为流程/选择面板，未接入。
+- **面板全注册**：注册表现覆盖 6 个游戏内运行时面板（含聚落详情）；主菜单/存读档/设置按流程面板口径不接入（§17）。
 - **Save.Runtime 不引用领域实现**：已移除 Audio 与 Faith（§14）；World/Simulation/Content/Culture 仍在，A2/A3 继续分批收口。
 
 ## 13. P10.1 验收补齐（2026-11-14）
@@ -239,3 +239,10 @@
 - `Save.World`：`SaveSystem` 与各持久化映射器，显式引用 Content/World/Simulation；仍是领域感知适配层。
 - 未做：把捕获器折进 `Simulation`（A2 最终形态）；`Save.Version` 未变。
 - 验证：`EXIT=0`、1082 例、1071 通过、0 失败、零 warning CS。
+
+## 17. 面板注册收口（2026-11-14）
+
+- `SettlementDetailPanel` 实现 `IUserInterfacePanel` 并在 `UIManager`/`UiFactory` 两处注册。
+- 注册表：Character / FamilyTree / Innovation / CityView / Government / SettlementDetail。
+- 流程面板（MainMenu/SaveLoad/Settings）`Build(parent, onClose)` 签名与接口不兼容，保持独立流程，不造假适配。
+- 验证：`EXIT=0`、1082 例、1071 通过、零 warning CS。

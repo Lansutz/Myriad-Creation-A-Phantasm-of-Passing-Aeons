@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -12,7 +12,7 @@ using MyriadCreation.Core.Enums;
 
 namespace MyriadCreation.UI.Panels
 {
-public partial class SettlementDetailPanel : MonoBehaviour, ISettlementDetailUi
+public partial class SettlementDetailPanel : MonoBehaviour, ISettlementDetailUi, IUserInterfacePanel
 {
         private const float PanelWidth = 640f;
         private const float PanelHeight = 700f;
@@ -43,6 +43,14 @@ public partial class SettlementDetailPanel : MonoBehaviour, ISettlementDetailUi
 
         /// <summary>面板是否打开（根遮罩激活）。</summary>
         public bool IsOpen => _root != null && _root.activeSelf;
+
+        public string PanelId => "settlement-detail";
+
+        /// <summary>注册表入口：重开最近一次选中的聚落；尚无选择时保持关闭。</summary>
+        void IUserInterfacePanel.Show()
+        {
+            if (_currentAnchorId >= 0) Show(_currentAnchorId);
+        }
 
         /// <summary>当前显示的聚落锚点 id（无效 id 时也会记录，用于排错；-1 表示尚未 Show）。</summary>
         public int CurrentAnchorId => _currentAnchorId;

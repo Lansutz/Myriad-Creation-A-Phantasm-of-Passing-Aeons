@@ -1408,3 +1408,10 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **迁移**：12 个领域感知文件 + `SaveSlotService`/`RelationPersistencePolicy` 从 `SaveRuntime/` 移到 `SaveWorld/`；`App/Editor/Tests` 补 `MyriadCreation.Save.World` 引用。
 - **诚实口径**：这是"文件 IO 与领域捕获"分离，尚未把捕获器折进 `Simulation`（A2 的最终形态）；`Save.World` 仍是领域感知适配层，不冒充"捕获器已归领域"。
 - 验证：全量 EditMode `EXIT=0`、1082 例、1071 通过、0 失败、11 Explicit、零 warning/error CS；`Save.Runtime.asmdef` 仅剩 Core + Save.Contracts。
+
+## D160 面板注册收口：聚落详情接入注册表（2026-11-14）
+
+- `SettlementDetailPanel` 实现 `IUserInterfacePanel`（`PanelId="settlement-detail"`，`Show()` 重开最近选中聚落；未选择时为无操作）。
+- 注册点：`UIManager.SetWorldReadModel` 找到既有面板时注册；`UiFactory.EnsureSettlementDetailUi` 创建/复用后向 UIManager 注册（管理器尚未创建则跳过，Awake 侧补注册）。
+- 注册表现覆盖：Character / FamilyTree / Innovation / CityView / Government / SettlementDetail。主菜单、存读档、设置仍是流程驱动（`Build(parent, onClose)` 回调）且不常驻游戏内，按签名不硬套 `IUserInterfacePanel`，口径写入 D155。
+- 验证：全量 EditMode `EXIT=0`、1082 例、1071 通过、0 失败、零 warning/error CS。
