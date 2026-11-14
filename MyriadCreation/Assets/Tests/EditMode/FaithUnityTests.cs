@@ -3,6 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Save.Contracts;
 using MyriadCreation.Simulation.Faith;
 using MyriadCreation.Simulation.WorldState;
 using MyriadCreation.World.Generation;
@@ -91,9 +92,9 @@ namespace MyriadCreation.Tests.EditMode
                 communionUntilDay = 123
             };
 
-            FaithSaveData dto = FaithSaveData.FromFaith(faith);
+            FaithSaveData dto = FaithSaveMapping.FromFaith(faith);
             var restored = new FaithSystem();
-            dto.ApplyTo(restored);
+            FaithSaveMapping.ApplyTo(dto, restored);
 
             CollectionAssert.AreEqual(faith.doctrineIds, restored.doctrineIds);
             Assert.AreEqual(123, restored.communionUntilDay);

@@ -1382,3 +1382,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
   - 128×64：8 个政权共 939 项，**26/26 领域全部非零**（补平民实践后空领域 8 → 1，加选题短板后 0）。
 - 测试：`InnovationResearchBatchingTests`（90 天跳步应推进 rate×90）；`NaturalEmergenceTests.Diagnose_InnovationFieldCoverage_200Years` 现为硬断言 26/26 且默认 Explicit。
 - 验证：全量 EditMode `EXIT=0`、1081 例、1070 通过、0 失败、11 个 Explicit 跳过、零 warning/error CS。
+
+## D157 A1/A2 第一切片：信仰映射器回迁，Save.Runtime 去掉 Faith 引用（2026-11-14）
+
+- **DTO 与映射器分离**：`FaithSaveData` 纯字段骨架迁到 `MyriadCreation.Save.Contracts`（只依赖 Core）；`FromFaith` / `ApplyTo` / 捕获 / 还原 / 宗派映射搬到 `Simulation.WorldState.FaithSaveMapping`。
+- **删除存档层映射器**：`FaithPersistence.cs`、`DenominationPersistence.cs`、旧 `FaithSaveData.cs` 移出 `Save.Runtime`；`SaveSystem` 改调 `FaithSaveMapping`。
+- **引用收窄**：`MyriadCreation.Save.Runtime.asmdef` 移除 `MyriadCreation.Faith`，编译通过（判据："删掉引用还能编译"）。仍保留 World/Simulation/Content/Culture——A2/A3 尚未收口，不冒充完成。
+- **存档格式不变**：字段名/类型/JSON 形状不动，`SaveVersion` 不递增；`FaithPersistenceTests` 与 `FaithUnityTests` 仅改调用点与日志前缀（`[FaithSaveMapping]`）。
+- 验证：全量 EditMode `EXIT=0`、1081 例、1070 通过、0 失败、11 Explicit、零 warning/error CS。

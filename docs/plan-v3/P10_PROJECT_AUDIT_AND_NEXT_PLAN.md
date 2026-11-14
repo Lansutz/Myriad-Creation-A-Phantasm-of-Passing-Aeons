@@ -217,3 +217,10 @@
 - 结果：48×24 200 年 10 → 104 项；128×64 200 年 8 政权 939 项，26/26 领域非零。
 - 测试：`InnovationResearchBatchingTests`；`Diagnose_InnovationFieldCoverage_200Years` 改为硬断言 26/26。
 - 验证：`EXIT=0`、1081 例、1070 通过、0 失败、11 Explicit、零 warning CS。
+
+## 14. A1/A2 第一切片：Faith 映射器回迁（2026-11-14）
+
+- `FaithSaveData` 字段迁 `Save.Contracts`；映射器迁 `Simulation.WorldState.FaithSaveMapping`；删除 `Save.Runtime` 的 `FaithPersistence` / `DenominationPersistence` / 旧 DTO。
+- `Save.Runtime.asmdef` 去掉 `MyriadCreation.Faith` 后编译通过；存档字段与 JSON 形状不变，`SaveVersion` 不变。
+- 剩余引用 World/Simulation/Content/Culture 仍未收口，属 A2/A3 后续批次。
+- 验证：`EXIT=0`、1081 例、1070 通过、0 失败、零 warning CS。

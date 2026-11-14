@@ -7,7 +7,6 @@
         "MyriadCreation.Content",
         "MyriadCreation.World",
         "MyriadCreation.Simulation",
-        "MyriadCreation.Faith",
         "MyriadCreation.Culture"
     ],
     "includePlatforms": [],

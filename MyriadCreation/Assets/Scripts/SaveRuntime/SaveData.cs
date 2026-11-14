@@ -14,7 +14,6 @@ using MyriadCreation.World;
 using MyriadCreation.World.Generation;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
-using MyriadCreation.Simulation.Faith;
 using MyriadCreation.Simulation.Culture;
 using MyriadCreation.Simulation.Planning;
 using MyriadCreation.Simulation.AI;

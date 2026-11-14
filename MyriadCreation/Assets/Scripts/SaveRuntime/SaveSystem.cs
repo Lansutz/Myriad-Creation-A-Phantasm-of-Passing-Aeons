@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -20,7 +20,6 @@ using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.Actors;
 using MyriadCreation.Simulation.Units;
-using MyriadCreation.Simulation.Faith;
 using MyriadCreation.Simulation.Culture;
 using MyriadCreation.Content.Definitions;
 namespace MyriadCreation.Infrastructure.Save
@@ -405,8 +404,8 @@ namespace MyriadCreation.Infrastructure.Save
             data.innovationKnowledge = world.ResearchPlans?.CaptureKnowledge();
 
  // 信仰运行态（v15 起；faithName/virtues/sins 等内容定义由 ReligionCatalog 重建，这里只存运行态）
-            data.faiths = FaithPersistence.Capture(world);
-            data.denominations = DenominationPersistence.Capture(world);
+            data.faiths = FaithSaveMapping.Capture(world);
+            data.denominations = FaithSaveMapping.CaptureDenominations(world);
             data.chronicle = ChroniclePersistence.Capture(world);
             data.titleInstances = TitlePersistence.Capture();
 
@@ -529,11 +528,11 @@ namespace MyriadCreation.Infrastructure.Save
 
             // 信仰运行态 overlay（v15 起）：PrepareLoadedWorld 已按内容表重建 FaithSystem 骨架，
             // 这里按 faithId 覆盖运行态；旧档无 faiths 段 → 保持内容默认，不抛。
-            FaithPersistence.Restore(world, data.faiths);
+            FaithSaveMapping.Restore(world, data.faiths);
 
             // 宗派运行态 overlay（v18 起）：必须在 faiths 之后，faith.denominationId
             // 可能指向存档时动态分裂出的宗派；Restore 末尾会按最终归属重建 faithIds。
-            DenominationPersistence.Restore(world, data.denominations);
+            FaithSaveMapping.RestoreDenominations(world, data.denominations);
 
             // 编年史/头衔实例（P0.1）：两者都是运行时静态/对象状态，必须在世界重建后覆盖。
             ChroniclePersistence.Restore(world, data.chronicle);

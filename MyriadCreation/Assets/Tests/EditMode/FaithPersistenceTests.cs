@@ -7,6 +7,7 @@ using UnityEngine.TestTools;
 using MyriadCreation.Core.Constants;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Infrastructure.Save;
+using MyriadCreation.Save.Contracts;
 using MyriadCreation.Simulation.Actors;
 using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.Units;
@@ -184,7 +185,7 @@ namespace MyriadCreation.Tests.EditMode
             File.WriteAllText(SavePath(), JsonUtility.ToJson(raw, true));
 
             LogAssert.Expect(LogType.Warning,
-                "[FaithPersistence] 存档中的 faithId=99999 在内容表中不存在，跳过恢复");
+                "[FaithSaveMapping] 存档中的 faithId=99999 在内容表中不存在，跳过恢复");
             var loaded = SaveSystem.LoadGame(SaveName);
             Assert.IsNotNull(loaded, "未知 faithId 不应导致读档失败");
             _objects.Add(loaded.gameObject);
