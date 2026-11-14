@@ -65,6 +65,11 @@ public static class SettlementProduction
 		}
 		market.AddStock(outputGoodsId, recipe.outputAmount);
 		produced = recipe.outputAmount;
+		if (innovations != null && recipe.requiredInnovation > 0)
+		{
+			InnovationDef def = innovations.GetInnovation(recipe.requiredInnovation);
+			if (def != null) innovations.AddPractice(realmId, def.field, produced * 0.1f);
+		}
 		return true;
 	}
 }

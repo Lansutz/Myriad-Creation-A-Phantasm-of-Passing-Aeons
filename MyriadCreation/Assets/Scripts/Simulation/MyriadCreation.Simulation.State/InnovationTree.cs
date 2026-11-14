@@ -28,6 +28,9 @@ public class InnovationTree
 
 	private readonly Dictionary<string, float> _resourceCumulativeOutput = new Dictionary<string, float>();
 
+	/// <summary>政权级社会实践池：按领域累计，来源于真实的农业/采矿/手工产出。</summary>
+	private readonly Dictionary<int, Dictionary<InnovationField, float>> _realmPractice = new Dictionary<int, Dictionary<InnovationField, float>>();
+
 	public event Action<int, int> OnInnovationCompleted;
 
 	public event Action<int, int> OnInnovationDiscovered;
@@ -52,6 +55,42 @@ public class InnovationTree
 		{
 			Debug.LogWarning((object)"[InnovationTree] 革新定义为空（Innovation/Innovations.json 缺失或未加载）");
 		}
+	}
+
+	/// <summary>记录一次真实实践；amount 由产出/工时折算，调用方负责量纲。</summary>
+	public void AddPractice(int realmId, InnovationField field, float amount)
+	{
+		if (realmId < 0 || amount <= 0f) return;
+		if (!_realmPractice.TryGetValue(realmId, out Dictionary<InnovationField, float> byField))
+		{
+			_realmPractice[realmId] = byField = new Dictionary<InnovationField, float>();
+		}
+		byField.TryGetValue(field, out float current);
+		byField[field] = current + amount;
+	}
+
+	public float GetPractice(int realmId, InnovationField field)
+	{
+		if (_realmPractice.TryGetValue(realmId, out Dictionary<InnovationField, float> byField)
+			&& byField.TryGetValue(field, out float amount))
+		{
+			return amount;
+		}
+		return 0f;
+	}
+
+	/// <summary>立项所需实践经验；未显式配置时按研究成本的一半推导。</summary>
+	public static float GetRequiredPractice(InnovationDef def)
+	{
+		if (def == null) return 0f;
+		return def.practiceRequirement > 0f ? def.practiceRequirement : def.researchCost * 0.5f;
+	}
+
+	/// <summary>社会实践是否达到立项下限（需求的 50%）。</summary>
+	public bool HasMinimumPractice(int realmId, InnovationDef def)
+	{
+		if (def == null) return false;
+		return GetPractice(realmId, def.field) >= GetRequiredPractice(def) * 0.5f;
 	}
 
 	public void RegisterInnovation(InnovationDef def)
@@ -184,6 +223,11 @@ public class InnovationTree
 			return false;
 		}
 		if (!ArePrerequisitesMet(world, realmId, def))
+		{
+			return false;
+		}
+		// 没有相应社会实践就没有立项资格；world 为空时是纯单元测试/调试路径，不读实践池。
+		if (world != null && !HasMinimumPractice(realmId, def))
 		{
 			return false;
 		}

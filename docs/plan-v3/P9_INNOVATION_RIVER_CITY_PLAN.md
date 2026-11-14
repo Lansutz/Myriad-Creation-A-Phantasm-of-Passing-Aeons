@@ -241,3 +241,12 @@
 - 新增 `LawInnovationGateTests`（5）、`ContentInnovationGateAuditTests`（6）；`LawContentJsonTests` 不再复制革新 id。
 - 验证：`EXIT=0`、1054 例、1045 通过、0 失败、零 `error CS`。
 - 下一步：M3 社会实践池/灵感/掌握链路。
+
+## 11. M3 实施记录（2026-11-14）
+
+- `InnovationTree` 新增政权实践池（按 `InnovationField`），来源为农业/矿产入库与配方成品；`AddPractice/GetPractice` 公开。
+- `InnovationDef` 增加 `practiceRequirement / insightWeight / requiredRealmMastery`；立项要求实践 ≥ 需求 50%（world 为空时不读池）。
+- `InnovationKnowledgeSystem.GetRealmMastery` 取政权内最高角色熟练度；研究完成自动 `Learn(1)`。
+- `RealmPracticeGateTests` 4 例；保存/持久化测试补实践种子。
+- 验证：`EXIT=0`、1058 例、1049 通过、0 失败、零 `error CS`。
+- 下一步：M4 河流作为水体与贸易成本。

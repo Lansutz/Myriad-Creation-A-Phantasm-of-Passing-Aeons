@@ -303,6 +303,7 @@ namespace MyriadCreation.Tests.EditMode
                 foreach (var def in available)
                 {
                     if (def == null) continue;
+                    world.Innovations.AddPractice(realmId, def.field, InnovationTree.GetRequiredPractice(def));
                     if (!world.Innovations.StartResearch(realmId, def.innovationId, world)) continue;
                     world.Innovations.DailyTick(realmId, def.researchCost + 1f);
                     if (world.Innovations.HasInnovation(realmId, def.innovationId))

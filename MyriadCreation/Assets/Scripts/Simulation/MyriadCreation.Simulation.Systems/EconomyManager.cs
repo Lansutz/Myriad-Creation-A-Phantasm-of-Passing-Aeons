@@ -97,6 +97,9 @@ public class EconomyManager
 	/// <summary>被节流抑制的容量不足跳发车次数，用于告警汇总。</summary>
 	private int _suppressedTradeCapacitySkips;
 
+	/// <summary>政权级社会实践池（由 GameWorld 注入）；为空时只结算经济、不记实践。</summary>
+	public InnovationTree Innovations { get; set; }
+
 	public EconomyManager(TileData[] tiles, Dictionary<int, TradeCenter> tradeCenters, Dictionary<int, GoodsDef> goodsDefs, CurrencySystem currency, TaxSystem taxSystem, Dictionary<int, RealmData> realms = null, int mapWidth = 128, Dictionary<int, SettlementData> settlements = null)
 	{
 		_tiles = tiles;
@@ -190,14 +193,22 @@ public class EconomyManager
 							continue;
 						}
 						float accepted = tradeCenter.AddGoodsReturningAccepted(resource.goodsId, resource.EffectiveOutput * days);
-						if (accepted > 0f) produced++;
+						if (accepted > 0f)
+						{
+							produced++;
+							Innovations?.AddPractice(tile.ownerRealmId, InnovationField.Mining, accepted * 0.02f);
+						}
 					}
 				}
 				float cropYield = AgricultureYield.Compute(tile);
 				if (cropYield > 0f)
 				{
 					float accepted = AddEdibleReturningAccepted(tradeCenter, AgricultureYield.FoodGoodsId, cropYield * days);
-					if (accepted > 0f) produced++;
+					if (accepted > 0f)
+					{
+						produced++;
+						Innovations?.AddPractice(tile.ownerRealmId, InnovationField.Agriculture, accepted * 0.02f);
+					}
 				}
 				float meatYield = EcosystemSystem.Harvest(ref tile, days);
 				if (meatYield > 0f)

@@ -659,6 +659,7 @@ public partial class GameWorld : MonoBehaviour
 		_diseaseSystem = new DiseaseSystem(tiles, _characterManager, mapWidth, mapHeight);
 		_buildingSystem = new BuildingSystem(tiles, SimulationEvents);
 		_innovationTree = new InnovationTree();
+		_economyManager.Innovations = _innovationTree;
 		if (_buildingSystem != null)
 		{
 			_buildingSystem.Innovations = _innovationTree;

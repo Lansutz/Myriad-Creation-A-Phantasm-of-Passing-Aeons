@@ -63,6 +63,7 @@ namespace MyriadCreation.Tests.EditMode
             foreach (var def in available)
             {
                 if (def == null) continue;
+                tree.AddPractice(realmId, def.field, InnovationTree.GetRequiredPractice(def));
                 if (!tree.StartResearch(realmId, def.innovationId, world)) continue;
                 // 一次给足研究点，确保完成（DailyTick 内部按 researchCost 判定）
                 tree.DailyTick(realmId, def.researchCost + 1f);
@@ -109,6 +110,10 @@ namespace MyriadCreation.Tests.EditMode
             {
                 foreach (var def in available)
                 {
+                    if (def != null)
+                    {
+                        world.Innovations.AddPractice(realmId, def.field, InnovationTree.GetRequiredPractice(def));
+                    }
                     if (def != null && world.Innovations.StartResearch(realmId, def.innovationId, world))
                     {
                         pendingId = def.innovationId;

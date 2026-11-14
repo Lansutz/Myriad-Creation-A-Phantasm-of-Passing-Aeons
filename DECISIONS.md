@@ -1292,3 +1292,13 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **单位/配方/货物/宗教**：单位 14/14、配方 43/43、加工货物（铁/铜/青铜/钢/面粉/麻布/纸/苇席/陶器/玻璃）已挂门槛，原料保留 `-1` 显式默认可用；宗教 44/44（根信仰→祭祀神学，教派→正统教义）。修掉锡矿引用的悬空革新 1104。
 - **测试**：`LawInnovationGateTests`（5）、`ContentInnovationGateAuditTests`（6）；`LawContentJsonTests` 不再复制革新 id，JSON 为唯一来源。
 - 验证：全量 EditMode `EXIT=0`、1054 例、1045 通过、0 失败、零 `error CS`（9 个 Explicit 跳过）。
+
+## D148 P9.3 社会实践池、灵感与掌握（2026-11-14）
+
+- **政权实践池**：`InnovationTree` 新增按领域累计的实践池（农业/采矿/手工等），来源是真实产出——农业与矿产入库量、配方成品量；不是抽象点数。
+- **立项门槛**：`practiceRequirement` 未配置时按 `researchCost × 0.5` 推导；`StartResearch` 在运行时（有 world）要求实践达到需求 50%，否则不可立项。纯单元路径（world 为空）不读实践池，保留给测试/调试。
+- **角色掌握**：沿用既有 `InnovationKnowledgeSystem`（practice 0–3 mastery），新增 `GetRealmMastery(characterIds, innovationId)` 取政权内最高熟练度；研究完成时研究者自动 `Learn` 到 1 级。
+- **内容字段**：`InnovationDef` 新增 `practiceRequirement / insightWeight / requiredRealmMastery`，为后续按条目差异化预留。
+- **即时效果**：法律/建筑列表本来就随政权已研究革新变化；现在“能否开始研究”也受真实实践约束，形成“实践→立项→完成→解锁”的闭环。灵感基础概率与上限仍由 `ResearchPlanSystem`（0.0005/日，上限 0.03/日）控制，学者属性与相关实践提高概率。
+- 测试：`RealmPracticeGateTests` 4 例（无实践拒绝、49% 拒绝、50% 通过、按领域/政权隔离、政权掌握取最大值）；保存/持久化测试补实践种子。
+- 验证：全量 EditMode `EXIT=0`、1058 例、1049 通过、0 失败、零 `error CS`（9 个 Explicit 跳过）。

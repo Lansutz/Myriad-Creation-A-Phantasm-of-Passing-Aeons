@@ -90,6 +90,19 @@ public sealed class InnovationKnowledgeSystem
 		return SetMastery(characterId, innovationId, num);
 	}
 
+	/// <summary>政权掌握：取政权内角色的最高熟练度；没有角色掌握则为 0。</summary>
+	public int GetRealmMastery(IEnumerable<int> characterIds, int innovationId)
+	{
+		int best = MinMastery;
+		if (characterIds == null) return best;
+		foreach (int characterId in characterIds)
+		{
+			best = Math.Max(best, GetMastery(characterId, innovationId));
+			if (best >= MasteryLevel3) break;
+		}
+		return best;
+	}
+
 	public bool HasFoundation(int characterId, int innovationId)
 	{
 		return GetMastery(characterId, innovationId) >= 2;

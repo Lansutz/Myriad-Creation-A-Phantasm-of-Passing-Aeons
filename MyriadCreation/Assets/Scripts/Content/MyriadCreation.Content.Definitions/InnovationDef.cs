@@ -17,6 +17,15 @@ public class InnovationDef
 
 	public float researchCost;
 
+	/// <summary>立项前需要的实践经验（同领域累计）；0 表示按 researchCost × 0.5 推导。</summary>
+	public float practiceRequirement;
+
+	/// <summary>灵感权重：稀有/颠覆性条目更高；0.5 为普通条目。</summary>
+	public float insightWeight = 0.5f;
+
+	/// <summary>政权掌握门槛（1–3）；0/1 表示掌握一次即可。</summary>
+	public int requiredRealmMastery = 1;
+
 	public string description;
 
 	public List<string> affinityTags = new List<string>();
