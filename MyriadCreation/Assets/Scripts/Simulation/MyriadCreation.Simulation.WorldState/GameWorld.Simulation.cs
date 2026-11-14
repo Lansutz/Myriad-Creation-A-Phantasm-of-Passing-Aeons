@@ -907,7 +907,7 @@ public partial class GameWorld : MonoBehaviour
 		{
 			TickLawEffectsYearly();
 		});
-		ArmySchedule.Register(_simulationScheduler, armies, unitDefs, tiles, _seaLandGenerator, TryOccupyByArmy);
+		ArmySchedule.Register(_simulationScheduler, armies, unitDefs, tiles, _seaLandGenerator, TryOccupyByArmy, _innovationTree);
 		NavySchedule.Register(_simulationScheduler, navies);
 		SettlementSchedule.Register(_simulationScheduler, _settlementSimulationSystem);
 		// 影响力场：Compute 只读、Apply 只写；同一 tick 内两相锁步。

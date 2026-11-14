@@ -199,6 +199,15 @@ public class BuildingSystem
 			innovationId = innovationId
 		};
 		_tileBuildings[tileIndex].Add(item);
+		if (Innovations != null)
+		{
+			Innovations.AddPractice(realmId, InnovationField.Construction, Mathf.Max(1, value.tier) * 2f);
+			InnovationDef gate = Innovations.GetInnovation(value.requiredInnovation);
+			if (gate != null && gate.field != InnovationField.Construction)
+			{
+				Innovations.AddPractice(realmId, gate.field, Mathf.Max(1, value.tier));
+			}
+		}
 		return true;
 	}
 

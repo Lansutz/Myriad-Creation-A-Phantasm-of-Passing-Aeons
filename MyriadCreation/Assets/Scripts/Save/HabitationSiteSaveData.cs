@@ -40,6 +40,10 @@ namespace MyriadCreation.Save.Contracts
         public int legacy_settlement_level = -1;
         public int legacy_site_category;
 
+        // ===== 环境衰退（P10.2）=====
+        public int environmentalPressureDays;
+        public string lastDeclineCause = string.Empty;
+
         // ===== 聚落基础字段 =====
         public int provinceId;
         public int tileIndex;

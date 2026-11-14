@@ -15,6 +15,7 @@ namespace MyriadCreation.Simulation.State
         public RealmInnovationSaveData[] realms;
         public InnovationProgressSaveData[] progress;
         public StringFloatEntry[] resourceOutput;
+        public RealmPracticeSaveData[] realmPractice;
     }
 
     /// <summary>单个政权的革新状态。</summary>
@@ -42,6 +43,21 @@ namespace MyriadCreation.Simulation.State
         public float cumulativeOutput;
         public float averageQuality;
         public int oldMethodPracticeCount;
+    }
+
+    /// <summary>政权级社会实践池：按领域保存，避免读档后研究立刻回到死锁。</summary>
+    [Serializable]
+    public class RealmPracticeSaveData
+    {
+        public int realmId;
+        public InnovationFieldAmount[] fields;
+    }
+
+    [Serializable]
+    public class InnovationFieldAmount
+    {
+        public int field;
+        public float amount;
     }
 
     /// <summary>字符串→浮点条目（JsonUtility 无字典，资源累计产出 key 形如 "realmId_goodsId"）。</summary>

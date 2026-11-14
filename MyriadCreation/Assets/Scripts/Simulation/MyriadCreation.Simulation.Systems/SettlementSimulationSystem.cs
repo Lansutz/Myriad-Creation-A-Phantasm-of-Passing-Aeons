@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.Scheduling;
+using MyriadCreation.Content.Definitions;
 using MyriadCreation.Simulation.Actors;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.WorldState;
@@ -98,6 +99,94 @@ public sealed class SettlementSimulationSystem
 	public int TypologySedentaryCount { get; private set; }
 
 	public bool HasSettlement(int anchorId) => _settlements.ContainsKey(anchorId);
+
+	/// <summary>
+	/// 社会实践的日常来源：按聚落人口的阶层构成折算到各革新领域。
+	/// 农民种地/修屋/手工，商人跑贸易与记账，贵族教士治理、立法、祭祀、记史，奴隶开矿与营建。
+	/// 这是“分工产生实践”的机制入口，避免只有农业/采矿能积累实践、其余领域永远锁死。
+	/// </summary>
+	public void PracticeDailyTick(SimulationTickContext context)
+	{
+		if (_world?.Innovations == null || _world.tiles == null) return;
+		float days = Mathf.Max(1, context.deltaDays);
+		foreach (SettlementData settlement in _settlements.Values)
+		{
+			if (settlement == null || settlement.IsRuined) continue;
+			int tileIndex = settlement.tileIndex;
+			if (tileIndex < 0 || tileIndex >= _world.tiles.Length) continue;
+			TileData tile = _world.tiles[tileIndex];
+			if (tile.populationBlocks == null) continue;
+			int realmId = tile.ownerRealmId;
+			if (realmId < 0) continue;
+			for (int i = 0; i < tile.populationBlocks.Count; i++)
+			{
+				PopulationBlock block = tile.populationBlocks[i];
+				if (block.count <= 0f) continue;
+				AddClassPractice(_world.Innovations, realmId, block.socialClass, block.count * PracticePerPersonPerDay * days);
+			}
+		}
+	}
+
+	private const float PracticePerPersonPerDay = 0.0003f;
+
+	public static void AddClassPractice(InnovationTree innovations, int realmId, GameEnums.SocialClass socialClass, float scale)
+	{
+		switch (socialClass)
+		{
+			case GameEnums.SocialClass.Royalty:
+				Add(innovations, realmId, InnovationField.Governance, scale * 0.4f);
+				Add(innovations, realmId, InnovationField.Law, scale * 0.2f);
+				Add(innovations, realmId, InnovationField.Bureaucracy, scale * 0.1f);
+				Add(innovations, realmId, InnovationField.Heritage, scale * 0.1f);
+				Add(innovations, realmId, InnovationField.Ritual, scale * 0.1f);
+				Add(innovations, realmId, InnovationField.Festival, scale * 0.1f);
+				break;
+			case GameEnums.SocialClass.NobilityClergy:
+				Add(innovations, realmId, InnovationField.Governance, scale * 0.2f);
+				Add(innovations, realmId, InnovationField.Bureaucracy, scale * 0.15f);
+				Add(innovations, realmId, InnovationField.Law, scale * 0.15f);
+				Add(innovations, realmId, InnovationField.Theology, scale * 0.15f);
+				Add(innovations, realmId, InnovationField.ReligiousInstitution, scale * 0.1f);
+				Add(innovations, realmId, InnovationField.Philosophy, scale * 0.05f);
+				Add(innovations, realmId, InnovationField.Education, scale * 0.05f);
+				Add(innovations, realmId, InnovationField.Ritual, scale * 0.05f);
+				Add(innovations, realmId, InnovationField.NaturalCognition, scale * 0.03f);
+				Add(innovations, realmId, InnovationField.Medicine, scale * 0.03f);
+				Add(innovations, realmId, InnovationField.Heritage, scale * 0.03f);
+				Add(innovations, realmId, InnovationField.Festival, scale * 0.02f);
+				Add(innovations, realmId, InnovationField.SocialThought, scale * 0.02f);
+				Add(innovations, realmId, InnovationField.MilitaryThought, scale * 0.05f);
+				Add(innovations, realmId, InnovationField.MilitaryInstitution, scale * 0.03f);
+				break;
+			case GameEnums.SocialClass.MerchantFreeman:
+				Add(innovations, realmId, InnovationField.Economic, scale * 0.3f);
+				Add(innovations, realmId, InnovationField.Transport, scale * 0.2f);
+				Add(innovations, realmId, InnovationField.Craft, scale * 0.2f);
+				Add(innovations, realmId, InnovationField.Mathematics, scale * 0.1f);
+				Add(innovations, realmId, InnovationField.Script, scale * 0.1f);
+				Add(innovations, realmId, InnovationField.Law, scale * 0.1f);
+				Add(innovations, realmId, InnovationField.Machinery, scale * 0.05f);
+				Add(innovations, realmId, InnovationField.Metallurgy, scale * 0.05f);
+				break;
+			case GameEnums.SocialClass.Slave:
+				Add(innovations, realmId, InnovationField.Mining, scale * 0.3f);
+				Add(innovations, realmId, InnovationField.Construction, scale * 0.3f);
+				Add(innovations, realmId, InnovationField.Agriculture, scale * 0.2f);
+				Add(innovations, realmId, InnovationField.Craft, scale * 0.2f);
+				break;
+			default:
+				Add(innovations, realmId, InnovationField.Agriculture, scale * 0.5f);
+				Add(innovations, realmId, InnovationField.Construction, scale * 0.2f);
+				Add(innovations, realmId, InnovationField.Craft, scale * 0.2f);
+				Add(innovations, realmId, InnovationField.Folkways, scale * 0.1f);
+				break;
+		}
+	}
+
+	private static void Add(InnovationTree innovations, int realmId, InnovationField field, float amount)
+	{
+		if (amount > 0f) innovations.AddPractice(realmId, field, amount);
+	}
 
 	public void TypologyDailyTick(SimulationTickContext context)
 	{

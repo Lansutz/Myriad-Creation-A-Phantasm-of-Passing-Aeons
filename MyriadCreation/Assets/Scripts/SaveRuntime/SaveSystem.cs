@@ -367,6 +367,10 @@ namespace MyriadCreation.Infrastructure.Save
                 currentSeason = world.currentSeason,
                 randomSeed = world.randomSeed,
                 playerRealmId = world.PlayerRealmId,
+                cityFoundedCount = world.CityFoundedCount,
+                cityCollapsedCount = world.CityCollapsedCount,
+                riverAvulsionCount = world.RiverAvulsionCount,
+                lastCityDeclineCause = world.LastCityDeclineCause ?? string.Empty,
                 tiles = world.tiles,
                 races = new List<RaceDTO>(),
                 cultures = new List<CultureData>(),
@@ -430,6 +434,10 @@ namespace MyriadCreation.Infrastructure.Save
             world.currentDay = data.currentDay;
             world.currentSeason = data.currentSeason;
             world.PlayerRealmId = data.playerRealmId;
+            world.CityFoundedCount = data.cityFoundedCount;
+            world.CityCollapsedCount = data.cityCollapsedCount;
+            world.RiverAvulsionCount = data.riverAvulsionCount;
+            world.LastCityDeclineCause = data.lastCityDeclineCause ?? string.Empty;
             world.tiles = data.tiles;
             world.Knowledge.Restore(data.realmKnowledge, world.tiles?.Length ?? 0);
             world.SetupOptions = data.setupOptions ?? MyriadCreation.World.Generation.WorldSetupOptions.CreateDefault();

@@ -39,6 +39,7 @@ public static class SettlementSchedule
 		scheduler.Register("settlement-abandonment.daily", SimulationCadence.Daily, 21, system.AbandonmentDailyTick);
 		scheduler.Register("settlement-production.daily", SimulationCadence.Daily, 22, system.ProductionDailyTick);
 		scheduler.Register("settlement-typology.daily", SimulationCadence.Daily, 23, system.TypologyDailyTick);
+		scheduler.Register("settlement-practice.daily", SimulationCadence.Daily, 24, system.PracticeDailyTick);
 	}
 }
 }

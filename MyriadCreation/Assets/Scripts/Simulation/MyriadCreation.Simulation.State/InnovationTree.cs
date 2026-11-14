@@ -615,6 +615,17 @@ public class InnovationTree
 		return (and: value.GetPrerequisiteIds(), or: new List<int>());
 	}
 
+	/// <summary>可立项项：前置满足、未研究，且运行时有足够实践（world 为空时不查实践）。</summary>
+	public List<InnovationDef> GetResearchableInnovations(int realmId, GameWorld world = null)
+	{
+		List<InnovationDef> list = GetAvailableInnovations(realmId, world);
+		if (world != null)
+		{
+			list.RemoveAll(def => def == null || !HasMinimumPractice(realmId, def));
+		}
+		return list;
+	}
+
 	public List<InnovationDef> GetAvailableInnovations(int realmId, GameWorld world = null)
 	{
 		List<InnovationDef> list = new List<InnovationDef>();
@@ -998,6 +1009,7 @@ public class InnovationTree
 		realmIds.UnionWith(_realmResearchPoints.Keys);
 		realmIds.UnionWith(_realmCurrentResearch.Keys);
 		realmIds.UnionWith(_realmDiscovered.Keys);
+		realmIds.UnionWith(_realmPractice.Keys);
 		var realmList = new List<RealmInnovationSaveData>(realmIds.Count);
 		foreach (int realmId in realmIds)
 		{
@@ -1066,6 +1078,24 @@ public class InnovationTree
 		}
 		data.resourceOutput = resourceList.ToArray();
 
+		var practiceList = new List<RealmPracticeSaveData>(_realmPractice.Count);
+		var practiceRealmIds = new List<int>(_realmPractice.Keys);
+		practiceRealmIds.Sort();
+		foreach (int realmId in practiceRealmIds)
+		{
+			var byField = _realmPractice[realmId];
+			if (byField == null || byField.Count == 0) continue;
+			var fields = new List<InnovationFieldAmount>(byField.Count);
+			var fieldKeys = new List<InnovationField>(byField.Keys);
+			fieldKeys.Sort();
+			foreach (InnovationField field in fieldKeys)
+			{
+				fields.Add(new InnovationFieldAmount { field = (int)field, amount = byField[field] });
+			}
+			practiceList.Add(new RealmPracticeSaveData { realmId = realmId, fields = fields.ToArray() });
+		}
+		data.realmPractice = practiceList.ToArray();
+
 		return data;
 	}
 
@@ -1078,6 +1108,7 @@ public class InnovationTree
 		_realmDiscovered.Clear();
 		_innovationProgress.Clear();
 		_resourceCumulativeOutput.Clear();
+		_realmPractice.Clear();
 
 		if (data == null) return;
 
@@ -1120,6 +1151,21 @@ public class InnovationTree
 						progress.gainBreakdown[saved.gainBreakdownKeys[i]] = saved.gainBreakdownValues[i];
 				}
 				_innovationProgress[saved.innovationId] = progress;
+			}
+		}
+
+		if (data.realmPractice != null)
+		{
+			foreach (var savedRealm in data.realmPractice)
+			{
+				if (savedRealm == null || savedRealm.fields == null) continue;
+				var byField = new Dictionary<InnovationField, float>();
+				foreach (var savedField in savedRealm.fields)
+				{
+					if (savedField == null) continue;
+					byField[(InnovationField)savedField.field] = savedField.amount;
+				}
+				if (byField.Count > 0) _realmPractice[savedRealm.realmId] = byField;
 			}
 		}
 

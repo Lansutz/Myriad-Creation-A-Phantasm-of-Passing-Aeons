@@ -230,7 +230,7 @@ public class AIController
 		{
 			return;
 		}
-		List<InnovationDef> availableInnovations = innovations.GetAvailableInnovations(realmId, world);
+		List<InnovationDef> availableInnovations = innovations.GetResearchableInnovations(realmId, world);
 		// 内容不完整时列表可能夹带 null；排序比较器会解引用，先剔除。
 		availableInnovations.RemoveAll(i => i == null);
 		if (availableInnovations.Count <= 0)

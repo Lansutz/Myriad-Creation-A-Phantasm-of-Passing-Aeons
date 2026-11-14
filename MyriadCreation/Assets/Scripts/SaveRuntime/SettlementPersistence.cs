@@ -101,6 +101,8 @@ namespace MyriadCreation.Infrastructure.Save
                         y = settlement.location.y,
                         population = settlement.population,
                         abandonmentPressureDays = settlement.abandonmentPressureDays,
+                        environmentalPressureDays = settlement.environmentalPressureDays,
+                        lastDeclineCause = settlement.lastDeclineCause ?? string.Empty,
                         occupationPressureDays = settlement.occupationPressureDays,
                         development = settlement.development,
                         wealth = settlement.wealth,
@@ -288,7 +290,9 @@ namespace MyriadCreation.Infrastructure.Save
                     constructionProgress = entry.constructionProgress,
                     constructionTier = entry.constructionTier,
                     primarySector = (EconomicSector)entry.primarySector,
-                    economicInitialized = entry.economicInitialized
+                    economicInitialized = entry.economicInitialized,
+                    environmentalPressureDays = entry.environmentalPressureDays,
+                    lastDeclineCause = entry.lastDeclineCause ?? string.Empty
                 };
                 entry.ApplyModeData(settlement);
                 int savedLevel = entry.legacy_settlement_level >= 0

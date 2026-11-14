@@ -314,6 +314,15 @@ namespace MyriadCreation.Tests.EditMode
                 }
             }
 
+            settlement.environmentalPressureDays = 777;
+            settlement.lastDeclineCause = "water_loss";
+            world.CityFoundedCount = 3;
+            world.CityCollapsedCount = 2;
+            world.RiverAvulsionCount = 4;
+            world.LastCityDeclineCause = "water_loss";
+            world.Innovations.AddPractice(realmId, InnovationField.Agriculture, 12.5f);
+            float practiceBeforeSave = world.Innovations.GetPractice(realmId, InnovationField.Agriculture);
+
             // ---- 存盘 ----
             Assert.IsTrue(SaveSystem.SaveGame(world, SaveName), "存盘应成功");
 
@@ -343,6 +352,13 @@ namespace MyriadCreation.Tests.EditMode
             Assert.IsTrue(loaded.settlements.TryGetValue(settlement.anchorId, out var loadedSettlement), "聚落应还原");
             Assert.AreEqual(4321f, loadedSettlement.population, 0.01f, "聚落人口");
             Assert.AreEqual(987f, loadedSettlement.wealth, 0.01f, "聚落财富");
+            Assert.AreEqual(777, loadedSettlement.environmentalPressureDays, "环境压力应入档");
+            Assert.AreEqual("water_loss", loadedSettlement.lastDeclineCause, "衰退原因应入档");
+            Assert.AreEqual(3, loaded.CityFoundedCount, "城市建立计数应入档");
+            Assert.AreEqual(2, loaded.CityCollapsedCount, "城市死亡计数应入档");
+            Assert.AreEqual(4, loaded.RiverAvulsionCount, "改道计数应入档");
+            Assert.AreEqual("water_loss", loaded.LastCityDeclineCause, "最近死因应入档");
+            Assert.AreEqual(practiceBeforeSave, loaded.Innovations.GetPractice(realmId, InnovationField.Agriculture), 0.001f, "政权实践应入档");
             Assert.AreEqual(654, loadedSettlement.garrison, "聚落守军");
             Assert.AreEqual(4, loadedSettlement.constructionTier, "建造等级");
             Assert.AreEqual(SettlementLevel.LevelIII, loadedSettlement.settlementLevel, "聚落等级");

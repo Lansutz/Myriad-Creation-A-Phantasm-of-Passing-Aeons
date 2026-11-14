@@ -1322,3 +1322,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **观测**：500 年诊断（128×64、90 天/tick）中改道 51 次，6 座城市失去水源、环境压力达 990/1095 天；城市建立 263 座。
 - 测试：`CityDeclineTests` 4 例（改道断流换道、缺水跨阈值、有水回退、干旱即使有河也衰退）；`WaterwayTests` 8 例。
 - 验证：全量 EditMode `EXIT=0`、1070 例、1061 通过、0 失败、零 `error CS`（9 个 Explicit 跳过）；7000 年观测：48×24 默认观测（90 天/tick、7000 年）：firstCity=109、firstRealm=109、建城 30、城市死亡 0、改道 0——该尺寸地图没有成河，环境链不触发；128×64 的 500 年诊断中改道 51 次、6 城失水、压力 990/1095 天，机制在默认尺寸上成立。
+
+## D151 P10.1–P10.2 实践覆盖与研究解冻、存档闭合（2026-11-14）
+
+- **实践按社会分工产生**：新增 `settlement-practice.daily`（`SettlementSimulationSystem.PracticeDailyTick`），按聚落人口的阶层构成累计实践：农民→农业/营建/手工/习俗，商人→经济/运输/手工/数学/文字/法律/机械/冶金，贵族教士→治理/行政/法律/神学/宗教制度/哲学/教育/仪式/医学/自然认知/传承/节庆/社会思想/军事思想/军事制度，奴隶→采矿/营建/农业/手工，王室→治理/法律/行政/传承/仪式/节庆。26 个领域全部有真实来源，不再被 50% 门槛锁死。
+- **额外来源**：军队每日按人力给军事思想/军事制度实践；建筑开工按营建与建筑门槛所属领域给实践。
+- **AI 选题**：`InnovationTree.GetResearchableInnovations` 过滤“实践未达 50%”的项；`AIController` 改用它，避免每天重试不可立项项。
+- **存档闭合**：`InnovationTreeSaveData.realmPractice` 保存政权实践池；`HabitationSiteSaveData` 保存环境压力与衰退原因；`SaveData` 保存城市建立/死亡/改道计数与最近死因。`SaveSystemRoundTripTests` 增加逐字段断言。
+- 测试：`PracticeCoverageTests` 2 例（26 领域均有实践、可立项列表遵守实践门槛）；保存往返测试通过。
+- 验证：全量 EditMode `EXIT=0`、1075 例、1065 通过、0 失败、零 `error CS`（10 个 Explicit 跳过）。
