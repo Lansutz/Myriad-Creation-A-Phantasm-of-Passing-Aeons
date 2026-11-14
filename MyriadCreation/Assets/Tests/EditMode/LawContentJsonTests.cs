@@ -130,8 +130,9 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(expected.minTreasury, actual.minTreasury, 0.001f);
             Assert.AreEqual(expected.minLegitimacy, actual.minLegitimacy, 0.001f);
             Assert.AreEqual(expected.minCentralization, actual.minCentralization, 0.001f);
+            // requiredInnovationIds 以 JSON 为唯一来源（P9/M2）：这里不再复制一份到测试基准，
+            // 由 LawInnovationGateTests 校验“每条法律都有门槛且 id 可解析”。
             CollectionAssert.AreEqual(expected.requiredLawIds, actual.requiredLawIds, "requiredLawIds " + id);
-            CollectionAssert.AreEqual(expected.requiredInnovationIds, actual.requiredInnovationIds, "requiredInnovationIds " + id);
         }
 
         private static void AssertLawEffectEqual(LawEffect expected, LawEffect actual, string id)

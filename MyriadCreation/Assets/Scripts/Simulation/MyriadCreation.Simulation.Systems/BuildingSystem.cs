@@ -130,6 +130,15 @@ public class BuildingSystem
 		{
 			return false;
 		}
+		// 两条等价路径：直接掌握 requiredInnovation，或某条革新的 unlockRefs 指向该建筑。
+		if (value.requiredInnovation > 0 && Innovations != null)
+		{
+			bool learned = Innovations.HasInnovation(realmId, value.requiredInnovation);
+			if (!learned && !Innovations.IsUnlockGranted(realmId, InnovationUnlockKind.Building, value.buildingId))
+			{
+				return false;
+			}
+		}
 		if (realm.treasury < value.buildCost)
 		{
 			return false;

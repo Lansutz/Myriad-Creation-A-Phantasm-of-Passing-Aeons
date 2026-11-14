@@ -1,471 +1,500 @@
 {
-  "buildings": [
+ "buildings": [
+  {
+   "buildingId": 100,
+   "buildingName": "农田",
+   "category": 0,
+   "tier": 1,
+   "buildCost": 100.0,
+   "materialCost": [
     {
-      "buildingId": 100,
-      "buildingName": "农田",
-      "category": 0,
-      "tier": 1,
-      "buildCost": 100.0,
-      "materialCost": [
-        {
-          "goodsId": 30,
-          "amount": 20.0
-        }
-      ],
-      "buildDays": 10,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 101,
-      "buildingName": "灌溉渠",
-      "category": 0,
-      "tier": 2,
-      "buildCost": 200.0,
-      "materialCost": [
-        {
-          "goodsId": 30,
-          "amount": 30.0
-        },
-        {
-          "goodsId": 40,
-          "amount": 10.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 102,
-      "buildingName": "粮仓",
-      "category": 0,
-      "tier": 2,
-      "buildCost": 300.0,
-      "materialCost": [
-        {
-          "goodsId": 30,
-          "amount": 10.0
-        },
-        {
-          "goodsId": 40,
-          "amount": 20.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 103,
-      "buildingName": "磨坊",
-      "category": 0,
-      "tier": 3,
-      "buildCost": 500.0,
-      "materialCost": [
-        {
-          "goodsId": 31,
-          "amount": 20.0
-        }
-      ],
-      "buildDays": 30,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 200,
-      "buildingName": "铁匠铺",
-      "category": 1,
-      "tier": 1,
-      "buildCost": 200.0,
-      "materialCost": [
-        {
-          "goodsId": 50,
-          "amount": 10.0
-        },
-        {
-          "goodsId": 70,
-          "amount": 5.0
-        }
-      ],
-      "buildDays": 10,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 201,
-      "buildingName": "木工坊",
-      "category": 1,
-      "tier": 1,
-      "buildCost": 150.0,
-      "materialCost": [
-        {
-          "goodsId": 30,
-          "amount": 10.0
-        }
-      ],
-      "buildDays": 10,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 202,
-      "buildingName": "纺织坊",
-      "category": 1,
-      "tier": 2,
-      "buildCost": 300.0,
-      "materialCost": [
-        {
-          "goodsId": 11,
-          "amount": 10.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 203,
-      "buildingName": "窑炉",
-      "category": 1,
-      "tier": 2,
-      "buildCost": 400.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 15.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 204,
-      "buildingName": "造船厂",
-      "category": 1,
-      "tier": 3,
-      "buildCost": 800.0,
-      "materialCost": [
-        {
-          "goodsId": 30,
-          "amount": 50.0
-        },
-        {
-          "goodsId": 70,
-          "amount": 20.0
-        }
-      ],
-      "buildDays": 30,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 300,
-      "buildingName": "土路",
-      "category": 2,
-      "tier": 1,
-      "buildCost": 50.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 5.0
-        }
-      ],
-      "buildDays": 10,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 301,
-      "buildingName": "石砌路",
-      "category": 2,
-      "tier": 2,
-      "buildCost": 200.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 20.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 302,
-      "buildingName": "帝国大道",
-      "category": 2,
-      "tier": 3,
-      "buildCost": 500.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 50.0
-        }
-      ],
-      "buildDays": 30,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 303,
-      "buildingName": "桥梁",
-      "category": 2,
-      "tier": 2,
-      "buildCost": 300.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 30.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 400,
-      "buildingName": "木栅栏",
-      "category": 3,
-      "tier": 1,
-      "buildCost": 100.0,
-      "materialCost": [
-        {
-          "goodsId": 30,
-          "amount": 20.0
-        }
-      ],
-      "buildDays": 10,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 401,
-      "buildingName": "石墙",
-      "category": 3,
-      "tier": 2,
-      "buildCost": 400.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 50.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 402,
-      "buildingName": "箭塔",
-      "category": 3,
-      "tier": 2,
-      "buildCost": 300.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 20.0
-        },
-        {
-          "goodsId": 70,
-          "amount": 10.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 403,
-      "buildingName": "城堡",
-      "category": 3,
-      "tier": 3,
-      "buildCost": 1000.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 100.0
-        },
-        {
-          "goodsId": 70,
-          "amount": 30.0
-        }
-      ],
-      "buildDays": 30,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 404,
-      "buildingName": "要塞",
-      "category": 3,
-      "tier": 4,
-      "buildCost": 2000.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 200.0
-        },
-        {
-          "goodsId": 70,
-          "amount": 50.0
-        }
-      ],
-      "buildDays": 40,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 500,
-      "buildingName": "集市",
-      "category": 4,
-      "tier": 1,
-      "buildCost": 150.0,
-      "materialCost": [
-        {
-          "goodsId": 30,
-          "amount": 10.0
-        }
-      ],
-      "buildDays": 10,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 501,
-      "buildingName": "市场大厅",
-      "category": 4,
-      "tier": 2,
-      "buildCost": 400.0,
-      "materialCost": [
-        {
-          "goodsId": 30,
-          "amount": 30.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 502,
-      "buildingName": "商会会馆",
-      "category": 4,
-      "tier": 3,
-      "buildCost": 800.0,
-      "materialCost": [
-        {
-          "goodsId": 30,
-          "amount": 50.0
-        }
-      ],
-      "buildDays": 30,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 503,
-      "buildingName": "银行",
-      "category": 4,
-      "tier": 4,
-      "buildCost": 1500.0,
-      "materialCost": [
-        {
-          "goodsId": 60,
-          "amount": 100.0
-        }
-      ],
-      "buildDays": 40,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 504,
-      "buildingName": "海关",
-      "category": 4,
-      "tier": 2,
-      "buildCost": 300.0,
-      "materialCost": [
-        {
-          "goodsId": 30,
-          "amount": 20.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 600,
-      "buildingName": "村社公所",
-      "category": 5,
-      "tier": 1,
-      "buildCost": 100.0,
-      "materialCost": [
-        {
-          "goodsId": 30,
-          "amount": 10.0
-        }
-      ],
-      "buildDays": 10,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 601,
-      "buildingName": "城镇厅",
-      "category": 5,
-      "tier": 2,
-      "buildCost": 300.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 30.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 602,
-      "buildingName": "总督府",
-      "category": 5,
-      "tier": 3,
-      "buildCost": 700.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 80.0
-        }
-      ],
-      "buildDays": 30,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 603,
-      "buildingName": "王宫",
-      "category": 5,
-      "tier": 4,
-      "buildCost": 2000.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 200.0
-        },
-        {
-          "goodsId": 60,
-          "amount": 100.0
-        }
-      ],
-      "buildDays": 40,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 604,
-      "buildingName": "法院",
-      "category": 5,
-      "tier": 2,
-      "buildCost": 400.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 30.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
-    },
-    {
-      "buildingId": 605,
-      "buildingName": "档案馆",
-      "category": 5,
-      "tier": 2,
-      "buildCost": 300.0,
-      "materialCost": [
-        {
-          "goodsId": 40,
-          "amount": 20.0
-        }
-      ],
-      "buildDays": 20,
-      "maintenanceCost": 0.0
+     "goodsId": 30,
+     "amount": 20.0
     }
-  ]
+   ],
+   "buildDays": 10,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 100
+  },
+  {
+   "buildingId": 101,
+   "buildingName": "灌溉渠",
+   "category": 0,
+   "tier": 2,
+   "buildCost": 200.0,
+   "materialCost": [
+    {
+     "goodsId": 30,
+     "amount": 30.0
+    },
+    {
+     "goodsId": 40,
+     "amount": 10.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 107
+  },
+  {
+   "buildingId": 102,
+   "buildingName": "粮仓",
+   "category": 0,
+   "tier": 2,
+   "buildCost": 300.0,
+   "materialCost": [
+    {
+     "goodsId": 30,
+     "amount": 10.0
+    },
+    {
+     "goodsId": 40,
+     "amount": 20.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 2219
+  },
+  {
+   "buildingId": 103,
+   "buildingName": "磨坊",
+   "category": 0,
+   "tier": 3,
+   "buildCost": 500.0,
+   "materialCost": [
+    {
+     "goodsId": 31,
+     "amount": 20.0
+    }
+   ],
+   "buildDays": 30,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 106
+  },
+  {
+   "buildingId": 200,
+   "buildingName": "铁匠铺",
+   "category": 1,
+   "tier": 1,
+   "buildCost": 200.0,
+   "materialCost": [
+    {
+     "goodsId": 50,
+     "amount": 10.0
+    },
+    {
+     "goodsId": 70,
+     "amount": 5.0
+    }
+   ],
+   "buildDays": 10,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 202
+  },
+  {
+   "buildingId": 201,
+   "buildingName": "木工坊",
+   "category": 1,
+   "tier": 1,
+   "buildCost": 150.0,
+   "materialCost": [
+    {
+     "goodsId": 30,
+     "amount": 10.0
+    }
+   ],
+   "buildDays": 10,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 2072
+  },
+  {
+   "buildingId": 202,
+   "buildingName": "纺织坊",
+   "category": 1,
+   "tier": 2,
+   "buildCost": 300.0,
+   "materialCost": [
+    {
+     "goodsId": 11,
+     "amount": 10.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 204
+  },
+  {
+   "buildingId": 203,
+   "buildingName": "窑炉",
+   "category": 1,
+   "tier": 2,
+   "buildCost": 400.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 15.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 200
+  },
+  {
+   "buildingId": 204,
+   "buildingName": "造船厂",
+   "category": 1,
+   "tier": 3,
+   "buildCost": 800.0,
+   "materialCost": [
+    {
+     "goodsId": 30,
+     "amount": 50.0
+    },
+    {
+     "goodsId": 70,
+     "amount": 20.0
+    }
+   ],
+   "buildDays": 30,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 402
+  },
+  {
+   "buildingId": 300,
+   "buildingName": "土路",
+   "category": 2,
+   "tier": 1,
+   "buildCost": 50.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 5.0
+    }
+   ],
+   "buildDays": 10,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 807
+  },
+  {
+   "buildingId": 301,
+   "buildingName": "石砌路",
+   "category": 2,
+   "tier": 2,
+   "buildCost": 200.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 20.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 808
+  },
+  {
+   "buildingId": 302,
+   "buildingName": "帝国大道",
+   "category": 2,
+   "tier": 3,
+   "buildCost": 500.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 50.0
+    }
+   ],
+   "buildDays": 30,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 823
+  },
+  {
+   "buildingId": 303,
+   "buildingName": "桥梁",
+   "category": 2,
+   "tier": 2,
+   "buildCost": 300.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 30.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 2077
+  },
+  {
+   "buildingId": 400,
+   "buildingName": "木栅栏",
+   "category": 3,
+   "tier": 1,
+   "buildCost": 100.0,
+   "materialCost": [
+    {
+     "goodsId": 30,
+     "amount": 20.0
+    }
+   ],
+   "buildDays": 10,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 800
+  },
+  {
+   "buildingId": 401,
+   "buildingName": "石墙",
+   "category": 3,
+   "tier": 2,
+   "buildCost": 400.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 50.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 2073
+  },
+  {
+   "buildingId": 402,
+   "buildingName": "箭塔",
+   "category": 3,
+   "tier": 2,
+   "buildCost": 300.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 20.0
+    },
+    {
+     "goodsId": 70,
+     "amount": 10.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 306
+  },
+  {
+   "buildingId": 403,
+   "buildingName": "城堡",
+   "category": 3,
+   "tier": 3,
+   "buildCost": 1000.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 100.0
+    },
+    {
+     "goodsId": 70,
+     "amount": 30.0
+    }
+   ],
+   "buildDays": 30,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 306
+  },
+  {
+   "buildingId": 404,
+   "buildingName": "要塞",
+   "category": 3,
+   "tier": 4,
+   "buildCost": 2000.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 200.0
+    },
+    {
+     "goodsId": 70,
+     "amount": 50.0
+    }
+   ],
+   "buildDays": 40,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 2258
+  },
+  {
+   "buildingId": 500,
+   "buildingName": "集市",
+   "category": 4,
+   "tier": 1,
+   "buildCost": 150.0,
+   "materialCost": [
+    {
+     "goodsId": 30,
+     "amount": 10.0
+    }
+   ],
+   "buildDays": 10,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 700
+  },
+  {
+   "buildingId": 501,
+   "buildingName": "市场大厅",
+   "category": 4,
+   "tier": 2,
+   "buildCost": 400.0,
+   "materialCost": [
+    {
+     "goodsId": 30,
+     "amount": 30.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 824
+  },
+  {
+   "buildingId": 502,
+   "buildingName": "商会会馆",
+   "category": 4,
+   "tier": 3,
+   "buildCost": 800.0,
+   "materialCost": [
+    {
+     "goodsId": 30,
+     "amount": 50.0
+    }
+   ],
+   "buildDays": 30,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 1008
+  },
+  {
+   "buildingId": 503,
+   "buildingName": "银行",
+   "category": 4,
+   "tier": 4,
+   "buildCost": 1500.0,
+   "materialCost": [
+    {
+     "goodsId": 60,
+     "amount": 100.0
+    }
+   ],
+   "buildDays": 40,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 702
+  },
+  {
+   "buildingId": 504,
+   "buildingName": "海关",
+   "category": 4,
+   "tier": 2,
+   "buildCost": 300.0,
+   "materialCost": [
+    {
+     "goodsId": 30,
+     "amount": 20.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 824
+  },
+  {
+   "buildingId": 600,
+   "buildingName": "村社公所",
+   "category": 5,
+   "tier": 1,
+   "buildCost": 100.0,
+   "materialCost": [
+    {
+     "goodsId": 30,
+     "amount": 10.0
+    }
+   ],
+   "buildDays": 10,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 500
+  },
+  {
+   "buildingId": 601,
+   "buildingName": "城镇厅",
+   "category": 5,
+   "tier": 2,
+   "buildCost": 300.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 30.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 994
+  },
+  {
+   "buildingId": 602,
+   "buildingName": "总督府",
+   "category": 5,
+   "tier": 3,
+   "buildCost": 700.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 80.0
+    }
+   ],
+   "buildDays": 30,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 960
+  },
+  {
+   "buildingId": 603,
+   "buildingName": "王宫",
+   "category": 5,
+   "tier": 4,
+   "buildCost": 2000.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 200.0
+    },
+    {
+     "goodsId": 60,
+     "amount": 100.0
+    }
+   ],
+   "buildDays": 40,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 503
+  },
+  {
+   "buildingId": 604,
+   "buildingName": "法院",
+   "category": 5,
+   "tier": 2,
+   "buildCost": 400.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 30.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 505
+  },
+  {
+   "buildingId": 605,
+   "buildingName": "档案馆",
+   "category": 5,
+   "tier": 2,
+   "buildCost": 300.0,
+   "materialCost": [
+    {
+     "goodsId": 40,
+     "amount": 20.0
+    }
+   ],
+   "buildDays": 20,
+   "maintenanceCost": 0.0,
+   "requiredInnovation": 940
+  }
+ ]
 }

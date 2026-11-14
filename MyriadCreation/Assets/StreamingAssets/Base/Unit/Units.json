@@ -1,366 +1,368 @@
 {
-  "units": [
+ "units": [
+  {
+   "unitId": 100,
+   "unitName": "轻装步兵",
+   "category": 0,
+   "tier": 1,
+   "meleeAttack": 10.0,
+   "rangedAttack": 0.0,
+   "defense": 8.0,
+   "morale": 60.0,
+   "speed": 2.0,
+   "supplyConsumption": 1.0,
+   "manpowerCost": 50.0,
+   "recruitCost": [
     {
-      "unitId": 100,
-      "unitName": "轻装步兵",
-      "category": 0,
-      "tier": 1,
-      "meleeAttack": 10.0,
-      "rangedAttack": 0.0,
-      "defense": 8.0,
-      "morale": 60.0,
-      "speed": 2.0,
-      "supplyConsumption": 1.0,
-      "manpowerCost": 50.0,
-      "recruitCost": [
-        {
-          "goodsId": 70,
-          "amount": 1.0
-        }
-      ],
-      "requiredInnovations": []
-    },
-    {
-      "unitId": 101,
-      "unitName": "重装步兵",
-      "category": 0,
-      "tier": 2,
-      "meleeAttack": 15.0,
-      "rangedAttack": 0.0,
-      "defense": 15.0,
-      "morale": 70.0,
-      "speed": 1.5,
-      "supplyConsumption": 1.5,
-      "manpowerCost": 80.0,
-      "recruitCost": [
-        {
-          "goodsId": 70,
-          "amount": 1.2
-        },
-        {
-          "goodsId": 71,
-          "amount": 1.0
-        }
-      ],
-      "requiredInnovations": [
-        202
-      ]
-    },
-    {
-      "unitId": 102,
-      "unitName": "精锐步兵",
-      "category": 0,
-      "tier": 3,
-      "meleeAttack": 20.0,
-      "rangedAttack": 0.0,
-      "defense": 22.0,
-      "morale": 80.0,
-      "speed": 1.2,
-      "supplyConsumption": 2.0,
-      "manpowerCost": 120.0,
-      "recruitCost": [
-        {
-          "goodsId": 70,
-          "amount": 1.5
-        },
-        {
-          "goodsId": 71,
-          "amount": 1.5
-        }
-      ],
-      "requiredInnovations": [
-        203
-      ]
-    },
-    {
-      "unitId": 110,
-      "unitName": "弓箭手",
-      "category": 0,
-      "tier": 1,
-      "meleeAttack": 5.0,
-      "rangedAttack": 12.0,
-      "defense": 6.0,
-      "morale": 50.0,
-      "speed": 2.0,
-      "supplyConsumption": 0.8,
-      "manpowerCost": 40.0,
-      "recruitCost": [
-        {
-          "goodsId": 70,
-          "amount": 1.0
-        }
-      ],
-      "requiredInnovations": [
-        907
-      ]
-    },
-    {
-      "unitId": 111,
-      "unitName": "弩手",
-      "category": 0,
-      "tier": 2,
-      "meleeAttack": 6.0,
-      "rangedAttack": 18.0,
-      "defense": 8.0,
-      "morale": 55.0,
-      "speed": 1.5,
-      "supplyConsumption": 1.0,
-      "manpowerCost": 60.0,
-      "recruitCost": [
-        {
-          "goodsId": 70,
-          "amount": 1.2
-        }
-      ],
-      "requiredInnovations": [
-        304
-      ]
-    },
-    {
-      "unitId": 200,
-      "unitName": "轻骑兵",
-      "category": 1,
-      "tier": 1,
-      "meleeAttack": 12.0,
-      "rangedAttack": 5.0,
-      "defense": 8.0,
-      "morale": 65.0,
-      "speed": 4.0,
-      "supplyConsumption": 1.5,
-      "manpowerCost": 60.0,
-      "recruitCost": [
-        {
-          "goodsId": 70,
-          "amount": 1.0
-        },
-        {
-          "goodsId": 20,
-          "amount": 1.0
-        }
-      ],
-      "requiredInnovations": [
-        923
-      ]
-    },
-    {
-      "unitId": 201,
-      "unitName": "重骑兵",
-      "category": 1,
-      "tier": 2,
-      "meleeAttack": 20.0,
-      "rangedAttack": 8.0,
-      "defense": 18.0,
-      "morale": 75.0,
-      "speed": 3.0,
-      "supplyConsumption": 2.5,
-      "manpowerCost": 100.0,
-      "recruitCost": [
-        {
-          "goodsId": 70,
-          "amount": 1.2
-        },
-        {
-          "goodsId": 71,
-          "amount": 1.2
-        },
-        {
-          "goodsId": 20,
-          "amount": 1.5
-        }
-      ],
-      "requiredInnovations": [
-        924
-      ]
-    },
-    {
-      "unitId": 202,
-      "unitName": "具装甲骑",
-      "category": 1,
-      "tier": 3,
-      "meleeAttack": 28.0,
-      "rangedAttack": 10.0,
-      "defense": 25.0,
-      "morale": 85.0,
-      "speed": 2.5,
-      "supplyConsumption": 3.0,
-      "manpowerCost": 150.0,
-      "recruitCost": [
-        {
-          "goodsId": 70,
-          "amount": 1.5
-        },
-        {
-          "goodsId": 71,
-          "amount": 1.5
-        },
-        {
-          "goodsId": 20,
-          "amount": 2.0
-        }
-      ],
-      "requiredInnovations": [
-        303
-      ]
-    },
-    {
-      "unitId": 203,
-      "unitName": "超重装骑兵",
-      "category": 1,
-      "tier": 4,
-      "meleeAttack": 36.0,
-      "rangedAttack": 12.0,
-      "defense": 32.0,
-      "morale": 95.0,
-      "speed": 2.0,
-      "supplyConsumption": 4.0,
-      "manpowerCost": 200.0,
-      "recruitCost": [
-        {
-          "goodsId": 70,
-          "amount": 2.0
-        },
-        {
-          "goodsId": 71,
-          "amount": 2.0
-        },
-        {
-          "goodsId": 20,
-          "amount": 2.5
-        }
-      ],
-      "requiredInnovations": [
-        1006
-      ]
-    },
-    {
-      "unitId": 210,
-      "unitName": "战车兵",
-      "category": 1,
-      "tier": 2,
-      "meleeAttack": 20.0,
-      "rangedAttack": 6.0,
-      "defense": 14.0,
-      "morale": 70.0,
-      "speed": 3.5,
-      "supplyConsumption": 2.5,
-      "manpowerCost": 100.0,
-      "recruitCost": [
-        {
-          "goodsId": 70,
-          "amount": 1.2
-        },
-        {
-          "goodsId": 20,
-          "amount": 2.0
-        }
-      ],
-      "requiredInnovations": [
-        1013
-      ]
-    },
-    {
-      "unitId": 300,
-      "unitName": "桨帆船",
-      "category": 2,
-      "tier": 1,
-      "meleeAttack": 15.0,
-      "rangedAttack": 10.0,
-      "defense": 10.0,
-      "morale": 60.0,
-      "speed": 3.0,
-      "supplyConsumption": 2.0,
-      "manpowerCost": 80.0,
-      "recruitCost": [
-        {
-          "goodsId": 30,
-          "amount": 2.0
-        },
-        {
-          "goodsId": 31,
-          "amount": 1.0
-        }
-      ],
-      "requiredInnovations": [
-        402
-      ]
-    },
-    {
-      "unitId": 301,
-      "unitName": "帆船战舰",
-      "category": 2,
-      "tier": 2,
-      "meleeAttack": 20.0,
-      "rangedAttack": 15.0,
-      "defense": 15.0,
-      "morale": 70.0,
-      "speed": 4.0,
-      "supplyConsumption": 2.5,
-      "manpowerCost": 120.0,
-      "recruitCost": [
-        {
-          "goodsId": 31,
-          "amount": 2.0
-        },
-        {
-          "goodsId": 50,
-          "amount": 1.0
-        }
-      ],
-      "requiredInnovations": [
-        405
-      ]
-    },
-    {
-      "unitId": 302,
-      "unitName": "撞角战船",
-      "category": 2,
-      "tier": 2,
-      "meleeAttack": 28.0,
-      "rangedAttack": 4.0,
-      "defense": 14.0,
-      "morale": 65.0,
-      "speed": 3.5,
-      "supplyConsumption": 2.5,
-      "manpowerCost": 100.0,
-      "recruitCost": [
-        {
-          "goodsId": 30,
-          "amount": 2.0
-        },
-        {
-          "goodsId": 50,
-          "amount": 1.5
-        }
-      ],
-      "requiredInnovations": [
-        1007
-      ]
-    },
-    {
-      "unitId": 303,
-      "unitName": "远洋贸易船",
-      "category": 2,
-      "tier": 3,
-      "meleeAttack": 8.0,
-      "rangedAttack": 2.0,
-      "defense": 18.0,
-      "morale": 70.0,
-      "speed": 4.5,
-      "supplyConsumption": 1.5,
-      "manpowerCost": 80.0,
-      "recruitCost": [
-        {
-          "goodsId": 31,
-          "amount": 2.0
-        },
-        {
-          "goodsId": 11,
-          "amount": 1.0
-        }
-      ],
-      "requiredInnovations": [
-        1008
-      ]
+     "goodsId": 70,
+     "amount": 1.0
     }
-  ]
+   ],
+   "requiredInnovations": [
+    906
+   ]
+  },
+  {
+   "unitId": 101,
+   "unitName": "重装步兵",
+   "category": 0,
+   "tier": 2,
+   "meleeAttack": 15.0,
+   "rangedAttack": 0.0,
+   "defense": 15.0,
+   "morale": 70.0,
+   "speed": 1.5,
+   "supplyConsumption": 1.5,
+   "manpowerCost": 80.0,
+   "recruitCost": [
+    {
+     "goodsId": 70,
+     "amount": 1.2
+    },
+    {
+     "goodsId": 71,
+     "amount": 1.0
+    }
+   ],
+   "requiredInnovations": [
+    202
+   ]
+  },
+  {
+   "unitId": 102,
+   "unitName": "精锐步兵",
+   "category": 0,
+   "tier": 3,
+   "meleeAttack": 20.0,
+   "rangedAttack": 0.0,
+   "defense": 22.0,
+   "morale": 80.0,
+   "speed": 1.2,
+   "supplyConsumption": 2.0,
+   "manpowerCost": 120.0,
+   "recruitCost": [
+    {
+     "goodsId": 70,
+     "amount": 1.5
+    },
+    {
+     "goodsId": 71,
+     "amount": 1.5
+    }
+   ],
+   "requiredInnovations": [
+    203
+   ]
+  },
+  {
+   "unitId": 110,
+   "unitName": "弓箭手",
+   "category": 0,
+   "tier": 1,
+   "meleeAttack": 5.0,
+   "rangedAttack": 12.0,
+   "defense": 6.0,
+   "morale": 50.0,
+   "speed": 2.0,
+   "supplyConsumption": 0.8,
+   "manpowerCost": 40.0,
+   "recruitCost": [
+    {
+     "goodsId": 70,
+     "amount": 1.0
+    }
+   ],
+   "requiredInnovations": [
+    907
+   ]
+  },
+  {
+   "unitId": 111,
+   "unitName": "弩手",
+   "category": 0,
+   "tier": 2,
+   "meleeAttack": 6.0,
+   "rangedAttack": 18.0,
+   "defense": 8.0,
+   "morale": 55.0,
+   "speed": 1.5,
+   "supplyConsumption": 1.0,
+   "manpowerCost": 60.0,
+   "recruitCost": [
+    {
+     "goodsId": 70,
+     "amount": 1.2
+    }
+   ],
+   "requiredInnovations": [
+    304
+   ]
+  },
+  {
+   "unitId": 200,
+   "unitName": "轻骑兵",
+   "category": 1,
+   "tier": 1,
+   "meleeAttack": 12.0,
+   "rangedAttack": 5.0,
+   "defense": 8.0,
+   "morale": 65.0,
+   "speed": 4.0,
+   "supplyConsumption": 1.5,
+   "manpowerCost": 60.0,
+   "recruitCost": [
+    {
+     "goodsId": 70,
+     "amount": 1.0
+    },
+    {
+     "goodsId": 20,
+     "amount": 1.0
+    }
+   ],
+   "requiredInnovations": [
+    923
+   ]
+  },
+  {
+   "unitId": 201,
+   "unitName": "重骑兵",
+   "category": 1,
+   "tier": 2,
+   "meleeAttack": 20.0,
+   "rangedAttack": 8.0,
+   "defense": 18.0,
+   "morale": 75.0,
+   "speed": 3.0,
+   "supplyConsumption": 2.5,
+   "manpowerCost": 100.0,
+   "recruitCost": [
+    {
+     "goodsId": 70,
+     "amount": 1.2
+    },
+    {
+     "goodsId": 71,
+     "amount": 1.2
+    },
+    {
+     "goodsId": 20,
+     "amount": 1.5
+    }
+   ],
+   "requiredInnovations": [
+    924
+   ]
+  },
+  {
+   "unitId": 202,
+   "unitName": "具装甲骑",
+   "category": 1,
+   "tier": 3,
+   "meleeAttack": 28.0,
+   "rangedAttack": 10.0,
+   "defense": 25.0,
+   "morale": 85.0,
+   "speed": 2.5,
+   "supplyConsumption": 3.0,
+   "manpowerCost": 150.0,
+   "recruitCost": [
+    {
+     "goodsId": 70,
+     "amount": 1.5
+    },
+    {
+     "goodsId": 71,
+     "amount": 1.5
+    },
+    {
+     "goodsId": 20,
+     "amount": 2.0
+    }
+   ],
+   "requiredInnovations": [
+    303
+   ]
+  },
+  {
+   "unitId": 203,
+   "unitName": "超重装骑兵",
+   "category": 1,
+   "tier": 4,
+   "meleeAttack": 36.0,
+   "rangedAttack": 12.0,
+   "defense": 32.0,
+   "morale": 95.0,
+   "speed": 2.0,
+   "supplyConsumption": 4.0,
+   "manpowerCost": 200.0,
+   "recruitCost": [
+    {
+     "goodsId": 70,
+     "amount": 2.0
+    },
+    {
+     "goodsId": 71,
+     "amount": 2.0
+    },
+    {
+     "goodsId": 20,
+     "amount": 2.5
+    }
+   ],
+   "requiredInnovations": [
+    1006
+   ]
+  },
+  {
+   "unitId": 210,
+   "unitName": "战车兵",
+   "category": 1,
+   "tier": 2,
+   "meleeAttack": 20.0,
+   "rangedAttack": 6.0,
+   "defense": 14.0,
+   "morale": 70.0,
+   "speed": 3.5,
+   "supplyConsumption": 2.5,
+   "manpowerCost": 100.0,
+   "recruitCost": [
+    {
+     "goodsId": 70,
+     "amount": 1.2
+    },
+    {
+     "goodsId": 20,
+     "amount": 2.0
+    }
+   ],
+   "requiredInnovations": [
+    1013
+   ]
+  },
+  {
+   "unitId": 300,
+   "unitName": "桨帆船",
+   "category": 2,
+   "tier": 1,
+   "meleeAttack": 15.0,
+   "rangedAttack": 10.0,
+   "defense": 10.0,
+   "morale": 60.0,
+   "speed": 3.0,
+   "supplyConsumption": 2.0,
+   "manpowerCost": 80.0,
+   "recruitCost": [
+    {
+     "goodsId": 30,
+     "amount": 2.0
+    },
+    {
+     "goodsId": 31,
+     "amount": 1.0
+    }
+   ],
+   "requiredInnovations": [
+    402
+   ]
+  },
+  {
+   "unitId": 301,
+   "unitName": "帆船战舰",
+   "category": 2,
+   "tier": 2,
+   "meleeAttack": 20.0,
+   "rangedAttack": 15.0,
+   "defense": 15.0,
+   "morale": 70.0,
+   "speed": 4.0,
+   "supplyConsumption": 2.5,
+   "manpowerCost": 120.0,
+   "recruitCost": [
+    {
+     "goodsId": 31,
+     "amount": 2.0
+    },
+    {
+     "goodsId": 50,
+     "amount": 1.0
+    }
+   ],
+   "requiredInnovations": [
+    405
+   ]
+  },
+  {
+   "unitId": 302,
+   "unitName": "撞角战船",
+   "category": 2,
+   "tier": 2,
+   "meleeAttack": 28.0,
+   "rangedAttack": 4.0,
+   "defense": 14.0,
+   "morale": 65.0,
+   "speed": 3.5,
+   "supplyConsumption": 2.5,
+   "manpowerCost": 100.0,
+   "recruitCost": [
+    {
+     "goodsId": 30,
+     "amount": 2.0
+    },
+    {
+     "goodsId": 50,
+     "amount": 1.5
+    }
+   ],
+   "requiredInnovations": [
+    1007
+   ]
+  },
+  {
+   "unitId": 303,
+   "unitName": "远洋贸易船",
+   "category": 2,
+   "tier": 3,
+   "meleeAttack": 8.0,
+   "rangedAttack": 2.0,
+   "defense": 18.0,
+   "morale": 70.0,
+   "speed": 4.5,
+   "supplyConsumption": 1.5,
+   "manpowerCost": 80.0,
+   "recruitCost": [
+    {
+     "goodsId": 31,
+     "amount": 2.0
+    },
+    {
+     "goodsId": 11,
+     "amount": 1.0
+    }
+   ],
+   "requiredInnovations": [
+    1008
+   ]
+  }
+ ]
 }

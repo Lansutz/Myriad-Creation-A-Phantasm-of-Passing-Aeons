@@ -1,729 +1,733 @@
 {
-  "recipes": [
+ "recipes": [
+  {
+   "outputGoodsId": 56,
+   "outputAmount": 1.0,
+   "inputs": [
     {
-      "outputGoodsId": 56,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 53,
-          "amount": 0.8
-        },
-        {
-          "goodsId": 55,
-          "amount": 0.2
-        }
-      ],
-      "process": 1,
-      "requiredInnovation": 201,
-      "craftDays": 0.5,
-      "recipeId": "alloy_bronze",
-      "outputKind": 0,
-      "displayName": ""
+     "goodsId": 53,
+     "amount": 0.8
     },
     {
-      "outputGoodsId": 31,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 1.0
-        }
-      ],
-      "process": 8,
-      "requiredInnovation": 0,
-      "craftDays": 0.25,
-      "recipeId": "craft_processed_wood",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 52,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 50,
-          "amount": 1.0
-        }
-      ],
-      "process": 1,
-      "requiredInnovation": 202,
-      "craftDays": 0.5,
-      "requiredBuilding": 200,
-      "recipeId": "smelt_iron",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 53,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 51,
-          "amount": 1.0
-        }
-      ],
-      "process": 1,
-      "requiredInnovation": 201,
-      "craftDays": 0.5,
-      "recipeId": "smelt_copper",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 55,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 54,
-          "amount": 1.0
-        }
-      ],
-      "process": 1,
-      "requiredInnovation": 201,
-      "craftDays": 0.5,
-      "recipeId": "smelt_tin",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 57,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 52,
-          "amount": 1.0
-        },
-        {
-          "goodsId": 14,
-          "amount": 0.2
-        }
-      ],
-      "process": 4,
-      "requiredInnovation": 203,
-      "craftDays": 0.75,
-      "recipeId": "make_steel",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 12,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 11,
-          "amount": 1.0
-        }
-      ],
-      "process": 5,
-      "requiredInnovation": 204,
-      "craftDays": 0.5,
-      "recipeId": "weave_cotton",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 14,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 1.0
-        }
-      ],
-      "process": 8,
-      "requiredInnovation": 0,
-      "craftDays": 0.25,
-      "recipeId": "charcoal_burn",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 70,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 56,
-          "amount": 1.0
-        }
-      ],
-      "process": 2,
-      "requiredInnovation": 201,
-      "craftDays": 0.5,
-      "recipeId": "forge_weapon_goods",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 71,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 56,
-          "amount": 1.0
-        }
-      ],
-      "process": 2,
-      "requiredInnovation": 201,
-      "craftDays": 0.5,
-      "recipeId": "forge_armor_goods",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 100,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 0,
-          "amount": 1.0
-        }
-      ],
-      "process": 0,
-      "requiredInnovation": 0,
-      "craftDays": 0.1,
-      "recipeId": "mill_wheat",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 101,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 10,
-          "amount": 1.0
-        }
-      ],
-      "process": 0,
-      "requiredInnovation": 0,
-      "craftDays": 0.1,
-      "recipeId": "mill_rice",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 120,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 110,
-          "amount": 1.0
-        }
-      ],
-      "process": 5,
-      "requiredInnovation": 204,
-      "craftDays": 0.5,
-      "recipeId": "weave_linen",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 121,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 112,
-          "amount": 1.0
-        }
-      ],
-      "process": 6,
-      "requiredInnovation": 947,
-      "craftDays": 0.5,
-      "recipeId": "make_papyrus",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 122,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 111,
-          "amount": 1.0
-        }
-      ],
-      "process": 5,
-      "requiredInnovation": 0,
-      "craftDays": 0.25,
-      "recipeId": "weave_reed_mat",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 13,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 130,
-          "amount": 1.0
-        }
-      ],
-      "process": 7,
-      "craftDays": 0.5,
-      "recipeId": "tan_hide",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 141,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 140,
-          "amount": 1.0
-        }
-      ],
-      "process": 0,
-      "craftDays": 1.0,
-      "recipeId": "fire_pottery",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 142,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 40,
-          "amount": 1.0
-        }
-      ],
-      "process": 0,
-      "craftDays": 1.0,
-      "recipeId": "burn_lime",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "outputGoodsId": 143,
-      "outputAmount": 1.0,
-      "inputs": [
-        {
-          "goodsId": 40,
-          "amount": 1.0
-        },
-        {
-          "goodsId": 14,
-          "amount": 0.25
-        }
-      ],
-      "process": 0,
-      "craftDays": 1.0,
-      "recipeId": "melt_glass",
-      "outputKind": 0,
-      "displayName": ""
-    },
-    {
-      "recipeId": "craft_bronze_ge",
-      "outputKind": 1,
-      "outputGoodsId": 4,
-      "outputAmount": 0.5,
-      "inputs": [
-        {
-          "goodsId": 56,
-          "amount": 0.5
-        }
-      ],
-      "requiredInnovation": 201,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_bronze_spear",
-      "outputKind": 1,
-      "outputGoodsId": 10,
-      "outputAmount": 0.5,
-      "inputs": [
-        {
-          "goodsId": 56,
-          "amount": 0.5
-        }
-      ],
-      "requiredInnovation": 201,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_bronze_sword",
-      "outputKind": 1,
-      "outputGoodsId": 11,
-      "outputAmount": 0.6,
-      "inputs": [
-        {
-          "goodsId": 56,
-          "amount": 0.6
-        }
-      ],
-      "requiredInnovation": 201,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_bronze_arrowhead",
-      "outputKind": 1,
-      "outputGoodsId": 12,
-      "outputAmount": 0.1,
-      "inputs": [
-        {
-          "goodsId": 56,
-          "amount": 0.1
-        }
-      ],
-      "requiredInnovation": 201,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_iron_sword",
-      "outputKind": 1,
-      "outputGoodsId": 5,
-      "outputAmount": 0.6,
-      "inputs": [
-        {
-          "goodsId": 52,
-          "amount": 0.6
-        }
-      ],
-      "requiredInnovation": 202,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_iron_spear",
-      "outputKind": 1,
-      "outputGoodsId": 13,
-      "outputAmount": 0.5,
-      "inputs": [
-        {
-          "goodsId": 52,
-          "amount": 0.5
-        }
-      ],
-      "requiredInnovation": 202,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_iron_saber",
-      "outputKind": 1,
-      "outputGoodsId": 14,
-      "outputAmount": 0.6,
-      "inputs": [
-        {
-          "goodsId": 52,
-          "amount": 0.6
-        }
-      ],
-      "requiredInnovation": 202,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_trebuchet",
-      "outputKind": 1,
-      "outputGoodsId": 1,
-      "outputAmount": 2.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 2
-        },
-        {
-          "goodsId": 40,
-          "amount": 1
-        }
-      ],
-      "requiredInnovation": 305,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_matchlock",
-      "outputKind": 1,
-      "outputGoodsId": 2,
-      "outputAmount": 0.5,
-      "inputs": [
-        {
-          "goodsId": 52,
-          "amount": 0.5
-        },
-        {
-          "goodsId": 30,
-          "amount": 0.5
-        }
-      ],
-      "requiredInnovation": 307,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_bombard",
-      "outputKind": 1,
-      "outputGoodsId": 3,
-      "outputAmount": 2.0,
-      "inputs": [
-        {
-          "goodsId": 52,
-          "amount": 2
-        },
-        {
-          "goodsId": 40,
-          "amount": 1
-        }
-      ],
-      "requiredInnovation": 308,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_dugout",
-      "outputKind": 1,
-      "outputGoodsId": 100,
-      "outputAmount": 2.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 2
-        }
-      ],
-      "requiredInnovation": 400,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_square_sail_ship",
-      "outputKind": 1,
-      "outputGoodsId": 101,
-      "outputAmount": 4.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 4
-        },
-        {
-          "goodsId": 31,
-          "amount": 2
-        },
-        {
-          "goodsId": 12,
-          "amount": 2
-        }
-      ],
-      "requiredInnovation": 401,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_oar_sail_ship",
-      "outputKind": 1,
-      "outputGoodsId": 102,
-      "outputAmount": 4.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 4
-        },
-        {
-          "goodsId": 31,
-          "amount": 1
-        }
-      ],
-      "requiredInnovation": 402,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_compass",
-      "outputKind": 1,
-      "outputGoodsId": 103,
-      "outputAmount": 0.1,
-      "inputs": [
-        {
-          "goodsId": 60,
-          "amount": 0.1
-        },
-        {
-          "goodsId": 30,
-          "amount": 0.2
-        }
-      ],
-      "requiredInnovation": 403,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_lateen_ship",
-      "outputKind": 1,
-      "outputGoodsId": 104,
-      "outputAmount": 4.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 4
-        },
-        {
-          "goodsId": 12,
-          "amount": 2
-        }
-      ],
-      "requiredInnovation": 404,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_ocean_cargo",
-      "outputKind": 1,
-      "outputGoodsId": 105,
-      "outputAmount": 6.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 6
-        },
-        {
-          "goodsId": 31,
-          "amount": 3
-        },
-        {
-          "goodsId": 12,
-          "amount": 3
-        }
-      ],
-      "requiredInnovation": 405,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_gunport_warship",
-      "outputKind": 1,
-      "outputGoodsId": 106,
-      "outputAmount": 8.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 8
-        },
-        {
-          "goodsId": 31,
-          "amount": 4
-        },
-        {
-          "goodsId": 52,
-          "amount": 1
-        }
-      ],
-      "requiredInnovation": 406,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_wheeled_cart",
-      "outputKind": 1,
-      "outputGoodsId": 8,
-      "outputAmount": 2.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 2
-        },
-        {
-          "goodsId": 31,
-          "amount": 1
-        }
-      ],
-      "requiredInnovation": 807,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_ram_ship",
-      "outputKind": 1,
-      "outputGoodsId": 107,
-      "outputAmount": 6.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 6
-        },
-        {
-          "goodsId": 52,
-          "amount": 1
-        }
-      ],
-      "requiredInnovation": 1007,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_leather_armor",
-      "outputKind": 1,
-      "outputGoodsId": 6,
-      "outputAmount": 2.0,
-      "inputs": [
-        {
-          "goodsId": 13,
-          "amount": 2
-        }
-      ],
-      "requiredInnovation": 1010,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_solid_wheel_cart",
-      "outputKind": 1,
-      "outputGoodsId": 8,
-      "outputAmount": 2.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 2
-        },
-        {
-          "goodsId": 31,
-          "amount": 2
-        }
-      ],
-      "requiredInnovation": 1011,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_spoked_chariot",
-      "outputKind": 1,
-      "outputGoodsId": 9,
-      "outputAmount": 3.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 3
-        },
-        {
-          "goodsId": 31,
-          "amount": 2
-        },
-        {
-          "goodsId": 52,
-          "amount": 1
-        }
-      ],
-      "requiredInnovation": 1012,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_two_horse_chariot",
-      "outputKind": 1,
-      "outputGoodsId": 200,
-      "outputAmount": 4.0,
-      "inputs": [
-        {
-          "goodsId": 30,
-          "amount": 4
-        },
-        {
-          "goodsId": 31,
-          "amount": 2
-        },
-        {
-          "goodsId": 52,
-          "amount": 2
-        }
-      ],
-      "requiredInnovation": 1013,
-      "craftDays": 1.0
-    },
-    {
-      "recipeId": "craft_bronze_armor",
-      "outputKind": 1,
-      "outputGoodsId": 7,
-      "outputAmount": 2.0,
-      "inputs": [
-        {
-          "goodsId": 56,
-          "amount": 2
-        }
-      ],
-      "requiredInnovation": 1014,
-      "craftDays": 1.0
+     "goodsId": 55,
+     "amount": 0.2
     }
-  ]
+   ],
+   "process": 1,
+   "requiredInnovation": 201,
+   "craftDays": 0.5,
+   "recipeId": "alloy_bronze",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 31,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 1.0
+    }
+   ],
+   "process": 8,
+   "requiredInnovation": 2072,
+   "craftDays": 0.25,
+   "recipeId": "craft_processed_wood",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 52,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 50,
+     "amount": 1.0
+    }
+   ],
+   "process": 1,
+   "requiredInnovation": 202,
+   "craftDays": 0.5,
+   "requiredBuilding": 200,
+   "recipeId": "smelt_iron",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 53,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 51,
+     "amount": 1.0
+    }
+   ],
+   "process": 1,
+   "requiredInnovation": 201,
+   "craftDays": 0.5,
+   "recipeId": "smelt_copper",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 55,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 54,
+     "amount": 1.0
+    }
+   ],
+   "process": 1,
+   "requiredInnovation": 201,
+   "craftDays": 0.5,
+   "recipeId": "smelt_tin",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 57,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 52,
+     "amount": 1.0
+    },
+    {
+     "goodsId": 14,
+     "amount": 0.2
+    }
+   ],
+   "process": 4,
+   "requiredInnovation": 203,
+   "craftDays": 0.75,
+   "recipeId": "make_steel",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 12,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 11,
+     "amount": 1.0
+    }
+   ],
+   "process": 5,
+   "requiredInnovation": 204,
+   "craftDays": 0.5,
+   "recipeId": "weave_cotton",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 14,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 1.0
+    }
+   ],
+   "process": 8,
+   "requiredInnovation": 900,
+   "craftDays": 0.25,
+   "recipeId": "charcoal_burn",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 70,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 56,
+     "amount": 1.0
+    }
+   ],
+   "process": 2,
+   "requiredInnovation": 201,
+   "craftDays": 0.5,
+   "recipeId": "forge_weapon_goods",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 71,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 56,
+     "amount": 1.0
+    }
+   ],
+   "process": 2,
+   "requiredInnovation": 201,
+   "craftDays": 0.5,
+   "recipeId": "forge_armor_goods",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 100,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 0,
+     "amount": 1.0
+    }
+   ],
+   "process": 0,
+   "requiredInnovation": 903,
+   "craftDays": 0.1,
+   "recipeId": "mill_wheat",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 101,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 10,
+     "amount": 1.0
+    }
+   ],
+   "process": 0,
+   "requiredInnovation": 903,
+   "craftDays": 0.1,
+   "recipeId": "mill_rice",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 120,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 110,
+     "amount": 1.0
+    }
+   ],
+   "process": 5,
+   "requiredInnovation": 204,
+   "craftDays": 0.5,
+   "recipeId": "weave_linen",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 121,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 112,
+     "amount": 1.0
+    }
+   ],
+   "process": 6,
+   "requiredInnovation": 947,
+   "craftDays": 0.5,
+   "recipeId": "make_papyrus",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 122,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 111,
+     "amount": 1.0
+    }
+   ],
+   "process": 5,
+   "requiredInnovation": 2224,
+   "craftDays": 0.25,
+   "recipeId": "weave_reed_mat",
+   "outputKind": 0,
+   "displayName": ""
+  },
+  {
+   "outputGoodsId": 13,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 130,
+     "amount": 1.0
+    }
+   ],
+   "process": 7,
+   "craftDays": 0.5,
+   "recipeId": "tan_hide",
+   "outputKind": 0,
+   "displayName": "",
+   "requiredInnovation": 1009
+  },
+  {
+   "outputGoodsId": 141,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 140,
+     "amount": 1.0
+    }
+   ],
+   "process": 0,
+   "craftDays": 1.0,
+   "recipeId": "fire_pottery",
+   "outputKind": 0,
+   "displayName": "",
+   "requiredInnovation": 200
+  },
+  {
+   "outputGoodsId": 142,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 40,
+     "amount": 1.0
+    }
+   ],
+   "process": 0,
+   "craftDays": 1.0,
+   "recipeId": "burn_lime",
+   "outputKind": 0,
+   "displayName": "",
+   "requiredInnovation": 2073
+  },
+  {
+   "outputGoodsId": 143,
+   "outputAmount": 1.0,
+   "inputs": [
+    {
+     "goodsId": 40,
+     "amount": 1.0
+    },
+    {
+     "goodsId": 14,
+     "amount": 0.25
+    }
+   ],
+   "process": 0,
+   "craftDays": 1.0,
+   "recipeId": "melt_glass",
+   "outputKind": 0,
+   "displayName": "",
+   "requiredInnovation": 935
+  },
+  {
+   "recipeId": "craft_bronze_ge",
+   "outputKind": 1,
+   "outputGoodsId": 4,
+   "outputAmount": 0.5,
+   "inputs": [
+    {
+     "goodsId": 56,
+     "amount": 0.5
+    }
+   ],
+   "requiredInnovation": 201,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_bronze_spear",
+   "outputKind": 1,
+   "outputGoodsId": 10,
+   "outputAmount": 0.5,
+   "inputs": [
+    {
+     "goodsId": 56,
+     "amount": 0.5
+    }
+   ],
+   "requiredInnovation": 201,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_bronze_sword",
+   "outputKind": 1,
+   "outputGoodsId": 11,
+   "outputAmount": 0.6,
+   "inputs": [
+    {
+     "goodsId": 56,
+     "amount": 0.6
+    }
+   ],
+   "requiredInnovation": 201,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_bronze_arrowhead",
+   "outputKind": 1,
+   "outputGoodsId": 12,
+   "outputAmount": 0.1,
+   "inputs": [
+    {
+     "goodsId": 56,
+     "amount": 0.1
+    }
+   ],
+   "requiredInnovation": 201,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_iron_sword",
+   "outputKind": 1,
+   "outputGoodsId": 5,
+   "outputAmount": 0.6,
+   "inputs": [
+    {
+     "goodsId": 52,
+     "amount": 0.6
+    }
+   ],
+   "requiredInnovation": 202,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_iron_spear",
+   "outputKind": 1,
+   "outputGoodsId": 13,
+   "outputAmount": 0.5,
+   "inputs": [
+    {
+     "goodsId": 52,
+     "amount": 0.5
+    }
+   ],
+   "requiredInnovation": 202,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_iron_saber",
+   "outputKind": 1,
+   "outputGoodsId": 14,
+   "outputAmount": 0.6,
+   "inputs": [
+    {
+     "goodsId": 52,
+     "amount": 0.6
+    }
+   ],
+   "requiredInnovation": 202,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_trebuchet",
+   "outputKind": 1,
+   "outputGoodsId": 1,
+   "outputAmount": 2.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 2
+    },
+    {
+     "goodsId": 40,
+     "amount": 1
+    }
+   ],
+   "requiredInnovation": 305,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_matchlock",
+   "outputKind": 1,
+   "outputGoodsId": 2,
+   "outputAmount": 0.5,
+   "inputs": [
+    {
+     "goodsId": 52,
+     "amount": 0.5
+    },
+    {
+     "goodsId": 30,
+     "amount": 0.5
+    }
+   ],
+   "requiredInnovation": 307,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_bombard",
+   "outputKind": 1,
+   "outputGoodsId": 3,
+   "outputAmount": 2.0,
+   "inputs": [
+    {
+     "goodsId": 52,
+     "amount": 2
+    },
+    {
+     "goodsId": 40,
+     "amount": 1
+    }
+   ],
+   "requiredInnovation": 308,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_dugout",
+   "outputKind": 1,
+   "outputGoodsId": 100,
+   "outputAmount": 2.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 2
+    }
+   ],
+   "requiredInnovation": 400,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_square_sail_ship",
+   "outputKind": 1,
+   "outputGoodsId": 101,
+   "outputAmount": 4.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 4
+    },
+    {
+     "goodsId": 31,
+     "amount": 2
+    },
+    {
+     "goodsId": 12,
+     "amount": 2
+    }
+   ],
+   "requiredInnovation": 401,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_oar_sail_ship",
+   "outputKind": 1,
+   "outputGoodsId": 102,
+   "outputAmount": 4.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 4
+    },
+    {
+     "goodsId": 31,
+     "amount": 1
+    }
+   ],
+   "requiredInnovation": 402,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_compass",
+   "outputKind": 1,
+   "outputGoodsId": 103,
+   "outputAmount": 0.1,
+   "inputs": [
+    {
+     "goodsId": 60,
+     "amount": 0.1
+    },
+    {
+     "goodsId": 30,
+     "amount": 0.2
+    }
+   ],
+   "requiredInnovation": 403,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_lateen_ship",
+   "outputKind": 1,
+   "outputGoodsId": 104,
+   "outputAmount": 4.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 4
+    },
+    {
+     "goodsId": 12,
+     "amount": 2
+    }
+   ],
+   "requiredInnovation": 404,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_ocean_cargo",
+   "outputKind": 1,
+   "outputGoodsId": 105,
+   "outputAmount": 6.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 6
+    },
+    {
+     "goodsId": 31,
+     "amount": 3
+    },
+    {
+     "goodsId": 12,
+     "amount": 3
+    }
+   ],
+   "requiredInnovation": 405,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_gunport_warship",
+   "outputKind": 1,
+   "outputGoodsId": 106,
+   "outputAmount": 8.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 8
+    },
+    {
+     "goodsId": 31,
+     "amount": 4
+    },
+    {
+     "goodsId": 52,
+     "amount": 1
+    }
+   ],
+   "requiredInnovation": 406,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_wheeled_cart",
+   "outputKind": 1,
+   "outputGoodsId": 8,
+   "outputAmount": 2.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 2
+    },
+    {
+     "goodsId": 31,
+     "amount": 1
+    }
+   ],
+   "requiredInnovation": 807,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_ram_ship",
+   "outputKind": 1,
+   "outputGoodsId": 107,
+   "outputAmount": 6.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 6
+    },
+    {
+     "goodsId": 52,
+     "amount": 1
+    }
+   ],
+   "requiredInnovation": 1007,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_leather_armor",
+   "outputKind": 1,
+   "outputGoodsId": 6,
+   "outputAmount": 2.0,
+   "inputs": [
+    {
+     "goodsId": 13,
+     "amount": 2
+    }
+   ],
+   "requiredInnovation": 1010,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_solid_wheel_cart",
+   "outputKind": 1,
+   "outputGoodsId": 8,
+   "outputAmount": 2.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 2
+    },
+    {
+     "goodsId": 31,
+     "amount": 2
+    }
+   ],
+   "requiredInnovation": 1011,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_spoked_chariot",
+   "outputKind": 1,
+   "outputGoodsId": 9,
+   "outputAmount": 3.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 3
+    },
+    {
+     "goodsId": 31,
+     "amount": 2
+    },
+    {
+     "goodsId": 52,
+     "amount": 1
+    }
+   ],
+   "requiredInnovation": 1012,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_two_horse_chariot",
+   "outputKind": 1,
+   "outputGoodsId": 200,
+   "outputAmount": 4.0,
+   "inputs": [
+    {
+     "goodsId": 30,
+     "amount": 4
+    },
+    {
+     "goodsId": 31,
+     "amount": 2
+    },
+    {
+     "goodsId": 52,
+     "amount": 2
+    }
+   ],
+   "requiredInnovation": 1013,
+   "craftDays": 1.0
+  },
+  {
+   "recipeId": "craft_bronze_armor",
+   "outputKind": 1,
+   "outputGoodsId": 7,
+   "outputAmount": 2.0,
+   "inputs": [
+    {
+     "goodsId": 56,
+     "amount": 2
+    }
+   ],
+   "requiredInnovation": 1014,
+   "craftDays": 1.0
+  }
+ ]
 }

@@ -231,3 +231,13 @@
 - 修正 6 处跨时代前置（爆破采矿改 era5、待客礼/财产观念改挂珠饰交换、口述谱系去前置、书吏培养改 era2 挂文字）。
 - 验证：`EXIT=0`、1043 例、1034 通过、0 失败、零 `error CS`。
 - 下一步：M2 法律/法令与建筑/单位/配方接线。
+
+## 10. M2 实施记录（2026-11-14）
+
+- 法律 50/50、法令 2/2 全部有 `requiredInnovationIds`；tier1 用开端节点，tier2+ 至少一条。
+- 开国基础制度知识 7 条，写入新政权，避免“开国无任何惯例可推行”。
+- 建筑新增 `requiredInnovation` 字段并接入 `CanBuildBuilding`（直接掌握或 unlockRefs 两条路径）；29/29 映射。
+- 单位 14/14、配方 43/43、加工货物 10 条、宗教 44/44 接通；原料保留显式默认。
+- 新增 `LawInnovationGateTests`（5）、`ContentInnovationGateAuditTests`（6）；`LawContentJsonTests` 不再复制革新 id。
+- 验证：`EXIT=0`、1054 例、1045 通过、0 失败、零 `error CS`。
+- 下一步：M3 社会实践池/灵感/掌握链路。

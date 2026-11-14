@@ -44,6 +44,10 @@ public static class StateFormationHost
 			stateReligionId = -1
 		};
 		world.realms[realmId] = realm;
+		foreach (int innovationId in StateFormationSystem.FoundingKnowledge)
+		{
+			world.Innovations?.GrantInnovation(realmId, innovationId);
+		}
 
 		// 领土：聚落地块 + 少量同省无主邻地；不吞并其他聚落。
 		List<int> claimed = new List<int>();

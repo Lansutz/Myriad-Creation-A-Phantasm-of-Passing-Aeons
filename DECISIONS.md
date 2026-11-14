@@ -1283,3 +1283,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **审计**：新增 `InnovationCatalogAuditTests` 4 例——总数 ≥420、每领域 ≥10、era5 ≥30、来源非空且不含“待补”、前置 DAG 无环、ID/名称唯一。
 - **前置修正**：`InnovationSystemTests` 的“前置时代不得晚于本条目”暴露 6 处跨时代前置（爆破采矿、待客礼、财产观念、口述谱系、神庙学校、宫廷学校、书吏培养），已逐条改挂更早节点或调整时代。
 - 验证：全量 EditMode `EXIT=0`、1043 例、1034 通过、0 失败、零 `error CS`（9 个 Explicit 跳过）。
+
+## D147 P9.2 全系统革新接线（2026-11-14）
+
+- **法律/法令 100% 门槛**：50 条法律、2 条法令全部有 `requiredInnovationIds`。tier1 用开端节点（习惯法、军队编制、城市特许状、祭司阶层、祖先记忆、领土主权、文书行政），tier2+ 至少一条；行政/财政类用簿籍、上计、财政署、度量衡等。
+- **开国基础制度知识**：`StateFormationSystem.FoundingKnowledge = {习惯法, 军队编制, 城市特许状, 祭司阶层, 祖先记忆, 领土主权, 文书行政}`，建国时写入新政权；否则开国当天连部族惯例都不可推行。
+- **建筑门槛真正生效**：`BuildingContentDef/BuildingDef` 新增 `requiredInnovation`，29 条建筑全部映射（农田→刀耕火种、粮仓→谷仓、铁匠铺→块炼铁、银行→银行业、要塞→棱堡等）；`BuildingSystem.CanBuildBuilding` 同时接受“直接掌握”与“unlockRefs 指向该建筑”两条等价路径。
+- **单位/配方/货物/宗教**：单位 14/14、配方 43/43、加工货物（铁/铜/青铜/钢/面粉/麻布/纸/苇席/陶器/玻璃）已挂门槛，原料保留 `-1` 显式默认可用；宗教 44/44（根信仰→祭祀神学，教派→正统教义）。修掉锡矿引用的悬空革新 1104。
+- **测试**：`LawInnovationGateTests`（5）、`ContentInnovationGateAuditTests`（6）；`LawContentJsonTests` 不再复制革新 id，JSON 为唯一来源。
+- 验证：全量 EditMode `EXIT=0`、1054 例、1045 通过、0 失败、零 `error CS`（9 个 Explicit 跳过）。

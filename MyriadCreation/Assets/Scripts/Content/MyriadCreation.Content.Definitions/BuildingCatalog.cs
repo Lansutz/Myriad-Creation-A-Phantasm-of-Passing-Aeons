@@ -31,6 +31,9 @@ public sealed class BuildingContentDef
 	public int buildDays;
 
 	public float maintenanceCost;
+
+	/// <summary>建造门槛：政权须已掌握该革新；0 表示无门槛（仅代码兜底表使用）。</summary>
+	public int requiredInnovation;
 }
 
 /// <summary>
@@ -79,7 +82,8 @@ public static class BuildingCatalog
 				buildCost = def.buildCost,
 				materialCost = materials,
 				buildDays = def.buildDays > 0 ? def.buildDays : Math.Max(10, def.tier * 10),
-				maintenanceCost = def.maintenanceCost
+				maintenanceCost = def.maintenanceCost,
+				requiredInnovation = def.requiredInnovation
 			};
 		}
 	}

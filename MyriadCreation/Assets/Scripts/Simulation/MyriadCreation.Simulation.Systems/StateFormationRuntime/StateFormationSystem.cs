@@ -26,6 +26,12 @@ public static class StateFormationSystem
 	/// <summary>地区仓储至少要能覆盖人口 180 天口粮，才有多余养活脱产者。</summary>
 	public const int RequiredSurplusDays = 180;
 
+	/// <summary>
+	/// 开国共同体已经具备的基础制度知识（习惯法、军队编制、城市特许、祭司阶层、祖先记忆、领土主权、文书行政）。
+	/// 没有这份底子，新政权连最基础的部族惯例都无法推行；它们不是研究奖励，而是开国时的既有社会能力。
+	/// </summary>
+	public static readonly int[] FoundingKnowledge = { 2064, 995, 994, 2110, 2151, 958, 822 };
+
 	private const float PersonFoodPerDay = 0.01f;
 
 	public static bool MonthlyTick(GameWorld world)
