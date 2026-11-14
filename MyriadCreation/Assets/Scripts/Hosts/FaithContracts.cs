@@ -286,9 +286,17 @@ public sealed class FaithContracts : IFaithQuery, IFaithCommand
 			reason = "政权不存在";
 			return false;
 		}
-		if (faithId >= 0 && GetFaith(faithId) == null)
+		FaithSystem faith = faithId >= 0 ? GetFaith(faithId) : null;
+		if (faithId >= 0 && faith == null)
 		{
 			reason = "信仰不存在：" + faithId;
+			return false;
+		}
+		if (faith != null && faith.religionId >= 0
+			&& !ReligionCatalog.IsAvailable(faith.religionId,
+				id => _world.Innovations != null && _world.Innovations.HasInnovation(realmId, id)))
+		{
+			reason = "缺少该宗教的前置革新";
 			return false;
 		}
 		realm.stateReligionId = faithId;

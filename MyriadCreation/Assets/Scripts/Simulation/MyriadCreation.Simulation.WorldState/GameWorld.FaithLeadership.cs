@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using MyriadCreation.Content.Definitions;
+using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.ContentHost;
 using MyriadCreation.Simulation.Faith;
@@ -53,6 +54,67 @@ public partial class GameWorld
 			faith.highPriestCharacterId = replacement;
 			CharacterData chosen = _characterManager.GetCharacter(replacement);
 			_chronicle?.Add("religion", (chosen != null ? chosen.fullName : "某人") + " 出任" + faith.faithName + "的宗教领袖", true);
+		}
+	}
+
+	/// <summary>
+	/// 国教确立：政权尚无国教时，按核心领土人口的信仰多数（≥40%）选一个；
+	/// 该信仰所属 religion 必须已满足革新前置，否则继续维持无国教状态。
+	/// </summary>
+	public bool TryAdoptMajorityFaithForRealm(int realmId)
+	{
+		if (realms == null || !realms.TryGetValue(realmId, out RealmData realm) || realm == null) return false;
+		if (realm.stateReligionId >= 0 || tiles == null) return false;
+		List<int> core = new List<int>(realm.coreTiles);
+		if (core.Count == 0) return false;
+
+		Dictionary<int, float> tally = new Dictionary<int, float>();
+		float total = 0f;
+		foreach (int tileIndex in core)
+		{
+			if (tileIndex < 0 || tileIndex >= tiles.Length) continue;
+			if (tiles[tileIndex].populationBlocks == null) continue;
+			foreach (PopulationBlock block in tiles[tileIndex].populationBlocks)
+			{
+				if (block.count <= 0f || block.faithId < 0) continue;
+				tally.TryGetValue(block.faithId, out float count);
+				tally[block.faithId] = count + block.count;
+				total += block.count;
+			}
+		}
+		if (total <= 0f) return false;
+
+		int bestFaith = -1;
+		float bestCount = 0f;
+		foreach (KeyValuePair<int, float> pair in tally)
+		{
+			if (pair.Value > bestCount || (pair.Value == bestCount && pair.Key < bestFaith))
+			{
+				bestCount = pair.Value;
+				bestFaith = pair.Key;
+			}
+		}
+		if (bestFaith < 0 || bestCount / total < 0.4f) return false;
+
+		FaithSystem faith = GetFaithSystem(bestFaith);
+		if (faith == null) return false;
+		if (faith.religionId >= 0 && !ReligionCatalog.IsAvailable(faith.religionId,
+			id => _innovationTree != null && _innovationTree.HasInnovation(realmId, id)))
+		{
+			return false;
+		}
+		if (!FaithCommand.SetStateReligion(realmId, bestFaith, out _)) return false;
+		_chronicle?.Add("religion", realm.realmName + " 以" + faith.faithName + "为国教", true, realmId);
+		return true;
+	}
+
+	private void AdoptMajorityFaithDaily()
+	{
+		if (realms == null) return;
+		foreach (RealmData realm in realms.Values)
+		{
+			if (realm == null || realm.stateReligionId >= 0) continue;
+			TryAdoptMajorityFaithForRealm(realm.realmId);
 		}
 	}
 

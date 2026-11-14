@@ -176,6 +176,7 @@ public partial class GameWorld : MonoBehaviour
 		GenerateInitialUnits(seed);
 		ClearInitialTerrainDirty();
 		SettlementPopulationSystem.RecomputeAll(this);
+		SeedFolkFaith();
 		BuildPreloadPlan();
 		// P5：生成期不再造宫廷、不再填官职。官职只在政权出现后由每日 offices tick 按制度门槛补缺。
 		Knowledge.EnsureCapacity(tiles?.Length ?? 0);
@@ -209,6 +210,26 @@ public partial class GameWorld : MonoBehaviour
 		var hydrology = new MyriadCreation.World.Hydrology.HydrologySystem(mapWidth, mapHeight, config.wrapX);
 		hydrology.Run(elevation, land, MyriadCreation.World.Terrain.PlanetTerrainGenerator.ResolveRiverThreshold(mapWidth, mapHeight, 80f));
 		hydrology.ApplyToTiles(tiles);
+	}
+
+	/// <summary>世界生成时给尚未持有信仰的人口一个默认民间信仰；国教由运行时按多数与革新门槛确立。</summary>
+	private void SeedFolkFaith()
+	{
+		int folkFaith = MyriadCreation.Content.Definitions.ReligionCatalog.GetDefaultFolkReligionId();
+		if (folkFaith < 0 || tiles == null) return;
+		for (int i = 0; i < tiles.Length; i++)
+		{
+			if (tiles[i].populationBlocks == null) continue;
+			for (int b = 0; b < tiles[i].populationBlocks.Count; b++)
+			{
+				PopulationBlock block = tiles[i].populationBlocks[b];
+				if (block.faithId < 0)
+				{
+					block.faithId = folkFaith;
+					tiles[i].populationBlocks[b] = block;
+				}
+			}
+		}
 	}
 
 	private void ClampFertilityToCurrentClimate()

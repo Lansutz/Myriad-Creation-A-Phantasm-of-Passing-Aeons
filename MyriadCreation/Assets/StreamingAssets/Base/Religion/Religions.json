@@ -922,12 +922,26 @@
    "school": "mana 非人格化超自然力（前泛灵论——无神祇无人格化）",
    "worldview": "mana",
    "founder": "",
-   "requiredInnovations": [
-    2057
-   ],
+   "requiredInnovations": [],
    "selectedDoctrines": [],
    "liturgicalLanguage": "",
-   "scripturalLanguage": ""
+   "scripturalLanguage": "",
+   "isFolkDefault": false
+  },
+  {
+   "religionId": 601,
+   "religionName": "民间信仰",
+   "parentReligionId": 600,
+   "schoolParentId": -1,
+   "nodeType": 1,
+   "hasSuccession": false,
+   "rites": "",
+   "school": "",
+   "requiredInnovations": [],
+   "selectedDoctrines": [],
+   "liturgicalLanguage": "",
+   "scripturalLanguage": "",
+   "isFolkDefault": true
   }
  ]
 }

@@ -297,7 +297,12 @@ namespace MyriadCreation.Tests.EditMode
         public void EveryFaith_IsAttachedToDenomination_OfItsReligion()
         {
             var world = NewWorld();
-            Assert.AreEqual(22, world.FaithSystems.Count, "当前内容：22 条 faith 建运行态");
+            int expectedFaiths = 0;
+            foreach (var def in MyriadCreation.Content.Definitions.ReligionCatalog.All.Values)
+            {
+                if (def.nodeType == MyriadCreation.Content.Definitions.ReligionNodeType.Succession) expectedFaiths++;
+            }
+            Assert.AreEqual(expectedFaiths, world.FaithSystems.Count, "每个 Succession 节点应建一条 faith 运行态");
 
             foreach (var faith in world.FaithSystems)
             {

@@ -148,6 +148,30 @@ public static class ReligionCatalog
 		return DoctrineDivergence.Calculate(a, b, options);
 	}
 
+	/// <summary>默认民间信仰 id；内容未标时回退为无前置的根宗教，最后回退 -1。</summary>
+	public static int GetDefaultFolkReligionId()
+	{
+		int fallbackFaith = -1;
+		int fallbackReligion = -1;
+		foreach (var pair in All)
+		{
+			ReligionDef def = pair.Value;
+			if (def == null) continue;
+			if (def.isFolkDefault) return pair.Key;
+			if (def.nodeType == ReligionNodeType.Succession
+				&& (def.requiredInnovations == null || def.requiredInnovations.Count == 0)
+				&& fallbackFaith < 0)
+			{
+				fallbackFaith = pair.Key;
+			}
+			if (def.nodeType == ReligionNodeType.Religion && fallbackReligion < 0)
+			{
+				fallbackReligion = pair.Key;
+			}
+		}
+		return fallbackFaith >= 0 ? fallbackFaith : fallbackReligion;
+	}
+
 	public static bool IsAvailable(int religionId, Func<int, bool> hasInnovation)
 	{
 		ReligionDef religionDef = Get(religionId);

@@ -168,3 +168,11 @@
 - 存档：实践池、环境压力/死因、城市建立/死亡/改道计数入档；`SaveSystemRoundTripTests` 逐字段断言。
 - 测试：`PracticeCoverageTests` 2 例；全量 `EXIT=0`、1075 例、1065 通过。
 - 下一步：P10.3 宗教链裁决与接线。
+
+## 9. P10.3 实施记录（2026-11-14）
+
+- 内容：`isFolkDefault` + 601 民间信仰（faith 层，无门槛）；600 原始崇拜同步无门槛；生成期播种。
+- 运行时：`TryAdoptMajorityFaithForRealm`（≥40% 多数 + 门槛）挂 `faith.adoption.daily`；`SetStateReligion` 校验 `ReligionCatalog.IsAvailable`。
+- 教义绑定沿用 `DoctrineBindings`（已有 option→binding 映射）。
+- 测试：`ReligionAdoptionTests` 3 例；全量 `EXIT=0`、1078 例、1068 通过。
+- 下一步：P10.4 城市化非农条件与批处理口径。

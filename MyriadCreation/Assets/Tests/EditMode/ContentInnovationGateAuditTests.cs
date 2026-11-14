@@ -145,6 +145,8 @@ namespace MyriadCreation.Tests.EditMode
             var problems = new List<string>();
             foreach (var def in wrapper.religions)
             {
+                // 600/601 是默认民间信仰层：世界开始时人口与政权就要能持有它，故显式不设门槛。
+                if (def.religionId == 600 || def.religionId == 601) continue;
                 if (def.requiredInnovations == null || def.requiredInnovations.Count == 0)
                 {
                     problems.Add("宗教 " + def.religionId + " " + def.religionName + " 缺革新门槛");

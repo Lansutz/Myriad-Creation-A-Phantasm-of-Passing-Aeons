@@ -1331,3 +1331,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **存档闭合**：`InnovationTreeSaveData.realmPractice` 保存政权实践池；`HabitationSiteSaveData` 保存环境压力与衰退原因；`SaveData` 保存城市建立/死亡/改道计数与最近死因。`SaveSystemRoundTripTests` 增加逐字段断言。
 - 测试：`PracticeCoverageTests` 2 例（26 领域均有实践、可立项列表遵守实践门槛）；保存往返测试通过。
 - 验证：全量 EditMode `EXIT=0`、1075 例、1065 通过、0 失败、零 `error CS`（10 个 Explicit 跳过）。
+
+## D152 P10.3 宗教链运行时接线（2026-11-14）
+
+- **默认民间信仰**：内容新增 `ReligionDef.isFolkDefault`；新增 faith 层 `601 民间信仰`（parent 600，Succession，无革新门槛），宗教层 `600 原始崇拜` 同步无门槛。世界生成时 `SeedFolkFaith` 把未持有信仰的人口写为 601。
+- **国教确立**：新增 `faith.adoption.daily` → `TryAdoptMajorityFaithForRealm`：政权无国教时，按核心领土人口信仰多数（≥40%）选择，且该信仰所属 religion 必须 `ReligionCatalog.IsAvailable`（革新门槛）。确立时写编年史。
+- **门槛真正生效**：`FaithContracts.SetStateReligion` 现在检查 `ReligionCatalog.IsAvailable(faith.religionId, hasInnovation)`；缺前置时返回“缺少该宗教的前置革新”。
+- **教义绑定**：沿用既有 `DoctrineBindings`（教会性别/婚姻、葬礼、同性/通奸/巫术伦理等 option→binding 映射），内容 `selectedDoctrines` 已能驱动；本次只补“国教路径”这一处断链。
+- 测试：`ReligionAdoptionTests` 3 例（民间信仰内容标记与生成播种、多数确立国教、缺革新拒绝/授权后通过）；`ContentInnovationGateAuditTests` 与 `FaithPersistenceTests` 适配新增 faith。
+- 验证：全量 EditMode `EXIT=0`、1078 例、1068 通过、0 失败、零 `error CS`（10 个 Explicit 跳过）。

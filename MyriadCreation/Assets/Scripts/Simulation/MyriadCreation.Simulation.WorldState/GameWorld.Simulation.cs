@@ -1007,6 +1007,11 @@ public partial class GameWorld : MonoBehaviour
 		{
 			EnsureFaithLeadership();
 		});
+		// 国教确立：新政权按核心人口多数与宗教革新前置选择国教；只对尚无国教的政权生效。
+		_simulationScheduler.Register("faith.adoption.daily", SimulationCadence.Daily, 39, (SimulationTickContext _) =>
+		{
+			AdoptMajorityFaithDaily();
+		});
 		// 信息滞后：非本政权人物超过 3 年无接触则从"已知"移除。
 		_simulationScheduler.Register("knowledge.decay.monthly", SimulationCadence.Monthly, 44, (SimulationTickContext _) =>
 		{

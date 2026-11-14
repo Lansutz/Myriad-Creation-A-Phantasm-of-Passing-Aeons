@@ -41,6 +41,9 @@ public class ReligionDef
 
 	public bool orthodoxy = true;
 
+	/// <summary>默认民间信仰：世界生成时人口先持有它，国教尚未确立时各政权共享的底层崇拜。</summary>
+	public bool isFolkDefault;
+
 	public List<string> virtues = new List<string>();
 
 	public List<string> sins = new List<string>();
