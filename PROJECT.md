@@ -268,3 +268,4 @@
 - 2026-11-14 **P10.1 验收闭环**：研究日结按 `deltaDays` 折算（修复 1/90 速度的批处理 bug）；平民补入 8 个领域的日常实践源；AI 选题优先补齐空白领域。200 年 128×64 世界 26/26 领域均有完成项（939 项）。验证：`EXIT=0`、1081 例、1070 通过、零 warning。详见 D156。
 - 2026-11-14 **A1/A2 切片：存档层去 Faith 依赖**：`FaithSaveData` 进 `Save.Contracts`，信仰/宗派映射迁入 `Simulation.FaithSaveMapping`，`Save.Runtime.asmdef` 移除 `MyriadCreation.Faith`；存档格式不变。验证：`EXIT=0`、1081 例、1070 通过。详见 D157。
 - 2026-11-14 **A1/A2 切片：存档层去 Culture 依赖**：`CultureSaveData` 进 `Save.Contracts`，映射迁 `Simulation.CultureSaveMapping`，`Save.Runtime.asmdef` 移除 `MyriadCreation.Culture`；JSON 形状不变。验证：`EXIT=0`、1082 例、1071 通过。详见 D158。
+- 2026-11-14 **A2/A3 存档层三段拆分**：`Save.Runtime` 只留 Core + Save.Contracts（零领域引用），领域捕获与映射集中到 `Save.World`。验证：`EXIT=0`、1082 例、1071 通过。详见 D159。

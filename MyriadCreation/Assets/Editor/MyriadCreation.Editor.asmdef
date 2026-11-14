@@ -10,7 +10,8 @@
         "MyriadCreation.UI",
         "UnityEngine.UI",
         "Unity.TextMeshPro",
-        "MyriadCreation.Save.Runtime"
+        "MyriadCreation.Save.Runtime",
+        "MyriadCreation.Save.World"
     ],
     "includePlatforms": [
         "Editor"

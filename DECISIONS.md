@@ -1398,3 +1398,13 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **引用收窄**：`Save.Runtime.asmdef` 移除 `MyriadCreation.Culture`；剩 Core / Save.Contracts / Content / World / Simulation。
 - **测试**：`CultureSaveMappingTests` 做 JSON 往返逐字段断言。
 - 验证：全量 EditMode `EXIT=0`、1082 例、1071 通过、0 失败、11 Explicit、零 warning/error CS。
+
+## D159 A2/A3 收口：存档层拆为 Contracts / Runtime / World（2026-11-14）
+
+- **三段分工**：
+  - `Save.Contracts`：文件 schema（纯 DTO，只依赖 Core）；
+  - `Save.Runtime`：槽位与纯策略，`references = Core + Save.Contracts`，**不再引用任何领域程序集**（含 Audio/Faith/Culture/World/Simulation）；
+  - `Save.World`：领域捕获层（`SaveSystem` 与各 `*Persistence`/`*SaveData` 映射器），显式引用 Content/World/Simulation。
+- **迁移**：12 个领域感知文件 + `SaveSlotService`/`RelationPersistencePolicy` 从 `SaveRuntime/` 移到 `SaveWorld/`；`App/Editor/Tests` 补 `MyriadCreation.Save.World` 引用。
+- **诚实口径**：这是"文件 IO 与领域捕获"分离，尚未把捕获器折进 `Simulation`（A2 的最终形态）；`Save.World` 仍是领域感知适配层，不冒充"捕获器已归领域"。
+- 验证：全量 EditMode `EXIT=0`、1082 例、1071 通过、0 失败、11 Explicit、零 warning/error CS；`Save.Runtime.asmdef` 仅剩 Core + Save.Contracts。

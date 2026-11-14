@@ -223,7 +223,7 @@
 - `FaithSaveData` 字段迁 `Save.Contracts`；映射器迁 `Simulation.WorldState.FaithSaveMapping`；删除 `Save.Runtime` 的 `FaithPersistence` / `DenominationPersistence` / 旧 DTO。
 - `Save.Runtime.asmdef` 去掉 `MyriadCreation.Faith` 后编译通过；存档字段与 JSON 形状不变，`SaveVersion` 不变。
 - 第二批（§15）：文化 DTO 分离，`Save.Runtime` 去掉 `Culture`。
-- 剩余引用 World/Simulation/Content 仍未收口，属 A2/A3 后续批次。
+- 第三批（§16）：存档层拆为 Contracts/Runtime/World，`Save.Runtime` 引用只剩 Core + Save.Contracts。
 - 验证：`EXIT=0`、1081 例、1070 通过、0 失败、零 warning CS。
 
 ## 15. A1/A2 第二切片：Culture 映射器回迁（2026-11-14）
@@ -231,4 +231,11 @@
 - `CultureSaveData`（含继承法/官衔快照）进 `Save.Contracts`，字段名与旧 JSON 一致；映射器 `Simulation.WorldState.CultureSaveMapping`。
 - `GameWorld.CaptureCultures/RestoreCultures` 收口；`Save.Runtime.asmdef` 去掉 `MyriadCreation.Culture` 后编译通过。
 - 测试：`CultureSaveMappingTests` JSON 往返逐字段断言。
+- 验证：`EXIT=0`、1082 例、1071 通过、0 失败、零 warning CS。
+
+## 16. A2/A3：存档层三段拆分（2026-11-14）
+
+- `Save.Runtime`：槽位/纯策略，引用仅 Core + Save.Contracts（零领域引用）——A3 判据达成。
+- `Save.World`：`SaveSystem` 与各持久化映射器，显式引用 Content/World/Simulation；仍是领域感知适配层。
+- 未做：把捕获器折进 `Simulation`（A2 最终形态）；`Save.Version` 未变。
 - 验证：`EXIT=0`、1082 例、1071 通过、0 失败、零 warning CS。

@@ -14,7 +14,8 @@
         "MyriadCreation.Settings",
         "MyriadCreation.Audio",
         "MyriadCreation.Save.Runtime",
-        "MyriadCreation.Simulation.Hosts"
+        "MyriadCreation.Simulation.Hosts",
+        "MyriadCreation.Save.World"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
