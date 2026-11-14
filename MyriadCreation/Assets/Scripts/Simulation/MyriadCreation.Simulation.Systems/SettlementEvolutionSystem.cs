@@ -61,11 +61,66 @@ public static class SettlementEvolutionSystem
 		settlement.cityForm = SettlementTypologySystem.DeriveCityForm(tile, settlement);
 		settlement.primaryFunction = SettlementFunction.Administrative;
 		if (world.FirstCityYear < 0) world.FirstCityYear = world.currentYear;
+		world.CityFoundedCount++;
 		world.GetChronicle()?.Add(
 			"settlement_urbanized",
 			$"{settlement.settlementName} 由村镇发展为城市（人口约 {Mathf.RoundToInt(population)}）",
 			true);
 		return true;
+	}
+
+	/// <summary>城市在缺水后维持多久才判衰退：3 年，给季节河/短期干旱留恢复窗口。</summary>
+	public const int EnvironmentalCollapseDays = 3 * 365;
+
+	/// <summary>
+	/// 环境压力：聚落周边没有河流/海岸水体可依赖时，人口越大越撑不住；水源恢复则压力回退。
+	/// 返回是否达到衰退阈值。
+	/// </summary>
+	public static bool ApplyEnvironmentalPressure(GameWorld world, SettlementData settlement, int deltaDays)
+	{
+		if (world?.tiles == null || settlement == null || settlement.IsRuined) return false;
+		int support = CountWaterSupport(world.tiles, world.mapWidth, world.mapHeight, settlement.tileIndex, 2);
+		bool needsWater = settlement.population >= 200f || settlement.settlementForm == SettlementForm.City;
+		// 多年干旱：灾害系统压低土壤湿度与降水，即使河道还在，土地也养不起人。
+		TileData site = settlement.tileIndex >= 0 && settlement.tileIndex < world.tiles.Length
+			? world.tiles[settlement.tileIndex]
+			: default;
+		bool droughtStressed = site.soilHumidityPct < 12f && site.annualPrecipMm < 400f;
+		if (needsWater && (support == 0 || droughtStressed))
+		{
+			settlement.environmentalPressureDays += Mathf.Max(1, deltaDays);
+		}
+		else
+		{
+			settlement.environmentalPressureDays = Mathf.Max(0, settlement.environmentalPressureDays - Mathf.Max(1, deltaDays) * 2);
+		}
+		if (settlement.environmentalPressureDays >= EnvironmentalCollapseDays)
+		{
+			settlement.lastDeclineCause = "water_loss";
+			return true;
+		}
+		return false;
+	}
+
+	/// <summary>半径内的河流/海岸水体数量；河道与海洋都算水源。</summary>
+	public static int CountWaterSupport(TileData[] tiles, int width, int height, int tileIndex, int radius)
+	{
+		if (tiles == null || tileIndex < 0 || tileIndex >= tiles.Length) return 0;
+		int cx = tileIndex % width;
+		int cy = tileIndex / width;
+		int count = 0;
+		for (int y = cy - radius; y <= cy + radius; y++)
+		{
+			for (int x = cx - radius; x <= cx + radius; x++)
+			{
+				if (x < 0 || x >= width || y < 0 || y >= height) continue;
+				TileData tile = tiles[y * width + x];
+				if (!tile.exists) continue;
+				if (tile.isRiver) count++;
+				else if (!tile.isLand && tile.oceanTier != GameEnums.OceanTier.Land) count++;
+			}
+		}
+		return count;
 	}
 
 	public static void DailyTick(GameWorld world)

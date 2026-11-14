@@ -248,6 +248,12 @@ public partial class GameWorld : MonoBehaviour
 	/// <summary>第一座城市出现的年份；-1=尚未出现。观测值，不是时间门禁。</summary>
 	public int FirstCityYear = -1;
 
+	/// <summary>观测计数：城市建立/衰亡次数与最近一次衰亡原因。</summary>
+	public int CityFoundedCount;
+	public int RiverAvulsionCount;
+	public int CityCollapsedCount;
+	public string LastCityDeclineCause = string.Empty;
+
 	/// <summary>第一个政权出现的年份；-1=尚未出现。观测值，不是时间门禁。</summary>
 	public int FirstRealmYear = -1;
 

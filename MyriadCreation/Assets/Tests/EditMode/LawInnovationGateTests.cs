@@ -4,6 +4,7 @@ using MyriadCreation.Content.Definitions;
 using MyriadCreation.Simulation.ContentHost;
 using MyriadCreation.Simulation.LawHost;
 using MyriadCreation.Simulation.Laws;
+using MyriadCreation.Simulation.State;
 
 namespace MyriadCreation.Tests.EditMode
 {
@@ -104,6 +105,25 @@ namespace MyriadCreation.Tests.EditMode
                 }
             }
             Assert.IsEmpty(problems, string.Join("\n", problems));
+        }
+
+        [Test]
+        public void LawEnactment_ChangesWithInnovationOwnership()
+        {
+            LawDef law = null;
+            foreach (LawDef candidate in AllLaws())
+            {
+                if (candidate.lawId == "tax_standard") { law = candidate; break; }
+            }
+            Assert.IsNotNull(law);
+            var state = new RealmLawState();
+
+            Assert.IsFalse(LawAndDecreeSystem.CanEnactLaw(law, state, 1000f, 100f, 80f, 0.5f,
+                new List<int>(), out string reason), "没有革新时不应可选");
+            StringAssert.Contains("革新", reason);
+
+            Assert.IsTrue(LawAndDecreeSystem.CanEnactLaw(law, state, 1000f, 100f, 80f, 0.5f,
+                law.requirements.requiredInnovationIds, out reason), "掌握所需革新后应可推行：" + reason);
         }
 
         [Test]

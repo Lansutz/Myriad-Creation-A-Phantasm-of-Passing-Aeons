@@ -37,6 +37,12 @@ public class PlanetTerrainGenerator
 
 	public float RiverThreshold = 80f;
 
+	/// <summary>河网阈值随地图面积缩放：小图要有河，大图不能被短沟渠淹没。</summary>
+	public static float ResolveRiverThreshold(int width, int height, float baseThreshold)
+	{
+		return Mathf.Clamp((float)(width * height) / 1024f, 3f, 80f);
+	}
+
 	public bool UseMultithreading = true;
 
 	public PlanetTerrainGenerator(int seed = 42)
@@ -218,9 +224,11 @@ public class PlanetTerrainGenerator
 		oceanCurrentSimulator.ApplyCoastalEffects(tiles, array);
 		Debug.Log((object)"[PlanetTerrainGenerator] 洋流模拟完成");
 		HydrologySystem hydrologySystem = new HydrologySystem(width, height);
-		hydrologySystem.Run(rawElevation, array, RiverThreshold);
+		// 河网阈值随地图面积缩放：固定 80 在 48×24 这类小图上要求 13% 陆地汇水，实际一条河都出不来。
+		float riverThreshold = ResolveRiverThreshold(width, height, RiverThreshold);
+		hydrologySystem.Run(rawElevation, array, riverThreshold);
 		hydrologySystem.ApplyToTiles(tiles);
-		Debug.Log((object)$"[PlanetTerrainGenerator] 水文模拟完成：河流{hydrologySystem.GetRiverTileCount()}地块，最大等级={hydrologySystem.GetMaxStreamOrder()}");
+		Debug.Log((object)$"[PlanetTerrainGenerator] 水文模拟完成：河流{hydrologySystem.GetRiverTileCount()}地块，最大等级={hydrologySystem.GetMaxStreamOrder()}，阈值={riverThreshold:F1}");
 		TerrainPCA terrainPCA = new TerrainPCA(width, height);
 		terrainPCA.Run(rawElevation, array);
 		Debug.Log((object)$"[PlanetTerrainGenerator] PCA地形特征完成：大陆主轴=({terrainPCA.ContinentPrincipalAxis.x:F2}, {terrainPCA.ContinentPrincipalAxis.y:F2})");

@@ -144,6 +144,12 @@ public class SettlementData : HabitationSite, ISerializationCallbackReceiver
 	/// <summary>连续低人口/无守军/无驻军的日数；达到阈值后废弃为营地（P1.1 废弃端口）。</summary>
 	public int abandonmentPressureDays;
 
+	/// <summary>环境压力天数：河流改道/水源消失后累计，达阈值即衰退。</summary>
+	public int environmentalPressureDays;
+
+	/// <summary>最近一次衰退原因（water_loss / population_loss）。</summary>
+	public string lastDeclineCause = string.Empty;
+
 	/// <summary>被敌方军事占领的连续天数；达到阈值触发毁灭/废墟（P1.1 毁灭端口）。</summary>
 	public int occupationPressureDays;
 

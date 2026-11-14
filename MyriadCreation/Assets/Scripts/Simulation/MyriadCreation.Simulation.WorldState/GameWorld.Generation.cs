@@ -192,6 +192,25 @@ public partial class GameWorld : MonoBehaviour
 	/// 生成期的肥力在 GCM/破碎化之前写入，气候重算后若不夹取，会出现“沙漠地块肥力 0.87、潜力 0.13”。
 	/// 只下调不回升，火山灰/建筑增肥仍由运行时恢复逻辑维护。
 	/// </summary>
+	/// <summary>
+	/// 以当前高程/海陆重算河网：河序与水力几何字段由 HydrologySystem 写回。
+	/// 破碎化/地形编辑之后必须重跑，否则旧河道会落在海里或断头。
+	/// </summary>
+	private void RebuildRiverNetwork()
+	{
+		if (tiles == null) return;
+		float[] elevation = new float[tiles.Length];
+		bool[] land = new bool[tiles.Length];
+		for (int i = 0; i < tiles.Length; i++)
+		{
+			elevation[i] = tiles[i].elevation01;
+			land[i] = tiles[i].isLand;
+		}
+		var hydrology = new MyriadCreation.World.Hydrology.HydrologySystem(mapWidth, mapHeight, config.wrapX);
+		hydrology.Run(elevation, land, MyriadCreation.World.Terrain.PlanetTerrainGenerator.ResolveRiverThreshold(mapWidth, mapHeight, 80f));
+		hydrology.ApplyToTiles(tiles);
+	}
+
 	private void ClampFertilityToCurrentClimate()
 	{
 		if (tiles == null) return;
@@ -215,9 +234,10 @@ public partial class GameWorld : MonoBehaviour
 		}
 		_worldMapSimulation?.MarkAllTerrainDirty(tiles.Length);
 		SimulationScheduler.MarkDirty("world.terrain");
-		new TerrainGenerator(seed).TrackRivers(tiles);
+		RebuildRiverNetwork();
 		// 初始开图也应用破碎化（task-42）：必须在省份/聚落/初始单位生成之前完成，下游按最终海陆生成。
 		ApplyInitialSeaLandFragmentation(0f);
+		RebuildRiverNetwork();
 		ClampFertilityToCurrentClimate();
 		ClearInitialTerrainDirty();
 	}
@@ -400,10 +420,11 @@ public partial class GameWorld : MonoBehaviour
 		{
 			RegionalTerrainShaper.Apply(tiles, mapWidth, mapHeight, GenConfig.RegionalEdge, GenConfig.RegionalEdgeFalloff, GenConfig.SeaLevel);
 		}
-		new TerrainGenerator(seed).TrackRivers(tiles);
+		RebuildRiverNetwork();
 		// 初始开图也应用破碎化（task-42）：在此之后才生成政权/省份/聚落/初始单位，下游按最终海陆生成。
 		// 传生成器使用中的 GlobalTempOffset，保证破碎化后补算的温度与主生成同口径（task-51）。
 		ApplyInitialSeaLandFragmentation(_planetTerrainGenerator.GlobalTempOffset);
+		RebuildRiverNetwork();
 		ClampFertilityToCurrentClimate();
 		_worldMapSimulation?.MarkAllTerrainDirty(tiles.Length);
 		SimulationScheduler.MarkDirty("world.terrain");

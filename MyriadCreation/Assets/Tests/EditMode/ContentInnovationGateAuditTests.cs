@@ -4,7 +4,10 @@ using System.IO;
 using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Content.Definitions;
+using MyriadCreation.Core.Data;
 using MyriadCreation.Simulation.ContentHost;
+using MyriadCreation.Simulation.State;
+using MyriadCreation.Simulation.Systems;
 
 namespace MyriadCreation.Tests.EditMode
 {
@@ -150,6 +153,18 @@ namespace MyriadCreation.Tests.EditMode
                 foreach (int id in def.requiredInnovations) AssertResolves(problems, "宗教 " + def.religionId, id);
             }
             Assert.IsEmpty(problems, string.Join("\n", problems));
+        }
+
+        [Test]
+        public void BuildingAvailability_ChangesWithInnovation()
+        {
+            var tiles = new[] { new TileData { exists = true, isLand = true, ownerRealmId = 1 } };
+            var system = new BuildingSystem(tiles) { Innovations = new InnovationTree() };
+            var realm = new RealmData { realmId = 1, treasury = 10000f };
+
+            Assert.IsFalse(system.CanBuildBuilding(0, 100, 1, realm), "未掌握革新时建筑应锁定");
+            system.Innovations.GrantInnovation(1, 100);
+            Assert.IsTrue(system.CanBuildBuilding(0, 100, 1, realm), "掌握后建筑应可选");
         }
 
         [Test]

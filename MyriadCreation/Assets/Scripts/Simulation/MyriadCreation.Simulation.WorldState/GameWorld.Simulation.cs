@@ -603,7 +603,7 @@ public partial class GameWorld : MonoBehaviour
 		_hydraulicErosion.WrapX = config.wrapX;
 		_hydraulicErosion.Run(array, array2);
 		_hydraulicErosion.ApplyToTiles(tiles, array);
-		new TerrainGenerator(randomSeed).TrackRivers(tiles);
+		RebuildRiverNetwork();
 		// 水文重算改写了全表高程：直接做一次 WMS 全量重算并清 dirty（task-55），不要沿用 MarkAllTerrainDirty。
 		// 否则首个 Daily tick 会用已设置的 _cachedSeaThreshold 对全表再跑一次增量重算（二次减阈值/改写海陆，
 		// 与 task-42/49 的初始开图隐患同类）。WMS.RecalculateAll 内部依次走 BeforeFullRecalculate（同步 seed）→
@@ -888,6 +888,16 @@ public partial class GameWorld : MonoBehaviour
 		PopulationSchedule.Register(_simulationScheduler, PopulationTick);
 		PoliticsSchedule.Register(_simulationScheduler, _politicsSimulationSystem);
 		// 每日推进"正在推行"的法律：到期才固化（旧法在此之前始终有效）。
+		// 河流改道：每年最多一次，概率由汇流/坡度决定；旧河道断流后由聚落环境压力接管衰退。
+		_simulationScheduler.Register("hydrology.avulsion.yearly", SimulationCadence.LongTerm, 9, delegate
+		{
+			if (tiles == null) return;
+			if (MyriadCreation.World.Hydrology.RiverAvulsion.TryAnnualAvulsion(tiles, mapWidth, mapHeight, randomSeed, currentYear, out int oldTile, out int newTile))
+			{
+				RiverAvulsionCount++;
+				GetChronicle()?.Add("river_avulsion", $"河流改道：地块 {oldTile} 断流，新河道出现在 {newTile}", true);
+			}
+		});
 		_simulationScheduler.Register("laws.pending.daily", SimulationCadence.Daily, 26, delegate
 		{
 			TickPendingLawsDaily();

@@ -1312,3 +1312,13 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **河网审计**：新增 `RiverNetworkAudit.CountRiverTilesWithoutOutlet`，可检查断头河段。
 - 测试：`WaterwayTests` 8 例（水体分类、可通航、`TerrainConditions` 同源、水力字段生产者、路线方式、水路效率、孤立河段、汇流河序）。
 - 验证：全量 EditMode `EXIT=0`、1066 例、1057 通过、0 失败、零 `error CS`（9 个 Explicit 跳过）。
+
+## D150 P9.5 河流改道与城市兴衰（2026-11-14）
+
+- **河网终于在生产链里活下来**：`PlanetTerrainGenerator` 算出的河被旧 `TerrainGenerator.TrackRivers` 全表清零重画，真实世界长期是 0 条河。现在改为 `RebuildRiverNetwork()` 按当前高程/海陆重跑水文，并在破碎化之后再跑一次；阈值按地图面积缩放（`max(3, area/1024)`），小图也能成河。
+- **河网字段**：`ApplyToTiles` 写回河序、汇流面积、宽/深/流速（Leopold & Maddock 水力几何），供可通行与河运使用。
+- **改道机制**：`RiverAvulsion` 按汇流量/坡度算年风险（上限 0.08），触发时废弃该段与相邻 1–2 段河道，在 2 格外最低旱地开新道；每年最多一次，编年史记 `river_avulsion`，`RiverAvulsionCount` 观测计数。
+- **城市衰退**：聚落周边（半径 1）没有河流/海岸水源，或多年干旱（土壤湿度 <12 且降水 <400mm）时累计环境压力；满 3 年判衰退，降级为营地，编年史记死因；城市死亡计入 `CityCollapsedCount` 与 `LastCityDeclineCause`。
+- **观测**：500 年诊断（128×64、90 天/tick）中改道 51 次，6 座城市失去水源、环境压力达 990/1095 天；城市建立 263 座。
+- 测试：`CityDeclineTests` 4 例（改道断流换道、缺水跨阈值、有水回退、干旱即使有河也衰退）；`WaterwayTests` 8 例。
+- 验证：全量 EditMode `EXIT=0`、1070 例、1061 通过、0 失败、零 `error CS`（9 个 Explicit 跳过）；7000 年观测：48×24 默认观测（90 天/tick、7000 年）：firstCity=109、firstRealm=109、建城 30、城市死亡 0、改道 0——该尺寸地图没有成河，环境链不触发；128×64 的 500 年诊断中改道 51 次、6 城失水、压力 990/1095 天，机制在默认尺寸上成立。

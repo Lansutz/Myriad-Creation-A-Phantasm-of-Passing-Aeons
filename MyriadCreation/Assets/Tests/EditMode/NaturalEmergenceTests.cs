@@ -376,6 +376,37 @@ TestContext.WriteLine($"Y{year} pop{pop:F0} agri{AgricultureYield.Compute(tile):
             Assert.Pass();
         }
 
+        [Test]
+        [Explicit("河流/城市动力学诊断，默认套件不跑")]
+        [Timeout(1800000)]
+        public void Diagnose_RiverAndCityDynamics()
+        {
+            var world = NewWorld(4242, 128, 64);
+            world.daysPerTick = 90;
+            int initialRivers = 0, initialHigh = 0;
+            foreach (TileData tile in world.tiles) { if (!tile.isRiver) continue; initialRivers++; if (tile.riverStreamOrder >= 2) initialHigh++; }
+            TestContext.WriteLine($"DIAG0 rivers={initialRivers} order2={initialHigh}");
+            for (int year = 0; year < 500; year++) world.RunDiagnosticDays(world.calendar.daysPerYear);
+            int rivers = 0, highOrder = 0, noWater = 0;
+            foreach (TileData tile in world.tiles)
+            {
+                if (!tile.isRiver) continue;
+                rivers++;
+                if (tile.riverStreamOrder >= 2) highOrder++;
+            }
+            int maxPressure = 0;
+            int cityNoWater = 0;
+            foreach (SettlementData settlement in world.settlements.Values)
+            {
+                if (settlement.IsRuined) continue;
+                int support = SettlementEvolutionSystem.CountWaterSupport(world.tiles, world.mapWidth, world.mapHeight, settlement.tileIndex, 1);
+                if (support == 0) { noWater++; if (settlement.settlementForm == SettlementForm.City) cityNoWater++; }
+                if (settlement.environmentalPressureDays > maxPressure) maxPressure = settlement.environmentalPressureDays;
+            }
+            TestContext.WriteLine($"DIAG rivers={rivers} order2={highOrder} avulsions={world.RiverAvulsionCount} settlements={world.settlements.Count} noWater={noWater} cityNoWater={cityNoWater} maxPressure={maxPressure} cities={world.CityFoundedCount} collapsed={world.CityCollapsedCount} firstCity={world.FirstCityYear} firstRealm={world.FirstRealmYear}");
+            Assert.Pass();
+        }
+
         /// <summary>
         /// P8.1 观测：默认世界以 daysPerTick 批处理长跑，记录第一座城市与第一个政权出现的年份。
         /// 年份是涌现结果，不是门槛或配置常量；断言只要求机制在观测窗口内确实产生了城市与政权。
@@ -386,9 +417,9 @@ TestContext.WriteLine($"Y{year} pop{pop:F0} agri{AgricultureYield.Compute(tile):
         public void NaturalLongRun_ObservesFirstCityAndRealmYears()
         {
             var world = NewWorld(4242, 48, 24);
-            world.daysPerTick = 30;
+            world.daysPerTick = 90;
             const int windowYears = 7000;
-            while (world.currentYear < windowYears && (world.FirstCityYear < 0 || world.FirstRealmYear < 0))
+            while (world.currentYear < windowYears)
             {
                 world.RunDiagnosticDays(world.calendar.daysPerYear);
             }
@@ -398,7 +429,7 @@ TestContext.WriteLine($"Y{year} pop{pop:F0} agri{AgricultureYield.Compute(tile):
             {
                 if (!settlement.IsRuined && settlement.settlementForm == SettlementForm.City) cities++;
             }
-            TestContext.WriteLine($"OBS firstCity={world.FirstCityYear} firstRealm={world.FirstRealmYear} worldYear={world.currentYear} settlements={world.settlements.Count} cities={cities} realms={world.realms.Count}");
+            TestContext.WriteLine($"OBS firstCity={world.FirstCityYear} firstRealm={world.FirstRealmYear} worldYear={world.currentYear} settlements={world.settlements.Count} cities={cities} realms={world.realms.Count} founded={world.CityFoundedCount} collapsed={world.CityCollapsedCount} avulsions={world.RiverAvulsionCount} lastCause={world.LastCityDeclineCause}");
 
             Assert.GreaterOrEqual(world.FirstCityYear, 0, "观测窗口内应出现第一座城市");
             Assert.GreaterOrEqual(world.FirstRealmYear, 0, "观测窗口内应出现第一个政权");

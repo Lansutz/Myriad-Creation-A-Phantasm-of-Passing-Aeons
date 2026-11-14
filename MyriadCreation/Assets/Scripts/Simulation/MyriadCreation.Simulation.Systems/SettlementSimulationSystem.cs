@@ -137,6 +137,13 @@ public sealed class SettlementSimulationSystem
 			{
 				settlement.abandonmentPressureDays = 0;
 			}
+			// 环境压力：河流改道/水源消失后，周边没有水体可依赖的聚落会逐日失血，满 3 年判衰退。
+			if (SettlementEvolutionSystem.ApplyEnvironmentalPressure(_world, settlement, context.deltaDays))
+			{
+				settlement.abandonmentPressureDays = 0;
+				toAbandon.Add(settlement);
+				continue;
+			}
 			float gain = 0.02f + Mathf.Clamp(settlement.population / 5000f, 0f, 1f) * 0.08f;
 			// 开发度来自持续建设劳动：人口越多，日常营建把聚落开发度推得越快；不再只减不增。
 			settlement.development += gain * context.deltaDays * 0.01f;
@@ -161,9 +168,16 @@ public sealed class SettlementSimulationSystem
 		{
 			string name = settlement.settlementName;
 			int anchorId = settlement.anchorId;
+			bool wasCity = settlement.settlementForm == SettlementForm.City;
+			string cause = string.IsNullOrEmpty(settlement.lastDeclineCause) ? "人口流失" : settlement.lastDeclineCause;
 			if (_evolutionRuntime.DegradeSettlementToCamp(anchorId) != null)
 			{
-				_world.GetChronicle()?.Add("settlement_abandoned", name + " 因人口流失废弃为营地", true);
+				if (wasCity)
+				{
+					_world.CityCollapsedCount++;
+					_world.LastCityDeclineCause = cause;
+				}
+				_world.GetChronicle()?.Add("settlement_abandoned", name + " 废弃为营地（" + cause + "）", true);
 			}
 		}
 	}
