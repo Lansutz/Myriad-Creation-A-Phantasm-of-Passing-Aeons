@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
@@ -145,6 +145,11 @@ public sealed class SettlementSimulationSystem
 			if (!SettlementTypologySystem.IsConstructionReady(settlement))
 			{
 				continue;
+			}
+			// 村镇→城市：人口/开发/市场/剩余到位才转形态；不读年份。
+			if (settlement.settlementForm == SettlementForm.Village)
+			{
+				SettlementEvolutionSystem.TryUrbanize(_world, settlement);
 			}
 			if (SettlementTypologySystem.CanLevelUp(settlement, out _))
 			{

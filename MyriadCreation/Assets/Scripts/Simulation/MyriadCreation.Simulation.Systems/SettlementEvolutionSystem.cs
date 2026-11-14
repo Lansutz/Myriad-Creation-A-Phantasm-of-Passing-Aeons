@@ -19,6 +19,55 @@ public static class SettlementEvolutionSystem
 
 	public const int FORTIFIED_CAMP_TO_FORT_POP = 100;
 
+	/// <summary>村镇进入城市形态的人口门槛。</summary>
+	public const float CITY_POPULATION_THRESHOLD = 1200f;
+
+	/// <summary>村镇进入城市形态的开发度门槛。</summary>
+	public const float CITY_DEVELOPMENT_THRESHOLD = 20f;
+
+	/// <summary>城市必须能养活脱产者：地区仓储至少覆盖人口 180 天口粮。</summary>
+	public const int CITY_SURPLUS_DAYS = 180;
+
+	private const float PERSON_FOOD_PER_DAY = 0.01f;
+
+	/// <summary>
+	/// 村镇→城市：人口、开发、市场、营建与粮食剩余都到位才转形态，不读世界/聚落年龄。
+	/// 城市形态是分工与行政剩余的结果，出现年份只作观测。
+	/// </summary>
+	public static bool TryUrbanize(GameWorld world, SettlementData settlement)
+	{
+		if (world == null || settlement == null) return false;
+		if (settlement.IsRuined || settlement.siteMode != SiteMode.SedentarySettlement) return false;
+		if (settlement.settlementForm == SettlementForm.City) return false;
+		if (settlement.tileIndex < 0 || settlement.tileIndex >= world.tiles.Length) return false;
+
+		TileData tile = world.tiles[settlement.tileIndex];
+		if (!tile.exists || !tile.isLand) return false;
+
+		float population = Mathf.Max(settlement.population, PopulationLedger.Total(tile));
+		if (population < CITY_POPULATION_THRESHOLD) return false;
+		if (settlement.development < CITY_DEVELOPMENT_THRESHOLD) return false;
+
+		// 没有市场就没有稳定的分工与交换；市场是“城市”而非“大村庄”的机制标志。
+		if (!settlement.hasMarket && settlement.market == null) return false;
+
+		// 营建到位才谈得上城墙/街区/公共建筑；未完工的村镇不升级形态。
+		if (!SettlementTypologySystem.IsConstructionReady(settlement)) return false;
+
+		float required = population * PERSON_FOOD_PER_DAY * CITY_SURPLUS_DAYS;
+		if (StateFormationSystem.EdibleStock(world, tile.regionId) < required) return false;
+
+		settlement.settlementForm = SettlementForm.City;
+		settlement.cityForm = SettlementTypologySystem.DeriveCityForm(tile, settlement);
+		settlement.primaryFunction = SettlementFunction.Administrative;
+		if (world.FirstCityYear < 0) world.FirstCityYear = world.currentYear;
+		world.GetChronicle()?.Add(
+			"settlement_urbanized",
+			$"{settlement.settlementName} 由村镇发展为城市（人口约 {Mathf.RoundToInt(population)}）",
+			true);
+		return true;
+	}
+
 	public static void DailyTick(GameWorld world)
 	{
 		if (world?.Camps == null)

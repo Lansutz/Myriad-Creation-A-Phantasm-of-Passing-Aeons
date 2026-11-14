@@ -1260,3 +1260,17 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - 测试：`GameCalendarTests`（4）、`SimulationSchedulerCadenceTests`（4，含 30/90/365 跳日）、`CalendarIntegrationTests`（2 + 100 年 Explicit：365 与 360 天两套各 100 年）。
 - 验证：全量 EditMode `EXIT=0`、1035 例、1026 通过、0 失败、零 `error CS`（9 个 Explicit 跳过）；100 年双历法回归通过（81.1s）。
 - 说明：5000–7000 年不作为时间门禁；P8.1 的城市/政权只由机制涌现，该区间是文献校准带（Zeder 2011、Çatalhöyük 7400–5600 cal BC、Uruk 晚第五至第四千年、Yoffee 2005、Trigger 2003 等，见 P8 计划 §6）。
+
+## D145 P8.1 城市与政权的机制涌现（2026-11-14）
+
+- **取消年份门禁**：`StateFormationSystem` 删除 `MinSettlementAgeYears` 与 `ageDays` 检查，不再读世界/聚落年龄；门槛只剩可指认的物质条件：城市形态、人口 ≥800、开发 ≥15、地区仓储 ≥180 天口粮；`MaxRealms=8` 仍是实体规模上限。
+- **城市形态在既有系统内完善**：不新建系统，`SettlementEvolutionSystem.TryUrbanize` 负责村镇→城市；条件为定居、人口 ≥1200、开发 ≥20、有市场、营建就绪、地区可食库存 ≥人口×180 天。成立时写编年史 `settlement_urbanized`，并记录 `FirstCityYear` 观测值。
+- **世界生成不再预置城市**：`AnchorGenerator` 的省中心与港口由 `SettlementForm.City` 改回默认村镇；城市必须由机制在运行时出现（此前 P7.0 让每个省治开局即城市，等于绕过整条演化链）。
+- **政权形成也去年龄化**：`StateFormationHost` 记录 `FirstRealmYear`；建国仍由 `StateFormationHost` 创建开国首领与 Household（既有 P5 设计），首领不是额外数值门槛。
+- **批处理等价性**：`EconomyManager.DailyTick(int days)` 按实际跨天数缩放产粮/资源产出、口粮与盐消费、腐损（`(1-日损)^days`）；`EconomySchedule` 传 `context.deltaDays`。贸易发车与商队移动仍按 tick，标为已知近似。
+- **诊断推进语义修正**：`RunDiagnosticDays(n)` 现在推进恰好 n 天（内部 `ceil(n/daysPerTick)` 个 tick），此前 `daysPerTick>1` 时会把一次调用当成一天、实际推进 n×daysPerTick 天。
+- **观测而非配置**：新增 Explicit 测试 `NaturalLongRun_ObservesFirstCityAndRealmYears`，48×24、seed 4242、`daysPerTick=30`、窗口 7000 年，输出 `firstCity/firstRealm` 年份。
+- **观测结果**：`firstCity=109`、`firstRealm=109`（worldYear=109，58 聚落、2 城、1 政权）。原因可指认：默认世界开局即为有市场的定居村镇（人口数百、开发 20–50），距 1200 人城市只差约一世纪的人口增长；5000–7000 年是“从采集基线到城市”的文献校准带，本作当前开局已跳过采集阶段。
+- 测试：`SettlementUrbanizationTests` 4 例；`NaturalEmergenceTests.TooYoungSettlement_DoesNotFormRealm` 改为 `ZeroAgeCity_CanFormRealm`；旧的“100 年内无政权”断言随年份门一并删除。
+- 验证：全量 EditMode `EXIT=0`、1039 例、1030 通过、0 失败、零 `error CS`（9 个 Explicit 跳过）；7000 年观测窗口在 109 年即满足城市与政权，长跑 4.3s。
+- 欠账：市场目前只在生成期置位、运行时没有“市场涌现”机制；开局村镇的初始开发度仍是生成常量。把开局改为营地/游群基线、让市场随人口与交换涌现，是逼近文献校准带的正路。

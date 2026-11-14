@@ -132,8 +132,13 @@ public class EconomyManager
 		}
 	}
 
-	public void DailyTick()
+	/// <summary>
+	/// 经济日步。days 为该 tick 实际跨越的天数：长周期批处理时按天数缩放产粮/消费/损耗，
+	/// 使一次调用等价于连续推进 days 天（贸易发车与商队移动仍按 tick 走，属已知近似）。
+	/// </summary>
+	public void DailyTick(int days = 1)
 	{
+		float span = Mathf.Max(1, days);
 		if (_storageUpdateDay < 0 || _storageUpdateDay >= 30)
 		{
 			UpdateStorageCapacities();
@@ -143,15 +148,15 @@ public class EconomyManager
 		{
 			_storageUpdateDay++;
 		}
-		ProduceResources();
+		ProduceResources(span);
 		UpdateAllSupplyDemand();
 		EnsureTradeRoutes();
 		CalculateAllRouteEfficiency();
 		InitiateTrades();
 		MoveCaravans();
-		ProcessConsumption();
+		ProcessConsumption(span);
 		_currency.DailyTick();
-		ProcessShelfLife();
+		ProcessShelfLife(span);
 	}
 
 	/// <summary>
@@ -184,14 +189,14 @@ public class EconomyManager
 						{
 							continue;
 						}
-						float accepted = tradeCenter.AddGoodsReturningAccepted(resource.goodsId, resource.EffectiveOutput);
+						float accepted = tradeCenter.AddGoodsReturningAccepted(resource.goodsId, resource.EffectiveOutput * days);
 						if (accepted > 0f) produced++;
 					}
 				}
 				float cropYield = AgricultureYield.Compute(tile);
 				if (cropYield > 0f)
 				{
-					float accepted = AddEdibleReturningAccepted(tradeCenter, AgricultureYield.FoodGoodsId, cropYield);
+					float accepted = AddEdibleReturningAccepted(tradeCenter, AgricultureYield.FoodGoodsId, cropYield * days);
 					if (accepted > 0f) produced++;
 				}
 				float meatYield = EcosystemSystem.Harvest(ref tile, days);
@@ -654,7 +659,7 @@ public class EconomyManager
 		_edibleGoods.Sort();
 	}
 
-	private void ProcessConsumption()
+	private void ProcessConsumption(float days = 1f)
 	{
 		// 内容表/兜底表都可能在 EconomyManager 构造之后才补齐：惰性重建可食货列表。
 		if (_edibleGoods.Count == 0 && _goodsDefs != null && _goodsDefs.Count > 0)
@@ -689,8 +694,8 @@ public class EconomyManager
 			{
 				continue;
 			}
-			float amount = num * PersonFoodPerDay;
-			float amount2 = num * SaltPerPersonPerDay;
+			float amount = num * PersonFoodPerDay * days;
+			float amount2 = num * SaltPerPersonPerDay * days;
 			// 食物篮子：只吃 edible 货（小麦/肉/鱼/稻谷），盐与矿物即使同属 Food 类也不充饥。
 			float foodAvailable = 0f;
 			for (int g = 0; g < _edibleGoods.Count; g++)
@@ -746,7 +751,7 @@ public class EconomyManager
 		_tiles[tileIndex].order = Mathf.Max(0f, _tiles[tileIndex].order - FamineOrderPenalty);
 	}
 
-	private void ProcessShelfLife()
+	private void ProcessShelfLife(float days = 1f)
 	{
 		foreach (TradeCenter value2 in _tradeCenters.Values)
 		{
@@ -757,7 +762,7 @@ public class EconomyManager
 					float lossPerDay = value.shelfLifeDays > 0f
 						? 1f / value.shelfLifeDays
 						: Mathf.Max(0f, value.spoilagePerDay);
-					value2.inventory[item] *= Mathf.Max(0f, 1f - Mathf.Clamp01(lossPerDay));
+					value2.inventory[item] *= Mathf.Pow(Mathf.Max(0f, 1f - Mathf.Clamp01(lossPerDay)), days);
 					if (value2.inventory[item] < 0.01f)
 					{
 						value2.inventory.Remove(item);

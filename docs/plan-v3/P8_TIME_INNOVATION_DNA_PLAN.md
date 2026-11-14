@@ -82,12 +82,12 @@
 **设计**
 
 - 世界开局不是“已有城市”，而是**聚落谱系**：营地/村落 → 村镇 → 城市。开局生成的村庄保留，但“城市”是运行时事件。
-- 新增 `SettlementUrbanizationSystem`：
-  - 城市门槛只由机制决定：人口、开发、粮食剩余、建筑/设施、革新掌握、疾病/战争压力；**不读“世界年龄”作为开关**。
+- 城市形态在既有 `SettlementEvolutionSystem` 内完善（不另开新系统）：营地/村镇 → 城市是演化链的一段。
+  - 城市门槛只由机制决定：人口、开发、粮食剩余、建筑/设施、市场与分工；**不读“世界年龄/聚落年龄”作为开关**。
   - 聚落有真实的 `foundingTick`（营地演化/新定居点），城市是运行时事件，不是开局生成。
   - 政权形成同样只看机制条件（城市、人口、分工、剩余、行政/文字革新），不设固定年份。
   - 默认世界的人类基准**校准目标**：第一座城市约 5000–7000 年（可被物种寿命/繁殖率/环境改变），作为验收带，不是配置常量。
-- `StateFormationSystem` 去掉“聚落 ≥200 年”的硬年龄门；改为“聚落自身年龄（防瞬生）+ 人口/开发/仓储 + 革新掌握”。
+- `StateFormationSystem` 去掉“聚落 ≥200 年”的硬年龄门；改为城市形态 + 人口/开发/仓储剩余，不读任何年龄。
 - 城市出现必须写编年史与 UI 事件（“第一座城市”），便于观测与验收。
 
 **验收**
@@ -283,3 +283,16 @@
 - 测试：`GameCalendarTests`、`SimulationSchedulerCadenceTests`、`CalendarIntegrationTests`（含 365/360 各 100 年 Explicit）。
 - 验证：`EXIT=0`、1035 例、1026 通过、0 失败；双历法 100 年回归 81.1s。
 - 下一步：P8.1 取消年份门禁，改为机制涌现；用文献校准带观测第一座城市出现的年份。
+
+---
+
+## 8. P8.1 实施记录（2026-11-14）
+
+- 城市形态在既有 `SettlementEvolutionSystem.TryUrbanize` 内实现，不另开系统：人口 ≥1200、开发 ≥20、有市场、营建就绪、地区可食库存 ≥人口×180 天口粮；成立写编年史并记录 `FirstCityYear`。
+- `StateFormationSystem` 删除 200 年年龄门，只保留城市形态 + 人口 ≥800 + 开发 ≥15 + 180 天口粮；`StateFormationHost` 记录 `FirstRealmYear`。
+- `AnchorGenerator` 的省中心/港口改回村镇：城市必须运行时涌现，生成期不再预置。
+- `EconomyManager.DailyTick(days)` 按天数缩放产出/消费/腐损；`EconomySchedule` 传 `context.deltaDays`；贸易发车/商队移动仍按 tick（已知近似）。
+- `RunDiagnosticDays(n)` 语义修正为“恰好 n 天”，`daysPerTick` 由内部折算。
+- 观测测试：`NaturalLongRun_ObservesFirstCityAndRealmYears`（Explicit，48×24、seed 4242、`daysPerTick=30`、窗口 7000 年）。
+- 观测结果：`firstCity=109`、`firstRealm=109`。这是“开局即为有市场的定居村镇”的机制结果，不是年份门禁；5000–7000 年校准带对应“从采集基线到城市”，本作尚未从采集基线开局。
+- 保留的欠账：市场只有生成期置位、无运行时涌现；开局初始开发度仍是生成常量；把开局改为营地/游群基线是下一轮校准的正路。

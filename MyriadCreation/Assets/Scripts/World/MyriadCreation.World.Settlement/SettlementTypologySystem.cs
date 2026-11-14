@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.World.Hydrology;
@@ -196,7 +196,7 @@ public static class SettlementTypologySystem
 		return SettlementForm.Village;
 	}
 
-	private static CityForm DeriveCityForm(TileData tile, SettlementData settlement)
+	public static CityForm DeriveCityForm(TileData tile, SettlementData settlement)
 	{
 		if (settlement.portTier >= PortTier.RiverPort)
 		{

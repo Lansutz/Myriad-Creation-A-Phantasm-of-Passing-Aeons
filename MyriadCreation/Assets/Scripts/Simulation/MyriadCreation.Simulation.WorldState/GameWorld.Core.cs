@@ -245,6 +245,12 @@ public partial class GameWorld : MonoBehaviour
 
 	public int currentSeason;
 
+	/// <summary>第一座城市出现的年份；-1=尚未出现。观测值，不是时间门禁。</summary>
+	public int FirstCityYear = -1;
+
+	/// <summary>第一个政权出现的年份；-1=尚未出现。观测值，不是时间门禁。</summary>
+	public int FirstRealmYear = -1;
+
 	private float _tickTimer;
 
 	private Queue<GameEvent> _eventQueue = new Queue<GameEvent>();

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using MyriadCreation.Core.Data;
+using MyriadCreation.Core.Enums;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.WorldState;
@@ -11,15 +12,12 @@ namespace MyriadCreation.Simulation.Systems
 /// <summary>
 /// 政权自然形成的判定侧（P5.1）：只回答“哪个聚落/行为体已经具备建国的物质条件”，
 /// 不写世界状态；写入由 <see cref="StateFormationHost"/> 完成。
-/// 条件全部可指认：有人口、有开发、有多年积累、有 90 天以上的口粮剩余。
+/// 条件全部可指认：已是城市、有人口、有开发、有 180 天以上的口粮剩余；不读世界/聚落年龄。
 /// </summary>
 public static class StateFormationSystem
 {
 	/// <summary>世界尺度上限：防止小地图无限建国，也给长跑一个可预期的实体规模；不是经济/政治门槛。</summary>
 	public const int MaxRealms = 8;
-
-	/// <summary>聚落至少存在这么多年，才谈得上形成政权（P7：从 8 年拉到 200 年量级）。</summary>
-	public const int MinSettlementAgeYears = 200;
 
 	public const float MinSettlementPopulation = 800f;
 
@@ -54,10 +52,8 @@ public static class StateFormationSystem
 		TileData tile = world.tiles[settlement.tileIndex];
 		if (!tile.exists || !tile.isLand || tile.ownerRealmId >= 0) return false;
 
-		// foundingTick 用绝对日（calendar.AbsoluteDay），不能用 currentDay（它每年回绕到 1）。
-		int absoluteDay = world.calendar.AbsoluteDay(world.currentYear, world.currentDay);
-		int ageDays = absoluteDay - settlement.foundingTick;
-		if (ageDays < MinSettlementAgeYears * world.calendar.daysPerYear) return false;
+		// 没有城市形态就没有稳定的分工与行政剩余；城市本身由 SettlementEvolutionSystem 机制化涌现。
+		if (settlement.settlementForm != SettlementForm.City) return false;
 
 		float population = Mathf.Max(settlement.population, PopulationLedger.Total(tile));
 		if (population < MinSettlementPopulation) return false;

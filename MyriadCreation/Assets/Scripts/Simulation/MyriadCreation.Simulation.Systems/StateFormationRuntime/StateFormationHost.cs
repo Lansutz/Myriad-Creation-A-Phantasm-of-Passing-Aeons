@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Simulation.Culture;
@@ -77,6 +77,7 @@ public static class StateFormationHost
 			};
 		}
 
+		if (world.FirstRealmYear < 0) world.FirstRealmYear = world.currentYear;
 		world.NotifyRealmCreated();
 		world.GetChronicle()?.Add(
 			"state_formation",

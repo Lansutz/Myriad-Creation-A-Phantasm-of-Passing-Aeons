@@ -18,9 +18,9 @@ public static class EconomySchedule
 		{
 			throw new ArgumentNullException("economy");
 		}
-		scheduler.Register("economy.daily", SimulationCadence.Daily, 12, (SimulationTickContext _) =>
+		scheduler.Register("economy.daily", SimulationCadence.Daily, 12, (SimulationTickContext context) =>
 		{
-			economy.DailyTick();
+			economy.DailyTick(context.deltaDays);
 			events?.Publish(new EconomyDayTickedEvent(dayProvider?.Invoke() ?? 0));
 		});
 	}

@@ -64,7 +64,10 @@ namespace MyriadCreation.Tests.EditMode
             world.tiles[settlement.tileIndex] = tile;
             SettlementPopulationSystem.Recompute(world, settlement);
             settlement.development = 20f;
-            settlement.foundingTick = world.currentYear * 365 + world.currentDay - ageDays;
+            // P8.1：政权要求城市形态；测试直接给城市，不依赖 200 年年龄门。
+            settlement.settlementForm = SettlementForm.City;
+            settlement.hasMarket = true;
+            settlement.foundingTick = world.calendar.AbsoluteDay(world.currentYear, world.currentDay) - ageDays;
 
             int regionId = tile.regionId;
             if (world.tradeCenters.TryGetValue(regionId, out TradeCenter center))
@@ -126,16 +129,17 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(0, world.realms.Count);
         }
 
+        /// <summary>P8.1：取消年龄门后，刚出现（age=0）的城市只要物质条件齐备就能建国。</summary>
         [Test]
-        public void TooYoungSettlement_DoesNotFormRealm()
+        public void ZeroAgeCity_CanFormRealm()
         {
             var world = NewWorld();
             SettlementData settlement = FirstVillage(world);
             Assert.IsNotNull(settlement);
-            MakeEligible(world, settlement, ageDays: 365);
+            MakeEligible(world, settlement, ageDays: 0);
 
-            Assert.IsFalse(StateFormationSystem.MonthlyTick(world), "聚落存在不足 8 年不得建国");
-            Assert.AreEqual(0, world.realms.Count);
+            Assert.IsTrue(StateFormationSystem.MonthlyTick(world), "城市不应因“年龄不足”被挡在建国之外");
+            Assert.AreEqual(1, world.realms.Count);
         }
 
         [Test]
@@ -372,16 +376,32 @@ TestContext.WriteLine($"Y{year} pop{pop:F0} agri{AgricultureYield.Compute(tile):
             Assert.Pass();
         }
 
-        /// <summary>P7：建国周期拉到 200 年量级，100 年内默认世界不应出现政权。</summary>
+        /// <summary>
+        /// P8.1 观测：默认世界以 daysPerTick 批处理长跑，记录第一座城市与第一个政权出现的年份。
+        /// 年份是涌现结果，不是门槛或配置常量；断言只要求机制在观测窗口内确实产生了城市与政权。
+        /// </summary>
         [Test]
-        [Explicit("100 年无政权回归按需运行，默认套件不跑")]
-        [Timeout(1800000)]
-        public void NaturalHundredYears_NoRealmBeforeStateCycle()
+        [Explicit("7000 年观测长跑按需运行，默认套件不跑")]
+        [Timeout(3600000)]
+        public void NaturalLongRun_ObservesFirstCityAndRealmYears()
         {
             var world = NewWorld(4242, 48, 24);
-            for (int year = 0; year < 100; year++) world.RunDiagnosticDays(365);
+            world.daysPerTick = 30;
+            const int windowYears = 7000;
+            while (world.currentYear < windowYears && (world.FirstCityYear < 0 || world.FirstRealmYear < 0))
+            {
+                world.RunDiagnosticDays(world.calendar.daysPerYear);
+            }
 
-            Assert.AreEqual(0, world.realms.Count, "P7 建国周期下，100 年内不应出现政权");
+            int cities = 0;
+            foreach (SettlementData settlement in world.settlements.Values)
+            {
+                if (!settlement.IsRuined && settlement.settlementForm == SettlementForm.City) cities++;
+            }
+            TestContext.WriteLine($"OBS firstCity={world.FirstCityYear} firstRealm={world.FirstRealmYear} worldYear={world.currentYear} settlements={world.settlements.Count} cities={cities} realms={world.realms.Count}");
+
+            Assert.GreaterOrEqual(world.FirstCityYear, 0, "观测窗口内应出现第一座城市");
+            Assert.GreaterOrEqual(world.FirstRealmYear, 0, "观测窗口内应出现第一个政权");
         }
 
         /// <summary>

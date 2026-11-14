@@ -57,7 +57,8 @@ public class AnchorGenerator
 			{
 				num = value.centerTileIndex;
 			}
-			(AnchorData, SettlementData) tuple = CreatePair(ref nextId, key, num, SiteMode.SedentarySettlement, SettlementForm.City);
+			// 省中心也先以村镇出现：城市形态必须由人口/开发/市场/剩余机制涌现，不在生成期预置。
+			(AnchorData, SettlementData) tuple = CreatePair(ref nextId, key, num, SiteMode.SedentarySettlement);
 			AnchorData item = tuple.Item1;
 			SettlementData item2 = tuple.Item2;
 			item2.hasMarket = true;
@@ -71,7 +72,7 @@ public class AnchorGenerator
 				int num2 = FindCoastalTile(value);
 				if (num2 >= 0 && _rng.NextDouble() < 0.6000000238418579)
 				{
-					(AnchorData, SettlementData) tuple2 = CreatePair(ref nextId, key, num2, SiteMode.SedentarySettlement, SettlementForm.City);
+					(AnchorData, SettlementData) tuple2 = CreatePair(ref nextId, key, num2, SiteMode.SedentarySettlement);
 					AnchorData item3 = tuple2.Item1;
 					SettlementData item4 = tuple2.Item2;
 					item4.isPort = true;
