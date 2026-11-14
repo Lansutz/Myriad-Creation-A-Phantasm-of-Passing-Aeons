@@ -789,7 +789,8 @@ namespace MyriadCreation.Content.Modding
                 field = InnovationField.Governance,
                 researchCost = 800,
                 prerequisiteTree = InnovationPrerequisiteNode.Leaf(500),
-                discoveryGroups = new List<string> { _fallback.scholar }
+                discoveryGroups = new List<string> { _fallback.scholar },
+                sources = new List<string> { "Trigger 2003, Understanding Early Civilizations; Yoffee 2005, Myths of the Archaic State" }
             });
             target.Set(1, new InnovationDef
             {
@@ -798,7 +799,8 @@ namespace MyriadCreation.Content.Modding
                 era = 1,
                 field = InnovationField.Agriculture,
                 researchCost = 10,
-                discoveryGroups = new List<string> { _fallback.artisan }
+                discoveryGroups = new List<string> { _fallback.artisan },
+                sources = new List<string> { "Zeder 2011, Current Anthropology 52(S4), DOI 10.1086/659307" }
             });
         }
 

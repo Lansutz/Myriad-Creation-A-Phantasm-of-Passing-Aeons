@@ -220,3 +220,14 @@
 - 与 P8.4 仓储设施合并：仓储建筑需要 `requiredInnovation` 与升级配方。
 - P8.5 的观测/UI 验收并入 M5。
 - 不新开系统：`InnovationTree`、`LawAndDecreeSystem`、`HydrologySystem`、`EconomyManager`、`SettlementEvolutionSystem` 都是改造对象。
+
+---
+
+## 9. M1 实施记录（2026-11-14）
+
+- 革新 186→446 条；26 领域各 ≥10；era 分布 0:37 / 1:70 / 2:111 / 3:116 / 4:48 / 5:64。
+- 145 条旧条目来源替换为领域内可核查文献；运行时兜底定义补来源。
+- `InnovationCatalogAuditTests` 4 例：总量、领域/时代覆盖、来源、DAG 无环、ID/名称唯一。
+- 修正 6 处跨时代前置（爆破采矿改 era5、待客礼/财产观念改挂珠饰交换、口述谱系去前置、书吏培养改 era2 挂文字）。
+- 验证：`EXIT=0`、1043 例、1034 通过、0 失败、零 `error CS`。
+- 下一步：M2 法律/法令与建筑/单位/配方接线。
