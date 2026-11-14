@@ -1468,3 +1468,12 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **内容**：农耕祭仪→共食宴、祖先崇拜→祖灵信仰、行会传统→行会特许、战团传统→民兵、海贸传统→边市、议事传统→地方自治。
 - **测试**：`TraditionConversionTests` 5 例（革新/成熟度门、教义写入、法律经 ILawCommand、无传统不得转换）。
 - 验证：全量 EditMode `EXIT=0`、1104 例、1093 通过、0 失败、11 Explicit、零 warning/error CS。
+
+## D166 P11.4 地形材质：等高线、配置与素材许可（2026-11-14）
+
+- **现状核对**：山影（Hillshade）+坡度笔触早已在 `MapRenderer.ApplyTerrainShading` 中存在（西北 45° 光源），本轮补的是**等高线**与材质配置。
+- **等高线**：`TerrainContour.ShouldDraw` 纯函数；按归一化高程间隔（默认 0.05）在西/北邻跨层时落 1px 暗线；`MapLayerConfig.showContours/contourInterval` 可关可调。线宽不随坡度膨胀，避免糊成色带。
+- **素材许可**：新增 `docs/art/ASSET_LICENSES.md`，登记 Poly Haven / ambientCG（CC0）与 Bootstrap Icons（MIT）的用途与状态；当前未引入任何外部二进制，运行时仍零联网。
+- **未完成**：before/after 截图尚未产出（需要一次真实渲染捕获），不冒充完成。
+- 测试：`TerrainContourTests` 3 例。
+- 验证：全量 EditMode `EXIT=0`、1107 例、1096 通过、0 失败、11 Explicit、零 warning/error CS。

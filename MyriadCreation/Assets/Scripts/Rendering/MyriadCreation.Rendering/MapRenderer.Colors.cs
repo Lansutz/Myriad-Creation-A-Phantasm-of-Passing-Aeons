@@ -113,6 +113,20 @@ namespace MyriadCreation.Rendering
             c.r = Mathf.Clamp01(c.r * mul);
             c.g = Mathf.Clamp01(c.g * mul);
             c.b = Mathf.Clamp01(c.b * mul);
+
+            // 等高线：与西/北邻高程跨过同一间隔才落线，线宽保持 1px，避免糊成色带。
+            if (_layerConfig != null && _layerConfig.showContours && TryGetTileView(tileIndex, out TileData current))
+            {
+                float interval = Mathf.Max(0.01f, _layerConfig.contourInterval);
+                float e = current.elevation01;
+                if (TerrainContour.ShouldDraw(e, Get(x - 1, y), Get(x, y - 1), interval))
+                {
+                    const float contourInk = 0.86f;
+                    c.r = Mathf.Clamp01(c.r * contourInk);
+                    c.g = Mathf.Clamp01(c.g * contourInk);
+                    c.b = Mathf.Clamp01(c.b * contourInk);
+                }
+            }
         }
 
 

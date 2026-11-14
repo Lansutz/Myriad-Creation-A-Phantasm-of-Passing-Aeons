@@ -143,3 +143,10 @@
 - 转换表 `TraditionConversions.json`：教义写 `FaithSystem.doctrineIds`，法律走 `ILawCommand.BeginEnactLaw`。
 - 月度文化演替接线；`TraditionConversionTests` 5 例。
 - 验证：`EXIT=0`、1104 例、1093 通过、零 warning CS。
+
+## 15. P11.4 实施记录（部分，2026-11-14）
+
+- 山影既有；新增 `TerrainContour` + `showContours/contourInterval` 配置，等高线按西/北跨层落 1px。
+- `docs/art/ASSET_LICENSES.md` 登记 CC0/MIT 来源；未引入外部二进制。
+- `TerrainContourTests` 3 例；验证：`EXIT=0`、1107 例、1096 通过、零 warning CS。
+- 未完成：before/after 渲染截图。

@@ -55,6 +55,10 @@ namespace MyriadCreation.Rendering
         public bool showCoastline = true;
         [Tooltip("河流：水系，始终显示")]
         public bool showRivers = true;
+        [Tooltip("等高线：按高程分层绘制细线（与山影一起构成地形材质）")]
+        public bool showContours = true;
+        [Tooltip("等高线间隔（归一化高程 0–1）")]
+        public float contourInterval = 0.05f;
 
         [Header("可选叠加层（少量，可独立开关）")]
         [Tooltip("省份边界线")]
