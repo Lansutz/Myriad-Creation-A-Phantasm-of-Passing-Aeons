@@ -122,3 +122,10 @@
 - `CombatManager` 按观察者去重记录接触；仍只在同地块结算战损。
 - 存档字段与 4 个探测测试；验证：`EXIT=0`、1089 例、1078 通过、零 warning CS。
 - 机制优先复盘：分遣收益来自"观测原点前移"，未使用 +射程抽象加成。
+
+## 12. P11.3 实施记录（2026-11-14）
+
+- `customs` 组（9 项）与伦理扩充（6 项），共 61 项教义全部带 `bindsTo`；`ValidateOption` 强制绑定合法。
+- 饮酒/弑亲/放贷三行为真的进入 `IsDoctrineCriminal/IsDoctrineShunned`；其余绑定点登记待消费者。
+- `DoctrineCustomsTests` 5 例；验证：`EXIT=0`、1094 例、1083 通过、零 warning CS。
+- 机制复盘：禁酒不是数值惩罚，而是走既有司法/审判流程。

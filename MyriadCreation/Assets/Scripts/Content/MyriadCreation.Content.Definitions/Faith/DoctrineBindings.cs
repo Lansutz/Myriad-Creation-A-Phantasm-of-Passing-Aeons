@@ -50,6 +50,9 @@ public class DoctrineBindings
 	public DoctrineMoralStance homosexuality = DoctrineMoralStance.Unspecified;
 	public DoctrineMoralStance adultery = DoctrineMoralStance.Unspecified;
 	public DoctrineMoralStance witchcraft = DoctrineMoralStance.Unspecified;
+	public DoctrineMoralStance drinking = DoctrineMoralStance.Unspecified;
+	public DoctrineMoralStance usury = DoctrineMoralStance.Unspecified;
+	public DoctrineMoralStance kinslaying = DoctrineMoralStance.Unspecified;
 	public DoctrineMarriageStance divorce = DoctrineMarriageStance.Unspecified;
 	public DoctrineFuneralRite funeral = DoctrineFuneralRite.Unspecified;
 	public DoctrineClericalGender clericalGender = DoctrineClericalGender.Unspecified;
@@ -99,6 +102,15 @@ public class DoctrineBindings
 			case "doctrine_clerical_gender_either": clericalGender = DoctrineClericalGender.Either; break;
 			case "doctrine_clerical_marriage_celibate": clericalMarriage = DoctrineClericalMarriage.Celibate; break;
 			case "doctrine_clerical_marriage_allowed": clericalMarriage = DoctrineClericalMarriage.Allowed; break;
+			case "doctrine_drinking_forbidden": drinking = DoctrineMoralStance.Crime; break;
+			case "doctrine_drinking_restrained": drinking = DoctrineMoralStance.Shunned; break;
+			case "doctrine_drinking_permitted": drinking = DoctrineMoralStance.Accepted; break;
+			case "doctrine_usury_crime": usury = DoctrineMoralStance.Crime; break;
+			case "doctrine_usury_shunned": usury = DoctrineMoralStance.Shunned; break;
+			case "doctrine_usury_accepted": usury = DoctrineMoralStance.Accepted; break;
+			case "doctrine_kinslaying_crime": kinslaying = DoctrineMoralStance.Crime; break;
+			case "doctrine_kinslaying_shunned": kinslaying = DoctrineMoralStance.Shunned; break;
+			case "doctrine_kinslaying_accepted": kinslaying = DoctrineMoralStance.Accepted; break;
 			case "doctrine_pacifism": pacifism = true; break;
 			case "doctrine_sacred_kingship": sacredKingship = true; break;
 		}

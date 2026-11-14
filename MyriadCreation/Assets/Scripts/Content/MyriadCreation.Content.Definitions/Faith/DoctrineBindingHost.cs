@@ -20,6 +20,9 @@ public static class DoctrineBindingHost
 			DoctrineCrimeBehavior.Homosexuality => bindings.homosexuality == DoctrineMoralStance.Crime,
 			DoctrineCrimeBehavior.Adultery => bindings.adultery == DoctrineMoralStance.Crime,
 			DoctrineCrimeBehavior.Witchcraft => bindings.witchcraft == DoctrineMoralStance.Crime,
+			DoctrineCrimeBehavior.Drinking => bindings.drinking == DoctrineMoralStance.Crime,
+			DoctrineCrimeBehavior.Usury => bindings.usury == DoctrineMoralStance.Crime,
+			DoctrineCrimeBehavior.Kinslaying => bindings.kinslaying == DoctrineMoralStance.Crime,
 			_ => false
 		};
 	}
@@ -35,6 +38,9 @@ public static class DoctrineBindingHost
 			DoctrineCrimeBehavior.Homosexuality => bindings.homosexuality,
 			DoctrineCrimeBehavior.Adultery => bindings.adultery,
 			DoctrineCrimeBehavior.Witchcraft => bindings.witchcraft,
+			DoctrineCrimeBehavior.Drinking => bindings.drinking,
+			DoctrineCrimeBehavior.Usury => bindings.usury,
+			DoctrineCrimeBehavior.Kinslaying => bindings.kinslaying,
 			_ => DoctrineMoralStance.Unspecified
 		};
 	}

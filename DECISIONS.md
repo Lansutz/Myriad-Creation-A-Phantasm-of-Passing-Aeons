@@ -1434,3 +1434,15 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **入档**：`ArmySaveData` 增加 `scoutDetached/scoutTileIndex`。
 - 测试：`DetectionContactTests` 新增 4 例（单向探测、perk 门槛、斥候原点前移、越界归队）+ 既有同格才开战 2 例。
 - 验证：全量 EditMode `EXIT=0`、1089 例、1078 通过、0 失败、11 Explicit、零 warning/error CS。
+
+## D163 P11.3 宗教分组：风俗 customs 与伦理扩充（2026-11-14）
+
+- **术语与分组**：`DoctrineSchema` 新增 `customs` 组（域 customs，category 型）；伦理前缀扩入弑亲/放贷。组/域/序仍是单一真源，不在消费者里各写一遍。
+- **新增内容**（15 项，全部带 `bindsTo`）：
+  - 风俗 9 项：禁酒/节制/许可、共食宴、日常祝祷、简朴服饰、圣乐、安息休耕、待客之礼；
+  - 伦理 6 项：弑亲、放贷取息各三档（罪行/忌讳/容忍）。
+- **真实消费**：`DoctrineCrimeBehavior` 增 Drinking/Usury/Kinslaying；`DoctrineBindings.alcohol/usury/kinslaying` 进 `IsDoctrineCriminal`/`IsDoctrineShunned`——禁酒真的能把饮酒送进司法流程，忌讳只降好感。
+- **绑定点校验**：`DoctrineOptionDef.bindsTo`（`域:键`）；`DoctrineSchema.ValidateOption` 拒绝缺失/未知绑定；无消费者的写 `display:`。现有 46 项一并补齐，当前共 61 项。
+- **诚实口径**：`crime:*` 已有消费者；`custom:/calendar:/festival:/ritual:` 等绑定点已登记但消费者随相应系统接入，不冒充已生效。
+- 测试：`DoctrineCustomsTests` 5 例（全量绑定合法性、customs 组识别与 schema 校验、禁酒入罪、节制/许可不入罪、弑亲/放贷映射）。
+- 验证：全量 EditMode `EXIT=0`、1094 例、1083 通过、0 失败、11 Explicit、零 warning/error CS。

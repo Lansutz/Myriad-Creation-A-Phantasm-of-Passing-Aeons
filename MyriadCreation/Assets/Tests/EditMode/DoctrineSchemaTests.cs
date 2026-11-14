@@ -42,6 +42,7 @@ namespace MyriadCreation.Tests.EditMode
             var bad = new DoctrineOptionDef
             {
                 optionId = "doctrine_divorce_permitted",
+                bindsTo = "marriage:divorce",
                 parameters = new List<DoctrineParameterDef>
                 {
                     new DoctrineParameterDef { key = "made.up.key", value = 1f, source = "TODO_M05" }
@@ -53,6 +54,7 @@ namespace MyriadCreation.Tests.EditMode
             var good = new DoctrineOptionDef
             {
                 optionId = "doctrine_divorce_permitted",
+                bindsTo = "marriage:divorce",
                 parameters = new List<DoctrineParameterDef>
                 {
                     new DoctrineParameterDef { key = "marriage.consanguinity_degree", value = 3f, source = "TODO_M05" }
@@ -63,6 +65,7 @@ namespace MyriadCreation.Tests.EditMode
             var noSource = new DoctrineOptionDef
             {
                 optionId = "doctrine_divorce_permitted",
+                bindsTo = "marriage:divorce",
                 parameters = new List<DoctrineParameterDef>
                 {
                     new DoctrineParameterDef { key = "marriage.consanguinity_degree", value = 3f }

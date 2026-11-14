@@ -1,56 +1,438 @@
 {
   "doctrines": [
-    { "optionId": "doctrine_monotheism", "pillar": "doctrine", "optionName": "一神论", "description": "独一至上神——万物由唯一神创造与主宰。" },
-    { "optionId": "doctrine_polytheism", "pillar": "doctrine", "optionName": "多神论", "description": "众神各司其职——神谱体系与地方崇拜并存。" },
-    { "optionId": "doctrine_dualism", "pillar": "doctrine", "optionName": "二元论", "description": "善恶两原理对立——光明与黑暗的永恒斗争。" },
-    { "optionId": "doctrine_animism", "pillar": "doctrine", "optionName": "泛灵论", "description": "万物有灵——自然与器物皆有灵性。" },
-    { "optionId": "doctrine_ancestor_veneration", "pillar": "doctrine", "optionName": "祖先崇拜", "description": "祖先之灵护佑后代——宗庙祭祀为核心。" },
-    { "optionId": "doctrine_sacred_kingship", "pillar": "doctrine", "optionName": "君权神授", "description": "君主为神之代理人——统治合法性来自天命。" },
-
-    { "optionId": "doctrine_pacifism", "pillar": "doctrine", "optionName": "和平主义", "description": "暴力是可憎的——禁止圣战与劫掠。" },
-    { "optionId": "doctrine_asceticism", "pillar": "doctrine", "optionName": "苦修主义", "description": "肉体欢愉疏离侍奉——隐修与禁欲为尚。" },
-    { "optionId": "doctrine_reincarnation", "pillar": "doctrine", "optionName": "转世", "description": "灵魂轮回——今世行为决定来世。" },
-    { "optionId": "doctrine_communion", "pillar": "doctrine", "optionName": "共融圣事", "description": "仪式召唤神明临在——不参加者非真信徒。" },
-    { "optionId": "doctrine_icon_veneration", "pillar": "doctrine", "optionName": "圣像崇拜", "description": "圣像为神圣通道——尊像即尊神。" },
-    { "optionId": "doctrine_iconoclasm", "pillar": "doctrine", "optionName": "圣像禁止", "description": "偶像崇拜为罪——只拜无形之神。" },
-    { "optionId": "doctrine_human_sacrifice", "pillar": "doctrine", "optionName": "人祭", "description": "以人牲献祭——最高形式的奉献。" },
-    { "optionId": "doctrine_sanctity_nature", "pillar": "doctrine", "optionName": "圣洁自然", "description": "自然为神圣显现——山川树木皆可崇拜。" },
-    { "optionId": "doctrine_no_mind", "pillar": "doctrine", "optionName": "无念", "description": "超越思虑的顿悟——禅观为修行核心。", "exclusiveReligionIds": [300] },
-    { "optionId": "doctrine_imamate", "pillar": "doctrine", "optionName": "伊玛目无误", "description": "伊玛目为神圣指定领袖——其教导无误。", "exclusiveReligionIds": [200], "enhancedFrom": "doctrine_sacred_kingship" },
-
-    { "optionId": "doctrine_homosexuality_crime", "pillar": "ethics", "optionName": "同性恋·罪行", "description": "同性行为为罪——可被定罪与惩罚。" },
-    { "optionId": "doctrine_homosexuality_shunned", "pillar": "ethics", "optionName": "同性恋·忌讳", "description": "同性行为受社会排斥——但不入罪。" },
-    { "optionId": "doctrine_homosexuality_accepted", "pillar": "ethics", "optionName": "同性恋·接纳", "description": "同性行为被接纳——无社会污名。" },
-    { "optionId": "doctrine_divorce_forbidden", "pillar": "ethics", "optionName": "离婚·禁止", "description": "婚姻神圣不可解除。" },
-    { "optionId": "doctrine_divorce_permitted", "pillar": "ethics", "optionName": "离婚·许可", "description": "在特定条件下可离婚。" },
-    { "optionId": "doctrine_divorce_allowed", "pillar": "ethics", "optionName": "离婚·允许", "description": "离婚为个人自由——随时可离。" },
-    { "optionId": "doctrine_adultery_crime", "pillar": "ethics", "optionName": "婚外情·罪行", "description": "婚外情为罪——男女同罪。" },
-    { "optionId": "doctrine_adultery_shunned", "pillar": "ethics", "optionName": "婚外情·忌讳", "description": "婚外情受排斥——不入罪。" },
-    { "optionId": "doctrine_adultery_accepted", "pillar": "ethics", "optionName": "婚外情·接纳", "description": "婚外情被接纳。" },
-    { "optionId": "doctrine_witchcraft_crime", "pillar": "ethics", "optionName": "巫术·罪行", "description": "巫术为罪——行巫者受罚。" },
-    { "optionId": "doctrine_witchcraft_shunned", "pillar": "ethics", "optionName": "巫术·忌讳", "description": "巫术受排斥。" },
-    { "optionId": "doctrine_witchcraft_accepted", "pillar": "ethics", "optionName": "巫术·接纳", "description": "巫术为合法实践。" },
-
-    { "optionId": "doctrine_funeral_cremation", "pillar": "ritual", "optionName": "葬礼·火葬", "description": "焚化遗体——灵魂随火升天。" },
-    { "optionId": "doctrine_funeral_sky_burial", "pillar": "ritual", "optionName": "葬礼·天葬", "description": "遗体饲予禽兽——回归自然。" },
-    { "optionId": "doctrine_funeral_mummification", "pillar": "ritual", "optionName": "葬礼·木乃伊化", "description": "精心保存遗体——为来世准备。" },
-    { "optionId": "doctrine_funeral_burial", "pillar": "ritual", "optionName": "葬礼·土葬", "description": "入土为安——回归大地。" },
-    { "optionId": "doctrine_ritual_feast", "pillar": "ritual", "optionName": "庆典宴祭", "description": "节庆宴会祭祀——神人同乐。" },
-
-    { "optionId": "doctrine_inner_journey", "pillar": "experience", "optionName": "内在之旅", "description": "冥想内观——灵性体验为中心。" },
-    { "optionId": "doctrine_bhakti", "pillar": "experience", "optionName": "奉爱", "description": "虔敬奉献——以爱敬神为修行。" },
-    { "optionId": "doctrine_esotericism", "pillar": "experience", "optionName": "秘传", "description": "秘义只传入门者——神秘体验为核心。" },
-    { "optionId": "doctrine_pilgrimage", "pillar": "experience", "optionName": "朝圣", "description": "朝拜圣地——旅程本身为修行。" },
-
-    { "optionId": "doctrine_clerical_gender_male", "pillar": "institution", "optionName": "神职·男子专属", "description": "祭司职位仅限男子。" },
-    { "optionId": "doctrine_clerical_gender_either", "pillar": "institution", "optionName": "神职·男女皆可", "description": "祭司职位男女皆可担任。" },
-    { "optionId": "doctrine_clerical_marriage_allowed", "pillar": "institution", "optionName": "神职·可婚配", "description": "神职人员可以结婚。" },
-    { "optionId": "doctrine_clerical_marriage_celibate", "pillar": "institution", "optionName": "神职·独身", "description": "神职人员须守独身。" },
-    { "optionId": "doctrine_clerical_appointment_temporal", "pillar": "institution", "optionName": "神职任命·俗人", "description": "神职由世俗君主任命——叙任权在君。" },
-    { "optionId": "doctrine_clerical_appointment_spiritual", "pillar": "institution", "optionName": "神职任命·灵性", "description": "神职由教会自行任命——叙任权在教。" },
-
-    { "optionId": "doctrine_holy_sites", "pillar": "material", "optionName": "圣地体系", "description": "神圣地点为崇拜核心——圣地朝拜制度。" },
-    { "optionId": "doctrine_temple_building", "pillar": "material", "optionName": "神庙建筑", "description": "宏伟神庙彰显神圣——建筑即崇拜。" },
-    { "optionId": "doctrine_relics", "pillar": "material", "optionName": "圣髑崇拜", "description": "圣人遗物具神力——圣髑为崇拜对象。" }
+    {
+      "optionId": "doctrine_monotheism",
+      "pillar": "doctrine",
+      "optionName": "一神论",
+      "description": "独一至上神——万物由唯一神创造与主宰。",
+      "bindsTo": "display:cosmology"
+    },
+    {
+      "optionId": "doctrine_polytheism",
+      "pillar": "doctrine",
+      "optionName": "多神论",
+      "description": "众神各司其职——神谱体系与地方崇拜并存。",
+      "bindsTo": "display:cosmology"
+    },
+    {
+      "optionId": "doctrine_dualism",
+      "pillar": "doctrine",
+      "optionName": "二元论",
+      "description": "善恶两原理对立——光明与黑暗的永恒斗争。",
+      "bindsTo": "display:cosmology"
+    },
+    {
+      "optionId": "doctrine_animism",
+      "pillar": "doctrine",
+      "optionName": "泛灵论",
+      "description": "万物有灵——自然与器物皆有灵性。",
+      "bindsTo": "display:cosmology"
+    },
+    {
+      "optionId": "doctrine_ancestor_veneration",
+      "pillar": "doctrine",
+      "optionName": "祖先崇拜",
+      "description": "祖先之灵护佑后代——宗庙祭祀为核心。",
+      "bindsTo": "custom:ancestor_rites"
+    },
+    {
+      "optionId": "doctrine_sacred_kingship",
+      "pillar": "doctrine",
+      "optionName": "君权神授",
+      "description": "君主为神之代理人——统治合法性来自天命。",
+      "bindsTo": "office:sacred_kingship"
+    },
+    {
+      "optionId": "doctrine_pacifism",
+      "pillar": "doctrine",
+      "optionName": "和平主义",
+      "description": "暴力是可憎的——禁止圣战与劫掠。",
+      "bindsTo": "war:pacifism"
+    },
+    {
+      "optionId": "doctrine_asceticism",
+      "pillar": "doctrine",
+      "optionName": "苦修主义",
+      "description": "肉体欢愉疏离侍奉——隐修与禁欲为尚。",
+      "bindsTo": "custom:asceticism"
+    },
+    {
+      "optionId": "doctrine_reincarnation",
+      "pillar": "doctrine",
+      "optionName": "转世",
+      "description": "灵魂轮回——今世行为决定来世。",
+      "bindsTo": "display:cosmology"
+    },
+    {
+      "optionId": "doctrine_communion",
+      "pillar": "doctrine",
+      "optionName": "共融圣事",
+      "description": "仪式召唤神明临在——不参加者非真信徒。",
+      "bindsTo": "ritual:communion"
+    },
+    {
+      "optionId": "doctrine_icon_veneration",
+      "pillar": "doctrine",
+      "optionName": "圣像崇拜",
+      "description": "圣像为神圣通道——尊像即尊神。",
+      "bindsTo": "material:icons"
+    },
+    {
+      "optionId": "doctrine_iconoclasm",
+      "pillar": "doctrine",
+      "optionName": "圣像禁止",
+      "description": "偶像崇拜为罪——只拜无形之神。",
+      "bindsTo": "material:icons"
+    },
+    {
+      "optionId": "doctrine_human_sacrifice",
+      "pillar": "doctrine",
+      "optionName": "人祭",
+      "description": "以人牲献祭——最高形式的奉献。",
+      "bindsTo": "crime:human_sacrifice"
+    },
+    {
+      "optionId": "doctrine_sanctity_nature",
+      "pillar": "doctrine",
+      "optionName": "圣洁自然",
+      "description": "自然为神圣显现——山川树木皆可崇拜。",
+      "bindsTo": "custom:nature"
+    },
+    {
+      "optionId": "doctrine_no_mind",
+      "pillar": "doctrine",
+      "optionName": "无念",
+      "description": "超越思虑的顿悟——禅观为修行核心。",
+      "exclusiveReligionIds": [
+        300
+      ],
+      "bindsTo": "display:cosmology"
+    },
+    {
+      "optionId": "doctrine_imamate",
+      "pillar": "doctrine",
+      "optionName": "伊玛目无误",
+      "description": "伊玛目为神圣指定领袖——其教导无误。",
+      "exclusiveReligionIds": [
+        200
+      ],
+      "enhancedFrom": "doctrine_sacred_kingship",
+      "bindsTo": "office:imamate"
+    },
+    {
+      "optionId": "doctrine_homosexuality_crime",
+      "pillar": "ethics",
+      "optionName": "同性恋·罪行",
+      "description": "同性行为为罪——可被定罪与惩罚。",
+      "bindsTo": "crime:homosexuality"
+    },
+    {
+      "optionId": "doctrine_homosexuality_shunned",
+      "pillar": "ethics",
+      "optionName": "同性恋·忌讳",
+      "description": "同性行为受社会排斥——但不入罪。",
+      "bindsTo": "crime:homosexuality"
+    },
+    {
+      "optionId": "doctrine_homosexuality_accepted",
+      "pillar": "ethics",
+      "optionName": "同性恋·接纳",
+      "description": "同性行为被接纳——无社会污名。",
+      "bindsTo": "crime:homosexuality"
+    },
+    {
+      "optionId": "doctrine_divorce_forbidden",
+      "pillar": "ethics",
+      "optionName": "离婚·禁止",
+      "description": "婚姻神圣不可解除。",
+      "bindsTo": "marriage:divorce"
+    },
+    {
+      "optionId": "doctrine_divorce_permitted",
+      "pillar": "ethics",
+      "optionName": "离婚·许可",
+      "description": "在特定条件下可离婚。",
+      "bindsTo": "marriage:divorce"
+    },
+    {
+      "optionId": "doctrine_divorce_allowed",
+      "pillar": "ethics",
+      "optionName": "离婚·允许",
+      "description": "离婚为个人自由——随时可离。",
+      "bindsTo": "marriage:divorce"
+    },
+    {
+      "optionId": "doctrine_adultery_crime",
+      "pillar": "ethics",
+      "optionName": "婚外情·罪行",
+      "description": "婚外情为罪——男女同罪。",
+      "bindsTo": "crime:adultery"
+    },
+    {
+      "optionId": "doctrine_adultery_shunned",
+      "pillar": "ethics",
+      "optionName": "婚外情·忌讳",
+      "description": "婚外情受排斥——不入罪。",
+      "bindsTo": "crime:adultery"
+    },
+    {
+      "optionId": "doctrine_adultery_accepted",
+      "pillar": "ethics",
+      "optionName": "婚外情·接纳",
+      "description": "婚外情被接纳。",
+      "bindsTo": "crime:adultery"
+    },
+    {
+      "optionId": "doctrine_witchcraft_crime",
+      "pillar": "ethics",
+      "optionName": "巫术·罪行",
+      "description": "巫术为罪——行巫者受罚。",
+      "bindsTo": "crime:witchcraft"
+    },
+    {
+      "optionId": "doctrine_witchcraft_shunned",
+      "pillar": "ethics",
+      "optionName": "巫术·忌讳",
+      "description": "巫术受排斥。",
+      "bindsTo": "crime:witchcraft"
+    },
+    {
+      "optionId": "doctrine_witchcraft_accepted",
+      "pillar": "ethics",
+      "optionName": "巫术·接纳",
+      "description": "巫术为合法实践。",
+      "bindsTo": "crime:witchcraft"
+    },
+    {
+      "optionId": "doctrine_funeral_cremation",
+      "pillar": "ritual",
+      "optionName": "葬礼·火葬",
+      "description": "焚化遗体——灵魂随火升天。",
+      "bindsTo": "ritual:funeral"
+    },
+    {
+      "optionId": "doctrine_funeral_sky_burial",
+      "pillar": "ritual",
+      "optionName": "葬礼·天葬",
+      "description": "遗体饲予禽兽——回归自然。",
+      "bindsTo": "ritual:funeral"
+    },
+    {
+      "optionId": "doctrine_funeral_mummification",
+      "pillar": "ritual",
+      "optionName": "葬礼·木乃伊化",
+      "description": "精心保存遗体——为来世准备。",
+      "bindsTo": "ritual:funeral"
+    },
+    {
+      "optionId": "doctrine_funeral_burial",
+      "pillar": "ritual",
+      "optionName": "葬礼·土葬",
+      "description": "入土为安——回归大地。",
+      "bindsTo": "ritual:funeral"
+    },
+    {
+      "optionId": "doctrine_ritual_feast",
+      "pillar": "ritual",
+      "optionName": "庆典宴祭",
+      "description": "节庆宴会祭祀——神人同乐。",
+      "bindsTo": "festival:feast"
+    },
+    {
+      "optionId": "doctrine_inner_journey",
+      "pillar": "experience",
+      "optionName": "内在之旅",
+      "description": "冥想内观——灵性体验为中心。",
+      "bindsTo": "ritual:inner_journey"
+    },
+    {
+      "optionId": "doctrine_bhakti",
+      "pillar": "experience",
+      "optionName": "奉爱",
+      "description": "虔敬奉献——以爱敬神为修行。",
+      "bindsTo": "ritual:bhakti"
+    },
+    {
+      "optionId": "doctrine_esotericism",
+      "pillar": "experience",
+      "optionName": "秘传",
+      "description": "秘义只传入门者——神秘体验为核心。",
+      "bindsTo": "ritual:esotericism"
+    },
+    {
+      "optionId": "doctrine_pilgrimage",
+      "pillar": "experience",
+      "optionName": "朝圣",
+      "description": "朝拜圣地——旅程本身为修行。",
+      "bindsTo": "ritual:pilgrimage"
+    },
+    {
+      "optionId": "doctrine_clerical_gender_male",
+      "pillar": "institution",
+      "optionName": "神职·男子专属",
+      "description": "祭司职位仅限男子。",
+      "bindsTo": "office:clerical_gender"
+    },
+    {
+      "optionId": "doctrine_clerical_gender_either",
+      "pillar": "institution",
+      "optionName": "神职·男女皆可",
+      "description": "祭司职位男女皆可担任。",
+      "bindsTo": "office:clerical_gender"
+    },
+    {
+      "optionId": "doctrine_clerical_marriage_allowed",
+      "pillar": "institution",
+      "optionName": "神职·可婚配",
+      "description": "神职人员可以结婚。",
+      "bindsTo": "office:clerical_marriage"
+    },
+    {
+      "optionId": "doctrine_clerical_marriage_celibate",
+      "pillar": "institution",
+      "optionName": "神职·独身",
+      "description": "神职人员须守独身。",
+      "bindsTo": "office:clerical_marriage"
+    },
+    {
+      "optionId": "doctrine_clerical_appointment_temporal",
+      "pillar": "institution",
+      "optionName": "神职任命·俗人",
+      "description": "神职由世俗君主任命——叙任权在君。",
+      "bindsTo": "office:clerical_appointment"
+    },
+    {
+      "optionId": "doctrine_clerical_appointment_spiritual",
+      "pillar": "institution",
+      "optionName": "神职任命·灵性",
+      "description": "神职由教会自行任命——叙任权在教。",
+      "bindsTo": "office:clerical_appointment"
+    },
+    {
+      "optionId": "doctrine_holy_sites",
+      "pillar": "material",
+      "optionName": "圣地体系",
+      "description": "神圣地点为崇拜核心——圣地朝拜制度。",
+      "bindsTo": "material:holy_sites"
+    },
+    {
+      "optionId": "doctrine_temple_building",
+      "pillar": "material",
+      "optionName": "神庙建筑",
+      "description": "宏伟神庙彰显神圣——建筑即崇拜。",
+      "bindsTo": "material:temple"
+    },
+    {
+      "optionId": "doctrine_relics",
+      "pillar": "material",
+      "optionName": "圣髑崇拜",
+      "description": "圣人遗物具神力——圣髑为崇拜对象。",
+      "bindsTo": "material:relics"
+    },
+    {
+      "optionId": "doctrine_drinking_forbidden",
+      "pillar": "customs",
+      "optionName": "饮酒·禁止",
+      "description": "禁绝饮酒；酿造与饮用在司法上入罪。",
+      "bindsTo": "crime:drinking"
+    },
+    {
+      "optionId": "doctrine_drinking_restrained",
+      "pillar": "customs",
+      "optionName": "饮酒·节制",
+      "description": "允许饮酒但以醉酒为耻，宴饮需有节。",
+      "bindsTo": "custom:drinking_restrained"
+    },
+    {
+      "optionId": "doctrine_drinking_permitted",
+      "pillar": "customs",
+      "optionName": "饮酒·许可",
+      "description": "饮酒是日常与节庆的一部分，不受宗教指摘。",
+      "bindsTo": "custom:drinking_permitted"
+    },
+    {
+      "optionId": "doctrine_feast_communal",
+      "pillar": "customs",
+      "optionName": "共食宴",
+      "description": "节庆时全体共食，强化共同体认同。",
+      "bindsTo": "custom:feast_communal"
+    },
+    {
+      "optionId": "doctrine_daily_prayer",
+      "pillar": "customs",
+      "optionName": "日常祝祷",
+      "description": "每日固定时段的祝祷，属于个人与家庭的日常仪式。",
+      "bindsTo": "custom:daily_prayer"
+    },
+    {
+      "optionId": "doctrine_dress_plain",
+      "pillar": "customs",
+      "optionName": "简朴服饰",
+      "description": "衣着以简朴为德，反对奢饰。",
+      "bindsTo": "custom:dress_plain"
+    },
+    {
+      "optionId": "doctrine_music_sacred",
+      "pillar": "customs",
+      "optionName": "圣乐",
+      "description": "以歌唱与器乐参与仪式，音乐被视为通神手段。",
+      "bindsTo": "custom:music_sacred"
+    },
+    {
+      "optionId": "doctrine_sabbath_rest",
+      "pillar": "customs",
+      "optionName": "安息休耕",
+      "description": "固定周期停止劳作与耕作，时间节律神圣化。",
+      "bindsTo": "custom:sabbath_rest"
+    },
+    {
+      "optionId": "doctrine_hospitality_guest",
+      "pillar": "customs",
+      "optionName": "待客之礼",
+      "description": "款待外来者是强制性的荣誉义务。",
+      "bindsTo": "custom:hospitality_guest"
+    },
+    {
+      "optionId": "doctrine_kinslaying_crime",
+      "pillar": "ethics",
+      "optionName": "弑亲·罪行",
+      "description": "杀害血亲是重罪，须以司法制裁。",
+      "bindsTo": "crime:kinslaying"
+    },
+    {
+      "optionId": "doctrine_kinslaying_shunned",
+      "pillar": "ethics",
+      "optionName": "弑亲·忌讳",
+      "description": "弑亲者被社会排斥，但不入司法流程。",
+      "bindsTo": "crime:kinslaying"
+    },
+    {
+      "optionId": "doctrine_kinslaying_accepted",
+      "pillar": "ethics",
+      "optionName": "弑亲·容忍",
+      "description": "血亲冲突被视为家族内部事务。",
+      "bindsTo": "crime:kinslaying"
+    },
+    {
+      "optionId": "doctrine_usury_crime",
+      "pillar": "ethics",
+      "optionName": "放贷取息·罪行",
+      "description": "收取利息入罪，债务纠纷走宗教法庭。",
+      "bindsTo": "crime:usury"
+    },
+    {
+      "optionId": "doctrine_usury_shunned",
+      "pillar": "ethics",
+      "optionName": "放贷取息·忌讳",
+      "description": "放贷者受蔑视，但不受司法追究。",
+      "bindsTo": "crime:usury"
+    },
+    {
+      "optionId": "doctrine_usury_accepted",
+      "pillar": "ethics",
+      "optionName": "放贷取息·许可",
+      "description": "利息被承认为正常交易。",
+      "bindsTo": "crime:usury"
+    }
   ]
 }

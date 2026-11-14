@@ -34,7 +34,8 @@ public static class DoctrineSchema
 		["clerical_marriage"] = "office",
 		["clerical_appointment"] = "office",
 		["ritual_devotion"] = "ritual",
-		["sacred_material"] = "economy"
+		["sacred_material"] = "economy",
+		["customs"] = "customs"
 	};
 
 	private static readonly Dictionary<string, string> GroupKind = new Dictionary<string, string>
@@ -47,7 +48,8 @@ public static class DoctrineSchema
 		["clerical_marriage"] = "sequence",
 		["clerical_appointment"] = "category",
 		["ritual_devotion"] = "category",
-		["sacred_material"] = "category"
+		["sacred_material"] = "category",
+		["customs"] = "category"
 	};
 
 	private static readonly Dictionary<string, string> ParameterSpecs = new Dictionary<string, string>
@@ -77,6 +79,21 @@ public static class DoctrineSchema
 		if (optionId.StartsWith("doctrine_funeral_", StringComparison.Ordinal))
 		{
 			return "funeral";
+		}
+		if (optionId.StartsWith("doctrine_drinking_", StringComparison.Ordinal)
+			|| optionId.StartsWith("doctrine_feast_", StringComparison.Ordinal)
+			|| optionId.StartsWith("doctrine_prayer_", StringComparison.Ordinal)
+			|| optionId.StartsWith("doctrine_dress_", StringComparison.Ordinal)
+			|| optionId.StartsWith("doctrine_music_", StringComparison.Ordinal)
+			|| optionId.StartsWith("doctrine_sabbath_", StringComparison.Ordinal)
+			|| optionId.StartsWith("doctrine_hospitality_", StringComparison.Ordinal))
+		{
+			return "customs";
+		}
+		if (optionId.StartsWith("doctrine_kinslaying_", StringComparison.Ordinal)
+			|| optionId.StartsWith("doctrine_usury_", StringComparison.Ordinal))
+		{
+			return "ethics";
 		}
 		if (optionId.StartsWith("doctrine_clerical_gender_", StringComparison.Ordinal))
 		{
@@ -122,6 +139,23 @@ public static class DoctrineSchema
 		return groupId != null && GroupKind.TryGetValue(groupId, out string kind) ? kind : "";
 	}
 
+	/// <summary>绑定点前缀白名单；`display:` 表示有明确消费者前只展示。</summary>
+	public static bool IsKnownBinding(string bindsTo)
+	{
+		if (string.IsNullOrEmpty(bindsTo)) return false;
+		int colon = bindsTo.IndexOf(':');
+		if (colon <= 0 || colon >= bindsTo.Length - 1) return false;
+		switch (bindsTo.Substring(0, colon))
+		{
+			case "display": case "crime": case "marriage": case "ritual":
+			case "office": case "calendar": case "custom": case "festival":
+			case "war": case "material": case "economy": case "law":
+				return true;
+			default:
+				return false;
+		}
+	}
+
 	public static bool IsParameterRegistered(string key)
 	{
 		return !string.IsNullOrEmpty(key) && ParameterSpecs.ContainsKey(key);
@@ -163,6 +197,11 @@ public static class DoctrineSchema
 					return false;
 				}
 			}
+		}
+		if (!IsKnownBinding(option.bindsTo))
+		{
+			error = $"doctrine '{option.optionId}' has no valid bindsTo (use '域:键'; display:... when no consumer).";
+			return false;
 		}
 		return true;
 	}

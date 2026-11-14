@@ -24,6 +24,9 @@ public class DoctrineOptionDef
 	/// <summary>组内序（加载期按声明顺序回填；sequence 组用它算偏离度）。</summary>
 	public int level;
 
+	/// <summary>绑定点：`域:键`（crime/driving、marriage:divorce、ritual:funeral…）；无消费者的写 `display:...`。</summary>
+	public string bindsTo = "";
+
 	/// <summary>组的序类型：sequence=光谱档，category=互斥并行项；加载期由 DoctrineSchema 回填。</summary>
 	public string kind = "";
 

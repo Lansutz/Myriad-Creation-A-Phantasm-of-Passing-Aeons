@@ -5,6 +5,9 @@ public enum DoctrineCrimeBehavior
 {
 	Homosexuality,
 	Adultery,
-	Witchcraft
+	Witchcraft,
+	Drinking,
+	Usury,
+	Kinslaying
 }
 }
