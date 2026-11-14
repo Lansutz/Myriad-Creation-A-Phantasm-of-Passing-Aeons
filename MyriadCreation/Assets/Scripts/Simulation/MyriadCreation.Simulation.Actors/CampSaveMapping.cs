@@ -27,6 +27,8 @@ namespace MyriadCreation.Simulation.Actors
             data.camp_supplies = camp.supplies;
             data.camp_morale = camp.morale;
             data.camp_permanence = camp.permanence;
+            data.camp_mobility = (int)camp.mobility;
+            data.camp_target_tile = camp.targetTileIndex;
             if (camp.attributes == null)
             {
                 data.camp_attribute_keys = null;

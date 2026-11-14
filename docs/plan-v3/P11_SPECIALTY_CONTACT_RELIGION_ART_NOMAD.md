@@ -129,3 +129,10 @@
 - 饮酒/弑亲/放贷三行为真的进入 `IsDoctrineCriminal/IsDoctrineShunned`；其余绑定点登记待消费者。
 - `DoctrineCustomsTests` 5 例；验证：`EXIT=0`、1094 例、1083 通过、零 warning CS。
 - 机制复盘：禁酒不是数值惩罚，而是走既有司法/审判流程。
+
+## 13. P11.6 实施记录（2026-11-14）
+
+- `CampMobility` 状态机 + `CampManager.PackCamp/MoveCamp/UnpackCamp`；迁移逐格推进、锚点随队、旧占用清除。
+- 归属只认 `ownerActorId`；Packed 不入 `ActiveHabitationSites`、不占地块、不建锚点。
+- 存档字段 `camp_mobility/camp_target_tile`，`RoundTrip_PreservesCamps` 断言 Moving/目标。
+- 测试：`CampMobilityTests` 5 例；验证：`EXIT=0`、1099 例、1088 通过、零 warning CS。

@@ -30,6 +30,8 @@ namespace MyriadCreation.Save.Contracts
         public float camp_supplies;
         public float camp_morale;
         public float camp_permanence;
+        public int camp_mobility;
+        public int camp_target_tile = -1;
         public string[] camp_attribute_keys;
         public float[] camp_attribute_values;
 

@@ -36,6 +36,12 @@ public class CampData : HabitationSite
 
 	public float permanence;
 
+	/// <summary>P11.6 移动状态；默认扎营。归属只认 ownerActorId，realm 只是管辖快照。</summary>
+	public CampMobility mobility = CampMobility.Pitched;
+
+	/// <summary>迁移目标地块（-1=无）。Moving 状态下每 tick 向目标推进一格。</summary>
+	public int targetTileIndex = -1;
+
 	public bool isAbandoned;
 
 	public Dictionary<string, float> attributes = new Dictionary<string, float>();
@@ -100,8 +106,9 @@ public class CampData : HabitationSite
 		{
 			return;
 		}
-		// 先收本地食物：营地人口在所在地块耕作/狩猎/捕鱼，产出从地块植被、野生、鱼群真实扣减。
-		if (world?.tiles != null && tileIndex >= 0 && tileIndex < world.tiles.Length && population > 0f)
+		// 收起状态没有 hearth/固定营地，不产生本地采集；迁移中按当天所在地块照常采集（沿途放牧）。
+		if (mobility != CampMobility.Packed
+			&& world?.tiles != null && tileIndex >= 0 && tileIndex < world.tiles.Length && population > 0f)
 		{
 			ref TileData tile = ref world.tiles[tileIndex];
 			float farm = AgricultureYield.ComputeForLabor(tile, population) * deltaDays;

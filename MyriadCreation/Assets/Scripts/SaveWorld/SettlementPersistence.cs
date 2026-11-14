@@ -204,7 +204,7 @@ namespace MyriadCreation.Infrastructure.Save
                         throw new InvalidOperationException($"Invalid saved camp type '{entry.camp_type}' for site {entry.site_id}.");
 
                     AnchorData campAnchor = null;
-                    if (entry.anchor_id >= 0)
+                    if (entry.anchor_id >= 0 && entry.camp_mobility != (int)CampMobility.Packed)
                     {
                         campAnchor = new AnchorData
                         {
@@ -237,7 +237,9 @@ namespace MyriadCreation.Infrastructure.Save
                         defense = entry.camp_defense,
                         supplies = entry.camp_supplies,
                         morale = entry.camp_morale,
-                        permanence = entry.camp_permanence
+                        permanence = entry.camp_permanence,
+                        mobility = (CampMobility)entry.camp_mobility,
+                        targetTileIndex = entry.camp_target_tile
                     };
                     entry.ApplyModeData(camp);
 

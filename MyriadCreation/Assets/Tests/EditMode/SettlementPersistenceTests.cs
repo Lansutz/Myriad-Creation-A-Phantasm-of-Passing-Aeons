@@ -218,6 +218,8 @@ namespace MyriadCreation.Tests.EditMode
                 camp_supplies = 42f,
                 camp_morale = 66f,
                 camp_permanence = 0.25f,
+                camp_mobility = (int)CampMobility.Moving,
+                camp_target_tile = 7,
                 camp_attribute_keys = new[] { "mood" },
                 camp_attribute_values = new[] { 0.5f }
             };
@@ -239,6 +241,8 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(0.5f, camp.attributes["mood"], 0.001f);
             Assert.IsTrue(target.anchors.ContainsKey(9), "营地锚点应还原");
             Assert.AreEqual(5, target.tiles[3].campId, "地块应回指营地");
+            Assert.AreEqual(CampMobility.Moving, camp.mobility, "迁移状态应还原");
+            Assert.AreEqual(7, camp.targetTileIndex, "迁移目标应还原");
         }
 
         [Test]

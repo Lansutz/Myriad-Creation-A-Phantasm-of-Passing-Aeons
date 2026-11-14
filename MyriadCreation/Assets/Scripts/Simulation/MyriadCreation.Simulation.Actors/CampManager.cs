@@ -30,7 +30,7 @@ public class CampManager
 		{
 			foreach (CampData camp in _camps)
 			{
-				if (!camp.isAbandoned)
+				if (!camp.isAbandoned && camp.mobility != CampMobility.Packed)
 				{
 					yield return camp;
 				}
@@ -68,7 +68,7 @@ public class CampManager
 		List<CampData> list = new List<CampData>();
 		foreach (CampData camp in _camps)
 		{
-			if (camp.tileIndex == tileIndex && !camp.isAbandoned)
+			if (camp.tileIndex == tileIndex && !camp.isAbandoned && camp.mobility != CampMobility.Packed)
 			{
 				list.Add(camp);
 			}
@@ -238,11 +238,132 @@ public class CampManager
 		Debug.Log((object)$"[CampManager] 营寨#{campId}被摧毁，攻击者政权={attackerRealmId}");
 	}
 
+	/// <summary>收起营地：脱离地面临时占用与锚点，但保留 campId/anchorId 以便原地或异地重扎。</summary>
+	public bool PackCamp(int campId)
+	{
+		if (!_campById.TryGetValue(campId, out CampData camp) || camp == null || camp.isAbandoned)
+		{
+			return false;
+		}
+		if (camp.mobility == CampMobility.Packed) return true;
+		if (camp.mobility == CampMobility.Moving) return false;
+		ClearTileOccupancy(camp);
+		if (camp.anchorId >= 0 && _world.anchors != null)
+		{
+			_world.anchors.Remove(camp.anchorId);
+		}
+		camp.anchor = null;
+		camp.mobility = CampMobility.Packed;
+		return true;
+	}
+
+	/// <summary>在指定地块重新扎营（Packed → Pitched）；地块须为陆地且可用。</summary>
+	public bool UnpackCamp(int campId, int tileIndex)
+	{
+		if (!_campById.TryGetValue(campId, out CampData camp) || camp == null || camp.isAbandoned)
+		{
+			return false;
+		}
+		if (!IsValidCampTile(tileIndex)) return false;
+		if (camp.mobility == CampMobility.Moving) return false;
+		ClearTileOccupancy(camp);
+		camp.tileIndex = tileIndex;
+		camp.targetTileIndex = -1;
+		PlaceAnchor(camp, tileIndex);
+		OccupyTile(camp, tileIndex);
+		camp.mobility = CampMobility.Pitched;
+		return true;
+	}
+
+	/// <summary>开始迁移：从扎营或收起状态进入 Moving；锚点随队移动（收起状态则先在目的地重扎时才恢复）。</summary>
+	public bool MoveCamp(int campId, int targetTileIndex)
+	{
+		if (!_campById.TryGetValue(campId, out CampData camp) || camp == null || camp.isAbandoned)
+		{
+			return false;
+		}
+		if (!IsValidCampTile(targetTileIndex)) return false;
+		camp.targetTileIndex = targetTileIndex;
+		camp.mobility = CampMobility.Moving;
+		return true;
+	}
+
+	private void TickCampMovement(CampData camp)
+	{
+		if (camp == null || camp.mobility != CampMobility.Moving) return;
+		if (camp.targetTileIndex < 0 || !IsValidCampTile(camp.targetTileIndex))
+		{
+			camp.mobility = CampMobility.Pitched;
+			camp.targetTileIndex = -1;
+			return;
+		}
+		int dx = Mathf.Clamp((camp.targetTileIndex % _world.mapWidth) - (camp.tileIndex % _world.mapWidth), -1, 1);
+		int dy = Mathf.Clamp((camp.targetTileIndex / _world.mapWidth) - (camp.tileIndex / _world.mapWidth), -1, 1);
+		int nextX = camp.tileIndex % _world.mapWidth + dx;
+		int nextY = camp.tileIndex / _world.mapWidth + dy;
+		int next = nextY * _world.mapWidth + nextX;
+		// 迁移只走陆地；遇水/无效格则停一天，不改道（寻路由上层 AI 负责）。
+		if (next >= 0 && next < _world.tiles.Length && _world.tiles[next].exists && _world.tiles[next].isLand)
+		{
+			ClearTileOccupancy(camp);
+			camp.tileIndex = next;
+			PlaceAnchor(camp, next);
+			OccupyTile(camp, next);
+		}
+		if (camp.tileIndex == camp.targetTileIndex)
+		{
+			camp.targetTileIndex = -1;
+			camp.mobility = CampMobility.Pitched;
+		}
+	}
+
+	private bool IsValidCampTile(int tileIndex)
+	{
+		return tileIndex >= 0 && _world.tiles != null && tileIndex < _world.tiles.Length
+			&& _world.tiles[tileIndex].exists && _world.tiles[tileIndex].isLand;
+	}
+
+	private void OccupyTile(CampData camp, int tileIndex)
+	{
+		TileData tile = _world.tiles[tileIndex];
+		tile.campId = camp.campId;
+		_world.tiles[tileIndex] = tile;
+	}
+
+	private void ClearTileOccupancy(CampData camp)
+	{
+		if (camp == null || _world.tiles == null) return;
+		if (camp.tileIndex < 0 || camp.tileIndex >= _world.tiles.Length) return;
+		TileData tile = _world.tiles[camp.tileIndex];
+		if (tile.campId == camp.campId) tile.campId = -1;
+		_world.tiles[camp.tileIndex] = tile;
+	}
+
+	private void PlaceAnchor(CampData camp, int tileIndex)
+	{
+		if (_world.anchors == null) _world.anchors = new Dictionary<int, AnchorData>();
+		AnchorData anchor = camp.anchor;
+		if (anchor == null)
+		{
+			anchor = new AnchorData
+			{
+				anchorId = camp.anchorId,
+				provinceId = _world.tiles[tileIndex].provinceId,
+				tileIndex = tileIndex
+			};
+		}
+		anchor.tileIndex = tileIndex;
+		anchor.provinceId = _world.tiles[tileIndex].provinceId;
+		camp.anchor = anchor;
+		_world.anchors[anchor.anchorId] = anchor;
+	}
+
 	public void Tick(float deltaDays)
 	{
 		for (int num = _camps.Count - 1; num >= 0; num--)
 		{
 			CampData campData = _camps[num];
+			TickCampMovement(campData);
 			campData.Tick(_world, deltaDays);
 			if (campData.isAbandoned)
 			{

@@ -1446,3 +1446,16 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **诚实口径**：`crime:*` 已有消费者；`custom:/calendar:/festival:/ritual:` 等绑定点已登记但消费者随相应系统接入，不冒充已生效。
 - 测试：`DoctrineCustomsTests` 5 例（全量绑定合法性、customs 组识别与 schema 校验、禁酒入罪、节制/许可不入罪、弑亲/放贷映射）。
 - 验证：全量 EditMode `EXIT=0`、1094 例、1083 通过、0 失败、11 Explicit、零 warning/error CS。
+
+## D164 P11.6 游牧营地移动：Pitched/Packed/Moving 与单一归属（2026-11-14）
+
+- **状态机**：`CampMobility{Pitched,Packed,Moving}`；`CampData.mobility/targetTileIndex`。
+  - `PackCamp`：移除地块占用（`tile.campId=-1`）与地图锚点，保留 campId/anchorId 以便重扎；`ActiveHabitationSites` 不再返回收起营地。
+  - `MoveCamp`：进入 Moving；每 tick 向目标推进一格（只走陆地，遇水停一天，不自动改道）。
+  - `UnpackCamp`：在目标地块重扎，恢复锚点与地块占用。
+- **单一真源**：归属只认 `ownerActorId`；`ownerRealmId` 是管辖快照，不在地块/锚点重复存归属。
+- **不悬空**：迁移每步同步 `tile.campId` 与 `AnchorData.tileIndex`，旧地块占用清除；读档时 Packed 不建锚点。
+- **入档**：`HabitationSiteSaveData.camp_mobility/camp_target_tile`，`SettlementPersistence` 还原；`SettlementPersistenceTests.RoundTrip_PreservesCamps` 断言 Moving/目标往返。
+- **机制复盘**：收起不是"删除营地"，移动不是传送；采集按当天所在地块进行，收起状态无本地采集。
+- 测试：`CampMobilityTests` 5 例（收起清占用/锚点、迁移推进与到达、重扎、收起非活动点、DTO 捕获）+ 存档往返扩展。
+- 验证：全量 EditMode `EXIT=0`、1099 例、1088 通过、0 失败、11 Explicit、零 warning/error CS。
