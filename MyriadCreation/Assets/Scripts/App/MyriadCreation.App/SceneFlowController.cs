@@ -234,8 +234,7 @@ namespace MyriadCreation.UI
         private static void EnsureEventSystem()
         {
             // 含 inactive：场景里如果保留了被禁用的 EventSystem，优先启用它，避免出现两个 EventSystem。
-            var existing = UnityEngine.Object.FindObjectsByType<EventSystem>(
-                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var existing = UnityEngine.Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include);
             if (existing != null && existing.Length > 0)
             {
                 if (!existing[0].gameObject.activeInHierarchy) existing[0].gameObject.SetActive(true);

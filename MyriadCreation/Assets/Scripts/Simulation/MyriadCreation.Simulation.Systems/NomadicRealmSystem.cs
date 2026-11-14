@@ -1,3 +1,4 @@
+#pragma warning disable 0618 // 迁移期：仍读七板块旧字段，5A.3 夹具/聚合迁移完成后移除
 using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Simulation.State;

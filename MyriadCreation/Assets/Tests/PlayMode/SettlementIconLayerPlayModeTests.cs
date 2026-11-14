@@ -27,13 +27,13 @@ namespace MyriadCreation.Tests
         public void TearDown()
         {
             // 与 MapVisibilityPlayModeTests 同款清理：销毁测试生成的大世界/渲染对象，避免 524k TileData 泄漏。
-            foreach (var w in Object.FindObjectsByType<GameWorld>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var w in Object.FindObjectsByType<GameWorld>(FindObjectsInactive.Include))
                 if (w != null) Object.DestroyImmediate(w.gameObject);
-            foreach (var r in Object.FindObjectsByType<MapRenderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var r in Object.FindObjectsByType<MapRenderer>(FindObjectsInactive.Include))
                 if (r != null) Object.DestroyImmediate(r.gameObject);
-            foreach (var f in Object.FindObjectsByType<SceneFlowController>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var f in Object.FindObjectsByType<SceneFlowController>(FindObjectsInactive.Include))
                 if (f != null) Object.DestroyImmediate(f.gameObject);
-            foreach (var p in Object.FindObjectsByType<SettlementDetailPanel>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var p in Object.FindObjectsByType<SettlementDetailPanel>(FindObjectsInactive.Include))
                 if (p != null) Object.DestroyImmediate(p.gameObject);
             System.GC.Collect();
         }

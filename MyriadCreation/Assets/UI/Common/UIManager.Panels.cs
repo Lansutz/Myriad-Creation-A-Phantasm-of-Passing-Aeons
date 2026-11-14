@@ -27,9 +27,7 @@ public partial class UIManager
         private Transform settlementPeopleListRoot;
         private TMPro.TMP_Text settlementPeopleTitle;
         private UnityEngine.UI.Button settlementPeopleEntryButton;
-        private int settlementPeopleAnchorId = -1;
         private string settlementPeopleSiteName = "";
-        private int settlementPeopleLookupTile = int.MinValue;
 
 
         private string GetReligionName(int faithId)
@@ -659,6 +657,7 @@ public partial class UIManager
                 ApplyLawServicesToGovernmentPanel();
                 ApplyDecreeCommandToGovernmentPanel();
                 _governmentPanel.SetWorldReadModel(_worldReadModel);
+                Panels.Register(_governmentPanel);
                 return;
             }
 
@@ -678,6 +677,7 @@ public partial class UIManager
             ApplyLawServicesToGovernmentPanel();
             ApplyDecreeCommandToGovernmentPanel();
             _governmentPanel.SetWorldReadModel(_worldReadModel);
+            Panels.Register(_governmentPanel);
         }
 
         public void OpenGovernmentPanel()

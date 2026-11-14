@@ -1,3 +1,4 @@
+#pragma warning disable 0618 // 迁移期：本测试仍显式构造七板块旧字段，待文化 5A.3 夹具迁移后移除
 using System.Collections.Generic;
 using NUnit.Framework;
 using MyriadCreation.Core.Data;
@@ -126,3 +127,5 @@ namespace MyriadCreation.Tests.EditMode
         }
     }
 }
+
+#pragma warning restore 0618

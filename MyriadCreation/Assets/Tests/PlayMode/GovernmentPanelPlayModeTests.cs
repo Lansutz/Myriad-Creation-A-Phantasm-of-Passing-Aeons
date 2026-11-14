@@ -27,15 +27,15 @@ namespace MyriadCreation.Tests
         public void TearDown()
         {
             // 动态面板/世界/渲染器都是运行时创建或 DDOL 对象，不清理会污染后续 PlayMode 测试。
-            foreach (var panel in Object.FindObjectsByType<GovernmentPanel>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var panel in Object.FindObjectsByType<GovernmentPanel>(FindObjectsInactive.Include))
                 if (panel != null) Object.DestroyImmediate(panel.gameObject);
-            foreach (var w in Object.FindObjectsByType<GameWorld>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var w in Object.FindObjectsByType<GameWorld>(FindObjectsInactive.Include))
                 if (w != null) Object.DestroyImmediate(w.gameObject);
-            foreach (var r in Object.FindObjectsByType<MapRenderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var r in Object.FindObjectsByType<MapRenderer>(FindObjectsInactive.Include))
                 if (r != null) Object.DestroyImmediate(r.gameObject);
-            foreach (var f in Object.FindObjectsByType<SceneFlowController>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var f in Object.FindObjectsByType<SceneFlowController>(FindObjectsInactive.Include))
                 if (f != null) Object.DestroyImmediate(f.gameObject);
-            foreach (var gm in Object.FindObjectsByType<GameManager>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var gm in Object.FindObjectsByType<GameManager>(FindObjectsInactive.Include))
                 if (gm != null) Object.DestroyImmediate(gm.gameObject);
             // 大世界销毁后主动回收，避免后续测试分配触发全堆扫描。
             System.GC.Collect();
@@ -43,7 +43,7 @@ namespace MyriadCreation.Tests
 
         private static Button FindGovernmentButton()
         {
-            Button[] buttons = Object.FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            Button[] buttons = Object.FindObjectsByType<Button>(FindObjectsInactive.Include);
             for (int i = 0; i < buttons.Length; i++)
             {
                 TMPro.TMP_Text label = buttons[i].GetComponentInChildren<TMPro.TMP_Text>(true);

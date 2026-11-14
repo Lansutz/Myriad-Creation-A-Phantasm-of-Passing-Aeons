@@ -1357,3 +1357,17 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **实测**：128×64（8192 地块）经济日结平均 **3.24ms**（旧实现约 28ms），回到调度预算内；7000 年 48×24 观测从约 149s 降到约 85s。
 - 测试：`EconomyTickPerformanceTests`（20 次采样平均 <25ms，实测 3.24ms）；`EconomyConservationTests` 18/18。
 - 验证：全量 EditMode `EXIT=0`、1080 例、1070 通过、0 失败、零 `error CS`（10 个 Explicit 跳过）。
+
+## D155 P10.6 工程卫生：死代码、警告清零、面板注册与依赖边界（2026-11-14）
+
+- **死代码**：删除 `LawRuntime/LawSystem.cs`（全库零外部引用；`LawEffects` 仍被 `AIDecisionSystem` 消费，保留）。
+- **契约清理**：删除 `RuntimeMapEditingController` 的 `[SerializeField] world` 与 obsolete `BindWorld(Object)` 兼容壳。控制器只持有 `IMapWorldView` 与 `IMapEditCommandService`；编辑命令经 `WorldEditService` 的 provider 解析当前世界，读档自动切换。`GameManager` 两处注入点（`InjectMapWorldView`、`LoadGame`）在服务为空时兜底创建，避免快速读档早于 `Awake` 导致控制器拿到 null 服务。
+- **回归测试改为行为契约**：`WorldRebindOnLoadTests` 不再反射已删字段，改为"读档后控制器拿到编辑服务 + 一次 `SetTerrain` 落在新世界"，active/inactive 两条路径都覆盖。
+- **警告清零（152 → 0）**：
+  - `FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)` 全部换成不带 `FindObjectsSortMode` 的重载（`SceneFlowController`、PlayMode 测试）；
+  - 迁移期旧字段（文化七板块、`RealmDTO.composition`）在消费文件顶部用 `#pragma warning disable 0618` 标注，作为迁移期唯一临时手段；
+  - 删除 `UIManager.Panels` 中两个从未读取的聚落人物锚点字段（CS0414）；
+  - 全库重复 `using` 扫描为 0。
+- **面板注册口径**：运行时面板以 `UIManager.Panels`（`UiPanelRegistry`）为唯一入口。本次补注册 `GovernmentPanel`（其 `Build/Show/Hide/IsOpen` 与接口完全一致）。聚落详情面板是"锚点选择驱动"（`Show(anchorId)`，由 `ISettlementDetailUi` 契约绑定），存读档/设置/主菜单是"流程驱动"（`Build(parent, onClose)` 回调），签名与 `IUserInterfacePanel` 不兼容；不为它们造假适配，注册表范围明确为"可由管理器按 id 开关的运行时面板"。
+- **依赖收窄**：`MyriadCreation.Save.Runtime.asmdef` 移除 `MyriadCreation.Audio`（该程序集无 Audio 代码）。仍引用 World/Simulation/Faith/Culture 的 DTO 映射属于序列化边界欠账（主计划 A2/A3），本轮不假装解耦，保留在后续计划。
+- **验证**：全量 EditMode `EXIT=0`、1079 例、1069 通过、0 失败、10 个 Explicit 跳过、零 `warning CS`、零 `error CS`。

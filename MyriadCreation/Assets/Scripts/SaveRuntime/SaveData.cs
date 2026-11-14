@@ -1,4 +1,4 @@
-﻿
+
 
 
 using System.Collections.Generic;
@@ -18,7 +18,6 @@ using MyriadCreation.Simulation.Faith;
 using MyriadCreation.Simulation.Culture;
 using MyriadCreation.Simulation.Planning;
 using MyriadCreation.Simulation.AI;
-using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.LawHost;
 using MyriadCreation.Content.Definitions;
 namespace MyriadCreation.Infrastructure.Save

@@ -264,3 +264,4 @@
 7. **迁移已落地** — 旧总纲在 `docs/archive/2026-11-11_superseded/`，不再作为现行；V2 为唯一现行总纲。
 
 **结论**：§5.1 清零（第 2 条由 D101 收口）；§6 七条全部满足。P2.5 A–E 完成（F 按 D97 作废并写明触发条件）、P2.3 信息滞后完成（Intrigue 按 D98 作废）、P2.6 影响力两相完成（调度器全局两相按 D99 作废）、P2.4 计划点名平表全部外提（其余按 D99 清点）。
+- 2026-11-14 **P10.6 工程卫生**：删 `LawSystem` 死代码与 `RuntimeMapEditingController.BindWorld` 兼容壳（读档重绑测试改为行为契约）；警告 152 → 0（过时 `FindObjectsByType` 重载、迁移期旧字段标注、未读字段清理）；`Save.Runtime` 移除 Audio 依赖；`GovernmentPanel` 接入面板注册表。验证：`EXIT=0`、1079 例、1069 通过、0 失败、零 warning。详见 D155。

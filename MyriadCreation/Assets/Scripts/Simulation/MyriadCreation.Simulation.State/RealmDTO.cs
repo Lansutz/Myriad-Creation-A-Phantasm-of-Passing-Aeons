@@ -1,3 +1,4 @@
+#pragma warning disable 0618 // 旧档字段迁移期：composition 由 NormalizeLegacyFields 读取后清空
 using System;
 using System.Collections.Generic;
 using MyriadCreation.Core.Dto;

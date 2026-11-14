@@ -7,7 +7,7 @@ using MyriadCreation.UI.Common;
 
 namespace MyriadCreation.UI.Panels
 {
-public partial class GovernmentPanel : MonoBehaviour
+public partial class GovernmentPanel : MonoBehaviour, IUserInterfacePanel
 {
         [SerializeField] private int targetRealmId = 0;
         [SerializeField] private GameObject panelRoot;
@@ -49,6 +49,8 @@ public partial class GovernmentPanel : MonoBehaviour
 
         /// <summary>面板是否打开（动态 Build 的根遮罩激活；兼容场景内旧引用）。</summary>
         public bool IsOpen => panelRoot != null && panelRoot.activeSelf;
+
+        public string PanelId => "government";
 
         private static Font UiFont
         {

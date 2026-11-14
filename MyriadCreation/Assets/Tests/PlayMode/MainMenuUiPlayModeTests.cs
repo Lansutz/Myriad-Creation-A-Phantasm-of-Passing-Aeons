@@ -25,15 +25,15 @@ namespace MyriadCreation.Tests
         public void TearDown()
         {
             // 主菜单/流程/世界都是 DDOL 运行时对象；不清理会污染后续 PlayMode 测试（MapVisibility 等）。
-            foreach (var flow in Object.FindObjectsByType<SceneFlowController>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var flow in Object.FindObjectsByType<SceneFlowController>(FindObjectsInactive.Include))
                 if (flow != null) Object.DestroyImmediate(flow.gameObject);
-            foreach (var menu in Object.FindObjectsByType<MainMenuUI>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var menu in Object.FindObjectsByType<MainMenuUI>(FindObjectsInactive.Include))
                 if (menu != null) Object.DestroyImmediate(menu.gameObject);
-            foreach (var gm in Object.FindObjectsByType<GameManager>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var gm in Object.FindObjectsByType<GameManager>(FindObjectsInactive.Include))
                 if (gm != null) Object.DestroyImmediate(gm.gameObject);
-            foreach (var w in Object.FindObjectsByType<GameWorld>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var w in Object.FindObjectsByType<GameWorld>(FindObjectsInactive.Include))
                 if (w != null) Object.DestroyImmediate(w.gameObject);
-            foreach (var canvas in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var canvas in Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include))
                 if (canvas != null && canvas.gameObject.name == "MainMenuCanvas") Object.DestroyImmediate(canvas.gameObject);
             // 大世界（524k TileData）销毁后主动回收，避免后续测试的分配触发 Boehm GC 全堆扫描（曾造成 ~100s 抖动）。
             System.GC.Collect();
@@ -119,7 +119,7 @@ namespace MyriadCreation.Tests
         private static int CountActivePanelObjects()
         {
             int count = 0;
-            foreach (var t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            foreach (var t in Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude))
             {
                 if (t != null && t.name.Contains("Panel") && t.gameObject.activeInHierarchy) count++;
             }

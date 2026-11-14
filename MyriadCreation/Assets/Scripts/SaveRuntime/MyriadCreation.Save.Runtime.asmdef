@@ -8,8 +8,7 @@
         "MyriadCreation.World",
         "MyriadCreation.Simulation",
         "MyriadCreation.Faith",
-        "MyriadCreation.Culture",
-        "MyriadCreation.Audio"
+        "MyriadCreation.Culture"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

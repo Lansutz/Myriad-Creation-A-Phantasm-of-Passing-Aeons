@@ -302,7 +302,8 @@ namespace MyriadCreation.UI
                 if (mapEditing != null)
                 {
                     mapEditing.SetWorldView(mapRenderer != null ? mapRenderer.WorldView : null);
-                    mapEditing.BindWorld(world);
+                    // 快速读档可能早于 Awake 完成注入：这里兜底创建，避免控制器拿到 null 服务。
+                    if (_worldEditService == null) _worldEditService = new WorldEditService(() => world);
                     mapEditing.SetEditService(_worldEditService);
                 }
                 InjectUiReadViews();
@@ -400,7 +401,7 @@ namespace MyriadCreation.UI
             if (mapEditing != null)
             {
                 mapEditing.SetWorldView(mapRenderer != null ? mapRenderer.WorldView : null);
-                mapEditing.BindWorld(world);
+                if (_worldEditService == null) _worldEditService = new WorldEditService(() => world);
                 mapEditing.SetEditService(_worldEditService);
             }
             InjectUiReadViews();

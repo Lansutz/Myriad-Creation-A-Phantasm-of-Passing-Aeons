@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -25,7 +25,6 @@ using MyriadCreation.Simulation.State;
 using MyriadCreation.Simulation.Systems;
 using MyriadCreation.Simulation.ActionGate;
 using GateService = MyriadCreation.Simulation.ActionGate.ActionGate;
-using MyriadCreation.Core.Contracts;
 using MyriadCreation.Simulation.Units;
 using MyriadCreation.Simulation.Warfare;
 using MyriadCreation.World;

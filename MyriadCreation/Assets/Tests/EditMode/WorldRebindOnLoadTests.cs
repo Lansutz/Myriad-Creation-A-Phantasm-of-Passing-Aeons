@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 using MyriadCreation.Core.Data;
@@ -18,15 +17,13 @@ namespace MyriadCreation.Tests.EditMode
     /// 读档后世界级场景组件重绑回归（task-33 A）。
     ///
     /// SaveSystem.LoadGame 会新建 GameWorld 并让旧世界变成 fake-null；场景里的
-    /// RuntimeMapEditingController 必须由 GameManager.LoadGame 重绑到新世界（含 inactive 物体），
-    /// 否则框选/移动/抬升/撤销会继续作用在已销毁的旧世界上。
+    /// RuntimeMapEditingController 必须由 GameManager.LoadGame 重绑（含 inactive 物体）：
+    /// 控制器本身不再持有 GameWorld，编辑命令经注入的 WorldEditService 按 provider 解析当前世界，
+    /// 因此断言点在"服务已注入 + 命令落在新世界"，而不是旧的对象引用。
     /// </summary>
     public class WorldRebindOnLoadTests
     {
         private const string SaveName = "__world_rebind_on_load_test";
-
-        private static readonly FieldInfo ControllerWorldField =
-            typeof(RuntimeMapEditingController).GetField("world", BindingFlags.Instance | BindingFlags.NonPublic);
 
         private readonly List<GameObject> _objects = new List<GameObject>();
 
@@ -59,28 +56,18 @@ namespace MyriadCreation.Tests.EditMode
             return world;
         }
 
-        private static GameWorld ControllerWorld(RuntimeMapEditingController controller)
-        {
-            Assert.IsNotNull(controller, "控制器不应为 null");
-            Assert.IsNotNull(ControllerWorldField,
-                "找不到 RuntimeMapEditingController.world 字段（反射契约变化，需同步测试）");
-            return ControllerWorldField.GetValue(controller) as GameWorld;
-        }
-
-        private RuntimeMapEditingController CreateController(GameWorld initialWorld, bool active)
+        private RuntimeMapEditingController CreateController(bool active)
         {
             var go = new GameObject("RuntimeMapEditingController");
             go.SetActive(active);
             var controller = go.AddComponent<RuntimeMapEditingController>();
             _objects.Add(go);
-            // 模拟场景里预先接好的引用（读档前指向旧世界）。
-            controller.BindWorld(initialWorld);
             return controller;
         }
 
         /// <summary>
         /// GameManager 用 inactive 物体创建：避免 EditMode 下触发 Awake（DontDestroyOnLoad/单例副作用）。
-        /// LoadGame 是实例方法，不依赖 Awake/Instance，可直接调用。
+        /// 这也顺带覆盖"快速读档早于 Awake 注入"的兜底路径。
         /// </summary>
         private GameManager CreateGameManager()
         {
@@ -99,21 +86,39 @@ namespace MyriadCreation.Tests.EditMode
             return loaded;
         }
 
+        private static int FirstExistingTile(GameWorld world)
+        {
+            for (int i = 0; i < world.tiles.Length; i++)
+            {
+                if (world.tiles[i].exists) return i;
+            }
+            Assert.Fail("世界生成后应至少有一个可用地块");
+            return -1;
+        }
+
+        private static void AssertEditLandsOnNewWorld(RuntimeMapEditingController controller, GameWorld loaded)
+        {
+            Assert.IsNotNull(controller.EditService, "读档后应注入编辑命令服务（否则框选/抬升无实现）");
+            int tile = FirstExistingTile(loaded);
+            Assert.IsTrue(controller.EditService.SetTerrain(tile, 0.3f),
+                "编辑命令 handler 应能写入新世界的地块");
+            Assert.AreEqual(0.3f, loaded.tiles[tile].elevation01, 1e-3f,
+                "编辑命令必须落在读档后的新世界，而不是已销毁的旧世界");
+        }
+
         [Test]
         public void LoadGame_RebindsActiveRuntimeMapEditingController_ToNewWorld()
         {
             var oldWorld = NewWorld();
             Assert.IsTrue(SaveSystem.SaveGame(oldWorld, SaveName), "前置：存盘应成功");
-            var controller = CreateController(oldWorld, active: true);
-            Assert.AreSame(oldWorld, ControllerWorld(controller), "前置：控制器初始应持有旧世界");
+            var controller = CreateController(active: true);
             var manager = CreateGameManager();
 
             manager.LoadGame(SaveName);
 
             var loadedWorld = SaveAndRegisterLoadedWorld(manager);
             Assert.AreNotSame(oldWorld, loadedWorld, "读档应新建 GameWorld 实例");
-            Assert.AreSame(loadedWorld, ControllerWorld(controller),
-                "读档后 RuntimeMapEditingController 应重绑到新世界（否则编辑/选择作用在已销毁旧世界）");
+            AssertEditLandsOnNewWorld(controller, loadedWorld);
         }
 
         [Test]
@@ -121,24 +126,13 @@ namespace MyriadCreation.Tests.EditMode
         {
             var oldWorld = NewWorld();
             Assert.IsTrue(SaveSystem.SaveGame(oldWorld, SaveName), "前置：存盘应成功");
-            var controller = CreateController(oldWorld, active: false);
+            var controller = CreateController(active: false);
             var manager = CreateGameManager();
 
             manager.LoadGame(SaveName);
 
             var loadedWorld = SaveAndRegisterLoadedWorld(manager);
-            Assert.AreSame(loadedWorld, ControllerWorld(controller),
-                "inactive 的控制器也应被 FindAnyObjectByType(Include) 找到并重绑");
-        }
-
-        [Test]
-        public void BindWorld_NullWorld_IsNullSafe()
-        {
-            var world = NewWorld();
-            var controller = CreateController(world, active: true);
-
-            Assert.DoesNotThrow(() => controller.BindWorld(null), "BindWorld(null) 不应抛异常");
-            Assert.IsNull(ControllerWorld(controller), "BindWorld(null) 后 world 引用应为 null");
+            AssertEditLandsOnNewWorld(controller, loadedWorld);
         }
     }
 }

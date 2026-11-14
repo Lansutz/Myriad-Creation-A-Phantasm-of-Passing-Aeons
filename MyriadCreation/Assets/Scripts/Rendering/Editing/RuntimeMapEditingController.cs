@@ -12,8 +12,6 @@ namespace MyriadCreation.Rendering.Editing
     public sealed partial class RuntimeMapEditingController : MonoBehaviour
     {
         private IMapWorldView _view;
-        // B7 兼容：旧测试/场景引用的 GameWorld 组件（UnityEngine.Object，不引 Simulation 类型）。
-        [SerializeField] private UnityEngine.Object world;
         [SerializeField] private MapRenderer mapRenderer;
         [SerializeField] private Camera mainCamera;
         [SerializeField] private int brushRadius = 3;
@@ -42,6 +40,9 @@ namespace MyriadCreation.Rendering.Editing
 
         public bool EditingActive => editingActive;
 
+        /// <summary>当前注入的编辑命令服务（未注入为 null）；App 的 WorldEditService 会跟随 GameManager 的当前世界。</summary>
+        public IMapEditCommandService EditService => _editService;
+
         private void Awake()
         {
             if (mapRenderer == null) mapRenderer = FindAnyObjectByType<MapRenderer>();
@@ -63,13 +64,6 @@ namespace MyriadCreation.Rendering.Editing
         {
             _editService = service;
             _missingServiceLogged = false;
-        }
-
-        /// <summary>B7 兼容壳：旧 GameManager/测试的 BindWorld(GameWorld) 入口（仅记录对象，不取 GameWorld 类型）。</summary>
-        [System.Obsolete("B7: 使用 SetWorldView(IMapWorldView)；本方法仅为旧测试/场景兼容保留。")]
-        public void BindWorld(UnityEngine.Object target)
-        {
-            world = target;
         }
 
         private void Update()

@@ -37,13 +37,13 @@ namespace MyriadCreation.Tests
         public void TearDown()
         {
             // 销毁本测试生成的大世界/场景对象，避免 524k TileData 泄漏导致后续测试 GC 全堆扫描（曾使后续测试膨胀到 ~100s）。
-            foreach (var w in Object.FindObjectsByType<GameWorld>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var w in Object.FindObjectsByType<GameWorld>(FindObjectsInactive.Include))
                 if (w != null) Object.DestroyImmediate(w.gameObject);
-            foreach (var r in Object.FindObjectsByType<MapRenderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var r in Object.FindObjectsByType<MapRenderer>(FindObjectsInactive.Include))
                 if (r != null) Object.DestroyImmediate(r.gameObject);
-            foreach (var f in Object.FindObjectsByType<SceneFlowController>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var f in Object.FindObjectsByType<SceneFlowController>(FindObjectsInactive.Include))
                 if (f != null) Object.DestroyImmediate(f.gameObject);
-            foreach (var m in Object.FindObjectsByType<MainMenuUI>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var m in Object.FindObjectsByType<MainMenuUI>(FindObjectsInactive.Include))
                 if (m != null) Object.DestroyImmediate(m.gameObject);
             System.GC.Collect();
         }
@@ -86,7 +86,7 @@ namespace MyriadCreation.Tests
             var cam = Camera.main;
             if (cam == null)
             {
-                var cams = Object.FindObjectsByType<Camera>(FindObjectsSortMode.None);
+                var cams = Object.FindObjectsByType<Camera>();
                 if (cams != null && cams.Length > 0) cam = cams[0];
             }
             Assert.IsNotNull(cam, "相机存在");

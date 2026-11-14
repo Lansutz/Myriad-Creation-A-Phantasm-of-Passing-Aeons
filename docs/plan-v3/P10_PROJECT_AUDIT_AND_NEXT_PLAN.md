@@ -193,3 +193,18 @@
 - 实测 8192 地块日结 3.24ms（旧约 28ms）；7000 年观测 149s → 85s。
 - `EconomyTickPerformanceTests` + `EconomyConservationTests` 18/18。
 - 下一步：P10.6 工程卫生。
+
+## 12. P10.6 实施记录（2026-11-14）
+
+- 删 `LawRuntime/LawSystem.cs`（零引用）与 `RuntimeMapEditingController` 的 `world` 字段 / obsolete `BindWorld`；控制器只依赖 `IMapWorldView` + `IMapEditCommandService`。
+- `GameManager` 注入点兜底创建 `WorldEditService`，覆盖快速读档早于 `Awake` 的路径；`WorldRebindOnLoadTests` 改为"服务已注入 + 编辑落到新世界"的行为断言。
+- warning 152 → 0：过时 `FindObjectsByType` 重载、迁移期旧字段 `#pragma` 标注、`UIManager.Panels` 未读字段、重复 using 扫描清零。
+- `Save.Runtime` 移除 `MyriadCreation.Audio`；World/Simulation/Faith/Culture 的 DTO 映射仍是序列化边界欠账（A2/A3），不冒充已完成。
+- 面板注册：补注册 `GovernmentPanel`；聚落详情/存读档/设置/主菜单按"选择驱动/流程驱动"口径留在注册表之外（签名不兼容，拒绝假适配）。
+- 验证：`EXIT=0`、1079 例、1069 通过、0 失败、10 Explicit、零 warning CS。
+
+### 12.1 仍未达成的 P10 验收项（不掩盖）
+
+- **200 年每领域至少 1 项**：尚未做专项诊断；需长跑统计 `InnovationTree` 各领域完成数，若 AI 偏科则在选题侧加缺口优先，而不是放宽门槛。
+- **面板全注册**：见上文口径，`IUserInterfacePanel` 覆盖运行时可开关面板；其余为流程/选择面板，未接入。
+- **Save.Runtime 不引用领域实现**：仅移除 Audio；领域 DTO 映射仍在，属 A2/A3 大工程。
