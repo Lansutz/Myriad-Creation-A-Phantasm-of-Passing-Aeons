@@ -1477,3 +1477,14 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **未完成**：before/after 截图尚未产出（需要一次真实渲染捕获），不冒充完成。
 - 测试：`TerrainContourTests` 3 例。
 - 验证：全量 EditMode `EXIT=0`、1107 例、1096 通过、0 失败、11 Explicit、零 warning/error CS。
+
+## D167 P11.4 截图工件与 P11.7 遗留欠账判据（2026-11-14）
+
+- **截图**：`TerrainPreviewCaptureTests`（Explicit）用真实几何导出 `docs/art/terrain-preview.png`（512×256，seed 4242）；山影对比度提高（±0.26/0.22），等高线墨色 0.80，配置可关。
+- **许可**：`docs/art/ASSET_LICENSES.md` 登记 CC0/MIT 来源；当前未入库任何外部二进制，运行时不联网。
+- **P11.7 判据**：
+  - `Save.Runtime`：asmdef 仅 Core + Save.Contracts（已达成）；`Save.World` 保留为领域捕获适配层，折进 `Simulation` 的 A2 最终形态列为后续架构项，不收窄定义冒充完成。
+  - 流程面板（MainMenu/SaveLoad/Settings）：`Build(parent, onClose)` 签名与 `IUserInterfacePanel` 不兼容，维持注册表外；注册表覆盖 6 个游戏内面板。
+  - 运输"方式"：由 `animals/carts/boats` 编成表达，`ArmyPersistenceTests` 逐项断言入档；不另设 mode 字段。
+  - 斥候分遣：`scoutDetached/scoutTileIndex` 入档并在同一测试断言。
+- 验证：全量 EditMode `EXIT=0`、1108 例、1096 通过、0 失败、11 Explicit、零 warning/error CS。

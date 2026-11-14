@@ -150,3 +150,10 @@
 - `docs/art/ASSET_LICENSES.md` 登记 CC0/MIT 来源；未引入外部二进制。
 - `TerrainContourTests` 3 例；验证：`EXIT=0`、1107 例、1096 通过、零 warning CS。
 - 未完成：before/after 渲染截图。
+
+## 16. P11.4 截图与 P11.7 欠账判据（2026-11-14）
+
+- `docs/art/terrain-preview.png` 由 Explicit 测试从真实地形导出（512×256）；山影对比与等高线可见度上调，配置可关。
+- `ASSET_LICENSES.md` 记录 CC0/MIT 来源，未引入外部二进制。
+- P11.7：Save.Runtime 引用判据已达成；Save.World 仍为适配层（A2 最终形态列为后续）；流程面板维持外置；运输编成与斥候状态入档断言。
+- 验证：`EXIT=0`、1108 例、1096 通过、零 warning CS。

@@ -99,7 +99,7 @@ namespace MyriadCreation.Rendering
  // 光源西北 45°（光照方向向量——东南面受光）
             float shade = (dx + dy) * 0.5f; // dot 简化（光 -1,-1 归一后的等效）
  // 海陆交接（低海拔近海）不平——只调陆地幅度
-            float light = 1f + Mathf.Clamp(shade * 0.9f, -0.16f, 0.14f);
+            float light = 1f + Mathf.Clamp(shade * 1.35f, -0.26f, 0.22f);
 
  // 坡度笔触（陡坡加重——slopeDegree 在手绘地图≈笔触密度）
             float slope = 0f;
@@ -121,7 +121,7 @@ namespace MyriadCreation.Rendering
                 float e = current.elevation01;
                 if (TerrainContour.ShouldDraw(e, Get(x - 1, y), Get(x, y - 1), interval))
                 {
-                    const float contourInk = 0.86f;
+                    const float contourInk = 0.80f;
                     c.r = Mathf.Clamp01(c.r * contourInk);
                     c.g = Mathf.Clamp01(c.g * contourInk);
                     c.b = Mathf.Clamp01(c.b * contourInk);

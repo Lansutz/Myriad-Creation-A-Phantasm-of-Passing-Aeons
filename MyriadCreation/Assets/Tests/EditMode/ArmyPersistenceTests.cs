@@ -62,7 +62,9 @@ namespace MyriadCreation.Tests.EditMode
                 supply = 44f,
                 training = 55f,
                 moveTargetTile = 0,
-                moveProgress = 0.35f
+                moveProgress = 0.35f,
+                scoutDetached = true,
+                scoutTileIndex = 0
             };
             army.unitCounts[50] = 500f;
             army.unitCounts[51] = 120f;
@@ -72,8 +74,10 @@ namespace MyriadCreation.Tests.EditMode
                 type = TransportUnitType.Army,
                 unitName = "军需队",
                 leaderCharacterId = 12,
-                boats = 1
+                boats = 2
             };
+            army.transport.animals.Add(PackAnimalKind.Horse);
+            army.transport.carts.Add(CartKind.Wagon);
             army.transport.AddCargo(10, 240f);
             army.transport.AddCargo(70, 30f);
             return army;
@@ -105,6 +109,8 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(78f, army.organization, 0.01f);
             Assert.AreEqual(61f, army.morale, 0.01f);
             Assert.AreEqual(44f, army.supply, 0.01f);
+            Assert.IsTrue(army.scoutDetached, "斥候分遣状态应入档");
+            Assert.AreEqual(0, army.scoutTileIndex, "斥候地块应入档");
             Assert.AreEqual(55f, army.training, 0.01f);
             Assert.AreEqual(500f, army.unitCounts[50], 0.01f);
             Assert.AreEqual(120f, army.unitCounts[51], 0.01f);
@@ -115,7 +121,11 @@ namespace MyriadCreation.Tests.EditMode
             Assert.IsNotNull(army.transport, "军队队伍/货物不应读档蒸发");
             Assert.AreEqual(240f, army.transport.GetCargoAmount(10), 0.01f);
             Assert.AreEqual(30f, army.transport.GetCargoAmount(70), 0.01f);
-            Assert.AreEqual(1, army.transport.boats);
+            Assert.AreEqual(2, army.transport.boats, "船舶编成应入档");
+            Assert.AreEqual(1, army.transport.animals.Count, "驮兽编成应入档");
+            Assert.AreEqual(PackAnimalKind.Horse, army.transport.animals[0]);
+            Assert.AreEqual(1, army.transport.carts.Count, "车辆编成应入档");
+            Assert.AreEqual(CartKind.Wagon, army.transport.carts[0]);
             Assert.AreEqual(12, army.transport.leaderCharacterId);
         }
 
