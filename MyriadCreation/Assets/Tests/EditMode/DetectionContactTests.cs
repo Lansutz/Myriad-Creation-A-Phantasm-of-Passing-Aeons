@@ -23,16 +23,68 @@ namespace MyriadCreation.Tests.EditMode
             Assert.AreEqual(3, DetectionContactService.TileDistance(0, 30, 10));
         }
 
-        [Test]
-        public void CanContact_RequiresScoutReach()
+        [TearDown]
+        public void TearDown()
         {
-            var nearby = new Army { armyId = 1, currentTileIndex = 0, scoutRange = 1 };
-            var far = new Army { armyId = 2, currentTileIndex = 22, scoutRange = 1 };
-            var farWithScouts = new Army { armyId = 3, currentTileIndex = 22, scoutRange = 2 };
+            DetectionContactService.CommanderResolver = null;
+        }
 
-            Assert.IsFalse(DetectionContactService.CanContact(nearby, far, 10), "范围 1 看不到距离 2");
-            Assert.IsTrue(DetectionContactService.CanContact(nearby, farWithScouts, 10), "任一侧够得到即接触");
-            Assert.IsTrue(DetectionContactService.CanContact(nearby, new Army { armyId = 4, currentTileIndex = 0, scoutRange = 0 }, 10), "同地块始终接触");
+        [Test]
+        public void CanDetect_IsOneSided()
+        {
+            var blind = new Army { armyId = 1, currentTileIndex = 0, scoutRange = 1 };
+            var nearBlind = new Army { armyId = 2, currentTileIndex = 10, scoutRange = 0 };
+            var far = new Army { armyId = 3, currentTileIndex = 22, scoutRange = 1 };
+
+            Assert.IsTrue(DetectionContactService.CanDetect(blind, nearBlind, 10),
+                "观察方范围 1、距离 1：看得到");
+            Assert.IsFalse(DetectionContactService.CanDetect(nearBlind, blind, 10),
+                "反向不成立：被观察方自己范围 0，看不见对方");
+            Assert.IsTrue(DetectionContactService.CanContact(blind, nearBlind, 10),
+                "任一方看到即形成接触");
+            Assert.IsFalse(DetectionContactService.CanContact(blind, far, 10),
+                "双方都够不到距离 2 时不得接触");
+        }
+
+        [Test]
+        public void ScoutDetach_RequiresCommanderPerk()
+        {
+            var army = new Army { armyId = 1, currentTileIndex = 0, commanderId = 7 };
+            var commander = new CharacterData { characterId = 7 };
+            DetectionContactService.CommanderResolver = id => id == 7 ? commander : null;
+
+            Assert.IsFalse(DetectionContactService.TryDetachScouts(army), "未解锁 scout_detach 不得分遣");
+
+            commander.AddSpecialtyExperience(SpecialtyType.Military, 500f);
+            commander.military = 90f;
+            commander.unlockedPerks.Add("scout_detach");
+
+            Assert.IsTrue(DetectionContactService.TryDetachScouts(army), "已解锁即可分遣");
+            Assert.IsTrue(army.scoutDetached);
+            Assert.AreEqual(army.currentTileIndex, army.scoutTileIndex);
+        }
+
+        [Test]
+        public void ScoutDetach_ExtendsVisionFromScoutTile()
+        {
+            var army = new Army { armyId = 1, currentTileIndex = 0, scoutRange = 1, scoutDetached = true, scoutTileIndex = 10 };
+            var target = new Army { armyId = 2, currentTileIndex = 20, scoutRange = 0 };
+
+            Assert.IsTrue(DetectionContactService.CanDetect(army, target, 10),
+                "斥候前出到相邻地块后，应能从斥候位置看到目标");
+            Assert.AreEqual(1, DetectionContactService.EffectiveScoutRange(army),
+                "分遣斥候不凭空加射程；收益来自观测原点前移");
+        }
+
+        [Test]
+        public void ScoutDetach_RejoinsBeyondLeash()
+        {
+            var army = new Army { armyId = 1, currentTileIndex = 0, scoutRange = 1, scoutDetached = true, scoutTileIndex = 40 };
+
+            Assert.IsFalse(DetectionContactService.TickScoutDetachment(army, 10),
+                "斥候离开主军超过 leash（基础范围+1）应归队");
+            Assert.IsFalse(army.scoutDetached);
+            Assert.AreEqual(-1, army.scoutTileIndex);
         }
 
         [Test]

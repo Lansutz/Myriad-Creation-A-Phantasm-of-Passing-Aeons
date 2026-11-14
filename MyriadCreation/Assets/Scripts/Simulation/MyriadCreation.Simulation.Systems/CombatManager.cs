@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
 using MyriadCreation.Core.Events;
@@ -204,8 +204,10 @@ public class CombatManager
 		foreach (KeyValuePair<int, Army> army3 in armies)
 		{
 			DetectionContactService.RefreshScoutRange(army3.Value, _tiles, _unitDefs);
+			DetectionContactService.TickScoutDetachment(army3.Value, _mapWidth);
 		}
 		_lastContacts.Clear();
+		var reportedContacts = new HashSet<long>();
 		foreach (WarState item in new List<WarState>(wars.FindAll((WarState w) => !w.ended)))
 		{
 			foreach (KeyValuePair<int, Army> army in armies)
@@ -228,22 +230,27 @@ public class CombatManager
 					{
 						continue;
 					}
-					// D37：先有接触，才有接敌。斥候可达范围覆盖不到对方时，双方都看不见彼此。
-					int distance = DetectionContactService.TileDistance(value.currentTileIndex, value2.currentTileIndex, _mapWidth);
-					int reach = Mathf.Max(value.scoutRange, value2.scoutRange);
-					if (distance > reach)
+					// P11.2：探测是单向的，各自由自己的斥候决定；双方都看不见才没有接触。
+					bool observerSees = DetectionContactService.CanDetect(value, value2, _mapWidth);
+					bool targetSees = DetectionContactService.CanDetect(value2, value, _mapWidth);
+					if (!observerSees && !targetSees)
 					{
 						continue;
 					}
-					_lastContacts.Add(new DetectionContact
+					int distance = DetectionContactService.TileDistance(value.currentTileIndex, value2.currentTileIndex, _mapWidth);
+					long pairKey = ((long)value.armyId << 32) ^ (uint)value2.armyId;
+					if (reportedContacts.Add(pairKey))
 					{
-						observerArmyId = value.armyId,
-						targetArmyId = value2.armyId,
-						observerRealmId = ownerRealmId,
-						targetRealmId = ownerRealmId2,
-						distance = distance,
-						mutual = value2.scoutRange >= distance
-					});
+						_lastContacts.Add(new DetectionContact
+						{
+							observerArmyId = value.armyId,
+							targetArmyId = value2.armyId,
+							observerRealmId = ownerRealmId,
+							targetRealmId = ownerRealmId2,
+							distance = distance,
+							mutual = targetSees
+						});
+					}
 					if (distance == 0)
 					{
 						BattleResult battleResult = ResolveBattle(value, value2);

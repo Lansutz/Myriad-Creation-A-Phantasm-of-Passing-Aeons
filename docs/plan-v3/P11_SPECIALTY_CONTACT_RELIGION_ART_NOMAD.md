@@ -114,3 +114,11 @@
 - 解锁门槛 = 既有技能值 + 该专精真实实践；`CharacterData.specialtyExperience/unlockedPerks` 入档。
 - `SpecialtyPerkSystem.TryUnlock/TryUnlockAll/CanUseAction`；`SpecialtyPerkTests` 4 例。
 - 验证：`EXIT=0`、1086 例、1075 通过、零 warning CS。下一步 P11.2：斥候分遣与单向探测。
+
+## 11. P11.2 实施记录（2026-11-14）
+
+- `CanDetect` 单向化；`CanContact` = 任一方看到。
+- `Army.scoutDetached/scoutTileIndex`；`TryDetachScouts` 需 `scout_detach`；观测原点前移，不加射程；leash 越界归队。
+- `CombatManager` 按观察者去重记录接触；仍只在同地块结算战损。
+- 存档字段与 4 个探测测试；验证：`EXIT=0`、1089 例、1078 通过、零 warning CS。
+- 机制优先复盘：分遣收益来自"观测原点前移"，未使用 +射程抽象加成。

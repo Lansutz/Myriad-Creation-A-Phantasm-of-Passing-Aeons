@@ -58,6 +58,12 @@ public class Army
 	/// <summary>斥候可达范围（地块，切比雪夫距离）；每日按兵力构成/状态/地形重算，D37。</summary>
 	public int scoutRange = 1;
 
+	/// <summary>P11.2：斥候是否已从主军分遣出去（需将领专精 scout_detach）。</summary>
+	public bool scoutDetached;
+
+	/// <summary>分遣斥候所在的地块（P11.2）；未分遣为 -1，观测原点随之前移。</summary>
+	public int scoutTileIndex = -1;
+
 	[NonSerialized]
 	public float originalManpower;
 

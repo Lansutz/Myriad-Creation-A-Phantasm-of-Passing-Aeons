@@ -33,6 +33,8 @@ namespace MyriadCreation.Infrastructure.Save
         public float training = 50f;
         /// <summary>斥候可达范围（D37）；旧档缺字段为 1，读档后次日重算。</summary>
         public int scoutRange = 1;
+        public bool scoutDetached;
+        public int scoutTileIndex = -1;
 
         public int[] movePath = new int[0];
         public int moveTargetTile = -1;
@@ -57,6 +59,8 @@ namespace MyriadCreation.Infrastructure.Save
                 supply = army.supply,
                 training = army.training,
                 scoutRange = army.scoutRange,
+                scoutDetached = army.scoutDetached,
+                scoutTileIndex = army.scoutTileIndex,
                 movePath = army.movePath?.ToArray() ?? new int[0],
                 moveTargetTile = army.moveTargetTile,
                 moveProgress = army.moveProgress,
@@ -95,6 +99,8 @@ namespace MyriadCreation.Infrastructure.Save
                 supply = supply,
                 training = training,
                 scoutRange = scoutRange,
+                scoutDetached = scoutDetached,
+                scoutTileIndex = scoutTileIndex,
                 movePath = movePath != null ? new System.Collections.Generic.List<int>(movePath) : new System.Collections.Generic.List<int>(),
                 moveTargetTile = moveTargetTile,
                 moveProgress = moveProgress,

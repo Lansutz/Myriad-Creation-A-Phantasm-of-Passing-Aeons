@@ -1424,3 +1424,13 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **解锁消费**：`SpecialtyPerkSystem.TryUnlock/TryUnlockAll/CanUseAction`；后续 P11.2 用 `scout_detach` 真正改变斥候分遣操作。
 - 测试：`SpecialtyPerkTests` 4 例（高技能零实践不解锁、达标解锁、幂等、存档往返）。
 - 验证：全量 EditMode `EXIT=0`、1086 例、1075 通过、0 失败、11 Explicit、零 warning/error CS。
+
+## D162 P11.2 接敌：单向探测、斥候分遣、接触与会战分离（2026-11-14）
+
+- **单向探测**：`CanDetect(observer, target)` 只看观察方自己的斥候范围，取消旧 `max(双方 scoutRange)` 的全知口径；`CanContact` = 任一方看到即接触。
+- **斥候分遣**：`Army.scoutDetached/scoutTileIndex`；`TryDetachScouts` 要求将领已解锁 `scout_detach`（P11.1 专精节点），分遣后**观测原点前移到斥候地块**——不凭空加射程（机制优先，避免抽象加成）。
+- **归队规则**：斥候离开主军超过 leash（主军基础侦察范围 +1，表示指挥/传令可达距离）自动归队；主军阵亡同样归队。
+- **接触≠会战**：`CombatManager.DailyTick` 只在同地块结算战损；不同地块仅记录 `DetectionContact`，并按观察者对去重。
+- **入档**：`ArmySaveData` 增加 `scoutDetached/scoutTileIndex`。
+- 测试：`DetectionContactTests` 新增 4 例（单向探测、perk 门槛、斥候原点前移、越界归队）+ 既有同格才开战 2 例。
+- 验证：全量 EditMode `EXIT=0`、1089 例、1078 通过、0 失败、11 Explicit、零 warning/error CS。

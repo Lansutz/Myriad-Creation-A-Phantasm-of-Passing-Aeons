@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using MyriadCreation.Content.Definitions;
 using MyriadCreation.Core.Data;
 using MyriadCreation.Core.Enums;
@@ -139,16 +139,78 @@ public static class DetectionContactService
 		return Mathf.Max(Mathf.Abs(ax - bx), Mathf.Abs(ay - by));
 	}
 
-	/// <summary>双方任一侧的斥候可达范围覆盖对方，才算接触。</summary>
-	public static bool CanContact(Army observer, Army target, int mapWidth)
+	/// <summary>P11.2：单向探测——只由观察方自己的斥候决定，不取双方最大值。</summary>
+	public static bool CanDetect(Army observer, Army target, int mapWidth)
 	{
-		if (observer == null || target == null)
+		if (observer == null || target == null || mapWidth <= 0)
 		{
 			return false;
 		}
-		int distance = TileDistance(observer.currentTileIndex, target.currentTileIndex, mapWidth);
-		int reach = Mathf.Max(observer.scoutRange, target.scoutRange);
+		// 分遣斥候时观测原点前移到斥候所在地块（失败/越界则回落到主军）。
+		int origin = observer.scoutDetached && observer.scoutTileIndex >= 0
+			? observer.scoutTileIndex
+			: observer.currentTileIndex;
+		if (origin < 0 || target.currentTileIndex < 0)
+		{
+			return false;
+		}
+		int distance = TileDistance(origin, target.currentTileIndex, mapWidth);
+		int reach = EffectiveScoutRange(observer);
 		return distance <= reach;
+	}
+
+	/// <summary>任一方看到对方即形成接触（用于旧调用点/UI 提示）。</summary>
+	public static bool CanContact(Army observer, Army target, int mapWidth)
+	{
+		return CanDetect(observer, target, mapWidth) || CanDetect(target, observer, mapWidth);
+	}
+
+	/// <summary>有效侦察范围：只由兵力构成/状态/地形决定；分遣斥候改变的是观测原点，不是凭空加射程。</summary>
+	public static int EffectiveScoutRange(Army army)
+	{
+		return army == null ? 0 : Mathf.Clamp(army.scoutRange, 0, MaxScoutRange);
+	}
+
+	/// <summary>分遣斥候：要求将领已解锁 scout_detach；斥候落点先与主军同格，由行军/巡逻推进。</summary>
+	public static bool TryDetachScouts(Army army)
+	{
+		if (army == null || army.scoutDetached || army.state == GameEnums.CombatState.Dead)
+		{
+			return false;
+		}
+		CharacterData commander = CommanderResolver != null && army.commanderId >= 0
+			? CommanderResolver(army.commanderId)
+			: null;
+		if (commander == null || !commander.HasPerk("scout_detach"))
+		{
+			return false;
+		}
+		army.scoutDetached = true;
+		army.scoutTileIndex = army.currentTileIndex;
+		return true;
+	}
+
+	/// <summary>斥候归队/越界检查：离开主军超过 leash（基础范围+1）格就自动归队。</summary>
+	public static bool TickScoutDetachment(Army army, int mapWidth)
+	{
+		if (army == null || !army.scoutDetached)
+		{
+			return false;
+		}
+		if (army.state == GameEnums.CombatState.Dead)
+		{
+			army.scoutDetached = false;
+			army.scoutTileIndex = -1;
+			return false;
+		}
+		int leash = Mathf.Max(1, army.scoutRange + 1);
+		if (army.scoutTileIndex < 0 || TileDistance(army.currentTileIndex, army.scoutTileIndex, mapWidth) > leash)
+		{
+			army.scoutDetached = false;
+			army.scoutTileIndex = -1;
+			return false;
+		}
+		return true;
 	}
 
 	/// <summary>接触先手与地形/设防修正；不改变谁是攻方，只改结算权重。</summary>
