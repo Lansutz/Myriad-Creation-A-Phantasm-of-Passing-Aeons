@@ -1302,3 +1302,13 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
 - **即时效果**：法律/建筑列表本来就随政权已研究革新变化；现在“能否开始研究”也受真实实践约束，形成“实践→立项→完成→解锁”的闭环。灵感基础概率与上限仍由 `ResearchPlanSystem`（0.0005/日，上限 0.03/日）控制，学者属性与相关实践提高概率。
 - 测试：`RealmPracticeGateTests` 4 例（无实践拒绝、49% 拒绝、50% 通过、按领域/政权隔离、政权掌握取最大值）；保存/持久化测试补实践种子。
 - 验证：全量 EditMode `EXIT=0`、1058 例、1049 通过、0 失败、零 `error CS`（9 个 Explicit 跳过）。
+
+## D149 P9.4 河流作为水体与船运（2026-11-14）
+
+- **河网字段终于有生产者**：`HydrologySystem.ApplyToTiles` 现在写回 `riverStreamOrder / riverFlowAccumulation / riverWidthMeters / riverDepthMeters / riverCurrentMps`。此前五字段恒为 0，`IsNavigable` 在真实世界几乎永远为 false，河运名存实亡。宽/深/流速按汇流面积用 Leopold & Maddock 水力几何指数（W∝Q^0.5、D∝Q^0.35、V∝Q^0.1）推导。
+- **单一水体判定**：`RiverNavigability` 提供 `WaterBodyKind`、`IsBoatPassable`、参数化 `IsNavigable`；`TerrainConditions.IsNavigableRiver` 委托同一实现，不再各写一套阈值。
+- **贸易方式由真实连通性决定**：撤掉第一版的抽象 `waterShare` 采样倍率；`ClassifyRoute` 以可通航水体做 BFS，判断两地是陆运、河运还是海运。
+- **用船单位而不是魔法系数**：`UnitDef` 增加 `cargoCapacity`，Units.json 给船只填载货量（桨帆船 150、帆船战舰 250、撞角战船 80、远洋贸易船 800）；水运商队的容量与速度直接读船单位，陆运沿用商队基准；水路效率不再被道路等级拖累。
+- **河网审计**：新增 `RiverNetworkAudit.CountRiverTilesWithoutOutlet`，可检查断头河段。
+- 测试：`WaterwayTests` 8 例（水体分类、可通航、`TerrainConditions` 同源、水力字段生产者、路线方式、水路效率、孤立河段、汇流河序）。
+- 验证：全量 EditMode `EXIT=0`、1066 例、1057 通过、0 失败、零 `error CS`（9 个 Explicit 跳过）。

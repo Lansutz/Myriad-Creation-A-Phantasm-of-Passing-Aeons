@@ -622,6 +622,7 @@ public partial class GameWorld : MonoBehaviour
 		InitializeSubsystems();
 		InitializeGoodsDefs();
 		InitializeUnitDefs();
+		if (_economyManager != null) _economyManager.UnitDefs = unitDefs;
 		InitializeTradeCenters();
 		InitializeDefaultRaces();
 		InitializeDefaultCultures();

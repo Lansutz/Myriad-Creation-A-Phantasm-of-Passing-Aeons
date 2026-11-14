@@ -20,7 +20,8 @@
    ],
    "requiredInnovations": [
     906
-   ]
+   ],
+   "cargoCapacity": 0
   },
   {
    "unitId": 101,
@@ -46,7 +47,8 @@
    ],
    "requiredInnovations": [
     202
-   ]
+   ],
+   "cargoCapacity": 0
   },
   {
    "unitId": 102,
@@ -72,7 +74,8 @@
    ],
    "requiredInnovations": [
     203
-   ]
+   ],
+   "cargoCapacity": 0
   },
   {
    "unitId": 110,
@@ -94,7 +97,8 @@
    ],
    "requiredInnovations": [
     907
-   ]
+   ],
+   "cargoCapacity": 0
   },
   {
    "unitId": 111,
@@ -116,7 +120,8 @@
    ],
    "requiredInnovations": [
     304
-   ]
+   ],
+   "cargoCapacity": 0
   },
   {
    "unitId": 200,
@@ -142,7 +147,8 @@
    ],
    "requiredInnovations": [
     923
-   ]
+   ],
+   "cargoCapacity": 0
   },
   {
    "unitId": 201,
@@ -172,7 +178,8 @@
    ],
    "requiredInnovations": [
     924
-   ]
+   ],
+   "cargoCapacity": 0
   },
   {
    "unitId": 202,
@@ -202,7 +209,8 @@
    ],
    "requiredInnovations": [
     303
-   ]
+   ],
+   "cargoCapacity": 0
   },
   {
    "unitId": 203,
@@ -232,7 +240,8 @@
    ],
    "requiredInnovations": [
     1006
-   ]
+   ],
+   "cargoCapacity": 0
   },
   {
    "unitId": 210,
@@ -258,7 +267,8 @@
    ],
    "requiredInnovations": [
     1013
-   ]
+   ],
+   "cargoCapacity": 0
   },
   {
    "unitId": 300,
@@ -284,7 +294,8 @@
    ],
    "requiredInnovations": [
     402
-   ]
+   ],
+   "cargoCapacity": 150
   },
   {
    "unitId": 301,
@@ -310,7 +321,8 @@
    ],
    "requiredInnovations": [
     405
-   ]
+   ],
+   "cargoCapacity": 250
   },
   {
    "unitId": 302,
@@ -336,7 +348,8 @@
    ],
    "requiredInnovations": [
     1007
-   ]
+   ],
+   "cargoCapacity": 80
   },
   {
    "unitId": 303,
@@ -362,7 +375,8 @@
    ],
    "requiredInnovations": [
     1008
-   ]
+   ],
+   "cargoCapacity": 800
   }
  ]
 }

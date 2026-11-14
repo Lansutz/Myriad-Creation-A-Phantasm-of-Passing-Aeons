@@ -250,3 +250,13 @@
 - `RealmPracticeGateTests` 4 例；保存/持久化测试补实践种子。
 - 验证：`EXIT=0`、1058 例、1049 通过、0 失败、零 `error CS`。
 - 下一步：M4 河流作为水体与贸易成本。
+
+## 12. M4 实施记录（2026-11-14）
+
+- `HydrologySystem.ApplyToTiles` 写回河序、汇流面积、河宽、河深、流速（水力几何指数），修掉五字段零生产者。
+- `RiverNavigability`：`WaterBodyKind`、`IsBoatPassable`、参数化 `IsNavigable`、`ClassifyRoute`（真实水体 BFS）。
+- `TerrainConditions.IsNavigableRiver` 委托同一实现。
+- 贸易：撤掉抽象 `waterShare`；路线方式=陆运/河运/海运；`UnitDef.cargoCapacity` 提供船只载货量，水运商队容量/速度读船单位。
+- `RiverNetworkAudit` 检查断头河段；`WaterwayTests` 8 例。
+- 验证：`EXIT=0`、1066 例、1057 通过、0 失败、零 `error CS`。
+- 下一步：M5 河流改道与城市兴衰。

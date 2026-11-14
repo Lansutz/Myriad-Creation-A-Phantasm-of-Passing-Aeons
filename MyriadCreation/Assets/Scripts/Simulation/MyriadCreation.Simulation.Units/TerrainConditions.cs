@@ -77,25 +77,8 @@ public struct TerrainConditions
 		}
 	}
 
-	public bool IsNavigableRiver
-	{
-		get
-		{
-			if (IsRiver)
-			{
-				if (RiverStreamOrder < 2)
-				{
-					if (RiverWidthMeters >= 20f)
-					{
-						return RiverDepthMeters >= 0.6f;
-					}
-					return false;
-				}
-				return true;
-			}
-			return false;
-		}
-	}
+	public bool IsNavigableRiver => IsRiver && MyriadCreation.World.Hydrology.RiverNavigability.IsNavigable(
+		RiverStreamOrder, RiverWidthMeters, RiverDepthMeters, Elevation01, PrecipitationMm);
 
 	public static TerrainConditions FromTile(TileData tile)
 	{

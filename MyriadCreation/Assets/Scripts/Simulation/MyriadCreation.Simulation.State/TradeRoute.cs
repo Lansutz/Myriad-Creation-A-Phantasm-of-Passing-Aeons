@@ -18,6 +18,9 @@ public class TradeRoute
 
 	public bool isBlocked;
 
+	/// <summary>运输方式：由两地之间真实水体连通性判定（陆运/河运/海运）。</summary>
+	public MyriadCreation.World.Hydrology.TransportMode transportMode;
+
 	public void CalculateEfficiency(TileData[] tiles)
 	{
 		if (isBlocked || nodeTileIndices.Count == 0)
@@ -32,7 +35,8 @@ public class TradeRoute
 			num2 += (float)tiles[nodeTileIndex].roadLevel;
 		}
 		num2 /= (float)nodeTileIndices.Count;
-		num *= 0.6f + num2 * 0.15f;
+		// 水路不需要道路；陆运才按沿线道路等级加成。
+		num *= transportMode == MyriadCreation.World.Hydrology.TransportMode.Land ? 0.6f + num2 * 0.15f : 1f;
 		float num3 = 0f;
 		foreach (int nodeTileIndex2 in nodeTileIndices)
 		{

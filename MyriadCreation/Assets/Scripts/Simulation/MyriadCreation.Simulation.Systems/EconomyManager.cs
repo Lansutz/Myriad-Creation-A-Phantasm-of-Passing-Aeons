@@ -100,6 +100,9 @@ public class EconomyManager
 	/// <summary>政权级社会实践池（由 GameWorld 注入）；为空时只结算经济、不记实践。</summary>
 	public InnovationTree Innovations { get; set; }
 
+	/// <summary>单位定义（船/车）；用于给水陆商队取真实载货与速度。</summary>
+	public Dictionary<int, UnitDef> UnitDefs { get; set; }
+
 	public EconomyManager(TileData[] tiles, Dictionary<int, TradeCenter> tradeCenters, Dictionary<int, GoodsDef> goodsDefs, CurrencySystem currency, TaxSystem taxSystem, Dictionary<int, RealmData> realms = null, int mapWidth = 128, Dictionary<int, SettlementData> settlements = null)
 	{
 		_tiles = tiles;
@@ -263,11 +266,30 @@ public class EconomyManager
 				fromRegionId = origin.regionId,
 				toRegionId = target.regionId,
 				nodeTileIndices = new List<int> { origin.centerTileIndex, target.centerTileIndex },
-				baseEfficiency = 1f
+				baseEfficiency = 1f,
+				transportMode = MyriadCreation.World.Hydrology.RiverNavigability.ClassifyRoute(
+					_tiles, _mapWidth, Mathf.Max(1, _tiles.Length / Mathf.Max(1, _mapWidth)),
+					origin.centerTileIndex, target.centerTileIndex)
 			});
 			created++;
 		}
 		return created;
+	}
+
+	/// <summary>水运容量取船单位的载货量；陆运沿用商队基准 500。</summary>
+	private float ResolveCargoCapacity(MyriadCreation.World.Hydrology.TransportMode mode)
+	{
+		if (mode == MyriadCreation.World.Hydrology.TransportMode.Land || UnitDefs == null) return 500f;
+		int unitId = mode == MyriadCreation.World.Hydrology.TransportMode.Sea ? 303 : 300;
+		return UnitDefs.TryGetValue(unitId, out UnitDef def) && def.cargoCapacity > 0f ? def.cargoCapacity : 500f;
+	}
+
+	/// <summary>水运速度取船单位速度；陆运沿用 1 节点/日。</summary>
+	private float ResolveTransportSpeed(MyriadCreation.World.Hydrology.TransportMode mode)
+	{
+		if (mode == MyriadCreation.World.Hydrology.TransportMode.Land || UnitDefs == null) return 1f;
+		int unitId = mode == MyriadCreation.World.Hydrology.TransportMode.Sea ? 303 : 300;
+		return UnitDefs.TryGetValue(unitId, out UnitDef def) && def.speed > 0f ? def.speed : 1f;
 	}
 
 	private static bool HasTradeGradient(TradeCenter origin, TradeCenter target)
@@ -368,7 +390,10 @@ public class EconomyManager
 							fromRegionId = tradeRoute.fromRegionId,
 							toRegionId = tradeRoute.toRegionId,
 							currentNodeIndex = 0,
-							isMoving = true
+							isMoving = true,
+							transportMode = tradeRoute.transportMode,
+							capacity = ResolveCargoCapacity(tradeRoute.transportMode),
+							speed = ResolveTransportSpeed(tradeRoute.transportMode)
 						};
 						caravan.cargo[num] = num4;
 						_caravans.Add(caravan);

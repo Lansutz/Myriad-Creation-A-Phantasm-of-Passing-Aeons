@@ -32,6 +32,9 @@ public struct UnitDef
 
 	public float manpowerCost;
 
+	/// <summary>载货量（仅运输/船只单位有意义）；0 表示不承担货运。</summary>
+	public float cargoCapacity;
+
 	[NonSerialized]
 	public Dictionary<GameEnums.TerrainTacticType, float> terrainModifiers;
 

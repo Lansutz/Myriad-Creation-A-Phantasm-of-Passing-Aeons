@@ -24,6 +24,9 @@ public class Caravan
 
 	public bool isMoving = true;
 
+	/// <summary>本次运输方式（陆运/河运/海运）。</summary>
+	public MyriadCreation.World.Hydrology.TransportMode transportMode;
+
 	public float moveProgress;
 
 	public float GetCargoWeight(Dictionary<int, GoodsDef> goodsDefs)

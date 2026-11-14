@@ -305,12 +305,33 @@ public class HydrologySystem
 		}
 	}
 
+	/// <summary>
+	/// 把河网写回地块：除 isRiver 外，同时写河序、汇流面积与水力几何量（宽/深/流速）。
+	/// 宽度/深度/流速用 Leopold &amp; Maddock 水力几何的经验指数（W∝Q^0.5、D∝Q^0.35、V∝Q^0.1），
+	/// 系数按本作地块尺度标定；没有这些字段，可通行判定与河运会永远读到 0。
+	/// </summary>
 	public void ApplyToTiles(TileData[] tiles)
 	{
 		int num = Math.Min(tiles.Length, IsRiver.Length);
 		for (int i = 0; i < num; i++)
 		{
-			tiles[i].isRiver = IsRiver[i];
+			bool river = IsRiver[i];
+			tiles[i].isRiver = river;
+			if (!river)
+			{
+				tiles[i].riverStreamOrder = 0;
+				tiles[i].riverFlowAccumulation = 0f;
+				tiles[i].riverWidthMeters = 0f;
+				tiles[i].riverDepthMeters = 0f;
+				tiles[i].riverCurrentMps = 0f;
+				continue;
+			}
+			float q = Mathf.Max(1f, FlowAccumulation[i]);
+			tiles[i].riverStreamOrder = StreamOrder[i];
+			tiles[i].riverFlowAccumulation = q;
+			tiles[i].riverWidthMeters = 1.2f * Mathf.Sqrt(q);
+			tiles[i].riverDepthMeters = 0.25f * Mathf.Pow(q, 0.35f);
+			tiles[i].riverCurrentMps = 0.5f * Mathf.Pow(q, 0.1f);
 		}
 	}
 
