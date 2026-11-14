@@ -1488,3 +1488,11 @@ INeedQuery.GetReports(NeedAxis) -> IReadOnlyList<NeedReport>
   - 运输"方式"：由 `animals/carts/boats` 编成表达，`ArmyPersistenceTests` 逐项断言入档；不另设 mode 字段。
   - 斥候分遣：`scoutDetached/scoutTileIndex` 入档并在同一测试断言。
 - 验证：全量 EditMode `EXIT=0`、1108 例、1096 通过、0 失败、11 Explicit、零 warning/error CS。
+
+## D168 P11.1 收口：三个专精节点的真实动作（2026-11-14）
+
+- **field_survey → 实地踏勘**：`GameWorld.TrySurveyTile(realmId, surveyorId, tileIndex)` 需随员已解锁该节点，真实揭示目标地块周边知识；重复踏勘返回 false，不刷状态。
+- **night_raid → 夜袭**：`CombatManager.TryNightRaid(raider, target, mapWidth)` 需将领解锁且两军相邻一格；只打乱组织/士气，不进入 `ResolveBattle`（夜袭不是会战）。
+- **scout_detach → 斥候分遣**（既有）：解锁后才允许 `TryDetachScouts`。
+- 三个动作都有"未解锁必须失败"的测试；配合 `SpecialtyPerkTests` 的"高技能零实践不解锁"。
+- 验证：全量 EditMode `EXIT=0`、1111 例、1099 通过、0 失败、11 Explicit、零 warning/error CS。

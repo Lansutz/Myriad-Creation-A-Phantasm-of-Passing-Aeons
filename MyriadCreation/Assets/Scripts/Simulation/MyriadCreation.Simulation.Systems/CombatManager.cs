@@ -195,6 +195,31 @@ public class CombatManager
 		return num;
 	}
 
+	/// <summary>
+	/// P11.1/P11.2：夜间突袭——相邻地块才可发动，需将领解锁 night_raid。
+	/// 这是"接触≠会战"之外的独立操作：不进入 ResolveBattle，只打乱对方组织与士气。
+	/// </summary>
+	public bool TryNightRaid(Army raider, Army target, int mapWidth)
+	{
+		if (raider == null || target == null) return false;
+		if (raider.state == GameEnums.CombatState.Dead || target.state == GameEnums.CombatState.Dead) return false;
+		CharacterData commander = DetectionContactService.CommanderResolver != null && raider.commanderId >= 0
+			? DetectionContactService.CommanderResolver(raider.commanderId)
+			: null;
+		if (commander == null || !commander.HasPerk("night_raid")) return false;
+		if (DetectionContactService.TileDistance(raider.currentTileIndex, target.currentTileIndex, mapWidth) != 1)
+		{
+			return false;
+		}
+
+		float raiderPower = raider.GetTotalManpower(_unitDefs);
+		float targetPower = target.GetTotalManpower(_unitDefs);
+		float shock = Mathf.Clamp(4f + raiderPower / Mathf.Max(1f, targetPower) * 4f, 4f, 12f);
+		target.organization = Mathf.Max(0f, target.organization - shock);
+		target.morale = Mathf.Max(0f, target.morale - shock * 0.5f);
+		return true;
+	}
+
 	public void DailyTick(Dictionary<int, Army> armies, List<WarState> wars, WarRules rules, int day)
 	{
 		if (wars == null || armies == null)

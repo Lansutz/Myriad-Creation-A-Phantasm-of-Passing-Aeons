@@ -157,3 +157,9 @@
 - `ASSET_LICENSES.md` 记录 CC0/MIT 来源，未引入外部二进制。
 - P11.7：Save.Runtime 引用判据已达成；Save.World 仍为适配层（A2 最终形态列为后续）；流程面板维持外置；运输编成与斥候状态入档断言。
 - 验证：`EXIT=0`、1108 例、1096 通过、零 warning CS。
+
+## 17. P11.1 收口：节点真实动作（2026-11-14）
+
+- `field_survey`：`TrySurveyTile` 揭示知识；`night_raid`：`TryNightRaid` 相邻打击组织；`scout_detach`：`TryDetachScouts`。
+- 三者均测试"未解锁必须失败"；`SpecialtyPerkTests` 覆盖无实践不解锁。
+- 验证：`EXIT=0`、1111 例、1099 通过、零 warning CS。
